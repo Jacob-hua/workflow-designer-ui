@@ -20,7 +20,9 @@
     "bpmn-js-token-simulation": "^0.10.0",
     "x2js": "^3.4.2",
     "xml-js": "^1.6.11",
-    "diagram-js-minimap": "^2.0.4"
+    "diagram-js-minimap": "^2.0.4",
+    "highlight.js": "^10.5.0",
+    "@bpmn-io/form-js-editor": "^0.7.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.11",

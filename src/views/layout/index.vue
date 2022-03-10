@@ -3,24 +3,25 @@
     <el-container>
       <!-- <el-header>Header</el-header> -->
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="185px">
           <div class="Logo">
             流程引擎工作台
           </div>
           <el-menu
-                default-active="1"
+                :default-active="$route.name"
                 class="el-menu-vertical-demo"
+                router
                 @open="handleOpen"
                 @close="handleClose">
-                <el-menu-item index="1">
+                <el-menu-item index="bpmn">
                     <i class="el-icon-location"></i>
                     <span>工作流管理</span>
                 </el-menu-item>
-                <el-menu-item index="2">
+                <el-menu-item index="form">
                   <i class="el-icon-menu"></i>
                   <span slot="title">表单管理</span>
                 </el-menu-item>
-                <el-menu-item index="3">
+                <el-menu-item index="home">
                   <i class="el-icon-document"></i>
                   <span slot="title">工作流驾驶舱</span>
                 </el-menu-item>
@@ -56,6 +57,9 @@
       handleClose() {
         
       }
+    },
+    mounted() {
+      
     }
   }
 </script>
@@ -72,6 +76,8 @@
     height: 175px;
     background-color: #666666;
     color: white;
+    /* background-color: white; */
+    /* color: black; */
     font-size: 20px;
     line-height: 215px;
     padding-left: 20px;

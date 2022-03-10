@@ -17,6 +17,10 @@ import 'element-ui/lib/theme-chalk/index.css';
 import "@/components/package/theme/element-variables.scss";
 Vue.use(ElementUI);
 
+import { vuePlugin } from "@/components/package/highlight";
+import "highlight.js/styles/atom-one-dark-reasonable.css";
+Vue.use(vuePlugin);
+
 import MyPD from "@/components/package/index.js";
 Vue.use(MyPD);
 import "@/components/package/theme/index.scss";

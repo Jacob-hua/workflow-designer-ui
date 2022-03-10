@@ -23,11 +23,12 @@
             </div>
             <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-view">预览</el-button>
           </el-tooltip>
-          <el-tooltip v-if="simulation" effect="light" :content="this.simulationStatus ? '退出模拟' : '开启模拟'">
+<!--          <el-tooltip v-if="simulation" effect="light" :content="this.simulationStatus ? '退出模拟' : '开启模拟'">
             <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-cpu" @click="processSimulation">
               模拟
             </el-button>
-          </el-tooltip>
+          </el-tooltip> -->
+          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至数据库</el-button>
         </el-button-group>
         <!-- <el-button-group key="align-control">
           <el-tooltip effect="light" content="向左对齐">
@@ -263,8 +264,16 @@ export default {
         ...this.options
       });
       this.$emit("init-finished", this.bpmnModeler);
-      this.creatDemo()
+      // this.creatDemo()
       this.initModelListeners();
+    },
+    postData() {
+      var file1 = new File(['凯凯是我儿子'], 'test.txt', {type: 'text/plain'});
+      // console.log(file1)
+      var blobUrl = URL.createObjectURL(file1);
+      console.log(blobUrl)
+      this.downloadFunc(blobUrl, '123.txt')
+      
     },
     creatDemo() {
       processInstanceData({
@@ -365,7 +374,15 @@ export default {
         }
       }
     },
-
+    downloadFunc(href, filename) {
+      if (href && filename) {
+        let a = document.createElement("a");
+        a.download = filename; //指定下载的文件名
+        a.href = href; //  URL对象
+        a.click(); // 模拟点击
+        URL.revokeObjectURL(a.href); // 释放URL 对象
+      }
+    },
     // 根据所需类型进行转码并返回下载地址
     setEncoded(type, filename = "diagram", data) {
       const encodedData = encodeURIComponent(data);
@@ -380,6 +397,7 @@ export default {
     importLocalFile() {
       const that = this;
       const file = this.$refs.refFile.files[0];
+      console.log(file, '00000')
       const reader = new FileReader();
       reader.readAsText(file);
       reader.onload = function() {
@@ -473,7 +491,7 @@ export default {
         } else {
           this.previewResult = "";
         }
-
+        
         this.previewType = "json";
         this.previewModelVisible = true;
       });

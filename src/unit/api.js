@@ -11,3 +11,6 @@ export const extraApi = (params) =>
 
 export const processInstanceData = (params) =>
   get('/process/processInstanceData', params);
+
+export const postFormService = (params) =>
+  post('/formService', params);

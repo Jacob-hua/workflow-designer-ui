@@ -31,6 +31,10 @@ export default {
     display: none;
   }
   
+  .fjs-powered-by {
+    display: none;
+  }
+  
   body,
   body * {
     /* 滚动条 */
