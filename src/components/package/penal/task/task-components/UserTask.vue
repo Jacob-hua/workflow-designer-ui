@@ -145,7 +145,7 @@
 
           this.$set(this.userTaskForm, key, value);
         }
-        // this.getOption()
+        this.getOption()
       },
       updateElementTask(key) {
         const taskAttr = Object.create(null);
