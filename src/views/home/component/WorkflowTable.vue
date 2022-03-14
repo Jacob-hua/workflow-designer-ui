@@ -24,7 +24,7 @@
             <el-button @click.native.prevent="deployDiolog()" type="text" size="small" class="button1">
               部署
             </el-button>
-            <el-button @click.native.prevent="deleteRow(scope.$index, tableData)" type="text" size="small">
+            <el-button @click.native.prevent="detailsDiolog()" type="text" size="small">
               查看
             </el-button>
           </template>
@@ -37,11 +37,13 @@
       </el-pagination>
     </div>
     <deploy ref="deploy"></deploy>
+    <detailsBnpm ref="detailsBnpm"></detailsBnpm>
   </div>
 </template>
 
 <script>
   import deploy from './deploy.vue'
+  import detailsBnpm from './details.vue'
   export default {
     data() {
       return {
@@ -108,10 +110,14 @@
       },
       deployDiolog() {
         this.$refs.deploy.dialogVisible1 = true
+      },
+      detailsDiolog() {
+        this.$refs.detailsBnpm.dialogVisible1 = true
       }
     },
     components:{
-      deploy
+      deploy,
+      detailsBnpm
     }
   }
 </script>

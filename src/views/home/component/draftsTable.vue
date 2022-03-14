@@ -20,10 +20,10 @@
         <el-table-column prop="name" label="操作" align="center">
           <template slot-scope="scope">
             <el-button @click.native.prevent="deployDiolog()" type="text" size="small" class="button1">
-              部署
+              编辑
             </el-button>
-            <el-button @click.native.prevent="deleteRow(scope.$index, tableData)" type="text" size="small">
-              查看
+            <el-button @click.native.prevent="deleteRow()" type="text" size="small">
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -102,10 +102,24 @@
         console.log(`当前页: ${val}`);
       },
       deleteRow() {
-        
+        this.$confirm('从草稿箱删除草稿不可恢复, 请确认是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
       },
       deployDiolog() {
-        this.$refs.deploy.dialogVisible1 = true
+        this.$refs.deploy.dialogVisible2 = true
       }
     },
     components:{

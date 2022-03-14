@@ -70,8 +70,8 @@
         <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">草稿箱（15）</span>
       </div>
       <div class="home-table">
-        <WorkflowTable v-if="activeName === 'first'"></WorkflowTable>
-        <draftsTable v-if="activeName === 'second'"></draftsTable>
+        <WorkflowTable v-show="activeName === 'first'"></WorkflowTable>
+        <draftsTable v-show="activeName === 'second'"></draftsTable>
       </div>
     </div>
   </div>
