@@ -30,7 +30,7 @@
     <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-left">
         <div class="bpmn-Main">
-          <ProcessInformation></ProcessInformation>
+          <ProcessInformation type="deploy2"></ProcessInformation>
         </div>
         <div class="bpmn-configure">
           <div class="bpmn-configure-basic">

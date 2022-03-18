@@ -40,6 +40,9 @@
 
 <script>
   import deploy from './deploy.vue'
+  import {
+      getFormService
+  } from '@/unit/api.js'
   export default {
     data() {
       return {
@@ -95,6 +98,22 @@
       }
     },
     methods: {
+      getTableData() {
+        getFormService({
+          page: 1,
+          limit: 10,
+          name: '',
+          tenantId: '',
+          createName: '',
+          code: '',
+          ascription: '',
+          business: '',
+          startTime: '',
+          endTime: ''
+        }).then((res) => {
+          console.log(res, '0000')
+        })
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
@@ -124,6 +143,9 @@
     },
     components:{
       deploy
+    },
+    created() {
+      this.getTableData()
     }
   }
 </script>
