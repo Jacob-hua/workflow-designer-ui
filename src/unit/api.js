@@ -14,3 +14,9 @@ export const processInstanceData = (params) =>
 
 export const postFormService = (params) =>
   post('/formService', params);
+  
+export const getFormService = (params) =>
+  get('/design/formService/page', params);
+  
+export const getProcessDesignService = (params) =>
+  get('/design/processDesignService/page', params);
