@@ -59,8 +59,11 @@
         <div class="bpmn-configure-form">
           <div class="bpmn-configure-title">工单分配-表单内容</div>
           <div class="bpmn-configure-Main">
-            <span v-if="true" class="noneForm"> 当前未关联表单 </span>
-            <div v-if="false"></div>
+            <span v-if="!formShow" class="noneForm"> 当前未关联表单 </span>
+            <div v-if="formShow" class="formShowForm">
+              <!-- <span class="formRemove">移除表单</span> -->
+              <formOB></formOB>
+            </div>
           </div>
         </div>
       </div>
@@ -74,11 +77,14 @@
 
 <script>
   import ProcessInformation from './ProcessInformation.vue'
+  import formOB from './formOB.vue'
   export default {
     data() {
       return {
         dialogVisible1: false,
         dialogVisible2: false,
+        formShow: false,
+        input: '',
         postData: {
           system: '1'
         },
@@ -103,7 +109,8 @@
       }
     },
     components:{
-      ProcessInformation
+      ProcessInformation,
+      formOB
     },
     methods:{
       dialogVisible2Detail() {
@@ -207,11 +214,22 @@
     height: 200px;
     border: 1px solid #000000;
     padding: 20px 10px;
+    overflow: auto;
   }
   
   .bpmn-configure-Main-item {
     margin-bottom: 20px;
     color: black;
+  }
+  
+  .formShowForm {
+    position: relative;
+  }
+  
+  .formRemove {
+    position: absolute;
+    right: 10px;
+    top: 10px;
   }
   
 </style>

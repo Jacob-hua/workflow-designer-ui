@@ -79,13 +79,13 @@
       </div>
     </div>
     <projectFormDiolog ref="projectFormDiolog"></projectFormDiolog>
-    <detailsDiolog ref="detailsDiolog" @editForm="editForm" quote="delete"></detailsDiolog>
+    <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete"></detailsDiologForm>
   </div>
 </template>
 
 <script>
   import projectFormDiolog from './projectFormComponent/index.vue'
-  import detailsDiolog from './details.vue'
+  import detailsDiologForm from './details.vue'
   export default {
     data() {
       return {
@@ -125,16 +125,19 @@
       addForm() {
         this.$refs.projectFormDiolog.dialogVisible1 = true
       },
+      addForm2() {
+        this.$refs.projectFormDiolog.dialogVisible2 = true
+      },
       detailsDiolog() {
         this.$refs.detailsDiolog.dialogVisible2 = true
       },
       editForm() {
-        this.addForm()
+        this.addForm2()
       }
     },
     components:{
       projectFormDiolog,
-      detailsDiolog
+      detailsDiologForm
     }
   }
 </script>

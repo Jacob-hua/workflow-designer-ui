@@ -273,7 +273,11 @@ export default {
       var blobUrl = URL.createObjectURL(file1);
       console.log(blobUrl)
       this.downloadFunc(blobUrl, '123.txt')
-      
+      let postData = {
+        name: '测试',
+        docName: '测试.bpmn',
+        ascription: ''
+      }
     },
     creatDemo() {
       processInstanceData({

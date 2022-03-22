@@ -86,6 +86,7 @@
         dialogVisible2: false,
         dialogVisible1: false,
         value: '',
+        input: '',
         options: [{
           value: 'V1.0',
           label: 'V1.0'

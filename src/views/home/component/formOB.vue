@@ -3,7 +3,6 @@
     <div id="form" ref="form">
       
     </div>
-    <!-- <span @click="save()">导出</span> -->
   </div>
 </template>
 
@@ -31,7 +30,10 @@
         this.formEditor = new FormEditor({
           container: container
         });
-        this.formEditor.importSchema(this.schema)
+        
+        let str = '{"components":[{"label":"Text Field","type":"textfield","id":"Field_0wi0bph","key":"field_1h9sf53"},{"label":"Number","type":"number","id":"Field_17j2myb","key":"field_0015l1e"},{"label":"Checkbox","type":"checkbox","id":"Field_1yjofg1","key":"field_0uoxlai"},{"values":[{"label":"Value","value":"value"}],"label":"Radio","type":"radio","id":"Field_1iefqvx","key":"field_02t66sm"},{"values":[{"label":"Value","value":"value"}],"label":"Select","type":"select","id":"Field_19dd56r","key":"field_1x3uycc"},{"text":"# Text","type":"text","id":"Field_10bgy0v"},{"action":"submit","label":"Button","type":"button","id":"Field_1uvrwge","key":"field_148fk9h"}],"schemaVersion":4,"type":"default","exporter":{"name":"form-js","version":"0.7.0"},"id":"Form_0brc4xq"}'
+        let schema = JSON.parse(str)
+        this.formEditor.importSchema(schema)
         this.formEditor.on('selection.changed', (item) => {
           console.log('选中？', item)
         })
@@ -108,7 +110,19 @@
   }
   
   /deep/ .fjs-form-container {
-    border: 1px solid #000000;
-    margin: 0px 20px;
+    /* border: 1px solid #000000; */
+    margin: 0px 0px 0px 00px;
+  }
+  
+  /deep/ .fjs-palette-container {
+    display: none;
+  }
+  
+  /deep/ .fjs-properties-container {
+    display: none;
+  }
+  
+  /deep/ .fjs-context-pad {
+    display: none;
   }
 </style>

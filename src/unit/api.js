@@ -17,3 +17,6 @@ export const postFormService = (params) =>
   
 export const getFormService = (params) =>
   get('/design/formService/page', params);
+  
+export const getProcessDesignService = (params) =>
+  get('/design/processDesignService/page', params);
