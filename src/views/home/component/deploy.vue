@@ -30,7 +30,7 @@
     <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-left">
         <div class="bpmn-Main">
-          <ProcessInformation></ProcessInformation>
+          <ProcessInformation type="deploy2"></ProcessInformation>
         </div>
         <div class="bpmn-configure">
           <div class="bpmn-configure-basic">
@@ -45,8 +45,11 @@
           <div class="bpmn-configure-form">
             <div class="bpmn-configure-title">工单分配-表单内容</div>
             <div class="bpmn-configure-Main">
-              <span v-if="true" class="noneForm"> 当前未关联表单 </span>
-              <div v-if="false"></div>
+              <span v-if="!formShow" class="noneForm"> 当前未关联表单 </span>
+              <span v-if="formShow" class="formRemove" @click="removeForm()">移除表单</span>
+              <div v-if="formShow" class="formShowForm">
+                <formOB></formOB>
+              </div>
             </div>
           </div>
         </div>
@@ -68,10 +71,16 @@
               </el-select>
             </div>
             <div class="listItem-button">
-              <el-button type="text" size="small" class="listItem-button1">
-                查看
-              </el-button>
-              <el-button type="text" size="small" class="listItem-button2">
+              
+              <el-popover
+                placement="right"
+                width="400"
+                trigger="click">
+                <formOB></formOB>
+                <el-button type="text" size="small" class="listItem-button1" slot="reference">查看</el-button>
+              </el-popover>
+
+              <el-button type="text" size="small" class="listItem-button2" @click="showForm()">
                 关联
               </el-button>
             </div>
@@ -89,11 +98,13 @@
 
 <script>
   import ProcessInformation from './ProcessInformation.vue'
+  import formOB from './formOB.vue'
   export default {
     data() {
       return {
         dialogVisible1: false,
         dialogVisible2: false,
+        formShow: false,
         input: '',
         options: [],
         valueV: '1.0',
@@ -107,10 +118,17 @@
       nextDiolog() {
         this.dialogVisible1 = false
         this.dialogVisible2 = true
+      },
+      showForm() {
+        this.formShow = true
+      },
+      removeForm() {
+        this.formShow = false
       }
     },
     components:{
-      ProcessInformation
+      ProcessInformation,
+      formOB
     }
   }
 </script>
@@ -199,6 +217,8 @@
     height: 200px;
     border: 1px solid #000000;
     padding: 20px 10px;
+    overflow: auto;
+    position: relative;
   }
   
   .bpmn-configure-Main-item {
@@ -277,5 +297,17 @@
   .listItem .listItem-button2 {
     color: #0368cd;
     font-size: 14px;
+  }
+  
+  .formShowForm {
+    position: relative;
+  }
+  
+  .formRemove {
+    position: absolute;
+    right: 10px;
+    top: 2px;
+    z-index: 9;
+    cursor: pointer;
   }
 </style>

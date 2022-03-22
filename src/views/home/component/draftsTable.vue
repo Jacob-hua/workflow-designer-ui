@@ -6,14 +6,14 @@
         </el-table-column>
         <el-table-column prop="name" label="名称" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="版本" align="center">
+        <el-table-column prop="version" label="版本" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="流程文件" align="center">
+        <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
             <span class="fileStyle">周期巡视.bpmn</span>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="创建人" align="center">
+        <el-table-column prop="createId" label="创建人" align="center">
         </el-table-column>
         <el-table-column prop="date" label="编辑时间" align="center">
         </el-table-column>
@@ -30,8 +30,8 @@
       </el-table>
     </div>
     <div class="home-table-page">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4"
-        :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="prev, pager, next, jumper" :total="400">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="getData.page"
+        :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
     <deploy ref="deploy"></deploy>
@@ -40,10 +40,27 @@
 
 <script>
   import deploy from './deploy.vue'
+  import {
+      getFormService,
+      getProcessDesignService
+  } from '@/unit/api.js'
   export default {
     data() {
       return {
         currentPage4: 1,
+        getData: {
+          page: 1,
+          limit: 10,
+          total: 100,
+          name: '',
+          tenantId: '',
+          createName: '',
+          code: '',
+          ascription: '',
+          business: '',
+          startTime: '',
+          endTime: ''
+        },
         tableData: [{
             date: '2021-11-12 14:11:23',
             name: '王小虎',
@@ -95,6 +112,11 @@
       }
     },
     methods: {
+      getTableData() {
+        getProcessDesignService(this.getData).then((res) => {
+          console.log(res, '0000')
+        })
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
@@ -124,6 +146,9 @@
     },
     components:{
       deploy
+    },
+    created() {
+      this.getTableData()
     }
   }
 </script>

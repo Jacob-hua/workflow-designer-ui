@@ -49,7 +49,7 @@
           <el-input v-model="postData.type" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
-      <div class="title-item">
+      <div class="title-item" v-if="type !== 'details1'">
         <span class="title-item-label marginLeft40">
           能源系统
         </span>
@@ -66,8 +66,21 @@
         </div>
       </div>
     </div>
+    <div v-if="type == 'details1'">
+      <span class="bnpmTitle">流程模板</span>
+    </div>
+    <div v-if="type == 'details2'">
+      <span class="bnpmTitle">巡视工作流</span>
+      <span class="bnpmSwitch">
+        <el-switch
+          v-model="switchValue"
+          active-color="#13ce66"
+          active-text="激活">
+        </el-switch>
+      </span>
+    </div>
     <div class="ProcessInformation-bpmn">
-      <span class="bpmn-Main-title">BPMN流程</span>
+      <span class="bpmn-Main-title" v-if="type == 'deploy2'">BPMN流程</span>
       <div class="my-process-designer__canvas" ref="bpmn-canvas"></div>
     </div>
   </div>
@@ -90,6 +103,7 @@
     } from '@/unit/api.js'
   export default {
     props:{
+      type: String,
       value: String, // xml 字符串
       processId: String,
       processName: String,
@@ -235,8 +249,9 @@
           {
             value: '4',
             label: '空调'
-          },
-        ]
+          }
+        ],
+        switchValue: ''
       }
     },
     methods:{
@@ -292,6 +307,10 @@
   .ProcessInformation {
     
   }
+  .ProcessInformation-title {
+    border-bottom: 1px solid #CCCCCC;
+    margin-bottom: 40px;
+  }
   .title-item {
     display: inline-block;
     margin-bottom: 20px;
@@ -341,5 +360,17 @@
   }
   /deep/ .djs-context-pad {
     display: none;
+  }
+  .bnpmTitle {
+    font-weight: 700;
+    color: black;
+    position: relative;
+    top: -15px;
+    left: 10px;
+  }
+  .bnpmSwitch {
+    position: relative;
+    top: -15px;
+    left: 1140px;
   }
 </style>
