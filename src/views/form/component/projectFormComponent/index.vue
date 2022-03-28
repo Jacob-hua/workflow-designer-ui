@@ -166,6 +166,12 @@
         const xml  = this.$refs.formbpmn.importData();
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
+        if (this.postData.id) {
+          formData.append('id', this.postData.id)
+        }
+        if (this.postData.sourceId) {
+          formData.append('sourceId', this.postData.sourceId)
+        }
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.form')
         formData.append('ascription', this.postData.ascription)
@@ -186,6 +192,12 @@
         const xml  = this.$refs.formbpmn.importData();
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
+        if (this.postData.id) {
+          formData.append('id', this.postData.id)
+        }
+        if (this.postData.sourceId) {
+          formData.append('sourceId', this.postData.sourceId)
+        }
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.form')
         formData.append('ascription', this.postData.ascription)
