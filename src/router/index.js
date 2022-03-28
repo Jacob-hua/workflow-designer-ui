@@ -50,9 +50,19 @@ const routes = [
       {
         path: '6',
         name: '6',
-        component: () => import('@/views/404'),
-        hidden: true
+        component: () => import('@/views/configuration'),
+        hidden: true,
       },
+      // {
+      //    path: '6-1',
+      //    name: '6-1',
+      //    component: () => import('@/views/configuration'),
+      // },
+      // {
+      //    path: '6-2',
+      //    name: '6-2',
+      //    component: () => import('@/views/404'),
+      // }
     ]
   },
 ]

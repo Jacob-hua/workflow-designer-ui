@@ -1,16 +1,16 @@
 <template>
   <div>
-    <el-dialog title="新建表单" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog title="表单详情" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div>
           表单模板
         </div>
         <div class="detail-title">
-          <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>232132132</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>工单创建表单</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>张三</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>2021-11-12 14:11:23</span> </div>
-          <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>4</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>{{ formData.numberCode }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>{{ formData.name }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>{{ formData.createName }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>{{ formData.createTime }}</span> </div>
+          <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formData.count }}</span> </div>
           
          <div class="detail-title-item-button">
            <el-button type="primary" @click="editForm()">编辑</el-button>
@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="fromEdit">
-          <formBpmnEdit></formBpmnEdit>
+          <formBpmnEdit v-if="dialogVisible2" ref="formbpmn"></formBpmnEdit>
         </div>
       </div>
     </el-dialog>
@@ -85,6 +85,12 @@
       return {
         dialogVisible2: false,
         dialogVisible1: false,
+        formData: {
+          numberCode: '',
+          name: '',
+          createName: '',
+          createTime: ''
+        },
         value: '',
         input: '',
         options: [{
@@ -115,7 +121,7 @@
         });
       },
       editForm() {
-        this.$emit('editForm')
+        this.$emit('editForm', this.formData)
       },
       nextDiolog() {
         this.dialogVisible1 = false

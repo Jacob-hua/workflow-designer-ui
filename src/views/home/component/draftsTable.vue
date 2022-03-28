@@ -41,7 +41,6 @@
 <script>
   import deploy from './deploy.vue'
   import {
-      getFormService,
       getProcessDesignService
   } from '@/unit/api.js'
   export default {

@@ -25,8 +25,9 @@ service.interceptors.response.use(
   response => {
     return new Promise (
       (resolve, reject) => {
-        const res = response.data;
-        if (res.status === "SUCCESS" || res.status === "success") {
+        const status = response.status;
+        const res = response.data
+        if (status === 200) {
           resolve(res);
         } else {
           reject(res);
