@@ -18,5 +18,34 @@ export const postFormService = (params) =>
 export const getFormService = (params) =>
   get('/design/formService/page', params);
   
+// 不用
 export const getProcessDesignService = (params) =>
   get('/design/processDesignService/page', params);
+
+
+// 正式接口
+
+// 工作流保存
+export const postProcessDesignService = (params) =>
+  post('/design/processDesignService', params);
+  
+// 保存草稿表单
+export const postFormDesignService = (params) =>
+  post('/design/formDesignService', params);
+
+// 发布到可用表单
+export const postFormDesignServiceRealiseProcessData = (params) =>
+  post('/design/formDesignService/realiseFormData', params);
+
+// 查询可用表单
+export const postFormDesignBasicFormRecord = (params) =>
+  post('/design/formDesignService/basicFormRecord', params);
+
+// 查询草稿箱表单
+export const postFormDesignRecordDraftInfo = (params) =>
+  post('/design/formDesignService/formDesignRecordDraftInfo', params);
+  
+// 查询表单详情
+export const postFormDesignRecordFormDesignRecordInfo = (params) =>
+  post('/design/formDesignService/formDesignRecordInfo', params);
+

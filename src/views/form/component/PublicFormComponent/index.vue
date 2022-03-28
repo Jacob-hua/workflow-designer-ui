@@ -1,32 +1,32 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog title="新建表单" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
-          <div class="title-item">
+          <!-- <div class="title-item">
             <span class="title-item-label">
               表单编码
             </span>
             <div class="title-item-main">
               <el-input v-model="postData.code" placeholder="" :disabled="true"></el-input>
             </div>
-          </div>
+          </div> -->
           <div class="title-item">
-            <span class="title-item-label marginLeft40">
+            <span class="title-item-label">
               表单名称
             </span>
             <div class="title-item-main">
-              <el-input v-model="postData.time" placeholder="" :disabled="true"></el-input>
+              <el-input v-model="postData.name" placeholder=""></el-input>
             </div>
           </div>
         </div>
         <div class="form-Main">
-            <formbpmn></formbpmn>
+            <formbpmn ref="formbpmn" v-if="dialogVisible2"></formbpmn>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible2 = false">发布</el-button>
-        <el-button @click="dialogVisible2 = false">保存</el-button>
+        <el-button type="primary" @click="addEnableForm()">发布</el-button>
+        <el-button @click="addDraftForm()">保存</el-button>
         <el-button @click="dialogVisible2 = false">取消</el-button>
       </span>
     </el-dialog>
@@ -35,6 +35,7 @@
 
 <script>
   import formbpmn from '../formBpmn.vue'
+  import { postFormDesignService, postFormDesignServiceRealiseProcessData } from '@/unit/api.js'
   import {
     FormEditor
   } from '@bpmn-io/form-js-editor';
@@ -45,22 +46,7 @@
         input: '',
         options: [],
         postData: {
-          code: '21321323',
-          name: '巡视工作流',
-          edition: 'V1.0',
-          time: '分配工单表单',
-          project: '北七家项目',
-          type: '智慧运维',
-          system: '配电'
-        },
-        formEditor: null,
-        schema: {
-          schemaVersion: 1,
-          type: "default",
-          exporter: {
-            name: "form-js",
-            version: "0.7.0"
-          }
+          name: ''
         }
       }
     },
@@ -68,6 +54,58 @@
       nextDiolog() {
         this.dialogVisible2 = true
       },
+      addEnableForm() {
+        const xml  = this.$refs.formbpmn.importData();
+        var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
+        let formData = new FormData()
+        if (this.postData.id) {
+          formData.append('id', this.postData.id)
+        }
+        if (this.postData.sourceId) {
+          formData.append('sourceId', this.postData.sourceId)
+        }
+        formData.append('name', this.postData.name)
+        formData.append('docName', this.postData.name +'.form')
+        formData.append('ascription', 'public')
+        formData.append('code', xml.id)
+        formData.append('business', '')
+        formData.append('status', 'enable')
+        formData.append('createId', '1')
+        formData.append('createName', 'admin')
+        formData.append('tenantId', '12')
+        formData.append('file', file1)
+        postFormDesignServiceRealiseProcessData(formData).then((res) => {
+          this.$message.success('发布至可用表单成功')
+          this.$emit('addSuccess', 'enable')
+          this.dialogVisible2 = false
+        })
+      },
+      addDraftForm() {
+        const xml  = this.$refs.formbpmn.importData();
+        var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
+        let formData = new FormData()
+        if (this.postData.id) {
+          formData.append('id', this.postData.id)
+        }
+        if (this.postData.sourceId) {
+          formData.append('sourceId', this.postData.sourceId)
+        }
+        formData.append('name', this.postData.name)
+        formData.append('docName', this.postData.name +'.form')
+        formData.append('ascription', 'public')
+        formData.append('code', xml.id)
+        formData.append('business', '')
+        formData.append('status', 'draft')
+        formData.append('createId', '1')
+        formData.append('createName', 'admin')
+        formData.append('tenantId', '12')
+        formData.append('file', file1)
+        postFormDesignService(formData).then((res) => {
+          this.$message.success('保存草稿成功')
+          this.$emit('addSuccess', 'draft')
+          this.dialogVisible2 = false
+        })
+      }
     },
     components:{
       formbpmn

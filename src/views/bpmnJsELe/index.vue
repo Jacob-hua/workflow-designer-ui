@@ -100,7 +100,6 @@ export default {
       this.reloadProcessDesigner();
     },
     elementClick(element) {
-      console.log(element);
       this.element = element;
     },
     elementContextmenu(element) {

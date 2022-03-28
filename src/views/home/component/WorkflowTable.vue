@@ -45,7 +45,6 @@
   import deploy from './deploy.vue'
   import detailsBnpm from './details.vue'
   import {
-      getFormService,
       getProcessDesignService
   } from '@/unit/api.js'
   export default {
@@ -73,7 +72,6 @@
         getProcessDesignService(this.getData).then((res) => {
           this.tableData = res.result.list
           this.getData.total = res.result.total
-          console.log(res, '0000')
         })
       },
       handleSizeChange(val) {

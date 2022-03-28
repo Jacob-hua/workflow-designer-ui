@@ -1,28 +1,28 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible.sync="dialogVisible1" width="35%" custom-class="dialogVisible1">
+    <el-dialog title="表单" :visible.sync="dialogVisible1" width="35%" custom-class="dialogVisible1">
       <div>
         <div class="from-item">
           <span>应用项目</span>
-          <el-input v-model="input" placeholder="请输入应用项目" :disabled="true"></el-input>
+          <el-input v-model="projectCodeObj[postData.ascription]" placeholder="请输入应用项目" :disabled="true"></el-input>
         </div>
         <div class="from-item">
           <span>流程类型</span>
-          <el-select v-model="input" placeholder="请选择流程类型">
+          <el-select v-model="postData.business" placeholder="请选择流程类型">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>能源系统</span>
-          <el-select v-model="input" placeholder="请选择能源系统">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="postData.energy" placeholder="请选择能源系统">
+            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>表单名称</span>
-          <el-input v-model="input" placeholder="请输入部署名称"></el-input>
+          <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -33,20 +33,20 @@
     <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
-          <div class="title-item">
+          <!-- <div class="title-item">
             <span class="title-item-label">
               表单编码
             </span>
             <div class="title-item-main">
               <el-input v-model="postData.code" placeholder="" :disabled="true"></el-input>
             </div>
-          </div>
+          </div> -->
           <div class="title-item">
-            <span class="title-item-label marginLeft40">
+            <span class="title-item-label">
               业务类型
             </span>
             <div class="title-item-main">
-              <el-input v-model="postData.name" placeholder="" :disabled="true"></el-input>
+              <el-input v-model="projectCodeObj[postData.ascription]" placeholder="" :disabled="true"></el-input>
             </div>
           </div>
           <div class="title-item">
@@ -54,7 +54,7 @@
               能源系统
             </span>
             <div class="title-item-main">
-              <el-input v-model="postData.edition" placeholder="" :disabled="true"></el-input>
+              <el-input v-model="projectCodeObj[postData.energy]" placeholder="" :disabled="true"></el-input>
             </div>
           </div>
           <div class="title-item">
@@ -62,17 +62,17 @@
               表单名称
             </span>
             <div class="title-item-main">
-              <el-input v-model="postData.time" placeholder="" :disabled="true"></el-input>
+              <el-input v-model="postData.name" placeholder="" :disabled="true"></el-input>
             </div>
           </div>
         </div>
         <div class="form-Main">
-            <formbpmn></formbpmn>
+            <formbpmn ref="formbpmn" v-if="dialogVisible2"></formbpmn>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible2 = false">发布</el-button>
-        <el-button @click="dialogVisible2 = false">保存</el-button>
+        <el-button type="primary" @click="addEnableForm()">发布</el-button>
+        <el-button @click="addDraftForm()">保存</el-button>
         <el-button @click="dialogVisible2 = false">取消</el-button>
       </span>
     </el-dialog>
@@ -81,6 +81,7 @@
 
 <script>
   import formbpmn from '../formBpmn.vue'
+  import { postFormDesignService, postFormDesignServiceRealiseProcessData } from '@/unit/api.js'
   import {
     FormEditor
   } from '@bpmn-io/form-js-editor';
@@ -89,17 +90,62 @@
       return {
         dialogVisible1: false,
         dialogVisible2: false,
-        input: '',
-        options: [],
-        postData: {
-          code: '21321323',
-          name: '巡视工作流',
-          edition: 'V1.0',
-          time: '分配工单表单',
-          project: '北七家项目',
-          type: '智慧运维',
-          system: '配电'
+        projectCodeObj: {
+          beiqijia: '北七家人才基地',
+          laiwu: '莱芜供热项目',
+          xilaideng: '海口喜来登酒店',
+          'energy-1': '配电',
+          'energy-2': '空压',
+          'energy-3': '供暖',
+          'energy-4': '空调',
+          '': '全部项目'
         },
+        postData: {
+          ascription: '',
+          business: '',
+          energy: '',
+          name: ''
+        },
+        options: [
+          {
+            value: '',
+            label: '全部项目'
+          },
+          {
+            value: '1',
+            label: '智慧运维'
+          },
+          {
+            value: '2',
+            label: '资产管理'
+          },
+          {
+            value: '3',
+            label: '人员管理'
+          },
+          {
+            value: '4',
+            label: '其他业务'
+          },
+        ],
+        options1: [
+          {
+            value: 'energy-1',
+            label: '配电'
+          },
+          {
+            value: 'energy-2',
+            label: '空压'
+          },
+          {
+            value: 'energy-3',
+            label: '供暖'
+          },
+          {
+            value: 'energy-4',
+            label: '空调'
+          },
+        ],
         formEditor: null,
         schema: {
           schemaVersion: 1,
@@ -115,6 +161,46 @@
       nextDiolog() {
         this.dialogVisible1 = false
         this.dialogVisible2 = true
+      },
+      addEnableForm() {
+        const xml  = this.$refs.formbpmn.importData();
+        var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
+        let formData = new FormData()
+        formData.append('name', this.postData.name)
+        formData.append('docName', this.postData.name +'.form')
+        formData.append('ascription', this.postData.ascription)
+        formData.append('code', xml.id)
+        formData.append('business', this.postData.business)
+        formData.append('status', 'enable')
+        formData.append('createId', '1')
+        formData.append('createName', 'admin')
+        formData.append('tenantId', '12')
+        formData.append('file', file1)
+        postFormDesignServiceRealiseProcessData(formData).then((res) => {
+          this.$message.success('发布至可用表单成功')
+          this.$emit('addSuccess', 'enable')
+          this.dialogVisible2 = false
+        })
+      },
+      addDraftForm() {
+        const xml  = this.$refs.formbpmn.importData();
+        var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
+        let formData = new FormData()
+        formData.append('name', this.postData.name)
+        formData.append('docName', this.postData.name +'.form')
+        formData.append('ascription', this.postData.ascription)
+        formData.append('code', xml.id)
+        formData.append('business', this.postData.business)
+        formData.append('status', 'draft')
+        formData.append('createId', '1')
+        formData.append('createName', 'admin')
+        formData.append('tenantId', '12')
+        formData.append('file', file1)
+        postFormDesignService(formData).then((res) => {
+          this.$message.success('保存草稿成功')
+          this.$emit('addSuccess', 'draft')
+          this.dialogVisible2 = false
+        })
       },
       async init() {
         const container = this.$refs.form

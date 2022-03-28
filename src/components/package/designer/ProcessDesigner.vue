@@ -28,7 +28,7 @@
               模拟
             </el-button>
           </el-tooltip> -->
-          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至数据库</el-button>
+          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至驾驶舱</el-button>
         </el-button-group>
         <!-- <el-button-group key="align-control">
           <el-tooltip effect="light" content="向左对齐">
@@ -108,7 +108,8 @@ import flowableModdleExtension from "./plugins/extension-moddle/flowable";
 import X2JS from "x2js";
 
 import {
-    processInstanceData
+    processInstanceData,
+    postProcessDesignService
   } from '@/unit/api.js'
 
 export default {
@@ -267,17 +268,41 @@ export default {
       // this.creatDemo()
       this.initModelListeners();
     },
-    postData() {
-      var file1 = new File(['凯凯是我儿子'], 'test.txt', {type: 'text/plain'});
-      // console.log(file1)
-      var blobUrl = URL.createObjectURL(file1);
-      console.log(blobUrl)
-      this.downloadFunc(blobUrl, '123.txt')
-      let postData = {
-        name: '测试',
-        docName: '测试.bpmn',
-        ascription: ''
-      }
+    async postData() {
+      const { err, xml } = await this.bpmnModeler.saveXML();
+      var file1 = new File([xml], 'test.bpmn', {type: 'bpmn20-xml'});
+      let formData = new FormData()
+      formData.append('name', '测试Bpmn1')
+      formData.append('docName', 'test.bpmn')
+      formData.append('ascription', 'zhihuiyunwei')
+      formData.append('code', 'beiqijia111')
+      formData.append('business', 'beiqijia')
+      formData.append('status', 'enable')
+      formData.append('createId', '1')
+      formData.append('createName', 'admin')
+      formData.append('tenantId', '12')
+      formData.append('file', file1)
+      postProcessDesignService(formData).then(() => {
+        console.log(res)
+      })
+      return
+      postProcessDesignService({
+        name: '测试Bpmn1',
+        docName: 'test.bpmn',
+        ascription: 'zhihuiyunwei',
+        code: 'beiqijia',
+        business: 'beiqijia',
+        status: 'enable',
+        createId: '1',
+        createName: 'admin',
+        tenantId: '12',
+        file: file1
+      }).then((res) => {
+        console.log(res)
+      })
+      // var file1 = new File(['凯凯是我儿子'], 'test.txt', {type: 'bpmn20-xml'});
+      // var blobUrl = URL.createObjectURL(file1);
+      // this.downloadFunc(blobUrl, '123.txt')
     },
     creatDemo() {
       processInstanceData({
