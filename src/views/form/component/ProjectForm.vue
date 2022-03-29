@@ -199,6 +199,8 @@
       },
       
       addSuccess() {
+        this.$refs.detailsDiolog.dialogVisible2 = false
+        this.$refs.projectFormDiolog.dialogVisible2 = false
         this.getData()
       },
       
