@@ -10,6 +10,9 @@
       <div class="PublicForm-title-input">
         <el-input v-model="input" placeholder="请输入内容"></el-input>
       </div>
+      <div class="PublicForm-title-input">
+        <el-button type="primary" @click="getManyData()">查询</el-button>
+      </div>
       <div class="PublicForm-title-button">
         <el-button type="primary" @click="addForm()">新建表单</el-button>
       </div>
@@ -67,8 +70,8 @@
         </div>
       </div>
     </div>
-    <PublicFormDiolog ref="PublicFormDiolog" @addSuccess="addSuccess()"></PublicFormDiolog>
-    <detailsDiolog ref="detailsDiolog" @editForm="editForm"></detailsDiolog>
+    <PublicFormDiolog ref="PublicFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></PublicFormDiolog>
+    <detailsDiolog ref="detailsDiolog" @editForm="editForm" :status="activeName" ascription="public"></detailsDiolog>
   </div>
 </template>
 
@@ -83,12 +86,14 @@
         input: '',
         activeName: 'enable',
         formListFirst: [],
-        formListSecond: []
+        formListSecond: [],
+        dataType: 'enable'
       }
     },
     methods:{
       // 查询草稿箱
       getDraftData() {
+        this.valueDate = this.valueDate || []
         postFormDesignRecordDraftInfo({
           tenantId: '12',
           status: 'draft',
@@ -97,14 +102,15 @@
           createId: 1,
           numberCode: '',
           name: this.input,
-          startTime: this.valueDate[0],
-          endTime: this.valueDate[1]
+          startTime: this.valueDate[0] || '',
+          endTime: this.valueDate[1] || ''
         }).then((res) => {
           this.formListSecond = res.result
         })
       },
       // 查询可部署流程
       getEnableData() {
+        this.valueDate = this.valueDate || []
         postFormDesignBasicFormRecord({
           tenantId: '12',
           status: 'enable',
@@ -118,6 +124,11 @@
         }).then((res) => {
           this.formListFirst = res.result
         })
+      },
+      
+      getManyData() {
+        this.getEnableData()
+        this.getDraftData()
       },
       
       getData() {
@@ -148,9 +159,12 @@
         this.$refs.PublicFormDiolog.dialogVisible2 = true
         this.$nextTick(() => {
           if (item) {
+            this.dataType = this.activeName + '-edit'
+            console.log(this.dataType)
             this.$refs.PublicFormDiolog.postData = item
             this.$refs.PublicFormDiolog.$refs.formbpmn.schema = JSON.parse(item.content)
           } else{
+            this.dataType = this.activeName
             this.$refs.PublicFormDiolog.postData = {
               name: ''
             }
@@ -179,14 +193,14 @@
           this.$refs.detailsDiolog.formData = res.result
           this.$nextTick(() => {
             let arr = []
-            res.result.versions.forEach((item) => {
+            res.result.versions.forEach((item, index) => {
               arr.push({
-                value: item,
+                value: res.result.childIds[index],
                 label: item
               })
             })
             this.$refs.detailsDiolog.options = arr
-            this.$refs.detailsDiolog.value = res.result.versions[0]
+            this.$refs.detailsDiolog.value = res.result.childIds[0]
             this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
             this.$refs.detailsDiolog.$refs.formbpmn.init()
           })

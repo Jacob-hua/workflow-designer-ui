@@ -1,8 +1,11 @@
 import {
   get,
-  post
+  post,
+  deletefn
 } from './request'
 
+
+// api接口查询
 export const apiCascade = (params) =>
   get('/config/global/apiCascade', params);
 
@@ -48,4 +51,8 @@ export const postFormDesignRecordDraftInfo = (params) =>
 // 查询表单详情
 export const postFormDesignRecordFormDesignRecordInfo = (params) =>
   post('/design/formDesignService/formDesignRecordInfo', params);
+  
+// 删除表单
+export const deleteFormDesignService = (id) =>
+  deletefn('/design/formDesignService/' + id);
 

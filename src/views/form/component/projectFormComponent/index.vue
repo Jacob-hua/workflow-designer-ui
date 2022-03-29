@@ -164,6 +164,7 @@
       },
       addEnableForm() {
         const xml  = this.$refs.formbpmn.importData();
+        xml.id = 'form_' + Date.parse(new Date())
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
         if (this.postData.id) {
@@ -190,6 +191,7 @@
       },
       addDraftForm() {
         const xml  = this.$refs.formbpmn.importData();
+        xml.id = 'form_' + Date.parse(new Date())
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
         if (this.postData.id) {
@@ -243,10 +245,10 @@
       downloadFunc(href, filename) {
         if (href && filename) {
           let a = document.createElement("a");
-          a.download = filename; //指定下载的文件名
+          a.download = filename; // 指定下载的文件名
           a.href = href; //  URL对象
           a.click(); // 模拟点击
-          URL.revokeObjectURL(a.href); // 释放URL 对象
+          URL.revokeObjectURL(a.href); // 释放URL对象
         }
       },
       // 加载本地文件

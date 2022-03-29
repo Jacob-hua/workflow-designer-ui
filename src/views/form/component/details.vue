@@ -21,7 +21,7 @@
         </div>
         <div>
           <div class="optionV">
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="value" placeholder="请选择" @change="upDataV()">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="fromEdit">
-          <formBpmnEdit v-if="dialogVisible2" ref="formbpmn"></formBpmnEdit>
+          <formBpmnEdit v-if="dialogVisible2" ref="formbpmn" :key="formBpmnEditKey"></formBpmnEdit>
         </div>
       </div>
     </el-dialog>
@@ -74,11 +74,24 @@
 
 <script>
   import formBpmnEdit from './formBpmnEdit.vue'
+  import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService } from '@/unit/api.js'
   export default {
     props:{
       quote: {
         type: String,
         default: 'quote'
+      },
+      status: {
+        type: String,
+        default: ''
+      },
+      ascription: {
+        type: String,
+        default: 'public'
+      },
+      business: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -91,6 +104,7 @@
           createName: '',
           createTime: ''
         },
+        formBpmnEditKey: 0,
         value: '',
         input: '',
         options: [{
@@ -109,16 +123,36 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          deleteFormDesignService(this.value || this.formData.id ).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.$emit('deleteSuccsee')
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
           });          
         });
+      },
+      upDataV() {
+        postFormDesignRecordFormDesignRecordInfo({
+          id: this.value,
+          status: this.status,
+          tenantId: 12,
+          ascription: this.ascription,
+          business: this.business,
+          createId: 1
+        }).then((res) => {
+          this.formData = res.result
+          this.formBpmnEditKey++
+          this.$nextTick(() => {
+            this.$refs.formbpmn.schema = JSON.parse(res.result.content)
+            this.$refs.formbpmn.init()
+          })
+        })
       },
       editForm() {
         this.$emit('editForm', this.formData)

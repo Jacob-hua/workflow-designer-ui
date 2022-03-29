@@ -40,6 +40,12 @@
     FormEditor
   } from '@bpmn-io/form-js-editor';
   export default {
+    props:{
+      dataType: {
+        type: String,
+        default: 'enable'
+      }
+    },
     data() {
       return {
         dialogVisible2: false,
@@ -56,13 +62,23 @@
       },
       addEnableForm() {
         const xml  = this.$refs.formbpmn.importData();
+        xml.id = 'form_' + Date.parse(new Date())
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
-        if (this.postData.id) {
-          formData.append('id', this.postData.id)
-        }
-        if (this.postData.sourceId) {
-          formData.append('sourceId', this.postData.sourceId)
+        switch (this.dataType){
+          case 'enable':
+            break;
+          case 'draft':
+            break;
+          case 'enable-edit':
+            formData.append('sourceId', this.postData.sourceId)
+            break;
+          case 'draft-edit':
+            formData.append('id', this.postData.id)
+            formData.append('sourceId', this.postData.sourceId)
+            break;
+          default:
+            break;
         }
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.form')
@@ -82,13 +98,23 @@
       },
       addDraftForm() {
         const xml  = this.$refs.formbpmn.importData();
+        xml.id = 'form_' + Date.parse(new Date())
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
-        if (this.postData.id) {
-          formData.append('id', this.postData.id)
-        }
-        if (this.postData.sourceId) {
-          formData.append('sourceId', this.postData.sourceId)
+        switch (this.dataType){
+          case 'enable':
+            break;
+          case 'draft':
+            break;
+          case 'enable-edit':
+            formData.append('sourceId', this.postData.sourceId)
+            break;
+          case 'draft-edit':
+            formData.append('id', this.postData.id)
+            formData.append('sourceId', this.postData.sourceId)
+            break;
+          default:
+            break;
         }
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.form')

@@ -28,7 +28,7 @@
               模拟
             </el-button>
           </el-tooltip> -->
-          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至驾驶舱</el-button>
+          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至驾驶舱草稿箱</el-button>
         </el-button-group>
         <!-- <el-button-group key="align-control">
           <el-tooltip effect="light" content="向左对齐">
@@ -270,6 +270,19 @@ export default {
     },
     async postData() {
       const { err, xml } = await this.bpmnModeler.saveXML();
+      let bpmnInstances = {
+        modeler: this.bpmnModeler,
+        modeling: this.bpmnModeler.get("modeling"),
+        moddle: this.bpmnModeler.get("moddle"),
+        eventBus: this.bpmnModeler.get("eventBus"),
+        bpmnFactory: this.bpmnModeler.get("bpmnFactory"),
+        elementFactory: this.bpmnModeler.get("elementFactory"),
+        elementRegistry: this.bpmnModeler.get("elementRegistry"),
+        replace: this.bpmnModeler.get("replace"),
+        selection: this.bpmnModeler.get("selection")
+      };
+      console.log(bpmnInstances, '0000')
+      return
       var file1 = new File([xml], 'test.bpmn', {type: 'bpmn20-xml'});
       let formData = new FormData()
       formData.append('name', '测试Bpmn1')
