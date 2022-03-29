@@ -30,18 +30,18 @@
         </div>
       </div>
       <div class="data3">
-        <div>
+        <div @click="goBpmn()">
           <div class="title">
             <i class="el-icon-circle-plus"></i>
           </div>
           <div class="titLabel">新建工作流</div>
         </div>
-        <div>
+        <!-- <div>
           <div class="title">
             <i class="el-icon-upload"></i>
           </div>
           <div class="titLabel">导入工作流</div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="home-filter">
@@ -120,6 +120,9 @@
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+      },
+      goBpmn() {
+        this.$router.push('/bpmn')
       }
     },
     components:{
@@ -193,6 +196,7 @@
     height: 160px;
     background-color: #f2f2f2;
     display: flex;
+    cursor: pointer;
   }
 
   .data3>div {

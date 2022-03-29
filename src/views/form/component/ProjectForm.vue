@@ -42,6 +42,9 @@
       <div class="PublicForm-title-input">
         <el-input v-model="input" placeholder="请输入内容"></el-input>
       </div>
+      <div class="PublicForm-title-input">
+        <el-button type="primary" @click="getManyData()">查询</el-button>
+      </div>
       <div class="PublicForm-title-button">
         <el-button type="primary" @click="addForm()">新建表单</el-button>
       </div>
@@ -103,7 +106,7 @@
       </div>
     </div>
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()"></projectFormDiolog>
-    <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete"></detailsDiologForm>
+    <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
   </div>
 </template>
 
@@ -180,6 +183,11 @@
         })
       },
       
+      getManyData() {
+        this.getEnableData()
+        this.getDraftData()
+      },
+      
       getData() {
         switch (this.activeName){
           case 'enable':
@@ -198,6 +206,11 @@
         this.getData()
       },
       
+      deleteSuccsee() {
+        this.$refs.detailsDiolog.dialogVisible2 = false
+        this.getData()
+      },
+      
       addSuccess() {
         this.$refs.detailsDiolog.dialogVisible2 = false
         this.$refs.projectFormDiolog.dialogVisible2 = false
@@ -208,7 +221,7 @@
         this.projectCode = code
       },
       addForm() {
-        this.$refs.projectFormDiolog.dialogVisible1postData.ascription = this.projectCode
+        this.$refs.projectFormDiolog.postData.ascription = this.projectCode
         this.$refs.projectFormDiolog.dialogVisible1 = true
       },
       
@@ -247,14 +260,14 @@
           this.$refs.detailsDiolog.formData = res.result
           this.$nextTick(() => {
             let arr = []
-            res.result.versions.forEach((item) => {
+            res.result.versions.forEach((item,index) => {
               arr.push({
-                value: item,
+                value: res.result.childIds[index],
                 label: item
               })
             })
             this.$refs.detailsDiolog.options = arr
-            this.$refs.detailsDiolog.value = res.result.versions[0]
+            this.$refs.detailsDiolog.value = res.result.childIds[0]
             this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
             this.$refs.detailsDiolog.$refs.formbpmn.init()
           })

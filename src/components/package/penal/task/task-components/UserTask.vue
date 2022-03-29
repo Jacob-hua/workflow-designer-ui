@@ -123,7 +123,6 @@
         this.valueObj = this.$refs.elCascader.getCheckedNodes()[0]
         console.log(this.$refs.elCascader.getCheckedNodes()[0].data)
         this.formData = JSON.parse(this.$refs.elCascader.getCheckedNodes()[0].data.dataMap)
-        console.log(this.formData, '99999')
         this.formData.forEach((item) => {
           this.$set(this.postForm, item.param, '')
         })
