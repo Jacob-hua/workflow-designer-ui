@@ -10,7 +10,7 @@ export const apiCascade = (params) =>
   get('/config/global/apiCascade', params);
 
 export const extraApi = (params) =>
-  get('/process/extraApi', params);
+  post('/config/global/executeApi', params);
 
 export const processInstanceData = (params) =>
   get('/process/processInstanceData', params);
@@ -56,3 +56,12 @@ export const postFormDesignRecordFormDesignRecordInfo = (params) =>
 export const deleteFormDesignService = (id) =>
   deletefn('/design/formDesignService/' + id);
 
+// 工作流
+
+// 发布工作流
+export const postDesignDesignService = (params) =>
+  post('/design/processDesignService/realiseProcessData', params);
+
+// 查询驾驶舱工作流信息
+export const postProcessDesignServicePage = (params) =>
+  post('/design/processDesignService/page', params);

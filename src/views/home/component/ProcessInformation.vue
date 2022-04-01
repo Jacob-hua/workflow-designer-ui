@@ -6,7 +6,7 @@
           流程编码
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.code" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.numberCode" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -22,7 +22,7 @@
           流程版本
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.edition" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.version" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -30,7 +30,7 @@
           创建时间
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.time" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.createTime" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -38,7 +38,7 @@
           应用项目
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.project" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.business" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -46,7 +46,7 @@
           流程类型
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.type" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item" v-if="type !== 'details1'">
@@ -55,7 +55,7 @@
         </span>
         <div class="title-item-main">
           <!-- <el-input v-model="postData.system" placeholder="" :disabled="true"></el-input> -->
-          <el-select v-model="postData.system" placeholder="请选择">
+          <el-select v-model="postData.energy" placeholder="请选择">
               <el-option
                 v-for="item in optionSystem"
                 :key="item.value"
@@ -225,29 +225,29 @@
     data() {
       return {
         postData: {
-          code: '21321323',
-          name: '巡视工作流',
-          edition: 'V1.0',
-          time: '2011-11-11 19:11:11',
-          project: '北七家项目',
-          type: '智慧运维',
-          system: '配电'
+          numberCode: '',
+          name: '',
+          version: '',
+          createTime: '',
+          business: '',
+          ascription: '',
+          energy: ''
         },
         optionSystem: [
           {
-            value: '1',
+            value: 'energy-1',
             label: '配电'
           },
           {
-            value: '2',
+            value: 'energy-2',
             label: '空压'
           },
           {
-            value: '3',
+            value: 'energy-3',
             label: '供暖'
           },
           {
-            value: '4',
+            value: 'energy-4',
             label: '空调'
           }
         ],
@@ -264,8 +264,11 @@
           moddleExtensions: [],
         //   ...this.options
         });
-        this.creatDemo()
-        this.$emit("init-finished", this.bpmnModeler);
+        // this.creatDemo()
+        // this.$emit("init-finished", this.bpmnModeler);
+        this.bpmnModeler.on("selection.changed", ({ newSelection }) => {
+            this.$emit('selection', newSelection[0] || null)
+        });
         // this.initModelListeners();
       },
       creatDemo() {

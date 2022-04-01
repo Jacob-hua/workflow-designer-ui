@@ -66,8 +66,8 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="activeName = 'first'">工作流（15）</span>
-        <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">草稿箱（15）</span>
+        <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="activeName = 'first'">工作流（1）</span>
+        <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">草稿箱（1）</span>
       </div>
       <div class="home-table">
         <WorkflowTable v-if="activeName === 'first'"></WorkflowTable>
@@ -115,12 +115,6 @@
       }
     },
     methods: {
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      },
       goBpmn() {
         this.$router.push('/bpmn')
       }

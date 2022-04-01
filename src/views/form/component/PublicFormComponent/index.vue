@@ -43,7 +43,7 @@
     props:{
       dataType: {
         type: String,
-        default: 'enable'
+        default: 'enabled'
       }
     },
     data() {
@@ -66,14 +66,14 @@
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
         switch (this.dataType){
-          case 'enable':
+          case 'enabled':
             break;
-          case 'draft':
+          case 'drafted':
             break;
-          case 'enable-edit':
+          case 'enabled-edit':
             formData.append('sourceId', this.postData.sourceId)
             break;
-          case 'draft-edit':
+          case 'drafted-edit':
             formData.append('id', this.postData.id)
             formData.append('sourceId', this.postData.sourceId)
             break;
@@ -85,14 +85,14 @@
         formData.append('ascription', 'public')
         formData.append('code', xml.id)
         formData.append('business', '')
-        formData.append('status', 'enable')
+        formData.append('status', 'enabled')
         formData.append('createId', '1')
         formData.append('createName', 'admin')
         formData.append('tenantId', '12')
         formData.append('file', file1)
         postFormDesignServiceRealiseProcessData(formData).then((res) => {
           this.$message.success('发布至可用表单成功')
-          this.$emit('addSuccess', 'enable')
+          this.$emit('addSuccess', 'enabled')
           this.dialogVisible2 = false
         })
       },
@@ -102,14 +102,14 @@
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
         switch (this.dataType){
-          case 'enable':
+          case 'enabled':
             break;
-          case 'draft':
+          case 'drafted':
             break;
-          case 'enable-edit':
+          case 'enabled-edit':
             formData.append('sourceId', this.postData.sourceId)
             break;
-          case 'draft-edit':
+          case 'drafted-edit':
             formData.append('id', this.postData.id)
             formData.append('sourceId', this.postData.sourceId)
             break;
@@ -121,14 +121,14 @@
         formData.append('ascription', 'public')
         formData.append('code', xml.id)
         formData.append('business', '')
-        formData.append('status', 'draft')
+        formData.append('status', 'drafted')
         formData.append('createId', '1')
         formData.append('createName', 'admin')
         formData.append('tenantId', '12')
         formData.append('file', file1)
         postFormDesignService(formData).then((res) => {
           this.$message.success('保存草稿成功')
-          this.$emit('addSuccess', 'draft')
+          this.$emit('addSuccess', 'drafted')
           this.dialogVisible2 = false
         })
       }

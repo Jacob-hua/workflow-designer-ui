@@ -4,22 +4,22 @@
       <div>
         <div class="from-item">
           <span>应用项目</span>
-          <el-input v-model="input" placeholder="请输入应用项目" :disabled="true"></el-input>
+          <el-input v-model="firstData.ascription" placeholder="请输入应用项目" :disabled="true"></el-input>
         </div>
         <div class="from-item">
           <span>流程类型</span>
-          <el-input v-model="input" placeholder="请输入流程类型" :disabled="true"></el-input>
+          <el-input v-model="firstData.business" placeholder="请输入流程类型" :disabled="true"></el-input>
         </div>
         <div class="from-item">
           <span>能源系统</span>
-          <el-select v-model="input" placeholder="请选择能源系统">
+          <el-select v-model="firstData.energy" placeholder="请选择能源系统">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>部署名称</span>
-          <el-input v-model="input" placeholder="请输入部署名称"></el-input>
+          <el-input v-model="firstData.deployName" placeholder="请输入部署名称"></el-input>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -30,7 +30,7 @@
     <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-left">
         <div class="bpmn-Main">
-          <ProcessInformation type="deploy2"></ProcessInformation>
+          <ProcessInformation type="deploy2" ref="ProcessInformation" v-if="dialogVisible2" @selection="selection"></ProcessInformation>
         </div>
         <div class="bpmn-configure">
           <div class="bpmn-configure-basic">
@@ -100,13 +100,41 @@
   import ProcessInformation from './ProcessInformation.vue'
   import formOB from './formOB.vue'
   export default {
+    props:{
+      editData: {
+        type: Object
+      }
+    },
     data() {
       return {
         dialogVisible1: false,
+        firstData: {
+          ascription: '',
+          business: '',
+          energy: '',
+          deployName: ''
+        },
         dialogVisible2: false,
         formShow: false,
         input: '',
-        options: [],
+        options: [
+          {
+            value: 'energy-1',
+            label: '配电'
+          },
+          {
+            value: 'energy-2',
+            label: '空压'
+          },
+          {
+            value: 'energy-3',
+            label: '供暖'
+          },
+          {
+            value: 'energy-4',
+            label: '空调'
+          }
+        ],
         valueV: '1.0',
         optionsV: [{
           value: '1.0',
@@ -118,6 +146,21 @@
       nextDiolog() {
         this.dialogVisible1 = false
         this.dialogVisible2 = true
+        this.$nextTick(() => {
+          this.$refs.ProcessInformation.postData = this.editData
+          this.$refs.ProcessInformation.postData.ascription = this.firstData.ascription
+          this.$refs.ProcessInformation.postData.business = this.firstData.business
+          this.$refs.ProcessInformation.postData.energy = this.firstData.energy
+          this.$refs.ProcessInformation.createNewDiagram(this.editData.content)
+        })
+      },
+      selection(element) {
+          if (element) {
+            console.log(element, '000')
+            // element.saveXML({ format: true }).then(({ xml }) => {
+            //   console.log(xml, '0000')
+            // })
+          }
       },
       showForm() {
         this.formShow = true
