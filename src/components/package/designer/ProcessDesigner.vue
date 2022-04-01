@@ -28,7 +28,7 @@
               模拟
             </el-button>
           </el-tooltip> -->
-          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至驾驶舱草稿箱</el-button>
+          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至驾驶舱工作流</el-button>
         </el-button-group>
         <!-- <el-button-group key="align-control">
           <el-tooltip effect="light" content="向左对齐">
@@ -109,7 +109,8 @@ import X2JS from "x2js";
 
 import {
     processInstanceData,
-    postProcessDesignService
+    postProcessDesignService,
+    postDesignDesignService
   } from '@/unit/api.js'
 
 export default {
@@ -269,53 +270,26 @@ export default {
       this.initModelListeners();
     },
     async postData() {
-      const { err, xml } = await this.bpmnModeler.saveXML();
-      let bpmnInstances = {
-        modeler: this.bpmnModeler,
-        modeling: this.bpmnModeler.get("modeling"),
-        moddle: this.bpmnModeler.get("moddle"),
-        eventBus: this.bpmnModeler.get("eventBus"),
-        bpmnFactory: this.bpmnModeler.get("bpmnFactory"),
-        elementFactory: this.bpmnModeler.get("elementFactory"),
-        elementRegistry: this.bpmnModeler.get("elementRegistry"),
-        replace: this.bpmnModeler.get("replace"),
-        selection: this.bpmnModeler.get("selection")
-      };
-      console.log(bpmnInstances, '0000')
-      return
-      var file1 = new File([xml], 'test.bpmn', {type: 'bpmn20-xml'});
-      let formData = new FormData()
-      formData.append('name', '测试Bpmn1')
-      formData.append('docName', 'test.bpmn')
-      formData.append('ascription', 'zhihuiyunwei')
-      formData.append('code', 'beiqijia111')
-      formData.append('business', 'beiqijia')
-      formData.append('status', 'enable')
-      formData.append('createId', '1')
-      formData.append('createName', 'admin')
-      formData.append('tenantId', '12')
-      formData.append('file', file1)
-      postProcessDesignService(formData).then(() => {
-        console.log(res)
-      })
-      return
-      postProcessDesignService({
-        name: '测试Bpmn1',
-        docName: 'test.bpmn',
-        ascription: 'zhihuiyunwei',
-        code: 'beiqijia',
-        business: 'beiqijia',
-        status: 'enable',
-        createId: '1',
-        createName: 'admin',
-        tenantId: '12',
-        file: file1
-      }).then((res) => {
-        console.log(res)
-      })
-      // var file1 = new File(['凯凯是我儿子'], 'test.txt', {type: 'bpmn20-xml'});
-      // var blobUrl = URL.createObjectURL(file1);
-      // this.downloadFunc(blobUrl, '123.txt')
+      const newConvert = new X2JS();
+      this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
+        const { definitions } = newConvert.xml2js(xml);
+        var file1 = new File([xml], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
+        let formData = new FormData()
+        formData.append('name', definitions.process._name)
+        formData.append('docName', definitions.process._name + '.bpmn')
+        formData.append('ascription', 'zhihuiyunwei')
+        formData.append('code', definitions.process._id)
+        formData.append('business', 'beiqijia')
+        formData.append('status', 'enable')
+        formData.append('createId', '1')
+        formData.append('createName', 'admin')
+        formData.append('tenantId', '12')
+        formData.append('file', file1)
+        postDesignDesignService(formData).then((res) => {
+          this.$message.success('保存成功')
+          this.$router.push('/home')
+        })
+      });
     },
     creatDemo() {
       processInstanceData({
@@ -528,6 +502,7 @@ export default {
       const newConvert = new X2JS();
       this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
         const { definitions } = newConvert.xml2js(xml);
+        console.log(definitions, '000000')
         if (definitions) {
           this.previewResult = JSON.stringify(definitions, null, 4);
         } else {

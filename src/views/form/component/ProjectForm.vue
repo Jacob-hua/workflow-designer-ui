@@ -51,11 +51,11 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enable' ? 'active' : ''" @click="changeActiveName('enable')">工作流（{{ formListFirst.length }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'draft' ? 'active' : ''" @click="changeActiveName('draft')">草稿箱（{{ formListSecond.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">工作流（{{ formListFirst.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
       </div>
       <div class="home-table">
-        <div v-if="activeName === 'enable'">
+        <div v-if="activeName === 'enabled'">
           <div class="home-table-card" v-for="(item, index) in formListFirst" :key="index">
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
@@ -81,7 +81,7 @@
             </div>
           </div>
         </div>
-        <div v-if="activeName === 'draft'">
+        <div v-if="activeName === 'drafted'">
           <div class="home-table-card" v-for="(item, index) in formListSecond" :key="index">
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
@@ -105,8 +105,8 @@
         </div>
       </div>
     </div>
-    <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()"></projectFormDiolog>
-    <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
+    <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></projectFormDiolog>
+    <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
   </div>
 </template>
 
@@ -140,10 +140,11 @@
             label: '其他业务'
           },
         ],
+        dataType: 'enabled',
         projectCode: 'beiqijia',
         valueDate: [],
         input: '',
-        activeName: 'enable',
+        activeName: 'enabled',
         formListFirst: [],
         formListSecond: []
       }
@@ -154,7 +155,7 @@
       getDraftData() {
         postFormDesignRecordDraftInfo({
           tenantId: '12',
-          status: 'draft',
+          status: 'drafted',
           ascription: this.projectCode,
           business: this.projectValue,
           createId: 1,
@@ -170,7 +171,7 @@
       getEnableData() {
         postFormDesignBasicFormRecord({
           tenantId: '12',
-          status: 'enable',
+          status: 'enabled',
           ascription: this.projectCode,
           business: this.projectValue,
           createId: 1,
@@ -190,10 +191,10 @@
       
       getData() {
         switch (this.activeName){
-          case 'enable':
+          case 'enabled':
             this.getEnableData()
             break;
-          case 'draft':
+          case 'drafted':
             this.getDraftData()
             break;
           default:
@@ -229,9 +230,11 @@
         this.$refs.projectFormDiolog.dialogVisible2 = true
         this.$nextTick(() => {
           if (item) {
+            this.dataType = this.activeName + '-edit'
             this.$refs.projectFormDiolog.postData = item
             this.$refs.projectFormDiolog.$refs.formbpmn.schema = JSON.parse(item.content)
           } else{
+            this.dataType = this.activeName
             this.$refs.projectFormDiolog.postData = {
               name: ''
             }

@@ -19,11 +19,11 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enable' ? 'active' : ''" @click="changeActiveName('enable')">可用表单（{{ formListFirst.length }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'draft' ? 'active' : ''" @click="changeActiveName('draft')">草稿箱（{{ formListSecond.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">可用表单（{{ formListFirst.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
       </div>
       <div class="home-table">
-        <div v-if="activeName === 'enable'">
+        <div v-if="activeName === 'enabled'">
           <div class="home-table-card" v-for="(item, index) in formListFirst" :key="index">
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
@@ -45,7 +45,7 @@
             </div>
           </div>
         </div>
-        <div v-if="activeName === 'draft'">
+        <div v-if="activeName === 'drafted'">
           <div class="home-table-card" v-for="(item, index) in formListSecond" :key="index">
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
@@ -84,10 +84,10 @@
       return {
         valueDate: [],
         input: '',
-        activeName: 'enable',
+        activeName: 'enabled',
         formListFirst: [],
         formListSecond: [],
-        dataType: 'enable'
+        dataType: 'enabled'
       }
     },
     methods:{
@@ -96,7 +96,7 @@
         this.valueDate = this.valueDate || []
         postFormDesignRecordDraftInfo({
           tenantId: '12',
-          status: 'draft',
+          status: 'drafted',
           ascription: 'public',
           business: '',
           createId: 1,
@@ -113,7 +113,7 @@
         this.valueDate = this.valueDate || []
         postFormDesignBasicFormRecord({
           tenantId: '12',
-          status: 'enable',
+          status: 'enabled',
           ascription: 'public',
           business: '',
           createId: 1,
@@ -133,7 +133,7 @@
       
       getData() {
         switch (this.activeName){
-          case 'enable':
+          case 'enabled':
             this.getEnableData()
             break;
           case 'draft':
@@ -160,7 +160,6 @@
         this.$nextTick(() => {
           if (item) {
             this.dataType = this.activeName + '-edit'
-            console.log(this.dataType)
             this.$refs.PublicFormDiolog.postData = item
             this.$refs.PublicFormDiolog.$refs.formbpmn.schema = JSON.parse(item.content)
           } else{

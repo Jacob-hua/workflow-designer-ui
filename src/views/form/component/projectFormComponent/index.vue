@@ -86,6 +86,12 @@
     FormEditor
   } from '@bpmn-io/form-js-editor';
   export default {
+    props:{
+      dataType: {
+        type: String,
+        default: 'enabled'
+      }
+    },
     data() {
       return {
         dialogVisible1: false,
@@ -161,31 +167,43 @@
       nextDiolog() {
         this.dialogVisible1 = false
         this.dialogVisible2 = true
+        this.$nextTick(() => {
+          this.$refs.formbpmn.init()
+        })
       },
       addEnableForm() {
         const xml  = this.$refs.formbpmn.importData();
         xml.id = 'form_' + Date.parse(new Date())
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
-        if (this.postData.id) {
-          formData.append('id', this.postData.id)
-        }
-        if (this.postData.sourceId) {
-          formData.append('sourceId', this.postData.sourceId)
+        switch (this.dataType){
+          case 'enabled':
+            break;
+          case 'drafted':
+            break;
+          case 'enabled-edit':
+            formData.append('sourceId', this.postData.sourceId)
+            break;
+          case 'drafted-edit':
+            formData.append('id', this.postData.id)
+            formData.append('sourceId', this.postData.sourceId)
+            break;
+          default:
+            break;
         }
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.form')
         formData.append('ascription', this.postData.ascription)
         formData.append('code', xml.id)
         formData.append('business', this.postData.business)
-        formData.append('status', 'enable')
+        formData.append('status', 'enabled')
         formData.append('createId', '1')
         formData.append('createName', 'admin')
         formData.append('tenantId', '12')
         formData.append('file', file1)
         postFormDesignServiceRealiseProcessData(formData).then((res) => {
           this.$message.success('发布至可用表单成功')
-          this.$emit('addSuccess', 'enable')
+          this.$emit('addSuccess', 'enabled')
           this.dialogVisible2 = false
         })
       },
@@ -194,25 +212,34 @@
         xml.id = 'form_' + Date.parse(new Date())
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
-        if (this.postData.id) {
-          formData.append('id', this.postData.id)
-        }
-        if (this.postData.sourceId) {
-          formData.append('sourceId', this.postData.sourceId)
+        switch (this.dataType){
+          case 'enabled':
+            break;
+          case 'drafted':
+            break;
+          case 'enabled-edit':
+            formData.append('sourceId', this.postData.sourceId)
+            break;
+          case 'drafted-edit':
+            formData.append('id', this.postData.id)
+            formData.append('sourceId', this.postData.sourceId)
+            break;
+          default:
+            break;
         }
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.form')
         formData.append('ascription', this.postData.ascription)
         formData.append('code', xml.id)
         formData.append('business', this.postData.business)
-        formData.append('status', 'draft')
+        formData.append('status', 'drafted')
         formData.append('createId', '1')
         formData.append('createName', 'admin')
         formData.append('tenantId', '12')
         formData.append('file', file1)
         postFormDesignService(formData).then((res) => {
           this.$message.success('保存草稿成功')
-          this.$emit('addSuccess', 'draft')
+          this.$emit('addSuccess', 'drafted')
           this.dialogVisible2 = false
         })
       },

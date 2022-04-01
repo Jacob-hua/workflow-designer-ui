@@ -17,14 +17,14 @@
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="已部署次数" align="center">
+        <el-table-column prop="count" label="已部署次数" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="操作" align="center">
+        <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="deployDiolog()" type="text" size="small" class="button1">
+            <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" class="button1">
               部署
             </el-button>
-            <el-button @click.native.prevent="detailsDiolog()" type="text" size="small">
+            <el-button @click.native.prevent="detailsDiolog(scope.row)" type="text" size="small">
               查看
             </el-button>
           </template>
@@ -36,7 +36,7 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy"></deploy>
+    <deploy ref="deploy" :editData="editData"></deploy>
     <detailsBnpm ref="detailsBnpm"></detailsBnpm>
   </div>
 </template>
@@ -45,31 +45,28 @@
   import deploy from './deploy.vue'
   import detailsBnpm from './details.vue'
   import {
-      getProcessDesignService
+      postProcessDesignServicePage
   } from '@/unit/api.js'
   export default {
     data() {
       return {
-        
         getData: {
           page: 1,
           limit: 10,
           total: 100,
-          name: '',
-          tenantId: '',
-          createName: '',
-          code: '',
+          tenantId: '12',
           ascription: '',
           business: '',
           startTime: '',
           endTime: ''
         },
-        tableData: [] 
+        tableData: [],
+        editData: {}
       }
     },
     methods: {
       getTableData() {
-        getProcessDesignService(this.getData).then((res) => {
+        postProcessDesignServicePage(this.getData).then((res) => {
           this.tableData = res.result.list
           this.getData.total = res.result.total
         })
@@ -83,8 +80,11 @@
       deleteRow() {
         
       },
-      deployDiolog() {
+      deployDiolog(row) {
+        this.editData = JSON.parse(JSON.stringify(row))
         this.$refs.deploy.dialogVisible1 = true
+        this.$refs.deploy.firstData.ascription = row.ascription
+        this.$refs.deploy.firstData.business = row.business
       },
       detailsDiolog() {
         this.$refs.detailsBnpm.dialogVisible1 = true
