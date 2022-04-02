@@ -136,7 +136,7 @@
           case 'enabled':
             this.getEnableData()
             break;
-          case 'draft':
+          case 'drafted':
             this.getDraftData()
             break;
           default:

@@ -259,17 +259,23 @@
         if (this.bpmnModeler) return;
         this.bpmnModeler = new BpmnModeler({
           container: this.$refs["bpmn-canvas"],
-        //   keyboard: this.keyboard ? { bindTo: document } : null,
           additionalModules: [],
           moddleExtensions: [],
-        //   ...this.options
         });
-        // this.creatDemo()
-        // this.$emit("init-finished", this.bpmnModeler);
         this.bpmnModeler.on("selection.changed", ({ newSelection }) => {
-            this.$emit('selection', newSelection[0] || null)
+            this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
         });
-        // this.initModelListeners();
+        window.bpmnInstances = {
+          modeler: this.bpmnModeler,
+          modeling: this.bpmnModeler.get("modeling"),
+          moddle: this.bpmnModeler.get("moddle"),
+          eventBus: this.bpmnModeler.get("eventBus"),
+          bpmnFactory: this.bpmnModeler.get("bpmnFactory"),
+          elementFactory: this.bpmnModeler.get("elementFactory"),
+          elementRegistry: this.bpmnModeler.get("elementRegistry"),
+          replace: this.bpmnModeler.get("replace"),
+          selection: this.bpmnModeler.get("selection")
+        };
       },
       creatDemo() {
         processInstanceData({
@@ -296,12 +302,14 @@
     },
     mounted() {
       this.initBpmnModeler();
-      // this.createNewDiagram(this.value);
       this.$once("hook:beforeDestroy", () => {
         if (this.bpmnModeler) this.bpmnModeler.destroy();
         this.$emit("destroy", this.bpmnModeler);
         this.bpmnModeler = null;
       });
+    },
+    beforeDestroy() {
+      window.bpmnInstances = null;
     }
   }
 </script>

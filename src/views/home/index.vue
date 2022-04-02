@@ -60,7 +60,7 @@
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-          start-placeholder="开始日期" end-placeholder="结束日期">
+          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
       </div>
     </div>
@@ -70,8 +70,8 @@
         <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">草稿箱（1）</span>
       </div>
       <div class="home-table">
-        <WorkflowTable v-if="activeName === 'first'"></WorkflowTable>
-        <draftsTable v-if="activeName === 'second'"></draftsTable>
+        <WorkflowTable v-if="activeName === 'first'" :valueDate="valueDate"></WorkflowTable>
+        <draftsTable v-if="activeName === 'second'" :valueDate="valueDate"></draftsTable>
       </div>
     </div>
   </div>
@@ -83,7 +83,7 @@
   export default {
     data() {
       return {
-        valueDate: '',
+        valueDate: ['2022-03-30 00:00:00', '2022-04-30 23:59:59'],
         activeName: 'first',
         value1: '',
         value2: '',

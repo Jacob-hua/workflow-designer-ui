@@ -48,6 +48,11 @@
       postProcessDesignServicePage
   } from '@/unit/api.js'
   export default {
+    props: {
+      valueDate: {
+        default: []
+      }
+    },
     data() {
       return {
         getData: {
@@ -85,6 +90,7 @@
         this.$refs.deploy.dialogVisible1 = true
         this.$refs.deploy.firstData.ascription = row.ascription
         this.$refs.deploy.firstData.business = row.business
+        this.$refs.deploy.firstData.id = row.id
       },
       detailsDiolog() {
         this.$refs.detailsBnpm.dialogVisible1 = true

@@ -55,6 +55,10 @@ export const postFormDesignRecordFormDesignRecordInfo = (params) =>
 // 删除表单
 export const deleteFormDesignService = (id) =>
   deletefn('/design/formDesignService/' + id);
+  
+//查询所有表单
+export const designFormDesignServiceAll = (params) =>
+  post('/design/formDesignService/all', params);
 
 // 工作流
 
@@ -65,3 +69,15 @@ export const postDesignDesignService = (params) =>
 // 查询驾驶舱工作流信息
 export const postProcessDesignServicePage = (params) =>
   post('/design/processDesignService/page', params);
+  
+// 查询驾驶舱草稿箱信息
+export const postDraftlist = (params) =>
+  post('/process/draft/list', params);
+  
+// 保存到草稿箱
+export const postProcessDraft = (params) =>
+  post('/process/draft', params);
+
+// 部署时草稿列表
+export const getProcessDraftList = (params) =>
+  post('/process/draft/list', params);

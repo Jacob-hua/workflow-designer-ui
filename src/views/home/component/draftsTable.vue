@@ -2,20 +2,20 @@
   <div>
     <div class="home-table-main">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column type="index" label="序号" width="180" align="center">
+        <el-table-column type="index" label="序号" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="名称" width="180" align="center">
+        <el-table-column prop="deployName" label="名称" align="center">
         </el-table-column>
-        <el-table-column prop="version" label="版本" align="center">
-        </el-table-column>
+        <!-- <el-table-column prop="version" label="版本" align="center">
+        </el-table-column> -->
         <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
-            <span class="fileStyle">周期巡视.bpmn</span>
+            <span class="fileStyle">{{ scope.row.deployName }}.bpmn</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createId" label="创建人" align="center">
+        <el-table-column prop="createBy" label="创建人" align="center">
         </el-table-column>
-        <el-table-column prop="date" label="编辑时间" align="center">
+        <el-table-column prop="createTime" label="创建时间" align="center">
         </el-table-column>
         <el-table-column prop="name" label="操作" align="center">
           <template slot-scope="scope">
@@ -41,9 +41,15 @@
 <script>
   import deploy from './deploy.vue'
   import {
-      getProcessDesignService
+      getProcessDesignService,
+      getProcessDraftList
   } from '@/unit/api.js'
   export default {
+    props: {
+      valueDate: {
+        default: []
+      }
+    },
     data() {
       return {
         currentPage4: 1,
@@ -51,69 +57,24 @@
           page: 1,
           limit: 10,
           total: 100,
-          name: '',
-          tenantId: '',
-          createName: '',
-          code: '',
           ascription: '',
           business: '',
+          createBy: '-1',
+          systemType: '',
+          tenantId: '12',
           startTime: '',
-          endTime: ''
+          endTime: '',
+          order: 'desc'
         },
-        tableData: [{
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }
-        ]
+        tableData: []
       }
     },
     methods: {
       getTableData() {
-        getProcessDesignService(this.getData).then((res) => {
-          console.log(res, '0000')
+        this.getData.startTime = this.valueDate[0]
+        this.getData.endTime = this.valueDate[1]
+        getProcessDraftList(this.getData).then((res) => {
+          this.tableData = res.result.dataList
         })
       },
       handleSizeChange(val) {
