@@ -2,27 +2,27 @@
   <div>
     <div class="home-table-main">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column type="index" label="序号" width="180" align="center">
+        <el-table-column type="index" label="序号" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="名称" width="180" align="center">
+        <el-table-column prop="deployName" label="名称" align="center">
         </el-table-column>
-        <el-table-column prop="version" label="版本" align="center">
-        </el-table-column>
+        <!-- <el-table-column prop="version" label="版本" align="center">
+        </el-table-column> -->
         <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
-            <span class="fileStyle">周期巡视.bpmn</span>
+            <span class="fileStyle">{{ scope.row.deployName }}.bpmn</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createId" label="创建人" align="center">
+        <el-table-column prop="createBy" label="创建人" align="center">
         </el-table-column>
-        <el-table-column prop="date" label="编辑时间" align="center">
+        <el-table-column prop="createTime" label="创建时间" align="center">
         </el-table-column>
         <el-table-column prop="name" label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="deployDiolog()" type="text" size="small" class="button1">
+            <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" class="button1">
               编辑
             </el-button>
-            <el-button @click.native.prevent="deleteRow()" type="text" size="small">
+            <el-button @click.native.prevent="deleteRow(scope.row.id)" type="text" size="small">
               删除
             </el-button>
           </template>
@@ -41,9 +41,16 @@
 <script>
   import deploy from './deploy.vue'
   import {
-      getProcessDesignService
+      getProcessDesignService,
+      getProcessDraftList,
+      deleteDraft
   } from '@/unit/api.js'
   export default {
+    props: {
+      valueDate: {
+        default: []
+      }
+    },
     data() {
       return {
         currentPage4: 1,
@@ -51,87 +58,48 @@
           page: 1,
           limit: 10,
           total: 100,
-          name: '',
-          tenantId: '',
-          createName: '',
-          code: '',
           ascription: '',
           business: '',
+          createBy: '-1',
+          systemType: '',
+          tenantId: '12',
           startTime: '',
-          endTime: ''
+          endTime: '',
+          order: 'desc'
         },
-        tableData: [{
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            date: '2021-11-12 14:11:23',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }
-        ]
+        tableData: []
       }
     },
     methods: {
       getTableData() {
-        getProcessDesignService(this.getData).then((res) => {
-          console.log(res, '0000')
+        this.getData.startTime = this.valueDate[0]
+        this.getData.endTime = this.valueDate[1]
+        getProcessDraftList(this.getData).then((res) => {
+          this.tableData = res.result.dataList
+          this.getData.total = res.result.count * 1
+          this.$emit('totalChange', res.result.count * 1, 'draftsTableNum')
         })
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.getTableData()
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        this.getTableData()
       },
-      deleteRow() {
+      deleteRow(id) {
         this.$confirm('从草稿箱删除草稿不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          deleteDraft(id).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -139,8 +107,14 @@
           });          
         });
       },
-      deployDiolog() {
+      deployDiolog(item) {
         this.$refs.deploy.dialogVisible2 = true
+        this.$nextTick(() => {
+          this.$refs.deploy.initData()
+          this.$refs.deploy.$refs.ProcessInformation.postData = JSON.parse(JSON.stringify(item))
+          this.$refs.deploy.$refs.ProcessInformation.createNewDiagram(item.content)
+          this.$refs.deploy.getFormList()
+        })
       }
     },
     components:{

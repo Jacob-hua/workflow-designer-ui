@@ -60,18 +60,18 @@
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-          start-placeholder="开始日期" end-placeholder="结束日期">
+          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
       </div>
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="activeName = 'first'">工作流（1）</span>
-        <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">草稿箱（1）</span>
+        <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="activeName = 'first'">工作流（{{ WorkflowTableNum }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">草稿箱（{{ draftsTableNum }}）</span>
       </div>
       <div class="home-table">
-        <WorkflowTable v-if="activeName === 'first'"></WorkflowTable>
-        <draftsTable v-if="activeName === 'second'"></draftsTable>
+        <WorkflowTable v-if="activeName === 'first'" :valueDate="valueDate" @totalChange="totalChange"></WorkflowTable>
+        <draftsTable v-if="activeName === 'second'" :valueDate="valueDate" @totalChange="totalChange"></draftsTable>
       </div>
     </div>
   </div>
@@ -80,13 +80,16 @@
 <script>
   import WorkflowTable from './component/WorkflowTable.vue'
   import draftsTable from './component/draftsTable.vue'
+  import { format } from '@/assets/js/unit.js'
   export default {
     data() {
       return {
-        valueDate: '',
+        valueDate: [format(new Date(), 'yyyy-MM-1') + ' 00:00:00', format(new Date(), 'yyyy-MM-dd') + ' 23:59:59'],
         activeName: 'first',
         value1: '',
         value2: '',
+        WorkflowTableNum: 0,
+        draftsTableNum: 0,
         options1: [{
           value: '',
           label: '全部项目'
@@ -117,6 +120,9 @@
     methods: {
       goBpmn() {
         this.$router.push('/bpmn')
+      },
+      totalChange(value, key) {
+        this[key] = value
       }
     },
     components:{

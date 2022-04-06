@@ -280,7 +280,7 @@ export default {
         formData.append('ascription', 'zhihuiyunwei')
         formData.append('code', definitions.process._id)
         formData.append('business', 'beiqijia')
-        formData.append('status', 'enable')
+        formData.append('status', 'enabled')
         formData.append('createId', '1')
         formData.append('createName', 'admin')
         formData.append('tenantId', '12')
