@@ -66,12 +66,12 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="activeName = 'first'">工作流（{{ WorkflowTableNum }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">草稿箱（{{ draftsTableNum }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="changeAction('first')">工作流（{{ WorkflowTableNum }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="changeAction('second')">草稿箱（{{ draftsTableNum }}）</span>
       </div>
       <div class="home-table">
-        <WorkflowTable v-if="activeName === 'first'" :valueDate="valueDate" @totalChange="totalChange"></WorkflowTable>
-        <draftsTable v-if="activeName === 'second'" :valueDate="valueDate" @totalChange="totalChange"></draftsTable>
+        <WorkflowTable v-show="activeName === 'first'" :valueDate="valueDate" @totalChange="totalChange" ref="first"></WorkflowTable>
+        <draftsTable v-show="activeName === 'second'" :valueDate="valueDate" @totalChange="totalChange" ref="second"></draftsTable>
       </div>
     </div>
   </div>
@@ -94,7 +94,8 @@
           value: '',
           label: '全部项目'
         }],
-        options2: [{
+        options2: [
+          {
             value: '',
             label: '全部业务'
           },
@@ -123,6 +124,10 @@
       },
       totalChange(value, key) {
         this[key] = value
+      },
+      changeAction(value) {
+        this.activeName = value
+        this.$refs[value].getTableData()
       }
     },
     components:{

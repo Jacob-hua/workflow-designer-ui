@@ -203,6 +203,7 @@
             });
             this.dialogVisible1 = false
             this.dialogVisible2 = false
+            this.$emit('deleteSuccess')
           })
         }).catch(() => {
           this.$message({

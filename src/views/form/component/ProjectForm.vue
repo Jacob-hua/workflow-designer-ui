@@ -68,7 +68,7 @@
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
-                <span class="value">{{ item.createName }}</span>
+                <span class="value">{{ item.createBy }}</span>
               </div>
               <div class="card-main-item">
                 <span class="label">创建时间:</span>

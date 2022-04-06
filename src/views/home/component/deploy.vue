@@ -59,7 +59,7 @@
           表单筛选
         </div>
         <div class="dialogVisible2-right-search">
-          <el-input v-model="input" placeholder="请输入内容"></el-input>
+          <el-input v-model="input" placeholder="请输入内容" @keyup.enter="getFormList()"></el-input>
         </div>
         <div class="formList">
           <div class="listItem" v-for="(item, index) in formList" :key="index">
@@ -198,6 +198,7 @@
           postDeployForOnline(formData).then((res) => {
             this.$message.success('保存成功')
             this.dialogVisible2 = false
+            this.$emit('addWorkSuccess')
           })
         });
       },
@@ -209,7 +210,7 @@
           business: '',
           createId: '',
           numberCode: '',
-          name: '',
+          name: this.input,
           docName: ''
         }).then((res) => {
           this.formList = res.result

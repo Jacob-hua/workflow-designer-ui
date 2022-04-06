@@ -40,28 +40,28 @@
       <div>
         <div class="from-item">
           <span>应用项目</span>
-          <el-select v-model="input" placeholder="请选择应用项目">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="postData.ascription" placeholder="请选择应用项目">
+            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>流程类型</span>
-          <el-select v-model="input" placeholder="请选择流程类型">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="postData.business" placeholder="请选择流程类型">
+            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>能源系统</span>
-          <el-select v-model="input" placeholder="请选择能源系统">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="postData.systemType" placeholder="请选择能源系统">
+            <el-option v-for="item in options3" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>表单名称</span>
-          <el-input v-model="input" placeholder="请输入部署名称"></el-input>
+          <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -106,11 +106,67 @@
         },
         formBpmnEditKey: 0,
         value: '',
+        postData: {
+          ascription: '',
+          business: '',
+          systemType: '',
+          name: ''
+        },
         input: '',
-        options: [{
-          value: 'V1.0',
-          label: 'V1.0'
-        }]
+        options1: [
+         {
+          value: 'beiqijia',
+          name: '北七家人才基地'
+         },
+         {
+          value: 'laiwu',
+          name: '莱芜供热项目'
+         },
+         {
+          value: 'xilaideng',
+          name: '海口喜来登酒店'
+         },
+        ],
+        options2: [
+          {
+            value: '',
+            label: '全部业务'
+          },
+          {
+            value: '1',
+            label: '指挥运维'
+          },
+          {
+            value: '2',
+            label: '资产管理'
+          },
+          {
+            value: '3',
+            label: '人员管理'
+          },
+          {
+            value: '4',
+            label: '其他业务'
+          },
+        ],
+        options3: [
+          {
+            value: 'energy-1',
+            label: '配电'
+          },
+          {
+            value: 'energy-2',
+            label: '空压'
+          },
+          {
+            value: 'energy-3',
+            label: '供暖'
+          },
+          {
+            value: 'energy-4',
+            label: '空调'
+          }
+        ]
       }
     },
     components:{
