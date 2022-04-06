@@ -99,6 +99,7 @@
               type: 'success',
               message: '删除成功!'
             });
+            this.getTableData()
           })
         }).catch(() => {
           this.$message({

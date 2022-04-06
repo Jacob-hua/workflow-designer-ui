@@ -36,8 +36,8 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy" :editData="editData"></deploy>
-    <detailsBnpm ref="detailsBnpm"></detailsBnpm>
+    <deploy ref="deploy" :editData="editData" @addWorkSuccess="getTableData()"></deploy>
+    <detailsBnpm ref="detailsBnpm" @deleteSuccess="getTableData()"></detailsBnpm>
   </div>
 </template>
 

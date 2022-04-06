@@ -23,7 +23,7 @@ export default {
   name: 'Page404',
   computed: {
     message() {
-      return 'The webmaster said that you can not enter this page...'
+      return '找不到页面'
     }
   }
 }
