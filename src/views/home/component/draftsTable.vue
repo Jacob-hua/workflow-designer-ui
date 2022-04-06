@@ -19,10 +19,10 @@
         </el-table-column>
         <el-table-column prop="name" label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="deployDiolog()" type="text" size="small" class="button1">
+            <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" class="button1">
               编辑
             </el-button>
-            <el-button @click.native.prevent="deleteRow()" type="text" size="small">
+            <el-button @click.native.prevent="deleteRow(scope.row.id)" type="text" size="small">
               删除
             </el-button>
           </template>
@@ -42,7 +42,8 @@
   import deploy from './deploy.vue'
   import {
       getProcessDesignService,
-      getProcessDraftList
+      getProcessDraftList,
+      deleteDraft
   } from '@/unit/api.js'
   export default {
     props: {
@@ -75,24 +76,30 @@
         this.getData.endTime = this.valueDate[1]
         getProcessDraftList(this.getData).then((res) => {
           this.tableData = res.result.dataList
+          this.getData.total = res.result.count * 1
+          this.$emit('totalChange', res.result.count * 1, 'draftsTableNum')
         })
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.getTableData()
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        this.getTableData()
       },
-      deleteRow() {
+      deleteRow(id) {
         this.$confirm('从草稿箱删除草稿不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          deleteDraft(id).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -100,8 +107,14 @@
           });          
         });
       },
-      deployDiolog() {
+      deployDiolog(item) {
         this.$refs.deploy.dialogVisible2 = true
+        this.$nextTick(() => {
+          this.$refs.deploy.initData()
+          this.$refs.deploy.$refs.ProcessInformation.postData = JSON.parse(JSON.stringify(item))
+          this.$refs.deploy.$refs.ProcessInformation.createNewDiagram(item.content)
+          this.$refs.deploy.getFormList()
+        })
       }
     },
     components:{

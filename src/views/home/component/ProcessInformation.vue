@@ -14,7 +14,7 @@
           流程名称
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.name" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.deployName" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -55,7 +55,7 @@
         </span>
         <div class="title-item-main">
           <!-- <el-input v-model="postData.system" placeholder="" :disabled="true"></el-input> -->
-          <el-select v-model="postData.energy" placeholder="请选择">
+          <el-select v-model="postData.systemType" placeholder="请选择">
               <el-option
                 v-for="item in optionSystem"
                 :key="item.value"
@@ -231,7 +231,7 @@
           createTime: '',
           business: '',
           ascription: '',
-          energy: ''
+          systemType: ''
         },
         optionSystem: [
           {

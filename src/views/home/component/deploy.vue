@@ -12,7 +12,7 @@
         </div>
         <div class="from-item">
           <span>能源系统</span>
-          <el-select v-model="firstData.energy" placeholder="请选择能源系统">
+          <el-select v-model="firstData.systemType" placeholder="请选择能源系统">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -87,7 +87,7 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible2 = false">部署</el-button>
+        <el-button type="primary" @click="addWorkFlow()">部署</el-button>
         <el-button @click="Adddraft()">保存</el-button>
         <el-button @click="dialogVisible2 = false">取消</el-button>
       </span>
@@ -98,7 +98,7 @@
 <script>
   import ProcessInformation from './ProcessInformation.vue'
   import formOB from './formOB.vue'
-  import { postProcessDraft, designFormDesignServiceAll } from '@/unit/api.js'
+  import { postProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/unit/api.js'
   import X2JS from "x2js";
   export default {
     props:{
@@ -109,7 +109,7 @@
     data() {
       return {
         dialogVisible1: false,
-        formOBKey: 0,
+        dialogVisible2: false,
         bpmnData: {
           name: '',
           grounp: '',
@@ -120,13 +120,13 @@
         firstData: {
           ascription: '',
           business: '',
-          energy: '',
+          systemType: '',
           deployName: ''
         },
         bpmnModeler: null,
         formContent: '',
+        formOBKey: 0,
         formList: [],
-        dialogVisible2: false,
         formShow: false,
         input: '',
         options: [
@@ -155,6 +155,52 @@
       }
     },
     methods: {
+      initData() {
+        this.bpmnData = {
+          name: '',
+          grounp: '',
+          assignee: '',
+          document: '',
+          id: ''
+        }
+        this.formShow = false
+        this.formContent = ''
+      },
+      addWorkFlow() {
+        const newConvert = new X2JS();
+        let formIds = ''
+        this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
+          const { definitions } = newConvert.xml2js(xml);
+          var file1 = new File([xml], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
+          if (Array.isArray(definitions.process.userTask)) {
+            definitions.process.userTask.forEach((item, index) => {
+              console.log(item)
+              formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
+            })
+          } else{
+            formIds = definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]
+          }
+          let formData = new FormData()
+          // formData.append('createTime', new Date())
+          formData.append('createBy', this.$refs.ProcessInformation.postData.createBy)
+          formData.append('deployKey', Date.parse(new Date()))
+          formData.append('deployName', this.$refs.ProcessInformation.postData.deployName)
+          formData.append('draftId', this.$refs.ProcessInformation.postData.id)
+          formData.append('formIds', formIds)
+          formData.append('operatorId', '1')
+          formData.append('operatorName', 'admin')
+          formData.append('processResource', file1)
+          formData.append('processId', this.$refs.ProcessInformation.postData.id)
+          formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
+          formData.append('updateBy', this.$refs.ProcessInformation.postData.createBy)
+          // formData.append('processResource', '')
+          formData.append('tenantId', '12')
+          postDeployForOnline(formData).then((res) => {
+            this.$message.success('保存成功')
+            this.dialogVisible2 = false
+          })
+        });
+      },
       getFormList() {
         designFormDesignServiceAll({
           status: 'enabled',
@@ -177,7 +223,8 @@
           this.$refs.ProcessInformation.postData = this.editData
           this.$refs.ProcessInformation.postData.ascription = this.firstData.ascription
           this.$refs.ProcessInformation.postData.business = this.firstData.business
-          this.$refs.ProcessInformation.postData.energy = this.firstData.energy
+          this.$refs.ProcessInformation.postData.systemType = this.firstData.systemType
+          this.$refs.ProcessInformation.postData.deployName = this.firstData.deployName
           this.$refs.ProcessInformation.createNewDiagram(this.editData.content)
         })
       },
@@ -195,10 +242,11 @@
             //   console.log(xml, '0000')
             // })
             // console.log(window.bpmnInstances.modeler, '0000')
+          } else {
+            this.initData()
           }
       },
       showForm(item) {
-        // 33335ff2-34f5-47cd-b707-54418cdb0e05_V1.0_8.form
         if (window.bpmnInstances.modeler) {
           window.bpmnInstances.modeling.updateProperties(window.bpmnInstances.modeler , { 'camunda:formKey': item.docName });
           this.formShow = true
@@ -221,12 +269,12 @@
           let formData = new FormData()
           // formData.append('createTime', new Date())
           formData.append('deployKey', Date.parse(new Date()))
-          formData.append('deployName', this.firstData.deployName)
+          formData.append('deployName', this.$refs.ProcessInformation.postData.deployName)
           formData.append('formIds', formIds)
           formData.append('operatorId', '1')
           formData.append('operatorName', 'admin')
           formData.append('processFile', file1)
-          formData.append('processId', this.firstData.id)
+          formData.append('processId', this.$refs.ProcessInformation.postData.id)
           // formData.append('processResource', '')
           formData.append('tenantId', '12')
           postProcessDraft(formData).then((res) => {

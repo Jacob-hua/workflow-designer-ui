@@ -81,3 +81,19 @@ export const postProcessDraft = (params) =>
 // 部署时草稿列表
 export const getProcessDraftList = (params) =>
   post('/process/draft/list', params);
+
+// 删除草稿列表
+export const deleteDraft = (id) =>
+  deletefn('/process/draft/' + id);
+
+// 部署工作流
+export const postDeployForOnline = (params) =>
+  post('/process/deploy/deployForOnline', params);
+  
+// 根据流程获取部署列表
+export const getDeployBasic = (id) =>
+  get('/process/deploy/basic/' + id);
+  
+// 删除部署列表
+export const getDeleteDeployment = (params) =>
+  deletefn('/process/deploy/deleteDeployment', params);
