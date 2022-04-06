@@ -85,6 +85,6 @@ export function post(url, params) {
   return service.post(url, params)
 }
 
-export function deletefn(url, params) {
-  return service.delete(url, params)
+export function deletefn(url, params, config) {
+  return service.delete(url, {params, config})
 }

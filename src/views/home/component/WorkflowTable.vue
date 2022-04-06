@@ -13,7 +13,7 @@
             <span class="fileStyle">{{ scope.row.name + '.bpmn' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createName" label="创建人" align="center">
+        <el-table-column prop="createBy" label="创建人" align="center">
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" align="center">
         </el-table-column>
@@ -48,6 +48,11 @@
       postProcessDesignServicePage
   } from '@/unit/api.js'
   export default {
+    props: {
+      valueDate: {
+        default: []
+      }
+    },
     data() {
       return {
         getData: {
@@ -66,13 +71,17 @@
     },
     methods: {
       getTableData() {
+        this.getData.startTime = this.valueDate[0]
+        this.getData.endTime = this.valueDate[1]
         postProcessDesignServicePage(this.getData).then((res) => {
           this.tableData = res.result.list
           this.getData.total = res.result.total
+          this.$emit('totalChange', res.result.total, 'WorkflowTableNum')
         })
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
@@ -85,9 +94,16 @@
         this.$refs.deploy.dialogVisible1 = true
         this.$refs.deploy.firstData.ascription = row.ascription
         this.$refs.deploy.firstData.business = row.business
+        this.$refs.deploy.firstData.id = row.id
       },
-      detailsDiolog() {
+      detailsDiolog(item) {
         this.$refs.detailsBnpm.dialogVisible1 = true
+        this.$nextTick(() => {
+          this.$refs.detailsBnpm.$refs.details1.postData = JSON.parse(JSON.stringify(item))
+          this.$refs.detailsBnpm.$refs.details1.postData.deployName =  this.$refs.detailsBnpm.$refs.details1.postData.name
+          this.$refs.detailsBnpm.$refs.details1.createNewDiagram(item.content)
+          this.$refs.detailsBnpm.getDetailList()
+        })
       }
     },
     created() {
