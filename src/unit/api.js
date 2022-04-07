@@ -94,6 +94,10 @@ export const postDeployForOnline = (params) =>
 export const getDeployBasic = (id) =>
   get('/process/deploy/basic/' + id);
   
+// 查询工作流详情
+export const getDeployAndProcessInfo = (id) =>
+  get('/process/deploy/deployAndProcessInfo/' + id);
+  
 // 删除部署列表
 export const getDeleteDeployment = (params) =>
   deletefn('/process/deploy/deleteDeployment', params);

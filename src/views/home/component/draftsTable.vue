@@ -14,6 +14,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="createBy" label="创建人" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.createBy == -1 ? '系统' : scope.row.createBy }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" align="center">
         </el-table-column>
@@ -34,7 +37,7 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy" dataType="drafted"></deploy>
+    <deploy ref="deploy" dataType="drafted" @addDraftSuccess="getTableData()" @addWorkSuccess="getTableData()"></deploy>
   </div>
 </template>
 
@@ -92,9 +95,11 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.getData.limit = val
         this.getTableData()
       },
       handleCurrentChange(val) {
+        this.getData.page = val
         console.log(`当前页: ${val}`);
         this.getTableData()
       },
