@@ -36,7 +36,7 @@
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-          start-placeholder="开始日期" end-placeholder="结束日期">
+          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
