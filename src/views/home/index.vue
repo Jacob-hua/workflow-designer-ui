@@ -70,8 +70,8 @@
         <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="changeAction('second')">草稿箱（{{ draftsTableNum }}）</span>
       </div>
       <div class="home-table">
-        <WorkflowTable v-show="activeName === 'first'" :valueDate="valueDate" :ascription="value1" :business="value2" @totalChange="totalChange" ref="first"></WorkflowTable>
-        <draftsTable v-show="activeName === 'second'" :valueDate="valueDate" :ascription="value1" :business="value2" @totalChange="totalChange" ref="second"></draftsTable>
+        <WorkflowTable v-show="activeName === 'first'" :valueDate="valueDate" :ascription="value1" :business="value2" @totalChange="totalChange" ref="first" @getManyData="getManyData()"></WorkflowTable>
+        <draftsTable v-show="activeName === 'second'" :valueDate="valueDate" :ascription="value1" :business="value2" @totalChange="totalChange" ref="second" @getManyData="getManyData()"></draftsTable>
       </div>
     </div>
   </div>

@@ -39,7 +39,7 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy" :editData="editData" @addWorkSuccess="getTableData()" dataType="enabled"  @addDraftSuccess="getTableData()"></deploy>
+    <deploy ref="deploy" :editData="editData" @addWorkSuccess="getManyData()" dataType="enabled"  @addDraftSuccess="getManyData()"></deploy>
     <detailsBnpm ref="detailsBnpm" @deleteSuccess="getTableData()"></detailsBnpm>
   </div>
 </template>
@@ -104,6 +104,9 @@
       },
       deleteRow() {
         
+      },
+      getManyData() {
+        this.$emit('getManyData')
       },
       deployDiolog(row) {
         this.editData = JSON.parse(JSON.stringify(row))
