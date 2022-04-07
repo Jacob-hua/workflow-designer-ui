@@ -35,6 +35,9 @@
         //   console.log('选中？', item)
         // })
       },
+      importData() {
+        return this.formEditor.saveSchema()
+      },
       save() {
         let { href, filename } = this.setEncoded('form', 'test', JSON.stringify(this.formEditor.saveSchema()))
         this.downloadFunc(href, filename);

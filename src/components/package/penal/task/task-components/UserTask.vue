@@ -19,7 +19,7 @@
              }"
         @change="handleChange('candidateUsers')" ref="candidateUsers">
       </el-cascader>
-      <el-input v-model="userTaskForm.candidateUsers" @change="updateElementTask('candidateUsers')" :disabled="true" />
+      <el-input v-model="userTaskForm.candidateUsers" @change="updateElementTask('candidateUsers')" :disabled="true" :title="userTaskForm.candidateUsers" />
       <!-- <el-select v-model="userTaskForm.candidateUsers" multiple collapse-tags @change="updateElementTask('candidateUsers')"> -->
       <!-- <el-option v-for="uk in mockData" :key="'user-' + uk" :label="`用户${uk}`" :value="`user${uk}`" /> -->
       <!-- </el-select> -->
@@ -33,7 +33,7 @@
         @change="handleChange('candidateGroups')" ref="candidateGroups">
       </el-cascader>
       <el-input v-model="userTaskForm.candidateGroups" clearable @change="updateElementTask('candidateGroups')"
-        :disabled="true" />
+        :disabled="true" :title="userTaskForm.candidateGroups" />
       <!-- <el-select v-model="userTaskForm.candidateGroups" multiple collapse-tags @change="updateElementTask('candidateGroups')"> -->
       <!-- <el-option v-for="gk in mockData" :key="'ass-' + gk" :label="`分组${gk}`" :value="`group${gk}`" /> -->
       <!-- </el-select> -->
@@ -137,6 +137,7 @@
           isUse: 1
         }).then((res) => {
           this.options = res.result
+          window.bpmnInstances.modeling.updateProperties(this.bpmnElement , { formKey: '' });
         })
       },
       postData() {

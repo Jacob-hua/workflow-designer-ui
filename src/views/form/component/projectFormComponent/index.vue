@@ -13,13 +13,13 @@
             </el-option>
           </el-select>
         </div>
-        <div class="from-item">
+        <!-- <div class="from-item">
           <span>能源系统</span>
           <el-select v-model="postData.energy" placeholder="请选择能源系统">
             <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-        </div>
+        </div> -->
         <div class="from-item">
           <span>表单名称</span>
           <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
@@ -30,7 +30,7 @@
         <el-button @click="dialogVisible1 = false">取消</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog title="发布表单" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
           <!-- <div class="title-item">
@@ -49,14 +49,14 @@
               <el-input v-model="projectCodeObj[postData.ascription]" placeholder="" :disabled="true"></el-input>
             </div>
           </div>
-          <div class="title-item">
+          <!-- <div class="title-item">
             <span class="title-item-label marginLeft40">
               能源系统
             </span>
             <div class="title-item-main">
               <el-input v-model="projectCodeObj[postData.energy]" placeholder="" :disabled="true"></el-input>
             </div>
-          </div>
+          </div> -->
           <div class="title-item">
             <span class="title-item-label marginLeft40">
               表单名称
@@ -116,23 +116,7 @@
           {
             value: '',
             label: '全部项目'
-          },
-          {
-            value: '1',
-            label: '智慧运维'
-          },
-          {
-            value: '2',
-            label: '资产管理'
-          },
-          {
-            value: '3',
-            label: '人员管理'
-          },
-          {
-            value: '4',
-            label: '其他业务'
-          },
+          }
         ],
         options1: [
           {

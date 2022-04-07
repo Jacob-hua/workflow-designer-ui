@@ -15,11 +15,11 @@
          <div class="detail-title-item-button">
            <el-button type="primary" @click="editForm()">编辑</el-button>
            <el-button type="primary" @click="deleteRow()" v-if="quote == 'delete'">删除</el-button>
-           <el-button type="primary" @click="quot()" v-if="quote == 'quote'">应用</el-button>
+           <el-button type="primary" @click="quot()" v-if="quote == 'quote' && status !== 'drafted' ">应用</el-button>
          </div>
           
         </div>
-        <div>
+        <div v-if="status !== 'drafted'">
           <div class="optionV">
             <el-select v-model="value" placeholder="请选择" @change="upDataV()">
                 <el-option
@@ -52,13 +52,13 @@
             </el-option>
           </el-select>
         </div>
-        <div class="from-item">
+        <!-- <div class="from-item">
           <span>能源系统</span>
           <el-select v-model="postData.systemType" placeholder="请选择能源系统">
             <el-option v-for="item in options3" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-        </div>
+        </div> -->
         <div class="from-item">
           <span>表单名称</span>
           <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
@@ -74,7 +74,7 @@
 
 <script>
   import formBpmnEdit from './formBpmnEdit.vue'
-  import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService } from '@/unit/api.js'
+  import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService, postFormDesignServiceRealiseProcessData } from '@/unit/api.js'
   export default {
     props:{
       quote: {
@@ -104,6 +104,7 @@
           createName: '',
           createTime: ''
         },
+        options: [],
         formBpmnEditKey: 0,
         value: '',
         postData: {
@@ -116,38 +117,22 @@
         options1: [
          {
           value: 'beiqijia',
-          name: '北七家人才基地'
+          label: '北七家人才基地'
          },
          {
           value: 'laiwu',
-          name: '莱芜供热项目'
+          label: '莱芜供热项目'
          },
          {
           value: 'xilaideng',
-          name: '海口喜来登酒店'
+          label: '海口喜来登酒店'
          },
         ],
         options2: [
           {
             value: '',
             label: '全部业务'
-          },
-          {
-            value: '1',
-            label: '指挥运维'
-          },
-          {
-            value: '2',
-            label: '资产管理'
-          },
-          {
-            value: '3',
-            label: '人员管理'
-          },
-          {
-            value: '4',
-            label: '其他业务'
-          },
+          }
         ],
         options3: [
           {
@@ -214,8 +199,25 @@
         this.$emit('editForm', this.formData)
       },
       nextDiolog() {
-        this.dialogVisible1 = false
-        this.dialogVisible2 = false
+        const xml  = this.$refs.formbpmn.importData();
+        xml.id = 'form_' + Date.parse(new Date())
+        var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
+        let formData = new FormData()
+        formData.append('name', this.postData.name)
+        formData.append('docName', this.postData.name +'.form')
+        formData.append('ascription', this.postData.ascription)
+        formData.append('code', xml.id)
+        formData.append('business', this.postData.business)
+        formData.append('status', 'enabled')
+        formData.append('createId', '1')
+        formData.append('createName', 'admin')
+        formData.append('tenantId', '12')
+        formData.append('file', file1)
+        postFormDesignServiceRealiseProcessData(formData).then((res) => {
+          this.$message.success('发布至可用表单成功')
+          this.dialogVisible1 = false
+          this.dialogVisible2 = false
+        })
       },
       quot() {
         this.dialogVisible1 = true

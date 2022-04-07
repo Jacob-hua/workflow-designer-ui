@@ -34,7 +34,7 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy"></deploy>
+    <deploy ref="deploy" dataType="drafted"></deploy>
   </div>
 </template>
 
@@ -49,6 +49,14 @@
     props: {
       valueDate: {
         default: []
+      },
+      ascription: {
+        type: String,
+        default: ''
+      },
+      business: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -74,6 +82,8 @@
       getTableData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
+        this.getData.business = this.business
+        this.getData.ascription = this.ascription
         getProcessDraftList(this.getData).then((res) => {
           this.tableData = res.result.dataList
           this.getData.total = res.result.count * 1

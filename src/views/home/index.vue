@@ -46,21 +46,21 @@
     </div>
     <div class="home-filter">
       <div class="projectSelect">
-        <el-select v-model="value1" placeholder="请选择">
-          <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
+        <el-select v-model="value1" placeholder="请选择" @change="getManyData()">
+          <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value" >
           </el-option>
         </el-select>
       </div>
       <div class="businessSelect">
-        <el-select v-model="value2" placeholder="请选择">
-          <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value">
+        <el-select v-model="value2" placeholder="请选择" @change="getManyData()">
+          <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" >
           </el-option>
         </el-select>
       </div>
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
+          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false" @change="getManyData()">
         </el-date-picker>
       </div>
     </div>
@@ -70,8 +70,8 @@
         <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="changeAction('second')">草稿箱（{{ draftsTableNum }}）</span>
       </div>
       <div class="home-table">
-        <WorkflowTable v-show="activeName === 'first'" :valueDate="valueDate" @totalChange="totalChange" ref="first"></WorkflowTable>
-        <draftsTable v-show="activeName === 'second'" :valueDate="valueDate" @totalChange="totalChange" ref="second"></draftsTable>
+        <WorkflowTable v-show="activeName === 'first'" :valueDate="valueDate" :ascription="value1" :business="value2" @totalChange="totalChange" ref="first"></WorkflowTable>
+        <draftsTable v-show="activeName === 'second'" :valueDate="valueDate" :ascription="value1" :business="value2" @totalChange="totalChange" ref="second"></draftsTable>
       </div>
     </div>
   </div>
@@ -86,35 +86,29 @@
       return {
         valueDate: [format(new Date(), 'yyyy-MM-1') + ' 00:00:00', format(new Date(), 'yyyy-MM-dd') + ' 23:59:59'],
         activeName: 'first',
-        value1: '',
+        value1: 'beiqijia',
         value2: '',
         WorkflowTableNum: 0,
         draftsTableNum: 0,
-        options1: [{
-          value: '',
-          label: '全部项目'
-        }],
+        options1: [
+          {
+            value: 'beiqijia',
+            label: '北七家人才基地'
+          },
+          {
+            value: 'laiwu',
+            label: '莱芜供热项目'
+          },
+          {
+            value: 'xilaideng',
+            label: '海口喜来登酒店'
+          }
+        ],
         options2: [
           {
             value: '',
             label: '全部业务'
-          },
-          {
-            value: '1',
-            label: '指挥运维'
-          },
-          {
-            value: '2',
-            label: '资产管理'
-          },
-          {
-            value: '3',
-            label: '人员管理'
-          },
-          {
-            value: '4',
-            label: '其他业务'
-          },
+          }
         ]
       }
     },
@@ -128,6 +122,12 @@
       changeAction(value) {
         this.activeName = value
         this.$refs[value].getTableData()
+      },
+      getManyData() {
+        this.$nextTick(() => {
+          this.$refs.first.getTableData()
+          this.$refs.second.getTableData()
+        })
       }
     },
     components:{
