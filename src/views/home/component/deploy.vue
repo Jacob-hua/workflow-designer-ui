@@ -187,7 +187,7 @@
           let formData = new FormData()
           switch (this.dataType){
             case 'enabled':
-              formData.append('id', this.$refs.ProcessInformation.postData.id)
+              formData.append('processId', this.$refs.ProcessInformation.postData.id)
               break;
             case 'drafted':
               formData.append('processId', this.$refs.ProcessInformation.postData.processId)

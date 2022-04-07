@@ -93,6 +93,9 @@
           this.$emit('totalChange', res.result.count * 1, 'draftsTableNum')
         })
       },
+      getManyData() {
+        this.$emit('getManyData')
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
         this.getData.limit = val

@@ -146,13 +146,13 @@
       
       changeActiveName(value) {
         this.activeName = value
-        this.getData()
+        this.getManyData()
       },
       
       addSuccess(value) {
         this.$refs.PublicFormDiolog.dialogVisible2 = false
         this.$refs.detailsDiolog.dialogVisible2 = false
-        this.getData()
+        this.getManyData()
       },
       
       addForm(item) {
