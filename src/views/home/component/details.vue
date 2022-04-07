@@ -196,7 +196,7 @@
           type: 'warning'
         }).then(() => {
           getDeleteDeployment({
-            id: this.$refs.details2.postData.id,
+            id: this.$refs.details2.postData.deployRecordId,
             cascade: false
           }).then(() => {
             this.$message({

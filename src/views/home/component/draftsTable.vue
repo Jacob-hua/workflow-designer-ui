@@ -37,7 +37,7 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy" dataType="drafted" @addDraftSuccess="getTableData()" @addWorkSuccess="getTableData()"></deploy>
+    <deploy ref="deploy" dataType="drafted" @addDraftSuccess="getManyData()" @addWorkSuccess="getManyData()"></deploy>
   </div>
 </template>
 
