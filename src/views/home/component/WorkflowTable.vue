@@ -36,7 +36,7 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy" :editData="editData" @addWorkSuccess="getTableData()"></deploy>
+    <deploy ref="deploy" :editData="editData" @addWorkSuccess="getTableData()" dataType="enabled"></deploy>
     <detailsBnpm ref="detailsBnpm" @deleteSuccess="getTableData()"></detailsBnpm>
   </div>
 </template>
@@ -51,6 +51,14 @@
     props: {
       valueDate: {
         default: []
+      },
+      ascription: {
+        type: String,
+        default: ''
+      },
+      business: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -73,6 +81,8 @@
       getTableData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
+        this.getData.business = this.business
+        this.getData.ascription = this.ascription
         postProcessDesignServicePage(this.getData).then((res) => {
           this.tableData = res.result.list
           this.getData.total = res.result.total

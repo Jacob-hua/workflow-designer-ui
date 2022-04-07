@@ -59,11 +59,11 @@
           表单筛选
         </div>
         <div class="dialogVisible2-right-search">
-          <el-input v-model="input" placeholder="请输入内容" @keyup.enter="getFormList()"></el-input>
+          <el-input v-model="input" placeholder="请输入内容" @keyup.native.enter="getFormList()"></el-input>
         </div>
         <div class="formList">
           <div class="listItem" v-for="(item, index) in formList" :key="index">
-            <span class="listItem-title">{{ item.name }}</span>
+            <span class="listItem-title" :title="item.name">{{ item.name }}</span>
             <div class="listItem-V1">
               <el-select v-model="item.version " placeholder="请选择" :disabled="true">
                 <el-option v-for="item in optionsV" :key="item.value" :label="item.label" :value="item.value">
@@ -104,6 +104,10 @@
     props:{
       editData: {
         type: Object
+      },
+      dataType: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -169,18 +173,27 @@
       addWorkFlow() {
         const newConvert = new X2JS();
         let formIds = ''
+        
         this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
           const { definitions } = newConvert.xml2js(xml);
           var file1 = new File([xml], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
           if (Array.isArray(definitions.process.userTask)) {
             definitions.process.userTask.forEach((item, index) => {
-              console.log(item)
-              formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
+              formIds = formIds + item['_camunda:formKey'] && item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
             })
           } else{
-            formIds = definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]
+            formIds = (definitions.process.userTask['_camunda:formKey'] && definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) || ''
           }
           let formData = new FormData()
+          switch (this.dataType){
+            case 'enabled':
+              break;
+            case 'drafted':
+              formData.append('id', this.$refs.ProcessInformation.postData.id)
+              break;
+            default:
+              break;
+          }
           // formData.append('createTime', new Date())
           formData.append('createBy', this.$refs.ProcessInformation.postData.createBy)
           formData.append('deployKey', Date.parse(new Date()))
@@ -206,7 +219,7 @@
         designFormDesignServiceAll({
           status: 'enabled',
           tenantId: '12',
-          ascription: 'public',
+          ascription: this.$refs.ProcessInformation.postData.ascription,
           business: '',
           createId: '',
           numberCode: '',
@@ -219,13 +232,13 @@
       nextDiolog() {
         this.dialogVisible1 = false
         this.dialogVisible2 = true
-        this.getFormList()
         this.$nextTick(() => {
           this.$refs.ProcessInformation.postData = this.editData
           this.$refs.ProcessInformation.postData.ascription = this.firstData.ascription
           this.$refs.ProcessInformation.postData.business = this.firstData.business
           this.$refs.ProcessInformation.postData.systemType = this.firstData.systemType
           this.$refs.ProcessInformation.postData.deployName = this.firstData.deployName
+          this.getFormList()
           this.$refs.ProcessInformation.createNewDiagram(this.editData.content)
         })
       },
@@ -262,12 +275,21 @@
           var file1 = new File([xml], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
           if (Array.isArray(definitions.process.userTask)) {
             definitions.process.userTask.forEach((item, index) => {
-              formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
+              formIds = formIds + item['_camunda:formKey'] && item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
             })
           } else{
-            formIds = definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]
+            formIds = (definitions.process.userTask['_camunda:formKey'] && definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) || ''
           }
           let formData = new FormData()
+          switch (this.dataType){
+            case 'enabled':
+              break;
+            case 'drafted':
+              formData.append('id', this.$refs.ProcessInformation.postData.id)
+              break;
+            default:
+              break;
+          }
           // formData.append('createTime', new Date())
           formData.append('deployKey', Date.parse(new Date()))
           formData.append('deployName', this.$refs.ProcessInformation.postData.deployName)
@@ -276,6 +298,7 @@
           formData.append('operatorName', 'admin')
           formData.append('processFile', file1)
           formData.append('processId', this.$refs.ProcessInformation.postData.id)
+          formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
           // formData.append('processResource', '')
           formData.append('tenantId', '12')
           postProcessDraft(formData).then((res) => {
@@ -289,7 +312,7 @@
           designFormDesignServiceAll({
             status: 'enabled',
             tenantId: '12',
-            ascription: 'public',
+            ascription: this.$refs.ProcessInformation.postData.ascription,
             business: '',
             createId: '',
             numberCode: '',
@@ -307,7 +330,7 @@
       },
       removeForm() {
         if (window.bpmnInstances.modeler) {
-          window.bpmnInstances.modeling.updateProperties(this.bpmnModeler , { 'camunda:formKey': '' });
+          window.bpmnInstances.modeling.updateProperties(window.bpmnInstances.modeler , { 'camunda:formKey': '' });
           this.formShow = false
           this.formContent = ''
         }
@@ -456,6 +479,9 @@
     display: inline-block;
     line-height: 46px;
     color: black;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
   .listItem .listItem-V1 /deep/ .el-input__inner {
     width: 60px;

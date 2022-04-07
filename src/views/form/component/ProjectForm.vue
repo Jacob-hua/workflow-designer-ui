@@ -11,19 +11,19 @@
         <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'beiqijia'">
         <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'beiqijia'">
         <span class="projectList-item-word">北七家人才基地</span>
-        <i class="el-icon-close item-icon"></i>
+        <!-- <i class="el-icon-close item-icon"></i> -->
       </div>
       <div class="projectList-item" :class="projectCode === 'laiwu' ? 'checkPro' : '' " @click="changProjectCode('laiwu')">
         <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'laiwu'">
         <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'laiwu'">
         <span class="projectList-item-word">莱芜供热项目</span>
-        <i class="el-icon-close item-icon"></i>
+        <!-- <i class="el-icon-close item-icon"></i> -->
       </div>
       <div class="projectList-item" :class="projectCode === 'xilaideng' ? 'checkPro' : '' " @click="changProjectCode('xilaideng')">
         <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'xilaideng'">
         <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'xilaideng'">
         <span class="projectList-item-word">海口喜来登酒店</span>
-        <i class="el-icon-close item-icon"></i>
+        <!-- <i class="el-icon-close item-icon"></i> -->
       </div>
     </div>
     <div class="PublicForm-title">
@@ -122,23 +122,7 @@
           {
             value: '',
             label: '全部项目'
-          },
-          {
-            value: '1',
-            label: '智慧运维'
-          },
-          {
-            value: '2',
-            label: '资产管理'
-          },
-          {
-            value: '3',
-            label: '人员管理'
-          },
-          {
-            value: '4',
-            label: '其他业务'
-          },
+          }
         ],
         dataType: 'enabled',
         projectCode: 'beiqijia',
@@ -220,6 +204,7 @@
       
       changProjectCode(code) {
         this.projectCode = code
+        this.getManyData()
       },
       addForm() {
         this.$refs.projectFormDiolog.postData.ascription = this.projectCode

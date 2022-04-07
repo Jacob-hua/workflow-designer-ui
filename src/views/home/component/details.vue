@@ -158,7 +158,7 @@
           designFormDesignServiceAll({
             status: 'enabled',
             tenantId: '12',
-            ascription: 'public',
+            ascription: this.$refs.details2.postData.ascription,
             business: '',
             createId: '',
             numberCode: '',
