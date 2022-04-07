@@ -36,7 +36,7 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy" :editData="editData" @addWorkSuccess="getTableData()" dataType="enabled"></deploy>
+    <deploy ref="deploy" :editData="editData" @addWorkSuccess="getTableData()" dataType="enabled"  @addDraftSuccess="getTableData()"></deploy>
     <detailsBnpm ref="detailsBnpm" @deleteSuccess="getTableData()"></detailsBnpm>
   </div>
 </template>
@@ -91,10 +91,13 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
-        
+        this.getData.limit = val
+        this.getTableData()
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        this.getData.page = val
+        this.getTableData()
       },
       deleteRow() {
         

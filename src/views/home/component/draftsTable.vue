@@ -34,7 +34,7 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy" dataType="drafted"></deploy>
+    <deploy ref="deploy" dataType="drafted" @addDraftSuccess="getTableData()" @addWorkSuccess="getTableData()"></deploy>
   </div>
 </template>
 
@@ -92,9 +92,11 @@
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.getData.limit = val
         this.getTableData()
       },
       handleCurrentChange(val) {
+        this.getData.page = val
         console.log(`当前页: ${val}`);
         this.getTableData()
       },

@@ -187,8 +187,10 @@
           let formData = new FormData()
           switch (this.dataType){
             case 'enabled':
+              formData.append('id', this.$refs.ProcessInformation.postData.id)
               break;
             case 'drafted':
+              formData.append('processId', this.$refs.ProcessInformation.postData.processId)
               formData.append('id', this.$refs.ProcessInformation.postData.id)
               break;
             default:
@@ -203,7 +205,6 @@
           formData.append('operatorId', '1')
           formData.append('operatorName', 'admin')
           formData.append('processResource', file1)
-          formData.append('processId', this.$refs.ProcessInformation.postData.id)
           formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
           formData.append('updateBy', this.$refs.ProcessInformation.postData.createBy)
           // formData.append('processResource', '')
@@ -283,8 +284,11 @@
           let formData = new FormData()
           switch (this.dataType){
             case 'enabled':
+              // formData.append('id', this.$refs.ProcessInformation.postData.id)
+              formData.append('processId', this.$refs.ProcessInformation.postData.id)
               break;
             case 'drafted':
+              formData.append('processId', this.$refs.ProcessInformation.postData.processId)
               formData.append('id', this.$refs.ProcessInformation.postData.id)
               break;
             default:
@@ -297,13 +301,13 @@
           formData.append('operatorId', '1')
           formData.append('operatorName', 'admin')
           formData.append('processFile', file1)
-          formData.append('processId', this.$refs.ProcessInformation.postData.id)
           formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
           // formData.append('processResource', '')
           formData.append('tenantId', '12')
           postProcessDraft(formData).then((res) => {
             this.$message.success('保存成功')
             this.dialogVisible2 = false
+            this.$emit('addDraftSuccess')
           })
         });
       },
