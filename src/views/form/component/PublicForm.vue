@@ -36,7 +36,7 @@
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
-                <span class="value">{{ item.createBy }}</span>
+                <span class="value">{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
               </div>
               <div class="card-main-item">
                 <span class="label">创建时间:</span>

@@ -28,7 +28,7 @@
               </div>
               <div class="item-item">
                 <span>部署人:</span>
-                <span>{{ item.createBy }}</span>
+                <span>{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
               </div>
               <div class="item-item">
                 <span>部署时间:</span>
@@ -36,7 +36,7 @@
               </div>
               <div class="item-item">
                 <span>状态:</span>
-                <span>{{ item.activation === 'activation' ? '已激活' : '未激活' }}</span>
+                <span>{{ item.status === 'activation' ? '已激活' : '未激活' }}</span>
               </div>
             </div>
             <div style="line-height: 194px;width: 100%;text-align: center;" v-if="!DeployBasicList[postData.systemType]">暂无数据</div>
@@ -79,7 +79,7 @@
 <script>
   import ProcessInformation from './ProcessInformation.vue'
   import formOB from './formOB.vue'
-  import { getDeployBasic, designFormDesignServiceAll, getDeleteDeployment } from '@/unit/api.js'
+  import { getDeployBasic, designFormDesignServiceAll, getDeleteDeployment, getDeployAndProcessInfo } from '@/unit/api.js'
   export default {
     data() {
       return {
@@ -141,10 +141,12 @@
         this.formContent = ''
       },
       dialogVisible2Detail(item) {
-        this.dialogVisible2 = true
-        this.$nextTick(() => {
-          this.$refs.details2.postData = JSON.parse(JSON.stringify(item))
-          this.$refs.details2.createNewDiagram(item.processResource)
+        getDeployAndProcessInfo(item.id).then((res) => {
+          this.dialogVisible2 = true
+          this.$nextTick(() => {
+            this.$refs.details2.postData = JSON.parse(JSON.stringify(res.result))
+            this.$refs.details2.createNewDiagram(item.processResource)
+          })
         })
       },
       getDetailList() {
