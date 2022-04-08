@@ -179,7 +179,9 @@
           var file1 = new File([xml], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
           if (Array.isArray(definitions.process.userTask)) {
             definitions.process.userTask.forEach((item, index) => {
-              formIds = formIds + item['_camunda:formKey'] && item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
+              if (item['_camunda:formKey']) {
+                formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
+              }
             })
           } else{
             formIds = (definitions.process.userTask['_camunda:formKey'] && definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) || ''
@@ -263,7 +265,7 @@
       },
       showForm(item) {
         if (window.bpmnInstances.modeler) {
-          window.bpmnInstances.modeling.updateProperties(window.bpmnInstances.modeler , { 'camunda:formKey': item.docName });
+          window.bpmnInstances.modeling.updateProperties(window.bpmnInstances.modeler , { 'camunda:formKey': 'camunda-forms:deployment:' + item.docName });
           this.formShow = true
           this.formContent = item.content
         }
@@ -276,7 +278,9 @@
           var file1 = new File([xml], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
           if (Array.isArray(definitions.process.userTask)) {
             definitions.process.userTask.forEach((item, index) => {
-              formIds = formIds + item['_camunda:formKey'] && item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
+              if (item['_camunda:formKey']) {
+                formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
+              }
             })
           } else{
             formIds = (definitions.process.userTask['_camunda:formKey'] && definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) || ''
@@ -313,6 +317,7 @@
       },
       getFormData(formKey) {
         if (formKey) {
+          let docName = formKey.split(':')[2]
           designFormDesignServiceAll({
             status: 'enabled',
             tenantId: '18',
@@ -321,7 +326,7 @@
             createId: '',
             numberCode: '',
             name: '',
-            docName: formKey
+            docName: docName
           }).then((res) => {
             this.formContent = res.result[0].content
             this.formOBKey++
