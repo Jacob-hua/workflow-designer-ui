@@ -208,7 +208,7 @@
           formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
           formData.append('updateBy', this.$refs.ProcessInformation.postData.createBy)
           // formData.append('processResource', '')
-          formData.append('tenantId', '12')
+          formData.append('tenantId', '18')
           postDeployForOnline(formData).then((res) => {
             this.$message.success('保存成功')
             this.dialogVisible2 = false
@@ -219,7 +219,7 @@
       getFormList() {
         designFormDesignServiceAll({
           status: 'enabled',
-          tenantId: '12',
+          tenantId: '18',
           ascription: this.$refs.ProcessInformation.postData.ascription,
           business: '',
           createId: '',
@@ -303,7 +303,7 @@
           formData.append('processFile', file1)
           formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
           // formData.append('processResource', '')
-          formData.append('tenantId', '12')
+          formData.append('tenantId', '18')
           postProcessDraft(formData).then((res) => {
             this.$message.success('保存成功')
             this.dialogVisible2 = false
@@ -315,7 +315,7 @@
         if (formKey) {
           designFormDesignServiceAll({
             status: 'enabled',
-            tenantId: '12',
+            tenantId: '18',
             ascription: this.$refs.ProcessInformation.postData.ascription,
             business: '',
             createId: '',
