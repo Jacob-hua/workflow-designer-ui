@@ -88,7 +88,7 @@
         formData.append('status', 'enabled')
         formData.append('createId', '1')
         formData.append('createName', 'admin')
-        formData.append('tenantId', '12')
+        formData.append('tenantId', '18')
         formData.append('file', file1)
         postFormDesignServiceRealiseProcessData(formData).then((res) => {
           this.$message.success('发布至可用表单成功')
@@ -124,7 +124,7 @@
         formData.append('status', 'drafted')
         formData.append('createId', '1')
         formData.append('createName', 'admin')
-        formData.append('tenantId', '12')
+        formData.append('tenantId', '18')
         formData.append('file', file1)
         postFormDesignService(formData).then((res) => {
           this.$message.success('保存草稿成功')

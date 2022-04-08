@@ -133,7 +133,7 @@
     methods: {
       getOption() {
         apiCascade({
-          tenantId: 30,
+          tenantId: 18,
           isUse: 1
         }).then((res) => {
           this.options = res.result

@@ -283,7 +283,7 @@ export default {
         formData.append('status', 'enabled')
         formData.append('createId', '1')
         formData.append('createName', 'admin')
-        formData.append('tenantId', '12')
+        formData.append('tenantId', '18')
         formData.append('file', file1)
         postDesignDesignService(formData).then((res) => {
           this.$message.success('保存成功')
