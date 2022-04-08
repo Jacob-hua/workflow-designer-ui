@@ -55,7 +55,7 @@
         </span>
         <div class="title-item-main">
           <!-- <el-input v-model="postData.system" placeholder="" :disabled="true"></el-input> -->
-          <el-select v-model="postData.systemType" placeholder="请选择">
+          <el-select v-model="postData.systemType" placeholder="请选择" :disabled="true">
               <el-option
                 v-for="item in optionSystem"
                 :key="item.value"
