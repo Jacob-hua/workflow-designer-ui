@@ -156,7 +156,9 @@
         })
       },
       getFormData(formKey) {
+        console.log('11111', formKey)
         if (formKey) {
+          let docName = formKey.split(':')[2]
           designFormDesignServiceAll({
             status: 'enabled',
             tenantId: '18',
@@ -165,7 +167,7 @@
             createId: '',
             numberCode: '',
             name: '',
-            docName: formKey
+            docName: docName
           }).then((res) => {
             this.formContent = res.result[0].content
             this.formOBKey++
