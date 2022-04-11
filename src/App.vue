@@ -27,6 +27,8 @@ export default {
   }
   #app {
     box-sizing: border-box;
+    min-width: 1920px;
+    min-height: 1080px;
   }
   
   .bjs-powered-by {

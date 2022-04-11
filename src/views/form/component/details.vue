@@ -182,7 +182,7 @@
         postFormDesignRecordFormDesignRecordInfo({
           id: this.value,
           status: this.status,
-          tenantId: 18,
+          tenantId: this.$store.state.tenantId,
           ascription: this.ascription,
           business: this.business,
           createId: 1
@@ -211,7 +211,7 @@
         formData.append('status', 'enabled')
         formData.append('createId', '1')
         formData.append('createName', 'admin')
-        formData.append('tenantId', '18')
+        formData.append('tenantId', this.$store.state.tenantId)
         formData.append('file', file1)
         postFormDesignServiceRealiseProcessData(formData).then((res) => {
           this.$message.success('发布至可用表单成功')

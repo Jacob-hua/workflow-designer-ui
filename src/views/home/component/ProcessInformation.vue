@@ -263,6 +263,7 @@
           moddleExtensions: [],
         });
         this.bpmnModeler.on("selection.changed", ({ newSelection }) => {
+          console.log(newSelection, '0000')
             this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
         });
         window.bpmnInstances = {
@@ -295,6 +296,11 @@
           if (warnings && warnings.length) {
             warnings.forEach(warn => console.warn(warn));
           }
+          this.$nextTick(() => {
+            console.log(window.bpmnInstances.elementRegistry.filter((element) => {
+              return element.id === "divideUnit"
+            }))
+          })
         } catch (e) {
           console.error(`[Process Designer Warn]: ${e?.message || e}`);
         }

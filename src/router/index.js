@@ -12,7 +12,7 @@ const routes = [
     redirect: 'bpmn',
     children: [
       {
-        path: '/bpmn',
+        path: 'bpmn',
         name: 'bpmn',
         component: () => import('@/views/bpmnJsELe/index'),
         meta: { title: 'bpmn', icon: 'dashboard' }
@@ -30,15 +30,9 @@ const routes = [
         meta: { title: 'bpmn', icon: 'dashboard' }
       },
       {
-        path: '3',
-        name: '3',
-        component: () => import('@/views/404'),
-        hidden: true
-      },
-      {
-        path: '4',
-        name: '4',
-        component: () => import('@/views/404'),
+        path: 'runTime',
+        name: 'runTime',
+        component: () => import('@/views/runtime/index'),
         hidden: true
       },
       {
@@ -48,8 +42,8 @@ const routes = [
         hidden: true
       },
       {
-        path: '6',
-        name: '6',
+        path: 'all',
+        name: 'all',
         component: () => import('@/views/configuration'),
         hidden: true,
       },

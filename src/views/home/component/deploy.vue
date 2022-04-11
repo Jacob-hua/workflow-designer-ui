@@ -210,7 +210,7 @@
           formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
           formData.append('updateBy', this.$refs.ProcessInformation.postData.createBy)
           // formData.append('processResource', '')
-          formData.append('tenantId', '18')
+          formData.append('tenantId', this.$store.state.tenantId)
           postDeployForOnline(formData).then((res) => {
             this.$message.success('保存成功')
             this.dialogVisible2 = false
@@ -221,7 +221,7 @@
       getFormList() {
         designFormDesignServiceAll({
           status: 'enabled',
-          tenantId: '18',
+          tenantId: this.$store.state.tenantId,
           ascription: this.$refs.ProcessInformation.postData.ascription,
           business: '',
           createId: '',
@@ -253,12 +253,11 @@
             this.bpmnData.grounp = element.businessObject.$attrs['camunda:' + 'candidateGroups']
             this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
             this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
-            this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
-            // window.bpmnInstances.modeling.updateProperties(element, { formKey: '56999' });
-            // bpmn.saveXML({ format: true }).then(({ xml }) => {
-            //   console.log(xml, '0000')
+            // window.bpmnInstances.elementRegistry.forEach((item) => {
+            //   window.bpmnInstances.modeling.setColor(item, { 'fill': '#ffffff' } )
             // })
-            // console.log(window.bpmnInstances.modeler, '0000')
+            // window.bpmnInstances.modeling.setColor(window.bpmnInstances.modeler, { 'fill': '#cccccc', 'stroke': '#1890ff' } )
+            this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
           } else {
             this.initData()
           }
@@ -307,7 +306,7 @@
           formData.append('processFile', file1)
           formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
           // formData.append('processResource', '')
-          formData.append('tenantId', '18')
+          formData.append('tenantId', this.$store.state.tenantId)
           postProcessDraft(formData).then((res) => {
             this.$message.success('保存成功')
             this.dialogVisible2 = false
@@ -320,7 +319,7 @@
           let docName = formKey.split(':')[2]
           designFormDesignServiceAll({
             status: 'enabled',
-            tenantId: '18',
+            tenantId: this.$store.state.tenantId,
             ascription: this.$refs.ProcessInformation.postData.ascription,
             business: '',
             createId: '',
