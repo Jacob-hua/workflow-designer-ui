@@ -45,7 +45,7 @@
     </el-dialog>
     <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="70%" custom-class="dialogVisible1">
       <div>
-        <ProcessInformation type="details2" ref="details2" v-if="dialogVisible2" @selection="selection"></ProcessInformation>
+        <ProcessInformation type="details2" ref="details2" v-if="dialogVisible2" @selection="selection" :seeType="seeType"></ProcessInformation>
       </div>
       <div class="bpmn-configure">
         <div class="bpmn-configure-basic">
@@ -68,7 +68,7 @@
           </div>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer" v-if="seeType === 'delete'">
         <!-- <el-button @click="dialogVisible2 = false">回收</el-button> -->
         <el-button @click="deleteDeployment()">删除</el-button>
       </span>
@@ -81,6 +81,12 @@
   import formOB from './formOB.vue'
   import { getDeployBasic, designFormDesignServiceAll, getDeleteDeployment, getDeployAndProcessInfo } from '@/unit/api.js'
   export default {
+    props:{
+      seeType: {
+        type: String,
+        default: 'delete'
+      }
+    },
     data() {
       return {
         dialogVisible1: false,
@@ -199,7 +205,7 @@
         }).then(() => {
           getDeleteDeployment({
             id: this.$refs.details2.postData.deployRecordId,
-            cascade: false
+            cascade: true
           }).then(() => {
             this.$message({
               type: 'success',

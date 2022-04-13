@@ -11,7 +11,7 @@
   import {
     FormEditor
   } from '@bpmn-io/form-js-editor';
-  import { useState } from 'preact/hooks';
+  // import { useState } from 'preact/hooks';
   export default {
     data() {
       return {
@@ -38,9 +38,9 @@
         })
       },
       save() {
-        console.log(useState(this.schema))
-        // let { href, filename } = this.setEncoded('form', 'test', JSON.stringify(this.formEditor.saveSchema()))
-        // this.downloadFunc(href, filename);
+        // console.log(useState(this.schema))
+        let { href, filename } = this.setEncoded('form', 'test', JSON.stringify(this.formEditor.saveSchema()))
+        this.downloadFunc(href, filename);
       },
       importData() {
         return this.formEditor.saveSchema()

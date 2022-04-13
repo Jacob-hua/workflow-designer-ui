@@ -48,7 +48,7 @@
         </div>
       </div>
       <div class="runtime-home-button">
-        <div class="button1">
+        <div class="button1" @click="goAdd()">
           <div class="title">
             <i class="el-icon-circle-plus"></i>
           </div>
@@ -96,7 +96,7 @@
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" class="button1">
+              <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small">
                 执行
               </el-button>
               <el-button @click.native.prevent="detailsDiolog(scope.row)" type="text" size="small">
@@ -112,17 +112,24 @@
         </el-pagination>
       </div>
     </div>
+    <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd"></runtimeAdd>
+    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement"></runTimeImplement>
   </div>
 </template>
 
 <script>
+  import runtimeAdd from './component/runtimeAdd.vue'
+  import runTimeImplement from './component/runTimeImplement.vue'
   export default {
     data() {
       return {
         options: [],
         value: '',
+        valueDate: [],
         radio: '',
         checkList: [],
+        dialogVisibleAdd: false,
+        dialogVisibleImplement: false,
         tableData: [
           {
             name: '王小虎',
@@ -157,7 +164,26 @@
       },
       handleCurrentChange() {
 
+      },
+      deployDiolog() {
+        this.dialogVisibleImplement = true
+      },
+      closeDialogImplement() {
+        this.dialogVisibleImplement = false
+      },
+      detailsDiolog() {
+        
+      },
+      goAdd() {
+        this.dialogVisibleAdd = true
+      },
+      closeDialogAdd() {
+        this.dialogVisibleAdd = false
       }
+    },
+    components:{
+      runtimeAdd,
+      runTimeImplement
     }
   }
 </script>
@@ -183,7 +209,11 @@
   .marginRight20 {
     margin-right: 20px;
   }
-
+  
+  .button1 {
+    cursor: pointer;
+  }
+  
   .datePick {}
 
   .datePickTitle {

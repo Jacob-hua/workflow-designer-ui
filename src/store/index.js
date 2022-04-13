@@ -29,6 +29,24 @@ export default new Vuex.Store({
         label: '全部业务'
       }
     ],
+    optionsSystemType: [
+      {
+        value: 'energy-1',
+        label: '配电'
+      },
+      {
+        value: 'energy-2',
+        label: '空压'
+      },
+      {
+        value: 'energy-3',
+        label: '供暖'
+      },
+      {
+        value: 'energy-4',
+        label: '空调'
+      },
+    ],
     tenantId: '18'
   },
   mutations: {

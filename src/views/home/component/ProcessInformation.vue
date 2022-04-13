@@ -71,7 +71,7 @@
     </div>
     <div v-if="type == 'details2'">
       <span class="bnpmTitle">巡视工作流</span>
-      <span class="bnpmSwitch">
+      <span class="bnpmSwitch" v-if="seeType === 'delete'">
         <el-switch
           v-model="switchValue"
           active-color="#13ce66"
@@ -104,6 +104,10 @@
   export default {
     props:{
       type: String,
+      seeType: {
+        type: String,
+        default: 'delete'
+      },
       value: String, // xml 字符串
       processId: String,
       processName: String,
@@ -263,7 +267,6 @@
           moddleExtensions: [],
         });
         this.bpmnModeler.on("selection.changed", ({ newSelection }) => {
-          console.log(newSelection, '0000')
             this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
         });
         window.bpmnInstances = {

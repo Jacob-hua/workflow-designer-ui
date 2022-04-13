@@ -23,11 +23,11 @@
             </div>
             <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-view">预览</el-button>
           </el-tooltip>
-         <el-tooltip v-if="simulation" effect="light" :content="this.simulationStatus ? '退出模拟' : '开启模拟'">
+         <!-- <el-tooltip v-if="simulation" effect="light" :content="this.simulationStatus ? '退出模拟' : '开启模拟'">
             <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-cpu" @click="processSimulation">
               模拟
             </el-button>
-          </el-tooltip>
+          </el-tooltip> -->
           <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至驾驶舱工作流</el-button>
         </el-button-group>
         <!-- <el-button-group key="align-control">
