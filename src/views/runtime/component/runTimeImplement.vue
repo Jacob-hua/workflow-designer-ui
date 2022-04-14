@@ -1,9 +1,9 @@
 <template>
   <div>
-    <el-dialog title="执行工作流" :visible="dialogVisible" width="85%" :before-close="handleClose">
+    <el-dialog title="执行工作流" :visible="dialogVisible" width="90%" :before-close="handleClose">
       <div class="Implement">
         <div class="Implement-left">
-          <ProcessInformation></ProcessInformation>
+          <ProcessInformation ref="ProcessInformation" v-if="dialogVisible"></ProcessInformation>
           <div class="function-list">
             <span class="function-item" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
             <span class="function-item" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
@@ -11,7 +11,7 @@
             <span class="function-item" @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
             <span class="function-item" @click="changeFunction('reject')" :class="functionCheck === 'reject' ? 'function-check' : ''">驳回</span>
             <span class="function-item" @click="changeFunction('termination')" :class="functionCheck === 'termination' ? 'function-check' : ''">终止</span>
-            <span class="function-see">查看</span>
+            <span class="function-see" @click="goSee()">查看</span>
           </div>
           <div class="function-main">
             <div v-if="functionCheck === 'agency'">
@@ -61,29 +61,56 @@
               </div>
             </div>
             <div v-if="functionCheck === 'reject'">
-              <div v-if="dataList.reject" class="HangStyle">
+              <div v-if="dataList.reject.rejectBollen" class="HangStyle">
                 <span style="color: #0066cc;">当前流程正常运行，如需将流程驳回，请进行认证操作</span>
                 <div class="confirm" @click="confirmation()">驳回验证</div>
               </div>
-              <div v-if="dataList.reject">
-                <span style="color: #0066cc;">当前流程已被挂起，如需将继续执行流程，请进行认证操作</span>
-                <div class="confirm">重新激活</div>
+              <div v-if="!dataList.reject.rejectBollen">
+                <div class="rejectData">
+                  <span>{{ dataList.reject.data }}</span>
+                </div>
+                <div class="rejectName">
+                  <span>{{ dataList.reject.name }}</span>
+                </div>
+                <div>
+                  <span class="rejectWord">驳回至</span>
+                  <span  class="rejectResult">{{ dataList.reject.rejectResult }}</span>
+                </div>
               </div>
             </div>
             <div v-if="functionCheck === 'termination'">
-               <div v-if="dataList.termination" class="HangStyle">
+               <div v-if="dataList.termination.terminationBollon" class="HangStyle">
                  <span style="color: #0066cc;">当前流程正常运行，如需将流程终止，请进行认证操作</span>
-                 <div class="confirm">终止确认</div>
+                 <div class="confirm" @click="confirmation()">终止确认</div>
                </div>
-               <div v-if="dataList.termination">
-                 <span style="color: #0066cc;">当前流程已被终止，如需将继续执行流程，请进行认证操作</span>
-                 <div class="confirm">重新激活</div>
+               <div v-if="!dataList.termination.terminationBollon">
+                 <div class="rejectData">
+                   <span>{{ dataList.termination.data }}</span>
+                 </div>
+                 <div class="rejectName">
+                   <span>{{ dataList.termination.name }}</span>
+                 </div>
+                 <div class="rejectWord">
+                   流程终止
+                 </div>
                </div>
             </div>
           </div>
         </div>
         <div class="Implement-right">
-    
+           <div class="bpmn-configure-basic">
+             <div class="bpmn-configure-title">工单分配</div>
+             <div class="bpmn-configure-Main">
+               <div class="bpmn-configure-Main-item"> <span>名<span style="visibility: hidden;">占位</span>称</span>: <span>{{ bpmnData.name }}</span> </div>
+               <div class="bpmn-configure-Main-item"> <span>绑定岗位</span>: <span>{{ bpmnData.grounp }}</span> </div>
+               <div class="bpmn-configure-Main-item"> <span>绑定人员</span>: <span>{{ bpmnData.assignee }}</span> </div>
+               <div class="bpmn-configure-Main-item"> <span>备<span style="visibility: hidden;">占位</span>注</span>: <span>{{ bpmnData.document }}</span> </div>
+             </div>
+           </div>
+           <div style="margin-top: 20px;margin-bottom: 10px;">表单内容</div>
+            <div class="Implement-right-form">
+              <formRuntime></formRuntime>
+            </div>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -100,6 +127,7 @@
   import ProcessInformation from '@/views/home/component/ProcessInformation.vue'
   import runtimePeople from './runtimePeople.vue'
   import runtimeConfirmation from './runtimeConfirmation.vue'
+  import formRuntime from './formRuntime.vue'
   export default {
     props: {
       dialogVisible: {
@@ -118,13 +146,28 @@
             name: '大乔'
           }
         ],
+        bpmnData: {
+          name: 'Task1',
+          grounp: 'admin',
+          assignee: 'admin1,admin2',
+          document: '你好'
+        },
         dataList: {
           agency: [],
           Circulate: [],
           signature: [],
           Hang: true,
-          reject: true,
-          termination: true
+          reject: {
+            rejectBollen: true,
+            data: '',
+            name: '',
+            rejectResult: ''
+          },
+          termination: {
+            terminationBollon: true,
+            data: '',
+            name: ''
+          }
         }
       }
     },
@@ -144,12 +187,16 @@
       },
       confirmation() {
         this.$refs.runtimeConfirmation.dialogVisible = true
+      },
+      goSee() {
+        this.$emit('goSee')
       }
     },
     components: {
       ProcessInformation,
       runtimePeople,
-      runtimeConfirmation
+      runtimeConfirmation,
+      formRuntime
     }
   }
 </script>
@@ -164,10 +211,13 @@
   }
 
   .Implement-left {
-    flex: 8;
+    flex: 6;
   }
 
   .Implement-right {
+    padding-left: 20px;
+    border-left: 1px solid #eeeeee;
+    margin-left: 20px;
     flex: 2;
   }
 
@@ -197,6 +247,7 @@
     right: 10px;
     top: 5px;
     color: #0055ff;
+    cursor: pointer;
   }
 
   .function-main {
@@ -262,5 +313,59 @@
     cursor: pointer;
     color: rgb(255, 76, 0);
     margin-top: 20px;
+  }
+  
+  .rejectData {
+    margin-top: 20px;
+  }
+  
+  .rejectName {
+    margin-top: 10px;
+  }
+  
+  .rejectWord {
+    display: inline-block;
+    margin-top: 20px;
+    color: #0066cc;
+    margin-right: 15px;
+  }
+  
+  .rejectResult {
+    display: inline-block;
+    border: 1px solid #0066cc;
+    text-align: center;
+    height: 36px;
+    line-height: 36px;
+    width: 120px;
+    border-radius: 5px;
+    color: #0066cc;
+  }
+  
+  .bpmn-configure-basic {
+    flex: 1;
+  }
+  
+  .bpmn-configure-title {
+    height: 40px;
+    line-height: 40px;
+  }
+  
+  .bpmn-configure-Main {
+    height: 250px;
+    border: 1px solid #000000;
+    padding: 20px 10px;
+    overflow: auto;
+    position: relative;
+  }
+  
+  .bpmn-configure-Main-item {
+    margin-bottom: 20px;
+    color: black;
+  }
+  
+  .Implement-right-form {
+    height: 475px;
+    border: 1px solid #000000;
+    overflow: auto;
   }
 </style>

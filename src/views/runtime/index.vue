@@ -113,13 +113,16 @@
       </div>
     </div>
     <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd"></runtimeAdd>
-    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement"></runTimeImplement>
+    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog()" ref="runTimeImplement"></runTimeImplement>
+    <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
 </template>
 
 <script>
+  import bpmnData from "@/assets/js/bpmnMock.js"
   import runtimeAdd from './component/runtimeAdd.vue'
   import runTimeImplement from './component/runTimeImplement.vue'
+  import lookover from './component/lookover.vue'
   export default {
     data() {
       return {
@@ -167,12 +170,18 @@
       },
       deployDiolog() {
         this.dialogVisibleImplement = true
+        this.$nextTick(() => {
+          this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(bpmnData.value)
+        })
       },
       closeDialogImplement() {
         this.dialogVisibleImplement = false
       },
       detailsDiolog() {
-        
+        this.$refs.lookover.dialogVisible = true
+        this.$nextTick(() => {
+          this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(bpmnData.value)
+        })
       },
       goAdd() {
         this.dialogVisibleAdd = true
@@ -183,7 +192,8 @@
     },
     components:{
       runtimeAdd,
-      runTimeImplement
+      runTimeImplement,
+      lookover
     }
   }
 </script>

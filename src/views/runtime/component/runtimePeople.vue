@@ -16,7 +16,7 @@
             <div>
               <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="全部" name=""></el-tab-pane>
-                <el-tab-pane :label="item" :name="item" v-for="(item, index) in letterList"></el-tab-pane>
+                <el-tab-pane :label="item" :name="item" v-for="(item, index) in letterList" :key="index"></el-tab-pane>
               </el-tabs>
             </div>
           </div>
@@ -27,8 +27,6 @@
               <el-table-column label="序号" type="index" align="center">
               </el-table-column>
               <el-table-column prop="name" label="姓名" align="center">
-              </el-table-column>
-              <el-table-column prop="name" label="姓名" show-overflow-tooltip align="center">
               </el-table-column>
               <el-table-column prop="name" label="手机号码" show-overflow-tooltip align="center">
               </el-table-column>

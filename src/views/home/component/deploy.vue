@@ -426,11 +426,6 @@
     flex: 1;
   }
   
-  .bpmn-configure-form {
-    flex: 3;
-    margin-left: 20px;
-  }
-  
   .bpmn-configure-Main {
     height: 200px;
     border: 1px solid #000000;
@@ -442,6 +437,11 @@
   .bpmn-configure-Main-item {
     margin-bottom: 20px;
     color: black;
+  }
+  
+  .bpmn-configure-form {
+    flex: 3;
+    margin-left: 20px;
   }
   
   /deep/ .dialogVisible2 .dialogVisible2-right {
