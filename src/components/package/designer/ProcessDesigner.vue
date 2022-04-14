@@ -23,7 +23,7 @@
             </div>
             <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-view">预览</el-button>
           </el-tooltip>
-<!--          <el-tooltip v-if="simulation" effect="light" :content="this.simulationStatus ? '退出模拟' : '开启模拟'">
+         <!-- <el-tooltip v-if="simulation" effect="light" :content="this.simulationStatus ? '退出模拟' : '开启模拟'">
             <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-cpu" @click="processSimulation">
               模拟
             </el-button>
@@ -413,7 +413,6 @@ export default {
     importLocalFile() {
       const that = this;
       const file = this.$refs.refFile.files[0];
-      console.log(file, '00000')
       const reader = new FileReader();
       reader.readAsText(file);
       reader.onload = function() {

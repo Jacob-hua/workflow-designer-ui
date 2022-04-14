@@ -70,7 +70,7 @@
           page: 1,
           limit: 10,
           total: 100,
-          tenantId: '18',
+          tenantId: this.$store.state.tenantId,
           ascription: '',
           business: '',
           startTime: '',
@@ -151,6 +151,7 @@
   
   /deep/ .el-table th.el-table__cell {
     padding: 16px 0px;
+    background-color: #f5f7f9;
   }
   .home-table-page {
     text-align: right;

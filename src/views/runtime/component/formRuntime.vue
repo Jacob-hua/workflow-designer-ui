@@ -3,16 +3,19 @@
     <div id="form" ref="form">
       
     </div>
-    <!-- <span @click="save()">导出</span> -->
   </div>
 </template>
 
 <script>
-  import {
-    FormEditor
-  } from '@bpmn-io/form-js-editor';
-  // import { useState } from 'preact/hooks';
+  import { Form } from '@bpmn-io/form-js-viewer'
+  import formValue from '@/assets/js/bpmnMock.js'
   export default {
+    props:{
+      formContant: {
+        type: String,
+        default: ''
+      }
+    },
     data() {
       return {
         formEditor: null,
@@ -29,21 +32,18 @@
     methods: {
       async init() {
         const container = this.$refs.form
-        this.formEditor = new FormEditor({
+        this.formEditor = new Form({
           container: container
         });
-        this.formEditor.importSchema(this.schema)
-        this.formEditor.on('selection.changed', (item) => {
-          console.log('选中？', item)
-        })
+        let schema = JSON.parse(formValue.formValue)
+        this.formEditor.importSchema(schema)
       },
       save() {
-        // console.log(useState(this.schema))
-        let { href, filename } = this.setEncoded('form', 'test', JSON.stringify(this.formEditor.saveSchema()))
-        this.downloadFunc(href, filename);
-      },
-      importData() {
-        return this.formEditor.saveSchema()
+        // let { href, filename } = this.setEncoded('form', 'test', JSON.stringify(this.formEditor.saveSchema()))
+        // this.downloadFunc(href, filename);
+        form.on('submit', (event) => {
+          console.log(event.data, event.errors);
+        });
       },
       downloadProcess() {
         
@@ -76,19 +76,9 @@
           this.formEditor.importSchema(JSON.parse(reader.result))
         }
       },
-      // 加载传入字符串
-      importLocalFile() {
-        const that = this;
-        const file = this.$refs.refFile.files[0];
-        const reader = new FileReader();
-        reader.readAsText(file);
-        reader.onload = () => {
-          this.formEditor.importSchema(JSON.parse(reader.result))
-        }
-      },
     },
     mounted() {
-      // this.init()
+      this.init()
     }
   }
 </script>
@@ -113,17 +103,29 @@
   }
   
   .formDiv {
-    height: 100%;
+    /* height: 100%; */
   }
   
   #form {
     /* height: calc(100vh - 48px); */
-    height: 100%;
-    background-color: aliceblue;
+    /* height: 100%; */
+    /* background-color: aliceblue; */
   }
   
   /deep/ .fjs-form-container {
-    border: 1px solid #000000;
-    margin: 0px 20px;
+    /* border: 1px solid #000000; */
+    margin: 0px 0px 0px 00px;
+  }
+  
+  /deep/ .fjs-palette-container {
+    display: none;
+  }
+  
+  /deep/ .fjs-properties-container {
+    display: none;
+  }
+  
+  /deep/ .fjs-context-pad {
+    display: none;
   }
 </style>

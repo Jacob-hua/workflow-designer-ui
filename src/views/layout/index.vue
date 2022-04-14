@@ -20,7 +20,7 @@
               <i class="el-icon-document"></i>
               <span slot="title">工作流驾驶舱</span>
             </el-menu-item>
-            <el-menu-item index="4">
+            <el-menu-item index="runTime">
               <i class="el-icon-setting"></i>
               <span slot="title">运行中工作流</span>
             </el-menu-item>
@@ -28,7 +28,7 @@
               <i class="el-icon-setting"></i>
               <span slot="title">历史工作流</span>
             </el-menu-item>
-             <el-menu-item index="6">
+             <el-menu-item index="all">
                <i class="el-icon-setting"></i>
                <span slot="title">工作流全局配置</span>
              </el-menu-item>

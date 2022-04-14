@@ -138,7 +138,7 @@
       // 查询草稿箱
       getDraftData() {
         postFormDesignRecordDraftInfo({
-          tenantId: '18',
+          tenantId: this.$store.state.tenantId,
           status: 'drafted',
           ascription: this.projectCode,
           business: this.projectValue,
@@ -154,7 +154,7 @@
       // 查询可部署流程
       getEnableData() {
         postFormDesignBasicFormRecord({
-          tenantId: '18',
+          tenantId: this.$store.state.tenantId,
           status: 'enabled',
           ascription: this.projectCode,
           business: this.projectValue,
@@ -240,7 +240,7 @@
         postFormDesignRecordFormDesignRecordInfo({
           id: item.id,
           status: this.activeName,
-          tenantId: 18,
+          tenantId: this.$store.state.tenantId,
           ascription: this.projectCode,
           business: this.projectValue,
           createId: 1

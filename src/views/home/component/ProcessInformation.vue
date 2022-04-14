@@ -56,13 +56,9 @@
         <div class="title-item-main">
           <!-- <el-input v-model="postData.system" placeholder="" :disabled="true"></el-input> -->
           <el-select v-model="postData.systemType" placeholder="请选择" :disabled="true">
-              <el-option
-                v-for="item in optionSystem"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
+            <el-option v-for="item in optionSystem" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
         </div>
       </div>
     </div>
@@ -71,11 +67,8 @@
     </div>
     <div v-if="type == 'details2'">
       <span class="bnpmTitle">巡视工作流</span>
-      <span class="bnpmSwitch">
-        <el-switch
-          v-model="switchValue"
-          active-color="#13ce66"
-          active-text="激活">
+      <span class="bnpmSwitch" v-if="seeType === 'delete'">
+        <el-switch v-model="switchValue" active-color="#13ce66" active-text="激活">
         </el-switch>
       </span>
     </div>
@@ -99,11 +92,15 @@
   import activitiModdleDescriptor from "@/components/package/designer/plugins/descriptor/activitiDescriptor.json";
   import flowableModdleDescriptor from "@/components/package/designer/plugins/descriptor/flowableDescriptor.json";
   import {
-      processInstanceData
-    } from '@/unit/api.js'
+    processInstanceData
+  } from '@/unit/api.js'
   export default {
-    props:{
+    props: {
       type: String,
+      seeType: {
+        type: String,
+        default: 'delete'
+      },
       value: String, // xml 字符串
       processId: String,
       processName: String,
@@ -159,25 +156,25 @@
           }
           return [this.additionalModel];
         }
-    
+
         // 插入用户自定义扩展模块
         if (Object.prototype.toString.call(this.additionalModel) === "[object Array]") {
           Modules.push(...this.additionalModel);
         } else {
           this.additionalModel && Modules.push(this.additionalModel);
         }
-    
+
         // 翻译模块
         const TranslateModule = {
           translate: ["value", customTranslate(this.translations || translationsCN)]
         };
         Modules.push(TranslateModule);
-    
+
         // 模拟流转模块
         if (this.simulation) {
           Modules.push(tokenSimulation);
         }
-    
+
         // 根据需要的流程类型设置扩展元素构建模块
         // if (this.prefix === "bpmn") {
         //   Modules.push(bpmnModdleExtension);
@@ -191,7 +188,7 @@
         if (this.prefix === "activiti") {
           Modules.push(activitiModdleExtension);
         }
-    
+
         return Modules;
       },
       moddleExtensions() {
@@ -200,14 +197,14 @@
         if (this.onlyCustomizeModdle) {
           return this.moddleExtension || null;
         }
-    
+
         // 插入用户自定义模块
         if (this.moddleExtension) {
           for (let key in this.moddleExtension) {
             Extensions[key] = this.moddleExtension[key];
           }
         }
-    
+
         // 根据需要的 "流程类型" 设置 对应的解析文件
         if (this.prefix === "activiti") {
           Extensions.activiti = activitiModdleDescriptor;
@@ -218,7 +215,7 @@
         if (this.prefix === "camunda") {
           Extensions.camunda = camundaModdleDescriptor;
         }
-    
+
         return Extensions;
       }
     },
@@ -233,8 +230,7 @@
           ascription: '',
           systemType: ''
         },
-        optionSystem: [
-          {
+        optionSystem: [{
             value: 'energy-1',
             label: '配电'
           },
@@ -254,7 +250,7 @@
         switchValue: ''
       }
     },
-    methods:{
+    methods: {
       initBpmnModeler() {
         if (this.bpmnModeler) return;
         this.bpmnModeler = new BpmnModeler({
@@ -262,8 +258,10 @@
           additionalModules: [],
           moddleExtensions: [],
         });
-        this.bpmnModeler.on("selection.changed", ({ newSelection }) => {
-            this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
+        this.bpmnModeler.on("selection.changed", ({
+          newSelection
+        }) => {
+          this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
         });
         window.bpmnInstances = {
           modeler: this.bpmnModeler,
@@ -291,14 +289,38 @@
         let newName = this.processName || `业务流程_${new Date().getTime()}`;
         let xmlString = xml || DefaultEmptyXML(newId, newName, this.prefix);
         try {
-          let { warnings } = await this.bpmnModeler.importXML(xmlString);
+          let {
+            warnings
+          } = await this.bpmnModeler.importXML(xmlString);
           if (warnings && warnings.length) {
             warnings.forEach(warn => console.warn(warn));
           }
+          this.$nextTick(() => {
+            let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
+              return element.id === "task1"
+            })
+            // window.bpmnInstances.elementRegistry.forEach((item) => {
+            //   window.bpmnInstances.modeling.setColor(item, {
+            //     'fill': '#ffffff'
+            //   })
+            // })
+            window.bpmnInstances.modeling.setColor(oneSet[0], {
+              'fill': '#cccccc',
+              // 'stroke': '#1890ff'
+            })
+          })
         } catch (e) {
           console.error(`[Process Designer Warn]: ${e?.message || e}`);
         }
       },
+      async lightSharp(id) {
+        this.$nextTick(() => {
+          let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
+            return element.id === id
+          })
+          
+        })
+      }
     },
     mounted() {
       this.initBpmnModeler();
@@ -315,23 +337,26 @@
 </script>
 
 <style scoped="scoped">
-  .ProcessInformation {
-    
-  }
+  .ProcessInformation {}
+
   .ProcessInformation-title {
     border-bottom: 1px solid #CCCCCC;
     margin-bottom: 40px;
   }
+
   .title-item {
     display: inline-block;
     margin-bottom: 20px;
   }
+
   .title-item-label {
     margin-right: 15px;
   }
+
   .title-item-main {
     display: inline-block;
   }
+
   /deep/ .el-input.is-disabled .el-input__inner {
     color: black;
     width: 180px;
@@ -340,6 +365,7 @@
     padding: 0px 10px;
     background-color: #f2f2f2;
   }
+
   /deep/ .el-input__inner {
     width: 180px;
     height: 43px;
@@ -347,14 +373,17 @@
     padding: 0px 10px;
     background-color: #f2f2f2;
   }
+
   .marginLeft40 {
     margin-left: 70px;
   }
+
   .ProcessInformation-bpmn {
     height: 400px;
     border: 1px solid black;
     position: relative;
   }
+
   .bpmn-Main-title {
     position: absolute;
     font-weight: 700;
@@ -363,15 +392,19 @@
     top: 10px;
     left: 10px;
   }
+
   .my-process-designer__canvas {
     height: 100%;
   }
+
   /deep/ .djs-palette {
     display: none;
   }
+
   /deep/ .djs-context-pad {
     display: none;
   }
+
   .bnpmTitle {
     font-weight: 700;
     color: black;
@@ -379,6 +412,7 @@
     top: -15px;
     left: 10px;
   }
+
   .bnpmSwitch {
     position: relative;
     top: -15px;

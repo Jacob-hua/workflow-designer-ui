@@ -95,7 +95,7 @@
       getDraftData() {
         this.valueDate = this.valueDate || []
         postFormDesignRecordDraftInfo({
-          tenantId: '18',
+          tenantId: this.$store.state.tenantId,
           status: 'drafted',
           ascription: 'public',
           business: '',
@@ -112,7 +112,7 @@
       getEnableData() {
         this.valueDate = this.valueDate || []
         postFormDesignBasicFormRecord({
-          tenantId: '18',
+          tenantId: this.$store.state.tenantId,
           status: 'enabled',
           ascription: 'public',
           business: '',
@@ -184,7 +184,7 @@
         postFormDesignRecordFormDesignRecordInfo({
           id: item.id,
           status: this.activeName,
-          tenantId: 18,
+          tenantId: this.$store.state.tenantId,
           ascription: 'public',
           business: '',
           createId: 1

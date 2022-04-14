@@ -73,7 +73,7 @@
           business: '',
           createBy: '-1',
           systemType: '',
-          tenantId: '18',
+          tenantId: this.$store.state.tenantId,
           startTime: '',
           endTime: '',
           order: 'desc'
@@ -160,6 +160,7 @@
   }
   
   /deep/ .el-table th.el-table__cell {
+    background-color: #f5f7f9;
     padding: 16px 0px;
   }
   .home-table-page {
