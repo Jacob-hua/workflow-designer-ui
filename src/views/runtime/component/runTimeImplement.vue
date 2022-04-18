@@ -3,9 +3,9 @@
     <el-dialog title="执行工作流" :visible="dialogVisible" width="90%" :before-close="handleClose">
       <div class="Implement">
         <div class="Implement-left">
-          <ProcessInformation ref="ProcessInformation" v-if="dialogVisible"></ProcessInformation>
-          <div class="function-list">
-            <span class="function-item" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
+          <ProcessInformation ref="ProcessInformation" v-if="dialogVisible" @selectOneSet="selectOneSet"></ProcessInformation>
+          <div class="function-list" v-if="bpmnType === 'bpmn:UserTask'">
+            <span class="function-item" @click="changeFunction('<agency></agency>')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
             <span class="function-item" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
             <span class="function-item" @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
             <span class="function-item" @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
@@ -147,6 +147,7 @@
     data() {
       return {
         functionCheck: 'agency',
+        bpmnType: '',
         peopleListDefatil: [{
             name: '旺仔'
           },
@@ -198,6 +199,9 @@
       },
       goSee() {
         this.$emit('goSee')
+      },
+      selectOneSet(value) {
+        this.bpmnType = value.type
       }
     },
     components: {

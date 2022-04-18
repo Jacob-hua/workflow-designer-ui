@@ -180,7 +180,7 @@
             ascription: '北七家',
             systemType: 'energy-1'
           }
-          this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(bpmnData.value)
+          this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(bpmnData.value, 'task1')
         })
       },
       closeDialogImplement() {

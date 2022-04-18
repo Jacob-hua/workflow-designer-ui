@@ -283,7 +283,7 @@
           this.createNewDiagram(xmlStr)
         })
       },
-      async createNewDiagram(xml) {
+      async createNewDiagram(xml, id) {
         // 将字符串转换成图显示出来
         let newId = this.processId || `Process_${new Date().getTime()}`;
         let newName = this.processName || `业务流程_${new Date().getTime()}`;
@@ -296,18 +296,16 @@
             warnings.forEach(warn => console.warn(warn));
           }
           this.$nextTick(() => {
-            let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
-              return element.id === "task1"
-            })
-            // window.bpmnInstances.elementRegistry.forEach((item) => {
-            //   window.bpmnInstances.modeling.setColor(item, {
-            //     'fill': '#ffffff'
-            //   })
-            // })
-            window.bpmnInstances.modeling.setColor(oneSet[0], {
-              'fill': '#cccccc',
-              // 'stroke': '#1890ff'
-            })
+            if(id) {
+              let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
+                return element.id === id
+              })
+              this.$emit('selectOneSet', oneSet[0])
+              window.bpmnInstances.modeling.setColor(oneSet[0], {
+                'fill': '#cccccc',
+                // 'stroke': '#1890ff'
+              })
+            }
           })
         } catch (e) {
           console.error(`[Process Designer Warn]: ${e?.message || e}`);

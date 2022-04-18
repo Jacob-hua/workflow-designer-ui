@@ -11,24 +11,24 @@
         </div> -->
         <div class="diologMain-right">
           <div class="processList">
-            <div class="processList-item" v-for="(item, index) in processListList" :key="index">
-              <div class="processList-item-detail" @click="detailsShow()">
+            <div class="processList-item" v-for="(item, index) in formList" :key="index">
+<!--              <div class="processList-item-detail" @click="detailsShow()">
                 <span>详情</span>
-              </div>
+              </div> -->
               <div class="processList-item-word">
                 <label>表单名称:</label>
-                <span>一般性周期巡视</span>
+                <span>{{ item.name }}</span>
               </div>
               <div class="processList-item-word">
                 <label>创建人:</label>
-                <span>张三</span>
+                <span>{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
               </div>
               <div class="processList-item-word">
                 <label>创建时间:</label>
-                <span>2021-11-12 14:11:23</span>
+                <span>{{ item.createTime }}</span>
               </div>
               <div class="processList-item-button">
-                <el-button type="primary" plain @click="open">应用</el-button>
+                <el-button type="primary" plain @click="open(item)">应用</el-button>
               </div>
             </div>
           </div>
@@ -44,19 +44,26 @@
 </template>
 
 <script>
+  import { designFormDesignServiceAll, postFormDesignServiceRealiseProcessData } from '@/unit/api.js'
   export default {
     props: {
       dialogVisible: {
         type: Boolean,
         default: false
+      },
+      projectCode: {
+        type: String,
+        default: ''
+      },
+      projectValue: {
+        type: String,
+        default: ''
       }
     },
     data() {
       return {
         input: '',
-        processListList: [1, 2, 3, 4, 5, 6, 7, 8, 9],
         getData: {
-          systemType: 'energy-1',
           page: 1,
           limit: 10,
           total: 1
@@ -78,25 +85,39 @@
         designFormDesignServiceAll({
           status: 'enabled',
           tenantId: this.$store.state.tenantId,
-          ascription: this.$refs.ProcessInformation.postData.ascription,
+          ascription: 'public',
           business: '',
           createBy: '',
           numberCode: '',
-          name: this.input,
+          name: '',
           docName: ''
         }).then((res) => {
           this.formList = res.result
         })
       },
-      open() {
+      open(item) {
         this.$confirm('应用的公共表单会加入到项目表单中,是否继续', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '创建成功'
-          });
+          
+          const xml  = JSON.parse(item.content);
+          xml.id = 'form_' + Date.parse(new Date())
+          var file1 = new File([JSON.stringify(xml.content)], 'test.form', {type: 'text/xml'});
+          let formData = new FormData()
+          formData.append('name', item.name)
+          formData.append('docName', item.name +'.form')
+          formData.append('ascription', this.projectCode)
+          formData.append('code', xml.id)
+          formData.append('business', this.projectValue)
+          formData.append('status', 'enabled')
+          formData.append('createBy', '-1')
+          formData.append('createName', 'admin')
+          formData.append('tenantId', this.$store.state.tenantId)
+          formData.append('file', file1)
+          postFormDesignServiceRealiseProcessData(formData).then((res) => {
+            this.$message.success('应用至项目表单成功')
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -110,6 +131,9 @@
       detailsShow() {
         this.$refs.detailsRem.dialogVisible2 = true
       }
+    },
+    mounted() {
+      this.getFormList()
     }
   }
 </script>
@@ -159,7 +183,11 @@
     border-color: #0066cc;
     color: #0066cc;
   }
-
+  
+  .processList {
+    height: 600px;
+  }
+  
   .processList-item {
     width: 290px;
     height: 178px;

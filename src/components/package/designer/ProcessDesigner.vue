@@ -501,7 +501,6 @@ export default {
       const newConvert = new X2JS();
       this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
         const { definitions } = newConvert.xml2js(xml);
-        console.log(definitions, '000000')
         if (definitions) {
           this.previewResult = JSON.stringify(definitions, null, 4);
         } else {
