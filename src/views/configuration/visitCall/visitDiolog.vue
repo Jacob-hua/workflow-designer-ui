@@ -23,6 +23,7 @@
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
+          <span class="word1">未找到类型,点击添加</span>
         </el-form-item>
         <div class="form-diys">
           <el-form-item label="主机地址">
@@ -35,7 +36,7 @@
         <div class="form-diys">
           <el-form-item label="请求类型">
             <el-select v-model="form.type" placeholder="请选择">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                <el-option v-for="item in optionRequestType" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -57,10 +58,22 @@
               <span v-if="index !== 0" class="el-icon-remove-outline addLop" @click="deleteBodyData(index)"></span>
             </div>
             <div style="text-align: center;">
-              <el-button type="primary">执行</el-button>
+              <el-button type="primary" @click="requestFun()">执行</el-button>
             </div>
           </div>
           <div>
+            <el-form-item label="配置解析">
+              <div class="bodyData" v-for="(item, index) in bodyData" :key="index">
+                <el-form-item label="参数key">
+                  <el-input v-model="item.key"></el-input>
+                </el-form-item>
+                <el-form-item label="参数Value">
+                  <el-input v-model="item.value"></el-input>
+                </el-form-item>
+                <span v-if="index === 0" class="el-icon-circle-plus-outline addLop" @click="addBodyData()"></span>
+                <span v-if="index !== 0" class="el-icon-remove-outline addLop" @click="deleteBodyData(index)"></span>
+              </div>
+            </el-form-item>
             <el-form-item label="请求结果">
               <div class="jsonViewer">
                 <json-viewer :value="jsonData"></json-viewer>
@@ -79,40 +92,43 @@
 </template>
 
 <script>
+  import { getApiTypeList } from '@/unit/api.js'
+  import axios from "axios"
   export default {
     data() {
       return {
         dialogVisible2: false,
         options: [],
-        jsonData: {
-          tatol: 25,
-          limit: 10,
-          skip: 0,
-          all: 'uuuuaaa',
-          links: {
-            provice: [1, 2, 3, 4, 5],
-            account: {
-              a: 1,
-              b: 2,
-              c: 3
-            }
+        optionRequestType: [
+          {
+            value: 'get',
+            label: 'get'
+          },
+          {
+            value: 'post',
+            label: 'post'
           }
-        },
+        ],
+        jsonData: { },
         form: {
           source: '',
           sourceMark: '',
           name: '',
           apiMark: '',
-          type: '',
-          host: '',
-          path: '',
+          type: 'get',
+          host: 'http://k8s.isiact.com/workflow-runtime-service',
+          path: '/config/global/apiCascade',
           method: '',
           headers: ''
         },
         bodyData: [
           {
-            key: '',
-            value: ''
+            key: 'isUse',
+            value: '1'
+          },
+          {
+            key: 'tenantId',
+            value: '18'
           }
         ]
       }
@@ -126,7 +142,45 @@
       },
       deleteBodyData(index) {
         this.bodyData.splice(index, 1)
+      },
+      getData() {
+        getApiTypeList({
+          tenantId: 18
+        }).then((res) => {
+          this.options = res.result
+        })
+      },
+      requestFun() {
+        let requestData = {
+          data: {},
+          params: {}
+        }
+        switch (this.form.type){
+          case 'get':
+            this.bodyData.forEach((item, index) => {
+              requestData.params[item.key] = item.value
+            })
+            break;
+          case 'post':
+            this.bodyData.forEach((item, index) => {
+              requestData.data[item.key] = item.value
+            })
+            break;
+          default:
+            break;
+        }
+        
+        axios({
+          method: this.form.type,
+          url: this.form.host + this.form.path,
+          ...requestData
+        }).then((res) => {
+          this.jsonData = res.data.result
+        })
       }
+    },
+    mounted() {
+      this.getData()
     }
   }
 </script>
@@ -180,7 +234,19 @@
     width: 100%;
     display: flex;
   }
-
+  
+  /deep/ .el-form-item {
+    position: relative;
+  }
+  
+  .word1 {
+    font-size: 12px;
+    position: absolute;
+    top: 30px;
+    left: 385px;
+    cursor: pointer;
+  }
+  
   /deep/ .jv-container .jv-code {
     padding: 0px;
     height: 300px;

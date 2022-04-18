@@ -33,7 +33,7 @@
         </el-table-column>
         <el-table-column prop="name" label="api类型" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="操作" align="center">
+        <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button type="text" size="small" class="button1" @click="editTable(scope.row)">
               编辑
@@ -80,6 +80,12 @@
       },
       deleteTable(row) {
         this.$emit('deleteTable', row)
+      },
+      handleSizeChange() {
+        
+      },
+      handleCurrentChange() {
+        
       }
     },
     components:{

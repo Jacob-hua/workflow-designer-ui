@@ -101,3 +101,7 @@ export const getDeployAndProcessInfo = (id) =>
 // 删除部署列表
 export const getDeleteDeployment = (params) =>
   deletefn('/process/deploy/deleteDeployment', params);
+
+// api类型下拉框
+export const getApiTypeList = (params) =>
+  get('/config/global/apiTypeList', params);

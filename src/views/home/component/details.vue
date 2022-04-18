@@ -170,7 +170,7 @@
             tenantId: this.$store.state.tenantId,
             ascription: this.$refs.details2.postData.ascription,
             business: '',
-            createId: '',
+            createBy: '',
             numberCode: '',
             name: '',
             docName: docName

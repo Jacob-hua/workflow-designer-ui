@@ -281,7 +281,7 @@ export default {
         formData.append('code', definitions.process._id)
         formData.append('business', 'zhihuiyunwei')
         formData.append('status', 'enabled')
-        formData.append('createId', '1')
+        formData.append('createBy', '-1')
         formData.append('createName', 'admin')
         formData.append('tenantId', '18')
         formData.append('file', file1)

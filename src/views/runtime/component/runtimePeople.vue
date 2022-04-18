@@ -12,14 +12,14 @@
           <div class="people-main-right-search">
             <el-input v-model="input" placeholder="请输入姓名搜索人员" prefix-icon="el-icon-search"></el-input>
           </div>
-          <div class="people-main-right-letter">
+          <!-- <div class="people-main-right-letter">
             <div>
               <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="全部" name=""></el-tab-pane>
                 <el-tab-pane :label="item" :name="item" v-for="(item, index) in letterList" :key="index"></el-tab-pane>
               </el-tabs>
             </div>
-          </div>
+          </div> -->
           <div class="people-main-right-table">
             <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" row-key="id" style="width: 100%" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55" align="center">
@@ -235,5 +235,9 @@
   .people-footer .el-icon-remove-outline {
     color: #2f9aef;
     font-size: 16px;
-  } 
+  }
+  
+  .people-main-right-table {
+    margin-top: 40px;
+  }
 </style>

@@ -46,6 +46,9 @@
         <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
       <div class="PublicForm-title-button">
+        <el-button type="primary" @click="application()">应用</el-button>
+      </div>
+      <div class="PublicForm-title-button">
         <el-button type="primary" @click="addForm()">新建表单</el-button>
       </div>
     </div>
@@ -107,12 +110,14 @@
     </div>
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></projectFormDiolog>
     <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
+    <application ref="application" :dialogVisible="dialogVisible" @close="close()"></application>
   </div>
 </template>
 
 <script>
   import projectFormDiolog from './projectFormComponent/index.vue'
   import detailsDiologForm from './details.vue'
+  import application from './projectFormComponent/application.vue'
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/unit/api.js'
   export default {
     data() {
@@ -130,11 +135,17 @@
         input: '',
         activeName: 'enabled',
         formListFirst: [],
-        formListSecond: []
+        formListSecond: [],
+        dialogVisible: false
       }
     },
     methods: {
-      
+      application() {
+        this.dialogVisible = true
+      },
+      close() {
+        this.dialogVisible = false
+      },
       // 查询草稿箱
       getDraftData() {
         postFormDesignRecordDraftInfo({
@@ -142,7 +153,7 @@
           status: 'drafted',
           ascription: this.projectCode,
           business: this.projectValue,
-          createId: 1,
+          createBy: 1,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0],
@@ -158,7 +169,7 @@
           status: 'enabled',
           ascription: this.projectCode,
           business: this.projectValue,
-          createId: 1,
+          createBy: 1,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0],
@@ -243,7 +254,7 @@
           tenantId: this.$store.state.tenantId,
           ascription: this.projectCode,
           business: this.projectValue,
-          createId: 1
+          createBy: 1
         }).then((res) => {
           this.$refs.detailsDiolog.formData = res.result
           this.$nextTick(() => {
@@ -271,7 +282,8 @@
     },
     components:{
       projectFormDiolog,
-      detailsDiologForm
+      detailsDiologForm,
+      application
     }
   }
 </script>
