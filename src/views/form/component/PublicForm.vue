@@ -99,7 +99,7 @@
           status: 'drafted',
           ascription: 'public',
           business: '',
-          createId: 1,
+          createBy: -1,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] || '',
@@ -116,7 +116,7 @@
           status: 'enabled',
           ascription: 'public',
           business: '',
-          createId: 1,
+          createBy: -1,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0],
@@ -187,7 +187,7 @@
           tenantId: this.$store.state.tenantId,
           ascription: 'public',
           business: '',
-          createId: 1
+          createBy: -1
         }).then((res) => {
           this.$refs.detailsDiolog.formData = res.result
           this.$nextTick(() => {

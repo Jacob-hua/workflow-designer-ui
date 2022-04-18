@@ -224,7 +224,7 @@
           tenantId: this.$store.state.tenantId,
           ascription: this.$refs.ProcessInformation.postData.ascription,
           business: '',
-          createId: '',
+          createBy: '',
           numberCode: '',
           name: this.input,
           docName: ''
@@ -322,7 +322,7 @@
             tenantId: this.$store.state.tenantId,
             ascription: this.$refs.ProcessInformation.postData.ascription,
             business: '',
-            createId: '',
+            createBy: '',
             numberCode: '',
             name: '',
             docName: docName

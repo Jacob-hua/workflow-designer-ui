@@ -1,14 +1,14 @@
 <template>
   <div>
-    <el-dialog title="新建执行" :visible="dialogVisible" width="66%" :before-close="handleClose">
+    <el-dialog title="应用" :visible="dialogVisible" width="70%" :before-close="handleClose">
       <div class="diologMain">
-        <div class="diologMain-left">
+        <!-- <div class="diologMain-left">
           <el-input v-model="input" placeholder="请输入内容" prefix-icon="el-icon-search"></el-input>
           <div class="energyList">
             <div v-for="(item, index) in $store.state.optionsSystemType" class="energyList-item" :class="getData.systemType === item.value ? 'checkPro' : ''"
               @click="changEnergy(item.value)"> {{ item.label }}系统 </div>
           </div>
-        </div>
+        </div> -->
         <div class="diologMain-right">
           <div class="processList">
             <div class="processList-item" v-for="(item, index) in processListList" :key="index">
@@ -16,19 +16,19 @@
                 <span>详情</span>
               </div>
               <div class="processList-item-word">
-                <label>部署名称:</label>
+                <label>表单名称:</label>
                 <span>一般性周期巡视</span>
               </div>
               <div class="processList-item-word">
-                <label>部署人:</label>
+                <label>创建人:</label>
                 <span>张三</span>
               </div>
               <div class="processList-item-word">
-                <label>部署时间:</label>
+                <label>创建时间:</label>
                 <span>2021-11-12 14:11:23</span>
               </div>
               <div class="processList-item-button">
-                <el-button type="primary" plain @click="open">创建</el-button>
+                <el-button type="primary" plain @click="open">应用</el-button>
               </div>
             </div>
           </div>
@@ -40,12 +40,10 @@
         </div>
       </div>
     </el-dialog>
-    <detailsRem ref="detailsRem" seeType="see"></detailsRem>
   </div>
 </template>
 
 <script>
-  import detailsRem from '@/views/home/component/details.vue'
   export default {
     props: {
       dialogVisible: {
@@ -62,7 +60,8 @@
           page: 1,
           limit: 10,
           total: 1
-        }
+        },
+        formList: []
       }
     },
     methods: {
@@ -75,8 +74,22 @@
       handleCurrentChange() {
 
       },
+      getFormList() {
+        designFormDesignServiceAll({
+          status: 'enabled',
+          tenantId: this.$store.state.tenantId,
+          ascription: this.$refs.ProcessInformation.postData.ascription,
+          business: '',
+          createBy: '',
+          numberCode: '',
+          name: this.input,
+          docName: ''
+        }).then((res) => {
+          this.formList = res.result
+        })
+      },
       open() {
-        this.$confirm('创建的执行会进入执行列表并开始执行流程,是否继续', '提示', {
+        this.$confirm('应用的公共表单会加入到项目表单中,是否继续', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消'
         }).then(() => {
@@ -97,9 +110,6 @@
       detailsShow() {
         this.$refs.detailsRem.dialogVisible2 = true
       }
-    },
-    components: {
-      detailsRem
     }
   }
 </script>

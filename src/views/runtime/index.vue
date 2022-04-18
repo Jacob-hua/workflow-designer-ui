@@ -58,16 +58,16 @@
     </div>
     <div class="runtime-check">
       <el-radio-group v-model="radio">
-          <el-radio :label="3">
-            我的任务（21）
-          </el-radio>
-          <el-radio :label="6">
-            待处理（21）
-          </el-radio>
-          <el-radio :label="9">
-            告知（31）
-          </el-radio>
-        </el-radio-group>
+        <el-radio :label="3">
+          我的任务（21）
+        </el-radio>
+        <el-radio :label="6">
+          待处理（21）
+        </el-radio>
+        <el-radio :label="9">
+          告知（31）
+        </el-radio>
+      </el-radio-group>
     </div>
     <div class="runtime-table">
       <div class="home-table-main">
@@ -88,9 +88,9 @@
           <el-table-column prop="name" label="执行进程" align="center">
             <template slot-scope="scope">
               <el-steps :active="scope.row.curStep" align-center process-status="success">
-                  <el-step title="步骤 1" icon="el-icon-edit" :class="scope.row.curStep === 1 ? 'tableStepNum' : ''"></el-step>
-                  <el-step title="步骤 2" icon="el-icon-upload" :class="scope.row.curStep === 2 ? 'tableStepNum' : ''"></el-step>
-                  <el-step title="步骤 3" icon="el-icon-picture" :class="scope.row.curStep === 3 ? 'tableStepNum' : ''"></el-step>
+                <el-step title="步骤 1" icon="el-icon-edit" :class="scope.row.curStep === 1 ? 'tableStepNum' : ''"></el-step>
+                <el-step title="步骤 2" icon="el-icon-upload" :class="scope.row.curStep === 2 ? 'tableStepNum' : ''"></el-step>
+                <el-step title="步骤 3" icon="el-icon-picture" :class="scope.row.curStep === 3 ? 'tableStepNum' : ''"></el-step>
               </el-steps>
             </template>
           </el-table-column>
@@ -113,7 +113,8 @@
       </div>
     </div>
     <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd"></runtimeAdd>
-    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog()" ref="runTimeImplement"></runTimeImplement>
+    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog()"
+      ref="runTimeImplement"></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
 </template>
@@ -133,8 +134,7 @@
         checkList: [],
         dialogVisibleAdd: false,
         dialogVisibleImplement: false,
-        tableData: [
-          {
+        tableData: [{
             name: '王小虎',
             curStep: 2
           },
@@ -171,6 +171,15 @@
       deployDiolog() {
         this.dialogVisibleImplement = true
         this.$nextTick(() => {
+          this.$refs.runTimeImplement.$refs.ProcessInformation.postData = {
+            numberCode: '121111',
+            deployName: '测试',
+            version: 'V1.0',
+            createTime: '2022-02-02 09:20:00',
+            business: '智慧运维',
+            ascription: '北七家',
+            systemType: 'energy-1'
+          }
           this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(bpmnData.value)
         })
       },
@@ -180,6 +189,16 @@
       detailsDiolog() {
         this.$refs.lookover.dialogVisible = true
         this.$nextTick(() => {
+          this.$refs.runTimeImplement.$refs.ProcessInformation.postData = {
+            numberCode: '121111',
+            deployName: '测试',
+            version: 'V1.0',
+            createTime: '2022-02-02 09:20:00',
+            business: '智慧运维',
+            ascription: '北七家',
+            systemType: 'energy-1',
+            
+          }
           this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(bpmnData.value)
         })
       },
@@ -190,7 +209,7 @@
         this.dialogVisibleAdd = false
       }
     },
-    components:{
+    components: {
       runtimeAdd,
       runTimeImplement,
       lookover
@@ -219,11 +238,11 @@
   .marginRight20 {
     margin-right: 20px;
   }
-  
+
   .button1 {
     cursor: pointer;
   }
-  
+
   .datePick {}
 
   .datePickTitle {
@@ -301,12 +320,13 @@
     text-align: right;
     padding: 20px 0px;
   }
-  
+
   /deep/ .el-table {
     .el-steps {
       position: relative;
       line-height: 23px;
       top: 0px;
+
       .tableStepNum {
         .el-step__icon {
           width: 14px;
@@ -315,35 +335,43 @@
           background-color: #0066cc !important;
         }
       }
+
       .el-step__head.is-finish {
         .el-step__icon {
           background-color: #66ccff;
         }
+
         .el-step__line {
           height: 2px;
           border-color: #66ccff;
         }
       }
+
       .el-step__icon-inner {
         display: none;
       }
+
       .el-step__line {
         height: 2px;
       }
+
       .el-step__icon {
         width: 10px;
         height: 10px;
         border-radius: 50%;
         background-color: #CCCCCC;
       }
+
       .el-step__line-inner {
         border-width: 1px !important;
         margin-top: 0px;
       }
+
       .el-step__title {
         color: #858585 !important;
         font-size: 12px;
       }
+
       .el-step__description {
         color: white !important;
         font-size: 12px;
