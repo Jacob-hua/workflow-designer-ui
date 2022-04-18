@@ -110,7 +110,7 @@
     </div>
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></projectFormDiolog>
     <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
-    <application ref="application" :dialogVisible="dialogVisible" @close="close()"></application>
+    <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode" :projectValue="projectValue" @close="close()"></application>
   </div>
 </template>
 
@@ -153,7 +153,7 @@
           status: 'drafted',
           ascription: this.projectCode,
           business: this.projectValue,
-          createBy: 1,
+          createBy: -1,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0],
@@ -169,7 +169,7 @@
           status: 'enabled',
           ascription: this.projectCode,
           business: this.projectValue,
-          createBy: 1,
+          createBy: -1,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0],
@@ -254,7 +254,7 @@
           tenantId: this.$store.state.tenantId,
           ascription: this.projectCode,
           business: this.projectValue,
-          createBy: 1
+          createBy: -1
         }).then((res) => {
           this.$refs.detailsDiolog.formData = res.result
           this.$nextTick(() => {
