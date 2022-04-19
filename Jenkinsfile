@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-		service="workflow-runtime-service"
+		service="workflow-ui"
 		def workspace = pwd()
 		namespace="workflow"
 		Branch="${env.gitlabTargetBranch}"
