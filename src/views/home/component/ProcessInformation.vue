@@ -54,7 +54,6 @@
           能源系统
         </span>
         <div class="title-item-main">
-          <!-- <el-input v-model="postData.system" placeholder="" :disabled="true"></el-input> -->
           <el-select v-model="postData.systemType" placeholder="请选择" :disabled="true">
             <el-option v-for="item in optionSystem" :key="item.value" :label="item.label" :value="item.value">
             </el-option>

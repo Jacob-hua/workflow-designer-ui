@@ -46,10 +46,10 @@
         <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary" @click="application()">应用表单</el-button>
+        <el-button type="primary" @click="quoteBpmnShow()">引用工作流</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary" @click="addForm()">新建表单</el-button>
+        <el-button type="primary" @click="addProjectShow()">新建工作流</el-button>
       </div>
     </div>
     <div class="home-main">
@@ -58,67 +58,25 @@
         <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
       </div>
       <div class="home-table">
-        <div v-if="activeName === 'enabled'">
-          <div class="home-table-card" v-for="(item, index) in formListFirst" :key="index">
-            <div class="card-title">
-              <span class="title">{{ item.numberCode }}</span>
-              <span class="detailWord" @click="detailsDiolog(item)">详情</span>
-            </div>
-            <div class="card-main">
-              <div class="card-main-item">
-                <span class="label">表单名称:</span>
-                <span class="value">{{ item.name }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建人:</span>
-                <span class="value">{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建时间:</span>
-                <span class="value">{{ item.createTime }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">发布次数:</span>
-                <span class="value">{{ item.count }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-if="activeName === 'drafted'">
-          <div class="home-table-card" v-for="(item, index) in formListSecond" :key="index">
-            <div class="card-title">
-              <span class="title">{{ item.numberCode }}</span>
-              <span class="detailWord" @click="detailsDiolog(item)">详情</span>
-            </div>
-            <div class="card-main">
-              <div class="card-main-item">
-                <span class="label">表单名称:</span>
-                <span class="value">{{ item.name }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建人:</span>
-                <span class="value">{{ item.createName }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建时间:</span>
-                <span class="value">{{ item.createTime }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <projectTable v-if="activeName === 'enabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
+        <projectTable v-if="activeName === 'drafted'"></projectTable>
       </div>
     </div>
-    <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></projectFormDiolog>
-    <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
-    <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode" :projectValue="projectValue" @close="close()"></application>
+    <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
+    <addBpmn :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
+    <quoteBpmn :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()"></quoteBpmn>
+    <lookBpmn :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit"></lookBpmn>
   </div>
 </template>
 
 <script>
-  import projectFormDiolog from './projectFormComponent/index.vue'
-  import detailsDiologForm from './details.vue'
-  import application from './projectFormComponent/application.vue'
-  import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/unit/api.js'
+  import projectTable from './projectTable.vue'
+  import publiceTable from './publiceTable.vue'
+  import addProject from './addProject.vue'
+  import addBpmn from './addBpmn.vue'
+  import quoteBpmn from './quoteBpmn.vue'
+  import lookBpmn from './lookBpmn.vue'
+  import bpmnData from "@/assets/js/bpmnMock.js"
   export default {
     data() {
       return {
@@ -129,6 +87,15 @@
             label: '全部项目'
           }
         ],
+        getData: {
+          page: 1,
+          limit: 10,
+          total: 1
+        },
+        addProjectVisible: false,
+        addBpmnVisible: false,
+        quoteBpmnVisible: false,
+        lookBpmnVisible: false,
         dataType: 'enabled',
         projectCode: 'beiqijia',
         valueDate: [],
@@ -136,16 +103,54 @@
         activeName: 'enabled',
         formListFirst: [],
         formListSecond: [],
-        dialogVisible: false
+        dialogVisible: false,
+        xmlString: ''
       }
     },
     methods: {
-      application() {
-        this.dialogVisible = true
+      addProjectShow() {
+        this.addProjectVisible = true
       },
-      close() {
-        this.dialogVisible = false
+      addProjectHidden() {
+        this.addProjectVisible = false
       },
+      addProjectDefine(value) {
+        this.addProjectVisible = false
+        this.addBpmnShow()
+      },
+      
+      addBpmnShow() {
+        this.addBpmnVisible = true
+      },
+      addBpmnHidden() {
+        this.xmlString = ''
+        this.addBpmnVisible = false
+      },
+      addBpmnDefine(value) {
+        this.xmlString = ''
+        this.addBpmnVisible = false
+      },
+      
+      quoteBpmnShow() {
+        this.quoteBpmnVisible = true
+      },
+      quoteBpmnHidden() {
+        this.quoteBpmnVisible = false
+      },
+      
+      lookBpmnShow() {
+        this.lookBpmnVisible = true
+      },
+      lookBpmnHidden() {
+        this.lookBpmnVisible = false
+      },
+      
+      lookBpmnEdit() {
+        this.lookBpmnVisible = false
+        this.xmlString = bpmnData.value
+        this.addBpmnVisible = true
+      },
+      
       // 查询草稿箱
       getDraftData() {
         postFormDesignRecordDraftInfo({
@@ -182,114 +187,28 @@
       getManyData() {
         this.getEnableData()
         this.getDraftData()
-      },
-      
-      getData() {
-        switch (this.activeName){
-          case 'enabled':
-            this.getEnableData()
-            break;
-          case 'drafted':
-            this.getDraftData()
-            break;
-          default:
-            break;
-        }
-      },
-      
-      changeActiveName(value) {
-        this.activeName = value
-        this.getData()
-      },
-      
-      deleteSuccsee() {
-        this.$refs.detailsDiolog.dialogVisible2 = false
-        this.getData()
-      },
-      
-      addSuccess() {
-        this.$refs.detailsDiolog.dialogVisible2 = false
-        this.$refs.projectFormDiolog.dialogVisible2 = false
-        this.getData()
-      },
-      
-      changProjectCode(code) {
-        this.projectCode = code
-        this.getManyData()
-      },
-      addForm() {
-        this.$refs.projectFormDiolog.postData.ascription = this.projectCode
-        this.$refs.projectFormDiolog.dialogVisible1 = true
-      },
-      
-      addForm2(item) {
-        this.$refs.projectFormDiolog.dialogVisible2 = true
-        this.$nextTick(() => {
-          if (item) {
-            this.dataType = this.activeName + '-edit'
-            this.$refs.projectFormDiolog.postData = item
-            this.$refs.projectFormDiolog.$refs.formbpmn.schema = JSON.parse(item.content)
-          } else{
-            this.dataType = this.activeName
-            this.$refs.projectFormDiolog.postData = {
-              name: ''
-            }
-            this.$refs.projectFormDiolog.$refs.formbpmn.schema = {
-              schemaVersion: 1,
-              type: "default",
-              exporter: {
-                name: "form-js",
-                version: "0.7.0"
-              }
-            }
-          }
-          this.$refs.projectFormDiolog.$refs.formbpmn.init()
-        })
-      },
-      detailsDiolog(item) {
-        this.$refs.detailsDiolog.dialogVisible2 = true
-        postFormDesignRecordFormDesignRecordInfo({
-          id: item.id,
-          status: this.activeName,
-          tenantId: this.$store.state.tenantId,
-          ascription: this.projectCode,
-          business: this.projectValue,
-          createBy: -1
-        }).then((res) => {
-          this.$refs.detailsDiolog.formData = res.result
-          this.$nextTick(() => {
-            let arr = []
-            res.result.versions.forEach((item,index) => {
-              arr.push({
-                value: res.result.childIds[index],
-                label: item
-              })
-            })
-            this.$refs.detailsDiolog.options = arr
-            this.$refs.detailsDiolog.value = res.result.childIds[0]
-            this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
-            this.$refs.detailsDiolog.$refs.formbpmn.init()
-          })
-        })
-      },
-      editForm(item) {
-        this.addForm2(item)
       }
     },
     mounted() {
-      this.getDraftData()
-      this.getEnableData()
+      
     },
     components:{
-      projectFormDiolog,
-      detailsDiologForm,
-      application
+      projectTable,
+      publiceTable,
+      addProject,
+      addBpmn,
+      quoteBpmn,
+      lookBpmn
     }
   }
 </script>
 
 <style scoped="scoped">
-  /deep/ .el-input__inner {
+  .projectHeader /deep/ .el-input__inner {
+    border: 1px solid black;
+  }
+  
+  .PublicForm-title /deep/ .el-input__inner {
     border: 1px solid black;
   }
 
@@ -432,5 +351,30 @@
   .card-main-item .label {
     display: inline-block;
     width: 90px;
+  }
+  
+  .home-table-main {
+    padding: 10px;
+    border: 1px solid #666666;
+  }
+  
+  .fileStyle {
+    color: #007edb;
+  }
+  
+  /deep/ .el-table .el-table__cell {
+    padding: 8px 0px;
+  }
+  
+  /deep/ .el-table th.el-table__cell {
+    padding: 16px 0px;
+    background-color: #f5f7f9;
+  }
+  .home-table-page {
+    text-align: right;
+    padding: 20px 0px;
+  }
+  .button1 {
+    margin-right: 50px;
   }
 </style>

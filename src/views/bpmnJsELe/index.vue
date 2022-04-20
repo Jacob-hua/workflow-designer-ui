@@ -42,9 +42,14 @@ export default {
   directives: {
     clickoutside: clickoutside
   },
+  props:{
+    xmlString: {
+      type: String,
+      default: ""
+    }
+  },
   data() {
     return {
-      xmlString: "",
       modeler: null,
       reloadIndex: 0,
       controlDrawerVisible: false,
@@ -76,6 +81,7 @@ export default {
         this.modeler = modeler;
         const canvas = modeler.get("canvas");
         const rootElement = canvas.getRootElement();
+        this.$emit('initModeler', this.modeler)
         // Log.prettyPrimary("Process Id:", rootElement.id);
         // Log.prettyPrimary("Process Name:", rootElement.businessObject.name);
       }, 10);
@@ -127,7 +133,7 @@ export default {
 <style scoped="scoped">
   .bpmnEle {
     width: 100%;
-    height: calc(100% - 48px);
+    height: 100%;
     box-sizing: border-box;
     display: flex;
   }

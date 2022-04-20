@@ -1,38 +1,6 @@
 <template>
   <div class="PublicForm">
-    <div class="projectHeader">
-      <el-select v-model="projectValue" placeholder="请选择">
-        <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">
-        </el-option>
-      </el-select>
-    </div>
-    <div class="projectList">
-      <div class="projectList-item" :class="projectCode === 'beiqijia' ? 'checkPro' : '' " @click="changProjectCode('beiqijia')">
-        <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'beiqijia'">
-        <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'beiqijia'">
-        <span class="projectList-item-word">北七家人才基地</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
-      </div>
-      <div class="projectList-item" :class="projectCode === 'laiwu' ? 'checkPro' : '' " @click="changProjectCode('laiwu')">
-        <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'laiwu'">
-        <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'laiwu'">
-        <span class="projectList-item-word">莱芜供热项目</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
-      </div>
-      <div class="projectList-item" :class="projectCode === 'xilaideng' ? 'checkPro' : '' " @click="changProjectCode('xilaideng')">
-        <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'xilaideng'">
-        <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'xilaideng'">
-        <span class="projectList-item-word">海口喜来登酒店</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
-      </div>
-    </div>
     <div class="PublicForm-title">
-      <div class="PublicForm-title-option">
-        <el-select v-model="projectValue" placeholder="请选择">
-          <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-      </div>
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
@@ -46,10 +14,7 @@
         <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary" @click="application()">应用表单</el-button>
-      </div>
-      <div class="PublicForm-title-button">
-        <el-button type="primary" @click="addForm()">新建表单</el-button>
+        <el-button type="primary" @click="addForm()">新建工作流</el-button>
       </div>
     </div>
     <div class="home-main">
@@ -58,67 +23,16 @@
         <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
       </div>
       <div class="home-table">
-        <div v-if="activeName === 'enabled'">
-          <div class="home-table-card" v-for="(item, index) in formListFirst" :key="index">
-            <div class="card-title">
-              <span class="title">{{ item.numberCode }}</span>
-              <span class="detailWord" @click="detailsDiolog(item)">详情</span>
-            </div>
-            <div class="card-main">
-              <div class="card-main-item">
-                <span class="label">表单名称:</span>
-                <span class="value">{{ item.name }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建人:</span>
-                <span class="value">{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建时间:</span>
-                <span class="value">{{ item.createTime }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">发布次数:</span>
-                <span class="value">{{ item.count }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-if="activeName === 'drafted'">
-          <div class="home-table-card" v-for="(item, index) in formListSecond" :key="index">
-            <div class="card-title">
-              <span class="title">{{ item.numberCode }}</span>
-              <span class="detailWord" @click="detailsDiolog(item)">详情</span>
-            </div>
-            <div class="card-main">
-              <div class="card-main-item">
-                <span class="label">表单名称:</span>
-                <span class="value">{{ item.name }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建人:</span>
-                <span class="value">{{ item.createName }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建时间:</span>
-                <span class="value">{{ item.createTime }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <projectTable v-if="activeName === 'enabled'"></projectTable>
+        <projectTable v-if="activeName === 'drafted'"></projectTable>
       </div>
     </div>
-    <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></projectFormDiolog>
-    <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
-    <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode" :projectValue="projectValue" @close="close()"></application>
   </div>
 </template>
 
 <script>
-  import projectFormDiolog from './projectFormComponent/index.vue'
-  import detailsDiologForm from './details.vue'
-  import application from './projectFormComponent/application.vue'
-  import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/unit/api.js'
+  import projectTable from './projectTable.vue'
+  import publiceTable from './publiceTable.vue'
   export default {
     data() {
       return {
@@ -129,6 +43,11 @@
             label: '全部项目'
           }
         ],
+        getData: {
+          page: 1,
+          limit: 10,
+          total: 1
+        },
         dataType: 'enabled',
         projectCode: 'beiqijia',
         valueDate: [],
@@ -183,35 +102,7 @@
         this.getEnableData()
         this.getDraftData()
       },
-      
-      getData() {
-        switch (this.activeName){
-          case 'enabled':
-            this.getEnableData()
-            break;
-          case 'drafted':
-            this.getDraftData()
-            break;
-          default:
-            break;
-        }
-      },
-      
-      changeActiveName(value) {
-        this.activeName = value
-        this.getData()
-      },
-      
-      deleteSuccsee() {
-        this.$refs.detailsDiolog.dialogVisible2 = false
-        this.getData()
-      },
-      
-      addSuccess() {
-        this.$refs.detailsDiolog.dialogVisible2 = false
-        this.$refs.projectFormDiolog.dialogVisible2 = false
-        this.getData()
-      },
+
       
       changProjectCode(code) {
         this.projectCode = code
@@ -277,13 +168,10 @@
       }
     },
     mounted() {
-      this.getDraftData()
-      this.getEnableData()
+      
     },
     components:{
-      projectFormDiolog,
-      detailsDiologForm,
-      application
+      projectTable
     }
   }
 </script>
@@ -432,5 +320,30 @@
   .card-main-item .label {
     display: inline-block;
     width: 90px;
+  }
+  
+  .home-table-main {
+    padding: 10px;
+    border: 1px solid #666666;
+  }
+  
+  .fileStyle {
+    color: #007edb;
+  }
+  
+  /deep/ .el-table .el-table__cell {
+    padding: 8px 0px;
+  }
+  
+  /deep/ .el-table th.el-table__cell {
+    padding: 16px 0px;
+    background-color: #f5f7f9;
+  }
+  .home-table-page {
+    text-align: right;
+    padding: 20px 0px;
+  }
+  .button1 {
+    margin-right: 50px;
   }
 </style>
