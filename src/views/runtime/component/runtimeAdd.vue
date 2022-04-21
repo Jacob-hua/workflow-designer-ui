@@ -3,32 +3,32 @@
     <el-dialog title="新建执行" :visible="dialogVisible" width="66%" :before-close="handleClose">
       <div class="diologMain">
         <div class="diologMain-left">
-          <el-input v-model="input" placeholder="请输入内容" prefix-icon="el-icon-search"></el-input>
+          <!-- <el-input v-model="input" placeholder="请输入内容" prefix-icon="el-icon-search"></el-input> -->
           <div class="energyList">
-            <div v-for="(item, index) in $store.state.optionsSystemType" class="energyList-item" :class="getData.systemType === item.value ? 'checkPro' : ''"
+            <div v-for="(item, index) in $store.state.optionsSystemType" class="energyList-item" :class="getData.type === item.value ? 'checkPro' : ''"
               @click="changEnergy(item.value)"> {{ item.label }}系统 </div>
           </div>
         </div>
         <div class="diologMain-right">
           <div class="processList">
             <div class="processList-item" v-for="(item, index) in processListList" :key="index">
-              <div class="processList-item-detail" @click="detailsShow()">
+              <div class="processList-item-detail" @click="detailsShow(item)">
                 <span>详情</span>
               </div>
               <div class="processList-item-word">
                 <label>部署名称:</label>
-                <span>一般性周期巡视</span>
+                <span>{{ item.deployName }}</span>
               </div>
               <div class="processList-item-word">
                 <label>部署人:</label>
-                <span>张三</span>
+                <span>{{ item.user }}</span>
               </div>
               <div class="processList-item-word">
                 <label>部署时间:</label>
-                <span>2021-11-12 14:11:23</span>
+                <span>{{ item.createTime }}</span>
               </div>
               <div class="processList-item-button">
-                <el-button type="primary" plain @click="open">创建</el-button>
+                <el-button type="primary" plain @click="open(item)">创建</el-button>
               </div>
             </div>
           </div>
@@ -40,12 +40,13 @@
         </div>
       </div>
     </el-dialog>
-    <detailsRem ref="detailsRem" seeType="see"></detailsRem>
+    <detailsRem ref="detailsRem" seeType="runTime"></detailsRem>
   </div>
 </template>
 
 <script>
   import detailsRem from '@/views/home/component/details.vue'
+  import { getProcessDefinitionList, getStartProcess } from '@/unit/api.js'
   export default {
     props: {
       dialogVisible: {
@@ -56,34 +57,53 @@
     data() {
       return {
         input: '',
-        processListList: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        processListList: [],
         getData: {
-          systemType: 'energy-1',
+          type: 'energy-1',
+          order: 'desc',
           page: 1,
           limit: 10,
+          tenantId: this.$store.state.tenantId,
           total: 1
         }
       }
     },
+    
+    created() {
+      this.getProcessList()
+    },
+    
     methods: {
       handleClose() {
         this.$emit('close')
       },
+      getProcessList() {
+        getProcessDefinitionList(this.getData).then((res) => {
+          this.processListList = res.result.dataList
+        })
+      },
       handleSizeChange() {
-
+        this.getProcessList()
       },
       handleCurrentChange() {
-
+        this.getProcessList()
       },
-      open() {
+      open(item) {
         this.$confirm('创建的执行会进入执行列表并开始执行流程,是否继续', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '创建成功'
-          });
+          getStartProcess({
+            businessKey: '',
+            definitionKey: item.key,
+            variables: {}
+          }).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '创建成功'
+            });
+          })
+          
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -92,10 +112,17 @@
         });
       },
       changEnergy(value) {
-        this.getData.systemType = value
+        this.getData.type = value
+        this.getProcessList()
       },
-      detailsShow() {
+      detailsShow(item) {
         this.$refs.detailsRem.dialogVisible2 = true
+        this.$nextTick(() => {
+          this.$refs.detailsRem.$refs.details2.postData = item
+          this.$refs.detailsRem.$refs.details2.postData.version = item.user
+          
+          this.$refs.detailsRem.$refs.details2.createNewDiagram(item.content)
+        })
       }
     },
     components: {
@@ -149,7 +176,11 @@
     border-color: #0066cc;
     color: #0066cc;
   }
-
+  
+  .processList {
+    height: 624px;
+  } 
+  
   .processList-item {
     width: 290px;
     height: 178px;
