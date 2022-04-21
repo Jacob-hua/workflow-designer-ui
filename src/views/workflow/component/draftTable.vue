@@ -20,15 +20,13 @@
         </el-table-column>
         <el-table-column prop="createTime" label="编辑时间" align="center">
         </el-table-column>
-        <el-table-column prop="count" label="状态" align="center">
-        </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" class="button1">
-              查看
+            <el-button @click.native.prevent="draftTableEdit(scope.row)" type="text" size="small" class="button1">
+              编辑
             </el-button>
-            <el-button @click.native.prevent="detailsDiolog(scope.row)" type="text" size="small">
-              查看
+            <el-button @click.native.prevent="deleteRow(scope.row)" type="text" size="small">
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -69,8 +67,24 @@
           startTime: '',
           endTime: ''
         },
-        tableData: [],
-        editData: {}
+        tableData: [
+          {
+            name: '王小虎',
+            version: '王小虎',
+            docName: '王小虎',
+            createBy: '王小虎',
+            createTime: '王小虎',
+            count: true,
+          },
+          {
+            name: '王小虎',
+            version: '王小虎',
+            docName: '王小虎',
+            createBy: '王小虎',
+            createTime: '王小虎',
+            count: false
+          }
+        ],
       }
     },
     methods: {
@@ -95,28 +109,30 @@
         this.getData.page = val
         this.getTableData()
       },
+      draftTableEdit() {
+        this.$emit('draftTableEdit')
+      },
       deleteRow() {
-        
+        this.$confirm('删除不可恢复, 请确认是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
       },
       getManyData() {
         this.$emit('getManyData')
       },
-      deployDiolog(row) {
-        this.editData = JSON.parse(JSON.stringify(row))
-        this.$refs.deploy.dialogVisible1 = true
-        this.$refs.deploy.firstData.ascription = row.ascription
-        this.$refs.deploy.firstData.business = row.business
-        this.$refs.deploy.firstData.id = row.id
-      },
-      detailsDiolog(item) {
-        this.$refs.detailsBnpm.dialogVisible1 = true
-        this.$nextTick(() => {
-          this.$refs.detailsBnpm.$refs.details1.postData = JSON.parse(JSON.stringify(item))
-          this.$refs.detailsBnpm.$refs.details1.postData.deployName =  this.$refs.detailsBnpm.$refs.details1.postData.name
-          this.$refs.detailsBnpm.$refs.details1.createNewDiagram(item.content)
-          this.$refs.detailsBnpm.getDetailList()
-        })
-      }
+      
     }
   }
 </script>

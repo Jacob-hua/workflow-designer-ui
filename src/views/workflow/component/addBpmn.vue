@@ -1,7 +1,7 @@
 <template>
-  <el-dialog title="新建流程" :visible="dialogVisible" width="90%" custom-class="dialogVisible" @close="close" :destroy-on-close="true">
+  <el-dialog title="新建流程" :visible="dialogVisible" width="90%" custom-class="dialogVisible" @close="close">
     <div class="dialogVisible-main">
-      <bpmnJsELe @initModeler="initModeler" :xmlString="xmlString"></bpmnJsELe>
+      <bpmnJsELe @initModeler="initModeler" :xmlString="xmlString" v-if="dialogVisible"></bpmnJsELe>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="addEnableForm()">发布</el-button>

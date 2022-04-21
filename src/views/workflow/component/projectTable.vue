@@ -21,6 +21,9 @@
         <el-table-column prop="createTime" label="编辑时间" align="center">
         </el-table-column>
         <el-table-column prop="count" label="状态" align="center">
+          <template slot-scope="scope">
+            <span class="status" :class="scope.row.count ? '' : 'statusFalse'">{{ scope.row.count ? '可部署' : '不可部署' }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
@@ -69,14 +72,24 @@
           startTime: '',
           endTime: ''
         },
-        tableData: [{
-          name: '王小虎',
-          version: '王小虎',
-          docName: '王小虎',
-          createBy: '王小虎',
-          createTime: '王小虎',
-          count: '王小虎',
-        }]
+        tableData: [
+          {
+            name: '王小虎',
+            version: '王小虎',
+            docName: '王小虎',
+            createBy: '王小虎',
+            createTime: '王小虎',
+            count: true,
+          },
+          {
+            name: '王小虎',
+            version: '王小虎',
+            docName: '王小虎',
+            createBy: '王小虎',
+            createTime: '王小虎',
+            count: false,
+          }
+        ]
       }
     },
     methods: {
@@ -84,7 +97,21 @@
         this.$emit('lookBpmnShow', row)
       },
       deleteRow() {
-        
+        this.$confirm('删除不可恢复, 请确认是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
       },
       handleSizeChange(val) {
        
@@ -120,5 +147,17 @@
   }
   .button1 {
     margin-right: 50px;
+  }
+  .status {
+    width: 90px;
+    height: 30px;
+    color: white;
+    background-color: #009900;
+    display: inline-block;
+    text-align: center;
+    line-height: 30px;
+  }
+  .statusFalse {
+    background-color: #ff9900;
   }
 </style>

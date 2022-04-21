@@ -59,19 +59,19 @@
       </div>
       <div class="home-table">
         <projectTable v-if="activeName === 'enabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
-        <projectTable v-if="activeName === 'drafted'"></projectTable>
+        <draftTable v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
     <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
     <addBpmn :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
-    <quoteBpmn :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()"></quoteBpmn>
+    <quoteBpmn :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
     <lookBpmn :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit"></lookBpmn>
   </div>
 </template>
 
 <script>
   import projectTable from './projectTable.vue'
-  import publiceTable from './publiceTable.vue'
+  import draftTable from './draftTable.vue'
   import addProject from './addProject.vue'
   import addBpmn from './addBpmn.vue'
   import quoteBpmn from './quoteBpmn.vue'
@@ -120,14 +120,13 @@
       },
       
       addBpmnShow() {
+        this.xmlString = ""
         this.addBpmnVisible = true
       },
       addBpmnHidden() {
-        this.xmlString = ''
         this.addBpmnVisible = false
       },
       addBpmnDefine(value) {
-        this.xmlString = ''
         this.addBpmnVisible = false
       },
       
@@ -149,6 +148,16 @@
         this.lookBpmnVisible = false
         this.xmlString = bpmnData.value
         this.addBpmnVisible = true
+      },
+      
+      draftTableEdit() {
+        this.xmlString = bpmnData.value
+        this.addBpmnVisible = true
+        console.log(this.addBpmnVisible)
+      },
+      
+      changeActiveName(value) {
+        this.activeName = value
       },
       
       // 查询草稿箱
@@ -194,7 +203,7 @@
     },
     components:{
       projectTable,
-      publiceTable,
+      draftTable,
       addProject,
       addBpmn,
       quoteBpmn,

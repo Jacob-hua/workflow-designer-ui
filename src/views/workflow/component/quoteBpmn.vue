@@ -55,10 +55,10 @@
         this.$emit('close')
       },
       lookBpmnShow(index, row) {
-        
+        this.$emit('lookBpmnShow')
       },
       addProjectShow(index, row) {
-        
+        this.$emit('addProjectShow')
       },
       handleSizeChange() {
         

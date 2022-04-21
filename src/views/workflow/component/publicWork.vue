@@ -24,7 +24,7 @@
       </div>
       <div class="home-table">
         <projectTable v-if="activeName === 'enabled'"></projectTable>
-        <projectTable v-if="activeName === 'drafted'"></projectTable>
+        <draftTable v-if="activeName === 'drafted'"></draftTable>
       </div>
     </div>
   </div>
@@ -32,7 +32,7 @@
 
 <script>
   import projectTable from './projectTable.vue'
-  import publiceTable from './publiceTable.vue'
+  import draftTable from './draftTable.vue'
   export default {
     data() {
       return {
@@ -65,6 +65,10 @@
       close() {
         this.dialogVisible = false
       },
+      changeActiveName(value) {
+        this.activeName = value
+      },
+      
       // 查询草稿箱
       getDraftData() {
         postFormDesignRecordDraftInfo({
@@ -171,7 +175,8 @@
       
     },
     components:{
-      projectTable
+      projectTable,
+      draftTable
     }
   }
 </script>
