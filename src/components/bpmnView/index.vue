@@ -1,6 +1,6 @@
 <template>
   <div class="bpmnView">
-    <div class="bpmnView-title">
+    <div class="bpmnView-title" v-if="valueType === 'project'">
       <div class="title-item">
         <span class="title-item-label">
           流程编码
@@ -61,6 +61,18 @@
         </div>
       </div>
     </div>
+    <div class="bpmnView-title" v-if="valueType === 'public'">
+      <div class="bpmnView-title-public">
+        <span class="bpmnView-title-public-label">流程编码:</span><span class="bpmnView-title-public-value">21321321</span>
+        <span class="bpmnView-title-public-label">流程名称:</span><span class="bpmnView-title-public-value">巡视工作流</span>
+        <span class="bpmnView-title-public-label">流程版本:</span><span class="bpmnView-title-public-value">V1.0</span>
+        <span class="bpmnView-title-public-label">创建时间:</span><span class="bpmnView-title-public-value">2011-11-11 19:11:11</span>
+      </div>
+      <div class="bpmnView-title-button">
+        <el-button type="primary" @click="$emit('edit')">编辑</el-button>
+        <el-button type="primary" @click="$emit('quote')">引用</el-button>
+      </div>
+    </div>
     <div class="bpmnView-process">
       <span class="bpmn-Main-title">BPMN流程</span>
       <div class="my-process-designer__canvas" ref="bpmn-canvas"></div>
@@ -100,6 +112,12 @@
     designFormDesignServiceAll
   } from '@/unit/api.js'
   export default {
+    props:{
+      valueType: {
+        type: String,
+        default: 'project'
+      }
+    },
     data() {
       return {
         postData: {
@@ -239,7 +257,28 @@
   .title-item-main {
     display: inline-block;
   }
-
+  
+  .bpmnView-title-public {
+    width: 400px;
+    display: inline-block;
+  }
+  
+  .bpmnView-title-button {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 730px;
+    margin-top: 10px;
+  }
+  
+  .bpmnView-title-public-label {
+    display: inline-block;
+    font-weight: 700;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+  }
+  
+  
   /deep/ .el-input.is-disabled .el-input__inner {
     color: black;
     width: 180px;

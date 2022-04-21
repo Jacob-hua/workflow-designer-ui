@@ -14,7 +14,7 @@
         <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary" @click="addForm()">新建工作流</el-button>
+        <el-button type="primary" @click="addBpmnShow()">新建工作流</el-button>
       </div>
     </div>
     <div class="home-main">
@@ -23,16 +23,25 @@
         <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
       </div>
       <div class="home-table">
-        <projectTable v-if="activeName === 'enabled'"></projectTable>
-        <draftTable v-if="activeName === 'drafted'"></draftTable>
+        <projectTable v-if="activeName === 'enabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
+        <draftTable v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
+    <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
+    <addBpmn :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
+    <quoteBpmn :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
+    <lookBpmn :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="quoteBpmnShow" valueType="public"></lookBpmn>
   </div>
 </template>
 
 <script>
   import projectTable from './projectTable.vue'
   import draftTable from './draftTable.vue'
+  import addProject from './addProject.vue'
+  import addBpmn from './addBpmn.vue'
+  import quoteBpmn from './quoteBpmn.vue'
+  import lookBpmn from './lookBpmn.vue'
+  import bpmnData from "@/assets/js/bpmnMock.js"
   export default {
     data() {
       return {
@@ -55,16 +64,51 @@
         activeName: 'enabled',
         formListFirst: [],
         formListSecond: [],
-        dialogVisible: false
+        dialogVisible: false,
+        addProjectVisible: false,
+        addBpmnVisible: false,
+        quoteBpmnVisible: false,
+        lookBpmnVisible: false
       }
     },
     methods: {
-      application() {
-        this.dialogVisible = true
+      
+      addBpmnShow() {
+        this.xmlString = ""
+        this.addBpmnVisible = true
       },
-      close() {
-        this.dialogVisible = false
+      addBpmnHidden() {
+        this.addBpmnVisible = false
       },
+      addBpmnDefine(value) {
+        this.addBpmnVisible = false
+      },
+      
+      quoteBpmnShow() {
+        this.quoteBpmnVisible = true
+      },
+      quoteBpmnHidden() {
+        this.quoteBpmnVisible = false
+      },
+      
+      lookBpmnShow() {
+        this.lookBpmnVisible = true
+      },
+      lookBpmnHidden() {
+        this.lookBpmnVisible = false
+      },
+      
+      lookBpmnEdit() {
+        this.lookBpmnVisible = false
+        this.xmlString = bpmnData.value
+        this.addBpmnVisible = true
+      },
+      
+      draftTableEdit() {
+        this.xmlString = bpmnData.value
+        this.addBpmnVisible = true
+      },
+      
       changeActiveName(value) {
         this.activeName = value
       },
@@ -105,70 +149,6 @@
       getManyData() {
         this.getEnableData()
         this.getDraftData()
-      },
-
-      
-      changProjectCode(code) {
-        this.projectCode = code
-        this.getManyData()
-      },
-      addForm() {
-        this.$refs.projectFormDiolog.postData.ascription = this.projectCode
-        this.$refs.projectFormDiolog.dialogVisible1 = true
-      },
-      
-      addForm2(item) {
-        this.$refs.projectFormDiolog.dialogVisible2 = true
-        this.$nextTick(() => {
-          if (item) {
-            this.dataType = this.activeName + '-edit'
-            this.$refs.projectFormDiolog.postData = item
-            this.$refs.projectFormDiolog.$refs.formbpmn.schema = JSON.parse(item.content)
-          } else{
-            this.dataType = this.activeName
-            this.$refs.projectFormDiolog.postData = {
-              name: ''
-            }
-            this.$refs.projectFormDiolog.$refs.formbpmn.schema = {
-              schemaVersion: 1,
-              type: "default",
-              exporter: {
-                name: "form-js",
-                version: "0.7.0"
-              }
-            }
-          }
-          this.$refs.projectFormDiolog.$refs.formbpmn.init()
-        })
-      },
-      detailsDiolog(item) {
-        this.$refs.detailsDiolog.dialogVisible2 = true
-        postFormDesignRecordFormDesignRecordInfo({
-          id: item.id,
-          status: this.activeName,
-          tenantId: this.$store.state.tenantId,
-          ascription: this.projectCode,
-          business: this.projectValue,
-          createBy: -1
-        }).then((res) => {
-          this.$refs.detailsDiolog.formData = res.result
-          this.$nextTick(() => {
-            let arr = []
-            res.result.versions.forEach((item,index) => {
-              arr.push({
-                value: res.result.childIds[index],
-                label: item
-              })
-            })
-            this.$refs.detailsDiolog.options = arr
-            this.$refs.detailsDiolog.value = res.result.childIds[0]
-            this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
-            this.$refs.detailsDiolog.$refs.formbpmn.init()
-          })
-        })
-      },
-      editForm(item) {
-        this.addForm2(item)
       }
     },
     mounted() {
@@ -176,7 +156,11 @@
     },
     components:{
       projectTable,
-      draftTable
+      draftTable,
+      addBpmn,
+      quoteBpmn,
+      lookBpmn,
+      addProject
     }
   }
 </script>
