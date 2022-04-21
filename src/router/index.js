@@ -14,7 +14,7 @@ const routes = [
       {
         path: 'bpmn',
         name: 'bpmn',
-        component: () => import('@/views/bpmnJsELe/index'),
+        component: () => import('@/views/workflow/index'),
         meta: { title: 'bpmn', icon: 'dashboard' }
       },
       {

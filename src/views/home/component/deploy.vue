@@ -200,7 +200,7 @@
           }
           // formData.append('createTime', new Date())
           formData.append('createBy', this.$refs.ProcessInformation.postData.createBy)
-          formData.append('deployKey', Date.parse(new Date()))
+          formData.append('deployKey', definitions.process['_id'] )
           formData.append('deployName', this.$refs.ProcessInformation.postData.deployName)
           formData.append('draftId', this.$refs.ProcessInformation.postData.id)
           formData.append('formIds', formIds)

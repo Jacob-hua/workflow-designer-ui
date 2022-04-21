@@ -3,7 +3,7 @@
     <div class="ProcessInformation-title">
       <div class="title-item">
         <span class="title-item-label">
-          流程编码
+           流程编码
         </span>
         <div class="title-item-main">
           <el-input v-model="postData.numberCode" placeholder="" :disabled="true"></el-input>
@@ -11,7 +11,7 @@
       </div>
       <div class="title-item">
         <span class="title-item-label marginLeft40">
-          流程名称
+          {{ seeType === 'runTime' ? '部署' : '流程' }} 名称
         </span>
         <div class="title-item-main">
           <el-input v-model="postData.deployName" placeholder="" :disabled="true"></el-input>
@@ -19,7 +19,7 @@
       </div>
       <div class="title-item">
         <span class="title-item-label marginLeft40">
-          流程版本
+          {{ seeType === 'runTime' ? '部署人' : '流程版本' }}
         </span>
         <div class="title-item-main">
           <el-input v-model="postData.version" placeholder="" :disabled="true"></el-input>
@@ -27,7 +27,7 @@
       </div>
       <div class="title-item">
         <span class="title-item-label marginLeft40">
-          创建时间
+          {{ seeType === 'runTime' ? '部署' : '创建' }}时间
         </span>
         <div class="title-item-main">
           <el-input v-model="postData.createTime" placeholder="" :disabled="true"></el-input>
@@ -54,7 +54,6 @@
           能源系统
         </span>
         <div class="title-item-main">
-          <!-- <el-input v-model="postData.system" placeholder="" :disabled="true"></el-input> -->
           <el-select v-model="postData.systemType" placeholder="请选择" :disabled="true">
             <el-option v-for="item in optionSystem" :key="item.value" :label="item.label" :value="item.value">
             </el-option>

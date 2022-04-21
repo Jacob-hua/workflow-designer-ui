@@ -105,3 +105,13 @@ export const getDeleteDeployment = (params) =>
 // api类型下拉框
 export const getApiTypeList = (params) =>
   get('/config/global/apiTypeList', params);
+
+// 执行时
+
+// 可创建实例列表
+export const getProcessDefinitionList = (params) =>
+  get('/execute/processDefinitionList', params);
+  
+// 启动流程实例
+export const getStartProcess = (params) =>
+  post('/execute/startProcess', params);
