@@ -5,7 +5,7 @@
         <div class="Implement-left">
           <ProcessInformation ref="ProcessInformation" v-if="dialogVisible" @selectOneSet="selectOneSet"></ProcessInformation>
           <div class="function-list" v-if="bpmnType === 'bpmn:UserTask'">
-            <span class="function-item" @click="changeFunction('<agency></agency>')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
+            <span class="function-item" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
             <span class="function-item" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
             <span class="function-item" @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
             <span class="function-item" @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
@@ -122,9 +122,9 @@
           </div>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false" :disabled="!dataList.reject.rejectBollen">确 定</el-button>
+      <span slot="footer" class="dialog-footer" style="text-align: center;">
+        <el-button @click="cancel()">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false" :disabled="!dataList.reject.rejectBollen">执 行</el-button>
       </span>
     </el-dialog>
     <runtimePeople ref="runtimePeople"></runtimePeople>
@@ -184,6 +184,10 @@
       handleClose() {
         this.$emit('close')
       },
+      cancel() {
+        this.$emit('close')
+      },
+      
       changeFunction(value) {
         this.functionCheck = value
       },

@@ -115,3 +115,11 @@ export const getProcessDefinitionList = (params) =>
 // 启动流程实例
 export const getStartProcess = (params) =>
   post('/execute/startProcess', params);
+  
+// 用户任务列表
+export const getTaskList = (params) =>
+  post('/execute/taskList', params);
+  
+// 用户任务踪迹列表
+export const getTaskTrackList = (params) =>
+  get('/execute/taskTrackList', params);

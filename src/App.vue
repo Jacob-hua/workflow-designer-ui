@@ -70,4 +70,8 @@ export default {
       -webkit-border-radius: 4px;
     }
   }
+  
+  .el-dialog .el-dialog__footer {
+    text-align: center;
+  }
 </style>
