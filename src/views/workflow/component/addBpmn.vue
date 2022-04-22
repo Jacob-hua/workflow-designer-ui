@@ -85,11 +85,11 @@
 </script>
 
 <style scoped="scoped">
-  /deep/ .el-dialog__body {
+ /* /deep/ .el-dialog__body {
     height: 80vh;
-  }
+  } */
 
   .dialogVisible-main {
-    height: 100%;
+    height: 80vh;
   }
 </style>
