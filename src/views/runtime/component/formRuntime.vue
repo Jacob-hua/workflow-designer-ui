@@ -36,7 +36,7 @@
         this.formEditor = new Form({
           container: container
         });
-        let schema = JSON.parse(formValue.formValue)
+        let schema = JSON.parse(this.formContant)
         this.formEditor.importSchema(schema)
       },
       save() {

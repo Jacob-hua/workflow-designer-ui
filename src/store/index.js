@@ -27,6 +27,22 @@ export default new Vuex.Store({
       {
         value: '',
         label: '全部业务'
+      },
+      {
+        value: 'zhihuiyunwei',
+        label: '智慧运维'
+      },
+      {
+        value: 'zichanguanli',
+        label: '资产管理'
+      },
+      {
+        value: 'renyuanguanli',
+        label: '人员管理'
+      },
+      {
+        value: 'other',
+        label: '其他业务'
       }
     ],
     optionsSystemType: [

@@ -9,7 +9,7 @@
       <div class="processDetail">
         <div class="block">
           <el-timeline>
-            <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData">
+            <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData" :key="index">
               <div class="contant">
                 <i class="el-icon-check" :class="item.status === 'completed' ? 'success' : 'error'"></i>
                 <span class="word1">巡视计划自动生成</span>

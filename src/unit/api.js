@@ -123,3 +123,7 @@ export const getTaskList = (params) =>
 // 用户任务踪迹列表
 export const getTaskTrackList = (params) =>
   get('/execute/taskTrackList', params);
+  
+// 任务执行
+export const postCompleteTask = (params) =>
+  post('/execute/completeTask', params);
