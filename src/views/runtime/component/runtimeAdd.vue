@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="新建执行" :visible="dialogVisible" width="66%" :before-close="handleClose">
+    <el-dialog title="新建执行" :visible="dialogVisible" width="66%" :before-close="handleClose" @open="openDialog">
       <div class="diologMain">
         <div class="diologMain-left">
           <!-- <el-input v-model="input" placeholder="请输入内容" prefix-icon="el-icon-search"></el-input> -->
@@ -70,7 +70,7 @@
     },
     
     created() {
-      this.getProcessList()
+      // this.getProcessList()
     },
     
     methods: {
@@ -96,12 +96,15 @@
           getStartProcess({
             businessKey: '',
             definitionKey: item.key,
+            createBy: 'admin',
+            startProcessId: item.id,
             variables: {}
           }).then((res) => {
             this.$message({
               type: 'success',
               message: '创建成功'
             });
+            this.$emit('succseeAdd')
           })
           
         }).catch(() => {
@@ -115,12 +118,14 @@
         this.getData.type = value
         this.getProcessList()
       },
+      openDialog() {
+        this.getProcessList()
+      },
       detailsShow(item) {
         this.$refs.detailsRem.dialogVisible2 = true
         this.$nextTick(() => {
           this.$refs.detailsRem.$refs.details2.postData = item
           this.$refs.detailsRem.$refs.details2.postData.version = item.user
-          
           this.$refs.detailsRem.$refs.details2.createNewDiagram(item.content)
         })
       }

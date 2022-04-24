@@ -3,6 +3,7 @@
     <div id="form" ref="form">
       
     </div>
+    <!-- <div @click="save()">提交</div> -->
   </div>
 </template>
 
@@ -35,14 +36,15 @@
         this.formEditor = new Form({
           container: container
         });
-        let schema = JSON.parse(formValue.formValue)
+        let schema = JSON.parse(this.formContant)
         this.formEditor.importSchema(schema)
       },
       save() {
         // let { href, filename } = this.setEncoded('form', 'test', JSON.stringify(this.formEditor.saveSchema()))
         // this.downloadFunc(href, filename);
-        form.on('submit', (event) => {
-          console.log(event.data, event.errors);
+        console.log(this.formEditor.submit())
+        this.formEditor.on('submit', (event) => {
+          console.log(event.data, event.errors, event);
         });
       },
       downloadProcess() {

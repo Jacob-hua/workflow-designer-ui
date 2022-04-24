@@ -2,23 +2,23 @@
   <div class="runtime">
     <div class="runtime-filter">
       <div class="projectSelect marginRight20">
-        <el-select v-model="value" placeholder="请选择">
+        <el-select v-model="getData.projectCode" placeholder="请选择">
           <el-option v-for="item in $store.state.optionsAscription" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
       <div class="businessSelect marginRight20">
-        <el-select v-model="value" placeholder="请选择">
+        <el-select v-model="getData.businessCode" placeholder="请选择">
           <el-option v-for="item in this.$store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
-      <div class="marginRight20">
+      <!-- <div class="marginRight20">
         <el-select v-model="value" placeholder="请选择">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
-      </div>
+      </div> -->
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
@@ -52,19 +52,19 @@
           <div class="title">
             <i class="el-icon-circle-plus"></i>
           </div>
-          <div class="titLabel">新建执行</div>
+          <div class="titLabel">创建工单</div>
         </div>
       </div>
     </div>
     <div class="runtime-check">
-      <el-radio-group v-model="radio">
-        <el-radio :label="3">
+      <el-radio-group v-model="getData.taskFilter">
+        <el-radio label="all">
           我的任务（21）
         </el-radio>
-        <el-radio :label="6">
+        <el-radio label="self">
           待处理（21）
         </el-radio>
-        <el-radio :label="9">
+        <el-radio label="notice">
           告知（31）
         </el-radio>
       </el-radio-group>
@@ -74,23 +74,23 @@
         <el-table :data="tableData" style="width: 100%">
           <el-table-column type="index" label="序号" width="180" align="center">
           </el-table-column>
-          <el-table-column prop="name" label="名称" width="180" align="center">
+          <el-table-column prop="processName" label="名称" width="180" align="center">
           </el-table-column>
-          <el-table-column prop="name" label="能源系统" align="center">
+          <el-table-column prop="systemType" label="能源系统" align="center">
           </el-table-column>
           <el-table-column prop="name" label="执行厂站" align="center">
           </el-table-column>
-          <el-table-column prop="name" label="发起人" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.createBy == -1 ? '系统' : scope.row.name }}</span>
-            </template>
+          <el-table-column prop="processStarter" label="发起人" align="center">
+            <!-- <template slot-scope="scope">
+              <span>{{ scope.row.processStarter == -1 ? '系统' : scope.row.processStarter }}</span>
+            </template> -->
           </el-table-column>
-          <el-table-column prop="name" label="执行进程" align="center">
+          <el-table-column prop="createTime" label="发起时间" align="center">
+          </el-table-column>
+          <el-table-column label="执行进程" align="center">
             <template slot-scope="scope">
-              <el-steps :active="scope.row.curStep" align-center process-status="success">
-                <el-step title="步骤 1" icon="el-icon-edit" :class="scope.row.curStep === 1 ? 'tableStepNum' : ''"></el-step>
-                <el-step title="步骤 2" icon="el-icon-upload" :class="scope.row.curStep === 2 ? 'tableStepNum' : ''"></el-step>
-                <el-step title="步骤 3" icon="el-icon-picture" :class="scope.row.curStep === 3 ? 'tableStepNum' : ''"></el-step>
+              <el-steps :active="scope.row.userTaskTrackVOList.length" align-center process-status="success" >
+                <el-step :title="item.taskName" description="通过" icon="el-icon-edit" :class="scope.row.userTaskTrackVOList.length === (index + 1) ? '' : ''" v-for="(item, index) in scope.row.userTaskTrackVOList" :key="index"></el-step>
               </el-steps>
             </template>
           </el-table-column>
@@ -112,8 +112,8 @@
         </el-pagination>
       </div>
     </div>
-    <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd"></runtimeAdd>
-    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog()"
+    <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtimeAdd>
+    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog"
       ref="runTimeImplement"></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
@@ -124,34 +124,26 @@
   import runtimeAdd from './component/runtimeAdd.vue'
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
+  import { getTaskList } from '@/unit/api.js'
   export default {
     data() {
       return {
         options: [],
         value: '',
-        valueDate: [],
-        radio: '',
+        valueDate: ['2022-02-01', '2022-04-22'],
         checkList: [],
         dialogVisibleAdd: false,
         dialogVisibleImplement: false,
-        tableData: [{
-            name: '王小虎',
-            curStep: 2
-          },
-          {
-            name: '王小虎',
-            curStep: 1
-          },
-          {
-            name: '王小虎',
-            curStep: 3
-          },
-          {
-            name: '王小虎',
-            curStep: 0
-          }
-        ],
+        tableData: [],
         getData: {
+          assignee: 'admin',
+          businessCode: '',
+          endTime: '',
+          order: 'desc',
+          projectCode: '',
+          startTime: '',
+          taskFilter: 'all',
+          tenantId: this.$store.state.tenantId,
           page: 1,
           limit: 10,
           total: 100
@@ -160,7 +152,11 @@
     },
     methods: {
       getManyData() {
-
+        this.getData.startTime = this.valueDate[0]
+        this.getData.endTime = this.valueDate[1]
+        getTaskList(this.getData).then((res) => {
+          this.tableData = res.result.dataList
+        })
       },
       handleSizeChange() {
 
@@ -168,10 +164,26 @@
       handleCurrentChange() {
 
       },
-      deployDiolog() {
+      deployDiolog(row) {
         this.dialogVisibleImplement = true
         this.$nextTick(() => {
-          this.$refs.runTimeImplement.$refs.ProcessInformation.postData = {
+          this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
+          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.processStarter
+          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
+          this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+        })
+      },
+      closeDialogImplement() {
+        this.dialogVisibleImplement = false
+      },
+      succseeAdd() {
+        this.dialogVisibleAdd = false
+        this.getManyData()
+      },
+      detailsDiolog(item) {
+        this.$refs.lookover.dialogVisible = true
+        this.$nextTick(() => {
+          this.$refs.lookover.$refs.ProcessInformation.postData = {
             numberCode: '121111',
             deployName: '测试',
             version: 'V1.0',
@@ -180,26 +192,8 @@
             ascription: '北七家',
             systemType: 'energy-1'
           }
-          this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(bpmnData.value, 'task1')
-        })
-      },
-      closeDialogImplement() {
-        this.dialogVisibleImplement = false
-      },
-      detailsDiolog() {
-        this.$refs.lookover.dialogVisible = true
-        this.$nextTick(() => {
-          this.$refs.runTimeImplement.$refs.ProcessInformation.postData = {
-            numberCode: '121111',
-            deployName: '测试',
-            version: 'V1.0',
-            createTime: '2022-02-02 09:20:00',
-            business: '智慧运维',
-            ascription: '北七家',
-            systemType: 'energy-1',
-            
-          }
           this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(bpmnData.value)
+          this.$refs.lookover.getListData(item.processInstanceId)
         })
       },
       goAdd() {
@@ -208,6 +202,9 @@
       closeDialogAdd() {
         this.dialogVisibleAdd = false
       }
+    },
+    created() {
+      this.getManyData()
     },
     components: {
       runtimeAdd,
@@ -373,8 +370,10 @@
       }
 
       .el-step__description {
-        color: white !important;
+        // color: white ;
         font-size: 12px;
+        position: absolute;
+        top: 5px;
       }
     }
   }

@@ -3,9 +3,9 @@
     <el-dialog title="执行工作流" :visible="dialogVisible" width="90%" :before-close="handleClose">
       <div class="Implement">
         <div class="Implement-left">
-          <ProcessInformation ref="ProcessInformation" v-if="dialogVisible" @selectOneSet="selectOneSet"></ProcessInformation>
+          <ProcessInformation ref="ProcessInformation" v-if="dialogVisible" @selectOneSet="selectOneSet" seeType="runTime"></ProcessInformation>
           <div class="function-list" v-if="bpmnType === 'bpmn:UserTask'">
-            <span class="function-item" @click="changeFunction('<agency></agency>')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
+            <span class="function-item" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
             <span class="function-item" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
             <span class="function-item" @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
             <span class="function-item" @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
@@ -118,13 +118,13 @@
           </div>
           <div style="margin-top: 20px;margin-bottom: 10px;">表单内容</div>
           <div class="Implement-right-form">
-            <formRuntime></formRuntime>
+            <formRuntime :formContant="formContant" v-if="formShow"></formRuntime>
           </div>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false" :disabled="!dataList.reject.rejectBollen">确 定</el-button>
+      <span slot="footer" class="dialog-footer" style="text-align: center;">
+        <el-button @click="cancel()">取 消</el-button>
+        <el-button type="primary" @click="implement()" :disabled="!dataList.reject.rejectBollen">执 行</el-button>
       </span>
     </el-dialog>
     <runtimePeople ref="runtimePeople"></runtimePeople>
@@ -137,6 +137,10 @@
   import runtimePeople from './runtimePeople.vue'
   import runtimeConfirmation from './runtimeConfirmation.vue'
   import formRuntime from './formRuntime.vue'
+  import {
+    designFormDesignServiceAll,
+    postCompleteTask
+  } from '@/unit/api.js'
   export default {
     props: {
       dialogVisible: {
@@ -148,6 +152,8 @@
       return {
         functionCheck: 'agency',
         bpmnType: '',
+        formContant: '',
+        formShow: false,
         peopleListDefatil: [{
             name: '旺仔'
           },
@@ -156,10 +162,10 @@
           }
         ],
         bpmnData: {
-          name: 'Task1',
-          grounp: 'admin',
-          assignee: 'admin1,admin2',
-          document: '你好'
+          name: '',
+          grounp: '',
+          assignee: '',
+          document: ''
         },
         dataList: {
           agency: [],
@@ -184,6 +190,10 @@
       handleClose() {
         this.$emit('close')
       },
+      cancel() {
+        this.$emit('close')
+      },
+      
       changeFunction(value) {
         this.functionCheck = value
       },
@@ -202,6 +212,46 @@
       },
       selectOneSet(value) {
         this.bpmnType = value.type
+        this.selection(value)
+      },
+      
+      implement() {
+        
+      },
+      
+      selection(element) {
+        if (element) {
+          this.bpmnData.name = element.businessObject.name
+          this.bpmnData.grounp = element.businessObject.$attrs['camunda:' + 'candidateGroups']
+          this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
+          this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
+          this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
+        } else {
+          this.initData()
+        }
+      },
+      
+      getFormData(formKey) {
+        if (formKey) {
+          let docName = formKey.split(':')[2]
+          designFormDesignServiceAll({
+            status: 'enabled',
+            tenantId: this.$store.state.tenantId,
+            ascription: this.$refs.ProcessInformation.postData.ascription,
+            // business: this.$refs.ProcessInformation.postData.business,
+            business: '',
+            createBy: '',
+            numberCode: '',
+            name: '',
+            docName: docName
+          }).then((res) => {
+            this.formContant = res.result[0].content
+            this.formShow = true
+          })
+        } else {
+          this.formContant = ''
+          this.formShow = false
+        }
       }
     },
     components: {

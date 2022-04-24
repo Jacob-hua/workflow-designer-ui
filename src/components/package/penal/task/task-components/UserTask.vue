@@ -52,7 +52,7 @@
     <el-form-item label="优先级">
       <el-input v-model="userTaskForm.priority" clearable @change="updateElementTask('priority')" />
     </el-form-item>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" append-to-body>
       <div class="dialogVisibleBody">
         <div class="dialogVisibleForm">
           <el-form-item :label="index" v-for="(item, index) in formData" :key="index">

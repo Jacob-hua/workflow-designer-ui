@@ -11,7 +11,7 @@
       </div>
       <div class="title-item">
         <span class="title-item-label marginLeft40">
-          {{ seeType === 'runTime' ? '部署' : '流程' }} 名称
+          {{ seeType === 'runTime' ? '部署' : '流程' }}名称
         </span>
         <div class="title-item-main">
           <el-input v-model="postData.deployName" placeholder="" :disabled="true"></el-input>
@@ -348,6 +348,8 @@
 
   .title-item-label {
     margin-right: 15px;
+    width: 60px;
+    display: inline-block;
   }
 
   .title-item-main {
