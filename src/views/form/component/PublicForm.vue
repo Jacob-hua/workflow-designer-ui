@@ -4,11 +4,14 @@
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-          start-placeholder="开始日期" end-placeholder="结束日期">
+          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
         <el-input v-model="input" placeholder="请输入内容"></el-input>
+      </div>
+      <div class="PublicForm-title-input">
+        <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary" @click="addForm()">新建表单</el-button>
@@ -16,62 +19,203 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="activeName = 'first'">可用表单（15）</span>
-        <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">草稿箱（15）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">可用表单（{{ formListFirst.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
       </div>
       <div class="home-table">
-        <div class="home-table-card" v-for="item in 10">
-          <div class="card-title">
-            <span class="title">NO.232132132</span>
-            <span class="detailWord" @click="detailsDiolog()">详情</span>
-          </div>
-          <div class="card-main">
-            <div class="card-main-item">
-              <span class="label">表单名称:</span>
-              <span class="value">工单创建表单</span>
+        <div v-if="activeName === 'enabled'">
+          <div class="home-table-card" v-for="(item, index) in formListFirst" :key="index">
+            <div class="card-title">
+              <span class="title">{{ item.numberCode }}</span>
+              <span class="detailWord" @click="detailsDiolog(item)">详情</span>
             </div>
-            <div class="card-main-item">
-              <span class="label">创建人:</span>
-              <span class="value">张三</span>
-            </div>
-            <div class="card-main-item">
-              <span class="label">创建时间:</span>
-              <span class="value">2021-11-12 14:11:23</span>
+            <div class="card-main">
+              <div class="card-main-item">
+                <span class="label">表单名称:</span>
+                <span class="value">{{ item.name }}</span>
+              </div>
+              <div class="card-main-item">
+                <span class="label">创建人:</span>
+                <span class="value">{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
+              </div>
+              <div class="card-main-item">
+                <span class="label">创建时间:</span>
+                <span class="value">{{ item.createTime }}</span>
+              </div>
             </div>
           </div>
         </div>
+        <div v-if="activeName === 'drafted'">
+          <div class="home-table-card" v-for="(item, index) in formListSecond" :key="index">
+            <div class="card-title">
+              <span class="title">{{ item.numberCode }}</span>
+              <span class="detailWord" @click="detailsDiolog(item)">详情</span>
+            </div>
+            <div class="card-main">
+              <div class="card-main-item">
+                <span class="label">表单名称:</span>
+                <span class="value">{{ item.name }}</span>
+              </div>
+              <div class="card-main-item">
+                <span class="label">创建人:</span>
+                <span class="value">{{ item.createName }}</span>
+              </div>
+              <div class="card-main-item">
+                <span class="label">创建时间:</span>
+                <span class="value">{{ item.createTime }}</span>
+              </div>
+            </div>
+          </div>
+          
+        </div>
       </div>
     </div>
-    <PublicFormDiolog ref="PublicFormDiolog"></PublicFormDiolog>
-    <detailsDiolog ref="detailsDiolog" @editForm="editForm"></detailsDiolog>
+    <PublicFormDiolog ref="PublicFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></PublicFormDiolog>
+    <detailsDiolog ref="detailsDiolog" @editForm="editForm" :status="activeName" ascription="public"></detailsDiolog>
   </div>
 </template>
 
 <script>
   import PublicFormDiolog from './PublicFormComponent/index.vue'
   import detailsDiolog from './details.vue'
+  import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/unit/api.js'
   export default {
     data() {
       return {
-        valueDate: '',
+        valueDate: [],
         input: '',
-        activeName: 'first'
+        activeName: 'enabled',
+        formListFirst: [],
+        formListSecond: [],
+        dataType: 'enabled'
       }
     },
     methods:{
-      addForm() {
+      // 查询草稿箱
+      getDraftData() {
+        this.valueDate = this.valueDate || []
+        postFormDesignRecordDraftInfo({
+          tenantId: this.$store.state.tenantId,
+          status: 'drafted',
+          ascription: 'public',
+          business: '',
+          createBy: -1,
+          numberCode: '',
+          name: this.input,
+          startTime: this.valueDate[0] || '',
+          endTime: this.valueDate[1] || ''
+        }).then((res) => {
+          this.formListSecond = res.result
+        })
+      },
+      // 查询可部署流程
+      getEnableData() {
+        this.valueDate = this.valueDate || []
+        postFormDesignBasicFormRecord({
+          tenantId: this.$store.state.tenantId,
+          status: 'enabled',
+          ascription: 'public',
+          business: '',
+          createBy: -1,
+          numberCode: '',
+          name: this.input,
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1]
+        }).then((res) => {
+          this.formListFirst = res.result
+        })
+      },
+      
+      getManyData() {
+        this.getEnableData()
+        this.getDraftData()
+      },
+      
+      getData() {
+        switch (this.activeName){
+          case 'enabled':
+            this.getEnableData()
+            break;
+          case 'drafted':
+            this.getDraftData()
+            break;
+          default:
+            break;
+        }
+      },
+      
+      changeActiveName(value) {
+        this.activeName = value
+        this.getManyData()
+      },
+      
+      addSuccess(value) {
+        this.$refs.PublicFormDiolog.dialogVisible2 = false
+        this.$refs.detailsDiolog.dialogVisible2 = false
+        this.getManyData()
+      },
+      
+      addForm(item) {
         this.$refs.PublicFormDiolog.dialogVisible2 = true
+        this.$nextTick(() => {
+          if (item) {
+            this.dataType = this.activeName + '-edit'
+            this.$refs.PublicFormDiolog.postData = item
+            this.$refs.PublicFormDiolog.$refs.formbpmn.schema = JSON.parse(item.content)
+          } else{
+            this.dataType = this.activeName
+            this.$refs.PublicFormDiolog.postData = {
+              name: ''
+            }
+            this.$refs.PublicFormDiolog.$refs.formbpmn.schema = {
+              schemaVersion: 1,
+              type: "default",
+              exporter: {
+                name: "form-js",
+                version: "0.7.0"
+              }
+            }
+          }
+          this.$refs.PublicFormDiolog.$refs.formbpmn.init()
+        })
       },
-      detailsDiolog() {
+      detailsDiolog(item) {
         this.$refs.detailsDiolog.dialogVisible2 = true
+        postFormDesignRecordFormDesignRecordInfo({
+          id: item.id,
+          status: this.activeName,
+          tenantId: this.$store.state.tenantId,
+          ascription: 'public',
+          business: '',
+          createBy: -1
+        }).then((res) => {
+          this.$refs.detailsDiolog.formData = res.result
+          this.$nextTick(() => {
+            let arr = []
+            res.result.versions.forEach((item, index) => {
+              arr.push({
+                value: res.result.childIds[index],
+                label: item
+              })
+            })
+            this.$refs.detailsDiolog.options = arr
+            this.$refs.detailsDiolog.value = res.result.childIds[0]
+            this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
+            this.$refs.detailsDiolog.$refs.formbpmn.init()
+          })
+        })
       },
-      editForm() {
-        this.addForm()
+      editForm(item) {
+        this.addForm(item)
       }
     },
     components:{
       PublicFormDiolog,
       detailsDiolog
+    },
+    created() {
+      this.getEnableData()
+      this.getDraftData()
     }
   }
 </script>

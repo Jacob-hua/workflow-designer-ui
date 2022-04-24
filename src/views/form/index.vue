@@ -2,10 +2,10 @@
   <div class="form-home">
     <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="公共表单" name="first">
-          <PublicForm></PublicForm>
+          <PublicForm v-if="activeName === 'first'"></PublicForm>
         </el-tab-pane>
         <el-tab-pane label="项目表单" name="second">
-          <ProjectForm></ProjectForm>
+          <ProjectForm v-if="activeName === 'second'"></ProjectForm>
         </el-tab-pane>
     </el-tabs>
   </div>

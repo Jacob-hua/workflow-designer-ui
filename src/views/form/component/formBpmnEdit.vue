@@ -31,9 +31,12 @@
           container: container
         });
         this.formEditor.importSchema(this.schema)
-        this.formEditor.on('selection.changed', (item) => {
-          console.log('选中？', item)
-        })
+        // this.formEditor.on('selection.changed', (item) => {
+        //   console.log('选中？', item)
+        // })
+      },
+      importData() {
+        return this.formEditor.saveSchema()
       },
       save() {
         let { href, filename } = this.setEncoded('form', 'test', JSON.stringify(this.formEditor.saveSchema()))
@@ -72,7 +75,7 @@
       },
     },
     mounted() {
-      this.init()
+      // this.init()
     }
   }
 </script>

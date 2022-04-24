@@ -11,6 +11,7 @@
   import {
     FormEditor
   } from '@bpmn-io/form-js-editor';
+  // import { useState } from 'preact/hooks';
   export default {
     data() {
       return {
@@ -37,8 +38,12 @@
         })
       },
       save() {
+        // console.log(useState(this.schema))
         let { href, filename } = this.setEncoded('form', 'test', JSON.stringify(this.formEditor.saveSchema()))
         this.downloadFunc(href, filename);
+      },
+      importData() {
+        return this.formEditor.saveSchema()
       },
       downloadProcess() {
         
@@ -71,9 +76,19 @@
           this.formEditor.importSchema(JSON.parse(reader.result))
         }
       },
+      // 加载传入字符串
+      importLocalFile() {
+        const that = this;
+        const file = this.$refs.refFile.files[0];
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
+          this.formEditor.importSchema(JSON.parse(reader.result))
+        }
+      },
     },
     mounted() {
-      this.init()
+      // this.init()
     }
   }
 </script>

@@ -217,6 +217,7 @@ export default {
       this.updateElementExtensions();
     },
     updateElementFormKey() {
+      console.log(this.bpmnElement, '000000')
       window.bpmnInstances.modeling.updateProperties(this.bpmnElement, { formKey: this.formKey });
     },
     updateElementBusinessKey() {

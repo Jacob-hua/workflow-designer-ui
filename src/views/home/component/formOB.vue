@@ -11,6 +11,12 @@
     FormEditor
   } from '@bpmn-io/form-js-editor';
   export default {
+    props:{
+      formContant: {
+        type: String,
+        default: ''
+      }
+    },
     data() {
       return {
         formEditor: null,
@@ -30,13 +36,8 @@
         this.formEditor = new FormEditor({
           container: container
         });
-        
-        let str = '{"components":[{"label":"Text Field","type":"textfield","id":"Field_0wi0bph","key":"field_1h9sf53"},{"label":"Number","type":"number","id":"Field_17j2myb","key":"field_0015l1e"},{"label":"Checkbox","type":"checkbox","id":"Field_1yjofg1","key":"field_0uoxlai"},{"values":[{"label":"Value","value":"value"}],"label":"Radio","type":"radio","id":"Field_1iefqvx","key":"field_02t66sm"},{"values":[{"label":"Value","value":"value"}],"label":"Select","type":"select","id":"Field_19dd56r","key":"field_1x3uycc"},{"text":"# Text","type":"text","id":"Field_10bgy0v"},{"action":"submit","label":"Button","type":"button","id":"Field_1uvrwge","key":"field_148fk9h"}],"schemaVersion":4,"type":"default","exporter":{"name":"form-js","version":"0.7.0"},"id":"Form_0brc4xq"}'
-        let schema = JSON.parse(str)
+        let schema = JSON.parse(this.formContant)
         this.formEditor.importSchema(schema)
-        this.formEditor.on('selection.changed', (item) => {
-          console.log('选中？', item)
-        })
       },
       save() {
         let { href, filename } = this.setEncoded('form', 'test', JSON.stringify(this.formEditor.saveSchema()))

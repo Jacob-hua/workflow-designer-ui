@@ -15,7 +15,11 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import "@/components/package/theme/element-variables.scss";
+
+import JsonViewer from 'vue-json-viewer'
+
 Vue.use(ElementUI);
+Vue.use(JsonViewer);
 
 import { vuePlugin } from "@/components/package/highlight";
 import "highlight.js/styles/atom-one-dark-reasonable.css";

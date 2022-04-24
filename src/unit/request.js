@@ -2,14 +2,21 @@ import axios from "axios"
 import {Message} from 'element-ui'
 
 // create an axios instance
-const service = axios.create({
-  baseURL: '/', // url = base url + request url
+export const service = axios.create({
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
 })
 
 axios.defaults.withCredentials = true
+
+service.defaults.headers['X-SIACT-TOKEN'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFkbWluIiwiZXhwIjoxNjYzNDcyNjQ4fQ.gGidbfs64pf_r79KFGdUHtCkEJdU5JtficHEh1K112U'
+service.defaults.headers['X-SIACT-TOKEN-TYPE'] = '1'
+
+
 service.defaults.headers.post["Content-Type"] ="application/x-www-form-urlencoded;charset=UTF-8";  //设置编码
+
+
 
 //请求拦截
 service.interceptors.request.use(
@@ -25,8 +32,9 @@ service.interceptors.response.use(
   response => {
     return new Promise (
       (resolve, reject) => {
-        const res = response.data;
-        if (res.status === "SUCCESS" || res.status === "success") {
+        const status = response.status;
+        const res = response.data
+        if (status === 200) {
           resolve(res);
         } else {
           reject(res);
@@ -84,6 +92,6 @@ export function post(url, params) {
   return service.post(url, params)
 }
 
-export function deletefn(url, params) {
-  return service.delete(url, params)
+export function deletefn(url, params, config) {
+  return service.delete(url, {params, config})
 }

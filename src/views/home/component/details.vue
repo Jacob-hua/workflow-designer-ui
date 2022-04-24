@@ -2,13 +2,13 @@
   <div>
     <el-dialog title="部署工作流" :visible.sync="dialogVisible1" width="70%" custom-class="dialogVisible1">
       <div>
-        <ProcessInformation type="details1"></ProcessInformation>
+        <ProcessInformation type="details1" v-if="dialogVisible1" ref="details1" ></ProcessInformation>
       </div>
-      <div>
+      <div v-if="dialogVisible1" class="details-footer-height">
         <div class="details-header">
           <span>能源系统</span>
           <span class="inputSelect">
-            <el-select v-model="postData.system" placeholder="请选择">
+            <el-select v-model="postData.systemType" placeholder="请选择">
                 <el-option
                   v-for="item in optionSystem"
                   :key="item.value"
@@ -17,59 +17,60 @@
                 </el-option>
               </el-select>
           </span>
-          <span class="frequency">已部署次数:5</span>
+          <span class="frequency">已部署次数: {{ DeployBasicList[postData.systemType] ? DeployBasicList[postData.systemType].length : '0' }}</span>
         </div>
         <div class="detail-list">
-            <div class="detail-list-item" v-for="item in 5">
-              <span class="detailsWord" @click="dialogVisible2Detail()">详情</span>
+            <div class="detail-list-item" v-if="DeployBasicList[postData.systemType] && DeployBasicList[postData.systemType].length > 0"  v-for="(item, index) in DeployBasicList[postData.systemType]" :key="index">
+              <span class="detailsWord" @click="dialogVisible2Detail(item)">详情</span>
               <div class="item-item">
                 <span>部署名称:</span>
-                <span>一般性周期巡视</span>
+                <span>{{ item.deployName }}</span>
               </div>
               <div class="item-item">
                 <span>部署人:</span>
-                <span>张三</span>
+                <span>{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
               </div>
               <div class="item-item">
                 <span>部署时间:</span>
-                <span>2021-11-12 14:11:23</span>
+                <span>{{ item.createTime }}</span>
               </div>
               <div class="item-item">
                 <span>状态:</span>
-                <span>已激活</span>
+                <span>{{ item.status === 'activation' ? '已激活' : '未激活' }}</span>
               </div>
             </div>
+            <div style="line-height: 194px;width: 100%;text-align: center;" v-if="!DeployBasicList[postData.systemType]">暂无数据</div>
         </div>
       </div>
     </el-dialog>
     <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="70%" custom-class="dialogVisible1">
       <div>
-        <ProcessInformation type="details2"></ProcessInformation>
+        <ProcessInformation type="details2" ref="details2" v-if="dialogVisible2" @selection="selection" :seeType="seeType"></ProcessInformation>
       </div>
       <div class="bpmn-configure">
         <div class="bpmn-configure-basic">
           <div class="bpmn-configure-title">工单分配</div>
           <div class="bpmn-configure-Main">
-            <div class="bpmn-configure-Main-item"> <span>名<span style="visibility: hidden;">占位</span>称</span>: <span>工单分配</span> </div>
-            <div class="bpmn-configure-Main-item"> <span>绑定岗位</span>: <span>班组长</span> </div>
-            <div class="bpmn-configure-Main-item"> <span>绑定岗位</span>: <span>张三</span> </div>
-            <div class="bpmn-configure-Main-item"> <span>备<span style="visibility: hidden;">占位</span>注</span>: <span>看不到看不到看不到</span> </div>
+            <div class="bpmn-configure-Main-item"> <span>名<span style="visibility: hidden;">占位</span>称</span>: <span>{{ bpmnData.name }}</span> </div>
+            <div class="bpmn-configure-Main-item"> <span>绑定岗位</span>: <span>{{ bpmnData.grounp }}</span> </div>
+            <div class="bpmn-configure-Main-item"> <span>绑定人员</span>: <span>{{ bpmnData.assignee }}</span> </div>
+            <div class="bpmn-configure-Main-item"> <span>备<span style="visibility: hidden;">占位</span>注</span>: <span>{{ bpmnData.document }}</span> </div>
           </div>
         </div>
         <div class="bpmn-configure-form">
           <div class="bpmn-configure-title">工单分配-表单内容</div>
           <div class="bpmn-configure-Main">
             <span v-if="!formShow" class="noneForm"> 当前未关联表单 </span>
+            <!-- <span v-if="formShow" class="formRemove" @click="removeForm()">移除表单</span> -->
             <div v-if="formShow" class="formShowForm">
-              <!-- <span class="formRemove">移除表单</span> -->
-              <formOB></formOB>
+              <formOB v-if="formShow" :formContant="formContent" :key="formOBKey"></formOB>
             </div>
           </div>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible2 = false">回收</el-button>
-        <el-button @click="dialogVisible2 = false">删除</el-button>
+      <span slot="footer" class="dialog-footer" v-if="seeType === 'delete'">
+        <!-- <el-button @click="dialogVisible2 = false">回收</el-button> -->
+        <el-button @click="deleteDeployment()">删除</el-button>
       </span>
     </el-dialog>
   </div>
@@ -78,31 +79,52 @@
 <script>
   import ProcessInformation from './ProcessInformation.vue'
   import formOB from './formOB.vue'
+  import { getDeployBasic, designFormDesignServiceAll, getDeleteDeployment, getDeployAndProcessInfo } from '@/unit/api.js'
   export default {
+    props:{
+      seeType: {
+        type: String,
+        default: 'delete'
+      }
+    },
     data() {
       return {
         dialogVisible1: false,
         dialogVisible2: false,
+        bpmnModeler: null,
+        formContent: '',
+        formOBKey: 0,
+        formList: [],
         formShow: false,
+        DeployBasicList: {
+          'energy-1': []
+        },
+        bpmnData: {
+          name: '',
+          grounp: '',
+          assignee: '',
+          document: '',
+          id: ''
+        },
         input: '',
         postData: {
-          system: '1'
+          systemType: 'energy-1'
         },
         optionSystem: [
           {
-            value: '1',
+            value: 'energy-1',
             label: '配电'
           },
           {
-            value: '2',
+            value: 'energy-2',
             label: '空压'
           },
           {
-            value: '3',
+            value: 'energy-3',
             label: '供暖'
           },
           {
-            value: '4',
+            value: 'energy-4',
             label: '空调'
           },
         ]
@@ -113,8 +135,93 @@
       formOB
     },
     methods:{
-      dialogVisible2Detail() {
-        this.dialogVisible2 = true
+      initData() {
+        this.bpmnData = {
+          name: '',
+          grounp: '',
+          assignee: '',
+          document: '',
+          id: ''
+        }
+        this.formShow = false
+        this.formContent = ''
+      },
+      dialogVisible2Detail(item) {
+        getDeployAndProcessInfo(item.id).then((res) => {
+          this.dialogVisible2 = true
+          this.$nextTick(() => {
+            this.$refs.details2.postData = JSON.parse(JSON.stringify(res.result))
+            this.$refs.details2.createNewDiagram(item.processResource)
+          })
+        })
+      },
+      getDetailList() {
+        let id = this.$refs.details1.postData.sourceId
+        getDeployBasic(id).then((res) => {
+          this.DeployBasicList = res.result
+        })
+      },
+      getFormData(formKey) {
+        console.log('11111', formKey)
+        if (formKey) {
+          let docName = formKey.split(':')[2]
+          designFormDesignServiceAll({
+            status: 'enabled',
+            tenantId: this.$store.state.tenantId,
+            ascription: this.$refs.details2.postData.ascription,
+            business: '',
+            createBy: '',
+            numberCode: '',
+            name: '',
+            docName: docName
+          }).then((res) => {
+            this.formContent = res.result[0].content
+            this.formOBKey++
+            this.formShow = true
+          })
+        } else {
+          this.formContent = ''
+          this.formShow = false
+        }
+      },
+      selection(element, bpmn) {
+          this.bpmnModeler = bpmn
+          if (element) {
+            window.bpmnInstances.modeler = element
+            this.bpmnData.name = element.businessObject.name
+            this.bpmnData.grounp = element.businessObject.$attrs['camunda:' + 'candidateGroups']
+            this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
+            this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
+            this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
+          } else {
+            this.initData()
+          }
+      },
+      deleteDeployment() {
+        this.$confirm('删除后不可恢复, 请确认是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          getDeleteDeployment({
+            id: this.$refs.details2.postData.deployRecordId,
+            cascade: true
+          }).then(() => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.dialogVisible1 = false
+            this.dialogVisible2 = false
+            this.$emit('deleteSuccess')
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+        
       }
     }
   }
@@ -194,6 +301,10 @@
     width: 100%;
     text-align: center;
     line-height: 160px;
+  }
+  
+  .details-footer-height {
+    height: 248px;
   }
   
   .bpmn-configure-title {

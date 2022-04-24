@@ -3,34 +3,34 @@
     <div class="ProcessInformation-title">
       <div class="title-item">
         <span class="title-item-label">
-          流程编码
+           流程编码
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.code" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.numberCode" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
         <span class="title-item-label marginLeft40">
-          流程名称
+          {{ seeType === 'runTime' ? '部署' : '流程' }}名称
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.name" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.deployName" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
         <span class="title-item-label marginLeft40">
-          流程版本
+          {{ seeType === 'runTime' ? '部署人' : '流程版本' }}
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.edition" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.version" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
         <span class="title-item-label marginLeft40">
-          创建时间
+          {{ seeType === 'runTime' ? '部署' : '创建' }}时间
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.time" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.createTime" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -38,7 +38,7 @@
           应用项目
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.project" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.business" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -46,7 +46,7 @@
           流程类型
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.type" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item" v-if="type !== 'details1'">
@@ -54,15 +54,10 @@
           能源系统
         </span>
         <div class="title-item-main">
-          <!-- <el-input v-model="postData.system" placeholder="" :disabled="true"></el-input> -->
-          <el-select v-model="postData.system" placeholder="请选择">
-              <el-option
-                v-for="item in optionSystem"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
+          <el-select v-model="postData.systemType" placeholder="请选择" :disabled="true">
+            <el-option v-for="item in optionSystem" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
         </div>
       </div>
     </div>
@@ -71,11 +66,8 @@
     </div>
     <div v-if="type == 'details2'">
       <span class="bnpmTitle">巡视工作流</span>
-      <span class="bnpmSwitch">
-        <el-switch
-          v-model="switchValue"
-          active-color="#13ce66"
-          active-text="激活">
+      <span class="bnpmSwitch" v-if="seeType === 'delete'">
+        <el-switch v-model="switchValue" active-color="#13ce66" active-text="激活">
         </el-switch>
       </span>
     </div>
@@ -99,11 +91,15 @@
   import activitiModdleDescriptor from "@/components/package/designer/plugins/descriptor/activitiDescriptor.json";
   import flowableModdleDescriptor from "@/components/package/designer/plugins/descriptor/flowableDescriptor.json";
   import {
-      processInstanceData
-    } from '@/unit/api.js'
+    processInstanceData
+  } from '@/unit/api.js'
   export default {
-    props:{
+    props: {
       type: String,
+      seeType: {
+        type: String,
+        default: 'delete'
+      },
       value: String, // xml 字符串
       processId: String,
       processName: String,
@@ -159,25 +155,25 @@
           }
           return [this.additionalModel];
         }
-    
+
         // 插入用户自定义扩展模块
         if (Object.prototype.toString.call(this.additionalModel) === "[object Array]") {
           Modules.push(...this.additionalModel);
         } else {
           this.additionalModel && Modules.push(this.additionalModel);
         }
-    
+
         // 翻译模块
         const TranslateModule = {
           translate: ["value", customTranslate(this.translations || translationsCN)]
         };
         Modules.push(TranslateModule);
-    
+
         // 模拟流转模块
         if (this.simulation) {
           Modules.push(tokenSimulation);
         }
-    
+
         // 根据需要的流程类型设置扩展元素构建模块
         // if (this.prefix === "bpmn") {
         //   Modules.push(bpmnModdleExtension);
@@ -191,7 +187,7 @@
         if (this.prefix === "activiti") {
           Modules.push(activitiModdleExtension);
         }
-    
+
         return Modules;
       },
       moddleExtensions() {
@@ -200,14 +196,14 @@
         if (this.onlyCustomizeModdle) {
           return this.moddleExtension || null;
         }
-    
+
         // 插入用户自定义模块
         if (this.moddleExtension) {
           for (let key in this.moddleExtension) {
             Extensions[key] = this.moddleExtension[key];
           }
         }
-    
+
         // 根据需要的 "流程类型" 设置 对应的解析文件
         if (this.prefix === "activiti") {
           Extensions.activiti = activitiModdleDescriptor;
@@ -218,55 +214,65 @@
         if (this.prefix === "camunda") {
           Extensions.camunda = camundaModdleDescriptor;
         }
-    
+
         return Extensions;
       }
     },
     data() {
       return {
         postData: {
-          code: '21321323',
-          name: '巡视工作流',
-          edition: 'V1.0',
-          time: '2011-11-11 19:11:11',
-          project: '北七家项目',
-          type: '智慧运维',
-          system: '配电'
+          numberCode: '',
+          name: '',
+          version: '',
+          createTime: '',
+          business: '',
+          ascription: '',
+          systemType: ''
         },
-        optionSystem: [
-          {
-            value: '1',
+        optionSystem: [{
+            value: 'energy-1',
             label: '配电'
           },
           {
-            value: '2',
+            value: 'energy-2',
             label: '空压'
           },
           {
-            value: '3',
+            value: 'energy-3',
             label: '供暖'
           },
           {
-            value: '4',
+            value: 'energy-4',
             label: '空调'
           }
         ],
         switchValue: ''
       }
     },
-    methods:{
+    methods: {
       initBpmnModeler() {
         if (this.bpmnModeler) return;
         this.bpmnModeler = new BpmnModeler({
           container: this.$refs["bpmn-canvas"],
-        //   keyboard: this.keyboard ? { bindTo: document } : null,
           additionalModules: [],
           moddleExtensions: [],
-        //   ...this.options
         });
-        this.creatDemo()
-        this.$emit("init-finished", this.bpmnModeler);
-        // this.initModelListeners();
+        this.bpmnModeler.on("selection.changed", ({
+          newSelection
+        }) => {
+          this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
+        });
+        window.bpmnInstances = {
+          modeler: this.bpmnModeler,
+          modeling: this.bpmnModeler.get("modeling"),
+          moddle: this.bpmnModeler.get("moddle"),
+          eventBus: this.bpmnModeler.get("eventBus"),
+          bpmnFactory: this.bpmnModeler.get("bpmnFactory"),
+          elementFactory: this.bpmnModeler.get("elementFactory"),
+          elementRegistry: this.bpmnModeler.get("elementRegistry"),
+          replace: this.bpmnModeler.get("replace"),
+          selection: this.bpmnModeler.get("selection")
+        };
       },
       creatDemo() {
         processInstanceData({
@@ -276,51 +282,80 @@
           this.createNewDiagram(xmlStr)
         })
       },
-      async createNewDiagram(xml) {
+      async createNewDiagram(xml, id) {
         // 将字符串转换成图显示出来
         let newId = this.processId || `Process_${new Date().getTime()}`;
         let newName = this.processName || `业务流程_${new Date().getTime()}`;
         let xmlString = xml || DefaultEmptyXML(newId, newName, this.prefix);
         try {
-          let { warnings } = await this.bpmnModeler.importXML(xmlString);
+          let {
+            warnings
+          } = await this.bpmnModeler.importXML(xmlString);
           if (warnings && warnings.length) {
             warnings.forEach(warn => console.warn(warn));
           }
+          this.$nextTick(() => {
+            if(id) {
+              let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
+                return element.id === id
+              })
+              this.$emit('selectOneSet', oneSet[0])
+              window.bpmnInstances.modeling.setColor(oneSet[0], {
+                'fill': '#cccccc',
+                // 'stroke': '#1890ff'
+              })
+            }
+          })
         } catch (e) {
           console.error(`[Process Designer Warn]: ${e?.message || e}`);
         }
       },
+      async lightSharp(id) {
+        this.$nextTick(() => {
+          let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
+            return element.id === id
+          })
+          
+        })
+      }
     },
     mounted() {
       this.initBpmnModeler();
-      // this.createNewDiagram(this.value);
       this.$once("hook:beforeDestroy", () => {
         if (this.bpmnModeler) this.bpmnModeler.destroy();
         this.$emit("destroy", this.bpmnModeler);
         this.bpmnModeler = null;
       });
+    },
+    beforeDestroy() {
+      window.bpmnInstances = null;
     }
   }
 </script>
 
 <style scoped="scoped">
-  .ProcessInformation {
-    
-  }
+  .ProcessInformation {}
+
   .ProcessInformation-title {
     border-bottom: 1px solid #CCCCCC;
     margin-bottom: 40px;
   }
+
   .title-item {
     display: inline-block;
     margin-bottom: 20px;
   }
+
   .title-item-label {
     margin-right: 15px;
+    width: 60px;
+    display: inline-block;
   }
+
   .title-item-main {
     display: inline-block;
   }
+
   /deep/ .el-input.is-disabled .el-input__inner {
     color: black;
     width: 180px;
@@ -329,6 +364,7 @@
     padding: 0px 10px;
     background-color: #f2f2f2;
   }
+
   /deep/ .el-input__inner {
     width: 180px;
     height: 43px;
@@ -336,14 +372,17 @@
     padding: 0px 10px;
     background-color: #f2f2f2;
   }
+
   .marginLeft40 {
     margin-left: 70px;
   }
+
   .ProcessInformation-bpmn {
     height: 400px;
     border: 1px solid black;
     position: relative;
   }
+
   .bpmn-Main-title {
     position: absolute;
     font-weight: 700;
@@ -352,15 +391,19 @@
     top: 10px;
     left: 10px;
   }
+
   .my-process-designer__canvas {
     height: 100%;
   }
+
   /deep/ .djs-palette {
     display: none;
   }
+
   /deep/ .djs-context-pad {
     display: none;
   }
+
   .bnpmTitle {
     font-weight: 700;
     color: black;
@@ -368,6 +411,7 @@
     top: -15px;
     left: 10px;
   }
+
   .bnpmSwitch {
     position: relative;
     top: -15px;

@@ -1,27 +1,27 @@
 <template>
   <div>
-    <el-dialog title="新建表单" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog title="表单详情" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div>
           表单模板
         </div>
         <div class="detail-title">
-          <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>232132132</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>工单创建表单</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>张三</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>2021-11-12 14:11:23</span> </div>
-          <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>4</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>{{ formData.numberCode }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>{{ formData.name }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>{{ formData.createName }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>{{ formData.createTime }}</span> </div>
+          <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formData.count }}</span> </div>
           
          <div class="detail-title-item-button">
            <el-button type="primary" @click="editForm()">编辑</el-button>
            <el-button type="primary" @click="deleteRow()" v-if="quote == 'delete'">删除</el-button>
-           <el-button type="primary" @click="quot()" v-if="quote == 'quote'">应用</el-button>
+           <el-button type="primary" @click="quot()" v-if="quote == 'quote' && status !== 'drafted' ">应用</el-button>
          </div>
           
         </div>
-        <div>
+        <div v-if="status !== 'drafted'">
           <div class="optionV">
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="value" placeholder="请选择" @change="upDataV()">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="fromEdit">
-          <formBpmnEdit></formBpmnEdit>
+          <formBpmnEdit v-if="dialogVisible2" ref="formbpmn" :key="formBpmnEditKey"></formBpmnEdit>
         </div>
       </div>
     </el-dialog>
@@ -40,28 +40,28 @@
       <div>
         <div class="from-item">
           <span>应用项目</span>
-          <el-select v-model="input" placeholder="请选择应用项目">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="postData.ascription" placeholder="请选择应用项目">
+            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>流程类型</span>
-          <el-select v-model="input" placeholder="请选择流程类型">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="postData.business" placeholder="请选择流程类型">
+            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
-        <div class="from-item">
+        <!-- <div class="from-item">
           <span>能源系统</span>
-          <el-select v-model="input" placeholder="请选择能源系统">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="postData.systemType" placeholder="请选择能源系统">
+            <el-option v-for="item in options3" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-        </div>
+        </div> -->
         <div class="from-item">
           <span>表单名称</span>
-          <el-input v-model="input" placeholder="请输入部署名称"></el-input>
+          <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -74,23 +74,84 @@
 
 <script>
   import formBpmnEdit from './formBpmnEdit.vue'
+  import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService, postFormDesignServiceRealiseProcessData } from '@/unit/api.js'
   export default {
     props:{
       quote: {
         type: String,
         default: 'quote'
+      },
+      status: {
+        type: String,
+        default: ''
+      },
+      ascription: {
+        type: String,
+        default: 'public'
+      },
+      business: {
+        type: String,
+        default: ''
       }
     },
     data() {
       return {
         dialogVisible2: false,
         dialogVisible1: false,
+        formData: {
+          numberCode: '',
+          name: '',
+          createName: '',
+          createTime: ''
+        },
+        options: [],
+        formBpmnEditKey: 0,
         value: '',
+        postData: {
+          ascription: '',
+          business: '',
+          systemType: '',
+          name: ''
+        },
         input: '',
-        options: [{
-          value: 'V1.0',
-          label: 'V1.0'
-        }]
+        options1: [
+         {
+          value: 'beiqijia',
+          label: '北七家人才基地'
+         },
+         {
+          value: 'laiwu',
+          label: '莱芜供热项目'
+         },
+         {
+          value: 'xilaideng',
+          label: '海口喜来登酒店'
+         },
+        ],
+        options2: [
+          {
+            value: '',
+            label: '全部业务'
+          }
+        ],
+        options3: [
+          {
+            value: 'energy-1',
+            label: '配电'
+          },
+          {
+            value: 'energy-2',
+            label: '空压'
+          },
+          {
+            value: 'energy-3',
+            label: '供暖'
+          },
+          {
+            value: 'energy-4',
+            label: '空调'
+          }
+        ]
       }
     },
     components:{
@@ -103,10 +164,13 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          deleteFormDesignService(this.value || this.formData.id ).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.$emit('deleteSuccsee')
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -114,12 +178,46 @@
           });          
         });
       },
+      upDataV() {
+        postFormDesignRecordFormDesignRecordInfo({
+          id: this.value,
+          status: this.status,
+          tenantId: this.$store.state.tenantId,
+          ascription: this.ascription,
+          business: this.business,
+          createBy: -1
+        }).then((res) => {
+          this.formData = res.result
+          this.formBpmnEditKey++
+          this.$nextTick(() => {
+            this.$refs.formbpmn.schema = JSON.parse(res.result.content)
+            this.$refs.formbpmn.init()
+          })
+        })
+      },
       editForm() {
-        this.$emit('editForm')
+        this.$emit('editForm', this.formData)
       },
       nextDiolog() {
-        this.dialogVisible1 = false
-        this.dialogVisible2 = false
+        const xml  = this.$refs.formbpmn.importData();
+        xml.id = 'form_' + Date.parse(new Date())
+        var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
+        let formData = new FormData()
+        formData.append('name', this.postData.name)
+        formData.append('docName', this.postData.name +'.form')
+        formData.append('ascription', this.postData.ascription)
+        formData.append('code', xml.id)
+        formData.append('business', this.postData.business)
+        formData.append('status', 'enabled')
+        formData.append('createBy', '-1')
+        formData.append('createName', 'admin')
+        formData.append('tenantId', this.$store.state.tenantId)
+        formData.append('file', file1)
+        postFormDesignServiceRealiseProcessData(formData).then((res) => {
+          this.$message.success('发布至可用表单成功')
+          this.dialogVisible1 = false
+          this.dialogVisible2 = false
+        })
       },
       quot() {
         this.dialogVisible1 = true

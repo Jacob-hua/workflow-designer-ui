@@ -3,7 +3,7 @@
     <div class="my-process-designer__header">
       <slot name="control-header"></slot>
       <template v-if="!$slots['control-header']">
-        <el-button-group key="file-control">
+<!--        <el-button-group key="file-control">
           <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="$refs.refFile.click()">打开文件</el-button>
           <el-tooltip effect="light">
             <div slot="content">
@@ -23,13 +23,13 @@
             </div>
             <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-view">预览</el-button>
           </el-tooltip>
-<!--          <el-tooltip v-if="simulation" effect="light" :content="this.simulationStatus ? '退出模拟' : '开启模拟'">
+         <el-tooltip v-if="simulation" effect="light" :content="this.simulationStatus ? '退出模拟' : '开启模拟'">
             <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-cpu" @click="processSimulation">
               模拟
             </el-button>
-          </el-tooltip> -->
-          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至数据库</el-button>
-        </el-button-group>
+          </el-tooltip>
+          <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至驾驶舱工作流</el-button>
+        </el-button-group> -->
         <!-- <el-button-group key="align-control">
           <el-tooltip effect="light" content="向左对齐">
             <el-button :size="headerButtonSize" class="align align-left" icon="el-icon-s-data" @click="elementsAlign('left')" />
@@ -108,7 +108,9 @@ import flowableModdleExtension from "./plugins/extension-moddle/flowable";
 import X2JS from "x2js";
 
 import {
-    processInstanceData
+    processInstanceData,
+    postProcessDesignService,
+    postDesignDesignService
   } from '@/unit/api.js'
 
 export default {
@@ -267,17 +269,27 @@ export default {
       // this.creatDemo()
       this.initModelListeners();
     },
-    postData() {
-      var file1 = new File(['凯凯是我儿子'], 'test.txt', {type: 'text/plain'});
-      // console.log(file1)
-      var blobUrl = URL.createObjectURL(file1);
-      console.log(blobUrl)
-      this.downloadFunc(blobUrl, '123.txt')
-      let postData = {
-        name: '测试',
-        docName: '测试.bpmn',
-        ascription: ''
-      }
+    async postData() {
+      const newConvert = new X2JS();
+      this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
+        const { definitions } = newConvert.xml2js(xml);
+        var file1 = new File([xml], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
+        let formData = new FormData()
+        formData.append('name', definitions.process._name)
+        formData.append('docName', definitions.process._name + '.bpmn')
+        formData.append('ascription', 'beiqijia')
+        formData.append('code', definitions.process._id)
+        formData.append('business', 'zhihuiyunwei')
+        formData.append('status', 'enabled')
+        formData.append('createBy', '-1')
+        formData.append('createName', 'admin')
+        formData.append('tenantId', '18')
+        formData.append('file', file1)
+        postDesignDesignService(formData).then((res) => {
+          this.$message.success('保存成功')
+          this.$router.push('/home')
+        })
+      });
     },
     creatDemo() {
       processInstanceData({
@@ -401,7 +413,6 @@ export default {
     importLocalFile() {
       const that = this;
       const file = this.$refs.refFile.files[0];
-      console.log(file, '00000')
       const reader = new FileReader();
       reader.readAsText(file);
       reader.onload = function() {

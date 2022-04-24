@@ -13,7 +13,9 @@ export default {
     }
   },
   methods: {},
-  mounted() {}
+  mounted() {
+    
+  }
 };
 </script>
 
@@ -25,6 +27,8 @@ export default {
   }
   #app {
     box-sizing: border-box;
+    min-width: 1920px;
+    min-height: 1080px;
   }
   
   .bjs-powered-by {
@@ -65,5 +69,9 @@ export default {
       background-color: rgba(159, 159, 159, 0.5);
       -webkit-border-radius: 4px;
     }
+  }
+  
+  .el-dialog .el-dialog__footer {
+    text-align: center;
   }
 </style>
