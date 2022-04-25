@@ -1,22 +1,22 @@
 <template>
   <div>
     <div class="home-table-main">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="formListFirst" style="width: 100%">
         <el-table-column type="index" label="序号" width="180" align="center">
         </el-table-column>
         <el-table-column prop="name" label="名称" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="version" label="版本" align="center">
-        </el-table-column>
+<!--        <el-table-column prop="version" label="版本" align="center">-->
+<!--        </el-table-column>-->
         <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
             <span class="fileStyle">{{ scope.row.name + '.bpmn' }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="createBy" label="创建人" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.createBy == -1 ? '系统' : scope.row.createBy }}</span>
-          </template>
+<!--          <template slot-scope="scope">-->
+<!--            <span>{{ scope.row.createBy == -1 ? '系统' : scope.row.createBy }}</span>-->
+<!--          </template>-->
         </el-table-column>
         <el-table-column prop="createTime" label="编辑时间" align="center">
         </el-table-column>
@@ -26,7 +26,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
+          <template  slot-scope="scope">
             <el-button @click.native.prevent="lookBpmnShow(scope.row)" type="text" size="small" class="button1">
               查看
             </el-button>
@@ -48,6 +48,10 @@
 <script>
   export default {
     props: {
+      formListFirst: {
+        type: Array,
+        default: () => []
+      },
       valueDate: {
         default: () => []
       },
