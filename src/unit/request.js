@@ -91,6 +91,9 @@ export function get(url, params, config) {
 export function post(url, params) {
   return service.post(url, params)
 }
+export function put(url, params) {
+  return service.put(url, params)
+}
 
 export function deletefn(url, params, config) {
   return service.delete(url, {params, config})
