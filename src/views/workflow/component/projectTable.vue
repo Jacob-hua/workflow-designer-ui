@@ -46,6 +46,8 @@
 </template>
 
 <script>
+  import {deleteWorkflow} from "@/api/managerWorkflow";
+
   export default {
     props: {
       formListFirst: {
@@ -106,10 +108,14 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          deleteWorkflow(row.id).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            // this.getTableData()
+            this.$parent.findWorkFlowRecord()
+          })
         }).catch(() => {
           this.$message({
             type: 'info',

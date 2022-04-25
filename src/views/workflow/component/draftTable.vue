@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { workFlowRecord } from '@/api/managerWorkflow'
+import {deleteWorkflow, workFlowRecord} from '@/api/managerWorkflow'
   export default {
     props: {
       valueDate: {
@@ -101,16 +101,22 @@ import { workFlowRecord } from '@/api/managerWorkflow'
       draftTableEdit(row) {
         this.$emit('draftTableEdit', row)
       },
-      deleteRow() {
+      deleteRow(row) {
         this.$confirm('删除不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          deleteWorkflow(row.id).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            // this.getTableData()
+            this.$parent.findWorkFlowRecord()
+          })
+
+
         }).catch(() => {
           this.$message({
             type: 'info',

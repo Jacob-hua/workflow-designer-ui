@@ -28,7 +28,7 @@
       </div>
     </div>
     <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
-    <addBpmn :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
+    <addBpmn publick="publick" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
     <quoteBpmn :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
     <lookBpmn :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="quoteBpmnShow" valueType="public"></lookBpmn>
   </div>
@@ -94,8 +94,9 @@ import {
         this.quoteBpmnVisible = false
       },
       
-      lookBpmnShow() {
+      lookBpmnShow(row) {
         this.lookBpmnVisible = true
+        // this.xmlString = row.content
       },
       lookBpmnHidden() {
         this.lookBpmnVisible = false
@@ -127,8 +128,8 @@ import {
           createBy: -1,
           numberCode: '',
           name: this.input,
-          startTime: this.valueDate[0],
-          endTime: this.valueDate[1]
+          startTime: this.valueDate[0]? `${this.valueDate[0]} 00:00:00` || '' : '',
+          endTime: this.valueDate[1]? `${this.valueDate[1]} 23:59:59` || '' : '' ,
         }).then((res) => {
           this.formListSecond = res.result
         })
@@ -143,8 +144,8 @@ import {
           createBy: -1,
           numberCode: '',
           name: this.input,
-          startTime: this.valueDate[0],
-          endTime: this.valueDate[1]
+          startTime: this.valueDate[0]? `${this.valueDate[0]} 00:00:00` || '' : '',
+          endTime: this.valueDate[1]? `${this.valueDate[1]} 23:59:59` || '' : '' ,
         }).then((res) => {
           this.formListFirst = res.result
         })
@@ -165,8 +166,8 @@ import {
           createBy: 'admin' || '',
           numberCode: '',
           name: this.input,
-          startTime: `${this.valueDate[0]} 00:00:00` || '',
-          endTime: `${this.valueDate[1]} 23:59:59` || '',
+          startTime: this.valueDate[0]? `${this.valueDate[0]} 00:00:00` || '' : '',
+          endTime: this.valueDate[1]? `${this.valueDate[1]} 23:59:59` || '' : '' ,
           page: '1',
           limit: '10'
         })

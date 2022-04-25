@@ -4,13 +4,13 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="date" label="名称" align="center">
+        <el-table-column prop="name" label="名称" align="center">
         </el-table-column>
-        <el-table-column prop="date" label="版本" align="center">
+<!--        <el-table-column prop="date" label="版本" align="center">-->
+<!--        </el-table-column>-->
+        <el-table-column prop="createBy" label="创建人" align="center">
         </el-table-column>
-        <el-table-column prop="date" label="创建人" align="center">
-        </el-table-column>
-        <el-table-column prop="date" label="编辑时间" align="center">
+        <el-table-column prop="createTime" label="编辑时间" align="center">
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
@@ -29,11 +29,24 @@
 </template>
 
 <script>
+  import {workFlowRecord} from "@/api/managerWorkflow";
+
   export default {
     props: {
       dialogVisible: {
         type: Boolean,
         default: false
+      },
+      valueDate: {
+        default: () => []
+      },
+      ascription: {
+        type: String,
+        default: ''
+      },
+      business: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -50,21 +63,43 @@
         }
       }
     },
+    mounted() {
+      this.findWorkFlowRecord()
+    },
     methods: {
+      async findWorkFlowRecord () {
+        let data = await workFlowRecord({
+          tenantId: this.$store.state.tenantId || null,
+          status: 'enabled,disabled' || '',
+          ascription: 'public' || '',
+          business: this.business || '',
+          createBy: 'admin' || '',
+          numberCode: '',
+          name: this.input,
+          startTime: this.valueDate[0]? `${this.valueDate[0]} 00:00:00` || '' : '',
+          endTime: this.valueDate[1]? `${this.valueDate[1]} 23:59:59` || '' : '' ,
+          page: this.getData.page,
+          limit: this.getData.limit
+        })
+        this.tableData = data.result.list
+      },
       close() {
         this.$emit('close')
       },
       lookBpmnShow(index, row) {
-        this.$emit('lookBpmnShow')
+        this.$emit('lookBpmnShow', row)
       },
       addProjectShow(index, row) {
         this.$emit('addProjectShow')
       },
-      handleSizeChange() {
+      handleSizeChange(val) {
+        this.getData.limit = val
+        this.findWorkFlowRecord()
         
       },
-      handleCurrentChange() {
-        
+      handleCurrentChange(val) {
+        this.getData.page = val
+        this.findWorkFlowRecord()
       }
     }
   }

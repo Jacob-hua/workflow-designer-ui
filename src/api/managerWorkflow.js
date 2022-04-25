@@ -1,10 +1,28 @@
 import {
     get,
     post,
-    deletefn
+    deletefn, put
 } from '../unit/request'
 
 // 查询工作流草稿或发布流程
 
 export const workFlowRecord = (params) =>
     post('/design/processDesignService/record', params);
+
+// 工作流 草稿 新增
+
+export const workFlowSave = (params) =>
+    post('/design/processDesignService', params);
+
+// 工作流 草稿 新增
+
+export const workFlowSaveDraft = (params) =>
+    put('/design/processDesignService', params);
+
+// 发布工作流
+export const publishWorkflow = (params) =>
+    post('/design/processDesignService/realiseProcessData', params);
+
+// 删除 工作流
+export const deleteWorkflow = (id) =>
+    deletefn('/design/processDesignService/' + id);
