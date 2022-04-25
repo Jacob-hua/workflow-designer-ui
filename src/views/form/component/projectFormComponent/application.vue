@@ -111,7 +111,7 @@
           formData.append('code', xml.id)
           formData.append('business', this.projectValue)
           formData.append('status', 'enabled')
-          formData.append('createBy', '-1')
+          formData.append('createBy', this.$store.state.userInfo.name)
           formData.append('createName', 'admin')
           formData.append('tenantId', this.$store.state.tenantId)
           formData.append('file', file1)

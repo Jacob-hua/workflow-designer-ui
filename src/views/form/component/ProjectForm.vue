@@ -153,7 +153,7 @@
           status: 'drafted',
           ascription: this.projectCode,
           business: this.projectValue,
-          createBy: -1,
+          createBy: this.$store.state.userInfo.name,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0],
@@ -169,7 +169,7 @@
           status: 'enabled',
           ascription: this.projectCode,
           business: this.projectValue,
-          createBy: -1,
+          createBy: this.$store.state.userInfo.name,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0],
@@ -254,7 +254,7 @@
           tenantId: this.$store.state.tenantId,
           ascription: this.projectCode,
           business: this.projectValue,
-          createBy: -1
+          createBy: this.$store.state.userInfo.name
         }).then((res) => {
           this.$refs.detailsDiolog.formData = res.result
           this.$nextTick(() => {
@@ -385,7 +385,7 @@
   }
 
   .home-table {
-    height: 786px;
+    min-height: 786px;
     border: 1px solid #666666;
     margin-bottom: 40px;
     padding: 20px 20px;

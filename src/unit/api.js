@@ -120,10 +120,14 @@ export const getStartProcess = (params) =>
 export const getTaskList = (params) =>
   post('/execute/taskList', params);
   
-// 用户任务踪迹列表
+// 任务详情列表
 export const getTaskTrackList = (params) =>
-  get('/execute/taskTrackList', params);
+  get('/execute/taskDetailList', params);
   
 // 任务执行
 export const postCompleteTask = (params) =>
   post('/execute/completeTask', params);
+
+// 查询用户
+export const getPersonUser = (params) =>
+  get('/person/user', params);

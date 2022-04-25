@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="代办指定" :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
+  <el-dialog title="代办指定" :visible.sync="dialogVisible" width="70%" :before-close="handleClose" @open="open()">
     <div class="people">
       <div>
         <span>组织结构</span>
@@ -61,6 +61,7 @@
 </template>
 
 <script>
+  import { getPersonUser } from '@/unit/api.js'
   export default {
     data() {
       return {
@@ -145,6 +146,9 @@
       handleClick() {
 
       },
+      open() {
+        this.getPeopleList()
+      },
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
@@ -154,6 +158,17 @@
       handleClose() {
         
       },
+      getPeopleList() {
+        getPersonUser({
+          groupId: '',
+          name: '',
+          tenantId: '',
+          userId: ''
+        }).then((res) => {
+          console.log(res)
+        })
+      },
+      
       deletePeople(index) {
         this.multipleSelection.splice(index, 1)
       },
