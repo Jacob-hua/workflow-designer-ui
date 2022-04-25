@@ -385,7 +385,7 @@
   }
 
   .home-table {
-    height: 786px;
+    min-height: 786px;
     border: 1px solid #666666;
     margin-bottom: 40px;
     padding: 20px 20px;

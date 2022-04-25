@@ -215,8 +215,10 @@
         this.selection(value)
       },
       
-      implement() {
-        
+      implement(item) {
+        postCompleteTask({
+          
+        })
       },
       
       selection(element) {
