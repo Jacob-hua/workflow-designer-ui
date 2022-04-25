@@ -5,8 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    optionsAscription: [
-      {
+    optionsAscription: [{
         value: '',
         label: '全部项目'
       },
@@ -23,8 +22,7 @@ export default new Vuex.Store({
         label: '海口喜来登酒店'
       }
     ],
-    optionsBusiness: [
-      {
+    optionsBusiness: [{
         value: '',
         label: '全部业务'
       },
@@ -45,8 +43,7 @@ export default new Vuex.Store({
         label: '其他业务'
       }
     ],
-    optionsSystemType: [
-      {
+    optionsSystemType: [{
         value: 'energy-1',
         label: '配电'
       },
@@ -63,12 +60,13 @@ export default new Vuex.Store({
         label: '空调'
       },
     ],
-    tenantId: '18'
+    tenantId: '18',
+    userInfo: {
+      name: 'admin',
+      id: '1'
+    }
   },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
+  mutations: {},
+  actions: {},
+  modules: {}
 })

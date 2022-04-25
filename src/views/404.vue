@@ -25,6 +25,9 @@ export default {
     message() {
       return '找不到页面404'
     }
+  },
+  mounted() {
+    console.log(this.$store.state.userInfo.name)
   }
 }
 </script>
