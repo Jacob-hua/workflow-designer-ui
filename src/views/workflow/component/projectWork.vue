@@ -54,12 +54,12 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">工作流（{{ formListFirst.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流（{{ formListFirst.length }}）</span>
         <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
       </div>
       <div class="home-table">
-        <projectTable v-if="activeName === 'enabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
-        <draftTable v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
+        <projectTable :formListFirst="formListFirst" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'enabled,disabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
+        <draftTable :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
     <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
@@ -77,6 +77,9 @@
   import quoteBpmn from './quoteBpmn.vue'
   import lookBpmn from './lookBpmn.vue'
   import bpmnData from "@/assets/js/bpmnMock.js"
+  import {
+    workFlowRecord
+  } from '@/api/managerWorkflow'
   export default {
     data() {
       return {
@@ -100,7 +103,7 @@
         projectCode: 'beiqijia',
         valueDate: [],
         input: '',
-        activeName: 'enabled',
+        activeName: 'drafted',
         formListFirst: [],
         formListSecond: [],
         dialogVisible: false,
@@ -108,6 +111,14 @@
       }
     },
     methods: {
+      // 修改code
+      changProjectCode(code) {
+        this.projectCode = code
+        this.findWorkFlowRecord()
+      },
+      totalChange(list) {
+        this.formListSecond = list
+      },
       addProjectShow() {
         this.addProjectVisible = true
       },
@@ -118,7 +129,7 @@
         this.addProjectVisible = false
         this.addBpmnShow()
       },
-      
+
       addBpmnShow() {
         this.xmlString = ""
         this.addBpmnVisible = true
@@ -129,37 +140,38 @@
       addBpmnDefine(value) {
         this.addBpmnVisible = false
       },
-      
+
       quoteBpmnShow() {
         this.quoteBpmnVisible = true
       },
       quoteBpmnHidden() {
         this.quoteBpmnVisible = false
       },
-      
+
       lookBpmnShow() {
         this.lookBpmnVisible = true
       },
       lookBpmnHidden() {
         this.lookBpmnVisible = false
       },
-      
+
       lookBpmnEdit() {
         this.lookBpmnVisible = false
         this.xmlString = bpmnData.value
         this.addBpmnVisible = true
       },
-      
-      draftTableEdit() {
-        this.xmlString = bpmnData.value
+
+      draftTableEdit(row) {
+        this.xmlString = row.content
         this.addBpmnVisible = true
         console.log(this.addBpmnVisible)
       },
-      
+
       changeActiveName(value) {
         this.activeName = value
+        this.findWorkFlowRecord(value)
       },
-      
+
       // 查询草稿箱
       getDraftData() {
         postFormDesignRecordDraftInfo({
@@ -192,14 +204,33 @@
           this.formListFirst = res.result
         })
       },
-      
+
       getManyData() {
-        this.getEnableData()
-        this.getDraftData()
-      }
+        this.findWorkFlowRecord()
+      },
+      // 查询项目流程
+     async findWorkFlowRecord (status = 'drafted' ) {
+       let data = await workFlowRecord({
+         tenantId: this.$store.state.tenantId || null,
+         status,
+         ascription: this.projectCode || '',
+         business: this.projectValue || '',
+         createBy: 'admin' || '',
+         numberCode: '',
+         name: this.input,
+         startTime: `${this.valueDate[0]} 00:00:00` || '',
+         endTime: `${this.valueDate[1]} 23:59:59` || '',
+         page: '1',
+         limit: '10'
+        })
+        status === 'drafted'?
+            this.formListSecond = data.result.list
+            : this.formListFirst = data.result.list
+
+     }
     },
     mounted() {
-      
+      // this.findWorkFlowRecord()
     },
     components:{
       projectTable,
@@ -216,7 +247,7 @@
   .projectHeader /deep/ .el-input__inner {
     border: 1px solid black;
   }
-  
+
   .PublicForm-title /deep/ .el-input__inner {
     border: 1px solid black;
   }
@@ -361,20 +392,20 @@
     display: inline-block;
     width: 90px;
   }
-  
+
   .home-table-main {
     padding: 10px;
     border: 1px solid #666666;
   }
-  
+
   .fileStyle {
     color: #007edb;
   }
-  
+
   /deep/ .el-table .el-table__cell {
     padding: 8px 0px;
   }
-  
+
   /deep/ .el-table th.el-table__cell {
     padding: 16px 0px;
     background-color: #f5f7f9;

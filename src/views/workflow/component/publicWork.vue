@@ -19,12 +19,12 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">工作流（{{ formListFirst.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流（{{ formListFirst.length }}）</span>
         <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
       </div>
       <div class="home-table">
-        <projectTable v-if="activeName === 'enabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
-        <draftTable v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
+        <projectTable :formListFirst="formListFirst" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'enabled,disabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
+        <draftTable :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
     <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
@@ -35,6 +35,9 @@
 </template>
 
 <script>
+import {
+  workFlowRecord
+} from '@/api/managerWorkflow'
   import projectTable from './projectTable.vue'
   import draftTable from './draftTable.vue'
   import addProject from './addProject.vue'
@@ -61,7 +64,7 @@
         projectCode: 'beiqijia',
         valueDate: [],
         input: '',
-        activeName: 'enabled',
+        activeName: 'drafted',
         formListFirst: [],
         formListSecond: [],
         dialogVisible: false,
@@ -111,6 +114,7 @@
       
       changeActiveName(value) {
         this.activeName = value
+        this.findWorkFlowRecord(value)
       },
       
       // 查询草稿箱
@@ -147,8 +151,29 @@
       },
       
       getManyData() {
-        this.getEnableData()
-        this.getDraftData()
+        // this.getEnableData()
+        // this.getDraftData()
+        this.findWorkFlowRecord()
+      },
+      // 查询公共流程工作流记录
+      async findWorkFlowRecord (status = 'drafted' ) {
+        let data = await workFlowRecord({
+          tenantId: this.$store.state.tenantId || null,
+          status,
+          ascription: 'public' || '',
+          business: this.projectValue || '',
+          createBy: 'admin' || '',
+          numberCode: '',
+          name: this.input,
+          startTime: `${this.valueDate[0]} 00:00:00` || '',
+          endTime: `${this.valueDate[1]} 23:59:59` || '',
+          page: '1',
+          limit: '10'
+        })
+        status === 'drafted'?
+            this.formListSecond = data.result.list
+            : this.formListFirst = data.result.list
+
       }
     },
     mounted() {
