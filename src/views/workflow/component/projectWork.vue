@@ -62,9 +62,9 @@
         <draftTable :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
-    <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
-    <addBpmn :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
-    <quoteBpmn :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
+    <addProject :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
+    <addBpmn :formData="formData" :flag="flag" :currentRowData="currentRowData" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
+    <quoteBpmn v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
     <lookBpmn :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
   </div>
 </template>
@@ -90,11 +90,13 @@
             label: '全部项目'
           }
         ],
+        formData: {},
         getData: {
           page: 1,
           limit: 10,
           total: 1
         },
+        currentRowData: '',
         addProjectVisible: false,
         addBpmnVisible: false,
         quoteBpmnVisible: false,
@@ -107,7 +109,8 @@
         formListFirst: [],
         formListSecond: [],
         dialogVisible: false,
-        xmlString: ''
+        xmlString: '',
+        flag: false,
       }
     },
     methods: {
@@ -126,6 +129,9 @@
         this.addProjectVisible = false
       },
       addProjectDefine(value) {
+        console.log(value)
+        this.formData = value
+        Object.keys(value).length? this.flag = true : this.flag = false
         this.addProjectVisible = false
         this.addBpmnShow()
       },
@@ -163,6 +169,7 @@
 
       draftTableEdit(row) {
         this.xmlString = row.content
+        this.currentRowData = row
         this.addBpmnVisible = true
         console.log(this.addBpmnVisible)
       },
@@ -218,8 +225,8 @@
          createBy: 'admin' || '',
          numberCode: '',
          name: this.input,
-         startTime: `${this.valueDate[0]} 00:00:00` || '',
-         endTime: `${this.valueDate[1]} 23:59:59` || '',
+         startTime: this.valueDate[0]? `${this.valueDate[0]} 00:00:00` || '' : '',
+         endTime: this.valueDate[1]? `${this.valueDate[1]} 23:59:59` || '' : '' ,
          page: '1',
          limit: '10'
         })
@@ -230,7 +237,7 @@
      }
     },
     mounted() {
-      // this.findWorkFlowRecord()
+      this.findWorkFlowRecord()
     },
     components:{
       projectTable,
