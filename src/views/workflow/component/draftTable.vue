@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="home-table-main">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="formListSecond" style="width: 100%">
         <el-table-column type="index" label="序号" width="180" align="center">
         </el-table-column>
         <el-table-column prop="name" label="名称" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="version" label="版本" align="center">
-        </el-table-column>
+<!--        <el-table-column prop="version" label="版本" align="center">-->
+<!--        </el-table-column>-->
         <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
             <span class="fileStyle">{{ scope.row.name + '.bpmn' }}</span>
@@ -41,9 +41,14 @@
 </template>
 
 <script>
+import {deleteWorkflow, workFlowRecord} from '@/api/managerWorkflow'
   export default {
     props: {
       valueDate: {
+        default: () => []
+      },
+      formListSecond: {
+        type: Array,
         default: () => []
       },
       ascription: {
@@ -68,22 +73,6 @@
           endTime: ''
         },
         tableData: [
-          {
-            name: '王小虎',
-            version: '王小虎',
-            docName: '王小虎',
-            createBy: '王小虎',
-            createTime: '王小虎',
-            count: true,
-          },
-          {
-            name: '王小虎',
-            version: '王小虎',
-            docName: '王小虎',
-            createBy: '王小虎',
-            createTime: '王小虎',
-            count: false
-          }
         ],
       }
     },
@@ -93,8 +82,8 @@
         this.getData.endTime = this.valueDate[1]
         this.getData.business = this.business
         this.getData.ascription = this.ascription
-        postProcessDesignServicePage(this.getData).then((res) => {
-          this.tableData = res.result.list
+        workFlowRecord(this.getData).then((res) => {
+          this.formListSecond = res.result.list
           this.getData.total = res.result.total
           this.$emit('totalChange', res.result.total, 'WorkflowTableNum')
         })
@@ -109,19 +98,25 @@
         this.getData.page = val
         this.getTableData()
       },
-      draftTableEdit() {
-        this.$emit('draftTableEdit')
+      draftTableEdit(row) {
+        this.$emit('draftTableEdit', row)
       },
-      deleteRow() {
+      deleteRow(row) {
         this.$confirm('删除不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          deleteWorkflow(row.id).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            // this.getTableData()
+            this.$parent.findWorkFlowRecord()
+          })
+
+
         }).catch(() => {
           this.$message({
             type: 'info',

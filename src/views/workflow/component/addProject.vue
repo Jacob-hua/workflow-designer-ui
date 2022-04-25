@@ -32,6 +32,10 @@
 <script>
   export default {
     props:{
+      projectCode: {
+        type: String,
+        default: ''
+      },
       dialogVisible: {
         type: Boolean,
         default: true
@@ -40,11 +44,11 @@
     data() {
       return {
         postData: {
-          ascription: '',
+          ascription: this.projectCode,
           business: '',
           name: ''
         },
-        options: []
+        options: this.$store.state.optionsBusiness
       }
     },
     methods:{
