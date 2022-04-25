@@ -87,7 +87,7 @@
           </el-table-column>
           <el-table-column prop="createTime" label="发起时间" align="center">
           </el-table-column>
-          <el-table-column label="执行进程" align="center">
+          <el-table-column label="执行进程" align="center" min-width="150px">
             <template slot-scope="scope">
               <el-steps :active="scope.row.userTaskTrackVOList.length" align-center process-status="success" >
                 <el-step :title="item.taskName" :description="statusObj[item.status]" icon="el-icon-edit" :class="statusClassObj[item.status]" v-for="(item, index) in scope.row.userTaskTrackVOList" :key="index"></el-step>
@@ -114,7 +114,7 @@
     </div>
     <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtimeAdd>
     <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog"
-      ref="runTimeImplement"></runTimeImplement>
+      ref="runTimeImplement" @taskSuccess="taskSuccess()"></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
 </template>
@@ -196,7 +196,6 @@
       detailsDiolog(row) {
         this.$refs.lookover.dialogVisible = true
         this.$nextTick(() => {
-          
           this.$refs.lookover.$refs.ProcessInformation.postData = row
           this.$refs.lookover.$refs.ProcessInformation.postData.version = row.processStarter
           this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
@@ -209,6 +208,10 @@
       },
       closeDialogAdd() {
         this.dialogVisibleAdd = false
+      },
+      taskSuccess() {
+        this.dialogVisibleImplement = false
+        this.getManyData()
       }
     },
     created() {

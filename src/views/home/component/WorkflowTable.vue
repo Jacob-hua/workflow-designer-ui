@@ -74,7 +74,8 @@
           ascription: '',
           business: '',
           startTime: '',
-          endTime: ''
+          endTime: '',
+          status: 'enabled'
         },
         tableData: [],
         editData: {}

@@ -118,7 +118,7 @@
           </div>
           <div style="margin-top: 20px;margin-bottom: 10px;">表单内容</div>
           <div class="Implement-right-form">
-            <formRuntime :formContant="formContant" v-if="formShow"></formRuntime>
+            <formRuntime :formContant="formContant" v-if="formShow" ref="formRuntime"></formRuntime>
           </div>
         </div>
       </div>
@@ -188,6 +188,7 @@
     },
     methods: {
       handleClose() {
+        this.formShow = false
         this.$emit('close')
       },
       cancel() {
@@ -215,9 +216,35 @@
         this.selection(value)
       },
       
-      implement(item) {
+      implement() {
+        let { data } = this.$refs.formRuntime.formEditor.submit()
+        let formData = JSON.parse(this.formContant).components
+        formData.forEach((item) => {
+          switch (item.type){
+            case 'radio':
+              item.value = item.values.filter((values) => {
+                return values.value == data[item.key]
+              })[0].label
+              break;
+            default:
+              item.value = data[item.key]
+              break;
+          }
+        })
         postCompleteTask({
-          
+          assignee: 'admin',
+          commentList: [],
+          formDataList: formData,
+          processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
+          processKey: this.$refs.ProcessInformation.postData.deployKey,
+          taskId: this.$refs.ProcessInformation.postData.taskId,
+          taskKey: this.$refs.ProcessInformation.postData.taskKey,
+          taskName: this.$refs.ProcessInformation.postData.taskName,
+          variable: data
+        }).then((res) => {
+          this.formShow = false
+          this.$message.success('执行成功')
+          this.$emit('taskSuccess')
         })
       },
       

@@ -11,9 +11,15 @@
           <el-timeline>
             <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData" :key="index">
               <div class="contant">
-                <i class="el-icon-check" :class="item.status === 'completed' ? 'success' : 'error'"></i>
-                <span class="word1">{{ item.assignee }}</span>
-                <span class="dataYear">{{ item.endTime }}</span>
+                <div v-for="(item, index) in JSON.parse(item.formData)">
+                  <span>{{ item.label }}</span>
+                  <span style="margin-left: 20px;">{{ item.value }}</span>
+                </div>
+                <div>
+                  <i class="el-icon-check " :class="item.time === '-' ? 'error' : 'success'"></i>
+                  <span class="word1">{{ item.assignee }}</span>
+                  <span class="dataYear">{{ item.time }}</span>
+                </div>
               </div>
             </el-timeline-item>
 <!--            <el-timeline-item timestamp="任务#2" placement="top">
@@ -90,7 +96,7 @@
       },
       getListData(id) {
         getTaskTrackList({
-          processInstanceId: id 
+          processInstanceId: id
         }).then((res) => {
           this.listData = res.result
         })
