@@ -5,7 +5,7 @@
         <div class="title">请输入账号密码进行校验，将此工作流程挂起</div>
         <el-form ref="form" :model="form" label-width="40px">
           <el-form-item label="账号">
-            <el-input v-model="form.account"></el-input>
+            <el-input v-model="form.username"></el-input>
           </el-form-item>
           <el-form-item label="密码">
             <el-input v-model="form.password"></el-input>
@@ -19,7 +19,7 @@
     </el-dialog>
 
     <el-dialog title="驳回" :visible.sync="dialogVisible2" width="70%" :before-close="handleClose">
-      <processData ref="processData" v-if="dialogVisible2" @selection="selection"></processData>
+      <processData ref="processData" v-if="dialogVisible2" @selection="selection" v-bind="$attrs" :processInstanceId="processInstanceId"></processData>
       <div>
         <div class="rejectWord">驳回原因（必填）</div>
         <div>
@@ -40,7 +40,7 @@
                   type="textarea"
                   :rows="15"
                   placeholder="请输入内容"
-                  v-model="textarea">
+                  v-model="termination">
                 </el-input>
               </div>
             </div>
@@ -55,16 +55,33 @@
 
 <script>
   import processData from './processData.vue'
+  import {
+    putHangInstance,
+    postVerifyUser,
+    putRejectTask
+  } from '@/unit/api.js'
   export default {
+    props:{
+      processInstanceId: {
+        type: String,
+        default: ''
+      },
+      taskKey: {
+        type: String,
+        default: ''
+      }
+    },
     data() {
       return {
         dialogVisible: false,
         dialogVisible2: false,
         dialogVisible3: false,
         textarea: '',
+        termination: '',
         selectData: null,
+        selectValue: null,
         form: {
-          account: '',
+          username: '',
           password: ''
         }
       }
@@ -73,33 +90,50 @@
       handleClose() {
 
       },
-      selection(val) {
+      selection(val, selectValue) {
         this.selectData = val
+        this.selectValue = selectValue
+        console.log(this.selectData, '0000')
       },
       handleReject() {
-        this.$parent.dataList.reject.rejectBollen = false
-        this.$parent.dataList.reject.data = '2022-04-15 11:11:11'
-        this.$parent.dataList.reject.name = '昊昊'
-        this.$parent.dataList.reject.rejectResult = this.selectData.businessObject.name
-        this.dialogVisible2 = false
+        putRejectTask({
+          message: this.textarea,
+          processInstanceId: this.processInstanceId,
+          taskId: this.selectValue.taskId,
+          userId: this.$store.state.userInfo.name,
+          currentTaskId: this.taskKey
+        }).then((res) => {
+          this.$parent.dataList.reject.rejectBollen = false
+          this.$parent.dataList.reject.data = '2022-04-15 11:11:11'
+          this.$parent.dataList.reject.name = 'admin'
+          this.$parent.dataList.reject.rejectResult = this.selectData.businessObject.name
+          this.dialogVisible2 = false
+        })
       },
       handleOK() {
-        this.dialogVisible = false
-        switch (this.$parent.functionCheck) {
-          case 'Hang':
-            this.$parent.dataList[this.$parent.functionCheck] = !this.$parent.dataList[this.$parent.functionCheck]
-            break;
-          case 'reject':
-            this.dialogVisible2 = true
-            break;
-          case 'termination':
-            this.dialogVisible3 = true
-            break;
-          default:
-            break;
-        }
+        postVerifyUser(this.form).then((res) => {
+          this.dialogVisible = false
+          switch (this.$parent.functionCheck) {
+            case 'Hang':
+              putHangInstance({
+                processInstanceId: this.$parent.$refs.ProcessInformation.postData.processInstanceId
+              }).then((res) => {
+                this.$parent.dataList[this.$parent.functionCheck] = !this.$parent.dataList[this.$parent.functionCheck]
+              })
+              break;
+            case 'reject':
+              this.dialogVisible2 = true
+              break;
+            case 'termination':
+              this.dialogVisible3 = true
+              break;
+            default:
+              break;
+          }
+        })
       },
       handleTermination() {
+        
         this.$parent.dataList.termination.terminationBollon = false
         this.$parent.dataList.termination.data = '2022-04-15 11:11:11'
         this.$parent.dataList.termination.name = '昊昊'
