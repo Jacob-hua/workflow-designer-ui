@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="提示"
+    title="新建工作流"
     :visible="dialogVisible"
     width="35%"
     :before-close="handleClose" 

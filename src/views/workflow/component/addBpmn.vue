@@ -43,7 +43,7 @@ import {
       },
       currentRowData: {
         type: Object,
-        default: {
+        default:  {
           name: '',
           id: ''
         }
@@ -81,7 +81,6 @@ import {
           if (_this.currentRowData.id) {
             formData.append('id', _this.currentRowData.id )
           }
-          debugger
           let names = ''
           if (_this.currentRowData.name) {
             names = _this.currentRowData.name
@@ -127,6 +126,7 @@ import {
         this.modeler = value
       },
       confirm() {
+        let _this = this
         const newConvert = new X2JS();
         this.modeler.saveXML({
           format: true
@@ -141,10 +141,11 @@ import {
           });
           console.log(definitions)
           console.log(this.currentRowData)
+          console.log(_this.currentRowData)
           let formData = new FormData()
-          formData.append('id', this.currentRowData.id || this.formData.name)
-          formData.append('name', this.currentRowData.name || this.formData.name)
-          formData.append('docName',  this.currentRowData.name? this.currentRowData.name : this.formData.name + '.bpmn')
+            formData.append('id', _this.currentRowData.id )
+          formData.append('name', _this.currentRowData.name || _this.formData.name)
+          formData.append('docName',  _this.currentRowData.name? _this.currentRowData.name+'bpmn' : _this.formData.name + '.bpmn')
           formData.append('ascription', 'beiqijia')
           formData.append('code', definitions.process._id)
           formData.append('business', 'zhihuiyunwei')
