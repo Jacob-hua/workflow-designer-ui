@@ -124,10 +124,12 @@
         });
       },
       handleSizeChange(val) {
-       
+        this.$parent.getData.limit = val
+        this.$parent.findWorkFlowRecord('enabled,disabled')
       },
       handleCurrentChange(val) {
-        
+        this.$parent.getData.page = val
+        this.$parent.findWorkFlowRecord('enabled,disabled')
       }
     }
   }
