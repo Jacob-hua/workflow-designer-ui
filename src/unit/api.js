@@ -131,3 +131,7 @@ export const postCompleteTask = (params) =>
 // 查询用户
 export const getPersonUser = (params) =>
   get('/person/user', params);
+
+// 获取第三方组织架构
+export const getThreeSystemOrganize = (params) =>
+  get('/person/threeSystemOrganize', params);
