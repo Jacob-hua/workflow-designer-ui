@@ -6,7 +6,7 @@
       </div>
       <div class="people-main">
         <div class="people-main-left">
-          <el-tree :data="data" :highlight-current="true"></el-tree>
+          <el-tree :data="data" :highlight-current="true" :props="{ label: 'groupName', children: 'children' }"></el-tree>
         </div>
         <div class="people-main-right">
           <div class="people-main-right-search">
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-  import { getPersonUser } from '@/unit/api.js'
+  import { getPersonUser, getThreeSystemOrganize } from '@/unit/api.js'
   export default {
     data() {
       return {
@@ -105,41 +105,7 @@
         letterList: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
           'U', 'V', 'W', 'X', 'Y', 'Z'
         ],
-        data: [{
-          label: '一级 1',
-          children: [{
-            label: '二级 1-1',
-            children: [{
-              label: '三级 1-1-1'
-            }]
-          }]
-        }, {
-          label: '一级 2',
-          children: [{
-            label: '二级 2-1',
-            children: [{
-              label: '三级 2-1-1'
-            }]
-          }, {
-            label: '二级 2-2',
-            children: [{
-              label: '三级 2-2-1'
-            }]
-          }]
-        }, {
-          label: '一级 3',
-          children: [{
-            label: '二级 3-1',
-            children: [{
-              label: '三级 3-1-1'
-            }]
-          }, {
-            label: '二级 3-2',
-            children: [{
-              label: '三级 3-2-1'
-            }]
-          }]
-        }]
+        data: []
       }
     },
     methods: {
@@ -148,6 +114,7 @@
       },
       open() {
         this.getPeopleList()
+        this.getTreeData()
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -166,6 +133,14 @@
           userId: ''
         }).then((res) => {
           console.log(res)
+        })
+      },
+      
+      getTreeData() {
+        getThreeSystemOrganize({
+          projectCode: 'XM_aff0659724a54c119ac857d4e560b47b'
+        }).then((res) => {
+          this.data = res.result
         })
       },
       

@@ -9,10 +9,25 @@
   import BpmnModeler from "bpmn-js/lib/Modeler";
   import DefaultEmptyXML from "@/components/package/designer/plugins/defaultEmpty";
   import bpmnData from "@/assets/js/bpmnMock.js"
+  import { getTaskTrackList } from '@/unit/api.js'
   export default {
+    props:{
+      BpmnContant: {
+        type: String,
+        default: ''
+      },
+      taskId: {
+        type: String,
+        default: ''
+      },
+      processInstanceId: {
+        type: String,
+        default: ''
+      }
+    },
     data() {
       return {
-
+         bpmnList: []
       }
     },
     methods: {
@@ -39,7 +54,7 @@
         }) => {
           if (newSelection[0]) {
             window.bpmnInstances.elementRegistry.forEach((item) => {
-             if (item.id !== 'task3') {
+             if (item.id !== this.taskId) {
                window.bpmnInstances.modeling.setColor(item, {
                  'fill': '#ffffff'
                })
@@ -48,10 +63,16 @@
             window.bpmnInstances.modeling.setColor(newSelection[0], {
               'fill': '#b2b2ff',
             })
-            this.$emit('selection', newSelection[0])
+            let SelectValue = this.bpmnList.filter((item) => {
+              return item.taskKey === newSelection[0].id
+            })[0]
+            console.log(this.bpmnList, '00000')
+            console.log(newSelection[0].id, '000000')
+            console.log(SelectValue, '00000')
+            this.$emit('selection', newSelection[0], SelectValue)
           }
         });
-        this.createNewDiagram(bpmnData.value)
+        this.createNewDiagram(this.BpmnContant)
       },
       async createNewDiagram(xml) {
         // 将字符串转换成图显示出来
@@ -66,7 +87,7 @@
             warnings.forEach(warn => console.warn(warn));
           }
           let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
-            return element.id === "task3"
+            return element.id === this.taskId
           })
           window.bpmnInstances.modeling.setColor(oneSet[0], {
             'fill': '#cccccc',
@@ -77,8 +98,16 @@
           console.error(`[Process Designer Warn]: ${e?.message || e}`);
         }
       },
+      getList() {
+        getTaskTrackList({
+          processInstanceId: this.processInstanceId
+        }).then((res) => {
+          this.bpmnList = res.result
+        })
+      }
     },
     mounted() {
+      this.getList()
       this.initBpmnModeler()
       this.$once("hook:beforeDestroy", () => {
         if (this.bpmnModeler) this.bpmnModeler.destroy();

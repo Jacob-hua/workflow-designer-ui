@@ -61,6 +61,7 @@ service.interceptors.response.use(
       return;
     }
     const status = error.response.status;
+    const data = error.response.data
     switch (status) {
       case 500: 
         Message({
@@ -77,7 +78,7 @@ service.interceptors.response.use(
       default:
         Message({
           type:'error',
-          message:"请求失败"
+          message: data.errorInfo.errorMsg
         })
     }
     return Promise.reject(error);
