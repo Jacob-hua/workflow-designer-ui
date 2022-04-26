@@ -185,7 +185,7 @@
           tenantId: this.$store.state.tenantId,
           ascription: this.ascription,
           business: this.business,
-          createBy: -1
+          createBy: this.$store.state.userInfo.name
         }).then((res) => {
           this.formData = res.result
           this.formBpmnEditKey++
@@ -209,7 +209,7 @@
         formData.append('code', xml.id)
         formData.append('business', this.postData.business)
         formData.append('status', 'enabled')
-        formData.append('createBy', '-1')
+        formData.append('createBy', this.$store.state.userInfo.name)
         formData.append('createName', 'admin')
         formData.append('tenantId', this.$store.state.tenantId)
         formData.append('file', file1)

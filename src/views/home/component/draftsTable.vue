@@ -71,7 +71,7 @@
           total: 100,
           ascription: '',
           business: '',
-          createBy: '-1',
+          createBy: this.$store.state.userInfo.name,
           systemType: '',
           tenantId: this.$store.state.tenantId,
           startTime: '',

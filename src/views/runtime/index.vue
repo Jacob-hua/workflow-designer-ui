@@ -57,7 +57,7 @@
       </div>
     </div>
     <div class="runtime-check">
-      <el-radio-group v-model="getData.taskFilter">
+      <el-radio-group v-model="getData.taskFilter" @change="getManyData()">
         <el-radio label="all">
           我的任务（21）
         </el-radio>
@@ -87,10 +87,10 @@
           </el-table-column>
           <el-table-column prop="createTime" label="发起时间" align="center">
           </el-table-column>
-          <el-table-column label="执行进程" align="center">
+          <el-table-column label="执行进程" align="center" min-width="150px">
             <template slot-scope="scope">
               <el-steps :active="scope.row.userTaskTrackVOList.length" align-center process-status="success" >
-                <el-step :title="item.taskName" description="通过" icon="el-icon-edit" :class="scope.row.userTaskTrackVOList.length === (index + 1) ? '' : ''" v-for="(item, index) in scope.row.userTaskTrackVOList" :key="index"></el-step>
+                <el-step :title="item.taskName" :description="statusObj[item.status]" icon="el-icon-edit" :class="statusClassObj[item.status]" v-for="(item, index) in scope.row.userTaskTrackVOList" :key="index"></el-step>
               </el-steps>
             </template>
           </el-table-column>
@@ -114,7 +114,7 @@
     </div>
     <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtimeAdd>
     <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog"
-      ref="runTimeImplement"></runTimeImplement>
+      ref="runTimeImplement" @taskSuccess="taskSuccess()"></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
 </template>
@@ -135,6 +135,16 @@
         dialogVisibleAdd: false,
         dialogVisibleImplement: false,
         tableData: [],
+        statusObj: {
+          completed: '通过',
+          '-': '执行',
+          deleted: '驳回'
+        },
+        statusClassObj: {
+          completed: '',
+          '-': 'tableStepOnly',
+          deleted: 'tableStepDeleted'
+        },
         getData: {
           assignee: 'admin',
           businessCode: '',
@@ -156,6 +166,9 @@
         this.getData.endTime = this.valueDate[1]
         getTaskList(this.getData).then((res) => {
           this.tableData = res.result.dataList
+          this.getData.page = res.result.page * 1
+          this.getData.limit = res.result.limit * 1
+          this.getData.total = res.result.count * 1
         })
       },
       handleSizeChange() {
@@ -180,20 +193,14 @@
         this.dialogVisibleAdd = false
         this.getManyData()
       },
-      detailsDiolog(item) {
+      detailsDiolog(row) {
         this.$refs.lookover.dialogVisible = true
         this.$nextTick(() => {
-          this.$refs.lookover.$refs.ProcessInformation.postData = {
-            numberCode: '121111',
-            deployName: '测试',
-            version: 'V1.0',
-            createTime: '2022-02-02 09:20:00',
-            business: '智慧运维',
-            ascription: '北七家',
-            systemType: 'energy-1'
-          }
-          this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(bpmnData.value)
-          this.$refs.lookover.getListData(item.processInstanceId)
+          this.$refs.lookover.$refs.ProcessInformation.postData = row
+          this.$refs.lookover.$refs.ProcessInformation.postData.version = row.processStarter
+          this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
+          this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+          this.$refs.lookover.getListData(row.processInstanceId)
         })
       },
       goAdd() {
@@ -201,6 +208,10 @@
       },
       closeDialogAdd() {
         this.dialogVisibleAdd = false
+      },
+      taskSuccess() {
+        this.dialogVisibleImplement = false
+        this.getManyData()
       }
     },
     created() {
@@ -324,12 +335,15 @@
       line-height: 23px;
       top: 0px;
 
-      .tableStepNum {
+      .tableStepOnly {
         .el-step__icon {
-          width: 14px;
-          height: 14px;
-          border-radius: 50%;
           background-color: #0066cc !important;
+        }
+      }
+      
+      .tableStepDeleted {
+        .el-step__icon {
+          background-color: red !important;
         }
       }
 
@@ -343,7 +357,11 @@
           border-color: #66ccff;
         }
       }
-
+      
+      .el-step__head {
+        margin-top: 20px;
+      }
+      
       .el-step__icon-inner {
         display: none;
       }
@@ -374,6 +392,7 @@
         font-size: 12px;
         position: absolute;
         top: 5px;
+        width: 100%;
       }
     }
   }

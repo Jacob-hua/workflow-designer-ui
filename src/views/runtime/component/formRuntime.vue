@@ -3,7 +3,6 @@
     <div id="form" ref="form">
       
     </div>
-    <!-- <div @click="save()">提交</div> -->
   </div>
 </template>
 
