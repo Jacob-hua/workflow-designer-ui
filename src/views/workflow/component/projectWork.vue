@@ -27,12 +27,12 @@
       </div>
     </div>
     <div class="PublicForm-title">
-<!--      <div class="PublicForm-title-option">-->
-<!--        <el-select v-model="projectValue" placeholder="请选择">-->
-<!--          <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">-->
-<!--          </el-option>-->
-<!--        </el-select>-->
-<!--      </div>-->
+      <div class="PublicForm-title-option">
+        <el-select v-model="projectValue" placeholder="请选择">
+          <el-option v-for="item in projectOption2" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
@@ -54,7 +54,7 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流（{{ secondtTotal }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流{{ secondtTotal? `(${secondtTotal})` : '' }}</span>
         <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ firstTotal }}）</span>
       </div>
       <div class="home-table">
@@ -62,10 +62,10 @@
         <draftTable ref="draft" :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
-    <addProject :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
-    <addBpmn :formData="formData" :flag="flag" :currentRowData="currentRowData" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
-    <quoteBpmn v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
+    <addProject  ref="addpro"  :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
+    <addBpmn  :formData="formData" :flag="flag" :currentRowData="currentRowData" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
+    <quoteBpmn  v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
+    <lookBpmn :dep="dep"   v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
   </div>
 </template>
 
@@ -83,6 +83,7 @@
   export default {
     data() {
       return {
+        dep: '',
         lookData: null,
         secondtTotal: 0,
         firstTotal: 0,
@@ -93,13 +94,19 @@
             label: '全部项目'
           }
         ],
+        projectOption2: [
+          {
+            value: '',
+            label: '全部业务'
+          }
+        ],
         formData: {},
         getData: {
           page: 1,
           limit: 10,
           total: 1
         },
-        currentRowData: null,
+        currentRowData: {},
         addProjectVisible: false,
         addBpmnVisible: false,
         quoteBpmnVisible: false,
@@ -125,9 +132,11 @@
       totalChange(list) {
         this.formListSecond = list
       },
-      addProjectShow(row) {
+      addProjectShow(dep='新建工作流',row) {
         this.currentRowData = row
+        this.$refs.addpro.title = dep
         this.addProjectVisible = true
+        this.$refs.addpro.postData =  row || {}
       },
       addProjectHidden() {
         this.addProjectVisible = false
@@ -158,10 +167,11 @@
         this.quoteBpmnVisible = false
       },
 
-      lookBpmnShow(row) {
+      lookBpmnShow(dep,row) {
+        this.dep= dep
         this.lookBpmnVisible = true
-        console.log(row)
         this.$nextTick(() => {
+          this.$refs.bpmn.currentRowData = row
           this.$refs.bpmn.$refs.bpmnView.postData = row
         })
 
