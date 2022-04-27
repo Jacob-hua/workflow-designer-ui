@@ -2,7 +2,8 @@ import {
   get,
   post,
   deletefn,
-  put
+  put,
+  service
 } from './request'
 
 
@@ -125,6 +126,10 @@ export const getTaskList = (params) =>
 export const getTaskTrackList = (params) =>
   get('/execute/taskDetailList', params);
   
+// 任务流程最详情列表
+export const getTaskDetailList = (params) =>
+  get('/execute/taskTrackList', params);
+  
 // 任务执行
 export const postCompleteTask = (params) =>
   post('/execute/completeTask', params);
@@ -148,3 +153,23 @@ export const postVerifyUser = (params) =>
 // 驳回流程
 export const putRejectTask = (params) =>
   put('/execute/rejectTask', params);
+  
+// 终止流程
+export const putCancelInstance = (params) =>
+  put('/execute/cancelInstance', params);
+  
+// 传阅流程
+export const getCirculation = (params) =>
+  get('/execute/circulation', params);
+  
+// 流程加减签
+export const getModifyProcessUser = (params) =>
+  get('/execute/modifyProcessUser', params);
+  
+// 代办流程
+export const getModifyCandidate = (params) =>
+  get('/execute/modifyCandidate', params);
+
+// 重新激活流程
+export const getActiveInstance = (params) =>
+  get('/execute/activeInstance', params);
