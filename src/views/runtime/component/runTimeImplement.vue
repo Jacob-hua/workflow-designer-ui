@@ -5,12 +5,12 @@
         <div class="Implement-left">
           <ProcessInformation ref="ProcessInformation" v-if="dialogVisible" @selectOneSet="selectOneSet" seeType="runTime"></ProcessInformation>
           <div class="function-list" v-if="bpmnType === 'bpmn:UserTask'">
-            <span class="function-item" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
-            <span class="function-item" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
-            <span class="function-item" @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
+            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
+            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
+            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
             <span class="function-item" @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
-            <span class="function-item" @click="changeFunction('reject')" :class="functionCheck === 'reject' ? 'function-check' : ''">驳回</span>
-            <span class="function-item" @click="changeFunction('termination')" :class="functionCheck === 'termination' ? 'function-check' : ''">终止</span>
+            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('reject')" :class="functionCheck === 'reject' ? 'function-check' : ''">驳回</span>
+            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('termination')" :class="functionCheck === 'termination' ? 'function-check' : ''">终止</span>
             <span class="function-see" @click="goSee()">查看</span>
           </div>
           <div class="function-main">
@@ -24,10 +24,10 @@
                   <el-tooltip class="item" effect="dark" placement="top" v-for="(item, index) in dataList.agency"
                     :key="index">
                     <div slot="content">
-                      <span>姓名:</span> <span>{{ item.name }}</span><br/>
-                      <span>id:</span> <span>{{ item.id }}</span>
+                      <span>姓名:</span> <span>{{ item.userId }}</span><br/>
+                      <span>id:</span> <span>{{ item.userId }}</span>
                   </div>
-                    <div class="peopleList-item">{{ item.name }}</div>
+                    <div class="peopleList-item">{{ item.userId }}</div>
                   </el-tooltip>
                 </div>
                 <span class="editButton" @click="editDataList('agency')">编辑</span>
@@ -38,21 +38,21 @@
                 <span style="cursor: pointer;" @click="changePeopleList()">暂无传阅人员，点击添加</span>
               </div>
               <div v-if="dataList.Circulate.length > 0">
-                <div class="peopleList-title">指定代办人员:</div>
+                <div class="peopleList-title">指定传阅人员:</div>
                 <div class="peopleList">
-                  <div class="peopleList-item" v-for="(item, index) in dataList.Circulate">{{ item.name }}</div>
+                  <div class="peopleList-item" v-for="(item, index) in dataList.Circulate">{{ item.userId }}</div>
                 </div>
                 <span class="editButton" @click="editDataList('Circulate')">编辑</span>
               </div>
             </div>
             <div v-if="functionCheck === 'signature'">
               <div class="peopleListDefatil">
-                <div class="peopleList-item-defail" v-for="(item, index) in peopleListDefatil">{{ item.name }}</div>
+                <div class="peopleList-item-defail" v-for="(item, index) in peopleListDefatil">{{ item.userId }}</div>
               </div>
               <div style="margin-top: 15px;">
                 <div class="peopleList-title">加签:</div>
                 <div class="peopleList">
-                  <div class="peopleList-item" v-for="(item, index) in dataList.signature">{{ item.name }}</div>
+                  <div class="peopleList-item" v-for="(item, index) in dataList.signature">{{ item.userId }}</div>
                 </div>
                 <span class="editButton" @click="editDataList('signature')">编辑</span>
               </div>
@@ -77,7 +77,7 @@
                   <span>{{ dataList.reject.data }}</span>
                 </div>
                 <div class="rejectName">
-                  <span>{{ dataList.reject.name }}</span>
+                  <span>{{ dataList.reject.userId }}</span>
                 </div>
                 <div>
                   <span class="rejectWord">驳回至</span>
@@ -127,7 +127,7 @@
         <el-button type="primary" @click="implement()" :disabled="!dataList.reject.rejectBollen">执 行</el-button>
       </span>
     </el-dialog>
-    <runtimePeople ref="runtimePeople"></runtimePeople>
+    <runtimePeople ref="runtimePeople" v-if="$refs.ProcessInformation" :taskId="$refs.ProcessInformation.postData.taskId" :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :taskKey="$refs.ProcessInformation.postData.taskKey"></runtimePeople>
     <runtimeConfirmation v-if="$refs.ProcessInformation" ref="runtimeConfirmation" :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :BpmnContant="$refs.ProcessInformation.postData.content" :taskId="$refs.ProcessInformation.postData.taskKey" :taskKey="$refs.ProcessInformation.postData.taskId"></runtimeConfirmation>
   </div>
 </template>
@@ -140,7 +140,9 @@
   import {
     designFormDesignServiceAll,
     postCompleteTask,
-    putHangInstance
+    putHangInstance,
+    putCancelInstance,
+    getTaskDetailList
   } from '@/unit/api.js'
   export default {
     props: {
@@ -195,6 +197,27 @@
       cancel() {
         this.$emit('close')
       },
+      getNachList(processInstanceId) {
+        getTaskDetailList({
+          processInstanceId: processInstanceId
+        }).then((res) => {
+           res.result[res.result.length - 1].circulationList.forEach((item) => {
+             this.dataList.Circulate.push({
+               userId :item
+             })
+           })
+           res.result[res.result.length - 1].commentList.forEach((item) => {
+             this.dataList.signature.push({
+               userId :item
+             })
+           })
+           res.result[res.result.length - 1].candidateUsers.forEach((item) => {
+             this.dataList.agency.push({
+               userId :item
+             })
+           })
+        })
+      },
       
       changeFunction(value) {
         this.functionCheck = value
@@ -232,6 +255,17 @@
               break;
           }
         })
+        if ( this.$refs.ProcessInformation.postData.taskId === '3e517106-c60a-11ec-9199-005056c00001') {
+          let userList = []
+          Object.keys(data).forEach((item) => {
+            if (data[item]) {
+              userList.push(item)
+            }
+          })
+          data = {
+            userList: userList
+          }
+        }
         postCompleteTask({
           assignee: 'admin',
           commentList: [],

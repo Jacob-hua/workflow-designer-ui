@@ -6,7 +6,7 @@
       </div>
       <div class="people-main">
         <div class="people-main-left">
-          <el-tree :data="data" :highlight-current="true" :props="{ label: 'groupName', children: 'children' }"></el-tree>
+          <el-tree :data="data" node-key="groupId" :current-node-key="currentKey" :highlight-current="true" :props="{ label: 'groupName', children: 'children' }"></el-tree>
         </div>
         <div class="people-main-right">
           <div class="people-main-right-search">
@@ -26,13 +26,13 @@
               </el-table-column>
               <el-table-column label="序号" type="index" align="center">
               </el-table-column>
-              <el-table-column prop="name" label="姓名" align="center">
+              <el-table-column prop="userId" label="姓名" align="center">
               </el-table-column>
-              <el-table-column prop="name" label="手机号码" show-overflow-tooltip align="center">
+              <el-table-column prop="email" label="邮箱" show-overflow-tooltip align="center">
               </el-table-column>
               <el-table-column prop="name" label="岗位" show-overflow-tooltip align="center">
               </el-table-column>
-              <el-table-column prop="name" label="备注" show-overflow-tooltip align="center">
+              <el-table-column prop="lastName" label="备注" show-overflow-tooltip align="center">
               </el-table-column>
             </el-table>
           </div>
@@ -49,7 +49,7 @@
       <div class="people-footer">
         <div class="peopleList-title">运维一班</div>
         <div class="peopleList">
-          <div class="peopleList-item" v-for="(item, index) in multipleSelection">{{ item.name }} <i class="el-icon-remove-outline" @click="deletePeople(index)"></i> </div>
+          <div class="peopleList-item" v-for="(item, index) in multipleSelection">{{ item.userId }} <i class="el-icon-remove-outline" @click="deletePeople(index)"></i> </div>
         </div>
       </div>
     </div>
@@ -61,47 +61,35 @@
 </template>
 
 <script>
-  import { getPersonUser, getThreeSystemOrganize } from '@/unit/api.js'
+  import { getPersonUser, getThreeSystemOrganize, getModifyCandidate, getCirculation, getModifyProcessUser } from '@/unit/api.js'
   export default {
+    props:{
+      taskId: {
+        type: String,
+        default: ''
+      },
+      processInstanceId: {
+        type: String,
+        default: ''
+      },
+      taskKey: {
+        type: String,
+        default: ''
+      }
+    },
     data() {
       return {
         dialogVisible: false,
         input: '',
         activeName: '',
         multipleSelection: [],
+        currentKey: '',
         getData: {
           page: 1,
           limit: 5,
           total: 1
         },
-        tableData: [{
-            id: '1',
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            id: '2',
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            id: '3',
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            id: '4',
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },
-          {
-            id: '5',
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }
-        ],
+        tableData: [],
         letterList: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
           'U', 'V', 'W', 'X', 'Y', 'Z'
         ],
@@ -113,7 +101,6 @@
 
       },
       open() {
-        this.getPeopleList()
         this.getTreeData()
       },
       handleSelectionChange(val) {
@@ -127,12 +114,12 @@
       },
       getPeopleList() {
         getPersonUser({
-          groupId: '',
+          groupId: this.currentKey,
           name: '',
           tenantId: '',
           userId: ''
         }).then((res) => {
-          console.log(res)
+          this.tableData = res.result
         })
       },
       
@@ -141,6 +128,8 @@
           projectCode: 'XM_aff0659724a54c119ac857d4e560b47b'
         }).then((res) => {
           this.data = res.result
+          this.currentKey = res.result[0].groupId
+          this.getPeopleList()
         })
       },
       
@@ -148,8 +137,54 @@
         this.multipleSelection.splice(index, 1)
       },
       dataBack() {
-        this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
-        this.dialogVisible = false
+        switch (this.$parent.functionCheck){
+          case 'agency':
+            let dataList = []
+            this.multipleSelection.forEach((item) => {
+              dataList.push(item.userId)
+            })
+            let str = dataList.join(',')
+            getModifyCandidate({
+              dataList: str,
+              operateType: 'user:add',
+              taskId: this.taskId
+            }).then((res) => {
+              this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
+              this.dialogVisible = false
+            })
+            break;
+          case 'Circulate':
+            let dataListCirculate = []
+            this.multipleSelection.forEach((item) => {
+              dataListCirculate.push(item.userId)
+            })
+            let str1 = dataListCirculate.join(',')
+            getCirculation({
+              circulationList : str1,
+              taskId: this.taskId
+            }).then((res) => {
+              this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
+              this.dialogVisible = false
+            })
+            break;
+          case 'signature':
+            let dataListsignature = []
+            this.multipleSelection.forEach((item) => {
+              dataListsignature.push(item.userId)
+            })
+            let str2 = dataListsignature.join(',')
+            getModifyProcessUser({
+              processInstanceId: this.processInstanceId,
+              taskKey: this.taskKey,
+              userList: str2
+            }).then(() => {
+              this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
+              this.dialogVisible = false
+            })
+            break;
+          default:
+            break;
+        }
       }
     }
   }

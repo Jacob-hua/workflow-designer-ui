@@ -58,7 +58,9 @@
   import {
     putHangInstance,
     postVerifyUser,
-    putRejectTask
+    putRejectTask,
+    putCancelInstance,
+    getActiveInstance
   } from '@/unit/api.js'
   export default {
     props:{
@@ -108,6 +110,7 @@
           this.$parent.dataList.reject.name = 'admin'
           this.$parent.dataList.reject.rejectResult = this.selectData.businessObject.name
           this.dialogVisible2 = false
+          this.$parent.$emit('taskSuccess')
         })
       },
       handleOK() {
@@ -115,11 +118,23 @@
           this.dialogVisible = false
           switch (this.$parent.functionCheck) {
             case 'Hang':
-              putHangInstance({
-                processInstanceId: this.$parent.$refs.ProcessInformation.postData.processInstanceId
-              }).then((res) => {
-                this.$parent.dataList[this.$parent.functionCheck] = !this.$parent.dataList[this.$parent.functionCheck]
-              })
+              if (this.$parent.dataList.Hang) {
+                putHangInstance({
+                  processInstanceId: this.$parent.$refs.ProcessInformation.postData.processInstanceId
+                }).then((res) => {
+                  this.$message.success('挂起成功')
+                  this.$parent.dataList[this.$parent.functionCheck] = !this.$parent.dataList[this.$parent.functionCheck]
+                  this.$parent.$emit('taskSuccess')
+                })
+              } else{
+                getActiveInstance({
+                  processInstanceId: this.$parent.$refs.ProcessInformation.postData.processInstanceId
+                }).then((res) => {
+                  this.$message.success('激活成功')
+                  this.$parent.dataList[this.$parent.functionCheck] = !this.$parent.dataList[this.$parent.functionCheck]
+                  this.$parent.$emit('taskSuccess')
+                })
+              }
               break;
             case 'reject':
               this.dialogVisible2 = true
@@ -134,10 +149,19 @@
       },
       handleTermination() {
         
-        this.$parent.dataList.termination.terminationBollon = false
-        this.$parent.dataList.termination.data = '2022-04-15 11:11:11'
-        this.$parent.dataList.termination.name = '昊昊'
-        this.dialogVisible3 = false
+        putCancelInstance({
+          cancelReason: this.termination,
+          processInstanceId: this.processInstanceId
+        }).then((res) => {
+          this.$message.success('终止成功')
+          this.dialogVisible3 = false
+          this.$parent.dataList.termination.terminationBollon = false
+          this.$parent.$emit('taskSuccess')
+          // this.$parent.dataList.termination.data = '2022-04-15 11:11:11'
+          // this.$parent.dataList.termination.name = '昊昊'
+        })
+        
+       
       }
     },
     components: {

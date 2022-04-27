@@ -137,8 +137,9 @@
         tableData: [],
         statusObj: {
           completed: '通过',
-          '-': '执行',
-          deleted: '驳回'
+          run: '执行',
+          deleted: '驳回',
+          hang: '挂起'
         },
         statusClassObj: {
           completed: '',
@@ -156,7 +157,7 @@
           tenantId: this.$store.state.tenantId,
           page: 1,
           limit: 10,
-          total: 100
+          total: 1
         }
       }
     },
@@ -180,10 +181,12 @@
       deployDiolog(row) {
         this.dialogVisibleImplement = true
         this.$nextTick(() => {
+          this.$refs.runTimeImplement.getNachList(row.processInstanceId)
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.processStarter
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
           this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+          this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
         })
       },
       closeDialogImplement() {
