@@ -128,7 +128,7 @@
       </span>
     </el-dialog>
     <runtimePeople ref="runtimePeople"></runtimePeople>
-    <runtimeConfirmation ref="runtimeConfirmation"></runtimeConfirmation>
+    <runtimeConfirmation v-if="$refs.ProcessInformation" ref="runtimeConfirmation" :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :BpmnContant="$refs.ProcessInformation.postData.content" :taskId="$refs.ProcessInformation.postData.taskKey" :taskKey="$refs.ProcessInformation.postData.taskId"></runtimeConfirmation>
   </div>
 </template>
 
@@ -139,7 +139,8 @@
   import formRuntime from './formRuntime.vue'
   import {
     designFormDesignServiceAll,
-    postCompleteTask
+    postCompleteTask,
+    putHangInstance
   } from '@/unit/api.js'
   export default {
     props: {

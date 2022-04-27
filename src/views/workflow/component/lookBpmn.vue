@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="查看" :visible="dialogVisible" width="70%" custom-class="dialogVisible" @close="close">
     <div class="dialogVisible-main">
-      <bpmnView :valueType="valueType" @edit="edit()" @quote="quote()"></bpmnView>
+      <bpmnView ref="bpmnView" :valueType="valueType" @edit="edit()" @quote="quote()"></bpmnView>
     </div>
     <span slot="footer" class="dialog-footer" v-if="valueType === 'project'">
       <el-button @click="edit()">编辑</el-button>
@@ -25,7 +25,7 @@
     },
     data() {
       return {
-        
+
       }
     },
     methods:{

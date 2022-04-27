@@ -1,7 +1,8 @@
 import {
   get,
   post,
-  deletefn
+  deletefn,
+  put
 } from './request'
 
 
@@ -131,3 +132,19 @@ export const postCompleteTask = (params) =>
 // 查询用户
 export const getPersonUser = (params) =>
   get('/person/user', params);
+
+// 获取第三方组织架构
+export const getThreeSystemOrganize = (params) =>
+  get('/person/systemOrganize', params);
+  
+// 挂起流程
+export const putHangInstance = (params) =>
+  get('/execute/hangInstance', params);
+
+// 用户验证
+export const postVerifyUser = (params) =>
+  post('/person/verifyUser', params);
+  
+// 驳回流程
+export const putRejectTask = (params) =>
+  put('/execute/rejectTask', params);
