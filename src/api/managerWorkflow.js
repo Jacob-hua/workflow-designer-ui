@@ -1,7 +1,8 @@
 import {
     get,
     post,
-    deletefn, put
+    deletefn,
+    put
 } from '../unit/request'
 
 // 查询工作流草稿或发布流程

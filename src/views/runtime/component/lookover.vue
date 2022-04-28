@@ -15,10 +15,21 @@
                   <span>{{ item.label }}</span>
                   <span style="margin-left: 20px;">{{ item.value }}</span>
                 </div>
-                <div>
-                  <i class="el-icon-check " :class="item.time === '-' ? 'error' : 'success'"></i>
-                  <span class="word1">{{ item.assignee }}</span>
+                <div v-if="item.status === 'completed'">
+                  <i class="el-icon-check" :class="item.time === '-' ? 'error' : 'success'"></i>
+                  <span class="word1">{{ item.assignee }}  <span>(执行)</span></span>
                   <span class="dataYear">{{ item.time }}</span>
+                </div>
+                <div v-if="item.status === 'deleted'">
+                  <div>
+                    <i class="el-icon-warning-outline success"></i>
+                    <span class="word1">{{ item.commentList[0] }}</span>
+                  </div>
+                  <div>
+                    <i class="el-icon-check" :class="item.time === '-' ? 'error' : 'success'"></i>
+                    <span class="word1">{{ item.assignee }} <span style="color: red;">(驳回)</span> </span>
+                    <span class="dataYear">{{ item.time }}</span>
+                  </div>
                 </div>
               </div>
             </el-timeline-item>
@@ -131,6 +142,10 @@
     position: relative;
   }
   .el-icon-check {
+    font-size: 20px;
+    margin-right: 20px;
+  }
+  .el-icon-warning-outline {
     font-size: 20px;
     margin-right: 20px;
   }

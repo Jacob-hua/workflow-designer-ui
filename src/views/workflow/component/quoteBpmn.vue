@@ -14,8 +14,8 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button size="mini" @click="lookBpmnShow(scope.$index, scope.row)">查看</el-button>
-            <el-button size="mini" @click="addProjectShow(scope.$index, scope.row)">引用</el-button>
+            <el-button size="mini" @click="lookBpmnShow('引用', scope.$index, scope.row)">查看</el-button>
+            <el-button size="mini" @click="addProjectShow('引用工作流', scope.$index, scope.row)">引用</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -89,8 +89,8 @@
       lookBpmnShow(index, row) {
         this.$emit('lookBpmnShow', row)
       },
-      addProjectShow(index, row) {
-        this.$emit('addProjectShow')
+      addProjectShow(title,index, row) {
+        this.$emit('addProjectShow',title, row)
       },
       handleSizeChange(val) {
         this.getData.limit = val
