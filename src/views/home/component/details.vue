@@ -156,7 +156,7 @@
         })
       },
       getDetailList() {
-        let id = this.$refs.details1.postData.sourceId
+        let id = this.$refs.details1.postData.id
         getDeployBasic(id).then((res) => {
           this.DeployBasicList = res.result
         })
