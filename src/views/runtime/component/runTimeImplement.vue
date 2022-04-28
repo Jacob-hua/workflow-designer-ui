@@ -7,8 +7,8 @@
           <div class="function-list" v-if="bpmnType === 'bpmn:UserTask'">
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
-            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
-            <span class="function-item" @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
+            <span class="function-item" v-if="dataList.Hang && bpmnTypeloopChara === 'bpmn:MultiInstanceLoopCharacteristics'" @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
+            <span class="function-item"  @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('reject')" :class="functionCheck === 'reject' ? 'function-check' : ''">驳回</span>
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('termination')" :class="functionCheck === 'termination' ? 'function-check' : ''">终止</span>
             <span class="function-see" @click="goSee()">查看</span>
@@ -46,9 +46,9 @@
               </div>
             </div>
             <div v-if="functionCheck === 'signature'">
-              <div class="peopleListDefatil">
+              <!-- <div class="peopleListDefatil">
                 <div class="peopleList-item-defail" v-for="(item, index) in peopleListDefatil">{{ item.userId }}</div>
-              </div>
+              </div> -->
               <div style="margin-top: 15px;">
                 <div class="peopleList-title">加签:</div>
                 <div class="peopleList">
@@ -155,15 +155,10 @@
       return {
         functionCheck: 'agency',
         bpmnType: '',
+        bpmnTypeloopChara: '',
         formContant: '',
         formShow: false,
-        peopleListDefatil: [{
-            name: '旺仔'
-          },
-          {
-            name: '大乔'
-          }
-        ],
+        peopleListDefatil: [],
         bpmnData: {
           name: '',
           grounp: '',
@@ -198,6 +193,9 @@
         this.$emit('close')
       },
       getNachList(processInstanceId) {
+        this.dataList.Circulate = []
+        this.dataList.signature = []
+        this.dataList.agency = []
         getTaskDetailList({
           processInstanceId: processInstanceId
         }).then((res) => {
@@ -206,11 +204,13 @@
                userId :item
              })
            })
-           res.result[res.result.length - 1].commentList.forEach((item) => {
-             this.dataList.signature.push({
-               userId :item
+           if (res.result[res.result.length - 1].assignee) {
+             res.result[res.result.length - 1].assignee.split(',').forEach((item) => {
+               this.dataList.signature.push({
+                 userId :item
+               })
              })
-           })
+           }
            res.result[res.result.length - 1].candidateUsers.forEach((item) => {
              this.dataList.agency.push({
                userId :item
@@ -226,17 +226,19 @@
         this.$refs.runtimePeople.dialogVisible = true
       },
       editDataList(value) {
-        this.$refs.runtimePeople.multipleSelection = this.dataList[value]
+        this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(this.dataList[value]))
+        this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(this.dataList[value]))
         this.$refs.runtimePeople.dialogVisible = true
       },
       confirmation() {
         this.$refs.runtimeConfirmation.dialogVisible = true
       },
       goSee() {
-        this.$emit('goSee')
+        this.$emit('goSee', this.$refs.ProcessInformation.postData)
       },
       selectOneSet(value) {
         this.bpmnType = value.type
+        this.bpmnTypeloopChara = value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
         this.selection(value)
       },
       
@@ -255,7 +257,7 @@
               break;
           }
         })
-        if ( this.$refs.ProcessInformation.postData.taskId === '3e517106-c60a-11ec-9199-005056c00001') {
+        if ( this.$refs.ProcessInformation.postData.taskId === '4c1f5686-c6c2-11ec-bd33-005056c00001') {
           let userList = []
           Object.keys(data).forEach((item) => {
             if (data[item]) {

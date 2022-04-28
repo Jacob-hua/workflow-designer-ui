@@ -103,7 +103,7 @@
         this.dialogVisible = false
       },
       goReject() {
-        this.$emit('goReject')
+        this.$emit('goReject', this.$refs.ProcessInformation.postData)
       },
       getListData(id) {
         getTaskTrackList({

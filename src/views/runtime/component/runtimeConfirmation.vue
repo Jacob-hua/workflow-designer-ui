@@ -95,13 +95,12 @@
       selection(val, selectValue) {
         this.selectData = val
         this.selectValue = selectValue
-        console.log(this.selectData, '0000')
       },
       handleReject() {
         putRejectTask({
           message: this.textarea,
           processInstanceId: this.processInstanceId,
-          taskId: this.selectValue.taskId,
+          taskKey: this.selectValue,
           userId: this.$store.state.userInfo.name,
           currentTaskId: this.taskKey
         }).then((res) => {
