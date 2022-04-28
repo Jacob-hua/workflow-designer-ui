@@ -30,6 +30,12 @@ const routes = [
         meta: { title: 'bpmn', icon: 'dashboard' }
       },
       {
+        path: 'history',
+        name: 'history',
+        component: () => import('@/views/historyWorkflow/HistoryWorkflow'),
+        meta: { title: 'history', icon: 'dashboard' }
+      },
+      {
         path: 'runTime',
         name: 'runTime',
         component: () => import('@/views/runtime/index'),

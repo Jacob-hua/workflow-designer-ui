@@ -28,9 +28,9 @@
       </div>
     </div>
     <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
-    <addBpmn publick="publick" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
+    <addBpmn :flag="flag" publick="publick" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
     <quoteBpmn :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="quoteBpmnShow" valueType="public"></lookBpmn>
+    <lookBpmn ref="bpmn" :rowData="rowData" v-if="lookBpmnVisible" :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="quoteBpmnShow" valueType="public"></lookBpmn>
   </div>
 </template>
 
@@ -48,6 +48,8 @@ import {
   export default {
     data() {
       return {
+        flag: true,
+        rowData: '',
         projectValue: '',
         projectOption: [
           {
@@ -79,6 +81,7 @@ import {
       addBpmnShow() {
         this.xmlString = ""
         this.addBpmnVisible = true
+        this.flag = true
       },
       addBpmnHidden() {
         this.addBpmnVisible = false
@@ -96,20 +99,25 @@ import {
       
       lookBpmnShow(row) {
         this.lookBpmnVisible = true
+        this.rowData = row
+        this.$nextTick(() => {
+          this.$refs.bpmn.currentRowData = row
+          this.$refs.bpmn.$refs.bpmnView.postData = row
+        })
         // this.xmlString = row.content
       },
       lookBpmnHidden() {
         this.lookBpmnVisible = false
       },
       
-      lookBpmnEdit() {
+      lookBpmnEdit(row) {
         this.lookBpmnVisible = false
-        this.xmlString = bpmnData.value
+        this.xmlString = row.content
         this.addBpmnVisible = true
       },
       
-      draftTableEdit() {
-        this.xmlString = bpmnData.value
+      draftTableEdit(row) {
+        this.xmlString = row.content
         this.addBpmnVisible = true
       },
       

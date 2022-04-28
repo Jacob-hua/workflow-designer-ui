@@ -3,21 +3,25 @@
     <div class="dialogVisible-main">
       <bpmnView ref="bpmnView" :valueType="valueType" @edit="edit()" @quote="quote()"></bpmnView>
     </div>
-    <span slot="footer" class="dialog-footer"  v-if=" dep==='引用' ">
+    <span slot="footer" class="dialog-footer" >
       <el-button @click="edit()">编辑</el-button>
-      <el-button @click="Deactivate()">{{currentRowData.status === 'enabled'? '停用' : '启用'}}</el-button>
+      <el-button @click="Deactivate()">{{rowData.status === 'enabled'? '停用' : '启用'}}</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
   import bpmnView from '@/components/bpmnView/index.vue'
-  import {workFlowSave} from "@/api/managerWorkflow";
+  import {workFlowSaveDraft} from "@/api/managerWorkflow";
   export default {
     props: {
       dep: {
         type:String,
         default: ''
+      },
+      rowData: {
+        type: Object,
+        default: {}
       },
       dialogVisible: {
         type: Boolean,
@@ -34,11 +38,12 @@
       }
     },
     mounted() {
-      console.log(this.currentRowData)
+
+      console.log(this.rowData)
     },
     methods:{
       edit() {
-        this.$emit('edit')
+        this.$emit('edit', this.rowData)
       },
       Deactivate() {
         let _this = this
@@ -52,7 +57,11 @@
           formData.append('id', _this.currentRowData.id )
           formData.append('name', _this.currentRowData.name)
           formData.append('docName',  _this.currentRowData.name+'.bpmn' )
-          formData.append('ascription', 'beiqijia')
+          if (_this.currentRowData.ascription) {
+            formData.append('ascription', _this.currentRowData.ascription)
+          } else {
+            formData.append('ascription', 'beiqijia')
+          }
           formData.append('code', _this.currentRowData.code)
           formData.append('business', 'zhihuiyunwei')
         if (_this.currentRowData.status === 'disabled') {
@@ -63,8 +72,7 @@
           formData.append('createBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
-
-              workFlowSave(formData).then((res) => {
+        workFlowSaveDraft(formData).then((res) => {
                 this.$message.success(_this.currentRowData.status === 'disabled'? '启用成功' : '停用成功')
                 // this.$router.push('/home')
                 this.$emit('close')
