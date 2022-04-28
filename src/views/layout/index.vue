@@ -24,7 +24,7 @@
               <i class="el-icon-setting"></i>
               <span slot="title">运行中工作流</span>
             </el-menu-item>
-            <el-menu-item index="5">
+            <el-menu-item index="history">
               <i class="el-icon-setting"></i>
               <span slot="title">历史工作流</span>
             </el-menu-item>

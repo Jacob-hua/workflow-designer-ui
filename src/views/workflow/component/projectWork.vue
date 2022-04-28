@@ -64,8 +64,8 @@
     </div>
     <addProject  ref="addpro"  :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
     <addBpmn  :formData="formData" :flag="flag" :currentRowData="currentRowData" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
-    <quoteBpmn  v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn :dep="dep"   v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
+    <quoteBpmn  v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow2="lookBpmnShow2" @addProjectShow="addProjectShow"></quoteBpmn>
+    <lookBpmn :rowData="rowData" :dep="dep"   v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
   </div>
 </template>
 
@@ -84,6 +84,7 @@
     data() {
       return {
         dep: '',
+        rowData: {},
         lookData: null,
         secondtTotal: 0,
         firstTotal: 0,
@@ -133,7 +134,11 @@
         this.formListSecond = list
       },
       addProjectShow(dep='新建工作流',row) {
-        this.currentRowData = row
+
+        this.$nextTick(() => {
+          this.currentRowData = row
+        })
+
         this.$refs.addpro.title = dep
         this.addProjectVisible = true
         this.$refs.addpro.postData =  row || {}
@@ -167,9 +172,11 @@
         this.quoteBpmnVisible = false
       },
 
-      lookBpmnShow(dep,row) {
-        this.dep= dep
+      lookBpmnShow(row) {
+
+        this.rowData = row
         this.lookBpmnVisible = true
+
         this.$nextTick(() => {
           this.$refs.bpmn.currentRowData = row
           this.$refs.bpmn.$refs.bpmnView.postData = row
@@ -181,9 +188,9 @@
         this.lookBpmnVisible = false
       },
 
-      lookBpmnEdit() {
+      lookBpmnEdit(row) {
         this.lookBpmnVisible = false
-        this.xmlString = bpmnData.value
+        this.xmlString = row.content
         this.addBpmnVisible = true
       },
 
