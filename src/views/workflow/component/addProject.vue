@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="提示"
+    :title="title"
     :visible="dialogVisible"
     width="35%"
     :before-close="handleClose" 
@@ -23,8 +23,9 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
+      <el-button @click="define()">下一步</el-button>
       <el-button @click="cancel()">取 消</el-button>
-      <el-button type="primary" @click="define()">确 定</el-button>
+
     </span>
   </el-dialog>
 </template>
@@ -48,8 +49,11 @@
           business: '',
           name: ''
         },
-        options: this.$store.state.optionsBusiness
+        options: this.$store.state.optionsBusiness,
+        title: '新建工作流'
       }
+    },
+    mounted() {
     },
     methods:{
       handleClose() {

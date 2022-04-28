@@ -29,7 +29,7 @@
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
         <el-select v-model="projectValue" placeholder="请选择">
-          <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">
+          <el-option v-for="item in projectOption2" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
@@ -54,18 +54,18 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流（{{ formListFirst.length }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流{{ secondtTotal? `(${secondtTotal})` : '' }}</span>
+        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ firstTotal }}）</span>
       </div>
       <div class="home-table">
-        <projectTable :formListFirst="formListFirst" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'enabled,disabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
-        <draftTable :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
+        <projectTable ref="project" :formListFirst="formListFirst" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'enabled,disabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
+        <draftTable ref="draft" :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
-    <addProject :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
-    <addBpmn :formData="formData" :flag="flag" :currentRowData="currentRowData" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
-    <quoteBpmn v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
+    <addProject  ref="addpro"  :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
+    <addBpmn  :formData="formData" :flag="flag" :currentRowData="currentRowData" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
+    <quoteBpmn  v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
+    <lookBpmn :dep="dep"   v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
   </div>
 </template>
 
@@ -83,11 +83,21 @@
   export default {
     data() {
       return {
+        dep: '',
+        lookData: null,
+        secondtTotal: 0,
+        firstTotal: 0,
         projectValue: '',
         projectOption: [
           {
             value: '',
             label: '全部项目'
+          }
+        ],
+        projectOption2: [
+          {
+            value: '',
+            label: '全部业务'
           }
         ],
         formData: {},
@@ -96,7 +106,7 @@
           limit: 10,
           total: 1
         },
-        currentRowData: '',
+        currentRowData: {},
         addProjectVisible: false,
         addBpmnVisible: false,
         quoteBpmnVisible: false,
@@ -117,13 +127,16 @@
       // 修改code
       changProjectCode(code) {
         this.projectCode = code
-        this.findWorkFlowRecord()
+        this.findWorkFlowRecord(this.activeName)
       },
       totalChange(list) {
         this.formListSecond = list
       },
-      addProjectShow() {
+      addProjectShow(dep='新建工作流',row) {
+        this.currentRowData = row
+        this.$refs.addpro.title = dep
         this.addProjectVisible = true
+        this.$refs.addpro.postData =  row || {}
       },
       addProjectHidden() {
         this.addProjectVisible = false
@@ -154,8 +167,15 @@
         this.quoteBpmnVisible = false
       },
 
-      lookBpmnShow() {
+      lookBpmnShow(dep,row) {
+        this.dep= dep
         this.lookBpmnVisible = true
+        this.$nextTick(() => {
+          this.$refs.bpmn.currentRowData = row
+          this.$refs.bpmn.$refs.bpmnView.postData = row
+        })
+
+
       },
       lookBpmnHidden() {
         this.lookBpmnVisible = false
@@ -171,7 +191,6 @@
         this.xmlString = row.content
         this.currentRowData = row
         this.addBpmnVisible = true
-        console.log(this.addBpmnVisible)
       },
 
       changeActiveName(value) {
@@ -216,7 +235,7 @@
         this.findWorkFlowRecord()
       },
       // 查询项目流程
-     async findWorkFlowRecord (status = 'drafted' ) {
+     async findWorkFlowRecord (status ) {
        let data = await workFlowRecord({
          tenantId: this.$store.state.tenantId || null,
          status,
@@ -227,17 +246,26 @@
          name: this.input,
          startTime: this.valueDate[0]? `${this.valueDate[0]} 00:00:00` || '' : '',
          endTime: this.valueDate[1]? `${this.valueDate[1]} 23:59:59` || '' : '' ,
-         page: '1',
-         limit: '10'
+         page: this.getData.page,
+         limit: this.getData.limit
         })
-        status === 'drafted'?
-            this.formListSecond = data.result.list
-            : this.formListFirst = data.result.list
 
+        status === 'drafted'?
+            (
+                this.firstTotal= data.result.total,
+                this.$refs.draft.getData.total = data.result.total,
+                this.formListSecond = data.result.list
+            )
+           :
+            (
+               this.secondtTotal = data.result.total,
+               this.$refs.project.getData.total = data.result.total,
+               this.formListFirst = data.result.list
+            )
      }
     },
     mounted() {
-      this.findWorkFlowRecord()
+      this.findWorkFlowRecord('drafted')
     },
     components:{
       projectTable,

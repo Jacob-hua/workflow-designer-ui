@@ -22,7 +22,7 @@
         </el-table-column>
         <el-table-column prop="count" label="状态" align="center">
           <template slot-scope="scope">
-            <span class="status" :class="scope.row.count ? '' : 'statusFalse'">{{ scope.row.count ? '可部署' : '不可部署' }}</span>
+            <span class="status" :class="scope.row.status === 'enabled' ? '' : 'statusFalse'">{{ scope.row.status === 'enabled' ? '可部署' : '不可部署' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
@@ -79,22 +79,6 @@
           endTime: ''
         },
         tableData: [
-          {
-            name: '王小虎',
-            version: '王小虎',
-            docName: '王小虎',
-            createBy: '王小虎',
-            createTime: '王小虎',
-            count: true,
-          },
-          {
-            name: '王小虎',
-            version: '王小虎',
-            docName: '王小虎',
-            createBy: '王小虎',
-            createTime: '王小虎',
-            count: false,
-          }
         ]
       }
     },
@@ -102,7 +86,7 @@
       lookBpmnShow(row) {
         this.$emit('lookBpmnShow', row)
       },
-      deleteRow() {
+      deleteRow(row) {
         this.$confirm('删除不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -114,20 +98,24 @@
               message: '删除成功!'
             });
             // this.getTableData()
-            this.$parent.findWorkFlowRecord()
+            this.$parent.findWorkFlowRecord('enabled,disabled')
           })
+
+
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
         });
       },
       handleSizeChange(val) {
-       
+        this.$parent.getData.limit = val
+        this.$parent.findWorkFlowRecord('enabled,disabled')
       },
       handleCurrentChange(val) {
-        
+        this.$parent.getData.page = val
+        this.$parent.findWorkFlowRecord('enabled,disabled')
       }
     }
   }

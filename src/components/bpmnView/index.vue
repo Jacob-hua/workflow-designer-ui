@@ -164,7 +164,12 @@
           replace: this.bpmnModeler.get("replace"),
           selection: this.bpmnModeler.get("selection")
         };
-        this.createNewDiagram(bpmnData.value)
+        this.$nextTick(() => {
+          console.log(this.postData)
+          this.createNewDiagram(this.postData.content)
+        })
+
+
       },
       async createNewDiagram(xml) {
         // 将字符串转换成图显示出来

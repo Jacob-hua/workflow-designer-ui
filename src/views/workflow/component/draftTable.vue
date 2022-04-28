@@ -90,13 +90,13 @@ import {deleteWorkflow, workFlowRecord} from '@/api/managerWorkflow'
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
-        this.getData.limit = val
-        this.getTableData()
+        this.$parent.getData.limit = val
+        this.$parent.findWorkFlowRecord('drafted')
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
-        this.getData.page = val
-        this.getTableData()
+        this.$parent.getData.page = val
+        this.$parent.findWorkFlowRecord('drafted')
       },
       draftTableEdit(row) {
         this.$emit('draftTableEdit', row)
@@ -113,7 +113,7 @@ import {deleteWorkflow, workFlowRecord} from '@/api/managerWorkflow'
               message: '删除成功!'
             });
             // this.getTableData()
-            this.$parent.findWorkFlowRecord()
+            this.$parent.findWorkFlowRecord('drafted')
           })
 
 
