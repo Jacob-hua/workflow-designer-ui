@@ -2,24 +2,36 @@
   <div class="container">
       <HistorySearch />
       <HistoryHeadContent/>
-      <HistoryTable/>
+      <HistoryTable
+        @showDetail="showDetail"
+      />
+      <LookOver ref="lookover" />
   </div>
 </template>
 <script>
   import HistorySearch from "@/views/historyWorkflow/components/HistorySearch";
   import HistoryHeadContent from "@/views/historyWorkflow/components/HistoryHeadContent";
   import HistoryTable from "@/views/historyWorkflow/components/HistoryTable";
+  import LookOver from "@/views/historyWorkflow/components/Lookover";
   export default {
+
     components: {
       HistoryTable,
       HistorySearch,
-      HistoryHeadContent
+      HistoryHeadContent,
+      LookOver
     },
     data() {
       return {
 
       }
+    },
+    methods: {
+      showDetail(row) {
+        this.$refs.lookover.dialogVisible = true
+      }
     }
+
   }
 </script>
 <style scoped>
