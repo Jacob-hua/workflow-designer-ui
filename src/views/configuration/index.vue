@@ -3,9 +3,9 @@
     <div class="home-main">
       <div class="home-main-tab">
         <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="activeName = 'first'">访问配置</span>
-        <!-- <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">业务配置</span> -->
+        <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">业务配置</span>
         <el-button type="primary" class="buttonTab" v-if="activeName === 'first'" @click="showDiolog">新建访问配置</el-button>
-        <el-button type="primary" class="buttonTab" v-if="activeName === 'second'" @click="showDiolog">新建业务配置</el-button>
+        <!-- <el-button type="primary" class="buttonTab" v-if="activeName === 'second'" @click="showDiolog">新建业务配置</el-button> -->
       </div>
       <div class="home-table">
         <visitCall v-show="activeName === 'first'" ref="first" @editTable="editTable()" @deleteTable="deleteTable()"></visitCall>
