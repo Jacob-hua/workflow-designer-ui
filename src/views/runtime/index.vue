@@ -187,6 +187,9 @@
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
           this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
           this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
+          if (!this.$refs.runTimeImplement.dataList.Hang) {
+            this.$refs.runTimeImplement.functionCheck = 'Hang'
+          }
         })
       },
       closeDialogImplement() {

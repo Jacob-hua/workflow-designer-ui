@@ -6,11 +6,11 @@
       </div>
       <div class="people-main">
         <div class="people-main-left">
-          <el-tree :data="data" node-key="groupId" :current-node-key="currentKey" :highlight-current="true" :props="{ label: 'groupName', children: 'children' }"></el-tree>
+          <el-tree :data="data" node-key="groupId" :current-node-key="currentKey" @current-change="changeCurrentKey" :highlight-current="true" :props="{ label: 'groupName', children: 'children' }"></el-tree>
         </div>
         <div class="people-main-right">
           <div class="people-main-right-search">
-            <el-input v-model="input" placeholder="请输入姓名搜索人员" prefix-icon="el-icon-search"></el-input>
+            <el-input v-model="input" placeholder="请输入姓名搜索人员" prefix-icon="el-icon-search" @keyup.enter.native="getPeopleList"></el-input>
           </div>
           <!-- <div class="people-main-right-letter">
             <div>
@@ -37,7 +37,7 @@
             </el-table>
           </div>
           <div class="people-main-right-page">
-            <el-pagination @size-change="handleSizeChange" :current-page.sync="getData.page"
+            <el-pagination  @current-change="getPeopleList()" :current-page.sync="getData.page"
               :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
             </el-pagination>
           </div>
@@ -82,12 +82,17 @@
         dialogVisible: false,
         input: '',
         activeName: '',
+        detailSelection: [],
         multipleSelection: [],
         currentKey: '',
         getData: {
-          page: 1,
+          groupId: '',
+          name: '',
+          tenantId: this.$store.state.tenantId,
+          userId: '',
           limit: 5,
-          total: 1
+          page: 1,
+          total: 1,
         },
         tableData: [],
         letterList: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
@@ -112,14 +117,16 @@
       handleClose() {
         
       },
+      changeCurrentKey(key) {
+        this.currentKey = key.groupId
+        this.getPeopleList()
+      },
       getPeopleList() {
-        getPersonUser({
-          groupId: this.currentKey,
-          name: '',
-          tenantId: '',
-          userId: ''
-        }).then((res) => {
-          this.tableData = res.result
+        this.getData.groupId = this.currentKey
+        this.getData.name = this.input
+        getPersonUser(this.getData).then((res) => {
+          this.tableData = res.result.list
+          this.getData.total = res.result.total * 1
         })
       },
       
@@ -140,18 +147,74 @@
         switch (this.$parent.functionCheck){
           case 'agency':
             let dataList = []
-            this.multipleSelection.forEach((item) => {
-              dataList.push(item.userId)
+            let deleteList = []
+            this.detailSelection.forEach((item1) => {
+              let BoolType = true
+              this.multipleSelection.forEach((item2) => {
+                if (item1.userId === item2.userId) {
+                  BoolType = false
+                }
+              })
+              if (BoolType) {
+                deleteList.push(item1.userId)
+              }
             })
-            let str = dataList.join(',')
-            getModifyCandidate({
-              dataList: str,
-              operateType: 'user:add',
-              taskId: this.taskId
-            }).then((res) => {
-              this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
+            this.multipleSelection.forEach((item1) => {
+              let BoolType = true
+              this.detailSelection.forEach((item2) => {
+                if (item1.userId === item2.userId) {
+                  BoolType = false
+                }
+              })
+              if (BoolType) {
+                dataList.push(item1.userId)
+              }
+            })
+            
+            if (deleteList.length) {
+              let strDelete = deleteList.join(',')
+              getModifyCandidate({
+                dataList: strDelete,
+                operateType: 'user:delete',
+                taskId: this.taskId
+              }).then((res) => {
+                if (dataList.length) {
+                  let strData = dataList.join(',')
+                  getModifyCandidate({
+                    dataList: strData,
+                    operateType: 'user:add',
+                    taskId: this.taskId
+                  }).then((res) => {
+                    this.$message.success('代办成功')
+                    // this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
+                    this.dialogVisible = false
+                    this.$parent.$emit('taskSuccess')
+                  })
+                } else {
+                  this.$message.success('代办成功')
+                  // this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
+                  this.dialogVisible = false
+                  this.$parent.$emit('taskSuccess')
+                }
+              })
+            } else if(dataList.length) {
+              let strData = dataList.join(',')
+              getModifyCandidate({
+                dataList: strData,
+                operateType: 'user:add',
+                taskId: this.taskId
+              }).then((res) => {
+                this.$message.success('代办成功')
+                // this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
+                this.dialogVisible = false
+                this.$parent.$emit('taskSuccess')
+              })
+            } else {
+              this.$message.success('代办成功')
+              // this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
               this.dialogVisible = false
-            })
+              this.$parent.$emit('taskSuccess')
+            }
             break;
           case 'Circulate':
             let dataListCirculate = []
@@ -163,8 +226,10 @@
               circulationList : str1,
               taskId: this.taskId
             }).then((res) => {
+              this.$message.success('传阅成功')
               this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
               this.dialogVisible = false
+              this.$parent.$emit('taskSuccess')
             })
             break;
           case 'signature':
@@ -178,8 +243,10 @@
               taskKey: this.taskKey,
               userList: str2
             }).then(() => {
+              this.$message.success('加减签成功')
               this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
               this.dialogVisible = false
+              this.$parent.$emit('taskSuccess')
             })
             break;
           default:

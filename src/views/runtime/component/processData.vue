@@ -63,13 +63,11 @@
             window.bpmnInstances.modeling.setColor(newSelection[0], {
               'fill': '#b2b2ff',
             })
-            let SelectValue = this.bpmnList.filter((item) => {
-              return item.taskKey === newSelection[0].id
-            })[0]
-            console.log(this.bpmnList, '00000')
-            console.log(newSelection[0].id, '000000')
-            console.log(SelectValue, '00000')
-            this.$emit('selection', newSelection[0], SelectValue)
+            // let SelectValue = this.bpmnList.filter((item) => {
+            //   console.log(item.taskKey, newSelection[0].id)
+            //   return item.taskKey === newSelection[0].id
+            // })[0]
+            this.$emit('selection', newSelection[0], newSelection[0].id)
           }
         });
         this.createNewDiagram(this.BpmnContant)
@@ -87,6 +85,7 @@
             warnings.forEach(warn => console.warn(warn));
           }
           let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
+            console.log(element)
             return element.id === this.taskId
           })
           window.bpmnInstances.modeling.setColor(oneSet[0], {

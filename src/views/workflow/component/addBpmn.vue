@@ -109,7 +109,7 @@ import {
             this.$message.success('发布成功')
             // this.$router.push('/home')
             this.$emit('close')
-            this.$parent.findWorkFlowRecord()
+            this.$parent.findWorkFlowRecord('enabled,disabled')
           })
         });
         this.$emit('confirm')
@@ -126,6 +126,7 @@ import {
         this.modeler = value
       },
       confirm() {
+        console.log(this.flag)
         let _this = this
         const newConvert = new X2JS();
         this.modeler.saveXML({
@@ -144,21 +145,27 @@ import {
           console.log(_this.currentRowData)
           let formData = new FormData()
             formData.append('id', _this.currentRowData.id )
-          formData.append('name', _this.currentRowData.name || _this.formData.name)
-          formData.append('docName',  _this.currentRowData.name? _this.currentRowData.name+'bpmn' : _this.formData.name + '.bpmn')
-          formData.append('ascription', 'beiqijia')
+          formData.append('name', _this.currentRowData.name || _this.formData.name || definitions.process._name)
+          formData.append('docName',  definitions.process._name+ '.bpmn' || _this.currentRowData.name+'.bpmn'|| _this.formData.name + '.bpmn')
+          if (this.flag) {
+            formData.append('ascription', 'public')
+          } else {
+            formData.append('ascription', 'beiqijia')
+          }
+
           formData.append('code', definitions.process._id)
           formData.append('business', 'zhihuiyunwei')
           formData.append('status', 'drafted')
           formData.append('createBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
+
           this.flag?
               workFlowSave(formData).then((res) => {
             this.$message.success('保存成功')
             // this.$router.push('/home')
                 this.$emit('close')
-                this.$parent.findWorkFlowRecord()
+                this.$parent.findWorkFlowRecord('drafted')
 
           })
           :

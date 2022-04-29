@@ -3,7 +3,7 @@
     <div class="my-process-designer__header">
       <slot name="control-header"></slot>
       <template v-if="!$slots['control-header']">
-<!--        <el-button-group key="file-control">
+       <el-button-group key="file-control">
           <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="$refs.refFile.click()">打开文件</el-button>
           <el-tooltip effect="light">
             <div slot="content">
@@ -29,7 +29,7 @@
             </el-button>
           </el-tooltip>
           <el-button :size="headerButtonSize" :type="headerButtonType" icon="el-icon-folder-opened" @click="postData()">保存至驾驶舱工作流</el-button>
-        </el-button-group> -->
+        </el-button-group>
         <!-- <el-button-group key="align-control">
           <el-tooltip effect="light" content="向左对齐">
             <el-button :size="headerButtonSize" class="align align-left" icon="el-icon-s-data" @click="elementsAlign('left')" />
