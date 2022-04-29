@@ -104,10 +104,10 @@
           userId: this.$store.state.userInfo.name,
           currentTaskId: this.taskKey
         }).then((res) => {
-          this.$parent.dataList.reject.rejectBollen = false
-          this.$parent.dataList.reject.data = '2022-04-15 11:11:11'
-          this.$parent.dataList.reject.name = 'admin'
-          this.$parent.dataList.reject.rejectResult = this.selectData.businessObject.name
+          // this.$parent.dataList.reject.rejectBollen = false
+          // this.$parent.dataList.reject.data = '2022-04-15 11:11:11'
+          // this.$parent.dataList.reject.name = 'admin'
+          // this.$parent.dataList.reject.rejectResult = this.selectData.businessObject.name
           this.dialogVisible2 = false
           this.$parent.$emit('taskSuccess')
         })
@@ -122,7 +122,7 @@
                   processInstanceId: this.$parent.$refs.ProcessInformation.postData.processInstanceId
                 }).then((res) => {
                   this.$message.success('挂起成功')
-                  this.$parent.dataList[this.$parent.functionCheck] = !this.$parent.dataList[this.$parent.functionCheck]
+                  // this.$parent.dataList[this.$parent.functionCheck] = !this.$parent.dataList[this.$parent.functionCheck]
                   this.$parent.$emit('taskSuccess')
                 })
               } else{
@@ -130,7 +130,7 @@
                   processInstanceId: this.$parent.$refs.ProcessInformation.postData.processInstanceId
                 }).then((res) => {
                   this.$message.success('激活成功')
-                  this.$parent.dataList[this.$parent.functionCheck] = !this.$parent.dataList[this.$parent.functionCheck]
+                  // this.$parent.dataList[this.$parent.functionCheck] = !this.$parent.dataList[this.$parent.functionCheck]
                   this.$parent.$emit('taskSuccess')
                 })
               }
@@ -154,7 +154,7 @@
         }).then((res) => {
           this.$message.success('终止成功')
           this.dialogVisible3 = false
-          this.$parent.dataList.termination.terminationBollon = false
+          // this.$parent.dataList.termination.terminationBollon = false
           this.$parent.$emit('taskSuccess')
           // this.$parent.dataList.termination.data = '2022-04-15 11:11:11'
           // this.$parent.dataList.termination.name = '昊昊'

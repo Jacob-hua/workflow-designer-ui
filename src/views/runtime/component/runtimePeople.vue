@@ -21,7 +21,7 @@
             </div>
           </div> -->
           <div class="people-main-right-table">
-            <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" row-key="id" style="width: 100%" @selection-change="handleSelectionChange">
+            <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" row-key="userId" style="width: 100%" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55" align="center">
               </el-table-column>
               <el-table-column label="序号" type="index" align="center">
@@ -144,32 +144,34 @@
         this.multipleSelection.splice(index, 1)
       },
       dataBack() {
+        let dataList = []
+        let deleteList = []
+        this.detailSelection.forEach((item1) => {
+          let BoolType = true
+          this.multipleSelection.forEach((item2) => {
+            if (item1.userId === item2.userId) {
+              BoolType = false
+            }
+          })
+          if (BoolType) {
+            deleteList.push(item1.userId)
+          }
+        })
+        this.multipleSelection.forEach((item1) => {
+          let BoolType = true
+          this.detailSelection.forEach((item2) => {
+            if (item1.userId === item2.userId) {
+              BoolType = false
+            }
+          })
+          if (BoolType) {
+            dataList.push(item1.userId)
+          }
+        })
+        
         switch (this.$parent.functionCheck){
           case 'agency':
-            let dataList = []
-            let deleteList = []
-            this.detailSelection.forEach((item1) => {
-              let BoolType = true
-              this.multipleSelection.forEach((item2) => {
-                if (item1.userId === item2.userId) {
-                  BoolType = false
-                }
-              })
-              if (BoolType) {
-                deleteList.push(item1.userId)
-              }
-            })
-            this.multipleSelection.forEach((item1) => {
-              let BoolType = true
-              this.detailSelection.forEach((item2) => {
-                if (item1.userId === item2.userId) {
-                  BoolType = false
-                }
-              })
-              if (BoolType) {
-                dataList.push(item1.userId)
-              }
-            })
+            
             
             if (deleteList.length) {
               let strDelete = deleteList.join(',')
@@ -186,13 +188,11 @@
                     taskId: this.taskId
                   }).then((res) => {
                     this.$message.success('代办成功')
-                    // this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
                     this.dialogVisible = false
                     this.$parent.$emit('taskSuccess')
                   })
                 } else {
                   this.$message.success('代办成功')
-                  // this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
                   this.dialogVisible = false
                   this.$parent.$emit('taskSuccess')
                 }
@@ -205,32 +205,56 @@
                 taskId: this.taskId
               }).then((res) => {
                 this.$message.success('代办成功')
-                // this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
                 this.dialogVisible = false
                 this.$parent.$emit('taskSuccess')
               })
             } else {
               this.$message.success('代办成功')
-              // this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
               this.dialogVisible = false
               this.$parent.$emit('taskSuccess')
             }
             break;
           case 'Circulate':
-            let dataListCirculate = []
-            this.multipleSelection.forEach((item) => {
-              dataListCirculate.push(item.userId)
-            })
-            let str1 = dataListCirculate.join(',')
-            getCirculation({
-              circulationList : str1,
-              taskId: this.taskId
-            }).then((res) => {
-              this.$message.success('传阅成功')
-              this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
+            if (deleteList.length) {
+              let strDelete = deleteList.join(',')
+              getCirculation({
+                circulationList: strDelete,
+                operateType: 'delete',
+                taskId: this.taskId
+              }).then((res) => {
+                if (dataList.length) {
+                  let strData = dataList.join(',')
+                  getCirculation({
+                    circulationList: strData,
+                    operateType: 'add',
+                    taskId: this.taskId
+                  }).then((res) => {
+                    this.$message.success('代办成功')
+                    this.dialogVisible = false
+                    this.$parent.$emit('taskSuccess')
+                  })
+                } else {
+                  this.$message.success('代办成功')
+                  this.dialogVisible = false
+                  this.$parent.$emit('taskSuccess')
+                }
+              })
+            } else if(dataList.length) {
+              let strData = dataList.join(',')
+              getModifyCandidate({
+                dataList: strData,
+                operateType: 'user:add',
+                taskId: this.taskId
+              }).then((res) => {
+                this.$message.success('代办成功')
+                this.dialogVisible = false
+                this.$parent.$emit('taskSuccess')
+              })
+            } else {
+              this.$message.success('代办成功')
               this.dialogVisible = false
               this.$parent.$emit('taskSuccess')
-            })
+            }
             break;
           case 'signature':
             let dataListsignature = []
