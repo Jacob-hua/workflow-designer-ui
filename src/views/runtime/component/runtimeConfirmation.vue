@@ -8,7 +8,7 @@
             <el-input v-model="form.username"></el-input>
           </el-form-item>
           <el-form-item label="密码">
-            <el-input v-model="form.password"></el-input>
+            <el-input v-model="form.password" show-password></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -68,6 +68,9 @@
         type: String,
         default: ''
       },
+      processInstanceDetail: {
+         type: Object,
+      },
       taskKey: {
         type: String,
         default: ''
@@ -102,7 +105,11 @@
           processInstanceId: this.processInstanceId,
           taskKey: this.selectValue,
           userId: this.$store.state.userInfo.name,
-          currentTaskId: this.taskKey
+          currentTaskId: this.taskKey,
+          processKey: this.processInstanceDetail.deployKey,
+          currentTaskName: this.processInstanceDetail.taskName,
+          currentTaskKey: this.processInstanceDetail.taskKey,
+          createBy: this.$store.state.userInfo.name
         }).then((res) => {
           // this.$parent.dataList.reject.rejectBollen = false
           // this.$parent.dataList.reject.data = '2022-04-15 11:11:11'

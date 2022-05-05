@@ -1,35 +1,35 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-      <el-select v-model="projectValue" placeholder="请选择">
+      <el-select v-model="projectCode" placeholder="请选择" @change="changProjectCode">
         <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
     </div>
-    <div class="projectList">
+    <!-- <div class="projectList">
       <div class="projectList-item" :class="projectCode === 'beiqijia' ? 'checkPro' : '' " @click="changProjectCode('beiqijia')">
         <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'beiqijia'">
         <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'beiqijia'">
         <span class="projectList-item-word">北七家人才基地</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
+        <i class="el-icon-close item-icon"></i>
       </div>
       <div class="projectList-item" :class="projectCode === 'laiwu' ? 'checkPro' : '' " @click="changProjectCode('laiwu')">
         <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'laiwu'">
         <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'laiwu'">
         <span class="projectList-item-word">莱芜供热项目</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
+        <i class="el-icon-close item-icon"></i>
       </div>
       <div class="projectList-item" :class="projectCode === 'xilaideng' ? 'checkPro' : '' " @click="changProjectCode('xilaideng')">
         <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'xilaideng'">
         <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'xilaideng'">
         <span class="projectList-item-word">海口喜来登酒店</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
+        <i class="el-icon-close item-icon"></i>
       </div>
-    </div>
+    </div> -->
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
         <el-select v-model="projectValue" placeholder="请选择">
-          <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">
+          <el-option v-for="item in $store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
@@ -127,6 +127,18 @@
           {
             value: '',
             label: '全部项目'
+          },
+          {
+            value: 'beiqijia',
+            label: '北七家人才基地'
+          },
+          {
+            value: 'laiwu',
+            label: '莱芜供热项目'
+          },
+          {
+            value: 'xilaideng',
+            label: '海口喜来登酒店'
           }
         ],
         dataType: 'enabled',

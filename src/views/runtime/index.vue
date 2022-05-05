@@ -147,7 +147,7 @@
           deleted: 'tableStepDeleted'
         },
         getData: {
-          assignee: 'admin',
+          assignee: this.$store.state.userInfo.name,
           businessCode: '',
           endTime: '',
           order: 'desc',
