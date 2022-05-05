@@ -28,7 +28,7 @@
       </div>
     </div>
     <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
-    <addBpmn :flag="flag" publick="publick" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
+    <addBpmn  :currentRowData="currentRowData" :flag="flag" publick="publick" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
     <quoteBpmn :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
     <lookBpmn ref="bpmn" :rowData="rowData" v-if="lookBpmnVisible" :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="quoteBpmnShow" valueType="public"></lookBpmn>
   </div>
@@ -62,6 +62,7 @@ import {
           limit: 10,
           total: 1
         },
+        currentRowData: {},
         dataType: 'enabled',
         projectCode: 'beiqijia',
         valueDate: [],
@@ -118,7 +119,9 @@ import {
       
       draftTableEdit(row) {
         this.xmlString = row.content
+        this.currentRowData = row
         this.addBpmnVisible = true
+
       },
       
       changeActiveName(value) {

@@ -14,7 +14,7 @@
           流程名称
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.deployName" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.name" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -234,6 +234,7 @@
       },
     },
     mounted() {
+      console.log(this.postData)
       this.initBpmnModeler()
       this.$once("hook:beforeDestroy", () => {
         if (this.bpmnModeler) this.bpmnModeler.destroy();

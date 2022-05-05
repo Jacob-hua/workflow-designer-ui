@@ -86,7 +86,7 @@
       close() {
         this.$emit('close')
       },
-      lookBpmnShow(index, row) {
+      lookBpmnShow(tit, index, row) {
         this.$emit('lookBpmnShow', row)
       },
       addProjectShow(title,index, row) {
