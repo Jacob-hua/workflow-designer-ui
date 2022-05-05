@@ -124,11 +124,11 @@
       </div>
       <span slot="footer" class="dialog-footer" style="text-align: center;">
         <el-button @click="cancel()">取 消</el-button>
-        <el-button type="primary" @click="implement()" :disabled="!dataList.reject.rejectBollen">执 行</el-button>
+        <el-button type="primary" @click="implement()" :disabled="!dataList.Hang">执 行</el-button>
       </span>
     </el-dialog>
     <runtimePeople ref="runtimePeople" v-if="$refs.ProcessInformation" :taskId="$refs.ProcessInformation.postData.taskId" :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :taskKey="$refs.ProcessInformation.postData.taskKey"></runtimePeople>
-    <runtimeConfirmation v-if="$refs.ProcessInformation" ref="runtimeConfirmation" :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :BpmnContant="$refs.ProcessInformation.postData.content" :taskId="$refs.ProcessInformation.postData.taskKey" :taskKey="$refs.ProcessInformation.postData.taskId"></runtimeConfirmation>
+    <runtimeConfirmation v-if="$refs.ProcessInformation" ref="runtimeConfirmation" :processInstanceDetail="$refs.ProcessInformation.postData" :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :BpmnContant="$refs.ProcessInformation.postData.content" :taskId="$refs.ProcessInformation.postData.taskKey" :taskKey="$refs.ProcessInformation.postData.taskId"></runtimeConfirmation>
   </div>
 </template>
 
@@ -269,7 +269,7 @@
           }
         }
         postCompleteTask({
-          assignee: 'admin',
+          assignee: this.$store.state.userInfo.name,
           commentList: [],
           formDataList: formData,
           processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
