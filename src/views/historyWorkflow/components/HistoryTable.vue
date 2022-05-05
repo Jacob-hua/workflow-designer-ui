@@ -1,34 +1,40 @@
 <template>
   <div>
-    <div class="his_checkbox">
-      <el-radio v-model="radio" label="1">
-        <div>
-          <p class="taskNO">51</p>
-          <p class="taskTit">我的任务</p>
-        </div>
-      </el-radio>
-      <el-radio v-model="radio" label="2">
-        <div>
-          <p class="taskNO">21</p>
-          <p class="taskTit">告知</p>
-        </div>
-      </el-radio>
-    </div>
+<!--    <div class="his_checkbox">-->
+<!--      <el-radio v-model="radio" label="1">-->
+<!--        <div>-->
+<!--          <p class="taskNO">51</p>-->
+<!--          <p class="taskTit">我的任务</p>-->
+<!--        </div>-->
+<!--      </el-radio>-->
+<!--      <el-radio v-model="radio" label="2">-->
+<!--        <div>-->
+<!--          <p class="taskNO">21</p>-->
+<!--          <p class="taskTit">告知</p>-->
+<!--        </div>-->
+<!--      </el-radio>-->
+<!--    </div>-->
     <div class="home-table-main">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="名称" width="180" align="center">
+        <el-table-column prop="processInstanceName" label="名称" width="180" align="center">
         </el-table-column>
         <el-table-column prop="version" label="能源系统" align="center">
+          <template slot-scope="scope">
+            <span> {{ scope.row.businessMap.ascription }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="docName" label="执行厂站" align="center">
         </el-table-column>
-        <el-table-column prop="docName" label="发起人" align="center">
+        <el-table-column prop="startUser" label="发起人" align="center">
         </el-table-column>
-        <el-table-column prop="createTime" label="发起时间" align="center">
+        <el-table-column prop="startTime" label="发起时间" align="center">
         </el-table-column>
         <el-table-column prop="createTime" label="执行人" align="center">
+          <template slot-scope="scope">
+                <span v-for=" (item,index) in scope.row.assigneeList" :key="index"> {{ item }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
@@ -53,19 +59,16 @@
 </template>
 
 <script>
+import {
+  historyTaskList
+} from "@/api/historyWorkflow";
+
 export default {
   props: {},
   data() {
     return {
       radio: '1',
-      tableData: [
-        {
-          name: '电厂',
-          version: '电厂',
-          docName: '电厂',
-          createTime: '电厂',
-        }
-      ],
+      tableData: [],
       pageInfo: {
         page: 1,
         limit: 10,
@@ -79,19 +82,31 @@ export default {
       deep: true,
       immediate: true,
       handler(newValue, oldValue) {
-        this.getTableData()
+        this.getHistoryTaskList(newValue)
       }
     }
   },
   methods: {
-    getTableData() {
-
+    async getHistoryTaskList(pageInfo) {
+     let data =  await historyTaskList({
+        "assignee": "admin", // 执行人
+        "candidate": true,  // 是否包含候选
+        "endTime": "2022-04-30 23:59:59", // 结束时间
+        ...pageInfo,
+        "order": "desc", // 排序方式
+        "startTime": "2022-04-01 00:00:00", // 起始时间
+        "tenantId": this.$store.state.tenantId // 租户id
+      })
+      this.tableData = data.result.dataList
+      this.pageInfo.total = +data.result.count
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
+      this.pageInfo.limit = val
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+      this.pageInfo.page = val
     }
   }
 }
