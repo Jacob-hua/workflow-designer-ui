@@ -32,7 +32,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="seeDetail(scope.row)" type="text" size="small" >
+            <el-button @click.native.prevent="$emit('showDetail', scope.row)" type="text" size="small" >
               查看
             </el-button>
           </template>
@@ -86,8 +86,6 @@ export default {
   methods: {
     getTableData() {
 
-    },
-    seeDetail(row) {
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
