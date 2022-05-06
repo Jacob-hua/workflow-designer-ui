@@ -30,7 +30,7 @@ import {
       formData: {
         type: Object,
         default: {
-          name: ''
+
         }
       },
       dialogVisible: {
@@ -82,15 +82,16 @@ import {
             formData.append('id', _this.currentRowData.id )
           }
           let names = ''
-          if (_this.currentRowData.name) {
-            names = _this.currentRowData.name
+          if (definitions.process._name) {
+            names = definitions.process._name
           }
           if ( _this.formData.name) {
             names =  _this.formData.name
           }
-          if (definitions.process._name) {
-            names = definitions.process._name
+          if (_this.currentRowData.name) {
+            names = _this.currentRowData.name
           }
+
           formData.append('name', names)
           formData.append('docName',   names+ '.bpmn')
           if (_this.publick) {
@@ -128,6 +129,7 @@ import {
       confirm() {
         console.log(this.flag)
         let _this = this
+        let names
         const newConvert = new X2JS();
         this.modeler.saveXML({
           format: true
@@ -137,7 +139,16 @@ import {
           const {
             definitions
           } = newConvert.xml2js(xml);
-          var file1 = new File([xml], definitions.process._name + '.bpmn', {
+          if (definitions.process._name) {
+            names = definitions.process._name
+          }
+          if (this.formData.name) {
+            names = this.formData.name
+          }
+          if (_this.currentRowData.name) {
+            names = _this.currentRowData.name
+          }
+          var file1 = new File([xml], names + '.bpmn', {
             type: 'bpmn20-xml'
           });
           console.log(definitions)
@@ -147,10 +158,10 @@ import {
             formData.append('id', _this.currentRowData.id )
           formData.append('name', _this.currentRowData.name || _this.formData.name || definitions.process._name)
           formData.append('docName',  definitions.process._name+ '.bpmn' || _this.currentRowData.name+'.bpmn'|| _this.formData.name + '.bpmn')
-          if (this.flag) {
-            formData.append('ascription', 'public')
-          } else {
+          if (_this.flag && Object.values(_this.formData).length > 0) {
             formData.append('ascription', 'beiqijia')
+          } else {
+            formData.append('ascription', 'public')
           }
 
           formData.append('code', definitions.process._id)
@@ -159,7 +170,6 @@ import {
           formData.append('createBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
-
           this.flag?
               workFlowSave(formData).then((res) => {
             this.$message.success('保存成功')

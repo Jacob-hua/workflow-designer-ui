@@ -24,7 +24,7 @@
     export default {
       data() {
         return {
-          valueDate: '1',
+          valueDate: [],
           projectValue: '1',
           systemValue: '1',
           statusValue: '1',

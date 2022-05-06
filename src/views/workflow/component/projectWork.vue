@@ -64,8 +64,8 @@
     </div>
     <addProject  ref="addpro"  :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
     <addBpmn  :formData="formData" :flag="flag" :currentRowData="currentRowData" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
-    <quoteBpmn  v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow2="lookBpmnShow2" @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn :rowData="rowData" :dep="dep"   v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
+    <quoteBpmn  v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
+    <lookBpmn :isEdit="isEdit" :rowData="rowData" :dep="dep"   v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
   </div>
 </template>
 
@@ -83,6 +83,7 @@
   export default {
     data() {
       return {
+        isEdit: true,
         dep: '',
         rowData: {},
         lookData: null,
@@ -149,7 +150,7 @@
       addProjectDefine(value) {
         console.log(value)
         this.formData = value
-        Object.keys(value).length? this.flag = true : this.flag = false
+        Object.keys(value).length ? this.flag = true : this.flag = false
         this.addProjectVisible = false
         this.addBpmnShow()
       },
@@ -172,17 +173,15 @@
         this.quoteBpmnVisible = false
       },
 
-      lookBpmnShow(row) {
-
+      lookBpmnShow(row, tit) {
+        tit === 'gongzuoliu'? this.isEdit = true : this.isEdit = false
         this.rowData = row
-        this.lookBpmnVisible = true
 
+        this.lookBpmnVisible = true
         this.$nextTick(() => {
           this.$refs.bpmn.currentRowData = row
           this.$refs.bpmn.$refs.bpmnView.postData = row
         })
-
-
       },
       lookBpmnHidden() {
         this.lookBpmnVisible = false
