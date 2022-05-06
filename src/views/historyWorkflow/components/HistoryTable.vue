@@ -67,6 +67,7 @@ export default {
   props: {},
   data() {
     return {
+      dateRang: ["2022-01-01","2022-12-31"],
       radio: '1',
       tableData: [],
       pageInfo: {
@@ -91,10 +92,10 @@ export default {
      let data =  await historyTaskList({
         "assignee": "admin", // 执行人
         "candidate": true,  // 是否包含候选
-        "endTime": "2022-04-30 23:59:59", // 结束时间
+        "endTime": `${this.dateRang[1]} 23:59:59`, // 结束时间
         ...pageInfo,
         "order": "desc", // 排序方式
-        "startTime": "2022-04-01 00:00:00", // 起始时间
+        "startTime": `${this.dateRang[0]} 00:00:00` , // 起始时间
         "tenantId": this.$store.state.tenantId // 租户id
       })
       this.tableData = data.result.dataList
