@@ -63,6 +63,14 @@
     },
     mounted() {
 
+    },
+    created() {
+      let userInfo = sessionStorage.getItem('loginData')
+      if (userInfo) {
+        this.$store.state.userInfo.name = JSON.parse(userInfo).account
+      } else{
+        this.$router.push('/')
+      }
     }
   }
 </script>
