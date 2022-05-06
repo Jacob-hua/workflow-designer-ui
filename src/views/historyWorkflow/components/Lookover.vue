@@ -1,69 +1,89 @@
 <template>
   <el-dialog title="历史工作流详情" :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
     <div>
-      <ProcessInformation ref="ProcessInformation" v-if="dialogVisible"></ProcessInformation>
+      <ProcessInformation  ref="ProcessInformation" v-if="dialogVisible"></ProcessInformation>
     </div>
     <div style="position: relative;">
       <div style="margin: 20px 0px 10px 0px;font-weight: 700;">工作流执行详情</div>
       <div class="processDetail">
         <div class="block">
-     <el-timeline>
-<!--            <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData" :key="index">-->
-<!--              <div class="contant">-->
-<!--                <i class="el-icon-check" :class="item.status === 'completed' ? 'success' : 'error'"></i>-->
-<!--                <span class="word1">巡视计划自动生成</span>-->
-<!--                <span class="dataYear">{{ item.endTime }}</span>-->
-<!--              </div>-->
-<!--            </el-timeline-item>-->
-          <el-timeline-item timestamp="任务#2" placement="top">
-              <div class="contant">
-                <div>
-                  <span>现场负责人</span>
-                  <span style="margin-left: 20px;">昊昊</span>
+          <template v-if="listData.length>0">
+            <el-timeline>
+              <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData" :key="index">
+                <div class="contant">
+                  <div v-for="(item, index) in JSON.parse(item.formVariable)">
+                    <span>{{ item.label }}</span>
+                    <span style="margin-left: 20px;">{{ item.value }}</span>
+                  </div>
+                  <div v-if="item.status === 'completed'">
+                    <i class="el-icon-check" :class="item.time === '-' ? 'error' : 'success'"></i>
+                    <span class="word1">{{ item.assignee }}  <span>(执行)</span></span>
+                    <span class="dataYear">{{ item.time }}</span>
+                  </div>
+                  <div v-if="item.status === 'deleted'">
+                    <div>
+                      <i class="el-icon-warning-outline success"></i>
+                      <span class="word1">{{ item.commentList[0] && item.commentList[0] }}</span>
+                    </div>
+                    <div>
+                      <i class="el-icon-check" :class="item.time === '-' ? 'error' : 'success'"></i>
+                      <span class="word1">{{ item.assignee }} <span style="color: red;">(驳回)</span> </span>
+                      <span class="dataYear">{{ item.time }}</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <span>现场操作人</span>
-                  <span style="margin-left: 20px;">旺仔</span>
-                  <span style="margin-left: 20px;">京博</span>
-                </div>
-                <div>
-                  <i class="el-icon-check success"></i>
-                  <span class="word1">大乔</span>
-                  <span class="dataYear">2020-04-01</span>
-<!--                  <span class="dataMin">14:11:12</span>-->
-                </div>
-              </div>
-            </el-timeline-item>
-            <el-timeline-item timestamp="任务#3" placement="top">
-              <div class="contant">
-                <div>
-                  <i class="el-icon-check success"></i>
-                  <span class="word1">昊昊</span>
-                  <span class="dataYear">2020-04-01</span>
-<!--                  <span class="dataMin">14:11:12</span>-->
-                </div>
-                <div>
-                  <i class="el-icon-check success"></i>
-                  <span class="word1">旺仔</span>
-                  <span class="dataYear">2020-04-01</span>
-<!--                  <span class="dataMin">14:11:12</span>-->
-                </div>
-                <div>
-                  <i class="el-icon-check "></i>
-                  <span class="word1">京博</span>
-                </div>
-              </div>
-            </el-timeline-item>
-            <el-timeline-item timestamp="任务#4" placement="top">
-              <div class="contant">
-                <i class="el-icon-check success"></i>
-                <span class="word1">昊昊</span>
-                <span class="dataYear">2020-04-01</span>
-<!--                <span class="dataMin">14:11:12</span>-->
-              </div>
-            </el-timeline-item>
+              </el-timeline-item>
+              <!--            <el-timeline-item timestamp="任务#2" placement="top">
+                            <div class="contant">
+                              <div>
+                                <span>现场负责人</span>
+                                <span style="margin-left: 20px;">昊昊</span>
+                              </div>
+                              <div>
+                                <span>现场操作人</span>
+                                <span style="margin-left: 20px;">旺仔</span>
+                                <span style="margin-left: 20px;">京博</span>
+                              </div>
+                              <div>
+                                <i class="el-icon-check success"></i>
+                                <span class="word1">大乔</span>
+                                <span class="dataYear">2020-04-01</span>
+                                <span class="dataMin">14:11:12</span>
+                              </div>
+                            </div>
+                          </el-timeline-item>
+                          <el-timeline-item timestamp="任务#3" placement="top">
+                            <div class="contant">
+                              <div>
+                                <i class="el-icon-check success"></i>
+                                <span class="word1">昊昊</span>
+                                <span class="dataYear">2020-04-01</span>
+                                <span class="dataMin">14:11:12</span>
+                              </div>
+                              <div>
+                                <i class="el-icon-check success"></i>
+                                <span class="word1">旺仔</span>
+                                <span class="dataYear">2020-04-01</span>
+                                <span class="dataMin">14:11:12</span>
+                              </div>
+                              <div>
+                                <i class="el-icon-check"></i>
+                                <span class="word1">京博</span>
+                              </div>
+                            </div>
+                          </el-timeline-item>
+                          <el-timeline-item timestamp="任务#4" placement="top">
+                            <div class="contant">
+                              <i class="el-icon-check success"></i>
+                              <span class="word1">昊昊</span>
+                              <span class="dataYear">2020-04-01</span>
+                              <span class="dataMin">14:11:12</span>
+                            </div>
+                          </el-timeline-item>
+                        -->
+            </el-timeline>
+          </template>
 
-          </el-timeline>
         </div>
       </div>
     </div>

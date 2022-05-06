@@ -1,79 +1,97 @@
 <template>
   <div class="container">
-      <HistorySearch />
-      <HistoryHeadContent/>
-      <HistoryTable
+    <HistorySearch
+        @searchHistory="searchHistory"
+    />
+    <HistoryHeadContent/>
+    <HistoryTable
         @showDetail="showDetail"
-      />
-      <LookOver ref="lookover" />
+        ref="historyTable"
+    />
+    <LookOver ref="lookover"/>
   </div>
 </template>
 <script>
-  import HistorySearch from "@/views/historyWorkflow/components/HistorySearch";
-  import HistoryHeadContent from "@/views/historyWorkflow/components/HistoryHeadContent";
-  import HistoryTable from "@/views/historyWorkflow/components/HistoryTable";
-  import LookOver from "@/views/historyWorkflow/components/Lookover";
-  export default {
+import HistorySearch from "@/views/historyWorkflow/components/HistorySearch.vue";
+import HistoryHeadContent from "@/views/historyWorkflow/components/HistoryHeadContent.vue";
+import HistoryTable from "@/views/historyWorkflow/components/HistoryTable.vue";
+import LookOver from "@/views/historyWorkflow/components/Lookover.vue";
 
-    components: {
-      HistoryTable,
-      HistorySearch,
-      HistoryHeadContent,
-      LookOver
-    },
-    data() {
-      return {
+export default {
 
-      }
-    },
+  components: {
+    HistoryTable,
+    HistorySearch,
+    HistoryHeadContent,
+    LookOver
+  },
+  data() {
+    return {}
+  },
 
-    mounted() {
+  mounted() {
+  },
+  methods: {
+    searchHistory(dateRang) {
+      this.$refs.historyTable.dateRang = dateRang
+      this.$refs.historyTable.getHistoryTaskList(this.$refs.historyTable.pageInfo)
     },
-    methods: {
-      // 获取任务历史列表
-      showDetail(row) {
-        this.$refs.lookover.dialogVisible = true
-      }
+    // 获取任务历史列表
+    showDetail(row) {
+      this.$refs.lookover.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.lookover.listData = row.taskList
+        this.$refs.lookover.$refs.ProcessInformation.postData = row
+        this.$refs.lookover.$refs.ProcessInformation.postData.ascription = this.$refs.lookover.$refs.ProcessInformation.postData.businessMap.ascription
+        this.$refs.lookover.$refs.ProcessInformation.postData.business = this.$refs.lookover.$refs.ProcessInformation.postData.businessMap.business
+      })
     }
-
   }
+
+}
 </script>
 <style scoped>
-  .container {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-  .container .history_head {
-    display: flex;
-    padding-top: 15px;
-  }
-  /deep/ .el-radio__inner {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-  }
-  /deep/ .el-select {
-    width: 340px;
-    height: 50px;
-    margin-right: 18px;
-  }
-  /deep/.el-radio {
-    width: 107px;
-    display: flex;
-    align-items: center;
-    margin-right: 80px;
-  }
-  /deep/.el-radio div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .container /deep/ .el-input__inner {
-    border: 1px solid black;
-  }
+.container {
+  padding-left: 20px;
+  padding-right: 20px;
+}
 
-  .container /deep/ .el-input__inner {
-    border: 1px solid black;
-  }
+.container .history_head {
+  display: flex;
+  padding-top: 15px;
+}
+
+/deep/ .el-radio__inner {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+/deep/ .el-select {
+  width: 340px;
+  height: 50px;
+  margin-right: 18px;
+}
+
+/deep/ .el-radio {
+  width: 107px;
+  display: flex;
+  align-items: center;
+  margin-right: 80px;
+}
+
+/deep/ .el-radio div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container /deep/ .el-input__inner {
+  border: 1px solid black;
+}
+
+.container /deep/ .el-input__inner {
+  border: 1px solid black;
+}
 </style>
