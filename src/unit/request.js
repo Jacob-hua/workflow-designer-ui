@@ -10,10 +10,6 @@ export const service = axios.create({
 
 axios.defaults.withCredentials = true
 
-service.defaults.headers['X-SIACT-TOKEN'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFkbWluIiwiZXhwIjoxNjYzNDcyNjQ4fQ.gGidbfs64pf_r79KFGdUHtCkEJdU5JtficHEh1K112U'
-service.defaults.headers['X-SIACT-TOKEN-TYPE'] = '1'
-
-
 service.defaults.headers.post["Content-Type"] ="application/x-www-form-urlencoded;charset=UTF-8";  //设置编码
 
 
@@ -21,6 +17,11 @@ service.defaults.headers.post["Content-Type"] ="application/x-www-form-urlencode
 //请求拦截
 service.interceptors.request.use(
   config => {
+    let userInfo = (sessionStorage.getItem('loginData') && JSON.parse(sessionStorage.getItem('loginData'))) || ''
+    if (userInfo) {
+      config.headers['X-SIACT-TOKEN'] = userInfo.token
+      config.headers['X-SIACT-TOKEN-TYPE'] = '1'
+    }
     return config;
   },
   error => {

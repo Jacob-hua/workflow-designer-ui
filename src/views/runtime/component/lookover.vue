@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="终止" :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
     <div>
-      <ProcessInformation ref="ProcessInformation" v-if="dialogVisible"></ProcessInformation>
+      <ProcessInformation ref="ProcessInformation" v-if="dialogVisible" seeType="runTime"></ProcessInformation>
     </div>
     <div style="position: relative;">
       <span style="position: absolute;right: 10px;color: #0055ff;cursor: pointer;" @click="goReject">执行</span>

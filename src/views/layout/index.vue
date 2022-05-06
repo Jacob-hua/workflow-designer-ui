@@ -35,7 +35,12 @@
           </el-menu>
         </el-aside>
         <el-main>
-          <div class="loginHeader"></div>
+          <div class="loginHeader">
+            <div class="userinfo">
+              <span class="userInfoName">{{ $store.state.userInfo.name }}</span>
+              <span class="exitClss" @click="exitProject()">退出</span>
+            </div>
+          </div>
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -51,10 +56,21 @@
       },
       handleClose() {
 
+      },
+      exitProject() {
+        this.$router.push('/')
       }
     },
     mounted() {
 
+    },
+    created() {
+      let userInfo = sessionStorage.getItem('loginData')
+      if (userInfo) {
+        this.$store.state.userInfo.name = JSON.parse(userInfo).account
+      } else{
+        this.$router.push('/')
+      }
     }
   }
 </script>
@@ -90,7 +106,10 @@
 
   .loginHeader {
     height: 48px;
+    line-height: 48px;
+    font-size: 16px;
     background-color: #999999;
+    padding: 0px 10px;
   }
 
   .el-main {
@@ -109,5 +128,19 @@
   
   /deep/ .el-menu-item-group__title {
     display: none;
+  }
+  
+  .userinfo {
+    float: right;
+  }
+  
+  
+  .exitClss {
+    display: inline-block;
+    width: 40px;
+    text-align: center;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
   }
 </style>

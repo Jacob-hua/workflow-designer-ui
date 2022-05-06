@@ -5,10 +5,10 @@
         <div class="title">请输入账号密码进行校验，将此工作流程挂起</div>
         <el-form ref="form" :model="form" label-width="40px">
           <el-form-item label="账号">
-            <el-input v-model="form.username"></el-input>
+            <el-input v-model="form.username" @keyup.native.enter="handleOK"></el-input>
           </el-form-item>
           <el-form-item label="密码">
-            <el-input v-model="form.password" show-password></el-input>
+            <el-input v-model="form.password" show-password @keyup.native.enter="handleOK"></el-input>
           </el-form-item>
         </el-form>
       </div>

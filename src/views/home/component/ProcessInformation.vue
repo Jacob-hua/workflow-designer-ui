@@ -17,7 +17,7 @@
           <el-input v-model="postData.deployName" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
-      <div class="title-item">
+      <div class="title-item" v-if="seeType === 'runTime'">
         <span class="title-item-label marginLeft40">
           {{ seeType === 'runTime' ? '部署人' : '流程版本' }}
         </span>
