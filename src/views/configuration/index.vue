@@ -12,7 +12,7 @@
         <businessCall v-show="activeName === 'second'" ref="second"></businessCall>
       </div>
     </div>
-    
+
   </div>
 </template>
 

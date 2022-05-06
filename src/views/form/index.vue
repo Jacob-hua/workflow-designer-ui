@@ -1,11 +1,11 @@
 <template>
   <div class="form-home">
     <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="项目表单" name="second">
+        <ProjectForm v-if="activeName === 'second'"></ProjectForm>
+      </el-tab-pane>
         <el-tab-pane label="公共表单" name="first">
           <PublicForm v-if="activeName === 'first'"></PublicForm>
-        </el-tab-pane>
-        <el-tab-pane label="项目表单" name="second">
-          <ProjectForm v-if="activeName === 'second'"></ProjectForm>
         </el-tab-pane>
     </el-tabs>
   </div>
@@ -17,7 +17,7 @@
   export default {
     data() {
       return {
-        activeName: 'first'
+        activeName: 'second'
       }
     },
     methods:{

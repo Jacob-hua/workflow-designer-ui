@@ -26,13 +26,11 @@
               </el-table-column>
               <el-table-column label="序号" type="index" align="center">
               </el-table-column>
-              <el-table-column prop="userId" label="姓名" align="center">
+              <el-table-column prop="lastName" label="姓名" align="center">
+              </el-table-column>
+              <el-table-column prop="userId" label="账号" show-overflow-tooltip align="center">
               </el-table-column>
               <el-table-column prop="email" label="邮箱" show-overflow-tooltip align="center">
-              </el-table-column>
-              <el-table-column prop="name" label="岗位" show-overflow-tooltip align="center">
-              </el-table-column>
-              <el-table-column prop="lastName" label="备注" show-overflow-tooltip align="center">
               </el-table-column>
             </el-table>
           </div>

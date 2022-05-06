@@ -84,7 +84,7 @@
     },
     methods: {
       lookBpmnShow(row) {
-        this.$emit('lookBpmnShow', row)
+        this.$emit('lookBpmnShow', row, 'gongzuoliu')
       },
       deleteRow(row) {
         this.$confirm('删除不可恢复, 请确认是否继续?', '提示', {

@@ -26,7 +26,11 @@
 
       }
     },
+
+    mounted() {
+    },
     methods: {
+      // 获取任务历史列表
       showDetail(row) {
         this.$refs.lookover.dialogVisible = true
       }

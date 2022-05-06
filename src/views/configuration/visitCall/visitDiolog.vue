@@ -39,7 +39,6 @@
                 <el-option v-for="item in optionRequestType" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
-            </el-form-item>
           </el-form-item>
           <el-form-item label="请求头">
             <el-input v-model="form.headers"></el-input>
