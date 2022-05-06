@@ -173,3 +173,7 @@ export const getModifyCandidate = (params) =>
 // 重新激活流程
 export const getActiveInstance = (params) =>
   get('/execute/activeInstance', params);
+  
+// 登录接口
+export const userLogin = (params) =>
+  get('/person/login', params);

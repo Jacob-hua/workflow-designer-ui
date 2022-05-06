@@ -7,36 +7,48 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    name: '/',
+    redirect: 'login',
+    // redirect: 'home',
+  },
+  {
+  	path: '/login',
+    name: 'login',
+  	component: () => import('@/views/login/login'),
+  	hidden: true
+  },
+  {
+    path: '/home',
     name: 'first',
     component: layout,
-    redirect: 'bpmn',
+    redirect: '/home/bpmn',
     children: [
       {
-        path: 'bpmn',
+        path: '/home/bpmn',
         name: 'bpmn',
         component: () => import('@/views/workflow/index'),
         meta: { title: 'bpmn', icon: 'dashboard' }
       },
       {
-        path: 'form',
+        path: '/home/form',
         name: 'form',
         component: () => import('@/views/form/index'),
         meta: { title: 'bpmn', icon: 'dashboard' }
       },
       {
-        path: 'home',
+        path: '/home/home',
         name: 'home',
         component: () => import('@/views/home/index'),
         meta: { title: 'bpmn', icon: 'dashboard' }
       },
       {
-        path: 'history',
+        path: '/home/history',
         name: 'history',
         component: () => import('@/views/historyWorkflow/HistoryWorkflow'),
         meta: { title: 'history', icon: 'dashboard' }
       },
       {
-        path: 'runTime',
+        path: '/home/runTime',
         name: 'runTime',
         component: () => import('@/views/runtime/index'),
         hidden: true
@@ -48,8 +60,8 @@ const routes = [
         hidden: true
       },
       {
-        path: 'all',
-        name: 'all',
+        path: '/home/all',
+        name: '/home/all',
         component: () => import('@/views/configuration'),
         hidden: true,
       },

@@ -6,8 +6,6 @@
         </el-table-column>
         <el-table-column prop="name" label="名称" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="version" label="版本" align="center">
-        </el-table-column>
         <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
             <span class="fileStyle">{{ scope.row.name + '.bpmn' }}</span>
