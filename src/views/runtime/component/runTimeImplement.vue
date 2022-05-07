@@ -243,31 +243,36 @@
       },
       
       implement() {
-        let { data } = this.$refs.formRuntime.formEditor.submit()
-        let formData = JSON.parse(this.formContant).components
-        formData.forEach((item) => {
-          switch (item.type){
-            case 'radio':
-              item.value = item.values.filter((values) => {
-                return values.value == data[item.key]
-              })[0].label
-              break;
-            default:
-              item.value = data[item.key]
-              break;
-          }
-        })
-        if ( this.$refs.ProcessInformation.postData.taskId === '4c1f5686-c6c2-11ec-bd33-005056c00001') {
-          let userList = []
-          Object.keys(data).forEach((item) => {
-            if (data[item]) {
-              userList.push(item)
+        let data = {}
+        let formData = []
+        if (this.formShow) {
+          data = this.$refs.formRuntime.formEditor.submit().data
+          formData = JSON.parse(this.formContant).components
+          formData.forEach((item) => {
+            switch (item.type){
+              case 'radio':
+                item.value = item.values.filter((values) => {
+                  return values.value == data[item.key]
+                })[0].label
+                break;
+              default:
+                item.value = data[item.key]
+                break;
             }
           })
-          data = {
-            userList: userList
-          }
+          // if ( this.$refs.ProcessInformation.postData.taskId === '4c1f5686-c6c2-11ec-bd33-005056c00001') {
+          //   let userList = []
+          //   Object.keys(data).forEach((item) => {
+          //     if (data[item]) {
+          //       userList.push(item)
+          //     }
+          //   })
+          //   data = {
+          //     userList: userList
+          //   }
+          // }
         }
+        
         postCompleteTask({
           assignee: this.$store.state.userInfo.name,
           commentList: [],
