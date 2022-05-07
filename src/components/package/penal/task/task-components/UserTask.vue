@@ -9,7 +9,7 @@
         @change="handleChange('assignee')" ref="assignee">
       </el-cascader>
 
-      <el-input v-model="userTaskForm.assignee" @change="updateElementTask('assignee')" :disabled="true" />
+      <el-input v-model="userTaskForm.assignee" @change="updateElementTask('assignee')" />
     </el-form-item>
     <el-form-item label="候选用户" class="flexDis">
       <el-cascader v-model="candidateUsersValue" :options="options" :props="{
