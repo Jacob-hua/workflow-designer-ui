@@ -125,12 +125,13 @@
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
   import { getTaskList } from '@/unit/api.js'
+  import { format } from '@/assets/js/unit.js'
   export default {
     data() {
       return {
         options: [],
         value: '',
-        valueDate: ['2022-02-01', '2022-04-22'],
+        valueDate: [format(new Date(), 'yyyy-MM-1') + ' 00:00:00', format(new Date(), 'yyyy-MM-dd') + ' 23:59:59'],
         checkList: [],
         dialogVisibleAdd: false,
         dialogVisibleImplement: false,
