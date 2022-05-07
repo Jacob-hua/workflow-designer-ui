@@ -162,7 +162,6 @@
         })
       },
       getFormData(formKey) {
-        console.log('11111', formKey)
         if (formKey) {
           let docName = formKey.split(':')[2]
           designFormDesignServiceAll({

@@ -17,14 +17,7 @@
           <el-input v-model="postData.deployName" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
-      <div class="title-item" v-if="seeType === 'runTime'">
-        <span class="title-item-label marginLeft40">
-          {{ seeType === 'runTime' ? '部署人' : '流程版本' }}
-        </span>
-        <div class="title-item-main">
-          <el-input v-model="postData.version" placeholder="" :disabled="true"></el-input>
-        </div>
-      </div>
+      
       <div class="title-item">
         <span class="title-item-label marginLeft40">
           {{ seeType === 'runTime' ? '部署' : '创建' }}时间
@@ -34,7 +27,7 @@
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label">
+        <span class="title-item-label marginLeft40">
           应用项目
         </span>
         <div class="title-item-main">
@@ -42,11 +35,19 @@
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40">
+        <span class="title-item-label">
           流程类型
         </span>
         <div class="title-item-main">
           <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
+        </div>
+      </div>
+      <div class="title-item" v-if="seeType === 'runTime'">
+        <span class="title-item-label marginLeft40">
+          {{ seeType === 'runTime' ? '部署人' : '流程版本' }}
+        </span>
+        <div class="title-item-main">
+          <el-input v-model="postData.version" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item" v-if="type !== 'details1'">
