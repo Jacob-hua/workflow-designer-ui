@@ -98,8 +98,10 @@ export default {
         "startTime": `${this.dateRang[0]} 00:00:00` , // 起始时间
         "tenantId": this.$store.state.tenantId // 租户id
       })
-      this.tableData = data.result.dataList
-      this.pageInfo.total = +data.result.count
+      if (data.result) {
+        this.tableData =  data.result.dataList
+        this.pageInfo.total =  +data.result.count
+      }
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
