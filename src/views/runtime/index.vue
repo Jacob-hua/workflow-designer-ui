@@ -72,9 +72,9 @@
     <div class="runtime-table">
       <div class="home-table-main">
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column type="index" label="序号" width="180" align="center">
+          <el-table-column type="index" label="序号" align="center">
           </el-table-column>
-          <el-table-column prop="processName" label="名称" width="180" align="center">
+          <el-table-column prop="processName" label="名称" align="center">
           </el-table-column>
           <el-table-column prop="systemType" label="能源系统" align="center">
           </el-table-column>
@@ -87,7 +87,7 @@
           </el-table-column>
           <el-table-column prop="createTime" label="发起时间" align="center">
           </el-table-column>
-          <el-table-column label="执行进程" align="center" min-width="150px">
+          <el-table-column label="执行进程" align="center" min-width="250">
             <template slot-scope="scope">
               <el-steps :active="scope.row.userTaskTrackVOList.length" align-center process-status="success" >
                 <el-step :title="item.taskName" :description="statusObj[item.status]" icon="el-icon-edit" :class="statusClassObj[item.status]" v-for="(item, index) in scope.row.userTaskTrackVOList" :key="index"></el-step>
