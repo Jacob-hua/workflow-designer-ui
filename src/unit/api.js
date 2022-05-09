@@ -160,7 +160,7 @@ export const putCancelInstance = (params) =>
   
 // 传阅流程
 export const getCirculation = (params) =>
-  get('/execute/circulation', params);
+  get('/execute/newCirculation', params);
   
 // 流程加减签
 export const getModifyProcessUser = (params) =>

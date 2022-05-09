@@ -63,7 +63,11 @@
         this.$emit('close')
       },
       define() {
-        this.$emit('define', this.postData)
+        if (this.postData.name.length > 2 ) {
+          this.$emit('define', this.postData)
+        } else{
+          this.$message.warning('流程名称长度必须大于二')
+        }
       }
     }
   }

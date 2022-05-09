@@ -179,7 +179,8 @@
             parent: "#js-properties-panel"
           },
           additionalModules: [propertiesProviderModule, propertiesPanelModule, {
-            translate: ["value", customTranslate]
+            translate: ["value", customTranslate],
+            labelEditingProvider: ["value", ""]
           }],
           moddleExtensions: {
             camunda: camundaModdleDescriptor

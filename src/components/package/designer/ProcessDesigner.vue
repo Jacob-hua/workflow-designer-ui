@@ -215,7 +215,10 @@ export default {
       if (this.prefix === "activiti") {
         Modules.push(activitiModdleExtension);
       }
-
+      // let a = {
+      //   labelEditingProvider: ["value", ""]
+      // }
+      
       return Modules;
     },
     moddleExtensions() {
