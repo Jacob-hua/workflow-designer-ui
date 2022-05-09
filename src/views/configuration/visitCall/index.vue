@@ -2,120 +2,195 @@
   <div>
     <div class="home-table-main">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="商品名称">
-                <span>{{ props.row.name }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
+        <el-table-column type="index" label="序号" width="180" align="center">
         </el-table-column>
-        <el-table-column type="index" label="序号" align="center">
+        <el-table-column prop="processInstanceName" label="资源类型" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="资源类型" align="center">
+<!--        <el-table-column prop="version" label="资源标识" align="center">-->
+<!--          <template slot-scope="scope">-->
+<!--            <span> {{ scope.row.businessMap.ascription }}</span>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
+        <el-table-column prop="processInstanceName" label="API数量" align="center">
         </el-table-column>
-        <el-table-column prop="version" label="资源标识" align="center">
+        <el-table-column prop="processInstanceName" label="创建人" align="center">
         </el-table-column>
-        <el-table-column prop="createName" label="api名称" align="center">
-        </el-table-column>
-        <el-table-column prop="createTime" label="api标识" align="center">
-        </el-table-column>
-        <el-table-column prop="name" label="api类型" align="center">
-        </el-table-column>
-        <el-table-column prop="name" label="主机地址" align="center">
-        </el-table-column>
-        <el-table-column prop="name" label="访问路径" align="center">
-        </el-table-column>
-        <el-table-column prop="name" label="请求类型" align="center">
-        </el-table-column>
-        <el-table-column prop="name" label="请求头" align="center">
-        </el-table-column>
-        <el-table-column prop="name" label="api类型" align="center">
+        <el-table-column prop="processInstanceName" label="创建时间" align="center">
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="small" class="button1" @click="editTable(scope.row)">
+            <el-button @click.native.prevent="showAddOrEidtDailog(scope.row)" type="text" size="small" >
               编辑
             </el-button>
-            <el-button type="text" size="small" @click="deleteTable(scope.row)">
-              删除
+            <el-button @click.native.prevent="showDetail(scope.row)" type="text" size="small" >
+              查看
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div class="home-table-page">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="getData.page"
-        :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageInfo.page"
+          :page-size="pageInfo.limit"
+          layout="prev, pager, next, jumper"
+          :total="pageInfo.total">
       </el-pagination>
     </div>
-    <visitDiolog ref="visitDiolog"></visitDiolog>
+    <Guide
+        ref="guide"
+        @showAddDialog="showAddDialog"
+    />
+    <AddOrEidtDailog
+      ref="AddOrEidtDailog"
+      @showAddOrEidtDailog="showAddOrEidtDailog"
+    />
+    <Detail
+        @showAddOrEidtDailog="showAddOrEidtDailog"
+     ref="detail"/>
   </div>
 </template>
 
 <script>
-  import visitDiolog from './visitDiolog.vue'
-  export default {
-    data() {
-      return {
-        getData: {
-          page: 1,
-          limit: 10,
-          total: 100
-        },
-        tableData: [
-          {
-            name: '资源类型',
-            version: '资源标识',
-            createName: '创建人',
-            createTime: '创建时间'
-          },
-        ]
+import {
+  historyTaskList
+} from "@/api/historyWorkflow";
+import Guide from "@/views/configuration/visitCall/Guide";
+import AddOrEidtDailog from "@/views/configuration/visitCall/AddOrEidtDailog";
+import Detail from "@/views/configuration/visitCall/Detail";
+export default {
+  components: {
+    Guide,
+    AddOrEidtDailog,
+    Detail
+  },
+  props: {},
+  data() {
+    return {
+      dateRang: ["2022-01-01","2022-12-31"],
+      radio: '1',
+      tableData: [
+        {
+          id: 1,
+          processInstanceName: '第三方api'
+        }
+      ],
+      pageInfo: {
+        page: 1,
+        limit: 10,
+        total: 0
       }
-    },
-    methods: {
-      editTable(row) {
-        this.$emit('editTable', row)
-      },
-      deleteTable(row) {
-        this.$emit('deleteTable', row)
-      },
-      handleSizeChange() {
-        
-      },
-      handleCurrentChange() {
-        
+    }
+
+  },
+  watch: {
+    pageInfo:{
+      deep: true,
+      immediate: true,
+      handler(newValue, oldValue) {
+        // this.getHistoryTaskList(newValue)
       }
+    }
+  },
+  methods: {
+      showDetail(row) {
+        this.$refs.detail.dialogVisible = true
+        this.$refs.detail.currentRow = row
+      },
+      showAddOrEidtDailog(row, code){
+        if (code) {
+          this.$refs.guide.dialogVisible = true
+          return
+        }
+        row.id?
+            this.$refs.AddOrEidtDailog.dialogVisible = true
+            : this.$refs.guide.dialogVisible = true
+      },
+      showAddDialog() {
+        this.$refs.AddOrEidtDailog.dialogVisible = true
     },
-    components:{
-      visitDiolog
+    // async getHistoryTaskList(pageInfo) {
+    //   let data =  await historyTaskList({
+    //     "assignee": "admin", // 执行人
+    //     "candidate": true,  // 是否包含候选
+    //     "endTime": `${this.dateRang[1]} 23:59:59`, // 结束时间
+    //     ...pageInfo,
+    //     "order": "desc", // 排序方式
+    //     "startTime": `${this.dateRang[0]} 00:00:00` , // 起始时间
+    //     "tenantId": this.$store.state.tenantId // 租户id
+    //   })
+    //   if (data.result) {
+    //     this.tableData =  data.result.dataList
+    //     this.pageInfo.total =  +data.result.count
+    //   }
+    // },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pageInfo.limit = val
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.pageInfo.page = val
     }
   }
+}
 </script>
 
-<style scoped="scoped">
-  .home-table-main {
-    padding: 10px;
-    border: 1px solid #666666;
-  }
-  
-  .fileStyle {
-    color: #007edb;
-  }
-  
-  /deep/ .el-table .el-table__cell {
-    padding: 8px 0px;
-  }
-  
-  /deep/ .el-table th.el-table__cell {
-    padding: 16px 0px;
-  }
-  .home-table-page {
-    text-align: right;
-    padding: 20px 0px;
-  }
-  .button1 {
-    margin-right: 20px;
-  }
+<style scoped>
+button {
+  font-size: 14px;
+  margin-left: 10px;
+}
+.his_checkbox {
+  margin: 30px 0;
+}
+
+.history_date {
+  margin-left: 20px;
+}
+
+
+.his_checkbox {
+  display: flex;
+}
+.taskNO {
+  font-size: 24px;
+  color: #000;
+  font-weight: 400;
+  font-style: normal;
+}
+.taskTit {
+  font-size: 14px;
+  color: #000;
+  font-weight: 400;
+  font-style: normal
+}
+.home-table-main {
+  padding: 10px;
+  border: 1px solid #666666;
+}
+
+.fileStyle {
+  color: #007edb;
+}
+
+/deep/ .el-table .el-table__cell {
+  padding: 8px 0px;
+}
+
+/deep/ .el-table th.el-table__cell {
+  padding: 16px 0px;
+  background-color: #f5f7f9;
+}
+
+.home-table-page {
+  text-align: right;
+  padding: 20px 0px;
+}
+
+.button1 {
+  margin-right: 50px;
+}
 </style>

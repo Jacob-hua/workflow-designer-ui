@@ -168,7 +168,7 @@
           default:
             break;
         }
-        
+
         axios({
           method: this.form.type,
           url: this.form.host + this.form.path,
@@ -208,19 +208,19 @@
   /deep/ .el-select {
     width: 500px;
   }
-  
+
   /deep/ .el-input__inner {
     width: 500px;
   }
-  
+
   .bodyData {
     display: flex;
   }
-  
+
   .bodyData /deep/ .el-input__inner {
     width: 200px;
   }
-  
+
   .addLop {
     font-size: 20px;
     display: inline-block;
@@ -228,16 +228,16 @@
     line-height: 40px;
     margin-left: 10px;
   }
-  
+
   .form-diys {
     width: 100%;
     display: flex;
   }
-  
+
   /deep/ .el-form-item {
     position: relative;
   }
-  
+
   .word1 {
     font-size: 12px;
     position: absolute;
@@ -245,7 +245,7 @@
     left: 385px;
     cursor: pointer;
   }
-  
+
   /deep/ .jv-container .jv-code {
     padding: 0px;
     height: 300px;

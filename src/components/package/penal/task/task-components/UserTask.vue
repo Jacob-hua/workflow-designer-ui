@@ -6,7 +6,9 @@
              label: 'name',
              value: 'id'
            }"
+                   @visible-change ="expand('assignee')"
         @change="handleChange('assignee')" ref="assignee">
+
       </el-cascader>
 
       <el-input v-model="userTaskForm.assignee" @change="updateElementTask('assignee')" />
@@ -17,6 +19,7 @@
                label: 'name',
                value: 'id'
              }"
+                   @visible-change ="expand('candidateUsers')"
         @change="handleChange('candidateUsers')" ref="candidateUsers">
       </el-cascader>
       <el-input v-model="userTaskForm.candidateUsers" @change="updateElementTask('candidateUsers')" :disabled="true" :title="userTaskForm.candidateUsers" />
@@ -30,6 +33,7 @@
                label: 'name',
                value: 'id'
              }"
+                   @visible-change ="expand('candidateGroups')"
         @change="handleChange('candidateGroups')" ref="candidateGroups">
       </el-cascader>
       <el-input v-model="userTaskForm.candidateGroups" clearable @change="updateElementTask('candidateGroups')"
@@ -131,6 +135,15 @@
       }
     },
     methods: {
+      expand(key) {
+   this.assigneeValue = {}
+        console.log(key)
+        this.$refs[key].clearCheckedNodes()
+        // console.log( this.$refs[key].$refs.panel.)
+        // console.log(        this.$refs[key].$refs.panel.getCheckedNodes()
+        // );
+
+      },
       getOption() {
         apiCascade({
           tenantId: 18,
