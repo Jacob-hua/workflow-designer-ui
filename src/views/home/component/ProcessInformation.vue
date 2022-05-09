@@ -255,7 +255,11 @@
         if (this.bpmnModeler) return;
         this.bpmnModeler = new BpmnModeler({
           container: this.$refs["bpmn-canvas"],
-          additionalModules: [],
+          additionalModules: [
+            {
+              labelEditingProvider: ["value", ""]
+            }
+          ],
           moddleExtensions: [],
         });
         this.bpmnModeler.on("selection.changed", ({

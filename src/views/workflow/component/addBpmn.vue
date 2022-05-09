@@ -17,6 +17,7 @@ import {
   workFlowSave, publishWorkflow
 } from '@/api/managerWorkflow'
   import bpmnJsELe from '@/views/bpmnJsELe/index.vue'
+  // import bpmnJsELe from '@/views/bnpmJs/index.vue'
   import X2JS from "x2js";
   import {
     postDesignDesignService

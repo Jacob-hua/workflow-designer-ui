@@ -25,6 +25,10 @@
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-help"></i>多实例</div>
         <element-multi-instance :business-object="elementBusinessObject" :type="elementType" />
       </el-collapse-item>
+      <el-collapse-item name="multiInstance" v-if="elementTimerEventDefinition" key="TimerEventDefinition">
+        <div slot="title" class="panel-tab__title"><i class="el-icon-s-help"></i>定时任务详情</div>
+        <ScheduledTask :business-object="elementBusinessObject" :type="elementType" />
+      </el-collapse-item>
       <el-collapse-item name="listeners" key="listeners">
         <div slot="title" class="panel-tab__title"><i class="el-icon-message-solid"></i>执行监听器</div>
         <element-listeners :id="elementId" :type="elementType" />
@@ -55,6 +59,7 @@ import ElementListeners from "./listeners/ElementListeners";
 import ElementProperties from "./properties/ElementProperties";
 import ElementForm from "./form/ElementForm";
 import UserTaskListeners from "./listeners/UserTaskListeners";
+import ScheduledTask from "./scheduledTask/index.vue"
 import Log from "../Log";
 /**
  * 侧边栏
@@ -74,7 +79,8 @@ export default {
     ElementMultiInstance,
     ElementTask,
     ElementOtherConfig,
-    ElementBaseInfo
+    ElementBaseInfo,
+    ScheduledTask
   },
   componentName: "MyPropertiesPanel",
   props: {
@@ -103,6 +109,7 @@ export default {
       activeTab: "base",
       elementId: "",
       elementType: "",
+      elementTimerEventDefinition: "", // 是否为定时开始事件组件
       elementBusinessObject: {}, // 元素 businessObject 镜像，提供给需要做判断的组件使用
       conditionFormVisible: false, // 流转条件设置
       formVisible: false // 表单配置
@@ -172,6 +179,7 @@ export default {
       this.bpmnElement = activatedElement;
       this.elementId = activatedElement.id;
       this.elementType = activatedElement.type.split(":")[1] || "";
+      this.elementTimerEventDefinition = activatedElement.businessObject.eventDefinitions && activatedElement.businessObject.eventDefinitions[0].$type
       this.elementBusinessObject = JSON.parse(JSON.stringify(activatedElement.businessObject));
       this.conditionFormVisible = !!(
         this.elementType === "SequenceFlow" &&

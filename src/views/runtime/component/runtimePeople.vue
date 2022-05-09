@@ -216,40 +216,49 @@
             if (deleteList.length) {
               let strDelete = deleteList.join(',')
               getCirculation({
-                circulationList: strDelete,
+                unitList: strDelete,
                 operateType: 'delete',
-                taskId: this.taskId
+                taskId: this.taskId,
+                type: 'user' ,
+                operator: this.$store.state.userInfo.name,
+                processInstanceId: this.processInstanceId,
               }).then((res) => {
                 if (dataList.length) {
                   let strData = dataList.join(',')
                   getCirculation({
-                    circulationList: strData,
+                    unitList: strData,
                     operateType: 'add',
-                    taskId: this.taskId
+                    taskId: this.taskId,
+                    type: 'user' ,
+                    operator: this.$store.state.userInfo.name,
+                    processInstanceId: this.processInstanceId,
                   }).then((res) => {
-                    this.$message.success('代办成功')
+                    this.$message.success('传阅成功')
                     this.dialogVisible = false
                     this.$parent.$emit('taskSuccess')
                   })
                 } else {
-                  this.$message.success('代办成功')
+                  this.$message.success('传阅成功')
                   this.dialogVisible = false
                   this.$parent.$emit('taskSuccess')
                 }
               })
             } else if(dataList.length) {
               let strData = dataList.join(',')
-              getModifyCandidate({
-                dataList: strData,
-                operateType: 'user:add',
-                taskId: this.taskId
+              getCirculation({
+                unitList: strData,
+                operateType: 'add',
+                taskId: this.taskId,
+                type: 'user' ,
+                operator: this.$store.state.userInfo.name,
+                processInstanceId: this.processInstanceId,
               }).then((res) => {
-                this.$message.success('代办成功')
+                this.$message.success('传阅成功')
                 this.dialogVisible = false
                 this.$parent.$emit('taskSuccess')
               })
             } else {
-              this.$message.success('代办成功')
+              this.$message.success('传阅成功')
               this.dialogVisible = false
               this.$parent.$emit('taskSuccess')
             }
