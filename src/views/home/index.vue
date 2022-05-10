@@ -7,25 +7,21 @@
           <div class="titLabel">已部署工作流</div>
         </div>
         <div>
-          <div class="title">15</div>
+          <div class="title">{{ WorkflowTableNum }}</div>
           <div class="titLabel">可部署工作流</div>
         </div>
       </div>
       <div class="data2">
         <div>
-          <div class="title">142</div>
+          <div class="title">{{ numberList.executionCount }}</div>
           <div class="titLabel">执行工作流总数</div>
         </div>
         <div>
-          <div class="title">142</div>
+          <div class="title">{{ numberList.completeCount }}</div>
           <div class="titLabel">执行中</div>
         </div>
         <div>
-          <div class="title">142</div>
-          <div class="titLabel">待执行数量</div>
-        </div>
-        <div>
-          <div class="title">142</div>
+          <div class="title">{{ numberList.executionInCount }}</div>
           <div class="titLabel">已完成数量</div>
         </div>
       </div>
@@ -81,10 +77,16 @@
   import WorkflowTable from './component/WorkflowTable.vue'
   import draftsTable from './component/draftsTable.vue'
   import { format } from '@/assets/js/unit.js'
+  import { getDeployCount, getTaskCountStatistic } from '@/unit/api.js'
   export default {
     data() {
       return {
         valueDate: [format(new Date(), 'yyyy-MM-1') + ' 00:00:00', format(new Date(), 'yyyy-MM-dd') + ' 23:59:59'],
+        numberList:{
+          executionCount: 0,
+          completeCount: 0,
+          executionInCount: 0
+        },
         activeName: 'first',
         value1: 'beiqijia',
         value2: '',
@@ -123,16 +125,38 @@
         this.activeName = value
         this.$refs[value].getTableData()
       },
+      getDeployCountList() {
+        getDeployCount({
+          status: 'enabled'
+        }).then((res) => {
+          console.log(res)
+        })
+      },
       getManyData() {
         this.$nextTick(() => {
           this.$refs.first.getTableData()
           this.$refs.second.getTableData()
+        })
+      },
+      getDataNumber() {
+        getTaskCountStatistic({
+          ascription: this.value1,
+          assignee: this.$store.state.userInfo.name,
+          business: this.value2,
+          endTime: this.valueDate[1],
+          startTime: this.valueDate[0]
+        }).then((res) => {
+          this.numberList = res.result
         })
       }
     },
     components:{
       WorkflowTable,
       draftsTable
+    },
+    mounted() {
+      this.getDeployCountList()
+      this.getDataNumber()
     }
   }
 </script>

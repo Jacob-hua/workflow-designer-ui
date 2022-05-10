@@ -177,3 +177,11 @@ export const getActiveInstance = (params) =>
 // 登录接口
 export const userLogin = (params) =>
   get('/person/login', params);
+
+// 执行中工作流统计
+export const getTaskCountStatistic = (params) =>
+  post('/execute/taskCountStatistic', params);
+
+// 统计已部署工作流
+export const getDeployCount = (params) =>
+  get('/process/deploy/deployCount', params);

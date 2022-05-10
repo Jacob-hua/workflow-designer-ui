@@ -1,5 +1,6 @@
 import axios from "axios"
 import {Message} from 'element-ui'
+import router from "../router"
 
 // create an axios instance
 export const service = axios.create({
@@ -75,6 +76,10 @@ service.interceptors.response.use(
           type:'error',
           message:"未找到远程服务器"
         })
+        break;
+      case 401:
+        sessionStorage.clear()
+        router.push('/')
         break;
       default:
         Message({
