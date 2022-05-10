@@ -2,13 +2,13 @@
   <div class="runtime">
     <div class="runtime-filter">
       <div class="projectSelect marginRight20">
-        <el-select v-model="getData.projectCode" placeholder="请选择">
+        <el-select v-model="getData.projectCode" placeholder="请选择" @change="getDataNumber()">
           <el-option v-for="item in $store.state.optionsAscription" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
       <div class="businessSelect marginRight20">
-        <el-select v-model="getData.businessCode" placeholder="请选择">
+        <el-select v-model="getData.businessCode" placeholder="请选择" @change="getDataNumber()">
           <el-option v-for="item in this.$store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
@@ -30,21 +30,21 @@
       <div class="runtime-home-title">
         <div class="data">
           <div class="title">
-            <b class="value">142</b>
+            <b class="value">{{ numberList.executionCount }}</b>
           </div>
           <div class="titLabel">执行工作流总数</div>
         </div>
         <div class="data">
           <div class="title">
-            <b class="value">142</b>
+            <b class="value">{{ numberList.completeCount }}</b>
           </div>
           <div class="titLabel">执行中</div>
         </div>
         <div class="data">
           <div class="title">
-            <b class="value">142</b>
+            <b class="value">{{ numberList.executionInCount }}</b>
           </div>
-          <div class="titLabel">待执行数量</div>
+          <div class="titLabel">已完成数量</div>
         </div>
       </div>
       <div class="runtime-home-button">
@@ -124,11 +124,16 @@
   import runtimeAdd from './component/runtimeAdd.vue'
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
-  import { getTaskList } from '@/unit/api.js'
+  import { getTaskList, getTaskCountStatistic } from '@/unit/api.js'
   import { format } from '@/assets/js/unit.js'
   export default {
     data() {
       return {
+        numberList:{
+          executionCount: 0,
+          completeCount: 0,
+          executionInCount: 0
+        },
         options: [],
         value: '',
         valueDate: [format(new Date(), 'yyyy-MM-1') + ' 00:00:00', format(new Date(), 'yyyy-MM-dd') + ' 23:59:59'],
@@ -219,10 +224,24 @@
       taskSuccess() {
         this.dialogVisibleImplement = false
         this.getManyData()
+      },
+      getDataNumber() {
+        getTaskCountStatistic({
+          ascription: this.getData.projectCode,
+          assignee: this.$store.state.userInfo.name,
+          business: this.getData.businessCode,
+          endTime: this.valueDate[1],
+          startTime: this.valueDate[0]
+        }).then((res) => {
+          this.numberList = res.result
+        })
       }
     },
     created() {
       this.getManyData()
+    },
+    mounted() {
+      this.getDataNumber()
     },
     components: {
       runtimeAdd,

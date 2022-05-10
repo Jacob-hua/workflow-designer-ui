@@ -3,11 +3,11 @@
     <el-container>
       <!-- <el-header>Header</el-header> -->
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="260px">
           <div class="Logo">
             流程引擎工作台
           </div>
-          <el-menu :default-active="$route.name" class="el-menu-vertical-demo" router @open="handleOpen" @close="handleClose">
+          <el-menu :default-active="$route.name" class="el-menu-vertical-demo" router @open="handleOpen" @close="handleClose" v-if="!status">
             <el-menu-item index="bpmn">
               <i class="el-icon-location"></i>
               <span>工作流管理</span>
@@ -36,7 +36,7 @@
         </el-aside>
         <el-main>
           <div class="loginHeader">
-            <div class="userinfo">
+            <div class="userinfo" v-if="!status">
               <span class="userInfoName">{{ $store.state.userInfo.name }}</span>
               <span class="exitClss" @click="exitProject()">退出</span>
             </div>
@@ -50,6 +50,11 @@
 
 <script>
   export default {
+    data() {
+      return {
+        status: false
+      }
+    },
     methods: {
       handleOpen() {
 
@@ -62,10 +67,11 @@
       }
     },
     mounted() {
-
+      
     },
     created() {
       let userInfo = sessionStorage.getItem('loginData')
+      this.status = (sessionStorage.getItem('status') === '我是菜鸡')
       if (userInfo) {
         this.$store.state.userInfo.name = JSON.parse(userInfo).account
       } else{

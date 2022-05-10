@@ -5,10 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    optionsAscription: [{
-        value: '',
-        label: '全部项目'
-      },
+    optionsAscription: [
       {
         value: 'beiqijia',
         label: '北七家人才基地'
@@ -22,10 +19,7 @@ export default new Vuex.Store({
         label: '海口喜来登酒店'
       }
     ],
-    optionsBusiness: [{
-        value: '',
-        label: '全部业务'
-      },
+    optionsBusiness: [
       {
         value: 'zhihuiyunwei',
         label: '智慧运维'

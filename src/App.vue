@@ -29,6 +29,7 @@ export default {
     box-sizing: border-box;
     min-width: 1920px;
     min-height: 1080px;
+    background-color: white;
   }
   
   .bjs-powered-by {
