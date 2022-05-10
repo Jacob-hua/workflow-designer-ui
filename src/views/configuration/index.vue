@@ -4,9 +4,9 @@
       <div class="home-main-tab">
         <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="activeName = 'first'">访问配置</span>
         <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="activeName = 'second'">业务配置</span>
-        <el-button type="primary" class="buttonTab" v-if="activeName === 'first'" @click="showDiolog">新建访问配置</el-button>
-        <!-- <el-button type="primary" class="buttonTab" v-if="activeName === 'second'" @click="showDiolog">新建业务配置</el-button> -->
+        <span class="home-main-tab-item" :class="activeName === 'third' ? 'active' : ''" @click="activeName = 'third'">启动项配置</span>
       </div>
+      <el-button type="primary" class="buttonTab" v-if="activeName === 'first'" @click="showDiolog">新增第三方接口</el-button>
       <div class="home-table">
         <visitCall v-show="activeName === 'first'" ref="first" @editTable="editTable()" @deleteTable="deleteTable()"></visitCall>
         <businessCall v-show="activeName === 'second'" ref="second"></businessCall>
@@ -36,7 +36,7 @@
     },
     methods:{
       showDiolog() {
-        this.$refs[this.activeName].$refs.visitDiolog.dialogVisible2 = true
+        this.$refs[this.activeName].$refs.guide.dialogVisible = true
       },
       editTable() {
         this.$refs[this.activeName].$refs.visitDiolog.dialogVisible2 = true
@@ -69,9 +69,7 @@
 <style scoped="scoped">
   
   .buttonTab {
-    position: absolute;
-    right: 0px;
-    top: 10px;
+    margin: 15px 0;
   }
   
   .configuration {

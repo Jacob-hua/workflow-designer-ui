@@ -6,7 +6,9 @@
              label: 'name',
              value: 'id'
            }"
+                   @visible-change ="expand('assignee')"
         @change="handleChange('assignee')" ref="assignee">
+
       </el-cascader>
 
       <el-input v-model="userTaskForm.assignee" @change="updateElementTask('assignee')" />
@@ -17,6 +19,7 @@
                label: 'name',
                value: 'id'
              }"
+                   @visible-change ="expand('candidateUsers')"
         @change="handleChange('candidateUsers')" ref="candidateUsers">
       </el-cascader>
       <el-input v-model="userTaskForm.candidateUsers" @change="updateElementTask('candidateUsers')" :disabled="true" :title="userTaskForm.candidateUsers" />
@@ -30,6 +33,7 @@
                label: 'name',
                value: 'id'
              }"
+                   @visible-change ="expand('candidateGroups')"
         @change="handleChange('candidateGroups')" ref="candidateGroups">
       </el-cascader>
       <el-input v-model="userTaskForm.candidateGroups" clearable @change="updateElementTask('candidateGroups')"
@@ -54,14 +58,14 @@
     </el-form-item>
     <el-dialog title="提示" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" append-to-body>
       <div class="dialogVisibleBody">
-        <div class="dialogVisibleForm">
-          <el-form-item :label="index" v-for="(item, index) in formData" :key="index">
-            <el-input v-model="postForm[index]" clearable />
-          </el-form-item>
-          <div class="dialogVisibleFormFooter">
-            <el-button type="primary" @click="postData()" size="mini">查询数据</el-button>
-          </div>
-        </div>
+<!--        <div class="dialogVisibleForm">-->
+<!--          <el-form-item :label="index" v-for="(item, index) in formData" :key="index">-->
+<!--            <el-input v-model="postForm[index]" clearable />-->
+<!--          </el-form-item>-->
+<!--          <div class="dialogVisibleFormFooter">-->
+<!--            <el-button type="primary" @click="postData()" size="mini">查询数据</el-button>-->
+<!--          </div>-->
+<!--        </div>-->
         <div class="dialogVisibleTable">
           <div v-if="tableDataHeader.length > 0">
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" @select-all="onSelectAll" ref="elTable">
@@ -131,6 +135,15 @@
       }
     },
     methods: {
+      expand(key) {
+   this.assigneeValue = {}
+        console.log(key)
+        this.$refs[key].clearCheckedNodes()
+        // console.log( this.$refs[key].$refs.panel.)
+        // console.log(        this.$refs[key].$refs.panel.getCheckedNodes()
+        // );
+
+      },
       getOption() {
         apiCascade({
           tenantId: 18,
@@ -140,23 +153,38 @@
           window.bpmnInstances.modeling.updateProperties(this.bpmnElement , { formKey: '' });
         })
       },
-      postData() {
-        let postData = ''
-        if (this.assigneeValueObj.data.method === "GET") {
-          Object.keys(this.postForm).forEach((item, index) => {
-            if (index === 0) {
-              postData = postData + `?${item}=${this.postForm[item]}`
-            } else {
-              postData = postData + `&${item}=${this.postForm[item]}`
+      getpostData() {
+        // let postData = ''
+        // if (this.assigneeValueObj.data.method === "GET") {
+        //   Object.keys(this.postForm).forEach((item, index) => {
+        //     if (index === 0) {
+        //       postData = postData + `?${item}=${this.postForm[item]}`
+        //     } else {
+        //       postData = postData + `&${item}=${this.postForm[item]}`
+        //     }
+        //   })
+        // } else {
+        //   postData = this.postForm
+        // }
+        let data
+        let vdata = this.assigneeValueObj.data
+        if (vdata.method === "GET") {
+          if (!vdata.parameter) {
+            data =''
+          } else {
+            if (vdata.parameter.includes('tenantId')) {
+              data= `?tenantId=${this.$store.state.tenantId}`
+            } else if (vdata.parameter.includes('account')) {
+              data=`?account=${this.$store.state.userInfo.name}`
             }
-          })
+          }
         } else {
-          postData = this.postForm
-        }
+            data = this.postForm
+          }
         extraApi({
           sourceMark: this.assigneeValueObj.parent.data.sourceMark,
           apiMark: this.assigneeValueObj.data.apiMark,
-          data: postData
+          data
         }).then((res) => {
           let result = res.result
           console.log(Array.isArray(result))
@@ -178,9 +206,11 @@
         this.dialogVisible = true
         this.assigneeValueObj = this.$refs[value].getCheckedNodes()[0]
         this.formData = JSON.parse(this.$refs[value].getCheckedNodes()[0].data.body)
+        console.log( this.assigneeValueObj )
         Object.keys(this.formData).forEach((item) => {
           this.$set(this.postForm, item, '')
         })
+        this.getpostData()
       },
       handleClose() {
         this.dialogVisible = false
