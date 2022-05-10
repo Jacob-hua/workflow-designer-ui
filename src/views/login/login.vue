@@ -1,5 +1,5 @@
 <template>
-  <div class="hello body">
+  <div class="hello body" v-show="showHtml">
      <div class="box">
          <h2>Login</h2>
          <form method="post" >
@@ -31,11 +31,20 @@ export default {
   data () {
     return {
        username:'',
-       password:''
+       password:'',
+       showHtml: false
     }
   },
   created(){
     sessionStorage.clear()
+    if(this.$route.query.account) {
+      this.username = this.$route.query.account
+      this.password = this.$route.query.account
+      sessionStorage.setItem('status', '我是菜鸡')
+      this.login()
+    } else {
+      this.showHtml = true
+    }
   },
   methods:{
    login(){
@@ -45,11 +54,11 @@ export default {
 		 }).then((res) => {
        sessionStorage.setItem('loginData', JSON.stringify(res.result))
        this.$store.state.userInfo.name = res.result.account
-       this.$router.push('/home')
-			 // if (res.code == 200) {
-			 // } else {
-			 // 	this.$message.error(res.message)
-			 // }
+       if (this.$route.query.account) {
+         this.$router.push('/home/runTime')
+       } else{
+         this.$router.push('/home')
+       }
 		 })
    }
   }
