@@ -6,11 +6,7 @@
       width="50%"
       append-to-body
   >
-
       <el-button @click="goEdit" v-if="!editFlag && showBtn  " type="primary" class="btn">继续编辑</el-button>
-
-
-    <div style="position: relative;" v-if="editFlag" class="edit">
       <el-tree
           v-if="editFlag"
           class="tree"
@@ -34,14 +30,11 @@
         </span>
       </span>
       </el-tree>
-
-    </div>
-    <div v-else class="preview"><el-tree class="tree" :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree></div>
+    <div v-if="!editFlag" class="preview"><el-tree class="tree" default-expand-all :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree></div>
     <span slot="footer" class="dialog-footer">
       <el-button v-if="editFlag"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
       <el-button v-if="showBtn"  @click="preview">{{btnTxt}}</el-button>
       <el-button v-if="showBtn"  @click="dialogVisible = false">取 消</el-button>
-
   </span>
   </el-dialog>
 </template>
@@ -79,10 +72,9 @@ export default {
   },
   methods: {
     goEdit() {
-      this.$nextTick(() => {
+
         this.editFlag = true
         this.btnTxt = '预览'
-      })
     },
     preview() {
       this.editFlag = false

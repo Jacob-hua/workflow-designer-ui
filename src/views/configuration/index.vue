@@ -10,6 +10,7 @@
       <div class="home-table">
         <visitCall v-show="activeName === 'first'" ref="first" @editTable="editTable()" @deleteTable="deleteTable()"></visitCall>
         <businessCall v-show="activeName === 'second'" ref="second"></businessCall>
+        <StartItemConfig v-if="activeName === 'third'" ref="third"  />
       </div>
     </div>
 
@@ -19,6 +20,7 @@
 <script>
   import visitCall from './visitCall/index.vue'
   import businessCall from './businessCall/index.vue'
+  import StartItemConfig from "@/views/configuration/startItemConfig";
   export default {
     data() {
       return {
@@ -61,7 +63,8 @@
     },
     components:{
       visitCall,
-      businessCall
+      businessCall,
+      StartItemConfig
     }
   }
 </script>
