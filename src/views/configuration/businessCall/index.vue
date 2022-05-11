@@ -72,6 +72,7 @@ import BusinessCon from "@/views/configuration/businessCall/BusinessCon";
       showAddDialog() {
         this.$refs.BusinessCon.dialogVisible = true
         this.$refs.BusinessCon.editFlag = true
+        this.$refs.BusinessCon.btnTxt = '预览'
         this.showBtn = true
       },
       showGuide() {
