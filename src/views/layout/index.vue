@@ -32,6 +32,10 @@
                <i class="el-icon-setting"></i>
                <span slot="title">工作流全局配置</span>
              </el-menu-item>
+             <el-menu-item index="power">
+               <i class="el-icon-setting"></i>
+               <span slot="title">权限管理</span>
+             </el-menu-item>
           </el-menu>
         </el-aside>
         <el-main>

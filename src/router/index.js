@@ -65,6 +65,12 @@ const routes = [
         component: () => import('@/views/configuration'),
         hidden: true,
       },
+      {
+        path: '/home/power',
+        name: '/home/power',
+        component: () => import('@/views/power'),
+        hidden: true,
+      }
       // {
       //    path: '6-1',
       //    name: '6-1',
