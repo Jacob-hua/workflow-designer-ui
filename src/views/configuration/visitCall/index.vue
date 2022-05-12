@@ -4,18 +4,15 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="processInstanceName" label="资源类型" width="180" align="center">
+        <el-table-column prop="source" label="资源类型" width="180" align="center">
         </el-table-column>
-<!--        <el-table-column prop="version" label="资源标识" align="center">-->
-<!--          <template slot-scope="scope">-->
-<!--            <span> {{ scope.row.businessMap.ascription }}</span>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-        <el-table-column prop="processInstanceName" label="API数量" align="center">
+        <el-table-column prop="sourceMark" label="资源类型" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="processInstanceName" label="创建人" align="center">
+        <el-table-column prop="apiCount" label="API数量" align="center">
         </el-table-column>
-        <el-table-column prop="processInstanceName" label="创建时间" align="center">
+        <el-table-column prop="createBy" label="创建人" align="center">
+        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" align="center">
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
@@ -46,6 +43,8 @@
     <AddOrEidtDailog
       ref="AddOrEidtDailog"
       @showAddOrEidtDailog="showAddOrEidtDailog"
+      v-if="AddOrEidtDailogFlag"
+      :guideForm="guideForm"
     />
     <Detail
         @showAddOrEidtDailog="showAddOrEidtDailog"
@@ -54,12 +53,11 @@
 </template>
 
 <script>
-import {
-  historyTaskList
-} from "@/api/historyWorkflow";
+
 import Guide from "@/views/configuration/visitCall/Guide";
 import AddOrEidtDailog from "@/views/configuration/visitCall/AddOrEidtDailog";
 import Detail from "@/views/configuration/visitCall/Detail";
+import {apiDetail, GetGlobalList} from "@/api/globalConfig";
 export default {
   components: {
     Guide,
@@ -69,6 +67,8 @@ export default {
   props: {},
   data() {
     return {
+      guideForm: {},
+      AddOrEidtDailogFlag: false,
       dateRang: ["2022-01-01","2022-12-31"],
       radio: '1',
       tableData: [
@@ -89,8 +89,8 @@ export default {
     pageInfo:{
       deep: true,
       immediate: true,
-      handler(newValue, oldValue) {
-        // this.getHistoryTaskList(newValue)
+      handler(newValue) {
+        this.GetGlobalList(newValue)
       }
     }
   },
@@ -99,33 +99,64 @@ export default {
         this.$refs.detail.dialogVisible = true
         this.$refs.detail.currentRow = row
       },
+    apiDetail(params) {
+        apiDetail(params).then((res)=> {
+          console.log(res)
+          res.result.forEach(api => {
+            api.configParams = []
+              if (api.methods === 'POST') {
+                let obj= {key: '', value: ''}
+                Object.keys( JSON.parse(api.body)).forEach(keys => {
+                  obj.key = keys
+                  obj.value = api.body[keys]
+                  api.configParams.push(obj)
+                })
+              }
+          })
+          console.log(res.result)
+        })
+    },
       showAddOrEidtDailog(row, code){
+        console.log('222222222222',row)
         if (code) {
           this.$refs.guide.dialogVisible = true
           return
         }
-        row.id?
-            this.$refs.AddOrEidtDailog.dialogVisible = true
+        Object.keys(row).length ?
+            (
+                this.AddOrEidtDailogFlag = true,
+                this.$nextTick(() => {
+                      this.$refs.AddOrEidtDailog.dialogVisible = true,
+                      this.apiDetail({
+                        source: row.source,
+                        sourceMark: row.sourceMark,
+                        tenantId: this.$store.state.tenantId
+                      })
+                })
+            )
             : this.$refs.guide.dialogVisible = true
       },
-      showAddDialog() {
-        this.$refs.AddOrEidtDailog.dialogVisible = true
+      showAddDialog(form) {
+
+        this.AddOrEidtDailogFlag = true
+        this.guideForm = form
+        this.$nextTick(() => {
+
+          this.$refs.AddOrEidtDailog.dialogVisible = true
+        })
+
+          // this.$refs.AddOrEidtDailog.guideForm = form
     },
-    // async getHistoryTaskList(pageInfo) {
-    //   let data =  await historyTaskList({
-    //     "assignee": "admin", // 执行人
-    //     "candidate": true,  // 是否包含候选
-    //     "endTime": `${this.dateRang[1]} 23:59:59`, // 结束时间
-    //     ...pageInfo,
-    //     "order": "desc", // 排序方式
-    //     "startTime": `${this.dateRang[0]} 00:00:00` , // 起始时间
-    //     "tenantId": this.$store.state.tenantId // 租户id
-    //   })
-    //   if (data.result) {
-    //     this.tableData =  data.result.dataList
-    //     this.pageInfo.total =  +data.result.count
-    //   }
-    // },
+    async GetGlobalList(pageInfo) {
+      let data =  await GetGlobalList({
+        ...pageInfo,
+        "tenantId": this.$store.state.tenantId // 租户id
+      })
+      if (data.result) {
+        this.tableData =  data.result.dataList
+        this.pageInfo.total =  +data.result.count
+      }
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageInfo.limit = val

@@ -54,8 +54,8 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流{{ secondtTotal? `(${secondtTotal})` : '' }}</span>
-        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ firstTotal }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流{{ processCount }}</span>
+        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
       </div>
       <div class="home-table">
         <projectTable ref="project" :formListFirst="formListFirst" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'enabled,disabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
@@ -78,11 +78,14 @@
   import lookBpmn from './lookBpmn.vue'
   import bpmnData from "@/assets/js/bpmnMock.js"
   import {
-    workFlowRecord
+    workFlowRecord,
+    designProcessCountStatistics
   } from '@/api/managerWorkflow'
   export default {
     data() {
       return {
+        draftProcessCount: 0,
+        processCount: 0,
         isEdit: true,
         dep: '',
         rowData: {},
@@ -271,6 +274,14 @@
      }
     },
     mounted() {
+
+      designProcessCountStatistics({
+        tenantId: 18
+      }).then(res => {
+        this.draftProcessCount = res.result.draftProcessCount
+        this.processCount = res.result.processCount
+        console.log(res)
+      })
       this.findWorkFlowRecord('drafted')
     },
     components:{

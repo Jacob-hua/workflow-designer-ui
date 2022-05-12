@@ -8,8 +8,8 @@
       </div>
       <el-button type="primary" class="buttonTab" v-if="activeName === 'first'" @click="showDiolog">新增第三方接口</el-button>
       <div class="home-table">
-        <visitCall v-show="activeName === 'first'" ref="first" @editTable="editTable()" @deleteTable="deleteTable()"></visitCall>
-        <businessCall v-show="activeName === 'second'" ref="second"></businessCall>
+        <visitCall v-if="activeName === 'first'" ref="first" @editTable="editTable()" @deleteTable="deleteTable()"></visitCall>
+        <businessCall v-if="activeName === 'second'" ref="second"></businessCall>
         <StartItemConfig v-if="activeName === 'third'" ref="third"  />
       </div>
     </div>

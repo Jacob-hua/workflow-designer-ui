@@ -124,6 +124,7 @@
         this.$refs[value].getTableData()
       },
       getManyData() {
+
         this.$nextTick(() => {
           this.$refs.first.getTableData()
           this.$refs.second.getTableData()
