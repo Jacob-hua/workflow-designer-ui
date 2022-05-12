@@ -13,15 +13,15 @@
       </div>
       <div class="data2">
         <div>
-          <div class="title">{{ numberList.executionCount }}</div>
+          <div class="title">{{ numberList.executionTotalProcessCount }}</div>
           <div class="titLabel">执行工作流总数</div>
         </div>
         <div>
-          <div class="title">{{ numberList.completeCount }}</div>
+          <div class="title">{{ numberList.executionInProcessCount }}</div>
           <div class="titLabel">执行中</div>
         </div>
         <div>
-          <div class="title">{{ numberList.executionInCount }}</div>
+          <div class="title">{{ numberList.executionCompleteCount }}</div>
           <div class="titLabel">已完成数量</div>
         </div>
       </div>
@@ -144,7 +144,8 @@
           assignee: this.$store.state.userInfo.name,
           business: this.value2,
           endTime: this.valueDate[1],
-          startTime: this.valueDate[0]
+          startTime: this.valueDate[0],
+          tenantId: this.$store.state.tenantId
         }).then((res) => {
           this.numberList = res.result
         })

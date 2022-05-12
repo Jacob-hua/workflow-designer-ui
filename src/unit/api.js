@@ -180,7 +180,7 @@ export const userLogin = (params) =>
 
 // 执行中工作流统计
 export const getTaskCountStatistic = (params) =>
-  post('/execute/taskCountStatistic', params);
+  post('/execute/processCountStatistic', params);
 
 // 统计已部署工作流
 export const getDeployCount = (params) =>

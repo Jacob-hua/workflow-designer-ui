@@ -81,6 +81,7 @@
 
 <script>
   import formbpmn from '../formBpmn.vue'
+  // import formComponent from '@/components/formComponent/index.vue'
   import { postFormDesignService, postFormDesignServiceRealiseProcessData } from '@/unit/api.js'
   import {
     FormEditor

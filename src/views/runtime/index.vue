@@ -30,19 +30,19 @@
       <div class="runtime-home-title">
         <div class="data">
           <div class="title">
-            <b class="value">{{ numberList.executionCount }}</b>
+            <b class="value">{{ numberList.executionTotalProcessCount }}</b>
           </div>
           <div class="titLabel">执行工作流总数</div>
         </div>
         <div class="data">
           <div class="title">
-            <b class="value">{{ numberList.completeCount }}</b>
+            <b class="value">{{ numberList.executionInProcessCount }}</b>
           </div>
           <div class="titLabel">执行中</div>
         </div>
         <div class="data">
           <div class="title">
-            <b class="value">{{ numberList.executionInCount }}</b>
+            <b class="value">{{ numberList.executionCompleteCount }}</b>
           </div>
           <div class="titLabel">已完成数量</div>
         </div>
@@ -231,7 +231,8 @@
           assignee: this.$store.state.userInfo.name,
           business: this.getData.businessCode,
           endTime: this.valueDate[1],
-          startTime: this.valueDate[0]
+          startTime: this.valueDate[0],
+          tenantId: this.$store.state.tenantId
         }).then((res) => {
           this.numberList = res.result
         })

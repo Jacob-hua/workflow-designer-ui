@@ -2,40 +2,66 @@
   <div class="history_head_top">
     <div class="history_head_top_left">
       <div class="his_block">
-        <p class="number">242</p>
+        <p class="number">{{ HeaderNum.currentMonthAccumulateProcessCount }}</p>
         <p class="tit">当月累计工作流</p>
       </div>
       <div class="his_block">
-        <p class="number">142</p>
+        <p class="number">{{ HeaderNum.currentMonthCompleteProcessCount }}</p>
         <p class="tit">当月完成工作流</p>
       </div>
       <div class="his_block">
-        <p class="number">2小时5分钟</p>
+        <p class="number">{{ HeaderNum.currentMonthAvgTime }}</p>
         <p class="tit">平均完成时长</p>
       </div>
     </div>
     <div class="history_head_top_right">
       <div class="his_block">
-        <p class="number">242</p>
+        <p class="number">{{ HeaderNum.currentDayAccumulateProcessCount }}</p>
         <p class="tit">当日累计工作流</p>
       </div>
       <div class="his_block">
-        <p class="number">142</p>
+        <p class="number">{{ HeaderNum.currentDayCompleteProcessCount }}</p>
         <p class="tit">当日完成工作流</p>
       </div>
       <div class="his_block">
-        <p class="number">1小时5分钟</p>
+        <p class="number">{{ HeaderNum.currentDayAvgTime }}</p>
         <p class="tit">平均完成时长</p>
       </div>
     </div>
   </div>
 </template>
 <script>
+  import { postHistoryProcessCountStatistic } from '@/api/historyWorkflow.js'
+  import { getFirstDay, getLastDay } from '@/assets/js/unit.js'
   export default {
     data() {
       return {
-
+        HeaderNum: {
+          currentDayAccumulateProcessCount: 0,
+          currentDayAvgTime: "0时0分",
+          currentDayCompleteProcessCount: 0,
+          currentMonthAccumulateProcessCount: 0,
+          currentMonthAvgTime: "8时6分",
+          currentMonthCompleteProcessCount: 3
+        }
       }
+    },
+    methods:{
+      getHeaderNum() {
+        postHistoryProcessCountStatistic({
+          assignee: this.$store.state.userInfo.name,
+          ascription: '',
+          business: '',
+          startTime: getFirstDay() + ' 00:00:00',
+          endTime: getLastDay() + ' 23:59:59',
+          tenantId: this.$store.state.tenantId
+        }).then((res) => {
+          this.HeaderNum = res.result
+        })
+      }
+    },
+    mounted() {
+      this.getHeaderNum()
     }
   }
 </script>

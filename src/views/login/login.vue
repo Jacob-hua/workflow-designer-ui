@@ -36,13 +36,13 @@ export default {
     }
   },
   created(){
-    sessionStorage.clear()
     if(this.$route.query.account) {
       this.username = this.$route.query.account
       this.password = this.$route.query.account
       sessionStorage.setItem('status', '我是菜鸡')
       this.login()
     } else {
+      sessionStorage.clear()
       this.showHtml = true
     }
   },
