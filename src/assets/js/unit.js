@@ -42,3 +42,23 @@ export function format(time, value) {
   // var time_str = year + '-' + month + '-' + day
   return obj[value]
 }
+
+
+export function getFirstDay(){ //当前月第一天
+		var y = new Date().getFullYear(); //获取年份
+		var m = new Date().getMonth() + 1; //获取月份
+		var d = '01';
+		m = m < 10 ? '0' + m : m; //月份补 0
+		
+		return [y,m,d].join("-")
+	}
+  
+export function getLastDay(){ //当前月最后一天
+	    var y = new Date().getFullYear(); //获取年份
+	    var m = new Date().getMonth() + 1; //获取月份
+	    var d = new Date(y, m, 0).getDate(); //获取当月最后一日
+	    m = m < 10 ? '0' + m : m; //月份补 0
+	    d = d < 10 ? '0' + d : d; //日数补 0
+	 
+	    return [y,m,d].join("-")
+ }
