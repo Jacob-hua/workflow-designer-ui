@@ -3,7 +3,7 @@
     <div class="home-header">
       <div class="data1">
         <div>
-          <div class="title">6</div>
+          <div class="title">{{ deployNumber }}</div>
           <div class="titLabel">已部署工作流</div>
         </div>
         <div>
@@ -92,6 +92,7 @@
         value2: '',
         WorkflowTableNum: 0,
         draftsTableNum: 0,
+        deployNumber: 0,
         options1: [
           {
             value: 'beiqijia',
@@ -127,9 +128,14 @@
       },
       getDeployCountList() {
         getDeployCount({
-          status: 'enabled'
+          ascription: this.value1,
+          business: this.value2,
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1],
+          status: 'activation',
+          tenantId: this.$store.state.tenantId
         }).then((res) => {
-          console.log(res)
+           this.deployNumber = res.result
         })
       },
       getManyData() {
@@ -139,6 +145,7 @@
         })
       },
       getDataNumber() {
+        debugger
         getTaskCountStatistic({
           ascription: this.value1,
           assignee: this.$store.state.userInfo.name,

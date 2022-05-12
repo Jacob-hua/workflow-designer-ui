@@ -121,7 +121,11 @@ export const getStartProcess = (params) =>
 // 用户任务列表
 export const getTaskList = (params) =>
   post('/execute/taskList', params);
-  
+
+// 用户流程任务列表（新）
+export const getNewTaskList = (params) =>
+  post('/execute/newTaskList', params);
+
 // 任务详情列表
 export const getTaskTrackList = (params) =>
   get('/execute/taskDetailList', params);
@@ -184,4 +188,4 @@ export const getTaskCountStatistic = (params) =>
 
 // 统计已部署工作流
 export const getDeployCount = (params) =>
-  get('/process/deploy/deployCount', params);
+  post('/process/deploy/deployCount', params);

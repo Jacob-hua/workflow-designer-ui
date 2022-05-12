@@ -124,7 +124,7 @@
   import runtimeAdd from './component/runtimeAdd.vue'
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
-  import { getTaskList, getTaskCountStatistic } from '@/unit/api.js'
+  import { getTaskList, getTaskCountStatistic, getNewTaskList } from '@/unit/api.js'
   import { format } from '@/assets/js/unit.js'
   export default {
     data() {
@@ -171,7 +171,7 @@
       getManyData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
-        getTaskList(this.getData).then((res) => {
+        getNewTaskList(this.getData).then((res) => {
           this.tableData = res.result.dataList
           this.getData.page = res.result.page * 1
           this.getData.limit = res.result.limit * 1
