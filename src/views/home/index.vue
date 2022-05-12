@@ -145,6 +145,7 @@
         })
       },
       getDataNumber() {
+        debugger
         getTaskCountStatistic({
           ascription: this.value1,
           assignee: this.$store.state.userInfo.name,
