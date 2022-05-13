@@ -16,7 +16,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="showAddOrEidtDailog(scope.row)" type="text" size="small" >
+            <el-button @click.native.prevent="showAddOrEidtDailog(scope.row, )" type="text" size="small" >
               编辑
             </el-button>
             <el-button @click.native.prevent="showDetail(scope.row)" type="text" size="small" >
@@ -48,7 +48,9 @@
     />
     <Detail
         @showAddOrEidtDailog="showAddOrEidtDailog"
-     ref="detail"/>
+        v-if="DetailFlag"
+        :currentRow="currentRow"
+        ref="detail"/>
   </div>
 </template>
 
@@ -57,7 +59,10 @@
 import Guide from "@/views/configuration/visitCall/Guide";
 import AddOrEidtDailog from "@/views/configuration/visitCall/AddOrEidtDailog";
 import Detail from "@/views/configuration/visitCall/Detail";
-import {apiDetail, GetGlobalList} from "@/api/globalConfig";
+import {
+  apiDetail,
+  GetGlobalList
+} from "@/api/globalConfig";
 export default {
   components: {
     Guide,
@@ -67,6 +72,8 @@ export default {
   props: {},
   data() {
     return {
+      currentRow: [],
+      DetailFlag: false,
       guideForm: {},
       AddOrEidtDailogFlag: false,
       dateRang: ["2022-01-01","2022-12-31"],
@@ -83,7 +90,6 @@ export default {
         total: 0
       }
     }
-
   },
   watch: {
     pageInfo:{
@@ -96,56 +102,122 @@ export default {
   },
   methods: {
       showDetail(row) {
-        this.$refs.detail.dialogVisible = true
-        this.$refs.detail.currentRow = row
+        apiDetail({
+          source: row.source,
+          sourceMark: row.sourceMark,
+          tenantId: this.$store.state.tenantId
+        }).then((res)=> {
+          res.result.forEach(api => {
+            api.configParams = []
+            if (api.method === 'POST') {
+              let obj= {key: '', value: ''}
+              let body = JSON.parse(api.body)
+              Object.keys(body).forEach(keys => {
+                obj.key = keys
+                obj.value = body[keys]
+                api.configParams.push(obj)
+              })
+            } else {
+              //?scope=103&&format=json&&appid=379020&&bk_key=关键字&&bk_length=600
+              let obj= {key: '', value: ''}
+              let parArr = api.parameter.split('?')
+              if (!api.parameter.includes('&&')) {
+                api.configParams.push({
+                  key: parArr[1].split('=')[0],
+                  value: parArr[1].split('=')[1]
+                })
+              } else {
+                let entry = parArr[1].split("&&")
+                for (const val of entry) {
+                  api.configParams.push({
+                    key:val.split('=')[0],
+                    value: val.split('=')[1]
+                  })
+                }
+              }
+            }
+          })
+          this.DetailFlag = true
+          this.$nextTick(() => {
+            this.$refs.detail.dialogVisible = true
+            this.$refs.detail.editableTabsValue = "0"
+          })
+          this.currentRow = res.result
+        })
       },
     apiDetail(params) {
         apiDetail(params).then((res)=> {
           console.log(res)
           res.result.forEach(api => {
             api.configParams = []
-              if (api.methods === 'POST') {
+              if (api.method === 'POST') {
                 let obj= {key: '', value: ''}
-                Object.keys( JSON.parse(api.body)).forEach(keys => {
+                let body = JSON.parse(api.body)
+                Object.keys(body).forEach(keys => {
                   obj.key = keys
-                  obj.value = api.body[keys]
+                  obj.value = body[keys]
                   api.configParams.push(obj)
                 })
+              } else {
+                //?scope=103&&format=json&&appid=379020&&bk_key=关键字&&bk_length=600
+                let obj= {key: '', value: ''}
+                 let parArr = api.parameter.split('?')
+                  if (!api.parameter.includes('&&')) {
+                    api.configParams.push({
+                      key: parArr[1].split('=')[0],
+                      value: parArr[1].split('=')[1]
+                    })
+                  } else {
+                    let entry = parArr[1].split("&&")
+                    for (const val of entry) {
+                      api.configParams.push({
+                        key:val.split('=')[0],
+                        value: val.split('=')[1]
+                      })
+                    }
+                  }
               }
           })
-          console.log(res.result)
+          this.$refs.AddOrEidtDailog.apiBoxList = res.result
         })
     },
       showAddOrEidtDailog(row, code){
         console.log('222222222222',row)
-        if (code) {
+        if (code === 'pre') {
           this.$refs.guide.dialogVisible = true
-          return
-        }
-        Object.keys(row).length ?
-            (
-                this.AddOrEidtDailogFlag = true,
-                this.$nextTick(() => {
-                      this.$refs.AddOrEidtDailog.dialogVisible = true,
-                      this.apiDetail({
-                        source: row.source,
-                        sourceMark: row.sourceMark,
-                        tenantId: this.$store.state.tenantId
+        }  else if(code === 'detail') {
+          this.AddOrEidtDailogFlag = true
+          this.guideForm = row
+          this.$nextTick(() => {
+            this.$refs.AddOrEidtDailog.dialogVisible = true
+          });
+        } else if (code==='edit') {
+          this.$refs.AddOrEidtDailog.dialogVisible = true
+          this.$refs.AddOrEidtDailog.apiBoxList = row
+        } else  {
+          Object.keys(row).length ?
+              (
+                  this.AddOrEidtDailogFlag = true,
+                      this.$nextTick(() => {
+                        this.$refs.AddOrEidtDailog.dialogVisible = true,
+                            this.apiDetail({
+                              source: row.source,
+                              sourceMark: row.sourceMark,
+                              tenantId: this.$store.state.tenantId
+                            })
                       })
-                })
-            )
-            : this.$refs.guide.dialogVisible = true
+              )
+              : this.$refs.guide.dialogVisible = true
+        }
+
+
       },
       showAddDialog(form) {
-
         this.AddOrEidtDailogFlag = true
         this.guideForm = form
         this.$nextTick(() => {
-
           this.$refs.AddOrEidtDailog.dialogVisible = true
         })
-
-          // this.$refs.AddOrEidtDailog.guideForm = form
     },
     async GetGlobalList(pageInfo) {
       let data =  await GetGlobalList({

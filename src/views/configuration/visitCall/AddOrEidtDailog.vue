@@ -64,7 +64,7 @@
                 </el-form-item>
                 <i @click="deleteParams( index,idx)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
               </div>
-              <el-button class="parse" type="primary">模拟解析</el-button>
+              <el-button @click="excuteParse(item)" class="parse" type="primary">模拟解析</el-button>
             </div>
           </el-form>
         </div>
@@ -80,7 +80,7 @@
     </div>
 
     <span slot="footer" class="dialog-footer">
-      <el-button  @click=" dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
+      <el-button  @click=" dialogVisible = false; $emit('showAddOrEidtDailog','','pre')">上一步</el-button>
       <el-button  @click="saveOrEdite">保存</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
 
@@ -91,8 +91,9 @@
 <script>
 import {
   apiTypeList,
-  saveOrEdite
+  saveOrEdite, simulationRequest
 } from "@/api/globalConfig";
+
 export default {
   name: "AddOrEidtDailog",
   props: {
@@ -204,6 +205,29 @@ export default {
     this.apiTypeList()
   },
   methods: {
+    excuteParse(api) {
+      if (api.method === 'POST') {
+        simulationRequest({
+          "body": api.body,
+          "headers": api.headers,
+          "method": api.method,
+          "url": api.url
+        }).then(res => {
+          console.log(res)
+          this.jsonData = res
+        })
+      } else {
+        simulationRequest({
+          "headers": api.headers,
+          "method": api.method,
+          "url": api.host + api.path + api.parameter
+        }).then(res => {
+          console.log(res)
+          this.jsonData = res
+        })
+      }
+
+    },
     apiTypeList() {
       apiTypeList(this.$store.state.tenantId).then(res => {
           this.apiOptions = res.result
@@ -232,37 +256,44 @@ export default {
       saveOrEdite(this.apiBoxList).then(res => {
         console.log(res)
         this.dialogVisible = false
+        this.$message({
+          type:'success',
+          message: '保存成功'
+        })
         this.$parent.GetGlobalList(this.$parent.pageInfo)
       })
     },
     addApiBox() {
-      this.apiBoxList.push(
-          {
-            ...this.guideForm,
-            // source: '', //系统名称
-            // sourceMark: '', // 系统标识
-            name: '', //api名称
-            apiMark: '', // api标识
-            type: '', // api类型,
-            typeName: '', //api类型名称
-            host: '',// 系统host
-            path: '',// 请求路径
-            method: '', //请求方式
-            headers: '', //请求头信息
-            parameter: '', // GET请求参数 eg: ?id=${id}&&name=${name}
-            body: '', //POST请求参数 eg: {\"id\":\"${id}\",\"name\":\"${name}\"}
-            dataParse: '', //解析配置
-            isUse: '', // 是否使用 1 使用 0禁用 2删除
-            createTime: '', //创建时间
-            tenantId: '', //租户id
-            configParams: [
-              {
-                key: '',
-                value: ''
-              }
-            ]
-          }
-      )
+
+        this.apiBoxList.push(
+            {
+              source: this.apiBoxList[0].source, //系统名称
+              sourceMark: this.apiBoxList[0].sourceMark, // 系统标识
+              name: '', //api名称
+              apiMark: '', // api标识
+              type: '', // api类型,
+              typeName: '', //api类型名称
+              host: '',// 系统host
+              path: '',// 请求路径
+              method: '', //请求方式
+              headers: '', //请求头信息
+              parameter: '', // GET请求参数 eg: ?id=${id}&&name=${name}
+              body: '', //POST请求参数 eg: {\"id\":\"${id}\",\"name\":\"${name}\"}
+              dataParse: '', //解析配置
+              isUse: 1, // 是否使用 1 使用 0禁用 2删除
+              createTime: '', //创建时间
+              createBy: this.$store.state.userInfo.name, //创建人
+              tenantId: +this.$store.state.tenantId, //租户id
+              configParams: [
+                {
+                  key: '',
+                  value: ''
+                }
+              ]
+            }
+        )
+
+
     },
     deleteApiBox(index) {
       this.apiBoxList.splice(index,1)

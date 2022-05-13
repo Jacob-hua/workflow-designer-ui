@@ -20,3 +20,21 @@ export const apiTypeList = (params) =>
 // 获取详情
 export const apiDetail = (params) =>
     get(`/config/global/bean`, params);
+
+// 调用配置处理
+export const executeApi = (params) =>
+    post('/config/global/executeApi', params);
+
+// 访问配置删除
+// 删除表单
+export const deleteApi = (id) =>
+    deletefn('/config/global/' + id);
+
+
+export const simulationRequest = (params) =>
+    post('/config/global/simulationRequest', params);
+
+// // 业务配置 list
+// export const executeApi = (params) =>
+//     post('/config/global/executeApi', params);
+
