@@ -3,7 +3,7 @@
     <el-dialog title="执行工作流" :visible="dialogVisible" width="90%" :before-close="handleClose">
       <div class="Implement">
         <div class="Implement-left">
-          <ProcessInformation ref="ProcessInformation" v-if="dialogVisible" @selectOneSet="selectOneSet" seeType="runTime"></ProcessInformation>
+          <ProcessInformation ref="ProcessInformation" :processTaskList="processTaskList" v-if="dialogVisible" @selectOneSet="selectOneSet" seeType="runTime"></ProcessInformation>
           <div class="function-list" v-if="bpmnType === 'bpmn:UserTask'">
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
@@ -133,7 +133,7 @@
 </template>
 
 <script>
-  import ProcessInformation from '@/views/home/component/ProcessInformation.vue'
+  import ProcessInformation from '@/components/bpmnView/ProcessInformation.vue'
   import runtimePeople from './runtimePeople.vue'
   import runtimeConfirmation from './runtimeConfirmation.vue'
   import formRuntime from './formRuntime.vue'
@@ -153,6 +153,7 @@
     },
     data() {
       return {
+        processTaskList: [],
         functionCheck: 'agency',
         bpmnType: '',
         bpmnTypeloopChara: '',
@@ -192,31 +193,40 @@
       cancel() {
         this.$emit('close')
       },
-      getNachList(processInstanceId) {
+      getNachList(result) {
         this.dataList.Circulate = []
         this.dataList.signature = []
         this.dataList.agency = []
-        getTaskDetailList({
-          processInstanceId: processInstanceId
-        }).then((res) => {
-           res.result[res.result.length - 1].circulationList.forEach((item) => {
-             this.dataList.Circulate.push({
-               userId :item
-             })
-           })
-           if (res.result[res.result.length - 1].assignee) {
-             res.result[res.result.length - 1].assignee.split(',').forEach((item) => {
-               this.dataList.signature.push({
-                 userId :item
-               })
-             })
-           }
-           res.result[res.result.length - 1].candidateUsers.forEach((item) => {
-             this.dataList.agency.push({
-               userId :item
-             })
-           })
+        
+        this.processTaskList = result
+        result[result.length - 1].circulationList.forEach((item) => {
+          item.circulations[0].forEach((item1) => {
+            this.dataList.Circulate.push({
+              userId :item1
+            })
+          })
+          
         })
+        if (result[result.length - 1].assignee) {
+          result[result.length - 1].assignee.split(',').forEach((item) => {
+            this.dataList.signature.push({
+              userId :item
+            })
+          })
+        }
+        result[result.length - 1].candidateUsers.forEach((item) => {
+          item.candidateUsers.forEach((item1) => {
+            this.dataList.agency.push({
+              userId :item1
+            })
+          })
+          
+        })
+        // return getTaskDetailList({
+        //   processInstanceId: processInstanceId
+        // }).then((res) => {
+           
+        // })
       },
       
       changeFunction(value) {
@@ -272,6 +282,9 @@
           //   }
           // }
         }
+        let a = this.$refs.ProcessInformation.postData.taskAssignee.split(',')
+        let b = this.$refs.ProcessInformation.postData.taskId.split(',')
+        let c = a.indexOf(this.$store.state.userInfo.name)
         
         postCompleteTask({
           assignee: this.$store.state.userInfo.name,
@@ -279,7 +292,7 @@
           formDataList: formData,
           processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
           processKey: this.$refs.ProcessInformation.postData.deployKey,
-          taskId: this.$refs.ProcessInformation.postData.taskId,
+          taskId: b[c],
           taskKey: this.$refs.ProcessInformation.postData.taskKey,
           taskName: this.$refs.ProcessInformation.postData.taskName,
           variable: data
