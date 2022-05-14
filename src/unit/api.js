@@ -189,3 +189,7 @@ export const getTaskCountStatistic = (params) =>
 // 统计已部署工作流
 export const getDeployCount = (params) =>
   post('/process/deploy/deployCount', params);
+  
+// 用户流程任务数量统计
+export const postTaskCountStatistics = (params) =>
+  post('/execute/taskCountStatistics', params);

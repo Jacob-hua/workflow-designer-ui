@@ -59,13 +59,13 @@
     <div class="runtime-check">
       <el-radio-group v-model="getData.taskFilter" @change="getManyData()">
         <el-radio label="all">
-          我的任务（21）
+          我的任务（{{ Amount.all }}）
         </el-radio>
         <el-radio label="self">
-          待处理（21）
+          待处理（{{ Amount.self }}）
         </el-radio>
         <el-radio label="notice">
-          告知（31）
+          告知（{{ Amount.notice }}）
         </el-radio>
       </el-radio-group>
     </div>
@@ -74,23 +74,24 @@
         <el-table :data="tableData" style="width: 100%">
           <el-table-column type="index" label="序号" align="center">
           </el-table-column>
-          <el-table-column prop="processName" label="名称" align="center">
+          <el-table-column prop="processName" label="名称" align="center" show-overflow-tooltip="">
           </el-table-column>
-          <el-table-column prop="systemType" label="能源系统" align="center">
+          <el-table-column prop="energyType" label="能源系统" align="center">
           </el-table-column>
           <el-table-column prop="name" label="执行厂站" align="center">
           </el-table-column>
-          <el-table-column prop="processStarter" label="发起人" align="center">
+          <el-table-column prop="starter" label="发起人" align="center">
             <!-- <template slot-scope="scope">
               <span>{{ scope.row.processStarter == -1 ? '系统' : scope.row.processStarter }}</span>
             </template> -->
           </el-table-column>
-          <el-table-column prop="createTime" label="发起时间" align="center">
+          <el-table-column prop="startTime" label="发起时间" align="center">
           </el-table-column>
           <el-table-column label="执行进程" align="center" min-width="250">
             <template slot-scope="scope">
-              <el-steps :active="scope.row.userTaskTrackVOList.length" align-center process-status="success" >
-                <el-step :title="item.taskName" :description="statusObj[item.status]" icon="el-icon-edit" :class="statusClassObj[item.status]" v-for="(item, index) in scope.row.userTaskTrackVOList" :key="index"></el-step>
+              <el-steps :active="scope.row.trackList.length" align-center process-status="success">
+                <el-step :title="item.taskName" :description="statusObj[item.status]" icon="el-icon-edit" :class="statusClassObj[item.status]"
+                  v-for="(item, index) in scope.row.trackList" :key="index"></el-step>
               </el-steps>
             </template>
           </el-table-column>
@@ -107,14 +108,14 @@
         </el-table>
       </div>
       <div class="home-table-page">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="getData.page"
-          :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="getData.page"
+          :page-size.sync="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
         </el-pagination>
       </div>
     </div>
     <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtimeAdd>
-    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog"
-      ref="runTimeImplement" @taskSuccess="taskSuccess()"></runTimeImplement>
+    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog" ref="runTimeImplement"
+      @taskSuccess="taskSuccess()"></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
 </template>
@@ -124,15 +125,27 @@
   import runtimeAdd from './component/runtimeAdd.vue'
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
-  import { getTaskList, getTaskCountStatistic, getNewTaskList } from '@/unit/api.js'
-  import { format } from '@/assets/js/unit.js'
+  import {
+    getTaskList,
+    getTaskCountStatistic,
+    getNewTaskList,
+    postTaskCountStatistics
+  } from '@/unit/api.js'
+  import {
+    format
+  } from '@/assets/js/unit.js'
   export default {
     data() {
       return {
-        numberList:{
+        numberList: {
           executionCount: 0,
           completeCount: 0,
           executionInCount: 0
+        },
+        Amount: {
+          all: 0,
+          notice: 0,
+          self: 0
         },
         options: [],
         value: '',
@@ -145,7 +158,8 @@
           completed: '通过',
           run: '执行',
           deleted: '驳回',
-          hang: '挂起'
+          hang: '挂起',
+          '-': '执行'
         },
         statusClassObj: {
           completed: '',
@@ -178,12 +192,41 @@
           this.getData.total = res.result.count * 1
         })
       },
+      getAmount() {
+        let obj = {
+          assignee: this.$store.state.userInfo.name,
+          businessCode: '',
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1],
+          projectCode: '',
+          tenantId: this.$store.state.tenantId
+        }
+        postTaskCountStatistics(obj).then((res) => {
+          this.Amount = res.result
+        })
+      },
       handleSizeChange() {
-
+        this.getManyData()
       },
       handleCurrentChange() {
-
+        this.getManyData()
       },
+      // deployDiolog(row) {
+      //   this.dialogVisibleImplement = true
+      //   this.$nextTick(() => {
+      //     this.$refs.runTimeImplement.getNachList(row.trackList)
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
+      //     this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
+      //     if (!this.$refs.runTimeImplement.dataList.Hang) {
+      //       this.$refs.runTimeImplement.functionCheck = 'Hang'
+      //     }
+      //   })
+      // },
       deployDiolog(row) {
         this.dialogVisibleImplement = true
         this.$nextTick(() => {
@@ -205,6 +248,18 @@
         this.dialogVisibleAdd = false
         this.getManyData()
       },
+      // detailsDiolog(row) {
+      //   this.$refs.lookover.dialogVisible = true
+      //   this.$nextTick(() => {
+      //     this.$refs.lookover.$refs.ProcessInformation.postData = row
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.energyType
+      //     this.$refs.lookover.getListData(row.trackList)
+      //     this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+      //   })
+      // },
       detailsDiolog(row) {
         this.$refs.lookover.dialogVisible = true
         this.$nextTick(() => {
@@ -240,9 +295,11 @@
     },
     created() {
       this.getManyData()
+      this.getAmount()
+      this.getDataNumber()
     },
     mounted() {
-      this.getDataNumber()
+      // this.getDataNumber()
     },
     components: {
       runtimeAdd,
@@ -367,7 +424,7 @@
           background-color: #0066cc !important;
         }
       }
-      
+
       .tableStepDeleted {
         .el-step__icon {
           background-color: red !important;
@@ -384,11 +441,11 @@
           border-color: #66ccff;
         }
       }
-      
+
       .el-step__head {
         margin-top: 20px;
       }
-      
+
       .el-step__icon-inner {
         display: none;
       }

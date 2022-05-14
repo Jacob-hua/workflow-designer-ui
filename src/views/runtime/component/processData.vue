@@ -51,7 +51,8 @@
           elementFactory: this.bpmnModeler.get("elementFactory"),
           elementRegistry: this.bpmnModeler.get("elementRegistry"),
           replace: this.bpmnModeler.get("replace"),
-          selection: this.bpmnModeler.get("selection")
+          selection: this.bpmnModeler.get("selection"),
+          canvas: this.bpmnModeler.get('canvas')
         };
         this.bpmnModeler.on("selection.changed", ({
           newSelection
@@ -89,7 +90,6 @@
             warnings.forEach(warn => console.warn(warn));
           }
           let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
-            console.log(element)
             return element.id === this.taskId
           })
           window.bpmnInstances.modeling.setColor(oneSet[0], {
