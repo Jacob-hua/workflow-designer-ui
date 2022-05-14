@@ -230,11 +230,12 @@
       deployDiolog(row) {
         this.dialogVisibleImplement = true
         this.$nextTick(() => {
-          this.$refs.runTimeImplement.getNachList(row.processInstanceId)
+          this.$refs.runTimeImplement.getNachList(row.processInstanceId).then(() => {
+            this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+          })
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.processStarter
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
-          this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
           this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
           if (!this.$refs.runTimeImplement.dataList.Hang) {
             this.$refs.runTimeImplement.functionCheck = 'Hang'
@@ -266,8 +267,9 @@
           this.$refs.lookover.$refs.ProcessInformation.postData = row
           this.$refs.lookover.$refs.ProcessInformation.postData.version = row.processStarter
           this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
-          this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-          this.$refs.lookover.getListData(row.processInstanceId)
+          this.$refs.lookover.getListData(row.processInstanceId).then(() => {
+            this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+          })
         })
       },
       goAdd() {

@@ -63,7 +63,7 @@
       //   this.listData = result
       // },
       getListData(id) {
-        getTaskTrackList({
+        return getTaskTrackList({
           processInstanceId: id
         }).then((res) => {
           this.listData = res.result

@@ -224,18 +224,17 @@
       //         userId: item1
       //       })
       //     })
-
       //   })
-
       // },
 
       getNachList(processInstanceId) {
         this.dataList.Circulate = []
         this.dataList.signature = []
         this.dataList.agency = []
-        getTaskDetailList({
+        return getTaskDetailList({
           processInstanceId: processInstanceId
         }).then((res) => {
+          this.processTaskList = res.result
           res.result[res.result.length - 1].circulationList.forEach((item) => {
             this.dataList.Circulate.push({
               userId: item
