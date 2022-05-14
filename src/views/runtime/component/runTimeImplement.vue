@@ -3,12 +3,14 @@
     <el-dialog title="执行工作流" :visible="dialogVisible" width="90%" :before-close="handleClose">
       <div class="Implement">
         <div class="Implement-left">
-          <ProcessInformation ref="ProcessInformation" :processTaskList="processTaskList" v-if="dialogVisible" @selectOneSet="selectOneSet" seeType="runTime"></ProcessInformation>
+          <ProcessInformation ref="ProcessInformation" :processTaskList="processTaskList" v-if="dialogVisible"
+            @selectOneSet="selectOneSet" seeType="runTime"></ProcessInformation>
           <div class="function-list" v-if="bpmnType === 'bpmn:UserTask'">
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
-            <span class="function-item" v-if="dataList.Hang && bpmnTypeloopChara === 'bpmn:MultiInstanceLoopCharacteristics'" @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
-            <span class="function-item"  @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
+            <span class="function-item" v-if="dataList.Hang && bpmnTypeloopChara === 'bpmn:MultiInstanceLoopCharacteristics'"
+              @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
+            <span class="function-item" @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('reject')" :class="functionCheck === 'reject' ? 'function-check' : ''">驳回</span>
             <span class="function-item" v-if="dataList.Hang" @click="changeFunction('termination')" :class="functionCheck === 'termination' ? 'function-check' : ''">终止</span>
             <span class="function-see" @click="goSee()">查看</span>
@@ -21,12 +23,11 @@
               <div v-if="dataList.agency.length > 0">
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
-                  <el-tooltip class="item" effect="dark" placement="top" v-for="(item, index) in dataList.agency"
-                    :key="index">
+                  <el-tooltip class="item" effect="dark" placement="top" v-for="(item, index) in dataList.agency" :key="index">
                     <div slot="content">
-                      <span>姓名:</span> <span>{{ item.userId }}</span><br/>
+                      <span>姓名:</span> <span>{{ item.userId }}</span><br />
                       <span>id:</span> <span>{{ item.userId }}</span>
-                  </div>
+                    </div>
                     <div class="peopleList-item">{{ item.userId }}</div>
                   </el-tooltip>
                 </div>
@@ -127,8 +128,11 @@
         <el-button type="primary" @click="implement()" :disabled="!dataList.Hang">执 行</el-button>
       </span>
     </el-dialog>
-    <runtimePeople ref="runtimePeople" v-if="$refs.ProcessInformation" :taskId="$refs.ProcessInformation.postData.taskId" :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :taskKey="$refs.ProcessInformation.postData.taskKey"></runtimePeople>
-    <runtimeConfirmation v-if="$refs.ProcessInformation" ref="runtimeConfirmation" :processInstanceDetail="$refs.ProcessInformation.postData" :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :BpmnContant="$refs.ProcessInformation.postData.content" :taskId="$refs.ProcessInformation.postData.taskKey" :taskKey="$refs.ProcessInformation.postData.taskId"></runtimeConfirmation>
+    <runtimePeople ref="runtimePeople" v-if="$refs.ProcessInformation" :taskId="$refs.ProcessInformation.postData.taskId"
+      :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :taskKey="$refs.ProcessInformation.postData.taskKey"></runtimePeople>
+    <runtimeConfirmation v-if="$refs.ProcessInformation" ref="runtimeConfirmation" :processInstanceDetail="$refs.ProcessInformation.postData"
+      :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :BpmnContant="$refs.ProcessInformation.postData.content"
+      :taskId="$refs.ProcessInformation.postData.taskKey" :taskKey="$refs.ProcessInformation.postData.taskId"></runtimeConfirmation>
   </div>
 </template>
 
@@ -193,42 +197,65 @@
       cancel() {
         this.$emit('close')
       },
-      getNachList(result) {
+      // getNachList(result) {
+      //   this.dataList.Circulate = []
+      //   this.dataList.signature = []
+      //   this.dataList.agency = []
+
+      //   this.processTaskList = result
+      //   result[result.length - 1].circulationList.forEach((item) => {
+      //     item.circulations[0].forEach((item1) => {
+      //       this.dataList.Circulate.push({
+      //         userId: item1
+      //       })
+      //     })
+
+      //   })
+      //   if (result[result.length - 1].assignee) {
+      //     result[result.length - 1].assignee.split(',').forEach((item) => {
+      //       this.dataList.signature.push({
+      //         userId: item
+      //       })
+      //     })
+      //   }
+      //   result[result.length - 1].candidateUsers.forEach((item) => {
+      //     item.candidateUsers.forEach((item1) => {
+      //       this.dataList.agency.push({
+      //         userId: item1
+      //       })
+      //     })
+
+      //   })
+
+      // },
+
+      getNachList(processInstanceId) {
         this.dataList.Circulate = []
         this.dataList.signature = []
         this.dataList.agency = []
-        
-        this.processTaskList = result
-        result[result.length - 1].circulationList.forEach((item) => {
-          item.circulations[0].forEach((item1) => {
+        getTaskDetailList({
+          processInstanceId: processInstanceId
+        }).then((res) => {
+          res.result[res.result.length - 1].circulationList.forEach((item) => {
             this.dataList.Circulate.push({
-              userId :item1
+              userId: item
             })
           })
-          
-        })
-        if (result[result.length - 1].assignee) {
-          result[result.length - 1].assignee.split(',').forEach((item) => {
-            this.dataList.signature.push({
-              userId :item
+          if (res.result[res.result.length - 1].assignee) {
+            res.result[res.result.length - 1].assignee.split(',').forEach((item) => {
+              this.dataList.signature.push({
+                userId: item
+              })
             })
-          })
-        }
-        result[result.length - 1].candidateUsers.forEach((item) => {
-          item.candidateUsers.forEach((item1) => {
+          }
+          res.result[res.result.length - 1].candidateUsers.forEach((item) => {
             this.dataList.agency.push({
-              userId :item1
+              userId: item
             })
           })
-          
         })
-        // return getTaskDetailList({
-        //   processInstanceId: processInstanceId
-        // }).then((res) => {
-           
-        // })
       },
-      
+
       changeFunction(value) {
         this.functionCheck = value
       },
@@ -251,7 +278,7 @@
         this.bpmnTypeloopChara = value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
         this.selection(value)
       },
-      
+
       implement() {
         let data = {}
         let formData = []
@@ -259,7 +286,7 @@
           data = this.$refs.formRuntime.formEditor.submit().data
           formData = JSON.parse(this.formContant).components
           formData.forEach((item) => {
-            switch (item.type){
+            switch (item.type) {
               case 'radio':
                 item.value = item.values.filter((values) => {
                   return values.value == data[item.key]
@@ -285,7 +312,7 @@
         let a = this.$refs.ProcessInformation.postData.taskAssignee.split(',')
         let b = this.$refs.ProcessInformation.postData.taskId.split(',')
         let c = a.indexOf(this.$store.state.userInfo.name)
-        
+
         postCompleteTask({
           assignee: this.$store.state.userInfo.name,
           commentList: [],
@@ -302,7 +329,7 @@
           this.$emit('taskSuccess')
         })
       },
-      
+
       selection(element) {
         if (element) {
           this.bpmnData.name = element.businessObject.name
@@ -314,7 +341,7 @@
           this.initData()
         }
       },
-      
+
       getFormData(formKey) {
         if (formKey) {
           let docName = formKey.split(':')[2]

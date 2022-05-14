@@ -89,8 +89,9 @@
           </el-table-column>
           <el-table-column label="执行进程" align="center" min-width="250">
             <template slot-scope="scope">
-              <el-steps :active="scope.row.trackList.length" align-center process-status="success" >
-                <el-step :title="item.taskName" :description="statusObj[item.status]" icon="el-icon-edit" :class="statusClassObj[item.status]" v-for="(item, index) in scope.row.trackList" :key="index"></el-step>
+              <el-steps :active="scope.row.trackList.length" align-center process-status="success">
+                <el-step :title="item.taskName" :description="statusObj[item.status]" icon="el-icon-edit" :class="statusClassObj[item.status]"
+                  v-for="(item, index) in scope.row.trackList" :key="index"></el-step>
               </el-steps>
             </template>
           </el-table-column>
@@ -113,8 +114,8 @@
       </div>
     </div>
     <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtimeAdd>
-    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog"
-      ref="runTimeImplement" @taskSuccess="taskSuccess()"></runTimeImplement>
+    <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog" ref="runTimeImplement"
+      @taskSuccess="taskSuccess()"></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
 </template>
@@ -124,12 +125,19 @@
   import runtimeAdd from './component/runtimeAdd.vue'
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
-  import { getTaskList, getTaskCountStatistic, getNewTaskList, postTaskCountStatistics } from '@/unit/api.js'
-  import { format } from '@/assets/js/unit.js'
+  import {
+    getTaskList,
+    getTaskCountStatistic,
+    getNewTaskList,
+    postTaskCountStatistics
+  } from '@/unit/api.js'
+  import {
+    format
+  } from '@/assets/js/unit.js'
   export default {
     data() {
       return {
-        numberList:{
+        numberList: {
           executionCount: 0,
           completeCount: 0,
           executionInCount: 0
@@ -203,16 +211,30 @@
       handleCurrentChange() {
         this.getManyData()
       },
+      // deployDiolog(row) {
+      //   this.dialogVisibleImplement = true
+      //   this.$nextTick(() => {
+      //     this.$refs.runTimeImplement.getNachList(row.trackList)
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
+      //     this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
+      //     if (!this.$refs.runTimeImplement.dataList.Hang) {
+      //       this.$refs.runTimeImplement.functionCheck = 'Hang'
+      //     }
+      //   })
+      // },
       deployDiolog(row) {
         this.dialogVisibleImplement = true
         this.$nextTick(() => {
-          this.$refs.runTimeImplement.getNachList(row.trackList)
-          this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+          this.$refs.runTimeImplement.getNachList(row.processInstanceId)
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
+          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.processStarter
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
-          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
-          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
-          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
+          this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
           this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
           if (!this.$refs.runTimeImplement.dataList.Hang) {
             this.$refs.runTimeImplement.functionCheck = 'Hang'
@@ -226,16 +248,26 @@
         this.dialogVisibleAdd = false
         this.getManyData()
       },
+      // detailsDiolog(row) {
+      //   this.$refs.lookover.dialogVisible = true
+      //   this.$nextTick(() => {
+      //     this.$refs.lookover.$refs.ProcessInformation.postData = row
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.energyType
+      //     this.$refs.lookover.getListData(row.trackList)
+      //     this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+      //   })
+      // },
       detailsDiolog(row) {
         this.$refs.lookover.dialogVisible = true
         this.$nextTick(() => {
           this.$refs.lookover.$refs.ProcessInformation.postData = row
+          this.$refs.lookover.$refs.ProcessInformation.postData.version = row.processStarter
           this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
-          this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
-          this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
-          this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.energyType
-          this.$refs.lookover.getListData(row.trackList)
           this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+          this.$refs.lookover.getListData(row.processInstanceId)
         })
       },
       goAdd() {
@@ -392,7 +424,7 @@
           background-color: #0066cc !important;
         }
       }
-      
+
       .tableStepDeleted {
         .el-step__icon {
           background-color: red !important;
@@ -409,11 +441,11 @@
           border-color: #66ccff;
         }
       }
-      
+
       .el-step__head {
         margin-top: 20px;
       }
-      
+
       .el-step__icon-inner {
         display: none;
       }
