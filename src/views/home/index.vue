@@ -43,13 +43,13 @@
     <div class="home-filter">
       <div class="projectSelect">
         <el-select v-model="value1" placeholder="请选择" @change="getManyData()">
-          <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value" >
+          <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
       <div class="businessSelect">
         <el-select v-model="value2" placeholder="请选择" @change="getManyData()">
-          <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" >
+          <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
@@ -66,8 +66,10 @@
         <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="changeAction('second')">草稿箱（{{ draftsTableNum }}）</span>
       </div>
       <div class="home-table">
-        <WorkflowTable v-show="activeName === 'first'" :valueDate="valueDate" :ascription="value1" :business="value2" @totalChange="totalChange" ref="first" @getManyData="getManyData()"></WorkflowTable>
-        <draftsTable v-show="activeName === 'second'" :valueDate="valueDate" :ascription="value1" :business="value2" @totalChange="totalChange" ref="second" @getManyData="getManyData()"></draftsTable>
+        <WorkflowTable v-show="activeName === 'first'" :valueDate="valueDate" :ascription="value1" :business="value2"
+          @totalChange="totalChange" ref="first" @getManyData="getManyData()"></WorkflowTable>
+        <draftsTable v-show="activeName === 'second'" :valueDate="valueDate" :ascription="value1" :business="value2"
+          @totalChange="totalChange" ref="second" @getManyData="getManyData()"></draftsTable>
       </div>
     </div>
   </div>
@@ -76,16 +78,21 @@
 <script>
   import WorkflowTable from './component/WorkflowTable.vue'
   import draftsTable from './component/draftsTable.vue'
-  import { format } from '@/assets/js/unit.js'
-  import { getDeployCount, getTaskCountStatistic } from '@/unit/api.js'
+  import {
+    format
+  } from '@/assets/js/unit.js'
+  import {
+    getDeployCount,
+    getTaskCountStatistic
+  } from '@/unit/api.js'
   export default {
     data() {
       return {
         valueDate: [format(new Date(), 'yyyy-MM-1') + ' 00:00:00', format(new Date(), 'yyyy-MM-dd') + ' 23:59:59'],
-        numberList:{
-          executionCount: 0,
-          completeCount: 0,
-          executionInCount: 0
+        numberList: {
+          executionCompleteCount: 0,
+          executionInProcessCount: 0,
+          executionTotalProcessCount: 0
         },
         activeName: 'first',
         value1: 'beiqijia',
@@ -93,8 +100,7 @@
         WorkflowTableNum: 0,
         draftsTableNum: 0,
         deployNumber: 0,
-        options1: [
-          {
+        options1: [{
             value: 'beiqijia',
             label: '北七家人才基地'
           },
@@ -107,17 +113,15 @@
             label: '海口喜来登酒店'
           }
         ],
-        options2: [
-          {
-            value: '',
-            label: '全部业务'
-          }
-        ]
+        options2: [{
+          value: '',
+          label: '全部业务'
+        }]
       }
     },
     methods: {
       goBpmn() {
-        this.$router.push('/bpmn')
+        this.$router.push('/home/bpmn')
       },
       totalChange(value, key) {
         this[key] = value
@@ -135,10 +139,12 @@
           status: 'activation',
           tenantId: this.$store.state.tenantId
         }).then((res) => {
-           this.deployNumber = res.result
+          this.deployNumber = res.result
         })
       },
       getManyData() {
+        this.getDataNumber()
+        this.getDeployCountList()
         this.$nextTick(() => {
           this.$refs.first.getTableData()
           this.$refs.second.getTableData()
@@ -153,11 +159,19 @@
           startTime: this.valueDate[0],
           tenantId: this.$store.state.tenantId
         }).then((res) => {
-          this.numberList = res.result
+          if (res) {
+            this.numberList = res.result
+          } else {
+            this.numberList = {
+              executionCompleteCount: 0,
+              executionInProcessCount: 0,
+              executionTotalProcessCount: 0
+            }
+          }
         })
       }
     },
-    components:{
+    components: {
       WorkflowTable,
       draftsTable
     },
@@ -291,6 +305,4 @@
     background-color: #030303;
     color: white;
   }
-
-
 </style>

@@ -36,7 +36,7 @@
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
+          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
@@ -67,7 +67,7 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <span class="value">{{ item.name }}</span>
+                <span class="value" :title="item.name">{{ item.name }}</span>
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -93,7 +93,7 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <span class="value">{{ item.name }}</span>
+                <span class="value" :title="item.name">{{ item.name }}</span>
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -110,7 +110,8 @@
     </div>
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></projectFormDiolog>
     <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
-    <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode" :projectValue="projectValue" @close="close()"></application>
+    <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode" :projectValue="projectValue"
+      @close="close()"></application>
   </div>
 </template>
 
@@ -118,13 +119,19 @@
   import projectFormDiolog from './projectFormComponent/index.vue'
   import detailsDiologForm from './details.vue'
   import application from './projectFormComponent/application.vue'
-  import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/unit/api.js'
+  import {
+    format
+  } from '@/assets/js/unit.js'
+  import {
+    postFormDesignRecordDraftInfo,
+    postFormDesignBasicFormRecord,
+    postFormDesignRecordFormDesignRecordInfo
+  } from '@/unit/api.js'
   export default {
     data() {
       return {
         projectValue: '',
-        projectOption: [
-          {
+        projectOption: [{
             value: '',
             label: '全部项目'
           },
@@ -143,7 +150,7 @@
         ],
         dataType: 'enabled',
         projectCode: 'beiqijia',
-        valueDate: [],
+        valueDate: [format(new Date(), 'yyyy-MM-1'), format(new Date(), 'yyyy-MM-dd')],
         input: '',
         activeName: 'enabled',
         formListFirst: [],
@@ -168,8 +175,8 @@
           createBy: this.$store.state.userInfo.name,
           numberCode: '',
           name: this.input,
-          startTime: this.valueDate[0],
-          endTime: this.valueDate[1]
+          startTime: this.valueDate[0] + ' 00:00:00',
+          endTime: this.valueDate[1] + ' 23:59:59'
         }).then((res) => {
           this.formListSecond = res.result
         })
@@ -184,20 +191,20 @@
           createBy: this.$store.state.userInfo.name,
           numberCode: '',
           name: this.input,
-          startTime: this.valueDate[0],
-          endTime: this.valueDate[1]
+          startTime: this.valueDate[0] + ' 00:00:00',
+          endTime: this.valueDate[1] + ' 23:59:59'
         }).then((res) => {
           this.formListFirst = res.result
         })
       },
-      
+
       getManyData() {
         this.getEnableData()
         this.getDraftData()
       },
-      
+
       getData() {
-        switch (this.activeName){
+        switch (this.activeName) {
           case 'enabled':
             this.getEnableData()
             break;
@@ -208,32 +215,33 @@
             break;
         }
       },
-      
+
       changeActiveName(value) {
         this.activeName = value
         this.getData()
       },
-      
+
       deleteSuccsee() {
         this.$refs.detailsDiolog.dialogVisible2 = false
         this.getData()
       },
-      
+
       addSuccess() {
         this.$refs.detailsDiolog.dialogVisible2 = false
         this.$refs.projectFormDiolog.dialogVisible2 = false
         this.getData()
       },
-      
+
       changProjectCode(code) {
         this.projectCode = code
         this.getManyData()
       },
       addForm() {
         this.$refs.projectFormDiolog.postData.ascription = this.projectCode
+        this.$refs.projectFormDiolog.postData.name = ''
         this.$refs.projectFormDiolog.dialogVisible1 = true
       },
-      
+
       addForm2(item) {
         this.$refs.projectFormDiolog.dialogVisible2 = true
         this.$nextTick(() => {
@@ -241,7 +249,7 @@
             this.dataType = this.activeName + '-edit'
             this.$refs.projectFormDiolog.postData = item
             this.$refs.projectFormDiolog.$refs.formbpmn.schema = JSON.parse(item.content)
-          } else{
+          } else {
             this.dataType = this.activeName
             this.$refs.projectFormDiolog.postData = {
               name: ''
@@ -271,7 +279,7 @@
           this.$refs.detailsDiolog.formData = res.result
           this.$nextTick(() => {
             let arr = []
-            res.result.versions.forEach((item,index) => {
+            res.result.versions.forEach((item, index) => {
               arr.push({
                 value: res.result.childIds[index],
                 label: item
@@ -292,7 +300,7 @@
       this.getDraftData()
       this.getEnableData()
     },
-    components:{
+    components: {
       projectFormDiolog,
       detailsDiologForm,
       application
@@ -444,5 +452,14 @@
   .card-main-item .label {
     display: inline-block;
     width: 90px;
+    vertical-align: top;
+  }
+
+  .card-main-item .value {
+    display: inline-block;
+    width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>

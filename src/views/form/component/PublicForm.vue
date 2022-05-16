@@ -32,7 +32,7 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <span class="value">{{ item.name }}</span>
+                <span class="value" :title="item.name">{{ item.name }}</span>
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -54,7 +54,7 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <span class="value">{{ item.name }}</span>
+                <span class="value" :title="item.name">{{ item.name }}</span>
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -310,5 +310,12 @@
   .card-main-item .label {
     display: inline-block;
     width: 90px;
+    vertical-align: top;
+  }
+  .card-main-item .value {
+    width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>
