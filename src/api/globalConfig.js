@@ -5,7 +5,7 @@ import {
     put
 } from '../unit/request'
 
- // api 分页列表
+// api 分页列表
 export const GetGlobalList = (params) =>
     post('/config/global/list', params);
 
@@ -35,6 +35,18 @@ export const simulationRequest = (params) =>
     post('/config/global/simulationRequest', params);
 
 // // 业务配置 list
-// export const executeApi = (params) =>
-//     post('/config/global/executeApi', params);
+
+export const getBusinessConfigBasicList = (params) =>
+    get(`/config/businessConfig/getBusinessConfigBasicList?tenantId=${params}`);
+
+export const getDicDataByClassify = () =>
+    get(`/config/dicData/getDicDataByClassify?classify=sys`);
+
+export const checkBusinessConfig = (params) =>
+    get(`/config/businessConfig/checkBusinessConfig?type=${params.type}&name=${params.name}`);
+
+export const addBusinessConfig = (params) =>
+    post('/config/businessConfig/saveBusinessConfigWithTree', params);
+
+
 
