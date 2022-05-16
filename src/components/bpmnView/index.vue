@@ -38,7 +38,7 @@
           应用项目
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.business" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -46,7 +46,7 @@
           流程类型
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
+          <el-input v-model="postData.business" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">

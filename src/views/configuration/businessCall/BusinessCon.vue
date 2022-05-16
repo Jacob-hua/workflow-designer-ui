@@ -51,23 +51,27 @@ export default {
       type: Boolean,
       default: true
     },
-
   },
+
   data() {
     return {
       btnTxt: '预览',
       editFlag: true,
+      forms: {},
       currentNode: {},
       inptVal: '',
       showinput: false,
       dialogVisible: false,
       data:  [
         {
-          id: 1,
-          code: 1,
-          label: '莱芜供热项目',
-          parentId:	-1,
-          tenantId: this.$store.state.tenantId
+          "code": 1,
+          "label": '莱芜供热项目',
+          "name": '',
+          "active": "Y",
+          "type": 'industry',
+          "parentId":	-1,
+          "createBy": this.$store.state.userInfo.name,
+          "tenantId": this.$store.state.tenantId
         }
       ],
       defaultProps: {
@@ -83,8 +87,14 @@ export default {
     },
     preview() {
       if (this.btnTxt === '保存') {
+        console.log(this.data)
         addBusinessConfig(this.data).then((res)=> {
           console.log(res)
+          this.dialogVisible = false
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
         })
       } else {
         this.editFlag = false
@@ -95,7 +105,7 @@ export default {
     },
     onblur() {
       this.showinput = false
-      const newChild = { id: id++, code: id++, label: this.inptVal, children: [] };
+      const newChild = { "id": id++, "name": this.forms.name, "code": id++, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "label": this.inptVal, "children": [] };
       if (!this.currentNode.children) {
         this.$set(this.currentNode, 'children', []);
       }

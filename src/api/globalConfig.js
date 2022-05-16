@@ -46,7 +46,7 @@ export const checkBusinessConfig = (params) =>
     get(`/config/businessConfig/checkBusinessConfig?type=${params.type}&name=${params.name}`);
 
 export const addBusinessConfig = (params) =>
-    post('/config/businessConfig', params);
+    post('/config/businessConfig/saveBusinessConfigWithTree', params);
 
 
 

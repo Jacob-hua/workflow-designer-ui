@@ -92,11 +92,12 @@ export default {
       this.$refs.guide.dialogVisible = true
     },
     showAddDialog(form) {
-
       this.$refs.BusinessCon.dialogVisible = true
       this.$refs.BusinessCon.editFlag = true
       this.$refs.BusinessCon.btnTxt = '预览'
       this.$refs.BusinessCon.data[0].label = form.name
+      this.$refs.BusinessCon.data[0].name = form.name
+      this.$refs.BusinessCon.forms = form
       this.showBtn = true
     },
     showGuide() {
@@ -133,12 +134,14 @@ export default {
 .businessCall-main-list {
   padding: 20px 0px;
   display: flex;
+  flex-wrap: wrap;
 }
 .businessCall-main-list-card {
   position: relative;
   line-height: 40px;
   width: 312px;
   height: 186px;
+  margin-bottom: 10px;
   border: 1px solid #0066cc;
   background-color: #f5f7f9;
   border-radius: 5px;
