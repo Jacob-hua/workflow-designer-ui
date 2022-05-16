@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible.sync="dialogVisible1" width="70%" custom-class="dialogVisible1">
+    <el-dialog title="查看工作流" :visible.sync="dialogVisible1" width="70%" custom-class="dialogVisible1">
       <div>
         <ProcessInformation type="details1" v-if="dialogVisible1" ref="details1" ></ProcessInformation>
       </div>

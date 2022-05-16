@@ -11,16 +11,40 @@
           <el-timeline>
             <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData" :key="index">
               <div class="contant">
-                <div v-for="(item, index) in JSON.parse(item.formData)">
+                <div v-for="(item1, index1) in item.formDataList">
+                  <div v-for="(item2, index2) in JSON.parse(item1.formData)">
+                    <span>{{ item2.label }}</span>
+                    <span style="margin-left: 20px;">{{ item2.value }}</span>
+                  </div>
+                  <div v-if="item1.status === 'completed'">
+                    <i class="el-icon-check" :class="item1.time === '-' ? 'error' : 'success'"></i>
+                    <span class="word1">{{ item1.assignee }} <span>(执行)</span></span>
+                    <span class="dataYear">{{ item1.time }}</span>
+                  </div>
+                 <div v-if="item.status === 'deleted'">
+                    <div v-for="(item1, index1) in item.commentList">
+                      <div v-for="(item2, index2) in item1.comments">
+                        <i class="el-icon-warning-outline success"></i>
+                        <span class="word1">{{ item2.message }}</span>
+                      </div>
+                      <div>
+                        <i class="el-icon-check" :class="item1.time === '-' ? 'error' : 'success'"></i>
+                        <span class="word1">{{ item1.assignee }} <span style="color: red;">(驳回)</span> </span>
+                        <span class="dataYear">{{ item1.time }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div v-for="(item, index) in JSON.parse(item.formData)">
                   <span>{{ item.label }}</span>
                   <span style="margin-left: 20px;">{{ item.value }}</span>
-                </div>
-                <div v-if="item.status === 'completed'">
+                </div> -->
+                <!-- <div v-if="item.status === 'completed'">
                   <i class="el-icon-check" :class="item.time === '-' ? 'error' : 'success'"></i>
                   <span class="word1">{{ item.assignee }} <span>(执行)</span></span>
                   <span class="dataYear">{{ item.time }}</span>
-                </div>
-                <div v-if="item.status === 'deleted'">
+                </div> -->
+                <!-- <div v-if="item.status === 'deleted'">
                   <div>
                     <i class="el-icon-warning-outline success"></i>
                     <span class="word1">{{ item.commentList[0] }}</span>
@@ -30,7 +54,7 @@
                     <span class="word1">{{ item.assignee }} <span style="color: red;">(驳回)</span> </span>
                     <span class="dataYear">{{ item.time }}</span>
                   </div>
-                </div>
+                </div> -->
               </div>
             </el-timeline-item>
           </el-timeline>
@@ -59,16 +83,22 @@
       goReject() {
         this.$emit('goReject', this.$refs.ProcessInformation.postData)
       },
-      // getListData(result) {
-      //   this.listData = result
-      // },
-      getListData(id) {
-        return getTaskTrackList({
-          processInstanceId: id
-        }).then((res) => {
-          this.listData = res.result
+      getListData(result) {
+        this.listData = JSON.parse(JSON.stringify(result))
+        this.listData.forEach((item, index) => {
+          item.status.split(',').forEach((item1, index1) => {
+            item.formDataList[index1].status = item1
+          })
         })
-      }
+        
+      },
+      // getListData(id) {
+      //   return getTaskTrackList({
+      //     processInstanceId: id
+      //   }).then((res) => {
+      //     this.listData = res.result
+      //   })
+      // }
     },
     components: {
       ProcessInformation

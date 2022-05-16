@@ -108,10 +108,10 @@
           })
           
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消创建'
-          });
+          // this.$message({
+          //   type: 'info',
+          //   message: '取消创建'
+          // });
         });
       },
       changEnergy(value) {

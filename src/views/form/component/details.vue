@@ -8,7 +8,7 @@
         <div class="detail-title">
           <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>{{ formData.numberCode }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>{{ formData.name }}</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>{{ formData.createName }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>{{ formData.createBy }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>{{ formData.createTime }}</span> </div>
           <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formData.count }}</span> </div>
           

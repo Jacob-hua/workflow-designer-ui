@@ -2,13 +2,13 @@
   <div class="runtime">
     <div class="runtime-filter">
       <div class="projectSelect marginRight20">
-        <el-select v-model="getData.projectCode" placeholder="请选择" @change="getDataNumber()">
+        <el-select v-model="getData.projectCode" placeholder="请选择" @change="getAllApi()">
           <el-option v-for="item in $store.state.optionsAscription" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
       <div class="businessSelect marginRight20">
-        <el-select v-model="getData.businessCode" placeholder="请选择" @change="getDataNumber()">
+        <el-select v-model="getData.businessCode" placeholder="请选择" @change="getAllApi()">
           <el-option v-for="item in this.$store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
@@ -22,7 +22,7 @@
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false" @change="getManyData()">
+          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false" @change="getAllApi()">
         </el-date-picker>
       </div>
     </div>
@@ -185,6 +185,8 @@
       getManyData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
+        this.getData.businessCode = this.getData.businessCode
+        this.getData.projectCode = this.getData.projectCode
         getNewTaskList(this.getData).then((res) => {
           this.tableData = res.result.dataList
           this.getData.page = res.result.page * 1
@@ -195,10 +197,10 @@
       getAmount() {
         let obj = {
           assignee: this.$store.state.userInfo.name,
-          businessCode: '',
+          businessCode: this.getData.businessCode,
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
-          projectCode: '',
+          projectCode: this.getData.projectCode,
           tenantId: this.$store.state.tenantId
         }
         postTaskCountStatistics(obj).then((res) => {
@@ -211,37 +213,37 @@
       handleCurrentChange() {
         this.getManyData()
       },
-      // deployDiolog(row) {
-      //   this.dialogVisibleImplement = true
-      //   this.$nextTick(() => {
-      //     this.$refs.runTimeImplement.getNachList(row.trackList)
-      //     this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
-      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
-      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
-      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
-      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
-      //     this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
-      //     if (!this.$refs.runTimeImplement.dataList.Hang) {
-      //       this.$refs.runTimeImplement.functionCheck = 'Hang'
-      //     }
-      //   })
-      // },
       deployDiolog(row) {
         this.dialogVisibleImplement = true
         this.$nextTick(() => {
-          this.$refs.runTimeImplement.getNachList(row.processInstanceId).then(() => {
-            this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-          })
+          this.$refs.runTimeImplement.getNachList(row.trackList)
+          this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
-          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.processStarter
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
+          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
+          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
+          this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
           this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
           if (!this.$refs.runTimeImplement.dataList.Hang) {
             this.$refs.runTimeImplement.functionCheck = 'Hang'
           }
         })
       },
+      // deployDiolog(row) {
+      //   this.dialogVisibleImplement = true
+      //   this.$nextTick(() => {
+      //     this.$refs.runTimeImplement.getNachList(row.processInstanceId).then(() => {
+      //       this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+      //     })
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.processStarter
+      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
+      //     this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
+      //     if (!this.$refs.runTimeImplement.dataList.Hang) {
+      //       this.$refs.runTimeImplement.functionCheck = 'Hang'
+      //     }
+      //   })
+      // },
       closeDialogImplement() {
         this.dialogVisibleImplement = false
       },
@@ -249,29 +251,29 @@
         this.dialogVisibleAdd = false
         this.getManyData()
       },
-      // detailsDiolog(row) {
-      //   this.$refs.lookover.dialogVisible = true
-      //   this.$nextTick(() => {
-      //     this.$refs.lookover.$refs.ProcessInformation.postData = row
-      //     this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
-      //     this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
-      //     this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
-      //     this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.energyType
-      //     this.$refs.lookover.getListData(row.trackList)
-      //     this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-      //   })
-      // },
       detailsDiolog(row) {
         this.$refs.lookover.dialogVisible = true
         this.$nextTick(() => {
           this.$refs.lookover.$refs.ProcessInformation.postData = row
-          this.$refs.lookover.$refs.ProcessInformation.postData.version = row.processStarter
           this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
-          this.$refs.lookover.getListData(row.processInstanceId).then(() => {
-            this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-          })
+          this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
+          this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
+          this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.energyType
+          this.$refs.lookover.getListData(row.trackList)
+          this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
         })
       },
+      // detailsDiolog(row) {
+      //   this.$refs.lookover.dialogVisible = true
+      //   this.$nextTick(() => {
+      //     this.$refs.lookover.$refs.ProcessInformation.postData = row
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.version = row.processStarter
+      //     this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
+      //     this.$refs.lookover.getListData(row.processInstanceId).then(() => {
+      //       this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+      //     })
+      //   })
+      // },
       goAdd() {
         this.dialogVisibleAdd = true
       },
@@ -282,6 +284,11 @@
         this.dialogVisibleImplement = false
         this.getManyData()
       },
+      getAllApi() {
+        this.getDataNumber()
+        this.getManyData()
+        this.getAmount()
+      },
       getDataNumber() {
         getTaskCountStatistic({
           ascription: this.getData.projectCode,
@@ -291,7 +298,15 @@
           startTime: this.valueDate[0],
           tenantId: this.$store.state.tenantId
         }).then((res) => {
-          this.numberList = res.result
+          if (res) {
+            this.numberList = res.result
+          } else {
+            this.numberList = {
+              executionCompleteCount: 0,
+              executionInProcessCount: 0,
+              executionTotalProcessCount: 0
+            }
+          }
         })
       }
     },
