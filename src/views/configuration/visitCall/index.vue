@@ -162,13 +162,13 @@ export default {
                 //?scope=103&&format=json&&appid=379020&&bk_key=关键字&&bk_length=600
                 let obj= {key: '', value: ''}
                  let parArr = api.parameter.split('?')
-                  if (!api.parameter.includes('&&')) {
+                  if (!api.parameter.includes('&')) {
                     api.configParams.push({
                       key: parArr[1].split('=')[0],
                       value: parArr[1].split('=')[1]
                     })
                   } else {
-                    let entry = parArr[1].split("&&")
+                    let entry = parArr[1].split("&")
                     for (const val of entry) {
                       api.configParams.push({
                         key:val.split('=')[0],
