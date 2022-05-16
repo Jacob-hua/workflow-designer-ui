@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="新建流程" :visible="dialogVisible" width="90%" custom-class="dialogVisible" @close="close">
     <div class="dialogVisible-main">
-      <bpmnJsELe @initModeler="initModeler" :xmlString="xmlString" v-if="dialogVisible"></bpmnJsELe>
+      <bpmnJsELe ref="bpmnJsELe" @initModeler="initModeler" :xmlString="xmlString" v-if="dialogVisible"></bpmnJsELe>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="publish()">发布</el-button>
@@ -62,6 +62,13 @@ import {
         }
       }
     },
+    mounted() {
+      this.$nextTick(() => {
+        console.log(this.formData)
+        this.$refs.bpmnJsELe.$refs.panel.$refs.baseInfo.elementBaseInfo.name = this.formData.name
+      })
+
+    },
     methods: {
       publish() {
         let _this = this
@@ -98,7 +105,7 @@ import {
           if (_this.publick) {
             formData.append('ascription', 'public')
           } else {
-            formData.append('ascription', 'beiqijia')
+            formData.append('ascription', _this.$parent.projectCode)
           }
 
           formData.append('code', definitions.process._id)
@@ -153,14 +160,13 @@ import {
             type: 'bpmn20-xml'
           });
           console.log(definitions)
-          console.log(this.currentRowData)
           console.log(_this.currentRowData)
           let formData = new FormData()
             formData.append('id', _this.currentRowData.id )
           formData.append('name', _this.currentRowData.name || _this.formData.name || definitions.process._name)
           formData.append('docName',  definitions.process._name+ '.bpmn' || _this.currentRowData.name+'.bpmn'|| _this.formData.name + '.bpmn')
           if (_this.flag && Object.values(_this.formData).length > 0) {
-            formData.append('ascription', 'beiqijia')
+            formData.append('ascription', _this.$parent.projectCode)
           } else {
             formData.append('ascription', 'public')
           }
@@ -171,23 +177,23 @@ import {
           formData.append('createBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
-          this.flag?
+          _this.flag?
               workFlowSave(formData).then((res) => {
-            this.$message.success('保存成功')
+            _this.$message.success('保存成功')
             // this.$router.push('/home')
-                this.$emit('close')
-                this.$parent.findWorkFlowRecord('drafted')
+                _this.$emit('close')
+              _this.$parent.findWorkFlowRecord('drafted')
 
           })
           :
           workFlowSaveDraft(formData).then((res) => {
-            this.$message.success('保存成功')
+          _this.$message.success('保存成功')
             // this.$router.push('/home')
-            this.$emit('close')
-            this.$parent.findWorkFlowRecord()
+            _this.$emit('close')
+            _this.$parent.findWorkFlowRecord()
           })
         });
-        this.$emit('confirm')
+        _this.$emit('confirm')
       }
     },
     components: {

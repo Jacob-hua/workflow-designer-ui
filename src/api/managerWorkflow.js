@@ -10,6 +10,11 @@ import {
 export const workFlowRecord = (params) =>
     post('/design/processDesignService/record', params);
 
+// 统计数量
+export const designProcessCountStatistics = (params) =>
+    post('/design/processDesignService/designProcessCountStatistics', params);
+
+
 // 工作流 草稿 新增
 
 export const workFlowSave = (params) =>

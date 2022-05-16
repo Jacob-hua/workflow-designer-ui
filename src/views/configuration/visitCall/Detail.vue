@@ -5,44 +5,44 @@
       width="65%"
       append-to-body
   >
-    <el-form  ref="form" :model="form" label-width="80px">
+    <el-form  ref="form" label-width="80px">
     <div class="top">
       <el-form-item label="资源名称">
-        <el-input disabled></el-input>
+        <el-input disabled v-model="currentRow[0].source"></el-input>
       </el-form-item>
 
-      <el-form-item label="资源名称">
-        <el-input disabled></el-input>
+      <el-form-item label="资源标识">
+        <el-input disabled v-model="currentRow[0].sourceMark"></el-input>
       </el-form-item>
       <div>
-        <el-button @click="$emit('showAddOrEidtDailog',currentRow)" type="primary">编辑</el-button>
-        <el-button type="primary">删除</el-button>
+        <el-button @click="$emit('showAddOrEidtDailog',currentRow,'edit')" type="primary">编辑</el-button>
+        <el-button @click="deleteApis()" type="primary">删除</el-button>
       </div>
     </div>
     <div style="display: flex">
       <div class="container">
         <div class="cardBox">
-          <el-tabs v-model="editableTabsValue" type="card" @tab-remove="removeTab">
+          <el-tabs v-model="editableTabsValue" type="card" @tab-click="handleClick">
             <el-tab-pane
-                v-for="(item, index) in editableTabs"
-                :key="item.name"
-                :label="item.title"
-                :name="item.name"
+                v-for="(item, index) in currentRow"
+                :key="item.id"
+                :label="item.name"
+                :name="index+''"
             >
               <el-form-item label="api名称">
-                <el-input disabled></el-input>
+                <el-input v-model="item.name" disabled></el-input>
               </el-form-item>
               <el-form-item label="api标识">
-                <el-input disabled></el-input>
+                <el-input v-model="item.apiMark" disabled></el-input>
               </el-form-item>
               <el-form-item label="主机地址">
-                <el-input disabled></el-input>
+                <el-input v-model="item.host" disabled></el-input>
               </el-form-item>
               <el-form-item label="访问路径">
-                <el-input disabled></el-input>
+                <el-input v-model="item.path"  disabled></el-input>
               </el-form-item>
               <el-form-item label="api类型">
-                <el-select v-model="value" placeholder="请选择api类型">
+                <el-select v-model="item.type" disabled placeholder="请选择api类型">
                   <el-option
                       v-for="item in apiOptions"
                       :key="item.value"
@@ -52,7 +52,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="请求类型">
-                <el-select v-model="value" placeholder="请选择api类型">
+                <el-select v-model="item.method" disabled placeholder="请选择api类型">
                   <el-option
                       v-for="item in methodsOptions"
                       :key="item.value"
@@ -62,14 +62,14 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="请求头">
-                <el-input v-model="form.srcMark"></el-input>
+                <el-input v-model="item.headers"></el-input>
               </el-form-item>
-              <div class="params">
+              <div class="params" v-for="(config,idx) in item.configParams" :key="idx">
                 <el-form-item label="参数key">
-                  <el-input v-model="form.srcMark"></el-input>
+                  <el-input v-model="config.key"></el-input>
                 </el-form-item>
                 <el-form-item label="参数value">
-                  <el-input v-model="form.srcMark"></el-input>
+                  <el-input v-model="config.value"></el-input>
                 </el-form-item>
               </div>
             </el-tab-pane>
@@ -121,10 +121,7 @@
             <el-form-item label="参数value">
               <el-input v-model="form.srcMark"></el-input>
             </el-form-item>
-
           </div>
-
-
         </div>
       </div>
 
@@ -134,13 +131,15 @@
 </template>
 
 <script>
+import {deleteApi} from "@/api/globalConfig";
+
 export default {
   name: "AddOrEidtDailog",
+  props: {
+    currentRow: Array
+  },
   data() {
     return {
-      currentRow: {
-        id: 2
-      },
       form: {},
       editableTabsValue: '1',
       methodsOptions: [
@@ -152,62 +151,33 @@ export default {
           label: 'GET'
         },
       ],
-      apiOptions: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }],
-      editableTabs: [
-        {
-        title: 'API 1',
-        name: '1',
-        content: 'Tab 1 content'
-      },
-        {
-          title: 'API 2',
-          name: '2',
-          content: 'Tab 1 content'
-        },
-        {
-          title: 'API 3',
-          name: '3',
-          content: 'Tab 1 content'
-        },  {
-          title: 'API 4',
-          name: '4',
-          content: 'Tab 1 content'
-        },  {
-          title: 'API 5',
-          name: '5',
-          content: 'Tab 1 content'
-        },  {
-          title: 'API 6',
-          name: '6',
-          content: 'Tab 1 content'
-        },
-        {
-          title: 'API 7',
-          name: '7',
-          content: 'Tab 1 content'
-        },
-        {
-          title: 'API 8',
-          name: '8',
-          content: 'Tab 1 content'
-        },
-
-
-
-      ],
+      apiOptions: [],
       tabIndex: 2,
-
       dialogVisible: false,
 
     }
   },
-  methods: {}
+  methods: {
+    handleClick() {},
+    deleteApis() {
+      console.log(this.editableTabsValue)
+
+      let currentApi = this.currentRow[this.editableTabsValue]
+      deleteApi(currentApi.id).then(res => {
+        this.currentRow.splice(+this.editableTabsValue,1)
+        console.log(this.currentRow)
+        this.editableTabsValue= '0'
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+      })
+    }
+  },
+  mounted() {
+    console.log(this.currentRow)
+    this.editableTabsValue = '0'
+  }
 }
 </script>
 

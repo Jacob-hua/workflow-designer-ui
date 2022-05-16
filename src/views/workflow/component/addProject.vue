@@ -19,7 +19,7 @@
       </div>
       <div class="from-item">
         <span>流程名称</span>
-        <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
+        <el-input v-model="postData.name" placeholder="请输入流程名称"></el-input>
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
