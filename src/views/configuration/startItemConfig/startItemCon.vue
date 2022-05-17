@@ -157,9 +157,9 @@ export default {
     }
   },
   mounted() {
-    debugger
+    // debugger
 
-      console.log(this.currentId)
+      // console.log(this.currentId)
 
 
   },
@@ -237,33 +237,33 @@ export default {
       let inputValue = this.inputValue;
       let index = parseInt(Math.random() * 5)
       if (inputValue) {
-        this.tags.push({
+          this.tags.push({
 
-          // "businessConfigId": 0,
-          // "code": "string",
+            // "businessConfigId": 0,
+            // "code": "string",
 
-          // "id": 0,
-          // "isRequired": 0,
-          // "isSetting": 0,
-          // "name": "string",
-          // "tenantId": 0,
-          // "thirdInterfaceId": 0,
-          // "type": 0,
-          // "updateBy": "string",
-          isUse: 0,
-          "createBy": this.$store.state.userInfo.name,
-          businessConfigId: this.currentId,
-          code: "",
-          tenantId: this.$store.state.tenantId,
-          thirdInterfaceId: null,
-          value: null,
-          name: this.inputValue,
-          isSetting: true,
-          isRequired: true,
-          type: this.color[index],
-          startType: '1',
-          disabled: true
-        });
+            // "id": 0,
+            // "isRequired": 0,
+            // "isSetting": 0,
+            // "name": "string",
+            // "tenantId": 0,
+            // "thirdInterfaceId": 0,
+            // "type": 0,
+            // "updateBy": "string",
+            isUse: 0,
+            "createBy": this.$store.state.userInfo.name,
+            businessConfigId: this.currentId,
+            code: "",
+            tenantId: this.$store.state.tenantId,
+            thirdInterfaceId: null,
+            value: null,
+            name: this.inputValue,
+            isSetting: true,
+            isRequired: true,
+            type: this.color[index],
+            startType: '1',
+            disabled: true
+          });
       }
       this.inputValue = '';
     }
