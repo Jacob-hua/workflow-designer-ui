@@ -23,7 +23,7 @@
         draggable
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span >{{ node.label }}<el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
+        <span >{{ data.name }}<el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
         <span>
           <i v-if="editFlag" @click="(e)=> append(data,node)" style="font-size: 20px !important; color: #409eff;margin-left: 10px" class="el-icon-circle-plus-outline"></i>
           <i v-if="data.id !==1" @click="remove(node, data)" style="font-size: 20px !important; color: red;margin-left: 10px" class="el-icon-remove-outline"></i>
@@ -32,7 +32,7 @@
     </el-tree>
     <div v-if="!editFlag" class="preview"><el-tree class="tree" default-expand-all :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree></div>
     <span slot="footer" class="dialog-footer">
-      <el-button v-if="editFlag"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
+      <el-button v-if="editFlag && !edit"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
       <el-button v-if="showBtn"  @click="preview">{{btnTxt}}</el-button>
       <el-button v-if="showBtn"  @click="dialogVisible = false">取 消</el-button>
   </span>
@@ -40,13 +40,17 @@
 </template>
 
 <script>
-import {addBusinessConfig} from "@/api/globalConfig";
+import {addBusinessConfig, UpdatebusinessConfig} from "@/api/globalConfig";
 
 let id = 2;
 export default {
   name: "BusinessCon",
 
   props: {
+    edit: {
+      type: Boolean,
+      default: false
+    },
     showBtn: {
       type: Boolean,
       default: true
@@ -76,7 +80,7 @@ export default {
       ],
       defaultProps: {
         children: 'children',
-        label: 'label'
+        label: 'name'
       }
     }
   },
@@ -86,8 +90,13 @@ export default {
       this.btnTxt = '预览'
     },
     preview() {
+      let _this = this
+
       if (this.btnTxt === '保存') {
         console.log(this.data)
+        if (!_this.edit) {
+          delete this.data[0].id
+        }
         addBusinessConfig(this.data).then((res)=> {
           console.log(res)
           this.dialogVisible = false
@@ -95,6 +104,8 @@ export default {
             type: 'success',
             message: '保存成功'
           })
+
+          _this.$parent.getBusinessConfigBasicList()
         })
       } else {
         this.editFlag = false
@@ -105,7 +116,7 @@ export default {
     },
     onblur() {
       this.showinput = false
-      const newChild = { "id": id++, "name": this.forms.name, "code": id++, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "label": this.inptVal, "children": [] };
+      const newChild = { "id": id++,  "code": id++, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
       if (!this.currentNode.children) {
         this.$set(this.currentNode, 'children', []);
       }

@@ -49,4 +49,24 @@ export const addBusinessConfig = (params) =>
     post('/config/businessConfig/saveBusinessConfigWithTree', params);
 
 
+ // 查询配置树状结构
+export const getBusinessConfigWithTree = (id, tenantId ) =>
+    get(`/config/businessConfig/getBusinessConfigWithTree/${tenantId}/${id}`);
+// 删除配置
+export const deleteBusinessConfig = (id) =>
+    deletefn(`/config/businessConfig/${id}`)
+export const UpdatebusinessConfig = (params) =>
+    put(`/config/businessConfig`, params)
+
+
+export const startConfig = (params) =>
+    post('/config/startConfig', params);
+
+export const getThirdInterfaceList = ( tenantId ) =>
+    get(`/config/global/getThirdInterfaceList?tenantId=${tenantId}`);
+//根据业务节点获取配置
+export const selectProcessStartConfigList = (id, tenantId ) =>
+    get(`/config/startConfig/selectProcessStartConfigList?tenantId=${tenantId}&businessConfigId=${id}`);
+
+
 
