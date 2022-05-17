@@ -5,22 +5,22 @@
         <el-button type="primary">批量导入</el-button>
       </div>
       <div class="businessCall-main-list">
-        <div class="businessCall-main-list-card">
+        <div v-for="(item,index) in businessList" :key="index" class="businessCall-main-list-card">
           <div class="card-popover">
             <el-popover
                 placement="bottom"
                 trigger="click">
-                <div  @click="lookBusiness"><i style="margin-top: 10px; margin-right: 15px; font-size: 20px; color: #333333" class=" el-icon-s-order"></i>查看</div>
-                <div @click="editBusiness"><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class=" el-icon-edit-outline"></i>编辑</div>
-                <div><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete"></i>删除</div>
-                <el-button slot="reference">···</el-button>
-              </el-popover>
+              <div  @click="lookBusiness"><i style="margin-top: 10px; margin-right: 15px; font-size: 20px; color: #333333" class=" el-icon-s-order"></i>查看</div>
+              <div @click="editBusiness"><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class=" el-icon-edit-outline"></i>编辑</div>
+              <div><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete"></i>删除</div>
+              <el-button slot="reference">···</el-button>
+            </el-popover>
           </div>
           <div class="card-main">
-            <div><label>项目名称:</label> <span>北七家</span></div>
-            <div><label>项目类型:</label> <span>工业</span></div>
-            <div><label>创建人:  </label> <span>昊昊</span></div>
-            <div><label>创建时间:</label> <span>2022-04-02 11:14:25</span></div>
+            <div><label>项目名称:</label> <span>{{ item.name }}</span></div>
+            <div><label>项目类型:</label> <span>{{ item.typeName }}</span></div>
+            <div><label>创建人:  </label> <span>{{item.createBy}}</span></div>
+            <div><label>创建时间:</label> <span>{{ item.createTime }}</span></div>
           </div>
         </div>
         <div @click="showGuide" class="businessCall-main-list-add">
@@ -31,13 +31,13 @@
       </div>
     </div>
     <Guide
-      ref="guide"
-      @showAddDialog="showAddDialog"
+        ref="guide"
+        @showAddDialog="showAddDialog"
     />
     <BusinessCon
-      ref="BusinessCon"
-      :showBtn="showBtn"
-      @showAddOrEidtDailog="showAddOrEidtDailog"
+        ref="BusinessCon"
+        :showBtn="showBtn"
+        @showAddOrEidtDailog="showAddOrEidtDailog"
     />
   </div>
 </template>
@@ -45,41 +45,66 @@
 <script>
 import Guide from "@/views/configuration/businessCall/Guide";
 import BusinessCon from "@/views/configuration/businessCall/BusinessCon";
-  export default {
-    components: {
-      Guide,
-      BusinessCon
+import {
+  getBusinessConfigBasicList,
+  getDicDataByClassify
+} from "@/api/globalConfig";
+export default {
+  components: {
+    Guide,
+    BusinessCon
+  },
+  data() {
+    return {
+      showBtn: true,
+      businessList: []
+    }
+  },
+  mounted() {
+    this.getBusinessConfigBasicList()
+    this.getDicDataByClassify()
+  },
+  methods: {
+    getDicDataByClassify() {
+      getDicDataByClassify().then(res=> {
+        console.log(res)
+        this.$refs.guide.projectOption = res.result
+      })
     },
-    data() {
-      return {
-        showBtn: true
-      }
+    getBusinessConfigBasicList() {
+      getBusinessConfigBasicList(this.$store.state.tenantId).then(res => {
+        console.log(res)
+        this.businessList = res.result
+      })
     },
-    methods: {
-      lookBusiness() {
-          this.$refs.BusinessCon.dialogVisible = true
-          this.$refs.BusinessCon.editFlag = false
-          this.showBtn = false
-      },
-      editBusiness() {
-        this.$refs.BusinessCon.dialogVisible = true
-        this.$refs.BusinessCon.editFlag = true
-        this.showBtn = true
-      },
-      showAddOrEidtDailog() {
-        this.$refs.guide.dialogVisible = true
-      },
-      showAddDialog() {
-        this.$refs.BusinessCon.dialogVisible = true
-        this.$refs.BusinessCon.editFlag = true
-        this.$refs.BusinessCon.btnTxt = '预览'
-        this.showBtn = true
-      },
-      showGuide() {
-        this.$refs.guide.dialogVisible = true
-      }
+
+    lookBusiness() {
+      this.$refs.BusinessCon.dialogVisible = true
+      this.$refs.BusinessCon.editFlag = false
+      this.showBtn = false
+    },
+    editBusiness() {
+      this.$refs.BusinessCon.dialogVisible = true
+      this.$refs.BusinessCon.editFlag = true
+      this.showBtn = true
+    },
+    showAddOrEidtDailog() {
+      this.$refs.guide.dialogVisible = true
+    },
+    showAddDialog(form) {
+      this.$refs.BusinessCon.dialogVisible = true
+      this.$refs.BusinessCon.editFlag = true
+      this.$refs.BusinessCon.btnTxt = '预览'
+      this.$refs.BusinessCon.data[0].label = form.name
+      this.$refs.BusinessCon.data[0].name = form.name
+      this.$refs.BusinessCon.forms = form
+      this.showBtn = true
+    },
+    showGuide() {
+      this.$refs.guide.dialogVisible = true
     }
   }
+}
 </script>
 
 <style scoped="scoped">
@@ -87,66 +112,68 @@ import BusinessCon from "@/views/configuration/businessCall/BusinessCon";
   min-width: unset !important;
   background-color: rgb(242,242,242);
 }
-  .businessCall {
-    padding: 20px 0px;
-  }
-  .businessCall-main-title {
-    
-  }
-  .card-popover {
-    position: absolute;
-    right: 10px;
-    top: 0px;
-  }
-  .card-popover /deep/ .el-button {
-    padding: 0px;
-    border: none;
-    background-color: transparent;
-    font-size: 20px;
-    font-weight: 700;
-    color: #1d89ff;
-  }
-  .businessCall-main-list {
-    padding: 20px 0px;
-    display: flex;
-  }
-  .businessCall-main-list-card {
-    position: relative;
-    line-height: 40px;
-    width: 312px;
-    height: 186px;
-    border: 1px solid #0066cc;
-    background-color: #f5f7f9;
-    border-radius: 5px;
-    font-size: 14px;
-    padding: 10px 20px;
-    display: inline-block;
-    margin-right: 40px;
-  }
-  
-  .businessCall-main-list-add .el-icon-plus {
-    font-size: 40px;
-    /* color: #e4e4e4; */
-    color: #1d89ff;
-  }
-  .businessCall-main-list-add:hover {
-    background-color: rgba(0,0,255,.3);
-  }
-  
-  .businessCall-main-list-add {
-    cursor: pointer;
-    text-align: center;
-    padding: 70px 20px;
-    position: relative;
-    display: inline-block;
-    width: 312px;
-    height: 186px;
-    background-color: #f5f7f9;
-    /* border: 1px solid #0066cc; */
-  }
-  
-  .card-main label {
-    display: inline-block;
-    width: 80px;
-  }
+.businessCall {
+  padding: 20px 0px;
+}
+.businessCall-main-title {
+
+}
+.card-popover {
+  position: absolute;
+  right: 10px;
+  top: 0px;
+}
+.card-popover /deep/ .el-button {
+  padding: 0px;
+  border: none;
+  background-color: transparent;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1d89ff;
+}
+.businessCall-main-list {
+  padding: 20px 0px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.businessCall-main-list-card {
+  position: relative;
+  line-height: 40px;
+  width: 312px;
+  height: 186px;
+  margin-bottom: 10px;
+  border: 1px solid #0066cc;
+  background-color: #f5f7f9;
+  border-radius: 5px;
+  font-size: 14px;
+  padding: 10px 20px;
+  display: inline-block;
+  margin-right: 40px;
+}
+
+.businessCall-main-list-add .el-icon-plus {
+  font-size: 40px;
+  /* color: #e4e4e4; */
+  color: #1d89ff;
+}
+.businessCall-main-list-add:hover {
+  background-color: rgba(0,0,255,.3);
+}
+
+.businessCall-main-list-add {
+  cursor: pointer;
+  text-align: center;
+  padding: 70px 20px;
+  position: relative;
+  display: inline-block;
+  width: 312px;
+  height: 186px;
+  background-color: #f5f7f9;
+  /* border: 1px solid #0066cc; */
+}
+
+.card-main label {
+  display: inline-block;
+  width: 80px;
+}
 </style>

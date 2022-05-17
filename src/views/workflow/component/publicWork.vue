@@ -19,8 +19,8 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流（{{ formListFirst.length }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流（{{ formFirstTotal }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formSecondTotal }}）</span>
       </div>
       <div class="home-table">
         <projectTable :formListFirst="formListFirst" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'enabled,disabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
@@ -48,6 +48,8 @@ import {
   export default {
     data() {
       return {
+        formSecondTotal:'',
+        formFirstTotal: '',
         flag: true,
         rowData: '',
         projectValue: '',
@@ -183,9 +185,14 @@ import {
           limit: '10'
         })
         status === 'drafted'?
-            this.formListSecond = data.result.list
-            : this.formListFirst = data.result.list
+            (this.formListSecond = data.result.list,
+            this.formSecondTotal= data.result.total)
+            :
+            (
+                this.formListFirst = data.result.list,
+                    this.formFirstTotal = data.result.total
 
+            )
       }
     },
     mounted() {

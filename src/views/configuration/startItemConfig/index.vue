@@ -9,7 +9,6 @@
         <div class="card-main">
           <div><label>项目名称:</label> <span>北七家</span></div>
           <div><label>项目类型:</label> <span>工业</span></div>
-<!--          <div><label>创建人:  </label> <span>昊昊</span></div>-->
           <div><label>配置时间:</label> <span>2022-04-02 11:14:25</span></div>
         </div>
         <el-button @click="showSartDailog" class="config">配置</el-button>
@@ -31,7 +30,7 @@ export default {
   name: "index",
   data() {
     return{
-
+      itemconFlag : false
     }
   },
   methods: {

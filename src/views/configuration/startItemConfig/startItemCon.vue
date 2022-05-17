@@ -40,11 +40,11 @@
         </div>
         <div class="start_right">
           <p>自定义启动项</p>
-          <div v-if="!tableFlag" class="tip_content">当前未配置自定义启动项</div>
+          <div v-if="!tableData.length" class="tip_content">当前未配置自定义启动项</div>
           <el-button @click="showSelf">自定义</el-button>
-          <el-button @click="editTable" v-if="btnFlag" style="margin-left: 560px" type="primary">编辑</el-button>
+          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 560px" type="primary">编辑</el-button>
           <el-table
-              v-if="tableFlag"
+              v-if="tableFlag && tableData.length > 0"
               :data="tableData"
               style="width: 100%">
             <el-table-column

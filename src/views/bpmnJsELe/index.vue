@@ -14,7 +14,7 @@
       @element-contextmenu="elementContextmenu"
       @init-finished="initModeler"
     />
-    <my-properties-panel :key="`penal-${reloadIndex}`" :bpmn-modeler="modeler" :prefix="controlForm.prefix" class="process-panel" />
+    <my-properties-panel ref="panel" :key="`penal-${reloadIndex}`" :bpmn-modeler="modeler" :prefix="controlForm.prefix" class="process-panel" />
   </div>
 </template>
 

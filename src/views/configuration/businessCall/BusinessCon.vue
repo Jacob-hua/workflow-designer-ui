@@ -6,22 +6,22 @@
       width="50%"
       append-to-body
   >
-      <el-button @click="goEdit" v-if="!editFlag && showBtn  " type="primary" class="btn">继续编辑</el-button>
-      <el-tree
-          v-if="editFlag"
-          class="tree"
-          :data="data"
-          node-key="id"
-          default-expand-all
-          :expand-on-click-node="false"
-          @node-drag-start="handleDragStart"
-          @node-drag-enter="handleDragEnter"
-          @node-drag-leave="handleDragLeave"
-          @node-drag-over="handleDragOver"
-          @node-drag-end="handleDragEnd"
-          @node-drop="handleDrop"
-          draggable
-      >
+    <el-button @click="goEdit" v-if="!editFlag && showBtn  " type="primary" class="btn">继续编辑</el-button>
+    <el-tree
+        v-if="editFlag"
+        class="tree"
+        :data="data"
+        node-key="id"
+        default-expand-all
+        :expand-on-click-node="false"
+        @node-drag-start="handleDragStart"
+        @node-drag-enter="handleDragEnter"
+        @node-drag-leave="handleDragLeave"
+        @node-drag-over="handleDragOver"
+        @node-drag-end="handleDragEnd"
+        @node-drop="handleDrop"
+        draggable
+    >
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span >{{ node.label }}<el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
         <span>
@@ -29,7 +29,7 @@
           <i v-if="data.id !==1" @click="remove(node, data)" style="font-size: 20px !important; color: red;margin-left: 10px" class="el-icon-remove-outline"></i>
         </span>
       </span>
-      </el-tree>
+    </el-tree>
     <div v-if="!editFlag" class="preview"><el-tree class="tree" default-expand-all :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree></div>
     <span slot="footer" class="dialog-footer">
       <el-button v-if="editFlag"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import {addBusinessConfig} from "@/api/globalConfig";
+
 let id = 2;
 export default {
   name: "BusinessCon",
@@ -49,21 +51,29 @@ export default {
       type: Boolean,
       default: true
     },
-
   },
+
   data() {
     return {
       btnTxt: '预览',
       editFlag: true,
+      forms: {},
       currentNode: {},
       inptVal: '',
       showinput: false,
       dialogVisible: false,
       data:  [
-          {
-        id: 1,
-        label: '莱芜供热项目',
-      },],
+        {
+          "code": 1,
+          "label": '莱芜供热项目',
+          "name": '',
+          "active": "Y",
+          "type": 'industry',
+          "parentId":	-1,
+          "createBy": this.$store.state.userInfo.name,
+          "tenantId": this.$store.state.tenantId
+        }
+      ],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -72,18 +82,30 @@ export default {
   },
   methods: {
     goEdit() {
-
-        this.editFlag = true
-        this.btnTxt = '预览'
+      this.editFlag = true
+      this.btnTxt = '预览'
     },
     preview() {
-      this.editFlag = false
-      this.btnTxt = '保存'
-      console.log(this.data)
+      if (this.btnTxt === '保存') {
+        console.log(this.data)
+        addBusinessConfig(this.data).then((res)=> {
+          console.log(res)
+          this.dialogVisible = false
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
+        })
+      } else {
+        this.editFlag = false
+        this.btnTxt = '保存'
+        console.log(this.data)
+      }
+
     },
     onblur() {
       this.showinput = false
-      const newChild = { id: id++, label: this.inptVal, children: [] };
+      const newChild = { "id": id++, "name": this.forms.name, "code": id++, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "label": this.inptVal, "children": [] };
       if (!this.currentNode.children) {
         this.$set(this.currentNode, 'children', []);
       }
