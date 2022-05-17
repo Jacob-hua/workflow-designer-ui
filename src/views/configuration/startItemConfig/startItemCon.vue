@@ -7,7 +7,7 @@
         width="30%"
         append-to-body
     >
-      <div>
+      <div id="item">
         <p class="tit">自定义启动项</p>
         <el-tag
             v-for="tag in tags"
@@ -17,7 +17,6 @@
             :type="tag.type">
           {{tag.name}}
         </el-tag>
-        <p class="tit">新增</p>
         <div style="display: flex">
           <el-input v-model="inputValue"></el-input><el-button @click="handleInputConfirm" type="primary">新增</el-button>
         </div>
@@ -31,43 +30,78 @@
         title="启动项配置"
         :visible.sync="dialogVisible"
         v-if="dialogVisible"
-        width="60%"
+        width="80%"
         append-to-body
     >
       <div class="start_container">
         <div class="start_left">
-          <el-tree class="tree" default-expand-all :data="data" :props="defaultProps" ></el-tree>
+          <el-tree   @node-click="handleNodeClick" class="tree" default-expand-all :data="data" :props="defaultProps" ></el-tree>
         </div>
         <div class="start_right">
           <p>自定义启动项</p>
           <div v-if="!tableData.length" class="tip_content">当前未配置自定义启动项</div>
-          <el-button @click="showSelf">自定义</el-button>
-          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 560px" type="primary">编辑</el-button>
+          <el-button  v-if="footFlag" @click="showSelf">自定义</el-button>
+          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary">编辑</el-button>
           <el-table
               v-if="tableFlag && tableData.length > 0"
               :data="tableData"
               style="width: 100%">
             <el-table-column
+                align="center"
                 prop="name"
                 label="启动项"
                 width="180">
             </el-table-column>
             <el-table-column
+                align="center"
+                prop=""
+                label="Code"
+                width="180">
+              <template slot-scope="scope">
+                <el-input :disabled="scope.row.disabled" v-model="scope.row.code"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column
+                align="center"
+                prop=""
+                label="启动类型"
+                width="180">
+              <template slot-scope="scope">
+                <el-input v-show="scope.row.startType ==='1'" :disabled="scope.row.disabled" v-model="scope.row.value"></el-input>
+                <el-select v-show="scope.row.startType === '2'" :disabled="scope.row.disabled" v-model="scope.row.thirdInterfaceId">
+                  <el-option v-for="(item,index) in optionsList" :key="index" :label="item.name"  :value="item.id"></el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column
+                align="center"
+                prop=""
+                label="启动类型选择"
+                width="280">
+              <template slot-scope="scope">
+                <el-radio @change="radioChange" :disabled="scope.row.disabled" v-model="scope.row.startType" label="1">输入框</el-radio>
+                <el-radio  @change="radioChange" :disabled="scope.row.disabled" v-model="scope.row.startType" label="2">单选框</el-radio>
+              </template>
+            </el-table-column>
+            <el-table-column
+                align="center"
                 prop=""
                 label="配置"
                 width="180">
               <template slot-scope="scope">
-                <el-checkbox :disabled="scope.row.disabled" v-model="scope.row.isConfig"></el-checkbox>
+                <el-checkbox :disabled="scope.row.disabled" v-model="scope.row.isSetting"></el-checkbox>
               </template>
             </el-table-column>
             <el-table-column
+                align="center"
                 prop=""
                 label="必填">
               <template slot-scope="scope">
-                <el-checkbox :disabled="scope.row.disabled" v-model="scope.row.required"></el-checkbox>
+                <el-checkbox :disabled="scope.row.disabled" v-model="scope.row.isRequired"></el-checkbox>
               </template>
             </el-table-column>
             <el-table-column
+                align="center"
                 v-if="processFlag"
                 prop=""
                 label="操作">
@@ -80,16 +114,27 @@
 
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button   @click="dialogVisible = false">保 存</el-button>
-        <el-button   @click="dialogVisible = false">取 消</el-button>
+        <div v-if="footFlag">
+           <el-button   @click="saveStart">保 存</el-button>
+            <el-button   @click="dialogVisible = false">取 消</el-button>
+        </div>
+
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import {getThirdInterfaceList, selectProcessStartConfigList, startConfig} from "@/api/globalConfig";
+
 export default {
   name: "startItemCon",
+  props: {
+    footFlag: {
+      type:Boolean,
+      default: true
+    }
+  },
   data() {
     return {
       processFlag: false,
@@ -101,24 +146,76 @@ export default {
       color: ['','success','info','warning','danger'],
       dialogVisible: false,
       dialogVisible2: false,
-      data:  [
-        {
-          id: 1,
-          label: '莱芜供热项目',
-          children: [{
-            label: '二级 1-1',
-            children: [{
-              label: '三级 1-1-1'
-            }]
-          }]
-        },],
+      data:  [],
       defaultProps: {
         children: 'children',
-        label: 'label'
-      }
+        label: 'name'
+      },
+      tempArr: [],
+      optionsList: [],
+      currentId: null
     }
   },
+  mounted() {
+    // debugger
+
+      // console.log(this.currentId)
+
+
+  },
   methods: {
+   radioChange(val) {
+     console.log(typeof val)
+     if (val === '2') {
+       getThirdInterfaceList(this.$store.state.tenantId).then(res => {
+         console.log(res)
+         this.optionsList = res.result
+       })
+     }
+   },
+    saveStart() {
+      let res = this.tempArr.concat(this.tableData)
+      res.forEach(item => {
+        item.isSetting?  item.isSetting=1 :  item.isSetting = 0
+        item.isRequired?  item.isRequired = 1 : item.isRequired = 1
+        item.startType = +item.startType
+      })
+
+      startConfig( {businessConfigId:res[0].businessConfigId, list: res}).then(res => {
+        console.log(res)
+        this.$message({
+          type: 'success',
+          message: '保存成功'
+        })
+      })
+      // this.dialogVisible = false
+
+
+    },
+    handleNodeClick(data) {
+     if (!this.footFlag) {
+       selectProcessStartConfigList(data.id, +this.$store.state.tenantId).then(res => {
+         console.log(res)
+         res.result.forEach(item => {
+           item.disabled = true
+           item.startType = item.startType+ ''
+           item.isSetting? item.isSetting = true : item.isSetting = false
+           item.isRequired? item.isRequired = true : item.isRequired = false
+         })
+         this.tableFlag = true
+         this.tableData = res.result
+
+       })
+     } else {
+       console.log(data)
+       console.log(this.tags)
+       this.currentId = data.id
+       this.tempArr = this.tempArr.concat(this.tableData)
+       this.tags = []
+       this.tableData = []
+     }
+
+    },
     editTable() {
       console.log(this.tableData)
       this.processFlag =true
@@ -140,12 +237,33 @@ export default {
       let inputValue = this.inputValue;
       let index = parseInt(Math.random() * 5)
       if (inputValue) {
-        this.tags.push({
-          name: this.inputValue,
-          isConfig: true,
-          required: true,
-          type: this.color[index],
-          disabled: true});
+          this.tags.push({
+
+            // "businessConfigId": 0,
+            // "code": "string",
+
+            // "id": 0,
+            // "isRequired": 0,
+            // "isSetting": 0,
+            // "name": "string",
+            // "tenantId": 0,
+            // "thirdInterfaceId": 0,
+            // "type": 0,
+            // "updateBy": "string",
+            isUse: 0,
+            "createBy": this.$store.state.userInfo.name,
+            businessConfigId: this.currentId,
+            code: "",
+            tenantId: this.$store.state.tenantId,
+            thirdInterfaceId: null,
+            value: null,
+            name: this.inputValue,
+            isSetting: true,
+            isRequired: true,
+            type: this.color[index],
+            startType: '1',
+            disabled: true
+          });
       }
       this.inputValue = '';
     }
@@ -158,7 +276,7 @@ export default {
   background-color: #e4e4e4;
   border-bottom: 1px solid #000000;
 }
-/deep/ .el-input {
+#item /deep/ .el-input {
   width: 420px;
 }
 /deep/ .el-tag {
@@ -183,7 +301,7 @@ export default {
   display: flex;
 }
 .start_right {
-  width: 70%;
+  width: 80%;
   padding: 10px;
   margin-left: 20px;
   border: 1px solid rgb(204, 204, 204);
