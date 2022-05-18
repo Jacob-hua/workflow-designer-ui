@@ -191,7 +191,7 @@ export default {
           message: '保存成功'
         })
       })
-      // this.dialogVisible = false
+      this.dialogVisible = false
 
 
     },
