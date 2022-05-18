@@ -29,7 +29,6 @@
     <el-dialog
         title="启动项配置"
         :visible.sync="dialogVisible"
-        v-if="dialogVisible"
         width="80%"
         append-to-body
     >
@@ -160,6 +159,10 @@ export default {
     // debugger
 
       // console.log(this.currentId)
+    this.$nextTick(() => {
+      console.log(this.data)
+      console.log(this.currentId)
+    })
 
 
   },

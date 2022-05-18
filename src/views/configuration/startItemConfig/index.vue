@@ -15,11 +15,13 @@
         <el-button @click="lookDetail(item.id)">查看</el-button>
       </div>
     </div>
-    <StartItemCon
-        :footFlag = "footFlag"
-        :currentId = 'currentId'
-        ref="StartItemCon"
-    />
+    <div v-if="itemconFlag">
+      <StartItemCon
+          :footFlag = "footFlag"
+          ref="StartItemCon"
+      />
+    </div>
+
   </div>
 </template>
 
@@ -50,15 +52,21 @@ export default {
   methods: {
     showSartDailog(id) {
       this.footFlag = true
-
       let _this = this
-      getBusinessConfigWithTree(id, +_this.$store.state.tenantId).then(res => {
-        console.log(res)
-        _this.$refs.StartItemCon.dialogVisible = true
-        _this.$refs.StartItemCon.data = res.result
-        _this.$refs.StartItemCon.currentId = +res.result[0].id
-        _this.$refs.StartItemCon.tableData = []
-      })
+
+
+
+        getBusinessConfigWithTree(id, +_this.$store.state.tenantId).then(res => {
+          console.log(res)
+          this.itemconFlag = true
+          this.$nextTick(() => {
+            _this.$refs.StartItemCon.dialogVisible = true
+            _this.$refs.StartItemCon.data = res.result
+            _this.$refs.StartItemCon.currentId = +res.result[0].id
+            _this.$refs.StartItemCon.tableData = []
+          })
+
+        })
     },
     lookDetail(id) {
       this.footFlag = false
