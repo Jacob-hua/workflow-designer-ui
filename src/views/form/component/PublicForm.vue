@@ -125,7 +125,7 @@
           endTime: this.valueDate[1],
           page: 1,
           limit: 10
-        }).then((res) => {
+         }).then((res) => {
           this.formListFirst = res.result.dataList
         })
       },
