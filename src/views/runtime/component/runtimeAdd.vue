@@ -62,7 +62,7 @@
           type: 'energy-1',
           order: 'desc',
           page: 1,
-          limit: 10,
+          limit: 6,
           tenantId: this.$store.state.tenantId,
           total: 1
         }
