@@ -53,9 +53,6 @@ export default {
     showSartDailog(id) {
       this.footFlag = true
       let _this = this
-
-
-
         getBusinessConfigWithTree(id, +_this.$store.state.tenantId).then(res => {
           console.log(res)
           this.itemconFlag = true
@@ -70,6 +67,7 @@ export default {
     },
     lookDetail(id) {
       this.footFlag = false
+      this.itemconFlag = true
       getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
         console.log(res)
         this.$refs.StartItemCon.dialogVisible = true
