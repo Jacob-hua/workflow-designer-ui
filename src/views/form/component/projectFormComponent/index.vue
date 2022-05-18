@@ -22,7 +22,7 @@
         </div> -->
         <div class="from-item">
           <span>表单名称</span>
-          <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
+          <el-input v-model="postData.name" placeholder="请输入表单名称"></el-input>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -30,7 +30,7 @@
         <el-button @click="dialogVisible1 = false">取消</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="发布表单" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog :title="title" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
           <!-- <div class="title-item">
@@ -62,7 +62,7 @@
               表单名称
             </span>
             <div class="title-item-main">
-              <el-input v-model="postData.name" placeholder="" :disabled="true"></el-input>
+              <el-input v-model="postData.name" placeholder="" :disabled="true" maxlength="20"></el-input>
             </div>
           </div>
         </div>
@@ -91,6 +91,10 @@
       dataType: {
         type: String,
         default: 'enabled'
+      },
+      title: {
+        type: String,
+        default: '新增表单'
       }
     },
     data() {
@@ -150,11 +154,20 @@
     },
     methods:{
       nextDiolog() {
-        this.dialogVisible1 = false
-        this.dialogVisible2 = true
-        this.$nextTick(() => {
-          this.$refs.formbpmn.init()
-        })
+        if (this.postData.name) {
+          if (this.postData.name.length > 2) {
+            this.dialogVisible1 = false
+            this.dialogVisible2 = true
+            this.$nextTick(() => {
+              this.$refs.formbpmn.init()
+            })
+          } else {
+            this.$message.error('表单名称必须大于两个字符')
+          }
+        } else{
+          this.$message.error('未填写表单名称')
+        }
+       
       },
       addEnableForm() {
         const xml  = this.$refs.formbpmn.importData();

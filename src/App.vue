@@ -80,6 +80,13 @@
     fill: green !important;
   }
   
+  // .fjs-properties-panel-text {
+  //   display: none;
+  // }
+  
+  // .fjs-properties-panel-header-label {
+  //   display: none;
+  // }
   
   body,
   body * {

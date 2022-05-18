@@ -119,10 +119,10 @@
             this.$message.success('应用至项目表单成功')
           })
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消创建'
-          });
+          // this.$message({
+          //   type: 'info',
+          //   message: '取消创建'
+          // });
         });
       },
       changEnergy(value) {

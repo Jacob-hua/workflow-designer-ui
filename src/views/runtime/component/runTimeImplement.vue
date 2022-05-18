@@ -23,13 +23,11 @@
               <div v-if="dataList.agency.length > 0">
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
-                  <el-tooltip class="item" effect="dark" placement="top" v-for="(item, index) in dataList.agency" :key="index">
-                    <div slot="content">
-                      <span>姓名:</span> <span>{{ item.userId }}</span><br />
-                      <span>id:</span> <span>{{ item.userId }}</span>
-                    </div>
-                    <div class="peopleList-item">{{ item.userId }}</div>
-                  </el-tooltip>
+                  <div v-for="(item, index) in dataList.agency">
+                    <span> {{ item.assignee }}: </span> 
+                    <div class="peopleList-item" v-for="(item1, index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
+                    <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span><span class="addCirculate" @click="changePeopleList()" v-if="item.assignee === $store.state.userInfo.name">点击添加</span> </div>
+                  </div>
                 </div>
                 <span class="editButton" @click="editDataList('agency')">编辑</span>
               </div>
@@ -41,7 +39,11 @@
               <div v-if="dataList.Circulate.length > 0">
                 <div class="peopleList-title">指定传阅人员:</div>
                 <div class="peopleList">
-                  <div class="peopleList-item" v-for="(item, index) in dataList.Circulate">{{ item.userId }}</div>
+                  <div v-for="(item, index) in dataList.Circulate">
+                    <span> {{ item.assignee }}: </span> 
+                    <div class="peopleList-item" v-for="(item1, index1) in item.circulations[0].unitList" v-if="item.circulations[0].unitList.length > 0">{{ item1 }}</div>
+                    <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span><span class="addCirculate" @click="changePeopleList()" v-if="item.assignee === $store.state.userInfo.name">点击添加</span> </div>
+                  </div>
                 </div>
                 <span class="editButton" @click="editDataList('Circulate')">编辑</span>
               </div>
@@ -197,63 +199,51 @@
       cancel() {
         this.$emit('close')
       },
-      // getNachList(result) {
+      getNachList(result) {
+        this.dataList.Circulate = []
+        this.dataList.signature = []
+        this.dataList.agency = []
+
+        this.processTaskList = result
+        console.log(this.processTaskList, '00000')
+        this.dataList.Circulate = result[result.length - 1].circulationList
+        if (result[result.length - 1].assignee) {
+          result[result.length - 1].assignee.split(',').forEach((item) => {
+            this.dataList.signature.push({
+              userId: item
+            })
+          })
+        }
+        this.dataList.agency = result[result.length - 1].candidateUsers
+      },
+
+      // getNachList(processInstanceId) {
       //   this.dataList.Circulate = []
       //   this.dataList.signature = []
       //   this.dataList.agency = []
-
-      //   this.processTaskList = result
-      //   result[result.length - 1].circulationList.forEach((item) => {
-      //     item.circulations[0].forEach((item1) => {
+      //   return getTaskDetailList({
+      //     processInstanceId: processInstanceId
+      //   }).then((res) => {
+      //     this.processTaskList = res.result
+      //     res.result[res.result.length - 1].circulationList.forEach((item) => {
       //       this.dataList.Circulate.push({
-      //         userId: item1
-      //       })
-      //     })
-
-      //   })
-      //   if (result[result.length - 1].assignee) {
-      //     result[result.length - 1].assignee.split(',').forEach((item) => {
-      //       this.dataList.signature.push({
       //         userId: item
       //       })
       //     })
-      //   }
-      //   result[result.length - 1].candidateUsers.forEach((item) => {
-      //     item.candidateUsers.forEach((item1) => {
+      //     if (res.result[res.result.length - 1].assignee) {
+      //       res.result[res.result.length - 1].assignee.split(',').forEach((item) => {
+      //         this.dataList.signature.push({
+      //           userId: item
+      //         })
+      //       })
+      //     }
+      //     res.result[res.result.length - 1].candidateUsers.forEach((item) => {
       //       this.dataList.agency.push({
-      //         userId: item1
+      //         userId: item
       //       })
       //     })
       //   })
       // },
-
-      getNachList(processInstanceId) {
-        this.dataList.Circulate = []
-        this.dataList.signature = []
-        this.dataList.agency = []
-        return getTaskDetailList({
-          processInstanceId: processInstanceId
-        }).then((res) => {
-          this.processTaskList = res.result
-          res.result[res.result.length - 1].circulationList.forEach((item) => {
-            this.dataList.Circulate.push({
-              userId: item
-            })
-          })
-          if (res.result[res.result.length - 1].assignee) {
-            res.result[res.result.length - 1].assignee.split(',').forEach((item) => {
-              this.dataList.signature.push({
-                userId: item
-              })
-            })
-          }
-          res.result[res.result.length - 1].candidateUsers.forEach((item) => {
-            this.dataList.agency.push({
-              userId: item
-            })
-          })
-        })
-      },
 
       changeFunction(value) {
         this.functionCheck = value
@@ -437,18 +427,18 @@
   }
 
   .peopleList {
-    display: flex;
     margin-top: 15px;
   }
 
   .peopleList-item {
+    display: inline-block;
     width: 96px;
     height: 32px;
     line-height: 32px;
     text-align: center;
     border: 1px solid #108cee;
     border-radius: 5px;
-    margin-right: 20px;
+    margin-left: 20px;
   }
 
   .peopleListDefatil {
@@ -539,5 +529,12 @@
     height: 475px;
     border: 1px solid #000000;
     overflow: auto;
+  }
+  
+  .addCirculate {
+    margin-left: 10px;
+    display: inline-block;
+    color: #5b5091;
+    cursor: pointer;
   }
 </style>
