@@ -103,7 +103,9 @@
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] || '',
-          endTime: this.valueDate[1] || ''
+          endTime: this.valueDate[1] || '',
+          page: 1,
+          limit: 10
         }).then((res) => {
           this.formListSecond = res.result
         })
@@ -120,9 +122,11 @@
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0],
-          endTime: this.valueDate[1]
+          endTime: this.valueDate[1],
+          page: 1,
+          limit: 10
         }).then((res) => {
-          this.formListFirst = res.result
+          this.formListFirst = res.result.dataList
         })
       },
       
