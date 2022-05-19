@@ -17,35 +17,45 @@
           </div>
           <div class="function-main">
             <div v-if="functionCheck === 'agency'">
-              <div v-if="dataList.agency.length === 0" class="noPeopleList">
+              <!-- <div v-if="dataList.agency.length === 0" class="noPeopleList">
                 <span style="cursor: pointer;" @click="changePeopleList()">暂无代办人员，点击添加</span>
-              </div>
+              </div> -->
               <div v-if="dataList.agency.length > 0">
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
                   <div v-for="(item, index) in dataList.agency">
-                    <span> {{ item.assignee }}: </span> 
+                    <span> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1, index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
-                    <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span><span class="addCirculate" @click="changePeopleList()" v-if="item.assignee === $store.state.userInfo.name">点击添加</span> </div>
+                    <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
+                        <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length == 0">点击添加</span>
+                    </div>
+                    <div v-if="item.candidateUsers.length > 0" style="display: inline-block;">
+                        <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'agency', item.candidateUsers )" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length > 0">编辑</span>
+                    </div>
                   </div>
                 </div>
-                <span class="editButton" @click="editDataList('agency')">编辑</span>
+                <!-- <span class="editButton" @click="editDataList('agency')">编辑</span> -->
               </div>
             </div>
             <div v-if="functionCheck === 'Circulate'">
-              <div v-if="dataList.Circulate.length === 0" class="noPeopleList">
+              <!-- <div v-if="dataList.Circulate.length === 0" class="noPeopleList">
                 <span style="cursor: pointer;" @click="changePeopleList()">暂无传阅人员，点击添加</span>
-              </div>
+              </div> -->
               <div v-if="dataList.Circulate.length > 0">
                 <div class="peopleList-title">指定传阅人员:</div>
                 <div class="peopleList">
                   <div v-for="(item, index) in dataList.Circulate">
-                    <span> {{ item.assignee }}: </span> 
+                    <span> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1, index1) in item.circulations[0].unitList" v-if="item.circulations[0].unitList.length > 0">{{ item1 }}</div>
-                    <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span><span class="addCirculate" @click="changePeopleList()" v-if="item.assignee === $store.state.userInfo.name">点击添加</span> </div>
+                    <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span>
+                        <span class="addCirculate" @click="changePeopleList(item.circulations[0].unitList.taskId)" v-if="item.assignee === $store.state.userInfo.name">点击添加</span>
+                    </div>
+                    <div v-if="item.circulations[0].unitList.length > 0" style="display: inline-block;">
+                        <span class="addCirculate" @click="changePeopleList(item.circulations[0].unitList.taskId, 'edit', 'Circulate', item.circulations[0].unitList)" v-if="item.assignee === $store.state.userInfo.name">编辑</span>
+                    </div>
                   </div>
                 </div>
-                <span class="editButton" @click="editDataList('Circulate')">编辑</span>
+                <!-- <span class="editButton" @click="editDataList('Circulate')">编辑</span> -->
               </div>
             </div>
             <div v-if="functionCheck === 'signature'">
@@ -57,7 +67,7 @@
                 <div class="peopleList">
                   <div class="peopleList-item" v-for="(item, index) in dataList.signature">{{ item.userId }}</div>
                 </div>
-                <span class="editButton" @click="editDataList('signature')">编辑</span>
+                <!-- <span class="editButton" @click="editDataList('signature')">编辑</span> -->
               </div>
             </div>
             <div v-if="functionCheck === 'Hang'">
@@ -130,7 +140,7 @@
         <el-button type="primary" @click="implement()" :disabled="!dataList.Hang">执 行</el-button>
       </span>
     </el-dialog>
-    <runtimePeople ref="runtimePeople" v-if="$refs.ProcessInformation" :taskId="$refs.ProcessInformation.postData.taskId"
+    <runtimePeople ref="runtimePeople" v-if="$refs.ProcessInformation" :taskId="taskId"
       :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :taskKey="$refs.ProcessInformation.postData.taskKey"></runtimePeople>
     <runtimeConfirmation v-if="$refs.ProcessInformation" ref="runtimeConfirmation" :processInstanceDetail="$refs.ProcessInformation.postData"
       :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :BpmnContant="$refs.ProcessInformation.postData.content"
@@ -166,6 +176,7 @@
         formContant: '',
         formShow: false,
         peopleListDefatil: [],
+        taskId: '',
         bpmnData: {
           name: '',
           grounp: '',
@@ -248,8 +259,32 @@
       changeFunction(value) {
         this.functionCheck = value
       },
-      changePeopleList() {
+      changePeopleList(taskId, type, value, item) {
+        if (type === 'edit') {
+          let a = []
+          item.forEach((item1) => {
+            a.push({
+              userId: item1
+            })
+          })
+          console.log(a)
+          switch (value){
+            case 'agency':
+              this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
+              break;
+            case 'Circulate':
+              // this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(item))
+              this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
+              break;
+            default:
+              break;
+          }
+        }
         this.$refs.runtimePeople.dialogVisible = true
+        this.taskId = taskId
+        this.$nextTick(() => {
+          this.$refs.runtimePeople.toggleRowSelection()
+        })
       },
       editDataList(value) {
         this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(this.dataList[value]))
@@ -530,7 +565,7 @@
     border: 1px solid #000000;
     overflow: auto;
   }
-  
+
   .addCirculate {
     margin-left: 10px;
     display: inline-block;

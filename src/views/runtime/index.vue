@@ -97,7 +97,7 @@
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small">
+              <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" v-if="scope.row.taskAssignee.split(',').indexOf($store.state.userInfo.name) !== -1">
                 执行
               </el-button>
               <el-button @click.native.prevent="detailsDiolog(scope.row)" type="text" size="small">
@@ -223,7 +223,7 @@
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
-          this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
+          this.$refs.runTimeImplement.dataList.Hang = row.taskStatus.split(',').indexOf('hang') == '-1'
           if (!this.$refs.runTimeImplement.dataList.Hang) {
             this.$refs.runTimeImplement.functionCheck = 'Hang'
           }

@@ -24,18 +24,20 @@
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button type="text" size="small">查看</el-button>
-              <el-button type="text" size="small">编辑</el-button>
+              <el-button type="text" size="small" @click="seeData()">查看</el-button>
+              <el-button type="text" size="small" @click="editData()">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
+    <editRole :dialogVisible="dialogVisible" @handleClose="handleClose()" ref="editRole"></editRole>
   </div>
 </template>
 
 <script>
   import PeTree from '@/components/PeTree.vue'
+  import editRole from './component/editRole.vue'
   export default {
     data() {
       return {
@@ -78,6 +80,7 @@
           children: 'children',
           label: 'label'
         },
+        dialogVisible: false,
         tableData: [{
           date: '2016-05-02',
           name: '王小虎',
@@ -100,10 +103,26 @@
     methods: {
       handleNodeClick(data) {
         console.log(data);
+      },
+      seeData() {
+        this.dialogVisible = true
+        this.$nextTick(() => {
+          this.$refs.editRole.type = 'see'
+        })
+      },
+      editData() {
+        this.dialogVisible = true
+        this.$nextTick(() => {
+          this.$refs.editRole.type = 'edit'
+        })
+      },
+      handleClose() {
+        this.dialogVisible = false
       }
     },
     components: {
-      PeTree
+      PeTree,
+      editRole
     }
   }
 </script>

@@ -22,7 +22,7 @@
           </div> -->
           <div class="people-main-right-table">
             <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" row-key="userId" style="width: 100%" @selection-change="handleSelectionChange">
-              <el-table-column type="selection" width="55" align="center">
+              <el-table-column type="selection" width="55" align="center" :reserve-selection="true">
               </el-table-column>
               <el-table-column label="序号" type="index" align="center">
               </el-table-column>
@@ -47,12 +47,12 @@
       <div class="people-footer">
         <div class="peopleList-title">运维一班</div>
         <div class="peopleList">
-          <div class="peopleList-item" v-for="(item, index) in multipleSelection">{{ item.userId }} <i class="el-icon-remove-outline" @click="deletePeople(index)"></i> </div>
+          <div class="peopleList-item" v-for="(item, index) in multipleSelection">{{ item.userId }} <i class="el-icon-remove-outline" @click="deletePeople(item, index)"></i> </div>
         </div>
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button @click="dialogVisible = false; $refs.multipleTable.clearSelection()">取 消</el-button>
       <el-button type="primary" @click="dataBack()">确 定</el-button>
     </span>
   </el-dialog>
@@ -109,6 +109,11 @@
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
+      toggleRowSelection() {
+         this.detailSelection.forEach((item) => {
+           this.$refs.multipleTable.toggleRowSelection(item)
+         })
+      },
       handleSizeChange() {
         
       },
@@ -137,9 +142,8 @@
           this.getPeopleList()
         })
       },
-      
-      deletePeople(index) {
-        this.multipleSelection.splice(index, 1)
+      deletePeople(item, index) {
+        this.$refs.multipleTable.toggleRowSelection(item)
       },
       dataBack() {
         let dataList = []
@@ -169,8 +173,6 @@
         
         switch (this.$parent.functionCheck){
           case 'agency':
-            
-            
             if (deleteList.length) {
               let strDelete = deleteList.join(',')
               getModifyCandidate({
