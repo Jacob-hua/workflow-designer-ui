@@ -265,6 +265,7 @@
         this.bpmnModeler.on("selection.changed", ({
           newSelection
         }) => {
+          console.log(newSelection, '00000')
           this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
         });
         window.bpmnInstances = {
@@ -302,6 +303,7 @@
           this.$nextTick(() => {
             if(id) {
               let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
+                console.log(element, '99999')
                 return element.id === id
               })
               this.$emit('selectOneSet', oneSet[0])

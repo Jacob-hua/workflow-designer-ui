@@ -1,91 +1,115 @@
 <template>
-  <el-dialog
-      title="第三方接口配置"
-      :visible.sync="dialogVisible"
-      width="80%"
-      append-to-body
-  >
-    <div style="display: flex">
-      <div class="container">
-        <div v-for="(item,index)  in apiBoxList " :key="index">
-          <p>API{{index+1}}
-            <i @click="addApiBox" v-if="index === 0" class="el-icon-circle-plus-outline"></i>
-            <span @click="deleteApiBox(index)" v-else class="el-icon-delete"></span>
-          </p>
-          <el-form  ref="form"  label-width="80px">
-            <div class="cardBox">
-              <div style="display: flex; flex-wrap: wrap">
-                <el-form-item label="api名称">
-                  <el-input v-model="item.name"></el-input>
-                </el-form-item>
-                <el-form-item label="api标识">
-                  <el-input v-model="item.apiMark"></el-input>
-                </el-form-item>
-                <el-form-item label="主机地址">
-                  <el-input v-model="item.host"></el-input>
-                </el-form-item>
-                <el-form-item label="访问路径">
-                  <el-input v-model="item.path"></el-input>
-                </el-form-item>
-                <el-form-item label="api类型">
-                  <el-select v-model="item.type" placeholder="请选择api类型">
-                    <el-option
-                        v-for="item in apiOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="请求类型">
-                  <el-select v-model="item.method" placeholder="请选择api类型">
-                    <el-option
-                        v-for="item in methodsOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.label">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="请求头">
-                  <el-input v-model="item.headers"></el-input>
-                </el-form-item>
-              </div>
+  <div>
+    <el-dialog
+        title="第三方接口配置"
+        :visible.sync="dialogVisible"
+        width="80%"
+        append-to-body
+    >
+      <div style="display: flex">
+        <div class="container">
+          <div v-for="(item,index)  in apiBoxList " :key="index">
+            <p>API{{index+1}}
+              <i @click="addApiBox" v-if="index === 0" class="el-icon-circle-plus-outline"></i>
+              <span @click="deleteApiBox(index)" v-else class="el-icon-delete"></span>
+            </p>
+            <el-form  ref="form"  label-width="80px">
+              <div class="cardBox">
+                <div style="display: flex; flex-wrap: wrap">
+                  <el-form-item label="api名称">
+                    <el-input v-model="item.name"></el-input>
+                  </el-form-item>
+                  <el-form-item label="api标识">
+                    <el-input v-model="item.apiMark"></el-input>
+                  </el-form-item>
+                  <el-form-item label="主机地址">
+                    <el-input v-model="item.host"></el-input>
+                  </el-form-item>
+                  <el-form-item label="访问路径">
+                    <el-input v-model="item.path"></el-input>
+                  </el-form-item>
+                  <el-form-item label="api类型">
+                    <el-select v-model="item.type" placeholder="请选择api类型">
+                      <el-option
+                          v-for="(item,idxe) in apiOptions"
+                          :key="idxe"
+                          :label="item.typeName"
+                          :value="item.type">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <p @click="addApiType" style="color: rgb(26, 136, 255); font-size: 14px">未找到类型点击添加</p>
+                  <el-form-item label="请求类型">
+                    <el-select v-model="item.method" placeholder="请选择api类型">
+                      <el-option
+                          v-for="item in methodsOptions"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.label">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="请求头">
+                    <el-input v-model="item.headers"></el-input>
+                  </el-form-item>
+                </div>
 
-              <div class="config_tit">
-                <span>配置参数</span> <i @click="addParams(index)"  class="el-icon-circle-plus-outline"></i>
+                <div class="config_tit">
+                  <span>配置参数</span> <i @click="addParams(index)"  class="el-icon-circle-plus-outline"></i>
+                </div>
+                <div v-for="(params,idx) in item.configParams" :key="idx" class="params">
+                  <el-form-item label="参数key">
+                    <el-input v-model="params.key"></el-input>
+                  </el-form-item>
+                  <el-form-item label="参数value">
+                    <el-input v-model="params.value"></el-input>
+                  </el-form-item>
+                  <i @click="deleteParams( index,idx)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
+                </div>
+                <el-button @click="excuteParse(item)" class="parse" type="primary">模拟解析</el-button>
               </div>
-              <div v-for="(params,idx) in item.configParams" :key="idx" class="params">
-                <el-form-item label="参数key">
-                  <el-input v-model="params.key"></el-input>
-                </el-form-item>
-                <el-form-item label="参数value">
-                  <el-input v-model="params.value"></el-input>
-                </el-form-item>
-                <i @click="deleteParams( index,idx)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
-              </div>
-              <el-button @click="excuteParse(item)" class="parse" type="primary">模拟解析</el-button>
-            </div>
-          </el-form>
+            </el-form>
+          </div>
+
+        </div>
+        <div>
+          <p>解析结果 API1</p>
+          <div class="jsonViewer">
+            <json-viewer :value="jsonData"></json-viewer>
+          </div>
         </div>
 
       </div>
-      <div>
-        <p>解析结果 API1</p>
-        <div class="jsonViewer">
-          <json-viewer :value="jsonData"></json-viewer>
-        </div>
-      </div>
 
-    </div>
-
-    <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer">
       <el-button  @click=" dialogVisible = false; $emit('showAddOrEidtDailog','','pre')">上一步</el-button>
       <el-button  @click="saveOrEdite">保存</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
 
   </span>
-  </el-dialog>
+    </el-dialog>
+
+    <el-dialog
+        title="添加API类型"
+        :visible.sync="dialogVisible2"
+        width="40%"
+        append-to-body
+    >
+      <el-form  ref="form"  label-width="80px">
+        <el-form-item label="类型">
+          <el-input v-model="typeForm.type"></el-input>
+        </el-form-item>
+        <el-form-item label="类型名称">
+          <el-input v-model="typeForm.typeName"></el-input>
+        </el-form-item>
+      </el-form>
+       <span slot="footer" class="dialog-footer">
+          <el-button  @click="dialogVisible2 = false">保存</el-button>
+          <el-button @click="dialogVisible2 = false">取 消</el-button>
+       </span>
+    </el-dialog>
+  </div>
+
 </template>
 
 <script>
@@ -101,6 +125,11 @@ export default {
   },
   data() {
     return {
+      dialogVisible2: false,
+      typeForm: {
+        type: '',
+        typeName: ''
+      },
       jsonData: [{
         value: '选项1',
         label: '黄金糕'
@@ -197,14 +226,15 @@ export default {
   },
   mounted() {
       console.log(this.guideForm)
-      // this.apiBoxList[0] = {
-      //   ...this.apiBoxList[0],
-      //   ...this.guideForm
-      // }
       console.log(this.apiBoxList)
     this.apiTypeList()
   },
   methods: {
+
+    addApiType() {
+      this.dialogVisible2 = true
+    },
+
     excuteParse(api) {
       if (api.method === 'POST') {
         simulationRequest({
