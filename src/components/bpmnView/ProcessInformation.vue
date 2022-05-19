@@ -265,11 +265,6 @@
           ],
           moddleExtensions: [],
         });
-        this.bpmnModeler.on("selection.changed", ({
-          newSelection
-        }) => {
-          this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
-        });
         window.bpmnInstances = {
           modeler: this.bpmnModeler,
           modeling: this.bpmnModeler.get("modeling"),
@@ -282,6 +277,11 @@
           selection: this.bpmnModeler.get("selection"),
           canvas: this.bpmnModeler.get('canvas')
         };
+        this.bpmnModeler.on("selection.changed", ({
+          newSelection
+        }) => {
+          this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
+        });
       },
       creatDemo() {
         processInstanceData({

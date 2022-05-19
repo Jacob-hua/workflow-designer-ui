@@ -267,9 +267,9 @@
               userId: item1
             })
           })
+          console.log(a)
           switch (value){
             case 'agency':
-              // this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(item))
               this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
               break;
             case 'Circulate':
