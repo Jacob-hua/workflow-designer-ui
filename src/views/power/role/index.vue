@@ -83,7 +83,124 @@
         defaultProps: {
           children: 'children',
           label: 'label'
-        }
+        },
+        roleList: [
+         {
+          menuName: '工作流管理',
+          menuCode: 'gongzuoliu',
+          checkList: [],
+          menuNameCheck: [],
+          role: [{
+              roleName: '查看',
+              roleCode: 'chakan'
+            },
+            {
+              roleName: '下装工作流',
+              roleCode: 'xiazhuang'
+            },
+            {
+              roleName: '新建工作流',
+              roleCode: 'xinjian'
+            },
+            {
+              roleName: '编辑工作流',
+              roleCode: 'bianji'
+            },
+          ]
+        },
+        {
+          menuName: '工作流管理',
+          menuCode: 'gongzuoliu',
+          checkList: [],
+          menuNameCheck: [],
+          role: [{
+              roleName: '查看',
+              roleCode: 'chakan'
+            },
+            {
+              roleName: '下装工作流',
+              roleCode: 'xiazhuang'
+            },
+            {
+              roleName: '新建工作流',
+              roleCode: 'xinjian'
+            },
+            {
+              roleName: '编辑工作流',
+              roleCode: 'bianji'
+            },
+          ]
+        },
+        {
+          menuName: '工作流管理',
+          menuCode: 'gongzuoliu',
+          checkList: [],
+          menuNameCheck: [],
+          role: [{
+              roleName: '查看',
+              roleCode: 'chakan'
+            },
+            {
+              roleName: '下装工作流',
+              roleCode: 'xiazhuang'
+            },
+            {
+              roleName: '新建工作流',
+              roleCode: 'xinjian'
+            },
+            {
+              roleName: '编辑工作流',
+              roleCode: 'bianji'
+            },
+          ]
+        },
+        {
+          menuName: '工作流管理',
+          menuCode: 'gongzuoliu',
+          checkList: [],
+          menuNameCheck: [],
+          role: [{
+              roleName: '查看',
+              roleCode: 'chakan'
+            },
+            {
+              roleName: '下装工作流',
+              roleCode: 'xiazhuang'
+            },
+            {
+              roleName: '新建工作流',
+              roleCode: 'xinjian'
+            },
+            {
+              roleName: '编辑工作流',
+              roleCode: 'bianji'
+            },
+          ]
+        },
+        {
+          menuName: '工作流管理',
+          menuCode: 'gongzuoliu',
+          checkList: [],
+          menuNameCheck: [],
+          role: [{
+              roleName: '查看',
+              roleCode: 'chakan'
+            },
+            {
+              roleName: '下装工作流',
+              roleCode: 'xiazhuang'
+            },
+            {
+              roleName: '新建工作流',
+              roleCode: 'xinjian'
+            },
+            {
+              roleName: '编辑工作流',
+              roleCode: 'bianji'
+            },
+          ]
+        },
+        ]
       }
     },
     methods: {
@@ -138,5 +255,33 @@
   
   .personnel-header-button {
     float: right;
+  }
+  
+  .personnel-right-main {
+    padding: 20px 20px;
+    height: 588px;
+    overflow: auto;
+  }
+  
+  .RoleList {
+    margin-bottom: 20px;
+    padding: 30px 20px;
+    /* background-color: #f2f2f2; */
+    border: 1px solid #7fbcff;
+  }
+  .RoleList .el-checkbox__input {
+    position: absolute;
+    left: 110px;
+  }
+  .roleTitle {
+    color: #0066cc;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+  .role-item {
+    border-top: 1px solid #d6d6d6;
+    margin-top: 20px;
+    padding-top: 15px;
   }
 </style>
