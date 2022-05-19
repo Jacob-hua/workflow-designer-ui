@@ -31,7 +31,7 @@
         </el-table>
       </div>
     </div>
-    <editRole :dialogVisible="dialogVisible" @handleClose="handleClose()"></editRole>
+    <editRole :dialogVisible="dialogVisible" @handleClose="handleClose()" ref="editRole"></editRole>
   </div>
 </template>
 
@@ -106,9 +106,15 @@
       },
       seeData() {
         this.dialogVisible = true
+        this.$nextTick(() => {
+          this.$refs.editRole.type = 'see'
+        })
       },
       editData() {
         this.dialogVisible = true
+        this.$nextTick(() => {
+          this.$refs.editRole.type = 'edit'
+        })
       },
       handleClose() {
         this.dialogVisible = false

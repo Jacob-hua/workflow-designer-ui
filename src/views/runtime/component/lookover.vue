@@ -17,9 +17,9 @@
                     <span style="margin-left: 20px;">{{ item2.value }}</span>
                   </div>
                   <div v-if="item1.status === 'completed'">
-                    <i class="el-icon-check" :class="item1.time === '-' ? 'error' : 'success'"></i>
+                    <i class="el-icon-check" :class="item.endTime === '-' ? 'error' : 'success'"></i>
                     <span class="word1">{{ item1.assignee }} <span>(执行)</span></span>
-                    <span class="dataYear">{{ item1.time }}</span>
+                    <span class="dataYear">{{ item.endTime }}</span>
                   </div>
                  <div v-if="item.status === 'deleted'">
                     <div v-for="(item1, index1) in item.commentList">
@@ -28,9 +28,9 @@
                         <span class="word1">{{ item2.message }}</span>
                       </div>
                       <div>
-                        <i class="el-icon-check" :class="item1.time === '-' ? 'error' : 'success'"></i>
+                        <i class="el-icon-check" :class="item.endTime === '-' ? 'error' : 'success'"></i>
                         <span class="word1">{{ item1.assignee }} <span style="color: red;">(驳回)</span> </span>
-                        <span class="dataYear">{{ item1.time }}</span>
+                        <span class="dataYear">{{ item.endTime }}</span>
                       </div>
                     </div>
                   </div>

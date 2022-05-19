@@ -2,7 +2,7 @@
   <el-dialog title="权限授予" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
     <div class="dialogHeader">
       <span>人员信息</span>
-      <el-button type="primary" plain>授权</el-button>
+      <el-button type="primary" plain @click="grant()" v-if="type !== 'edit'">授权</el-button>
     </div>
     <div class="dialogPeople">
       <div>
@@ -40,13 +40,13 @@
     </div>
     <div class="dialogRole">
       <div class="peopleRole">
-        <div class="peopleRole-item">
+        <div class="peopleRole-item" @click="changeRole('guanli')" :class=" checkRole == 'guanli' ? 'checkRole' : ''">
           <span>运检部管理人员</span>
         </div>
-        <div class="peopleRole-item">
+        <div class="peopleRole-item" @click="changeRole('yunwei')" :class=" checkRole == 'yunwei' ? 'checkRole' : ''">
           <span>运检部运维员工</span>
         </div>
-        <div class="peopleRole-item">
+        <div class="peopleRole-item" @click="changeRole('geren')" :class=" checkRole == 'geren' ? 'checkRole' : ''">
           <span>个人权限</span>
         </div>
       </div>
@@ -59,12 +59,17 @@
             <el-checkbox :label="item.menuCode">{{ item.menuName }}</el-checkbox>
           </el-checkbox-group>
         </div>
-        <div></div>
+        <div class="role-item">
+          <label class="roleTitle">操作权限</label>
+          <el-checkbox-group v-model="item.menuNameCheck">
+            <el-checkbox :label="item1.roleCode" v-for="(item1, index1) in item.role">{{ item1.roleName }}</el-checkbox>
+          </el-checkbox-group>
+        </div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">取 消</el-button>
-      <el-button type="primary" @click="handleClose">确 定</el-button>
+    <span slot="footer" class="dialog-footer" v-if="type === 'edit'">
+      <el-button type="primary" @click="handleClose">授予</el-button>
+      <el-button @click="handleClose">取消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -81,7 +86,9 @@
       return {
         input: '123',
         value: '',
+        type: 'see',
         options: [],
+        checkRole: 'guanli',
         roleList: [{
           menuName: '工作流管理',
           menuCode: 'gongzuoliu',
@@ -110,6 +117,12 @@
     methods: {
       handleClose() {
         this.$emit('handleClose')
+      },
+      changeRole(code) {
+        this.checkRole = code
+      },
+      grant() {
+        this.type = 'edit'
       }
     }
   }
@@ -175,12 +188,19 @@
     line-height: 40px;
     border: 1px solid #000000;
     text-align: center;
+    cursor: pointer;
   }
 
   .RoleMain {
     height: 400px;
     border: 1px solid #000000;
     padding: 20px;
+    overflow: auto;
+  }
+  .RoleList {
+    margin-bottom: 20px;
+    padding: 30px 20px;
+    background-color: #f2f2f2;
   }
   .RoleList .el-checkbox__input {
     position: absolute;
@@ -191,5 +211,14 @@
     font-weight: 700;
     margin-bottom: 20px;
     display: inline-block;
+  }
+  .role-item {
+    border-top: 1px solid #d6d6d6;
+    margin-top: 20px;
+    padding-top: 15px;
+  }
+  .checkRole {
+    background-color: #0368cd;
+    color: white;
   }
 </style>
