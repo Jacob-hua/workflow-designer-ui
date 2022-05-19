@@ -43,7 +43,8 @@ export const getDicDataByClassify = () =>
     get(`/config/dicData/getDicDataByClassify?classify=sys`);
 
 export const checkBusinessConfig = (params) =>
-    get(`/config/businessConfig/checkBusinessConfig?type=${params.type}&name=${params.name}`);
+    // get(`/config/businessConfig/checkBusinessConfig?type=${params.type}&name=${params.name}`);
+    get('/config/businessConfig/checkBusinessConfig', params);
 
 export const addBusinessConfig = (params) =>
     post('/config/businessConfig/saveBusinessConfigWithTree', params);
@@ -67,6 +68,10 @@ export const getThirdInterfaceList = ( tenantId ) =>
 //根据业务节点获取配置
 export const selectProcessStartConfigList = (id, tenantId ) =>
     get(`/config/startConfig/selectProcessStartConfigList?tenantId=${tenantId}&businessConfigId=${id}`);
+
+// export const selectProcessStartConfigList = (params ) =>
+//     get(`/config/global/checkApiType?typeName=${params.typeName}&type=user&tenantId=18`);
+
 
 
 

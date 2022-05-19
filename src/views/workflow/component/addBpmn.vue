@@ -112,14 +112,23 @@ import {
           formData.append('business', 'zhihuiyunwei')
           formData.append('status', 'enabled')
           formData.append('createBy', 'admin')
+          formData.append('updateBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
-          publishWorkflow(formData).then(res => {
-            this.$message.success('发布成功')
-            // this.$router.push('/home')
-            this.$emit('close')
-            this.$parent.findWorkFlowRecord('enabled,disabled')
-          })
+          _this.flag?
+              publishWorkflow(formData).then(res => {
+                this.$message.success('发布成功')
+                // this.$router.push('/home')
+                this.$emit('close')
+                this.$parent.findWorkFlowRecord('enabled,disabled')
+              })
+              :
+              workFlowSaveDraft(formData).then((res) => {
+                _this.$message.success('保存成功')
+                // this.$router.push('/home')
+                _this.$emit('close')
+                _this.$parent.findWorkFlowRecord()
+              })
         });
         this.$emit('confirm')
 
@@ -147,13 +156,12 @@ import {
           const {
             definitions
           } = newConvert.xml2js(xml);
+          debugger
           if (definitions.process._name) {
             names = definitions.process._name
-          }
-          if (this.formData.name) {
+          } else if (this.formData.name) {
             names = this.formData.name
-          }
-          if (_this.currentRowData.name) {
+          } else if (_this.currentRowData.name) {
             names = _this.currentRowData.name
           }
           var file1 = new File([xml], names + '.bpmn', {
@@ -163,7 +171,7 @@ import {
           console.log(_this.currentRowData)
           let formData = new FormData()
             formData.append('id', _this.currentRowData.id )
-          formData.append('name', _this.currentRowData.name || _this.formData.name || definitions.process._name)
+          formData.append('name', names)
           formData.append('docName',  definitions.process._name+ '.bpmn' || _this.currentRowData.name+'.bpmn'|| _this.formData.name + '.bpmn')
           if (_this.flag && Object.values(_this.formData).length > 0) {
             formData.append('ascription', _this.$parent.projectCode)
@@ -175,23 +183,26 @@ import {
           formData.append('business', 'zhihuiyunwei')
           formData.append('status', 'drafted')
           formData.append('createBy', 'admin')
+          formData.append('updateBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
+
           _this.flag?
               workFlowSave(formData).then((res) => {
-            _this.$message.success('保存成功')
-            // this.$router.push('/home')
+                _this.$message.success('保存成功')
+                // this.$router.push('/home')
                 _this.$emit('close')
-              _this.$parent.findWorkFlowRecord('drafted')
+                _this.$parent.findWorkFlowRecord('drafted')
 
-          })
-          :
-          workFlowSaveDraft(formData).then((res) => {
-          _this.$message.success('保存成功')
-            // this.$router.push('/home')
-            _this.$emit('close')
-            _this.$parent.findWorkFlowRecord()
-          })
+              })
+              :
+              workFlowSaveDraft(formData).then((res) => {
+                _this.$message.success('保存成功')
+                // this.$router.push('/home')
+                _this.$emit('close')
+                _this.$parent.findWorkFlowRecord('drafted')
+              })
+
         });
         _this.$emit('confirm')
       }
