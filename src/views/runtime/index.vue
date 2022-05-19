@@ -223,7 +223,7 @@
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
           this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
-          this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
+          this.$refs.runTimeImplement.dataList.Hang = row.taskStatus.split(',').indexOf('hang') == '-1'
           if (!this.$refs.runTimeImplement.dataList.Hang) {
             this.$refs.runTimeImplement.functionCheck = 'Hang'
           }
