@@ -5,24 +5,33 @@
       <el-button>创建</el-button>
     </div>
     <div class="businessCall-main-list">
-      <div class="businessCall-main-list-card">
+      <div v-for="(item,index) in businessList" :key="index" class="businessCall-main-list-card">
         <div class="card-main">
-          <div><label>项目名称:</label> <span>北七家</span></div>
-          <div><label>项目类型:</label> <span>工业</span></div>
-          <div><label>配置时间:</label> <span>2022-04-02 11:14:25</span></div>
+          <div><label>项目名称:</label> <span>{{item.name}}</span></div>
+          <div><label>项目类型:</label> <span>{{item.typeName}}</span></div>
+          <div><label>配置时间:</label> <span>{{item.createTime}}</span></div>
         </div>
-        <el-button @click="showSartDailog" class="config">配置</el-button>
-        <el-button>查看</el-button>
+        <el-button @click="showSartDailog(item.id)" class="config">配置</el-button>
+        <el-button @click="lookDetail(item.id)">查看</el-button>
       </div>
     </div>
-    <StartItemCon
-      ref="StartItemCon"
-    />
+    <div v-if="itemconFlag">
+      <StartItemCon
+          :footFlag = "footFlag"
+          ref="StartItemCon"
+      />
+    </div>
+
   </div>
 </template>
 
 <script>
   import StartItemCon from "@/views/configuration/startItemConfig/startItemCon";
+  import {
+    getBusinessConfigBasicList,
+    getBusinessConfigWithTree,
+    selectProcessStartConfigList
+  } from "@/api/globalConfig";
 export default {
   components: {
     StartItemCon
@@ -30,13 +39,60 @@ export default {
   name: "index",
   data() {
     return{
-      itemconFlag : false
+      itemconFlag : false,
+      businessList: [],
+      footFlag: false,
+      StartFlag: false,
+      currentId: null
     }
   },
+  mounted() {
+    this.getBusinessConfigBasicList()
+  },
   methods: {
-    showSartDailog() {
-      this.$refs.StartItemCon.dialogVisible = true
-    }
+    showSartDailog(id) {
+      this.footFlag = true
+      let _this = this
+        getBusinessConfigWithTree(id, +_this.$store.state.tenantId).then(res => {
+          console.log(res)
+          this.itemconFlag = true
+          this.$nextTick(() => {
+            _this.$refs.StartItemCon.dialogVisible = true
+            _this.$refs.StartItemCon.data = res.result
+            _this.$refs.StartItemCon.currentId = +res.result[0].id
+            _this.$refs.StartItemCon.tableData = []
+          })
+
+        })
+    },
+    lookDetail(id) {
+      this.footFlag = false
+      this.itemconFlag = true
+      getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
+        console.log(res)
+        this.$refs.StartItemCon.dialogVisible = true
+        this.$refs.StartItemCon.data = res.result
+        this.$refs.StartItemCon.tableData = []
+        selectProcessStartConfigList(id, +this.$store.state.tenantId).then(res => {
+          console.log(res)
+          res.result.forEach(item => {
+            item.disabled = true
+            item.startType = item.startType+ ''
+            item.isSetting? item.isSetting = true : item.isSetting = false
+            item.isRequired? item.isRequired = true : item.isRequired = false
+          })
+          this.$refs.StartItemCon.tableFlag = true
+          this.$refs.StartItemCon.tableData = res.result
+
+        })
+      })
+    },
+    getBusinessConfigBasicList() {
+        getBusinessConfigBasicList(this.$store.state.tenantId).then(res => {
+          console.log(res)
+          this.businessList = res.result
+        })
+     },
   }
 }
 </script>
@@ -64,6 +120,7 @@ export default {
   .businessCall-main-list {
     padding: 20px 0px;
     display: flex;
+    flex-wrap: wrap;
   }
   .businessCall-main-list-card {
     position: relative;
@@ -77,6 +134,7 @@ export default {
     padding: 10px 20px;
     display: inline-block;
     margin-right: 40px;
+    margin-bottom: 10px;
   }
 
   .businessCall-main-list-add .el-icon-plus {

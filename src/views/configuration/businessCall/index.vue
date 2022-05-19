@@ -10,9 +10,9 @@
             <el-popover
                 placement="bottom"
                 trigger="click">
-              <div  @click="lookBusiness"><i style="margin-top: 10px; margin-right: 15px; font-size: 20px; color: #333333" class=" el-icon-s-order"></i>查看</div>
-              <div @click="editBusiness"><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class=" el-icon-edit-outline"></i>编辑</div>
-              <div><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete"></i>删除</div>
+              <div  @click="lookBusiness(item.id)"><i style="margin-top: 10px; margin-right: 15px; font-size: 20px; color: #333333" class=" el-icon-s-order"></i>查看</div>
+              <div  @click="editBusiness(item.id)"><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class=" el-icon-edit-outline"></i>编辑</div>
+              <div @click ='deleteBusinessConfig(item.id)' ><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete"></i>删除</div>
               <el-button slot="reference">···</el-button>
             </el-popover>
           </div>
@@ -37,6 +37,7 @@
     <BusinessCon
         ref="BusinessCon"
         :showBtn="showBtn"
+        :edit = "edit"
         @showAddOrEidtDailog="showAddOrEidtDailog"
     />
   </div>
@@ -47,7 +48,8 @@ import Guide from "@/views/configuration/businessCall/Guide";
 import BusinessCon from "@/views/configuration/businessCall/BusinessCon";
 import {
   getBusinessConfigBasicList,
-  getDicDataByClassify
+  getDicDataByClassify,
+  getBusinessConfigWithTree, deleteBusinessConfig
 } from "@/api/globalConfig";
 export default {
   components: {
@@ -56,6 +58,7 @@ export default {
   },
   data() {
     return {
+      edit: false,
       showBtn: true,
       businessList: []
     }
@@ -65,6 +68,15 @@ export default {
     this.getDicDataByClassify()
   },
   methods: {
+    deleteBusinessConfig(id) {
+      deleteBusinessConfig(id).then(res=> {
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+        this.getBusinessConfigBasicList()
+      })
+    },
     getDicDataByClassify() {
       getDicDataByClassify().then(res=> {
         console.log(res)
@@ -78,15 +90,27 @@ export default {
       })
     },
 
-    lookBusiness() {
-      this.$refs.BusinessCon.dialogVisible = true
-      this.$refs.BusinessCon.editFlag = false
-      this.showBtn = false
+    lookBusiness(id) {
+      // 获取组织 结构树
+      getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
+        console.log(res)
+        this.$refs.BusinessCon.dialogVisible = true
+        this.$refs.BusinessCon.editFlag = false
+        this.showBtn = false
+        this.$refs.BusinessCon.data = res.result
+      })
+
     },
-    editBusiness() {
-      this.$refs.BusinessCon.dialogVisible = true
-      this.$refs.BusinessCon.editFlag = true
-      this.showBtn = true
+    editBusiness(id) {
+      getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
+        console.log(res)
+        this.$refs.BusinessCon.dialogVisible = true
+        this.$refs.BusinessCon.editFlag = true
+        this.edit = true
+        this.showBtn = true
+        this.$refs.BusinessCon.data = res.result
+      })
+
     },
     showAddOrEidtDailog() {
       this.$refs.guide.dialogVisible = true
