@@ -156,9 +156,6 @@ export default {
     }
   },
   mounted() {
-    // debugger
-
-      // console.log(this.currentId)
     this.$nextTick(() => {
       console.log(this.data)
       console.log(this.currentId)

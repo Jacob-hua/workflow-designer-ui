@@ -64,7 +64,6 @@ export default {
       this.checkBusinessConfig()
     },
     checkBusinessConfig() {
-      debugger
       checkBusinessConfig(this.form).then(res=> {
         console.log(res)
         if (res.result) {

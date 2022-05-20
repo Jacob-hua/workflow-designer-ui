@@ -80,51 +80,16 @@
       <div class="cardBox">
         <p> 解析参数</p>
         <div class="jsonViewer">
-          <div class="params">
+          <div v-for="(par,idx) in currentPars" :key="idx" class="params">
             <el-form-item label="参数key">
-              <el-input v-model="form.srcMark"></el-input>
+              <el-input v-model="par.key"></el-input>
             </el-form-item>
             <el-form-item label="参数value">
-              <el-input v-model="form.srcMark"></el-input>
+              <el-input v-model="par.value"></el-input>
             </el-form-item>
-
-          </div><div class="params">
-          <el-form-item label="参数key">
-            <el-input v-model="form.srcMark"></el-input>
-          </el-form-item>
-          <el-form-item label="参数value">
-            <el-input v-model="form.srcMark"></el-input>
-          </el-form-item>
-
         </div>
-          <div class="params">
-            <el-form-item label="参数key">
-              <el-input v-model="form.srcMark"></el-input>
-            </el-form-item>
-            <el-form-item label="参数value">
-              <el-input v-model="form.srcMark"></el-input>
-            </el-form-item>
-
-          </div><div class="params">
-          <el-form-item label="参数key">
-            <el-input v-model="form.srcMark"></el-input>
-          </el-form-item>
-          <el-form-item label="参数value">
-            <el-input v-model="form.srcMark"></el-input>
-          </el-form-item>
-
-        </div>
-          <div class="params">
-            <el-form-item label="参数key">
-              <el-input v-model="form.srcMark"></el-input>
-            </el-form-item>
-            <el-form-item label="参数value">
-              <el-input v-model="form.srcMark"></el-input>
-            </el-form-item>
-          </div>
         </div>
       </div>
-
     </div>
     </el-form>
   </el-dialog>
@@ -140,6 +105,7 @@ export default {
   },
   data() {
     return {
+      currentPars: [],
       form: {},
       editableTabsValue: '1',
       methodsOptions: [
@@ -158,7 +124,9 @@ export default {
     }
   },
   methods: {
-    handleClick() {},
+    handleClick() {
+     this.currentPars = this.currentRow[ this.editableTabsValue].parseParams
+    },
     deleteApis() {
       console.log(this.editableTabsValue)
 
@@ -177,6 +145,7 @@ export default {
   mounted() {
     console.log(this.currentRow)
     this.editableTabsValue = '0'
+    this.currentPars = this.currentRow[ this.editableTabsValue].parseParams
   }
 }
 </script>
@@ -201,12 +170,7 @@ export default {
 }
 .top /deep/ .el-form-item {
   width: 40%;
-  /*margin-right: 30px;*/
 }
-/*.container  /deep/ .el-form-item {*/
-/*  width: 60%;*/
-/*  margin-right: 30px;*/
-/*}*/
 /deep/ .jsonViewer .jv-code {
   background-color: rgb(204, 204, 204);
   width: 600px;
