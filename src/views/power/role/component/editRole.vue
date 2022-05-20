@@ -1,74 +1,61 @@
 <template>
   <el-dialog title="权限修改" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
-    <div class="dialogHeader">
-      <span>人员信息</span>
-      <el-button type="primary" plain @click="grant()" v-if="type !== 'edit'">授权</el-button>
+    <div class="dialogTitle">
+      <label>用户组</label>
+      <el-input v-model="input" placeholder="请输入内容"></el-input>
     </div>
-    <div class="dialogPeople">
-      <div>
-        <div class="item">
-          <label>姓名</label>
-          <el-input placeholder="请输入内容" v-model="input" :disabled="true">
-          </el-input>
-        </div>
-        <div class="item">
-          <label>账号</label>
-          <el-input placeholder="请输入内容" v-model="input" :disabled="true">
-          </el-input>
-        </div>
-      </div>
-      <div>
-        <div class="item1">
-          <label>业务选择</label>
-          <el-select v-model="value" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </div>
-      </div>
-      <div>
-        <div class="item2">
-          <label>当前角色</label>
-          <el-input placeholder="请输入内容" v-model="input" :disabled="true">
-          </el-input>
-        </div>
-        <div class="item2">
-          <el-input placeholder="请输入内容" v-model="input" :disabled="true">
-          </el-input>
-        </div>
+    <div class="dialogGroup">
+      <label>用户组详情</label>
+      <div class="userGroup">
+        <div v-for="(item, index) in array1" class="userGroup-item">{{ item }}</div>
       </div>
     </div>
-    <div class="dialogRole">
-      <div class="peopleRole">
-        <div class="peopleRole-item" @click="changeRole('guanli')" :class=" checkRole == 'guanli' ? 'checkRole' : ''">
-          <span>运检部管理人员</span>
-        </div>
-        <div class="peopleRole-item" @click="changeRole('yunwei')" :class=" checkRole == 'yunwei' ? 'checkRole' : ''">
-          <span>运检部运维员工</span>
-        </div>
-        <div class="peopleRole-item" @click="changeRole('geren')" :class=" checkRole == 'geren' ? 'checkRole' : ''">
-          <span>个人权限</span>
+    <div class="dialogMain">
+      <div class="dialogMain-left">
+        <div>权限库</div>
+        <div class="left-group">
+          <div class="RoleMain">
+            <div v-for="(item, index) in roleList" class="RoleList">
+              <div>
+                <label class="roleTitle">应用菜单权限</label>
+                <el-checkbox-group v-model="item.checkList">
+                  <el-checkbox :label="item.menuCode">{{ item.menuName }}</el-checkbox>
+                </el-checkbox-group>
+              </div>
+              <div class="role-item">
+                <label class="roleTitle">操作权限</label>
+                <el-checkbox-group v-model="item.menuNameCheck">
+                  <el-checkbox :label="item1.roleCode" v-for="(item1, index1) in item.role">{{ item1.roleName }}</el-checkbox>
+                </el-checkbox-group>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="RoleMain">
-      <div v-for="(item, index) in roleList" class="RoleList">
-        <div>
-          <label class="roleTitle">应用菜单权限</label>
-          <el-checkbox-group v-model="item.checkList">
-            <el-checkbox :label="item.menuCode">{{ item.menuName }}</el-checkbox>
-          </el-checkbox-group>
-        </div>
-        <div class="role-item">
-          <label class="roleTitle">操作权限</label>
-          <el-checkbox-group v-model="item.menuNameCheck">
-            <el-checkbox :label="item1.roleCode" v-for="(item1, index1) in item.role">{{ item1.roleName }}</el-checkbox>
-          </el-checkbox-group>
+      <div class="dialogMain-right">
+        <div>已选择权限</div>
+        <div class="right-group">
+          <div class="RoleMain">
+            <div v-for="(item, index) in roleList" class="RoleList">
+              <div>
+                <label class="roleTitle">应用菜单权限</label>
+                <el-checkbox-group v-model="item.checkList">
+                  <el-checkbox :label="item.menuCode">{{ item.menuName }}</el-checkbox>
+                </el-checkbox-group>
+              </div>
+              <div class="role-item">
+                <label class="roleTitle">操作权限</label>
+                <el-checkbox-group v-model="item.menuNameCheck">
+                  <el-checkbox :label="item1.roleCode" v-for="(item1, index1) in item.role">{{ item1.roleName }}</el-checkbox>
+                </el-checkbox-group>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer" v-if="type === 'edit'">
-      <el-button type="primary" @click="handleClose">授予</el-button>
+    <span slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="handleClose">保存</el-button>
       <el-button @click="handleClose">取消</el-button>
     </span>
   </el-dialog>
@@ -85,11 +72,9 @@
     data() {
       return {
         input: '123',
-        value: '',
-        type: 'see',
-        options: [],
-        checkRole: 'guanli',
-        roleList: [{
+        array1: ['张三', '昊昊', '大乔'],
+        roleList: [
+         {
           menuName: '工作流管理',
           menuCode: 'gongzuoliu',
           checkList: [],
@@ -111,7 +96,100 @@
               roleCode: 'bianji'
             },
           ]
-        }]
+        },
+        {
+          menuName: '工作流管理',
+          menuCode: 'gongzuoliu',
+          checkList: [],
+          menuNameCheck: [],
+          role: [{
+              roleName: '查看',
+              roleCode: 'chakan'
+            },
+            {
+              roleName: '下装工作流',
+              roleCode: 'xiazhuang'
+            },
+            {
+              roleName: '新建工作流',
+              roleCode: 'xinjian'
+            },
+            {
+              roleName: '编辑工作流',
+              roleCode: 'bianji'
+            },
+          ]
+        },
+        {
+          menuName: '工作流管理',
+          menuCode: 'gongzuoliu',
+          checkList: [],
+          menuNameCheck: [],
+          role: [{
+              roleName: '查看',
+              roleCode: 'chakan'
+            },
+            {
+              roleName: '下装工作流',
+              roleCode: 'xiazhuang'
+            },
+            {
+              roleName: '新建工作流',
+              roleCode: 'xinjian'
+            },
+            {
+              roleName: '编辑工作流',
+              roleCode: 'bianji'
+            },
+          ]
+        },
+        {
+          menuName: '工作流管理',
+          menuCode: 'gongzuoliu',
+          checkList: [],
+          menuNameCheck: [],
+          role: [{
+              roleName: '查看',
+              roleCode: 'chakan'
+            },
+            {
+              roleName: '下装工作流',
+              roleCode: 'xiazhuang'
+            },
+            {
+              roleName: '新建工作流',
+              roleCode: 'xinjian'
+            },
+            {
+              roleName: '编辑工作流',
+              roleCode: 'bianji'
+            },
+          ]
+        },
+        {
+          menuName: '工作流管理',
+          menuCode: 'gongzuoliu',
+          checkList: [],
+          menuNameCheck: [],
+          role: [{
+              roleName: '查看',
+              roleCode: 'chakan'
+            },
+            {
+              roleName: '下装工作流',
+              roleCode: 'xiazhuang'
+            },
+            {
+              roleName: '新建工作流',
+              roleCode: 'xinjian'
+            },
+            {
+              roleName: '编辑工作流',
+              roleCode: 'bianji'
+            },
+          ]
+        },
+        ]
       }
     },
     methods: {
@@ -129,72 +207,63 @@
 </script>
 
 <style scoped="scoped">
-  .dialogHeader {
-    border-left: 3px solid #108cee;
-    padding-left: 20px;
+  .dialogTitle {
+    padding-top: 0px;
+    padding-bottom: 20px;
+    color: black;
   }
-
-  .dialogHeader /deep/ .el-button {
-    float: right;
-    padding: 10px 30px;
+  .dialogTitle /deep/ .el-input {
+    width: 70%;
+    margin-left: 150px;
   }
-
-  .dialogPeople {
+  .dialogGroup {
+    padding-top: 20px;
+    border-top: 1px solid #f5f5f5;
+    color: black;
+  }
+  .userGroup {
+    height: 200px;
+    border: 1px solid #000000;
+    padding: 20px 20px;
     margin-top: 20px;
   }
-
-  .dialogPeople .item {
+  .userGroup-item {
+    width: 118px;
+    height: 42px;
     display: inline-block;
-    width: 400px;
-  }
-
-  .item /deep/ .el-input {
-    width: 220px;
-    margin-left: 38px;
-  }
-
-  .dialogPeople .item1 {
-    display: inline-block;
-    width: 500px;
-    margin-top: 30px;
-  }
-
-  .item1 /deep/ .el-select {
-    width: 220px;
-    margin-left: 10px;
-  }
-
-  .dialogPeople .item2 {
-    display: inline-block;
-    width: 300px;
-    margin-top: 30px;
-  }
-
-  .item2 /deep/ .el-input {
-    width: 220px;
-    margin-left: 10px;
-  }
-
-  .peopleRole {
-    margin-top: 30px;
-    border-top: 1px solid #f5f5f5;
-    padding-top: 20px;
-    display: flex;
-  }
-
-  .peopleRole-item {
-    width: 120px;
-    height: 40px;
-    line-height: 40px;
-    border: 1px solid #000000;
+    line-height: 42px;
     text-align: center;
-    cursor: pointer;
+    border: 1px solid #cccccc;
+    margin-right: 20px;
   }
-
-  .RoleMain {
-    height: 400px;
+  .dialogMain {
+    display: flex;
+    margin-top: 20px;
+    color: black;
+  }
+  .dialogMain-left {
+    flex: 1;
+    margin-right: 80px;
+  }
+  .left-group {
+    width: 100%;
+    height: 411px;
     border: 1px solid #000000;
-    padding: 20px;
+    margin-top: 20px;
+    padding: 10px 10px 0px 10px;
+    overflow: auto;
+    /* margin-right: 30px; */
+  }
+  .dialogMain-right {
+    flex: 1;
+  }
+  .right-group {
+    width: 100%;
+    height: 411px;
+    border: 1px solid #000000;
+    margin-top: 20px;
+    margin-left: 10px;
+    padding: 10px 10px 0px 10px;
     overflow: auto;
   }
   .RoleList {
@@ -216,9 +285,5 @@
     border-top: 1px solid #d6d6d6;
     margin-top: 20px;
     padding-top: 15px;
-  }
-  .checkRole {
-    background-color: #0368cd;
-    color: white;
   }
 </style>

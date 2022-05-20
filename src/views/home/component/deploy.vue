@@ -176,7 +176,7 @@
         this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
           let a = xml.replaceAll(this.$refs.ProcessInformation.postData.code, `Process_${new Date().getTime()}`)
           const { definitions } = newConvert.xml2js(a);
-          var file1 = new File([xml], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
+          var file1 = new File([a], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
           if (Array.isArray(definitions.process.userTask)) {
             definitions.process.userTask.forEach((item, index) => {
               if (item['_camunda:formKey']) {

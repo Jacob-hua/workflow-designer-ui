@@ -214,7 +214,7 @@
             tenantId: this.$store.state.tenantId,
             ascription: 'public',
             business: '',
-            createBy: '',
+            createBy: this.$store.state.userInfo.name,
             numberCode: '',
             name: '',
             docName: docName
