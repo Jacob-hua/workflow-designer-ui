@@ -7,7 +7,7 @@
     <div class="dialogGroup">
       <label>用户组详情</label>
       <div class="userGroup">
-        <div v-for="(item, index) in array1" class="userGroup-item">{{ item }}</div>
+        <div v-for="(item, index) in array1" :key="index" class="userGroup-item">{{ item }}</div>
       </div>
     </div>
     <div class="dialogMain">
@@ -15,7 +15,7 @@
         <div>权限库</div>
         <div class="left-group">
           <div class="RoleMain">
-            <div v-for="(item, index) in roleList" class="RoleList">
+            <div v-for="(item, index) in roleList" :key="index" class="RoleList">
               <div>
                 <label class="roleTitle">应用菜单权限</label>
                 <el-checkbox-group v-model="item.checkList">
@@ -25,7 +25,7 @@
               <div class="role-item">
                 <label class="roleTitle">操作权限</label>
                 <el-checkbox-group v-model="item.menuNameCheck">
-                  <el-checkbox :label="item1.roleCode" v-for="(item1, index1) in item.role">{{ item1.roleName }}</el-checkbox>
+                  <el-checkbox :label="item1.roleCode" v-for="(item1, index1) in item.role" :key="index1">{{ item1.roleName }}</el-checkbox>
                 </el-checkbox-group>
               </div>
             </div>
@@ -36,7 +36,7 @@
         <div>已选择权限</div>
         <div class="right-group">
           <div class="RoleMain">
-            <div v-for="(item, index) in roleList" class="RoleList">
+            <div v-for="(item, index) in roleList" :key="index" class="RoleList">
               <div>
                 <label class="roleTitle">应用菜单权限</label>
                 <el-checkbox-group v-model="item.checkList">
@@ -46,7 +46,7 @@
               <div class="role-item">
                 <label class="roleTitle">操作权限</label>
                 <el-checkbox-group v-model="item.menuNameCheck">
-                  <el-checkbox :label="item1.roleCode" v-for="(item1, index1) in item.role">{{ item1.roleName }}</el-checkbox>
+                  <el-checkbox :label="item1.roleCode" v-for="(item1, index1) in item.role" :key="index1">{{ item1.roleName }}</el-checkbox>
                 </el-checkbox-group>
               </div>
             </div>

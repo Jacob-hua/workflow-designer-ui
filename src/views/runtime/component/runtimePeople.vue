@@ -118,7 +118,7 @@
         
       },
       handleClose() {
-        
+        this.dialogVisible = false
       },
       changeCurrentKey(key) {
         this.currentKey = key.groupId

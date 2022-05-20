@@ -19,8 +19,8 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">可用表单（{{ formListFirst.length }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">可用表单（{{ getDataFirst.total }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ getDataSecond.total }}）</span>
       </div>
       <div class="home-table">
         <div v-if="activeName === 'enabled'">
@@ -87,7 +87,17 @@
         activeName: 'enabled',
         formListFirst: [],
         formListSecond: [],
-        dataType: 'enabled'
+        dataType: 'enabled',
+        getDataFirst: {
+          page: 1,
+          limit: 9999999,
+          total: 0
+        },
+        getDataSecond: {
+          page: 1,
+          limit: 9999999,
+          total: 0
+        }
       }
     },
     methods:{
@@ -104,13 +114,13 @@
           name: this.input,
           startTime: this.valueDate[0] || '',
           endTime: this.valueDate[1] || '',
-          page: 1,
-          limit: 10
+          ...this.getDataSecond
         }).then((res) => {
-          this.formListSecond = res.result
+          this.formListSecond = res.result.dataList
+          this.getDataSecond.total = res.result.count
         })
       },
-      // 查询可部署流程
+      // 查询公共表单
       getEnableData() {
         this.valueDate = this.valueDate || []
         postFormDesignBasicFormRecord({
@@ -123,10 +133,10 @@
           name: this.input,
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
-          page: 1,
-          limit: 10
+          ...this.getDataFirst
          }).then((res) => {
           this.formListFirst = res.result.dataList
+          this.getDataFirst.total = res.result.count
         })
       },
       
@@ -273,7 +283,7 @@
   }
   
   .home-table {
-    height: 786px;
+    min-height: 786px;
     border: 1px solid #666666;
     margin-bottom: 40px;
     padding: 20px 20px;

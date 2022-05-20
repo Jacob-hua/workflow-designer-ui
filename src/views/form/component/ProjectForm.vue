@@ -54,8 +54,8 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">工作流（{{ formListFirst.length }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formListSecond.length }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">工作流（{{ getDataFirst.total }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ getDataSecond.total }}）</span>
       </div>
       <div class="home-table">
         <div v-if="activeName === 'enabled'">
@@ -148,6 +148,16 @@
         activeName: 'enabled',
         formListFirst: [],
         formListSecond: [],
+        getDataFirst: {
+          page: 1,
+          limit: 9999999,
+          total: 0
+        },
+        getDataSecond: {
+          page: 1,
+          limit: 9999999,
+          total: 0
+        },
         dialogVisible: false
       }
     },
@@ -170,10 +180,10 @@
           name: this.input,
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
-          page: 1,
-          limit: 10
+          ...this.getDataSecond
         }).then((res) => {
-          this.formListSecond = res.result
+          this.formListSecond = res.result.dataList
+          this.getDataSecond.total = res.result.count
         })
       },
       // 查询可部署流程
@@ -188,10 +198,10 @@
           name: this.input,
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
-          page: 1,
-          limit: 10
+         ...this.getDataFirst
         }).then((res) => {
           this.formListFirst = res.result.dataList
+          this.getDataFirst.total = res.result.count
         })
       },
       
