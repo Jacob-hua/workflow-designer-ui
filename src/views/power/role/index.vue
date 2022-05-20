@@ -14,8 +14,8 @@
         <i class="el-icon-share"></i>
         <span class="personnel-header-word">权限详情</span>
         <div class="personnel-header-button">
-          <el-button type="primary" plain icon="el-icon-search">查看</el-button>
-          <el-button type="primary" plain icon="el-icon-s-finance">编辑</el-button>
+          <el-button type="primary" plain icon="el-icon-search" @click="seeHandle()">查看</el-button>
+          <el-button type="primary" plain icon="el-icon-s-finance" @click="editHandle()">编辑</el-button>
         </div>
       </div>
       <div class="personnel-right-main">
@@ -37,14 +37,17 @@
         </div>
       </div>
     </div>
+    <editRole :dialogVisible="dialogVisible" @handleClose="handleClose"></editRole>
   </div>
 </template>
 
 <script>
   import PeTree from '@/components/PeTree.vue'
+  import editRole from './component/editRole.vue'
   export default {
     data() {
       return {
+        dialogVisible: false,
         data: [{
           label: '一级 1',
           children: [{
@@ -206,10 +209,20 @@
     methods: {
       handleNodeClick(data) {
         console.log(data);
+      },
+      handleClose() {
+        this.dialogVisible = false
+      },
+      seeHandle() {
+        this.dialogVisible = true
+      },
+      editHandle() {
+        this.dialogVisible = true
       }
     },
     components: {
-      PeTree
+      PeTree,
+      editRole
     }
   }
 </script>

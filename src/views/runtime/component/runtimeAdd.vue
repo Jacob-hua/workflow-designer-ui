@@ -96,7 +96,7 @@
           getStartProcess({
             businessKey: '',
             definitionKey: item.key,
-            createBy: 'admin',
+            createBy: this.$store.state.userInfo.name,
             startProcessId: item.id,
             variables: {}
           }).then((res) => {
