@@ -1,8 +1,8 @@
 <template>
   <div class="pe-tree tree-container">
-    <el-tree :data="data" class="tree" :indent="0">
-      <div class="custom-tree-node" slot-scope="{ node }">
-        <span class="pe-tree-label">{{ node.label }}</span>
+    <el-tree :data="data" class="tree" node-key="groupId" :indent="0" @node-click="nodeClick" :current-node-key="currentNodeKey">
+      <div class="custom-tree-node" slot-scope="{ node, data }">
+        <span class="pe-tree-label">{{ data.groupName }}</span>
       </div>
     </el-tree>
   </div>
@@ -10,43 +10,24 @@
 
 <script>
   export default {
+    props:{
+      data: {
+        type: Array,
+        default: () => {[]}
+      },
+      currentNodeKey: {
+        type: String,
+        default: 'XM_aff0659724a54c119ac857d4e560b47b:-1:template:78'
+      }
+    },
     data() {
       return {
-        data: [{
-          label: '一级 1',
-          children: [{
-            label: '二级 1-1',
-            children: [{
-              label: '三级 1-1-1'
-            }]
-          }]
-        }, {
-          label: '一级 2',
-          children: [{
-            label: '二级 2-1',
-            children: [{
-              label: '三级 2-1-1'
-            }]
-          }, {
-            label: '二级 2-2',
-            children: [{
-              label: '三级 2-2-1'
-            }]
-          }]
-        }, {
-          label: '一级 3',
-          children: [{
-            label: '二级 3-1',
-            children: [{
-              label: '三级 3-1-1'
-            }]
-          }, {
-            label: '二级 3-2',
-            children: [{
-              label: '三级 3-2-1'
-            }]
-          }]
-        }],
+
+      }
+    },
+    methods:{
+      nodeClick(data, node) {
+        this.$emit('nodeClick', data, node)
       }
     }
   }
@@ -55,6 +36,7 @@
 <style scoped="scoped">
  /deep/ .el-tree {
     background: transparent;
+    font-size: 15px;
   }
   /deep/ .el-tree-node__content {
     height: 40px;
