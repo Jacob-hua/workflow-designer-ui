@@ -122,13 +122,13 @@ export default {
               let obj= {key: '', value: ''}
               if(api.parameter) {
                 let parArr = api.parameter.split('?')
-                if (!api.parameter.includes('&&')) {
+                if (!api.parameter.includes('&')) {
                   api.configParams.push({
                     key: parArr[1].split('=')[0],
                     value: parArr[1].split('=')[1]
                   })
                 } else {
-                  let entry = parArr[1].split("&&")
+                  let entry = parArr[1].split("&")
                   for (const val of entry) {
                     api.configParams.push({
                       key:val.split('=')[0],

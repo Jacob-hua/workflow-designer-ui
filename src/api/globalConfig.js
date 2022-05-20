@@ -69,8 +69,8 @@ export const getThirdInterfaceList = ( tenantId ) =>
 export const selectProcessStartConfigList = (id, tenantId ) =>
     get(`/config/startConfig/selectProcessStartConfigList?tenantId=${tenantId}&businessConfigId=${id}`);
 
-// export const selectProcessStartConfigList = (params ) =>
-//     get(`/config/global/checkApiType?typeName=${params.typeName}&type=user&tenantId=18`);
+export const checkApiType = (params ) =>
+    get(`/config/global/checkApiType`, params);
 
 
 

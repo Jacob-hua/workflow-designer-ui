@@ -66,6 +66,18 @@
                   </el-form-item>
                   <i @click="deleteParams( index,idx)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
                 </div>
+                <div class="config_tit">
+                  <span style="color: #1d89ff">解析参数</span> <i @click="addParseParams(index)"  class="el-icon-circle-plus-outline"></i>
+                </div>
+                <div v-for="(parse,idx) in item.parseParams" :key="idx" class="params">
+                  <el-form-item label="参数key">
+                    <el-input v-model="parse.key"></el-input>
+                  </el-form-item>
+                  <el-form-item label="参数value">
+                    <el-input v-model="parse.value"></el-input>
+                  </el-form-item>
+                  <i @click="deleteParseParams( index,idx)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
+                </div>
                 <el-button @click="excuteParse(item)" class="parse" type="primary">模拟解析</el-button>
               </div>
             </el-form>
@@ -82,11 +94,10 @@
       </div>
 
       <span slot="footer" class="dialog-footer">
-      <el-button  @click=" dialogVisible = false; $emit('showAddOrEidtDailog','','pre')">上一步</el-button>
-      <el-button  @click="saveOrEdite">保存</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
-
-  </span>
+        <el-button  @click=" dialogVisible = false; $emit('showAddOrEidtDailog','','pre')">上一步</el-button>
+        <el-button  @click="saveOrEdite">保存</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+     </span>
     </el-dialog>
 
     <el-dialog
@@ -104,7 +115,7 @@
         </el-form-item>
       </el-form>
        <span slot="footer" class="dialog-footer">
-          <el-button  @click="dialogVisible2 = false">保存</el-button>
+          <el-button  @click="saveApi">保存</el-button>
           <el-button @click="dialogVisible2 = false">取 消</el-button>
        </span>
     </el-dialog>
@@ -114,7 +125,7 @@
 
 <script>
 import {
-  apiTypeList,
+  apiTypeList, checkApiType,
   saveOrEdite, simulationRequest
 } from "@/api/globalConfig";
 
@@ -130,42 +141,7 @@ export default {
         type: '',
         typeName: ''
       },
-      jsonData: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      },
-        {
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        },
-      ],
+      jsonData: [],
       value: '',
       apiBoxList: [
         // {
@@ -203,12 +179,18 @@ export default {
             createTime: '', //创建时间
             createBy: this.$store.state.userInfo.name, //创建人
             tenantId: +this.$store.state.tenantId, //租户id
-          configParams: [
-            {
-              key: '',
-              value: ''
-            }
-          ]
+            configParams: [
+              {
+                key: '',
+                value: ''
+              }
+            ],
+            parseParams: [
+              {
+                key: '',
+                value: ''
+              }
+            ]
         }
       ],
       methodsOptions: [
@@ -230,9 +212,31 @@ export default {
     this.apiTypeList()
   },
   methods: {
+    saveApi() {
+      // get(`/config/global/checkApiType?typeName=${params.typeName}&type=user&tenantId=18`);
+      checkApiType({
+        ...this.typeForm,
+        tenantId: this.$store.state.tenantId
+      }).then(res => {
+        console.log(res)
+        if (res.result) {
+          this.apiOptions.push(this.typeForm)
+          this.dialogVisible2 = false
+        } else {
+          this.$message({
+            type: 'error',
+            message: 'Api类型或类型名称重复'
+          })
+        }
+      })
 
+    },
     addApiType() {
       this.dialogVisible2 = true
+      this.typeForm =  {
+        type: '',
+        typeName: ''
+      }
     },
 
     excuteParse(api) {
@@ -247,6 +251,7 @@ export default {
           this.jsonData = res
         })
       } else {
+
         simulationRequest({
           "headers": api.headers,
           "method": api.method,
@@ -264,6 +269,7 @@ export default {
       })
     },
     saveOrEdite() {
+      // dataParse {"userId":"$.result.account","userName":"$.result.name"}
       this.apiBoxList.forEach(apibox => {
         if (apibox.method === 'POST') {
           let obj = {}
@@ -322,8 +328,6 @@ export default {
               ]
             }
         )
-
-
     },
     deleteApiBox(index) {
       this.apiBoxList.splice(index,1)
@@ -333,6 +337,15 @@ export default {
         key: '',
         value: ''
       })
+    },
+    addParseParams(index) {
+      this.apiBoxList[index].parseParams.push({
+        key: '',
+        value: ''
+      })
+    },
+    deleteParseParams(parentIdx,idx) {
+      this.apiBoxList[parentIdx].parseParams.splice(idx,1)
     },
     deleteParams(parentIdx,idx) {
       this.apiBoxList[parentIdx].configParams.splice(idx,1)
