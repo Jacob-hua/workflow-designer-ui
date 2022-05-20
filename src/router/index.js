@@ -61,13 +61,13 @@ const routes = [
       },
       {
         path: '/home/all',
-        name: '/home/all',
+        name: 'all',
         component: () => import('@/views/configuration'),
         hidden: true,
       },
       {
         path: '/home/power',
-        name: '/home/power',
+        name: 'power',
         component: () => import('@/views/power'),
         hidden: true,
       }

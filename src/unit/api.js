@@ -193,3 +193,18 @@ export const getDeployCount = (params) =>
 // 用户流程任务数量统计
 export const postTaskCountStatistics = (params) =>
   post('/execute/taskCountStatistics', params);
+  
+  
+// 权限管理
+
+// 获取组树
+export const getSystemGroupTree = (params) =>
+  get('/person/systemGroupTree', params);
+
+// 获取用户列表
+export const postPersonUser = (params) =>
+  post('/person/user', params);
+  
+// 查询用户资源权限
+export const getUserPermission = (params) =>
+  get('/permission/mapping/userPermission', params);
