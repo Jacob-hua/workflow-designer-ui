@@ -251,15 +251,33 @@ export default {
           this.jsonData = res
         })
       } else {
+        if (api.parameter) {
+          simulationRequest({
+            "headers": api.headers,
+            "method": api.method,
+            "url": api.host + api.path + api.parameter
+          }).then(res => {
+            console.log(res)
+            this.jsonData = res
+          })
+        } else {
+          api.configParams.forEach((config,index) => {
+            if (index === 0) {
+              api.parameter = `?${config.key}=${config.value}`
+            } else  {
+              api.parameter += `&${config.key}=${config.value}`
+            }
+          })
+          simulationRequest({
+            "headers": api.headers,
+            "method": api.method,
+            "url": api.host + api.path + api.parameter
+          }).then(res => {
+            console.log(res)
+            this.jsonData = res
+          })
+        }
 
-        simulationRequest({
-          "headers": api.headers,
-          "method": api.method,
-          "url": api.host + api.path + api.parameter
-        }).then(res => {
-          console.log(res)
-          this.jsonData = res
-        })
       }
 
     },
@@ -270,7 +288,12 @@ export default {
     },
     saveOrEdite() {
       // dataParse {"userId":"$.result.account","userName":"$.result.name"}
+      let pars = {}
       this.apiBoxList.forEach(apibox => {
+        apibox.parseParams.forEach(parse => {
+            pars[parse.key] =  parse.value
+        })
+        apibox.dataParse = JSON.stringify(pars)
         if (apibox.method === 'POST') {
           let obj = {}
             apibox.configParams.forEach(item=> {
@@ -283,10 +306,19 @@ export default {
               if (index === 0) {
                 apibox.parameter = `?${config.key}=${config.value}`
               } else  {
-                apibox.parameter += `&&${config.key}=${config.value}`
+                apibox.parameter += `&${config.key}=${config.value}`
               }
             })
         }
+      })
+
+
+      let parameterMap = {}
+      this.apiBoxList.forEach(apiBox => {
+        apiBox.configParams.forEach(con => {
+          parameterMap[con.key] = con.value? con.value : null
+        })
+        apiBox.parameterMap = parameterMap
       })
       this.apiBoxList.forEach(apiBox => delete apiBox.configParams)
       saveOrEdite(this.apiBoxList).then(res => {
@@ -321,6 +353,12 @@ export default {
               createBy: this.$store.state.userInfo.name, //创建人
               tenantId: +this.$store.state.tenantId, //租户id
               configParams: [
+                {
+                  key: '',
+                  value: ''
+                }
+              ],
+              parseParams: [
                 {
                   key: '',
                   value: ''

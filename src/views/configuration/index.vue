@@ -39,6 +39,12 @@
     methods:{
       showDiolog() {
         this.$refs[this.activeName].$refs.guide.dialogVisible = true
+        if (this.activeName === 'first') {
+          this.$refs[this.activeName].$refs.guide.form = {
+            source: '',
+            sourceMark: ''
+          }
+        }
       },
       editTable() {
         this.$refs[this.activeName].$refs.visitDiolog.dialogVisible2 = true
