@@ -459,4 +459,12 @@
     display: inline-block;
     width: 90px;
   }
+  .card-main-item .value {
+    width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: top;
+  }
 </style>

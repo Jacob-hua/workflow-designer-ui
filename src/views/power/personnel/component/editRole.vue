@@ -8,12 +8,12 @@
       <div>
         <div class="item">
           <label>姓名</label>
-          <el-input placeholder="请输入内容" v-model="input" :disabled="true">
+          <el-input placeholder="请输入内容" v-model="detailData.name" :disabled="true">
           </el-input>
         </div>
         <div class="item">
           <label>账号</label>
-          <el-input placeholder="请输入内容" v-model="input" :disabled="true">
+          <el-input placeholder="请输入内容" v-model="detailData.id" :disabled="true">
           </el-input>
         </div>
       </div>
@@ -27,15 +27,15 @@
         </div>
       </div>
       <div>
-        <div class="item2">
-          <label>当前角色</label>
+        <label>当前角色</label>
+        <div class="item2" v-for="(item, index) in detailData.currentGroup" :key="index">
           <el-input placeholder="请输入内容" v-model="input" :disabled="true">
           </el-input>
         </div>
-        <div class="item2">
+        <!-- <div class="item2">
           <el-input placeholder="请输入内容" v-model="input" :disabled="true">
           </el-input>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="dialogRole">
@@ -75,15 +75,22 @@
 </template>
 
 <script>
+  import { getUserPermission } from '@/unit/api.js'
   export default {
     props: {
       dialogVisible: {
-        type: String,
+        type: Boolean,
         default: false
       }
     },
     data() {
       return {
+        detailData: {
+          id: '',
+          name: '',
+          currentGroup: [],
+          map: []
+        },
         input: '123',
         value: '',
         type: 'see',
@@ -123,6 +130,15 @@
       },
       grant() {
         this.type = 'edit'
+      },
+      getMapping(item) {
+        getUserPermission({
+          projectCode: item.groupList[0].id,
+          tenantId: item.tenantList[0].id,
+          userId: item.userId
+        }).then((res) => {
+           this.detailData = res.result
+        })
       }
     }
   }

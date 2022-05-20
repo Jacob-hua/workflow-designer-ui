@@ -65,7 +65,7 @@
   export default {
     props: {
       dialogVisible: {
-        type: String,
+        type: Boolean,
         default: false
       }
     },
