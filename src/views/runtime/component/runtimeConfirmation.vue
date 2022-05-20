@@ -93,7 +93,9 @@
     },
     methods: {
       handleClose() {
-
+        this.dialogVisible = false
+        this.dialogVisible2 = false
+        this.dialogVisible3 = false
       },
       selection(val, selectValue) {
         this.selectData = val
