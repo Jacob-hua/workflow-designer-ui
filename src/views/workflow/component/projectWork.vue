@@ -139,7 +139,7 @@ export default {
       this.formListSecond = list
     },
     addProjectShow(dep='新建工作流',row) {
-      // this.toData = row
+      this.toData = row
       this.$nextTick(() => {
         this.currentRowData = row
       })
@@ -160,7 +160,7 @@ export default {
     },
 
     addBpmnShow() {
-      // this.xmlString =  this.toData.content || ''
+      this.xmlString =  this.toData?.content || ''
       this.addBpmnVisible = true
     },
     addBpmnHidden() {
@@ -201,7 +201,7 @@ export default {
       this.xmlString = row.content
       this.currentRowData = row
       this.addBpmnVisible = true
-      this.flag = true
+      // this.flag = true
     },
 
     changeActiveName(value) {
