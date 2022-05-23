@@ -99,6 +99,7 @@ import {deleteWorkflow, workFlowRecord} from '@/api/managerWorkflow'
         this.$parent.findWorkFlowRecord('drafted')
       },
       draftTableEdit(row) {
+        window.oneBpmnInstances = true
         this.$emit('draftTableEdit', row)
       },
       deleteRow(row) {

@@ -48,6 +48,7 @@
     },
     methods:{
       edit() {
+        window.oneBpmnInstances = true
         this.$emit('edit', this.rowData, '查看')
       },
       Deactivate() {

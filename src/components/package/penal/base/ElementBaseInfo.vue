@@ -1,13 +1,13 @@
 <template>
   <div class="panel-tab__content">
     <el-form size="mini" label-width="90px" @submit.native.prevent>
-      <el-form-item label="ID">
+      <!-- <el-form-item label="ID">
         <el-input
           v-model="elementBaseInfo.id"
           clearable
           @change="updateBaseInfo('id')"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="名称">
         <el-input v-model="elementBaseInfo.name" clearable @change="updateBaseInfo('name')" />
       </el-form-item>
@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      elementBaseInfo: {name: ''}
+      elementBaseInfo: {name: ''},
     };
   },
   watch: {
@@ -53,16 +53,15 @@ export default {
     }
   },
   mounted() {
-    // this.bpmnElement = window?.bpmnInstances?.bpmnElement || {};
-    // console.log(this.bpmnElement, '999999')
-    // this.updateBaseInfo('id')
     window.bpmnInstances.elementRegistry.updateId(this.bpmnElement, `Process_${new Date().getTime()}`)
   },
   methods: {
     resetBaseInfo() {
       this.bpmnElement = window?.bpmnInstances?.bpmnElement || {};
-      console.log(this.bpmnElement, '999999')
-      // this.updateBaseInfo('id')
+      if (!window.oneBpmnInstances) {
+        this.bpmnElement.businessObject.name = this.$parent.$parent.$parent.$parent.$parent.$parent.formData.name
+        window.oneBpmnInstances = true
+      }
       this.elementBaseInfo = JSON.parse(JSON.stringify(this.bpmnElement.businessObject));
       if (this.elementBaseInfo && this.elementBaseInfo.$type === "bpmn:SubProcess") {
         this.$set(this.elementBaseInfo, "isExpanded", this.elementBaseInfo.di?.isExpanded);
@@ -71,8 +70,8 @@ export default {
     updateBaseInfo(key) {
       if (key === "id") {
         window.bpmnInstances.modeling.updateProperties(this.bpmnElement, {
-          // id: this.elementBaseInfo[key],
-          id:`Process_${new Date().getTime()}`,
+          id: this.elementBaseInfo[key],
+          // id:`Process_${new Date().getTime()}`,
           di: { id: `${this.elementBaseInfo[key]}_di` }
         });
         return;
@@ -88,6 +87,7 @@ export default {
   },
   beforeDestroy() {
     this.bpmnElement = null;
+    window.oneBpmnInstances = undefined
   }
 };
 </script>
