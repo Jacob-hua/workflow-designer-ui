@@ -90,7 +90,7 @@ export default {
   methods: {
     async getHistoryTaskList(pageInfo) {
      let data =  await historyTaskList({
-        "assignee": "admin", // 执行人
+        "assignee": this.$store.state.userInfo.name, // 执行人
         "candidate": true,  // 是否包含候选
         "endTime": `${this.dateRang[1]} 23:59:59`, // 结束时间
         ...pageInfo,
