@@ -126,6 +126,7 @@ export default {
       dialogVisible: false,
       xmlString: '',
       flag: false,
+      toData: null
     }
   },
   methods: {
@@ -138,7 +139,7 @@ export default {
       this.formListSecond = list
     },
     addProjectShow(dep='新建工作流',row) {
-
+      this.toData = row
       this.$nextTick(() => {
         this.currentRowData = row
       })
@@ -159,7 +160,7 @@ export default {
     },
 
     addBpmnShow() {
-      this.xmlString = ""
+      this.xmlString =  this.toData?.content || ''
       this.addBpmnVisible = true
     },
     addBpmnHidden() {
@@ -200,6 +201,7 @@ export default {
       this.xmlString = row.content
       this.currentRowData = row
       this.addBpmnVisible = true
+      // this.flag = true
     },
 
     changeActiveName(value) {
@@ -276,7 +278,11 @@ export default {
   mounted() {
 
     designProcessCountStatistics({
-      tenantId: 18
+      tenantId: this.$store.state.tenantId,
+      ascription: this.projectCode,
+      business: this.projectValue,
+      startTime: this.valueDate[0],
+      endTime: this.valueDate[1]
     }).then(res => {
       this.draftProcessCount = res.result.draftProcessCount
       this.processCount = res.result.processCount

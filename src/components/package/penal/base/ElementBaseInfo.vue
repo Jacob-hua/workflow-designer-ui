@@ -52,13 +52,18 @@ export default {
       }
     }
   },
+  mounted() {
+    // this.bpmnElement = window?.bpmnInstances?.bpmnElement || {};
+    // console.log(this.bpmnElement, '999999')
+    // this.updateBaseInfo('id')
+    window.bpmnInstances.elementRegistry.updateId(this.bpmnElement, `Process_${new Date().getTime()}`)
+  },
   methods: {
     resetBaseInfo() {
       this.bpmnElement = window?.bpmnInstances?.bpmnElement || {};
-      let names
-      if (this.elementBaseInfo.name) names =  this.elementBaseInfo.name;
+      console.log(this.bpmnElement, '999999')
+      // this.updateBaseInfo('id')
       this.elementBaseInfo = JSON.parse(JSON.stringify(this.bpmnElement.businessObject));
-      this.elementBaseInfo.name  = names
       if (this.elementBaseInfo && this.elementBaseInfo.$type === "bpmn:SubProcess") {
         this.$set(this.elementBaseInfo, "isExpanded", this.elementBaseInfo.di?.isExpanded);
       }
@@ -66,7 +71,8 @@ export default {
     updateBaseInfo(key) {
       if (key === "id") {
         window.bpmnInstances.modeling.updateProperties(this.bpmnElement, {
-          id: this.elementBaseInfo[key],
+          // id: this.elementBaseInfo[key],
+          id:`Process_${new Date().getTime()}`,
           di: { id: `${this.elementBaseInfo[key]}_di` }
         });
         return;

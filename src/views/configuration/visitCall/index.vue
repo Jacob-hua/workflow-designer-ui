@@ -120,22 +120,33 @@ export default {
             } else {
               //?scope=103&&format=json&&appid=379020&&bk_key=关键字&&bk_length=600
               let obj= {key: '', value: ''}
-              let parArr = api.parameter.split('?')
-              if (!api.parameter.includes('&&')) {
-                api.configParams.push({
-                  key: parArr[1].split('=')[0],
-                  value: parArr[1].split('=')[1]
-                })
-              } else {
-                let entry = parArr[1].split("&&")
-                for (const val of entry) {
+              if(api.parameter) {
+                let parArr = api.parameter.split('?')
+                if (!api.parameter.includes('&')) {
                   api.configParams.push({
-                    key:val.split('=')[0],
-                    value: val.split('=')[1]
+                    key: parArr[1].split('=')[0],
+                    value: parArr[1].split('=')[1]
                   })
+                } else {
+                  let entry = parArr[1].split("&")
+                  for (const val of entry) {
+                    api.configParams.push({
+                      key:val.split('=')[0],
+                      value: val.split('=')[1]
+                    })
+                  }
                 }
               }
             }
+            api.parseParams = []
+            let obj= {key: '', value: ''}
+            let dataParse = JSON.parse(api.dataParse)
+            Object.keys(dataParse).forEach(keys => {
+              obj.key = keys
+              obj.value = dataParse[keys]
+            })
+
+            api.parseParams.push(obj)
           })
           this.DetailFlag = true
           this.$nextTick(() => {
@@ -177,11 +188,20 @@ export default {
                     }
                   }
               }
+            api.parseParams = []
+            let obj= {key: '', value: ''}
+            let dataParse = JSON.parse(api.dataParse)
+              Object.keys(dataParse).forEach(keys => {
+                obj.key = keys
+                obj.value = dataParse[keys]
+              })
+
+              api.parseParams.push(obj)
           })
           this.$refs.AddOrEidtDailog.apiBoxList = res.result
         })
     },
-      showAddOrEidtDailog(row, code){
+       showAddOrEidtDailog(row, code){
         console.log('222222222222',row)
         if (code === 'pre') {
           this.$refs.guide.dialogVisible = true
@@ -192,8 +212,12 @@ export default {
             this.$refs.AddOrEidtDailog.dialogVisible = true
           });
         } else if (code==='edit') {
-          this.$refs.AddOrEidtDailog.dialogVisible = true
-          this.$refs.AddOrEidtDailog.apiBoxList = row
+          this.AddOrEidtDailogFlag = true,
+              this.$nextTick(() => {
+                this.$refs.AddOrEidtDailog.dialogVisible = true
+                this.$refs.AddOrEidtDailog.apiBoxList = row
+              })
+
         } else  {
           Object.keys(row).length ?
               (
@@ -210,13 +234,46 @@ export default {
               : this.$refs.guide.dialogVisible = true
         }
 
-
       },
       showAddDialog(form) {
         this.AddOrEidtDailogFlag = true
         this.guideForm = form
         this.$nextTick(() => {
           this.$refs.AddOrEidtDailog.dialogVisible = true
+          this.$refs.AddOrEidtDailog.apiBoxList =[
+            {
+              // source: '', //系统名称
+              // sourceMark: '', // 系统标识
+              ...form,
+              name: '', //api名称
+              apiMark: '', // api标识
+              type: '', // api类型,
+              typeName: '', //api类型名称
+              host: '',// 系统host
+              path: '',// 请求路径
+              method: '', //请求方式
+              headers: '', //请求头信息
+              parameter: '', // GET请求参数 eg: ?id=${id}&&name=${name}
+              body: '', //POST请求参数 eg: {\"id\":\"${id}\",\"name\":\"${name}\"}
+              dataParse: '', //解析配置
+              isUse: 1, // 是否使用 1 使用 0禁用 2删除
+              createTime: '', //创建时间
+              createBy: this.$store.state.userInfo.name, //创建人
+              tenantId: +this.$store.state.tenantId, //租户id
+              configParams: [
+                {
+                  key: '',
+                  value: ''
+                }
+              ],
+              parseParams: [
+                {
+                  key: '',
+                  value: ''
+                }
+              ]
+            }
+          ]
         })
     },
     async GetGlobalList(pageInfo) {

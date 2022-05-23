@@ -112,6 +112,7 @@ import {
           formData.append('business', 'zhihuiyunwei')
           formData.append('status', 'enabled')
           formData.append('createBy', 'admin')
+          formData.append('updateBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
           publishWorkflow(formData).then(res => {
@@ -175,6 +176,7 @@ import {
           formData.append('business', 'zhihuiyunwei')
           formData.append('status', 'drafted')
           formData.append('createBy', 'admin')
+          formData.append('updateBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
           _this.flag?

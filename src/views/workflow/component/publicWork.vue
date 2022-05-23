@@ -19,12 +19,12 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流（{{ formFirstTotal }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ formSecondTotal }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'enabled,disabled' ? 'active' : ''" @click="changeActiveName('enabled,disabled')">工作流（{{ processCount }}）</span>
+        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
       </div>
       <div class="home-table">
-        <projectTable :formListFirst="formListFirst" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'enabled,disabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
-        <draftTable :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
+        <projectTable ref="project" :formListFirst="formListFirst" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'enabled,disabled'" @lookBpmnShow="lookBpmnShow"></projectTable>
+        <draftTable ref="draft" :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
     <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
@@ -36,6 +36,7 @@
 
 <script>
 import {
+  designProcessCountStatistics,
   workFlowRecord
 } from '@/api/managerWorkflow'
   import projectTable from './projectTable.vue'
@@ -76,11 +77,15 @@ import {
         addProjectVisible: false,
         addBpmnVisible: false,
         quoteBpmnVisible: false,
-        lookBpmnVisible: false
+        lookBpmnVisible: false,
+        draftProcessCount: 0,
+        processCount: 0
       }
     },
     methods: {
-      
+      totalChange(list) {
+        this.formListSecond = list
+      },
       addBpmnShow() {
         this.xmlString = ""
         this.addBpmnVisible = true
@@ -181,22 +186,35 @@ import {
           name: this.input,
           startTime: this.valueDate[0]? `${this.valueDate[0]} 00:00:00` || '' : '',
           endTime: this.valueDate[1]? `${this.valueDate[1]} 23:59:59` || '' : '' ,
-          page: '1',
-          limit: '10'
+          page: this.getData.page,
+          limit: this.getData.limit
         })
         status === 'drafted'?
             (this.formListSecond = data.result.list,
+                this.$refs.draft.getData.total = data.result.total,
             this.formSecondTotal= data.result.total)
             :
             (
                 this.formListFirst = data.result.list,
+                    this.$refs.project.getData.total = data.result.total,
                     this.formFirstTotal = data.result.total
 
             )
       }
     },
     mounted() {
-      
+      designProcessCountStatistics({
+        tenantId: this.$store.state.tenantId,
+        ascription: 'public',
+        business: this.projectValue,
+        startTime: this.valueDate[0],
+        endTime: this.valueDate[1]
+      }).then(res => {
+        this.draftProcessCount = res.result.draftProcessCount
+        this.processCount = res.result.processCount
+        console.log(res)
+      })
+        this.findWorkFlowRecord()
     },
     components:{
       projectTable,
