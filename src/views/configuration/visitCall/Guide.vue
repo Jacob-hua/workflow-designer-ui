@@ -18,7 +18,7 @@
         </el-form>
     </span>
     <span slot="footer" class="dialog-footer">
-      <el-button  @click="dialogVisible = false; $emit('showAddDialog', form)">下一步</el-button>
+      <el-button  @click="dialogVisible = false; $emit('showAddDialog', form, editFlag)">下一步</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
 
   </span>
@@ -34,7 +34,8 @@ export default {
       form: {
         source: '',
         sourceMark: ''
-      }
+      },
+      editFlag: false
     }
   },
    methods: {

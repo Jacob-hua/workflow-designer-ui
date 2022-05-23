@@ -22,7 +22,7 @@
         </el-table-column>
         <el-table-column prop="version" label="能源系统" align="center">
           <template slot-scope="scope">
-            <span> {{ scope.row.businessMap.ascription }}</span>
+            <span> {{ scope.row.businessMap && scope.row.businessMap.business }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="docName" label="执行厂站" align="center">
