@@ -40,7 +40,7 @@
       dialogVisible: {
         type: Boolean,
         default: true
-      }
+      },
     },
     data() {
       return {
@@ -66,7 +66,7 @@
         if (this.postData.name.length > 2 ) {
           this.$emit('define', this.postData)
         } else{
-          this.$message.warning('流程名称长度必须大于二')
+          this.$message.warning('流程名称长度必须大于两个字符')
         }
       }
     }

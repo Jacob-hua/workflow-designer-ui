@@ -90,18 +90,20 @@ export default {
   methods: {
     async getHistoryTaskList(pageInfo) {
      let data =  await historyTaskList({
-        "assignee": "admin", // 执行人
+        "assignee": this.$store.state.userInfo.name,// 执行人
         "candidate": true,  // 是否包含候选
         "endTime": `${this.dateRang[1]} 23:59:59`, // 结束时间
         ...pageInfo,
         "order": "desc", // 排序方式
         "startTime": `${this.dateRang[0]} 00:00:00` , // 起始时间
         "tenantId": this.$store.state.tenantId // 租户id
-      })
-      if (data.result) {
-        this.tableData =  data.result.dataList
-        this.pageInfo.total =  +data.result.count
-      }
+      }).then(res => {
+
+     })
+        if (data.result) {
+          this.tableData =  data.result.dataList
+          this.pageInfo.total =  +data.result.count
+        }
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

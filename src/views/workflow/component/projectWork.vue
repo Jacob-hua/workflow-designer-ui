@@ -62,10 +62,10 @@
         <draftTable ref="draft" :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
-    <addProject  ref="addpro"  :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
-    <addBpmn  :formData="formData" :flag="flag" :currentRowData="currentRowData" v-if="addBpmnVisible" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
+    <addProject  ref="addpro"   :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
+    <addBpmn :pubFlag="pubFlag"  :formData="formData" :flag="flag" :currentRowData="currentRowData" v-if="addBpmnVisible" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
     <quoteBpmn  v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn :isEdit="isEdit" :rowData="rowData" :dep="dep"   v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
+    <lookBpmn :showFlag="showFlag" :isEdit="isEdit" :rowData="rowData" :dep="dep"   v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
   </div>
 </template>
 
@@ -126,7 +126,9 @@ export default {
       dialogVisible: false,
       xmlString: '',
       flag: false,
-      toData: null
+      toData: null,
+      pubFlag: false,
+      showFlag: true,
     }
   },
   methods: {
@@ -139,6 +141,9 @@ export default {
       this.formListSecond = list
     },
     addProjectShow(dep='新建工作流',row) {
+      // if (dep=== '引用工作流') {
+      //   this.pubFlag = true
+      // }
       this.toData = row
       this.$nextTick(() => {
         this.currentRowData = row
@@ -167,6 +172,7 @@ export default {
       this.addBpmnVisible = false
     },
     addBpmnDefine(value) {
+      this.flag =  false
       this.addBpmnVisible = false
     },
 
@@ -180,20 +186,27 @@ export default {
     lookBpmnShow(row, tit) {
       tit === 'gongzuoliu'? this.isEdit = true : this.isEdit = false
       this.rowData = row
-
+      if (tit === '引用') {
+        this.showFlag  = false
+      }
       this.lookBpmnVisible = true
       this.$nextTick(() => {
         this.$refs.bpmn.currentRowData = row
         this.$refs.bpmn.$refs.bpmnView.postData = row
+        this.$refs.bpmn.$refs.bpmnView.showFlag = false
       })
     },
     lookBpmnHidden() {
       this.lookBpmnVisible = false
     },
 
-    lookBpmnEdit(row) {
+    lookBpmnEdit(row, flag) {
+      if (flag=== '查看') {
+        this.pubFlag = true
+      }
       this.lookBpmnVisible = false
       this.xmlString = row.content
+      this.currentRowData  = row
       this.addBpmnVisible = true
     },
 
@@ -201,10 +214,11 @@ export default {
       this.xmlString = row.content
       this.currentRowData = row
       this.addBpmnVisible = true
-      // this.flag = true
+      this.flag = true
     },
 
     changeActiveName(value) {
+      this.getData.page = 1
       this.activeName = value
       this.findWorkFlowRecord(value)
     },

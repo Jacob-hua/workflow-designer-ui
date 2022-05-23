@@ -13,9 +13,11 @@
         <span class="title-item-label marginLeft40">
           流程名称
         </span>
-        <div class="title-item-main">
-          <el-input v-model="postData.name" placeholder="" :disabled="true"></el-input>
-        </div>
+        <el-tooltip class="item" effect="dark" :content="postData.name" placement="top-start">
+          <div class="title-item-main">
+            <el-input v-model="postData.name" placeholder="" :disabled="true"></el-input>
+          </div>
+        </el-tooltip>
       </div>
       <div class="title-item">
         <span class="title-item-label marginLeft40">
@@ -33,7 +35,7 @@
           <el-input v-model="postData.createTime" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
-      <div class="title-item">
+      <div v-if="showFlag" class="title-item">
         <span class="title-item-label">
           应用项目
         </span>
@@ -41,7 +43,7 @@
           <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
-      <div class="title-item">
+      <div v-if="showFlag" class="title-item">
         <span class="title-item-label marginLeft40">
           流程类型
         </span>
@@ -50,7 +52,7 @@
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40">
+        <span :class="['title-item-label', showFlag? 'marginLeft40': '']">
           能源系统
         </span>
         <div class="title-item-main">
@@ -80,7 +82,7 @@
     <div class="bpmnView-data">
       <div class="bpmn-configure">
         <div class="bpmn-configure-basic">
-          <div class="bpmn-configure-title">工单分配</div>
+          <div class="bpmn-configure-title">{{bpmnData.name}}工单分配</div>
           <div class="bpmn-configure-Main">
             <div class="bpmn-configure-Main-item"> <span>名<span style="visibility: hidden;">占位</span>称</span>: <span>{{ bpmnData.name }}</span>
             </div>
@@ -91,7 +93,7 @@
           </div>
         </div>
         <div class="bpmn-configure-form">
-          <div class="bpmn-configure-title">工单分配-表单内容</div>
+          <div class="bpmn-configure-title">{{bpmnData.name}}-表单内容</div>
           <div class="bpmn-configure-Main">
             <span v-if="!formShow" class="noneForm"> 当前未关联表单 </span>
             <div v-if="formShow" class="formShowForm">
@@ -120,6 +122,7 @@
     },
     data() {
       return {
+        showFlag: true,
         postData: {
           numberCode: '',
           deployName: '',
@@ -145,7 +148,11 @@
         if (this.bpmnModeler) return;
         this.bpmnModeler = new BpmnModeler({
           container: this.$refs["bpmn-canvas"],
-          additionalModules: [],
+          additionalModules: [
+            {
+              labelEditingProvider: ["value", ""]
+            }
+          ],
           moddleExtensions: [],
         });
         this.bpmnModeler.on("selection.changed", ({
