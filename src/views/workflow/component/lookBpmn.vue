@@ -47,6 +47,7 @@
     },
     methods:{
       edit() {
+        window.oneBpmnInstances = true
         this.$emit('edit', this.rowData)
       },
       Deactivate() {
