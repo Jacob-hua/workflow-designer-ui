@@ -34,7 +34,8 @@
       valueType: {
         type: String,
         default: 'project'
-      }
+      },
+      showFlag: Boolean
     },
     data() {
       return {
@@ -48,7 +49,7 @@
     methods:{
       edit() {
         window.oneBpmnInstances = true
-        this.$emit('edit', this.rowData)
+        this.$emit('edit', this.rowData, '查看')
       },
       Deactivate() {
         let _this = this

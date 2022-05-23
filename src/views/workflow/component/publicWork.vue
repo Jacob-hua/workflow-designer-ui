@@ -27,7 +27,7 @@
         <draftTable ref="draft" :formListSecond = "formListSecond" @totalChange = "totalChange" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" v-if="activeName === 'drafted'" @draftTableEdit="draftTableEdit"></draftTable>
       </div>
     </div>
-    <addProject :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
+    <addProject  ref="addpro" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
     <addBpmn  :currentRowData="currentRowData" :flag="flag" publick="publick" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
     <quoteBpmn :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
     <lookBpmn ref="bpmn" :rowData="rowData" v-if="lookBpmnVisible" :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="quoteBpmnShow" valueType="public"></lookBpmn>
@@ -79,10 +79,35 @@ import {
         quoteBpmnVisible: false,
         lookBpmnVisible: false,
         draftProcessCount: 0,
-        processCount: 0
+        processCount: 0,
+        xmlString: ''
       }
     },
     methods: {
+      addProjectHidden() {
+        this.addProjectVisible = false
+      },
+      addProjectDefine(value) {
+        console.log(value)
+        this.formData = value
+        Object.keys(value).length ? this.flag = true : this.flag = false
+        this.addProjectVisible = false
+        this.addBpmnShow()
+      },
+
+      addProjectShow(dep='新建工作流',row) {
+        // if (dep=== '引用工作流') {
+        //   this.pubFlag = true
+        // }
+        this.toData = row
+        this.$nextTick(() => {
+          this.currentRowData = row
+        })
+
+        this.$refs.addpro.title = dep
+        this.addProjectVisible = true
+        this.$refs.addpro.postData =  row || {}
+      },
       totalChange(list) {
         this.formListSecond = list
       },
@@ -104,15 +129,15 @@ import {
       quoteBpmnHidden() {
         this.quoteBpmnVisible = false
       },
-      
-      lookBpmnShow(row) {
-        this.lookBpmnVisible = true
+
+      lookBpmnShow(row, tit) {
+        tit === 'gongzuoliu'? this.isEdit = true : this.isEdit = false
         this.rowData = row
+        this.lookBpmnVisible = true
         this.$nextTick(() => {
           this.$refs.bpmn.currentRowData = row
           this.$refs.bpmn.$refs.bpmnView.postData = row
         })
-        // this.xmlString = row.content
       },
       lookBpmnHidden() {
         this.lookBpmnVisible = false
