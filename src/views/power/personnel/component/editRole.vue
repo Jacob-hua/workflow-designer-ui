@@ -29,8 +29,7 @@
       <div>
         <label>当前角色</label>
         <div class="item2" v-for="(item, index) in detailData.currentGroup" :key="index">
-          <el-input placeholder="请输入内容" v-model="input" :disabled="true">
-          </el-input>
+          <span class="UserItem">{{ item }}</span>
         </div>
         <!-- <div class="item2">
           <el-input placeholder="请输入内容" v-model="input" :disabled="true">
@@ -40,30 +39,20 @@
     </div>
     <div class="dialogRole">
       <div class="peopleRole">
-        <div class="peopleRole-item" @click="changeRole('guanli')" :class=" checkRole == 'guanli' ? 'checkRole' : ''">
-          <span>运检部管理人员</span>
-        </div>
-        <div class="peopleRole-item" @click="changeRole('yunwei')" :class=" checkRole == 'yunwei' ? 'checkRole' : ''">
-          <span>运检部运维员工</span>
-        </div>
-        <div class="peopleRole-item" @click="changeRole('geren')" :class=" checkRole == 'geren' ? 'checkRole' : ''">
-          <span>个人权限</span>
+        <div class="peopleRole-item" @click="changeRole(key)" :class=" checkRole == key ? 'checkRole' : ''" v-for="(item, key) in detailData.map">
+          <span>{{ key }}</span>
         </div>
       </div>
     </div>
     <div class="RoleMain">
-      <div v-for="(item, index) in roleList" :key="index" class="RoleList">
+      <div v-for="(item, index) in detailData.map[checkRole]" :key="index" class="RoleList">
         <div>
-          <label class="roleTitle">应用菜单权限</label>
-          <el-checkbox-group v-model="item.checkList">
-            <el-checkbox :label="item.menuCode">{{ item.menuName }}</el-checkbox>
-          </el-checkbox-group>
+          <label class="roleTitle">应用菜单权限</label><br>
+          <el-checkbox :label="item.id" v-model="item.flag" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
         </div>
         <div class="role-item">
-          <label class="roleTitle">操作权限</label>
-          <el-checkbox-group v-model="item.menuNameCheck">
-            <el-checkbox :label="item1.roleCode" v-for="(item1, index1) in item.role" :key="index1">{{ item1.roleName }}</el-checkbox>
-          </el-checkbox-group>
+          <label class="roleTitle">操作权限</label><br>
+          <el-checkbox :label="item1.id" v-for="(item1, index1) in item.children" :key="index1" v-model="item1.flag" :true-label="0" :false-label="1" @change="changeFlag(item, $event)">{{ item1.name }}</el-checkbox>
         </div>
       </div>
     </div>
@@ -96,6 +85,8 @@
         type: 'see',
         options: [],
         checkRole: 'guanli',
+        menuNameCheck: [],
+        checkList: [],
         roleList: [{
           menuName: '工作流管理',
           menuCode: 'gongzuoliu',
@@ -123,6 +114,14 @@
     },
     methods: {
       handleClose() {
+        let permission = {}
+        this.detailData.map[1].forEach((item) => {
+          if (item.flag === 1) {
+            
+          } else{
+            
+          }
+        })
         this.$emit('handleClose')
       },
       changeRole(code) {
@@ -131,9 +130,23 @@
       grant() {
         this.type = 'edit'
       },
+      changeFlag(item, event) {
+        if (event == 0) {
+          item.flag = 0
+          this.$forceUpdate()
+        }
+      },
+      changeTitleFlag(item, event) {
+        if (event == 1) {
+          item.children.forEach((item1) => {
+            item1.flag = 1
+          })
+          this.$forceUpdate()
+        }
+      },
       getMapping(item) {
         getUserPermission({
-          projectCode: item.groupList[0].id,
+          projectCode: item.groupList[0].id.split(':')[0],
           tenantId: item.tenantList[0].id,
           userId: item.userId
         }).then((res) => {
@@ -186,9 +199,19 @@
     margin-top: 30px;
   }
 
-  .item2 /deep/ .el-input {
+  .item2 .UserItem {
     width: 220px;
     margin-left: 10px;
+    height: 40px;
+    background-color: #F5F7FA;
+    border: 1px solid;
+    border-color: #E4E7ED;
+    cursor: not-allowed;
+    border-radius: 4px;
+    display: inline-block;
+    line-height: 40px;
+    padding: 0px 15px;
+    color: #999999;
   }
 
   .peopleRole {
