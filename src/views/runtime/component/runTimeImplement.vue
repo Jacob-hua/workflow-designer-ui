@@ -216,7 +216,6 @@
         this.dataList.agency = []
 
         this.processTaskList = result
-        console.log(this.processTaskList, '00000')
         this.dataList.Circulate = result[result.length - 1].circulationList
         if (result[result.length - 1].assignee) {
           result[result.length - 1].assignee.split(',').forEach((item) => {
@@ -292,6 +291,7 @@
         this.$refs.runtimePeople.dialogVisible = true
       },
       confirmation() {
+       console.log(this.$refs)
         this.$refs.runtimeConfirmation.dialogVisible = true
       },
       goSee() {
@@ -343,7 +343,7 @@
           formDataList: formData,
           processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
           processKey: this.$refs.ProcessInformation.postData.deployKey,
-          taskId: b[c],
+          taskId: this.$refs.ProcessInformation.postData.newTaskId,
           taskKey: this.$refs.ProcessInformation.postData.taskKey,
           taskName: this.$refs.ProcessInformation.postData.taskName,
           variable: data
