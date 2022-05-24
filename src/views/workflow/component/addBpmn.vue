@@ -116,9 +116,9 @@ import {
           formData.append('code', definitions.process._id)
           formData.append('business', 'zhihuiyunwei')
           formData.append('status', 'enabled')
-          formData.append('createBy', 'admin')
-          formData.append('updateBy', 'admin')
-          formData.append('tenantId', '18')
+          formData.append('createBy', this.$store.state.userInfo.name)
+          formData.append('updateBy', this.$store.state.userInfo.name)
+          formData.append('tenantId', this.$store.state.tenantId)
           formData.append('file', file1)
           // 已发布的 走修改的流程
           if (_this.pubFlag) {
@@ -192,9 +192,9 @@ import {
           formData.append('code', definitions.process._id)
           formData.append('business', 'zhihuiyunwei')
           formData.append('status', 'drafted')
-          formData.append('createBy', 'admin')
-          formData.append('updateBy', 'admin')
-          formData.append('tenantId', '18')
+          formData.append('createBy', this.$store.state.userInfo.name)
+          formData.append('updateBy', this.$store.state.userInfo.name)
+          formData.append('tenantId', this.$store.state.tenantId)
           formData.append('file', file1)
           _this.flag?
               workFlowSave(formData).then((res) => {
