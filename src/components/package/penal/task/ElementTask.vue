@@ -6,7 +6,7 @@
         <el-checkbox v-model="taskConfigForm.asyncAfter" label="异步后" @change="changeTaskAsync" />
         <el-checkbox v-model="taskConfigForm.exclusive" v-if="taskConfigForm.asyncAfter || taskConfigForm.asyncBefore" label="排除" @change="changeTaskAsync" />
       </el-form-item>
-      <component :is="witchTaskComponent" v-bind="$props" />
+      <c  omponent :is="witchTaskComponent" v-bind="$props" />
     </el-form>
   </div>
 </template>

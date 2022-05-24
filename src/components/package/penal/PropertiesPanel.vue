@@ -41,6 +41,19 @@
         <div slot="title" class="panel-tab__title"><i class="el-icon-circle-plus"></i>扩展属性</div>
         <element-properties :id="elementId" :type="elementType" />
       </el-collapse-item>
+      <el-collapse-item name="btnSetting" key="btnSetting">
+        <div slot="title" class="panel-tab__title"><i class="el-icon-circle-plus"></i>操作按钮配置</div>
+          <div style="margin-left: 10px;">
+            <el-checkbox-group @change="btnListChange" v-model="btnList">
+              <el-checkbox label="待办"></el-checkbox>
+              <el-checkbox label="传阅"></el-checkbox>
+              <el-checkbox label="挂起"></el-checkbox>
+              <el-checkbox v-if="addOrSub" label="加减签"></el-checkbox>
+              <el-checkbox label="驳回"></el-checkbox>
+              <el-checkbox label="终止"></el-checkbox>
+            </el-checkbox-group>
+          </div>
+      </el-collapse-item>
       <el-collapse-item name="other" key="other">
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-promotion"></i>其他</div>
         <element-other-config :id="elementId" />
@@ -61,6 +74,8 @@ import ElementForm from "./form/ElementForm";
 import UserTaskListeners from "./listeners/UserTaskListeners";
 import ScheduledTask from "./scheduledTask/index.vue"
 import Log from "../Log";
+import X2JS from "x2js";
+
 /**
  * 侧边栏
  * @Author MiyueFE
@@ -106,6 +121,8 @@ export default {
   },
   data() {
     return {
+      addOrSub: false,
+      btnList: [],
       activeTab: "base",
       elementId: "",
       elementType: "",
@@ -126,6 +143,23 @@ export default {
     this.initModels();
   },
   methods: {
+    btnListChange() {
+      let _this = this
+        const newConvert = new X2JS();
+        this.bpmnModeler.saveXML({ format: true }).then((obj) => {
+        const { definitions } = newConvert.xml2js(obj.xml);
+        console.log(window.bpmnInstances.bpmnElement.id)
+        let domParse = new DOMParser()
+        let doc = domParse.parseFromString(obj.xml, 'text/xml')
+        let element = doc.getElementById(window.bpmnInstances.bpmnElement.id)
+        element.setAttribute('camunda:btnList', JSON.stringify(_this.btnList) )
+        let serializer = new XMLSerializer();
+        _this.bpmnModeler.importXML( serializer.serializeToString(doc))
+
+      });
+
+      console.log(window.bpmnInstances)
+    },
     initModels() {
       // 初始化 modeler 以及其他 moddle
       if (!this.bpmnModeler) {
@@ -159,7 +193,10 @@ export default {
       });
       this.bpmnModeler.on("element.changed", ({ element }) => {
         // 保证 修改 "默认流转路径" 类似需要修改多个元素的事件发生的时候，更新表单的元素与原选中元素不一致。
+        this.addOrSub = false
+        // this.btnList  = []
         if (element && element.id === this.elementId) {
+
           this.initFormOnChanged(element);
         }
       });
@@ -176,6 +213,9 @@ export default {
       Log.printBack(`select element changed: id: ${activatedElement.id} , type: ${activatedElement.businessObject.$type}`);
       Log.prettyInfo("businessObject", activatedElement.businessObject);
       window.bpmnInstances.bpmnElement = activatedElement;
+       if (Object.keys(activatedElement.businessObject).includes('loopCharacteristics')) {
+         this.addOrSub = true
+       }
       this.bpmnElement = activatedElement;
       this.elementId = activatedElement.id;
       this.elementType = activatedElement.type.split(":")[1] || "";
@@ -194,3 +234,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+/deep/ .el-checkbox {
+  margin-bottom: 10px;
+}
+</style>
