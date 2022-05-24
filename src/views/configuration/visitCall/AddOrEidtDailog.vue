@@ -69,14 +69,14 @@
                 <div class="config_tit">
                   <span style="color: #1d89ff">解析参数</span> <i @click="addParseParams(index)"  class="el-icon-circle-plus-outline"></i>
                 </div>
-                <div v-for="(parse,idx) in item.parseParams" :key="idx" class="params">
+                <div v-for="(parse,idxs) in item.parseParams" :key="idxs" class="params">
                   <el-form-item label="参数key">
                     <el-input v-model="parse.key"></el-input>
                   </el-form-item>
                   <el-form-item label="参数value">
                     <el-input v-model="parse.value"></el-input>
                   </el-form-item>
-                  <i @click="deleteParseParams( index,idx)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
+                  <i @click="deleteParseParams( index,idxs)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
                 </div>
                 <el-button @click="excuteParse(item)" class="parse" type="primary">模拟解析</el-button>
               </div>
