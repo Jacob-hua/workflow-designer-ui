@@ -41,7 +41,7 @@
         <div slot="title" class="panel-tab__title"><i class="el-icon-circle-plus"></i>扩展属性</div>
         <element-properties :id="elementId" :type="elementType" />
       </el-collapse-item>
-      <el-collapse-item name="btnSetting" key="btnSetting">
+      <el-collapse-item v-if="elementType.indexOf('Task') !== -1" name="btnSetting" key="btnSetting">
         <div slot="title" class="panel-tab__title"><i class="el-icon-circle-plus"></i>操作按钮配置</div>
           <div style="margin-left: 10px;">
             <el-checkbox-group @change="btnListChange" v-model="btnList">
@@ -121,6 +121,7 @@ export default {
   },
   data() {
     return {
+      currentId: '',
       addOrSub: false,
       btnList: [],
       activeTab: "base",
@@ -151,11 +152,13 @@ export default {
         console.log(window.bpmnInstances.bpmnElement.id)
         let domParse = new DOMParser()
         let doc = domParse.parseFromString(obj.xml, 'text/xml')
+          this.currentId = window.bpmnInstances.bpmnElement.id
         let element = doc.getElementById(window.bpmnInstances.bpmnElement.id)
-        element.setAttribute('camunda:btnList', JSON.stringify(_this.btnList) )
-        let serializer = new XMLSerializer();
-        _this.bpmnModeler.importXML( serializer.serializeToString(doc))
-
+          element.setAttribute('camunda:btnList', JSON.stringify(_this.btnList) )
+          let serializer = new XMLSerializer();
+         _this.bpmnModeler.importXML( serializer.serializeToString(doc))
+          let shape = window.bpmnInstances.elementRegistry.get(_this.currentId)
+          window.bpmnInstances.selection.select(shape)
       });
 
       console.log(window.bpmnInstances)
@@ -192,6 +195,7 @@ export default {
         this.initFormOnChanged(newSelection[0] || null);
       });
       this.bpmnModeler.on("element.changed", ({ element }) => {
+
         // 保证 修改 "默认流转路径" 类似需要修改多个元素的事件发生的时候，更新表单的元素与原选中元素不一致。
         this.addOrSub = false
         // this.btnList  = []
