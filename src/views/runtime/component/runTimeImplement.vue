@@ -48,10 +48,10 @@
                     <span> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1, index1) in item.circulations[0].unitList" v-if="item.circulations[0].unitList.length > 0">{{ item1 }}</div>
                     <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span>
-                        <span class="addCirculate" @click="changePeopleList(item.circulations[0].unitList.taskId)" v-if="item.assignee === $store.state.userInfo.name">点击添加</span>
+                        <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name">点击添加</span>
                     </div>
                     <div v-if="item.circulations[0].unitList.length > 0" style="display: inline-block;">
-                        <span class="addCirculate" @click="changePeopleList(item.circulations[0].unitList.taskId, 'edit', 'Circulate', item.circulations[0].unitList)" v-if="item.assignee === $store.state.userInfo.name">编辑</span>
+                        <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'Circulate', item.circulations[0].unitList)" v-if="item.assignee === $store.state.userInfo.name">编辑</span>
                     </div>
                   </div>
                 </div>

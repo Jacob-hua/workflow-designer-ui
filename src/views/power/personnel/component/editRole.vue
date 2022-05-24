@@ -48,23 +48,28 @@
       <div v-for="(item, index) in detailData.map[checkRole]" :key="index" class="RoleList">
         <div>
           <label class="roleTitle">应用菜单权限</label><br>
-          <el-checkbox :label="item.id" v-model="item.flag" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
+          <el-checkbox :label="item.id" v-model="item.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
         </div>
         <div class="role-item">
           <label class="roleTitle">操作权限</label><br>
-          <el-checkbox :label="item1.id" v-for="(item1, index1) in item.children" :key="index1" v-model="item1.flag" :true-label="0" :false-label="1" @change="changeFlag(item, $event)">{{ item1.name }}</el-checkbox>
+          <div v-for="(item1, index1) in item.children" :key="index1" style="display: inline-block;margin-right: 20px;">
+            <el-checkbox :label="item1.id" v-model="item1.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole" :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{ item1.name }}</el-checkbox>
+            <div v-if="item1.children.length > 0" style="margin-top: 20px;margin-bottom: 20px;margin-left: 20px;">
+              <el-checkbox :label="item2.id" v-model="item2.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole" :true-label="0" v-for="(item2, index2) in item1.children" :key="index2" :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}</el-checkbox>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <span slot="footer" class="dialog-footer" v-if="type === 'edit'">
-      <el-button type="primary" @click="handleClose">授予</el-button>
+      <el-button type="primary" @click="award">授予</el-button>
       <el-button @click="handleClose">取消</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-  import { getUserPermission } from '@/unit/api.js'
+  import { getUserPermission, postMapping } from '@/unit/api.js'
   export default {
     props: {
       dialogVisible: {
@@ -84,9 +89,10 @@
         value: '',
         type: 'see',
         options: [],
-        checkRole: 'guanli',
+        checkRole: '',
         menuNameCheck: [],
         checkList: [],
+        disabledChange: true,
         roleList: [{
           menuName: '工作流管理',
           menuCode: 'gongzuoliu',
@@ -113,15 +119,49 @@
       }
     },
     methods: {
-      handleClose() {
+      award() {
         let permission = {}
-        this.detailData.map[0].forEach((item) => {
-          if (item.flag === 1) {
-            
+        let postArr = []
+        let recursionItem = function(item, arr) {
+          if (item.children.length === 0) {
+            return
           } else{
-            
+            item.children.forEach((item1) => {
+              if (item1.flag === 0) {
+                arr.push(item1.permission)
+              }
+              recursionItem(item1)
+            })
+          }
+        }
+        Object.keys(this.detailData.map).forEach((mapName, index) => {
+          if (index === Object.keys(this.detailData.map).length - 1) {
+            this.detailData.map[mapName].forEach((item) => {
+              permission[item.permissionType] = []
+              if (item.flag === 0) {
+                permission[item.permissionType].push(item.permission)
+              }
+              recursionItem(item, permission[item.permissionType])
+            })
+            let projectCode = this.detailData.roleList.filter((item) => {
+              return item.name === mapName
+            })
+            postArr.push({
+              code: projectCode[0].code,
+              name: projectCode[0].name,
+              type: projectCode[0].type,
+              projectCode: projectCode[0].projectCode,
+              tenantId: this.$store.state.tenantId,
+              permission: permission
+            })
           }
         })
+        postMapping(postArr).then((res) => {
+          this.$message.success('权限修改成功')
+          this.$emit('handleClose')
+        })
+      },
+      handleClose() {
         this.$emit('handleClose')
       },
       changeRole(code) {
@@ -130,16 +170,33 @@
       grant() {
         this.type = 'edit'
       },
-      changeFlag(item, event) {
+      changeFlag(item, item1, event) {
         if (event == 0) {
           item.flag = 0
-          this.$forceUpdate()
+        } else if(event == 1 && item1) {
+          if (item1.children.length > 0) {
+            item1.children.forEach((item2) => {
+              item2.flag = 1
+            })
+          }
+        }
+        this.$forceUpdate()
+      },
+      changeChildrenFlag(item, item1, event) {
+        if (event == 0) {
+          item.flag = 0
+          item1.flag = 0
         }
       },
       changeTitleFlag(item, event) {
         if (event == 1) {
           item.children.forEach((item1) => {
             item1.flag = 1
+            if (item1.children.length > 0) {
+              item1.children.forEach((item2) => {
+                item2.flag = 1
+              })
+            }
           })
           this.$forceUpdate()
         }
@@ -151,6 +208,7 @@
           userId: item.userId
         }).then((res) => {
            this.detailData = res.result
+           this.checkRole = Object.keys(this.detailData.map)[0]
         })
       }
     }
