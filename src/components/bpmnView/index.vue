@@ -82,7 +82,7 @@
     <div class="bpmnView-data">
       <div class="bpmn-configure">
         <div class="bpmn-configure-basic">
-          <div class="bpmn-configure-title">{{bpmnData.name}}工单分配</div>
+          <div class="bpmn-configure-title">任务详情</div>
           <div class="bpmn-configure-Main">
             <div class="bpmn-configure-Main-item"> <span>名<span style="visibility: hidden;">占位</span>称</span>: <span>{{ bpmnData.name }}</span>
             </div>
@@ -93,7 +93,7 @@
           </div>
         </div>
         <div class="bpmn-configure-form">
-          <div class="bpmn-configure-title">{{bpmnData.name}}-表单内容</div>
+          <div class="bpmn-configure-title">表单内容</div>
           <div class="bpmn-configure-Main">
             <span v-if="!formShow" class="noneForm"> 当前未关联表单 </span>
             <div v-if="formShow" class="formShowForm">

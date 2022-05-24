@@ -183,7 +183,6 @@ import {
             formData.append('id', _this.currentRowData.id )
           formData.append('name', _this.currentRowData.name || _this.formData.name || definitions.process._name)
           formData.append('docName',  definitions.process._name+ '.bpmn' || _this.currentRowData.name+'.bpmn'|| _this.formData.name + '.bpmn')
-          debugger
           if (_this.flag && Object.values(_this.formData).length > 0) {
             formData.append('ascription', _this.$parent.projectCode)
           } else {
@@ -197,21 +196,19 @@ import {
           formData.append('updateBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
-
           _this.flag?
-              workFlowSaveDraft(formData).then((res) => {
+              workFlowSave(formData).then((res) => {
                 _this.$message.success('保存成功')
                 // this.$router.push('/home')
                 _this.$emit('close')
                 _this.$parent.findWorkFlowRecord('drafted')
               })
           :
-              workFlowSave(formData).then((res) => {
+              workFlowSaveDraft(formData).then((res) => {
                 _this.$message.success('保存成功')
                 // this.$router.push('/home')
                 _this.$emit('close')
                 _this.$parent.findWorkFlowRecord('drafted')
-
               })
 
         });
