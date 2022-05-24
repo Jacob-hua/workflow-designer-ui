@@ -208,3 +208,11 @@ export const postPersonUser = (params) =>
 // 查询用户资源权限
 export const getUserPermission = (params) =>
   get('/permission/mapping/userPermission', params);
+  
+// 保存权限
+export const postMapping = (params) =>
+  post('/permission/mapping', params);
+  
+// 查询组资源权限
+export const getGroupPermission = (params) =>
+  get('/permission/mapping/groupPermission', params);
