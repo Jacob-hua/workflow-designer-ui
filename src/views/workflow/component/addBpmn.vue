@@ -30,7 +30,7 @@ import {
       },
       formData: {
         type: Object,
-        default: {
+        default: () =>{
 
         }
       },
@@ -52,6 +52,10 @@ import {
       xmlString: {
         type: String,
         default: ''
+      },
+      pubFlag: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -65,9 +69,10 @@ import {
     mounted() {
       this.$nextTick(() => {
         console.log(this.formData)
-        this.$refs.bpmnJsELe.$refs.panel.$refs.baseInfo.elementBaseInfo.name = this.formData.name
+        if (this.$refs.bpmnJsELe) {
+          this.$refs.bpmnJsELe.$refs.panel.$refs.baseInfo.elementBaseInfo.name = this.formData.name
+        }
       })
-
     },
     methods: {
       publish() {
@@ -115,12 +120,24 @@ import {
           formData.append('updateBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
-          publishWorkflow(formData).then(res => {
-            this.$message.success('发布成功')
-            // this.$router.push('/home')
-            this.$emit('close')
-            this.$parent.findWorkFlowRecord('enabled,disabled')
-          })
+          // 已发布的 走修改的流程
+          if (_this.pubFlag) {
+            formData.append('id', _this.currentRowData.id )
+            workFlowSaveDraft(formData).then((res) => {
+              _this.$message.success('保存成功')
+              // this.$router.push('/home')
+              _this.$emit('close')
+              _this.$parent.findWorkFlowRecord()
+            })
+          } else  {
+            publishWorkflow(formData).then(res => {
+              this.$message.success('发布成功')
+              // this.$router.push('/home')
+              this.$emit('close')
+              this.$parent.findWorkFlowRecord('enabled,disabled')
+            })
+          }
+
         });
         this.$emit('confirm')
 
@@ -166,6 +183,7 @@ import {
             formData.append('id', _this.currentRowData.id )
           formData.append('name', _this.currentRowData.name || _this.formData.name || definitions.process._name)
           formData.append('docName',  definitions.process._name+ '.bpmn' || _this.currentRowData.name+'.bpmn'|| _this.formData.name + '.bpmn')
+          debugger
           if (_this.flag && Object.values(_this.formData).length > 0) {
             formData.append('ascription', _this.$parent.projectCode)
           } else {
@@ -179,21 +197,23 @@ import {
           formData.append('updateBy', 'admin')
           formData.append('tenantId', '18')
           formData.append('file', file1)
-          _this.flag?
-              workFlowSave(formData).then((res) => {
-            _this.$message.success('保存成功')
-            // this.$router.push('/home')
-                _this.$emit('close')
-              _this.$parent.findWorkFlowRecord('drafted')
 
-          })
+          _this.flag?
+              workFlowSaveDraft(formData).then((res) => {
+                _this.$message.success('保存成功')
+                // this.$router.push('/home')
+                _this.$emit('close')
+                _this.$parent.findWorkFlowRecord('drafted')
+              })
           :
-          workFlowSaveDraft(formData).then((res) => {
-          _this.$message.success('保存成功')
-            // this.$router.push('/home')
-            _this.$emit('close')
-            _this.$parent.findWorkFlowRecord()
-          })
+              workFlowSave(formData).then((res) => {
+                _this.$message.success('保存成功')
+                // this.$router.push('/home')
+                _this.$emit('close')
+                _this.$parent.findWorkFlowRecord('drafted')
+
+              })
+
         });
         _this.$emit('confirm')
       }
