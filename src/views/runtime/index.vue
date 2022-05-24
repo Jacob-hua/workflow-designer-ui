@@ -57,7 +57,7 @@
       </div>
     </div>
     <div class="runtime-check">
-      <el-radio-group v-model="getData.taskFilter" @change="getManyData()">
+      <el-radio-group v-model="getData.taskFilter" @change="changeGroup()">
         <el-radio label="all">
           我的任务（{{ Amount.all }}）
         </el-radio>
@@ -97,7 +97,7 @@
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" v-if="scope.row.taskAssignee.split(',').indexOf($store.state.userInfo.name) !== -1">
+              <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" v-if="showDeployDiologButton(scope.row)">
                 执行
               </el-button>
               <el-button @click.native.prevent="detailsDiolog(scope.row)" type="text" size="small">
@@ -164,7 +164,8 @@
         statusClassObj: {
           completed: '',
           '-': 'tableStepOnly',
-          deleted: 'tableStepDeleted'
+          deleted: 'tableStepDeleted',
+          hang: 'tableStepHang',
         },
         getData: {
           assignee: this.$store.state.userInfo.name,
@@ -182,6 +183,11 @@
       }
     },
     methods: {
+      changeGroup() {
+        this.getData.page = 1
+        this.getData.limit = 10
+        this.getManyData()
+      },
       getManyData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
@@ -189,8 +195,18 @@
         this.getData.projectCode = this.getData.projectCode
         getNewTaskList(this.getData).then((res) => {
           this.tableData = res.result.dataList
-          this.getData.page = res.result.page * 1
-          this.getData.limit = res.result.limit * 1
+          this.tableData.forEach((item) => {
+            if (item.taskAssignee.split(',').indexOf(this.$store.state.userInfo.name) !== -1) {
+              item.newTaskId = item.taskId
+            } else{
+              item.trackList[item.trackList.length - 1].candidateUsers.forEach((item1) => {
+                if (item1.candidateUsers.indexOf(this.$store.state.userInfo.name) !== -1) {
+                  item.newTaskId = item1.taskId
+                }
+              })
+            }
+            
+          })
           this.getData.total = res.result.count * 1
         })
       },
@@ -207,6 +223,17 @@
           this.Amount = res.result
         })
       },
+      
+      showDeployDiologButton(row) {
+        let rolePeopleList = []
+        row.trackList[row.trackList.length - 1].candidateUsers.forEach((item) => {
+          item.candidateUsers.forEach((item1) => {
+            rolePeopleList.push(item1)
+          })
+        })
+        return rolePeopleList.concat(row.taskAssignee.split(',')).indexOf(this.$store.state.userInfo.name) !== -1
+      },
+      
       handleSizeChange() {
         this.getManyData()
       },
@@ -445,6 +472,11 @@
       .tableStepDeleted {
         .el-step__icon {
           background-color: red !important;
+        }
+      }
+      .tableStepHang {
+        .el-step__icon {
+          background-color: green !important;
         }
       }
 

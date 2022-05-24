@@ -115,7 +115,7 @@
     methods: {
       handleClose() {
         let permission = {}
-        this.detailData.map[1].forEach((item) => {
+        this.detailData.map[0].forEach((item) => {
           if (item.flag === 1) {
             
           } else{
