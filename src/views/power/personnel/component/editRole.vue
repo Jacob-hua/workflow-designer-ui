@@ -48,14 +48,14 @@
       <div v-for="(item, index) in detailData.map[checkRole]" :key="index" class="RoleList">
         <div>
           <label class="roleTitle">应用菜单权限</label><br>
-          <el-checkbox :label="item.id" v-model="item.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
+          <el-checkbox :label="item.id" v-model="item.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
         </div>
         <div class="role-item">
           <label class="roleTitle">操作权限</label><br>
           <div v-for="(item1, index1) in item.children" :key="index1" style="display: inline-block;margin-right: 20px;">
-            <el-checkbox :label="item1.id" v-model="item1.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole" :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{ item1.name }}</el-checkbox>
+            <el-checkbox :label="item1.id" v-model="item1.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !=='edit'" :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{ item1.name }}</el-checkbox>
             <div v-if="item1.children.length > 0" style="margin-top: 20px;margin-bottom: 20px;margin-left: 20px;">
-              <el-checkbox :label="item2.id" v-model="item2.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole" :true-label="0" v-for="(item2, index2) in item1.children" :key="index2" :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}</el-checkbox>
+              <el-checkbox :label="item2.id" v-model="item2.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'" :true-label="0" v-for="(item2, index2) in item1.children" :key="index2" :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}</el-checkbox>
             </div>
           </div>
         </div>
