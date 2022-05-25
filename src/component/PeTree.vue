@@ -33,7 +33,7 @@
   }
 </script>
 
-<style scoped="scoped">
+<style scoped>
  /deep/ .el-tree {
     background: transparent;
     font-size: 15px;

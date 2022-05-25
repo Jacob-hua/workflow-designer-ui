@@ -1,5 +1,7 @@
-import ProcessStatus from './ProcressStatus'
+import ProcessState from "./ProcessState";
+import Status from "./Status";
 
 export default {
-    ProcessStatus
-}
+  ProcessState,
+  Status,
+};
