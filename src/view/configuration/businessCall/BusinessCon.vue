@@ -91,14 +91,12 @@ export default {
     },
     preview() {
       let _this = this
-
       if (this.btnTxt === '保存') {
         console.log(this.data)
         if (!_this.edit) {
           delete this.data[0].id
         }
         addBusinessConfig(this.data).then((res)=> {
-          console.log(res)
           this.dialogVisible = false
           this.$message({
             type: 'success',
@@ -110,7 +108,6 @@ export default {
       } else {
         this.editFlag = false
         this.btnTxt = '保存'
-        console.log(this.data)
       }
 
     },
@@ -123,13 +120,11 @@ export default {
       this.currentNode.children.push(newChild);
     },
     handleNodeClick(data) {
-      console.log(data);
     },
     append(data, node) {
       this.inptVal = ''
       this.showinput = true
       this.currentNode = data
-      console.log(data.id, this.currentNode)
     },
 
     remove(node, data) {

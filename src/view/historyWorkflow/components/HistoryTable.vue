@@ -62,6 +62,7 @@
 import {
   historyTaskList
 } from "@/api/historyWorkflow";
+import CONSTANT from '@/constant'
 
 export default {
   props: {},
@@ -71,9 +72,9 @@ export default {
       radio: '1',
       tableData: [],
       pageInfo: {
-        page: 1,
-        limit: 10,
-        total: 0
+        [CONSTANT.PAGE]: 1,
+        [CONSTANT.LIMIT]: 10,
+        [CONSTANT.TOTAL]: 0
       }
     }
 
