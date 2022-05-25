@@ -61,7 +61,7 @@
     putRejectTask,
     putCancelInstance,
     getActiveInstance
-  } from '@/unit/api.js'
+  } from '@/api/unit/api.js'
   export default {
     props:{
       processInstanceId: {

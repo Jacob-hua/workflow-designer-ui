@@ -69,7 +69,7 @@
 </template>
 
 <script>
-  import { getUserPermission, postMapping } from '@/unit/api.js'
+  import { getUserPermission, postMapping } from '@/api/unit/api.js'
   export default {
     props: {
       dialogVisible: {

@@ -16,12 +16,12 @@ import {
   workFlowSaveDraft,
   workFlowSave, publishWorkflow
 } from '@/api/managerWorkflow'
-  import bpmnJsELe from '@/views/bpmnJsELe/index.vue'
-  // import bpmnJsELe from '@/views/bnpmJs/index.vue'
+  import bpmnJsELe from '@/view/bpmnJsELe/index.vue'
+  // import bpmnJsELe from '@/view/bnpmJs/index.vue'
   import X2JS from "x2js";
   import {
     postDesignDesignService
-  } from '@/unit/api.js'
+  } from '@/api/unit/api.js'
   export default {
     props: {
       flag: {

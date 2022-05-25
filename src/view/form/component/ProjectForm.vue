@@ -118,7 +118,7 @@
   import projectFormDiolog from './projectFormComponent/index.vue'
   import detailsDiologForm from './details.vue'
   import application from './projectFormComponent/application.vue'
-  import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/unit/api.js'
+  import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
   export default {
     data() {
       return {

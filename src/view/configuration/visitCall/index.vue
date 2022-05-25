@@ -56,9 +56,9 @@
 
 <script>
 
-import Guide from "@/views/configuration/visitCall/Guide";
-import AddOrEidtDailog from "@/views/configuration/visitCall/AddOrEidtDailog";
-import Detail from "@/views/configuration/visitCall/Detail";
+import Guide from "@/view/configuration/visitCall/Guide";
+import AddOrEidtDailog from "@/view/configuration/visitCall/AddOrEidtDailog";
+import Detail from "@/view/configuration/visitCall/Detail";
 import {
   apiDetail,
   GetGlobalList

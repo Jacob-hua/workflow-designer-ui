@@ -39,9 +39,9 @@
 </template>
 
 <script>
-  import PeTree from '@/components/PeTree.vue'
+  import PeTree from '@/component/PeTree.vue'
   import editRole from './component/editRole.vue'
-  import { getSystemGroupTree, postPersonUser } from '@/unit/api.js'
+  import { getSystemGroupTree, postPersonUser } from '@/api/unit/api.js'
   export default {
     data() {
       return {

@@ -14,20 +14,20 @@ import 'bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css'
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-import "@/components/package/theme/element-variables.scss";
+import "@/plugin/package/theme/element-variables.scss";
 
 import JsonViewer from 'vue-json-viewer'
 
 Vue.use(ElementUI);
 Vue.use(JsonViewer);
 
-import { vuePlugin } from "@/components/package/highlight";
+import { vuePlugin } from "@/plugin/package/highlight";
 import "highlight.js/styles/atom-one-dark-reasonable.css";
 Vue.use(vuePlugin);
 
-import MyPD from "@/components/package/index.js";
+import MyPD from "@/plugin/package/index.js";
 Vue.use(MyPD);
-import "@/components/package/theme/index.scss";
+import "@/plugin/package/theme/index.scss";
 
 
 new Vue({

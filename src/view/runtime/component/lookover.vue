@@ -65,10 +65,10 @@
 </template>
 
 <script>
-  import ProcessInformation from '@/components/bpmnView/ProcessInformation.vue'
+  import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
   import {
     getTaskTrackList
-  } from '@/unit/api.js'
+  } from '@/api/unit/api.js'
   export default {
     data() {
       return {

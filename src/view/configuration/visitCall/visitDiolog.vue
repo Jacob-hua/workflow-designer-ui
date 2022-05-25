@@ -91,7 +91,7 @@
 </template>
 
 <script>
-  import { getApiTypeList } from '@/unit/api.js'
+  import { getApiTypeList } from '@/api/unit/api.js'
   import axios from "axios"
   export default {
     data() {

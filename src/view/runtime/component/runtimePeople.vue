@@ -59,7 +59,7 @@
 </template>
 
 <script>
-  import { getPersonUser, getThreeSystemOrganize, getModifyCandidate, getCirculation, getModifyProcessUser } from '@/unit/api.js'
+  import { getPersonUser, getThreeSystemOrganize, getModifyCandidate, getCirculation, getModifyProcessUser } from '@/api/unit/api.js'
   export default {
     props:{
       taskId: {

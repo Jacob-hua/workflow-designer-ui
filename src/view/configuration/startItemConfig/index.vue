@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import StartItemCon from "@/views/configuration/startItemConfig/startItemCon";
+  import StartItemCon from "@/view/configuration/startItemConfig/startItemCon";
   import {
     getBusinessConfigBasicList,
     getBusinessConfigWithTree,

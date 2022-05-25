@@ -149,7 +149,7 @@
 </template>
 
 <script>
-  import ProcessInformation from '@/components/bpmnView/ProcessInformation.vue'
+  import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
   import runtimePeople from './runtimePeople.vue'
   import runtimeConfirmation from './runtimeConfirmation.vue'
   import formRuntime from './formRuntime.vue'
@@ -159,7 +159,7 @@
     putHangInstance,
     putCancelInstance,
     getTaskDetailList
-  } from '@/unit/api.js'
+  } from '@/api/unit/api.js'
   export default {
     props: {
       dialogVisible: {

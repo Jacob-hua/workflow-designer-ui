@@ -21,11 +21,11 @@
 <script>
 import translations from "@/assets/js/translations.js";
 // 自定义渲染（隐藏了 label 标签）
-import CustomRenderer from "@/modules/custom-renderer";
+import CustomRenderer from "@/plugin/package/module/custom-renderer";
 // 自定义元素选中时的弹出菜单（修改 默认任务 为 用户任务）
-import CustomContentPadProvider from "@/components/package/designer/plugins/content-pad";
+import CustomContentPadProvider from "@/plugin/package/designer/plugins/content-pad";
 // 自定义左侧菜单（修改 默认任务 为 用户任务）
-import CustomPaletteProvider from "@/components/package/designer/plugins/palette";
+import CustomPaletteProvider from "@/plugin/package/designer/plugins/palette";
 // import Log from "../package/Log";
 // 任务resize
 import resizeTask from "bpmn-js-task-resize/lib";
@@ -36,7 +36,7 @@ import sketchyRendererModule from "bpmn-js-sketchy";
 
 // clickoutside
 import clickoutside from "element-ui/lib/utils/clickoutside";
-import {ProcessStatus} from '@/enum'
+// import {ProcessStatus} from '@/enum'
 
 export default {
   name: "bpmnEle",
@@ -101,7 +101,7 @@ export default {
     changeLabelEditingStatus(status) {
       this.addis.labelEditing = status ? { labelEditingProvider: ["value", ""] } : false;
       this.reloadProcessDesigner();
-      status === ProcessStatus.BEGIN
+      // status === ProcessStatus.BEGIN
     },
     changeLabelVisibleStatus(status) {
       this.addis.customRenderer = status ? CustomRenderer : false;

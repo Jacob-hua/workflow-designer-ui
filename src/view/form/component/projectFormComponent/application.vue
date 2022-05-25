@@ -44,7 +44,7 @@
 </template>
 
 <script>
-  import { designFormDesignServiceAll, postFormDesignServiceRealiseProcessData } from '@/unit/api.js'
+  import { designFormDesignServiceAll, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
   export default {
     props: {
       dialogVisible: {

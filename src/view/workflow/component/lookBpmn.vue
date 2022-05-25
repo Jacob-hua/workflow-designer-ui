@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  import bpmnView from '@/components/bpmnView/index.vue'
+  import bpmnView from '@/component/bpmnView/index.vue'
   import {workFlowSaveDraft} from "@/api/managerWorkflow";
   export default {
     props: {

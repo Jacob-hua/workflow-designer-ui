@@ -7,9 +7,9 @@
 
 <script>
   import BpmnModeler from "bpmn-js/lib/Modeler";
-  import DefaultEmptyXML from "@/components/package/designer/plugins/defaultEmpty";
+  import DefaultEmptyXML from "@/plugin/package/designer/plugins/defaultEmpty";
   import bpmnData from "@/assets/js/bpmnMock.js"
-  import { getTaskTrackList } from '@/unit/api.js'
+  import { getTaskTrackList } from '@/api/unit/api.js'
   export default {
     props:{
       BpmnContant: {

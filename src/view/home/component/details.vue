@@ -79,7 +79,7 @@
 <script>
   import ProcessInformation from './ProcessInformation.vue'
   import formOB from './formOB.vue'
-  import { getDeployBasic, designFormDesignServiceAll, getDeleteDeployment, getDeployAndProcessInfo } from '@/unit/api.js'
+  import { getDeployBasic, designFormDesignServiceAll, getDeleteDeployment, getDeployAndProcessInfo } from '@/api/unit/api.js'
   export default {
     props:{
       seeType: {

@@ -20,7 +20,7 @@
 <script>
   import visitCall from './visitCall/index.vue'
   import businessCall from './businessCall/index.vue'
-  import StartItemConfig from "@/views/configuration/startItemConfig";
+  import StartItemConfig from "@/view/configuration/startItemConfig";
   export default {
     data() {
       return {

@@ -74,7 +74,7 @@
 
 <script>
   import formBpmnEdit from './formBpmnEdit.vue'
-  import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService, postFormDesignServiceRealiseProcessData } from '@/unit/api.js'
+  import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
   export default {
     props:{
       quote: {

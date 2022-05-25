@@ -78,7 +78,7 @@
 <script>
   import PublicFormDiolog from './PublicFormComponent/index.vue'
   import detailsDiolog from './details.vue'
-  import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/unit/api.js'
+  import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
   export default {
     data() {
       return {

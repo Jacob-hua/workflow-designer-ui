@@ -84,7 +84,7 @@
   import {
     getDeployCount,
     getTaskCountStatistic
-  } from '@/unit/api.js'
+  } from '@/api/unit/api.js'
   export default {
     data() {
       return {

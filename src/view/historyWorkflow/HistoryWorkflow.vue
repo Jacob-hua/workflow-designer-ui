@@ -12,10 +12,10 @@
   </div>
 </template>
 <script>
-import HistorySearch from "@/views/historyWorkflow/components/HistorySearch.vue";
-import HistoryHeadContent from "@/views/historyWorkflow/components/HistoryHeadContent.vue";
-import HistoryTable from "@/views/historyWorkflow/components/HistoryTable.vue";
-import LookOver from "@/views/historyWorkflow/components/Lookover.vue";
+import HistorySearch from "@/view/historyWorkflow/components/HistorySearch.vue";
+import HistoryHeadContent from "@/view/historyWorkflow/components/HistoryHeadContent.vue";
+import HistoryTable from "@/view/historyWorkflow/components/HistoryTable.vue";
+import LookOver from "@/view/historyWorkflow/components/Lookover.vue";
 
 export default {
 

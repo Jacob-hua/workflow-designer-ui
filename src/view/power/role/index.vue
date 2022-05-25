@@ -43,9 +43,9 @@
 </template>
 
 <script>
-  import PeTree from '@/components/PeTree.vue'
+  import PeTree from '@/component/PeTree.vue'
   import editRole from './component/editRole.vue'
-  import { getSystemGroupTree, getGroupPermission } from '@/unit/api.js'
+  import { getSystemGroupTree, getGroupPermission } from '@/api/unit/api.js'
   export default {
     data() {
       return {

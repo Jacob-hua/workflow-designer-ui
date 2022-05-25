@@ -35,7 +35,7 @@
 
 <script>
   import formbpmn from '../formBpmn.vue'
-  import { postFormDesignService, postFormDesignServiceRealiseProcessData } from '@/unit/api.js'
+  import { postFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
   import {
     FormEditor
   } from '@bpmn-io/form-js-editor';

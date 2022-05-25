@@ -47,7 +47,7 @@
   import detailsBnpm from './details.vue'
   import {
       postProcessDesignServicePage
-  } from '@/unit/api.js'
+  } from '@/api/unit/api.js'
   export default {
     props: {
       valueDate: {

@@ -44,8 +44,8 @@
 </template>
 
 <script>
-import Guide from "@/views/configuration/businessCall/Guide";
-import BusinessCon from "@/views/configuration/businessCall/BusinessCon";
+import Guide from "@/view/configuration/businessCall/Guide";
+import BusinessCon from "@/view/configuration/businessCall/BusinessCon";
 import {
   getBusinessConfigBasicList,
   getDicDataByClassify,

@@ -3,7 +3,7 @@ import {
     post,
     deletefn,
     put
-} from '../unit/request'
+} from './unit/request'
 
 // api 分页列表
 export const GetGlobalList = async (params) => {

@@ -24,7 +24,7 @@
 
 <script>
 
-import { userLogin } from '@/unit/api.js'
+import { userLogin } from '@/api/unit/api.js'
 // import md5 from 'js-md5'
 export default {
   name: 'HelloWorld',

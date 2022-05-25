@@ -91,8 +91,8 @@
 </template>
 
 <script>
-  import ProcessInformation from '@/views/historyWorkflow/components/ProcessInformation'
-  import { getTaskTrackList } from '@/unit/api.js'
+  import ProcessInformation from '@/view/historyWorkflow/components/ProcessInformation'
+  import { getTaskTrackList } from '@/api/unit/api.js'
   export default {
     data() {
       return {

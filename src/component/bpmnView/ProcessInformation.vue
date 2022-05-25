@@ -82,18 +82,18 @@
 <script>
   import BpmnModeler from "bpmn-js/lib/Modeler";
   import tokenSimulation from "bpmn-js-token-simulation";
-  import DefaultEmptyXML from "@/components/package/designer/plugins/defaultEmpty";
-  import customTranslate from "@/components/package/designer/plugins/translate/customTranslate";
-  import translationsCN from "@/components/package/designer/plugins/translate/zh";
-  import camundaModdleExtension from "@/components/package/designer/plugins/extension-moddle/camunda";
-  import activitiModdleExtension from "@/components/package/designer/plugins/extension-moddle/activiti";
-  import flowableModdleExtension from "@/components/package/designer/plugins/extension-moddle/flowable";
-  import camundaModdleDescriptor from "@/components/package/designer/plugins/descriptor/camundaDescriptor.json";
-  import activitiModdleDescriptor from "@/components/package/designer/plugins/descriptor/activitiDescriptor.json";
-  import flowableModdleDescriptor from "@/components/package/designer/plugins/descriptor/flowableDescriptor.json";
+  import DefaultEmptyXML from "@/plugin/package/designer/plugins/defaultEmpty";
+  import customTranslate from "@/plugin/package/designer/plugins/translate/customTranslate";
+  import translationsCN from "@/plugin/package/designer/plugins/translate/zh";
+  import camundaModdleExtension from "@/plugin/package/designer/plugins/extension-moddle/camunda";
+  import activitiModdleExtension from "@/plugin/package/designer/plugins/extension-moddle/activiti";
+  import flowableModdleExtension from "@/plugin/package/designer/plugins/extension-moddle/flowable";
+  import camundaModdleDescriptor from "@/plugin/package/designer/plugins/descriptor/camundaDescriptor.json";
+  import activitiModdleDescriptor from "@/plugin/package/designer/plugins/descriptor/activitiDescriptor.json";
+  import flowableModdleDescriptor from "@/plugin/package/designer/plugins/descriptor/flowableDescriptor.json";
   import {
     processInstanceData
-  } from '@/unit/api.js'
+  } from '@/api/unit/api.js'
   export default {
     props: {
       type: String,

@@ -70,7 +70,7 @@
 <script>
   import {
     postPersonUser
-  } from '@/unit/api.js'
+  } from '@/api/unit/api.js'
   export default {
     props: {
       dialogVisible: {

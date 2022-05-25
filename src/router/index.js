@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import layout from'@/views/layout/index.vue'
+import layout from'@/layout/index.vue'
 
 Vue.use(VueRouter)
 
@@ -14,7 +14,7 @@ const routes = [
   {
   	path: '/login',
     name: 'login',
-  	component: () => import('@/views/login/login'),
+  	component: () => import('@/view/login/login'),
   	hidden: true
   },
   {
@@ -26,49 +26,49 @@ const routes = [
       {
         path: '/home/bpmn',
         name: 'bpmn',
-        component: () => import('@/views/workflow/index'),
+        component: () => import('@/view/workflow/index'),
         meta: { title: 'bpmn', icon: 'dashboard' }
       },
       {
         path: '/home/form',
         name: 'form',
-        component: () => import('@/views/form/index'),
+        component: () => import('@/view/form/index'),
         meta: { title: 'bpmn', icon: 'dashboard' }
       },
       {
         path: '/home/home',
         name: 'home',
-        component: () => import('@/views/home/index'),
+        component: () => import('@/view/home/index'),
         meta: { title: 'bpmn', icon: 'dashboard' }
       },
       {
         path: '/home/history',
         name: 'history',
-        component: () => import('@/views/historyWorkflow/HistoryWorkflow'),
+        component: () => import('@/view/historyWorkflow/HistoryWorkflow'),
         meta: { title: 'history', icon: 'dashboard' }
       },
       {
         path: '/home/runTime',
         name: 'runTime',
-        component: () => import('@/views/runtime/index'),
+        component: () => import('@/view/runtime/index'),
         hidden: true
       },
       {
         path: '5',
         name: '5',
-        component: () => import('@/views/404'),
+        component: () => import('@/layout/404'),
         hidden: true
       },
       {
         path: '/home/all',
         name: 'all',
-        component: () => import('@/views/configuration'),
+        component: () => import('@/view/configuration'),
         hidden: true,
       },
       {
         path: '/home/power',
         name: 'power',
-        component: () => import('@/views/power'),
+        component: () => import('@/view/power'),
         hidden: true,
       }
       // {

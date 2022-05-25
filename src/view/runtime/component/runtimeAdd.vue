@@ -45,8 +45,8 @@
 </template>
 
 <script>
-  import detailsRem from '@/views/home/component/details.vue'
-  import { getProcessDefinitionList, getStartProcess } from '@/unit/api.js'
+  import detailsRem from '@/view/home/component/details.vue'
+  import { getProcessDefinitionList, getStartProcess } from '@/api/unit/api.js'
   export default {
     props: {
       dialogVisible: {

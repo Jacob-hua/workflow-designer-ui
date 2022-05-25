@@ -98,7 +98,7 @@
 <script>
   import ProcessInformation from './ProcessInformation.vue'
   import formOB from './formOB.vue'
-  import { postProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/unit/api.js'
+  import { postProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
   import X2JS from "x2js";
   export default {
     props:{
