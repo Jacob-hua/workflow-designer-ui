@@ -111,7 +111,7 @@
               if (item1.flag === 0) {
                 arr.push(item1.permission)
               }
-              recursionItem(item1)
+              recursionItem(item1, arr)
             })
           }
         }
