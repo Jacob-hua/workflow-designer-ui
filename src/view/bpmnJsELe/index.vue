@@ -36,6 +36,7 @@ import sketchyRendererModule from "bpmn-js-sketchy";
 
 // clickoutside
 import clickoutside from "element-ui/lib/utils/clickoutside";
+import {ProcessStatus} from '@/enum'
 
 export default {
   name: "bpmnEle",
@@ -100,6 +101,7 @@ export default {
     changeLabelEditingStatus(status) {
       this.addis.labelEditing = status ? { labelEditingProvider: ["value", ""] } : false;
       this.reloadProcessDesigner();
+      status === ProcessStatus.BEGIN
     },
     changeLabelVisibleStatus(status) {
       this.addis.customRenderer = status ? CustomRenderer : false;
