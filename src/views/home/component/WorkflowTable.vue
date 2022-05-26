@@ -73,7 +73,8 @@
           business: '',
           startTime: '',
           endTime: '',
-          status: 'enabled'
+          status: 'enabled',
+          createBy: this.$store.state.userInfo.name
         },
         tableData: [],
         editData: {}

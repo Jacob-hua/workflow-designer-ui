@@ -194,20 +194,24 @@
         this.getData.businessCode = this.getData.businessCode
         this.getData.projectCode = this.getData.projectCode
         getNewTaskList(this.getData).then((res) => {
-          this.tableData = res.result.dataList
-          this.tableData.forEach((item) => {
-            if (item.taskAssignee.split(',').indexOf(this.$store.state.userInfo.name) !== -1) {
-              item.newTaskId = item.taskId
-            } else{
-              item.trackList[item.trackList.length - 1].candidateUsers.forEach((item1) => {
-                if (item1.candidateUsers.indexOf(this.$store.state.userInfo.name) !== -1) {
-                  item.newTaskId = item1.taskId
-                }
-              })
-            }
-            
-          })
-          this.getData.total = res.result.count * 1
+         if (res) {
+           this.tableData = res.result.dataList
+           this.tableData.forEach((item) => {
+             if (item.taskAssignee.split(',').indexOf(this.$store.state.userInfo.name) !== -1) {
+               item.newTaskId = item.taskId
+             } else{
+               item.trackList[item.trackList.length - 1].candidateUsers.forEach((item1) => {
+                 if (item1.candidateUsers.indexOf(this.$store.state.userInfo.name) !== -1) {
+                   item.newTaskId = item1.taskId
+                 }
+               })
+             }
+             
+           })
+           this.getData.total = res.result.count * 1
+         } else {
+           this.tableData = []
+         } 
         })
       },
       getAmount() {

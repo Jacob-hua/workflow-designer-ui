@@ -73,7 +73,7 @@
           status: 'enabled,disabled' || '',
           ascription: 'public' || '',
           business: this.business || '',
-          createBy: 'admin' || '',
+          createBy: this.$store.state.userInfo.name || '',
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0]? `${this.valueDate[0]} 00:00:00` || '' : '',

@@ -4,7 +4,7 @@
       <ProcessInformation ref="ProcessInformation" :processTaskList="listData" v-if="dialogVisible" seeType="runTime"></ProcessInformation>
     </div>
     <div style="position: relative;">
-      <span style="position: absolute;right: 10px;color: #0055ff;cursor: pointer;" @click="goReject">执行</span>
+      <!-- <span style="position: absolute;right: 10px;color: #0055ff;cursor: pointer;" @click="goReject">执行</span> -->
       <div style="margin: 20px 0px 10px 0px;font-weight: 700;">工作流执行详情</div>
       <div class="processDetail">
         <div class="block">

@@ -320,6 +320,7 @@
               let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
                 return element.id === id
               })
+              console.log(oneSet, '000')
               this.$emit('selectOneSet', oneSet[0])
               
               userTaskArr.forEach((item) => {
