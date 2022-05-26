@@ -159,7 +159,6 @@ export default {
         _this.bpmnModeler.importXML( serializer.serializeToString(doc), (error)=> {
           if (error) {
           } else {
-
           }
           console.log('xml重新加载了')
           let shape = window.bpmnInstances.elementRegistry.get(_this.currentId)
@@ -241,8 +240,8 @@ export default {
         console.log(activatedElement)
       }
       if (!activatedElement) return;
-      // Log.printBack(`select element changed: id: ${activatedElement.id} , type: ${activatedElement.businessObject.$type}`);
-      // Log.prettyInfo("businessObject", activatedElement.businessObject);
+      Log.printBack(`select element changed: id: ${activatedElement.id} , type: ${activatedElement.businessObject.$type}`);
+      Log.prettyInfo("businessObject", activatedElement.businessObject);
       window.bpmnInstances.bpmnElement = activatedElement;
       if (Object.keys(activatedElement.businessObject).includes('loopCharacteristics')) {
         this.addOrSub = true
