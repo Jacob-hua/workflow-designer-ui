@@ -136,7 +136,7 @@
     },
     methods: {
       expand(key) {
-   this.assigneeValue = {}
+        this.assigneeValue = {}
         console.log(key)
         this.$refs[key].clearCheckedNodes()
         // console.log( this.$refs[key].$refs.panel.)
