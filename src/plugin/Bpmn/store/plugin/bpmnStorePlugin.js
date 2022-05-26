@@ -1,8 +1,8 @@
 import { iBpmnListener } from "../module/bpmn";
 
 function listenBpmn(store) {
-  console.log(store);
   const iBpmn = store._vm.$iBpmn;
+  store.$iBpmn = iBpmn;
 
   function refreshBpmnState(payload = {}) {
     store.commit("bpmn/refreshBpmnState", payload);
