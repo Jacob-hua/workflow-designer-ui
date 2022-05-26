@@ -196,7 +196,7 @@
         formData.append('business', this.postData.business)
         formData.append('status', 'enabled')
         formData.append('createBy', this.$store.state.userInfo.name)
-        formData.append('createName', 'admin')
+        formData.append('createName', this.$store.state.userInfo.name)
         formData.append('tenantId', this.$store.state.tenantId)
         formData.append('file', file1)
         postFormDesignServiceRealiseProcessData(formData).then((res) => {
@@ -233,7 +233,7 @@
         formData.append('business', this.postData.business)
         formData.append('status', 'drafted')
         formData.append('createBy', this.$store.state.userInfo.name)
-        formData.append('createName', 'admin')
+        formData.append('createName', this.$store.state.userInfo.name)
         formData.append('tenantId', this.$store.state.tenantId)
         formData.append('file', file1)
         postFormDesignService(formData).then((res) => {

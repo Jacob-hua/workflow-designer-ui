@@ -5,21 +5,12 @@
         <div class="Implement-left">
           <ProcessInformation ref="ProcessInformation" :processTaskList="processTaskList" v-if="dialogVisible"
             @selectOneSet="selectOneSet" seeType="runTime"></ProcessInformation>
-          <div class="function-list" v-if="bpmnType === 'bpmn:UserTask'">
-            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('agency')" :class="functionCheck === 'agency' ? 'function-check' : ''">代办</span>
-            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('Circulate')" :class="functionCheck === 'Circulate' ? 'function-check' : ''">传阅</span>
-            <span class="function-item" v-if="dataList.Hang && bpmnTypeloopChara === 'bpmn:MultiInstanceLoopCharacteristics'"
-              @click="changeFunction('signature')" :class="functionCheck === 'signature' ? 'function-check' : ''">加减签</span>
-            <span class="function-item" @click="changeFunction('Hang')" :class="functionCheck === 'Hang' ? 'function-check' : ''">挂起</span>
-            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('reject')" :class="functionCheck === 'reject' ? 'function-check' : ''">驳回</span>
-            <span class="function-item" v-if="dataList.Hang" @click="changeFunction('termination')" :class="functionCheck === 'termination' ? 'function-check' : ''">终止</span>
-            <span class="function-see" @click="goSee()">查看</span>
+          <div class="function-list" v-if="bpmnType === 'bpmn:UserTask' && btnList.length > 0">
+            <span class="function-item" v-for="(item, index) in btnList" :key="index" v-if="functionItemShow(item)" @click="changeFunction(btnListKey[item])" :class="functionCheck === btnListKey[item] ? 'function-check' : ''">{{ item }}</span>
+            <!-- <span class="function-see" @click="goSee()">查看</span> -->
           </div>
-          <div class="function-main">
+          <div class="function-main" :class="btnList.length === 0 ? 'noData': ''">
             <div v-if="functionCheck === 'agency'">
-              <!-- <div v-if="dataList.agency.length === 0" class="noPeopleList">
-                <span style="cursor: pointer;" @click="changePeopleList()">暂无代办人员，点击添加</span>
-              </div> -->
               <div v-if="dataList.agency.length > 0">
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
@@ -34,13 +25,9 @@
                     </div>
                   </div>
                 </div>
-                <!-- <span class="editButton" @click="editDataList('agency')">编辑</span> -->
               </div>
             </div>
             <div v-if="functionCheck === 'Circulate'">
-              <!-- <div v-if="dataList.Circulate.length === 0" class="noPeopleList">
-                <span style="cursor: pointer;" @click="changePeopleList()">暂无传阅人员，点击添加</span>
-              </div> -->
               <div v-if="dataList.Circulate.length > 0">
                 <div class="peopleList-title">指定传阅人员:</div>
                 <div class="peopleList">
@@ -55,7 +42,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- <span class="editButton" @click="editDataList('Circulate')">编辑</span> -->
               </div>
             </div>
             <div v-if="functionCheck === 'signature'">
@@ -115,6 +101,9 @@
                 </div>
               </div>
             </div>
+            <div v-if="btnList.length === 0" class="heightFunction">
+              无信息
+            </div>
           </div>
         </div>
         <div class="Implement-right">
@@ -170,7 +159,7 @@
     data() {
       return {
         processTaskList: [],
-        functionCheck: 'agency',
+        functionCheck: '',
         bpmnType: '',
         bpmnTypeloopChara: '',
         formContant: '',
@@ -183,6 +172,17 @@
           assignee: '',
           document: ''
         },
+        btnListKey: {
+          "待办": "agency",
+          "传阅": "Circulate",
+          "加减签": "signature",
+          "挂起": "Hang",
+          "驳回": "reject",
+          "终止": "termination"
+        },
+        btnList: [
+          '待办', '传阅', '加减签', '挂起', '驳回', '终止'
+        ],
         dataList: {
           agency: [],
           Circulate: [],
@@ -214,7 +214,6 @@
         this.dataList.Circulate = []
         this.dataList.signature = []
         this.dataList.agency = []
-
         this.processTaskList = result
         this.dataList.Circulate = result[result.length - 1].circulationList
         if (result[result.length - 1].assignee) {
@@ -226,7 +225,7 @@
         }
         this.dataList.agency = result[result.length - 1].candidateUsers
       },
-
+      
       // getNachList(processInstanceId) {
       //   this.dataList.Circulate = []
       //   this.dataList.signature = []
@@ -254,7 +253,31 @@
       //     })
       //   })
       // },
-
+      functionItemShow(item) {
+        let value = this.btnListKey[item]
+        switch (value){
+          case 'agency':
+            return !!this.dataList.Hang
+            break;
+          case 'Circulate':
+            return !!this.dataList.Hang
+            break;
+          case 'signature':
+            return !!(this.dataList.Hang && this.bpmnTypeloopChara === 'bpmn:MultiInstanceLoopCharacteristics')
+            break;
+          case 'Hang':
+            return true
+            break;
+          case 'reject':
+            return !!this.dataList.Hang
+            break;
+          case 'termination':
+            return !!this.dataList.Hang
+            break;
+          default:
+            break;
+        }
+      },
       changeFunction(value) {
         this.functionCheck = value
       },
@@ -266,7 +289,6 @@
               userId: item1
             })
           })
-          console.log(a)
           switch (value){
             case 'agency':
               this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
@@ -291,13 +313,19 @@
         this.$refs.runtimePeople.dialogVisible = true
       },
       confirmation() {
-       console.log(this.$refs)
         this.$refs.runtimeConfirmation.dialogVisible = true
       },
       goSee() {
         this.$emit('goSee', this.$refs.ProcessInformation.postData)
       },
       selectOneSet(value) {
+        // this.btnList = JSON.parse(value?.businessObject?.$attrs['camunda:btnList'] || '[]' )
+        console.log(this.btnList)
+        if (this.btnList.length > 0) {
+          this.changeFunction(this.btnListKey[this.btnList[0]])
+        } else {
+          this.changeFunction('')
+        }
         this.bpmnType = value.type
         this.bpmnTypeloopChara = value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
         this.selection(value)
@@ -454,7 +482,13 @@
     position: relative;
     color: #000000;
   }
-
+  
+  .heightFunction {
+    line-height: 141px;
+    text-align: center;
+    display: block;
+  }
+  
   .noPeopleList {
     line-height: 181px;
     text-align: center;
@@ -571,5 +605,9 @@
     display: inline-block;
     color: #5b5091;
     cursor: pointer;
+  }
+  
+  .noData {
+    margin-top: 68px;
   }
 </style>
