@@ -126,7 +126,7 @@ export const iBpmnListener = {
     if (Array.isArray(newSelection) && newSelection[0]) {
       refreshBpmnState(newSelection[0].businessObject);
     } else {
-      refreshBpmnState(generateState())
+      refreshBpmnState(generateState());
     }
   },
   "shape.changed": ({ element }, refreshBpmnState) => {
