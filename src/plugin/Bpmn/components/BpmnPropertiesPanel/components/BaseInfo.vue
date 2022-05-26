@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'baseInfo',
@@ -27,6 +27,12 @@ export default {
   computed: {
     ...mapState('bpmn', ['name']),
   },
+  mounted() {
+    this.initState();
+  },
+  methods: {
+    ...mapMutations('bpmn', ['initState'])
+  }
 }
 </script>
 
