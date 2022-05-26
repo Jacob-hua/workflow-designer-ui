@@ -5,7 +5,7 @@ function listenBpmn(store) {
   const iBpmn = store._vm.$iBpmn;
 
   function refreshBpmnState(payload = {}) {
-    store.commit("bpmn/refreshStore", payload);
+    store.commit("bpmn/refreshBpmnState", payload);
   }
 
   function handleIBpmnEvent(eventName) {
