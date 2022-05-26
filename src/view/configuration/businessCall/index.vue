@@ -123,6 +123,11 @@ export default {
     },
     showGuide() {
       this.$refs.guide.dialogVisible = true
+      this.$refs.guide.form =  {
+            name: '',
+            type: '',
+            code: ''
+      }
     }
   }
 }
