@@ -65,6 +65,10 @@
         console.log(data);
       },
       handleClose() {
+        this.getRole({
+          groupId: this.currentNodeKey,
+          groupName: this.currentNodeName
+        })
         this.dialogVisible = false
       },
       seeHandle() {

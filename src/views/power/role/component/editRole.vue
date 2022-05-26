@@ -19,14 +19,14 @@
             <div v-for="(item, index) in roleList" :key="index" class="RoleList">
               <div>
                 <label class="roleTitle">应用菜单权限</label><br>
-                <el-checkbox :label="item.id" v-model="item.flag" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
+                <el-checkbox :label="item.id" v-model="item.flag" :disabled="type !== 'edit'" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
               </div>
               <div class="role-item">
                 <label class="roleTitle">操作权限</label><br>
                 <div v-for="(item1, index1) in item.children" :key="index1" style="display: inline-block;margin-right: 20px;">
-                  <el-checkbox :label="item1.id" v-model="item1.flag" :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{ item1.name }}</el-checkbox>
+                  <el-checkbox :label="item1.id" :disabled="type !== 'edit'" v-model="item1.flag" :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{ item1.name }}</el-checkbox>
                   <div v-if="item1.children.length > 0" style="margin-top: 20px;margin-bottom: 20px;margin-left: 20px;">
-                    <el-checkbox :label="item2.id" v-model="item2.flag" :true-label="0" v-for="(item2, index2) in item1.children"
+                    <el-checkbox :label="item2.id" :disabled="type !== 'edit'" v-model="item2.flag" :true-label="0" v-for="(item2, index2) in item1.children"
                       :key="index2" :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}</el-checkbox>
                   </div>
                 </div>
@@ -42,15 +42,15 @@
             <div v-for="(item, index) in roleList" :key="index" class="RoleList" v-if="item.flag === 0">
               <div v-if="item.flag === 0">
                 <label class="roleTitle">应用菜单权限</label><br>
-                <el-checkbox :label="item.id" v-model="item.flag" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
+                <el-checkbox :label="item.id" v-model="item.flag" :disabled="type !== 'edit'" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
               </div>
               <div class="role-item">
                 <label class="roleTitle">操作权限</label><br>
                 <div v-for="(item1, index1) in item.children" :key="index1" style="display: inline-block;margin-right: 20px;">
-                  <el-checkbox :label="item1.id" v-model="item1.flag" :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)"
+                  <el-checkbox :label="item1.id" v-model="item1.flag" :disabled="type !== 'edit'" :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)"
                     v-if="item1.flag === 0">{{ item1.name }}</el-checkbox>
                   <div v-if="item1.children.length > 0" style="margin-top: 20px;margin-bottom: 20px;margin-left: 20px;">
-                    <el-checkbox :label="item2.id" v-model="item2.flag" :true-label="0" v-for="(item2, index2) in item1.children"
+                    <el-checkbox :label="item2.id" v-model="item2.flag" :disabled="type !== 'edit'" :true-label="0" v-for="(item2, index2) in item1.children"
                       :key="index2" v-if="item2.flag === 0" :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}</el-checkbox>
                   </div>
                 </div>
@@ -61,7 +61,7 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer" v-if="type === 'edit'">
-      <el-button type="primary" @click="handleClose">保存</el-button>
+      <el-button type="primary" @click="award">保存</el-button>
       <el-button @click="handleClose">取消</el-button>
     </span>
   </el-dialog>
@@ -69,7 +69,8 @@
 
 <script>
   import {
-    postPersonUser
+    postPersonUser,
+    postMapping
   } from '@/unit/api.js'
   export default {
     props: {
@@ -110,7 +111,7 @@
               if (item1.flag === 0) {
                 arr.push(item1.permission)
               }
-              recursionItem(item1)
+              recursionItem(item1, arr)
             })
           }
         }
@@ -122,10 +123,10 @@
           recursionItem(item, permission[item.permissionType])
         })
         postArr.push({
-          code: projectCode[0].code,
-          name: projectCode[0].name,
-          type: projectCode[0].type,
-          projectCode: projectCode[0].projectCode,
+          code: this.groupId,
+          name: this.currentNodeName,
+          type: 'group',
+          projectCode: this.groupId.split(':')[0],
           tenantId: this.$store.state.tenantId,
           permission: permission
         })

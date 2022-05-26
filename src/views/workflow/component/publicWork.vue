@@ -206,7 +206,7 @@ import {
           status,
           ascription: 'public' || '',
           business: this.projectValue || '',
-          createBy: 'admin' || '',
+          createBy: this.$store.state.userInfo.name || '',
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0]? `${this.valueDate[0]} 00:00:00` || '' : '',
@@ -233,7 +233,8 @@ import {
         ascription: 'public',
         business: this.projectValue,
         startTime: this.valueDate[0],
-        endTime: this.valueDate[1]
+        endTime: this.valueDate[1],
+        createBy: this.$store.state.userInfo.name
       }).then(res => {
         this.draftProcessCount = res.result.draftProcessCount
         this.processCount = res.result.processCount

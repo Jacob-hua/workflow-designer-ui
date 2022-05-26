@@ -62,7 +62,7 @@
           this.$refs.editRole.getMapping(item)
         })
       },
-      editData() {
+      editData(item) {
         this.dialogVisible = true
         this.$nextTick(() => {
           this.$refs.editRole.type = 'edit'

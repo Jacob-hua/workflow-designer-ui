@@ -18,6 +18,7 @@ service.defaults.headers.post["Content-Type"] ="application/x-www-form-urlencode
 //请求拦截
 service.interceptors.request.use(
   config => {
+    config.headers['X-SIACT-SOURCE'] = 'PC'
     let userInfo = (sessionStorage.getItem('loginData') && JSON.parse(sessionStorage.getItem('loginData'))) || ''
     if (userInfo) {
       config.headers['X-SIACT-TOKEN'] = userInfo.token
