@@ -38,7 +38,9 @@ service.interceptors.response.use(
         const status = response.status;
         const res = response.data
         if (status === 200) {
-          resolve(res);
+          if (res) {
+            resolve(res);
+          }
         } else {
           reject(res);
         }
