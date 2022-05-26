@@ -22,9 +22,9 @@ function functionMapping(target, sources = {}) {
   let newPrototype = Object.getPrototypeOf(target);
   for (const module of Object.keys(sources)) {
     const methods = filterPublicFunction(target.modeler.get(module), sources[module]?.prefix);
-    newPrototype = Object.assign(newPrototype, methods)
+    newPrototype = Object.assign(newPrototype, methods);
   }
-  Object.setPrototypeOf(target, newPrototype)
+  Object.setPrototypeOf(target, newPrototype);
 }
 
 const defaultIBpmnProps = {
@@ -62,6 +62,10 @@ class IBpmn {
     this.#getModule("linting")._button.style = "pointer-events: none";
   }
 
+  #getModule(module) {
+    return this.modeler.get(module);
+  }
+
   attachTo(element) {
     this.modeler.attachTo(element);
   }
@@ -74,8 +78,23 @@ class IBpmn {
     this.modeler.clear();
   }
 
-  #getModule(module) {
-    return this.modeler.get(module);
+  getSelectedShape() {
+    const shapes = this.selectionGet() ?? [];
+    if (shapes[0]) {
+      return shapes[0];
+    }
+    return null;
+  }
+
+  updateSelectedShapeProperties(payload = {}) {
+    if (!this.getSelectedShape()) {
+      return;
+    }
+    this.updateShapeProperties(this.getSelectedShape(), payload);
+  }
+
+  updateShapeProperties(shape, payload = {}) {
+    this.modelingUpdateProperties(shape, payload);
   }
 
   paletteVisible(visable) {

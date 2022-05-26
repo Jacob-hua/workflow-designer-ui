@@ -6,27 +6,27 @@ export const moduleConfigs = {
     prefix: "linter",
   },
   modeling: {
-    prefix: "",
+    prefix: "modeling",
   },
   moddle: {
-    prefix: "",
+    prefix: "moddle",
   },
   eventBus: {
     prefix: "",
   },
   bpmnFactory: {
-    prefix: "",
+    prefix: "bpmnFactory",
   },
   elementFactory: {
-    prefix: "",
+    prefix: "elementFactory",
   },
   elementRegistry: {
-    prefix: "",
+    prefix: "elementRegistry",
   },
   replace: {
-    prefix: "",
+    prefix: "replace",
   },
   selection: {
-    prefix: "",
+    prefix: "selection",
   },
 };

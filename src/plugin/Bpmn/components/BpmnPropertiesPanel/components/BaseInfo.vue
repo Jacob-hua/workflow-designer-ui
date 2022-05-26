@@ -5,8 +5,9 @@
              ref="baseInfo"
              :model="baseInfo">
       <el-form-item label="名称">
-        <el-input v-model="name"
-                  clearable></el-input>
+        <el-input :value="name"
+                  clearable
+                  @input="updateName"></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -27,11 +28,8 @@ export default {
   computed: {
     ...mapState('bpmn', ['name']),
   },
-  mounted() {
-    this.initState();
-  },
   methods: {
-    ...mapMutations('bpmn', ['initState'])
+    ...mapMutations('bpmn', ['updateName']),
   }
 }
 </script>

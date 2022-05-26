@@ -50,12 +50,16 @@ const getter = {};
 
 const mutations = {
   initState() {
-    this.commit('bpmn/refreshBpmnState', generateState())
+    this.commit("bpmn/refreshBpmnState", generateState());
   },
   refreshBpmnState(state, payload = {}) {
     Object.keys(payload).forEach((key) => {
       state[key] = payload[key];
     });
+  },
+  updateName(state, name) {
+    state.name = name;
+    this.$iBpmn.updateSelectedShapeProperties({ name });
   },
 };
 
@@ -65,8 +69,13 @@ export const iBpmnListener = {
   "selection.changed": ({ newSelection }, refreshBpmnState) => {
     if (Array.isArray(newSelection) && newSelection[0]) {
       refreshBpmnState({
-        name: newSelection[0].id,
+        name: newSelection[0].name,
       });
+    }
+  },
+  "shape.changed": ({ element }, refreshBpmnState) => {
+    if (element) {
+      refreshBpmnState(element.businessObject);
     }
   },
 };
