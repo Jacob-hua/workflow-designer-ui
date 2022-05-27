@@ -197,7 +197,11 @@ export const getDeployCount = (params) =>
 // 用户流程任务数量统计
 export const postTaskCountStatistics = (params) =>
   post('/execute/taskCountStatistics', params);
-  
+
+// 获取下一步流程的信息
+export const getProcessNodeInfo = (params) =>
+  get('/execute/processNodeInfo', params);
+
   
 // 权限管理
 

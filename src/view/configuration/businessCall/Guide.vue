@@ -46,7 +46,8 @@ export default {
       form: {
         name: '',
         type: '',
-        code: ''
+        code: '',
+        tenantId: this.$store.state.tenantId
       },
       projectOption: [
         {
