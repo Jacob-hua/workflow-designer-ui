@@ -169,7 +169,11 @@ export const getCirculation = (params) =>
 // 流程加减签
 export const getModifyProcessUser = (params) =>
   get('/execute/modifyProcessUser', params);
-  
+
+// 流程加减签（新）
+export const postModifyProcessUser = (params) =>
+  post('/execute/modifyProcessUser', params);
+
 // 代办流程
 export const getModifyCandidate = (params) =>
   get('/execute/modifyCandidate', params);
@@ -193,7 +197,11 @@ export const getDeployCount = (params) =>
 // 用户流程任务数量统计
 export const postTaskCountStatistics = (params) =>
   post('/execute/taskCountStatistics', params);
-  
+
+// 获取下一步流程的信息
+export const getProcessNodeInfo = (params) =>
+  get('/execute/processNodeInfo', params);
+
   
 // 权限管理
 

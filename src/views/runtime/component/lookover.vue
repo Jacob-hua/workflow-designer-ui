@@ -21,7 +21,7 @@
                     <span class="word1">{{ item1.assignee }} <span>(执行)</span></span>
                     <span class="dataYear">{{ item.endTime }}</span>
                   </div>
-                 <div v-if="item.status === 'deleted'">
+                 <div v-if="item.status === 'rejected'">
                     <div v-for="(item1, index1) in item.commentList">
                       <div v-for="(item2, index2) in item1.comments">
                         <i class="el-icon-warning-outline success"></i>

@@ -59,7 +59,7 @@
 </template>
 
 <script>
-  import { getPersonUser, getThreeSystemOrganize, getModifyCandidate, getCirculation, getModifyProcessUser } from '@/unit/api.js'
+  import { getPersonUser, getThreeSystemOrganize, getModifyCandidate, getCirculation, postModifyProcessUser } from '@/unit/api.js'
   export default {
     props:{
       taskId: {
@@ -270,14 +270,13 @@
             this.multipleSelection.forEach((item) => {
               dataListsignature.push(item.userId)
             })
-            let str2 = dataListsignature.join(',')
-            getModifyProcessUser({
+            // let str2 = dataListsignature.join(',')
+            postModifyProcessUser({
               processInstanceId: this.processInstanceId,
               taskKey: this.taskKey,
-              userList: str2
+              userList: dataListsignature
             }).then(() => {
               this.$message.success('加减签成功')
-              this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
               this.dialogVisible = false
               this.$parent.$emit('taskSuccess')
             })

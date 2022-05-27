@@ -53,7 +53,7 @@
                 <div class="peopleList">
                   <div class="peopleList-item" v-for="(item, index) in dataList.signature">{{ item.userId }}</div>
                 </div>
-                <!-- <span class="editButton" @click="editDataList('signature')">编辑</span> -->
+                <span class="editButton" @click="editDataList('signature')">编辑</span>
               </div>
             </div>
             <div v-if="functionCheck === 'Hang'">
@@ -147,7 +147,8 @@
     postCompleteTask,
     putHangInstance,
     putCancelInstance,
-    getTaskDetailList
+    getTaskDetailList,
+    getProcessNodeInfo
   } from '@/unit/api.js'
   export default {
     props: {
@@ -180,9 +181,7 @@
           "驳回": "reject",
           "终止": "termination"
         },
-        btnList: [
-          '待办', '传阅', '加减签', '挂起', '驳回', '终止'
-        ],
+        btnList: [],
         dataList: {
           agency: [],
           Circulate: [],
@@ -311,6 +310,9 @@
         this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(this.dataList[value]))
         this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(this.dataList[value]))
         this.$refs.runtimePeople.dialogVisible = true
+        this.$nextTick(() => {
+          this.$refs.runtimePeople.toggleRowSelection()
+        })
       },
       confirmation() {
         this.$refs.runtimeConfirmation.dialogVisible = true
@@ -319,8 +321,7 @@
         this.$emit('goSee', this.$refs.ProcessInformation.postData)
       },
       selectOneSet(value) {
-        // this.btnList = JSON.parse(value?.businessObject?.$attrs['camunda:btnList'] || '[]' )
-        console.log(this.btnList)
+        this.btnList = JSON.parse(value?.businessObject?.$attrs['camunda:btnList'] || '[]' )
         if (this.btnList.length > 0) {
           this.changeFunction(this.btnListKey[this.btnList[0]])
         } else {
@@ -335,7 +336,11 @@
         let data = {}
         let formData = []
         if (this.formShow) {
-          data = this.$refs.formRuntime.formEditor.submit().data
+          let { data, errors } = this.$refs.formRuntime.formEditor.submit()
+          if (Object.keys(errors).length > 0) {
+            this.$message.error('有必填项未填写')
+            return
+          }
           formData = JSON.parse(this.formContant).components
           formData.forEach((item) => {
             switch (item.type) {
@@ -361,9 +366,9 @@
           //   }
           // }
         }
-        let a = this.$refs.ProcessInformation.postData.taskAssignee.split(',')
-        let b = this.$refs.ProcessInformation.postData.taskId.split(',')
-        let c = a.indexOf(this.$store.state.userInfo.name)
+        // let a = this.$refs.ProcessInformation.postData.taskAssignee.split(',')
+        // let b = this.$refs.ProcessInformation.postData.taskId.split(',')
+        // let c = a.indexOf(this.$store.state.userInfo.name)
 
         postCompleteTask({
           assignee: this.$store.state.userInfo.name,

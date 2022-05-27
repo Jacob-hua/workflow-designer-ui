@@ -171,6 +171,10 @@
       },
       addEnableForm() {
         const xml  = this.$refs.formbpmn.importData();
+        if (xml.components && xml.components.length === 0) {
+          this.$message.error('不允许提交空表单')
+          return
+        }
         xml.id = 'form_' + Date.parse(new Date())
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()
