@@ -1,16 +1,24 @@
 <template>
   <div>
-    <base-info />
+    {{test}}
+    <base-info-panel />
+    <execute-listener-panel />
   </div>
 </template>
 
 <script>
-import BaseInfo from './components/BaseInfo.vue'
+import { mapState } from 'vuex'
+import BaseInfoPanel from './components/BaseInfoPanel.vue'
+import ExecuteListenerPanel from './components/ExecuteListenerPanel.vue'
 
 export default {
   name: 'bpmnPropertiesPanel',
   components: {
-    BaseInfo,
+    BaseInfoPanel,
+    ExecuteListenerPanel,
+  },
+  computed: {
+    ...mapState('bpmn/config', ['test']),
   },
 }
 </script>
