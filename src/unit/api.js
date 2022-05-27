@@ -169,7 +169,11 @@ export const getCirculation = (params) =>
 // 流程加减签
 export const getModifyProcessUser = (params) =>
   get('/execute/modifyProcessUser', params);
-  
+
+// 流程加减签（新）
+export const postModifyProcessUser = (params) =>
+  post('/execute/modifyProcessUser', params);
+
 // 代办流程
 export const getModifyCandidate = (params) =>
   get('/execute/modifyCandidate', params);

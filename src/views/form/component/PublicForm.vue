@@ -4,7 +4,7 @@
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
+          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
@@ -76,13 +76,16 @@
 </template>
 
 <script>
+  import {
+    format
+  } from '@/assets/js/unit.js'
   import PublicFormDiolog from './PublicFormComponent/index.vue'
   import detailsDiolog from './details.vue'
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/unit/api.js'
   export default {
     data() {
       return {
-        valueDate: [],
+        valueDate: [format(new Date(), 'yyyy-MM-1'), format(new Date(), 'yyyy-MM-dd')],
         input: '',
         activeName: 'enabled',
         formListFirst: [],
@@ -112,8 +115,8 @@
           createBy: this.$store.state.userInfo.name,
           numberCode: '',
           name: this.input,
-          startTime: this.valueDate[0] || '',
-          endTime: this.valueDate[1] || '',
+          startTime: this.valueDate[0] + ' 00:00:00',
+          endTime: this.valueDate[1] + ' 23:59:59',
           ...this.getDataSecond
         }).then((res) => {
           this.formListSecond = res.result.dataList
@@ -131,8 +134,8 @@
           createBy: this.$store.state.userInfo.name,
           numberCode: '',
           name: this.input,
-          startTime: this.valueDate[0],
-          endTime: this.valueDate[1],
+          startTime: this.valueDate[0] + ' 00:00:00',
+          endTime: this.valueDate[1] + ' 23:59:59',
           ...this.getDataFirst
          }).then((res) => {
           this.formListFirst = res.result.dataList

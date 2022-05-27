@@ -61,7 +61,24 @@
         this.dialogVisible2 = true
       },
       addEnableForm() {
+        
+        if (!this.postData.name) {
+          this.$message.error('请填写表单名称')
+          return
+        }
+        
+        if (this.postData.name.length <= 2) {
+          this.$message.error('表单名称的长度必须大于两个字符')
+          return
+        }
+        
         const xml  = this.$refs.formbpmn.importData();
+        
+        if (xml.components && xml.components.length === 0) {
+          this.$message.error('不允许提交空表单')
+          return
+        }
+        
         xml.id = 'form_' + Date.parse(new Date())
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
         let formData = new FormData()

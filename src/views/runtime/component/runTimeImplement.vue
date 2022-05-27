@@ -53,7 +53,7 @@
                 <div class="peopleList">
                   <div class="peopleList-item" v-for="(item, index) in dataList.signature">{{ item.userId }}</div>
                 </div>
-                <!-- <span class="editButton" @click="editDataList('signature')">编辑</span> -->
+                <span class="editButton" @click="editDataList('signature')">编辑</span>
               </div>
             </div>
             <div v-if="functionCheck === 'Hang'">
@@ -311,6 +311,9 @@
         this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(this.dataList[value]))
         this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(this.dataList[value]))
         this.$refs.runtimePeople.dialogVisible = true
+        this.$nextTick(() => {
+          this.$refs.runtimePeople.toggleRowSelection()
+        })
       },
       confirmation() {
         this.$refs.runtimeConfirmation.dialogVisible = true

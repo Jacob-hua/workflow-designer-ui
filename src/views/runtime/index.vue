@@ -157,15 +157,17 @@
         statusObj: {
           completed: '通过',
           run: '执行',
-          deleted: '驳回',
+          deleted: '删除',
           hang: '挂起',
-          '-': '执行'
+          '-': '执行',
+          rejected: '驳回'
         },
         statusClassObj: {
           completed: '',
           '-': 'tableStepOnly',
           deleted: 'tableStepDeleted',
           hang: 'tableStepHang',
+          rejected: 'tableStepDeleted'
         },
         getData: {
           assignee: this.$store.state.userInfo.name,
