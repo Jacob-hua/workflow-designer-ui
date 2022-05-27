@@ -119,6 +119,18 @@ export default {
       this.$refs.BusinessCon.dialogVisible = true
       this.$refs.BusinessCon.editFlag = true
       this.$refs.BusinessCon.btnTxt = '预览'
+      this.$refs.BusinessCon.data = [
+            {
+              "code": 1,
+              "label": '莱芜供热项目',
+              "name": '',
+              "active": "Y",
+              "type": 'industry',
+              "parentId":	-1,
+              "createBy": this.$store.state.userInfo.name,
+              "tenantId": this.$store.state.tenantId
+            }
+        ]
       this.$refs.BusinessCon.data[0].label = form.name
       this.$refs.BusinessCon.data[0].name = form.name
       this.$refs.BusinessCon.forms = form
@@ -126,6 +138,11 @@ export default {
     },
     showGuide() {
       this.$refs.guide.dialogVisible = true
+      this.$refs.guide.form =  {
+            name: '',
+            type: '',
+            code: ''
+      }
     }
   }
 }
