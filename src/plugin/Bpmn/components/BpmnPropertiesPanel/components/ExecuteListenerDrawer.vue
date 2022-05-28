@@ -2,10 +2,10 @@
   <div>
     <el-drawer :title="title"
                :visible="visible"
-               :before-close="onCloseDrawer"
+               @close="onCloseDrawer"
                direction="rtl">
       <el-form :model="listenerForm"
-               :rules="listenerRules"
+               :rules="listenerFormRules"
                ref="listenerForm">
         <el-form-item label="事件类型"
                       prop="eventType">
@@ -86,9 +86,10 @@
             <span>注入字段</span>
             <el-button size="mini"
                        type="primary"
-                       @click="openListenerFieldForm(null)">添加字段</el-button>
+                       @click="onAddField">添加字段</el-button>
           </div>
-          <el-table size="mini"
+          <el-table :data="listenerForm.fields"
+                    size="mini"
                     max-height="240"
                     border
                     fit
@@ -102,90 +103,85 @@
             <el-table-column label="字段类型"
                              min-width="80px"
                              show-overflow-tooltip
-                             :formatter="row => fieldTypeObject[row.fieldType]" />
+                             :formatter="fieldTypeLabel" />
             <el-table-column label="字段值/表达式"
                              min-width="100px"
                              show-overflow-tooltip
                              :formatter="row => row.string || row.expression" />
             <el-table-column label="操作"
                              width="100px">
-              <template slot-scope="{ row, $index }">
+              <template slot-scope="{ $index }">
                 <el-button size="mini"
                            type="text"
-                           @click="openListenerFieldForm(row, $index)">编辑</el-button>
+                           @click="onEditField($index)">编辑</el-button>
                 <el-divider direction="vertical" />
                 <el-button size="mini"
                            type="text"
                            style="color: #ff4d4f"
-                           @click="removeListenerField(row, $index)">移除</el-button>
+                           @click="onRemoveField($index)">移除</el-button>
               </template>
             </el-table-column>
           </el-table>
         </template>
         <el-form-item>
-          <el-button @click="onClickCancel">取消</el-button>
+          <el-button @click="onListenerFormCancel">取消</el-button>
           <el-button type="primary"
-                     @click="onClickSubmit">保存</el-button>
+                     @click="onListenerFormSubmit">保存</el-button>
         </el-form-item>
       </el-form>
     </el-drawer>
     <el-dialog title="字段配置"
-               :visible.sync="listenerFieldFormModelVisible"
+               :visible.sync="fieldModalVisible"
                width="600px"
                append-to-body
                destroy-on-close>
-      <el-form :model="listenerFieldForm"
+      <el-form :model="fieldForm"
+               :rules="fieldFormRules"
                size="mini"
                label-width="96px"
-               ref="listenerFieldFormRef"
-               style="height: 136px"
-               @submit.native.prevent>
-        <el-form-item label="字段名称："
-                      prop="name"
-                      :rules="{ required: true, trigger: ['blur', 'change'] }">
-          <el-input v-model="listenerFieldForm.name"
+               ref="fieldForm"
+               style="height: 136px">
+        <el-form-item label="字段名称"
+                      prop="name">
+          <el-input v-model="fieldForm.name"
                     clearable />
         </el-form-item>
-        <el-form-item label="字段类型："
-                      prop="fieldType"
-                      :rules="{ required: true, trigger: ['blur', 'change'] }">
-          <el-select v-model="listenerFieldForm.fieldType">
+        <el-form-item label="字段类型"
+                      prop="fieldType">
+          <el-select v-model="fieldForm.fieldType">
             <el-option v-for="({label, value}, index) in fieldTypeOptions"
                        :key="index"
                        :label="label"
                        :value="value" />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="listenerFieldForm.fieldType === 'string'"
-                      label="字段值："
-                      prop="string"
-                      key="field-string"
-                      :rules="{ required: true, trigger: ['blur', 'change'] }">
-          <el-input v-model="listenerFieldForm.string"
+        <el-form-item v-if="fieldTypeIs('string')"
+                      label="字段值"
+                      prop="value">
+          <el-input v-model="fieldForm.string"
                     clearable />
         </el-form-item>
-        <el-form-item v-if="listenerFieldForm.fieldType === 'expression'"
-                      label="表达式："
-                      prop="expression"
-                      key="field-expression"
-                      :rules="{ required: true, trigger: ['blur', 'change'] }">
-          <el-input v-model="listenerFieldForm.expression"
+        <el-form-item v-if="fieldTypeIs('expression')"
+                      label="表达式"
+                      prop="value">
+          <el-input v-model="fieldForm.expression"
                     clearable />
         </el-form-item>
       </el-form>
       <template slot="footer">
         <el-button size="mini"
-                   @click="listenerFieldFormModelVisible = false">取 消</el-button>
+                   @click="onFieldFormCancel">取 消</el-button>
         <el-button size="mini"
                    type="primary"
-                   @click="saveListenerFiled">确 定</el-button>
+                   @click="onFieldFormSubmit">确 定</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
+import { deepCopy } from '../../../utils/object'
 
 function requiredRule(message) {
   return [{ required: true, trigger: ['blur', 'change'], message }]
@@ -217,10 +213,8 @@ export default {
   },
   data() {
     return {
-      listenerFieldFormModelVisible: false,
-      listenerFieldForm: {},
       listenerForm: {},
-      listenerRules: {
+      listenerFormRules: {
         eventType: [...requiredRule('请选择事件类型')],
         listenerType: [...requiredRule('请选择监听器类型')],
         class: [...requiredRule('请输入Java类名')],
@@ -232,6 +226,14 @@ export default {
         resource: [...requiredRule('请填写资源地址')],
         timer: [...requiredRule('请填写定时器配置')],
       },
+      fieldModalVisible: false,
+      fieldForm: {},
+      fieldFormRules: {
+        name: [...requiredRule('请填写字段名称')],
+        fieldType: [...requiredRule('请选择字段类型')],
+        string: [...requiredRule('请输入字段值')],
+        expression: [...requiredRule('请输入表达式')],
+      },
     }
   },
   computed: {
@@ -242,6 +244,7 @@ export default {
       'timerTypeOptions',
       'fieldTypeOptions',
     ]),
+    ...mapGetters('bpmn/config', ['fieldTypeLabel']),
   },
   watch: {
     listener(value) {
@@ -267,6 +270,11 @@ export default {
         this.listenerForm['scriptType'] === scriptType
       )
     },
+    fieldTypeIs(fieldType) {
+      return (
+        this.fieldForm['fieldType'] && this.fieldForm['fieldType'] === fieldType
+      )
+    },
     timerTypeIsNotNull() {
       return (
         this.listenerForm['timerType'] &&
@@ -278,24 +286,55 @@ export default {
       this.$refs.listenerForm['resetFields'] &&
         this.$refs.listenerForm['resetFields']()
     },
-    onClickCancel() {
+    onListenerFormCancel() {
       this.onCloseDrawer()
     },
-    onClickSubmit() {
+    onListenerFormSubmit() {
       this.$refs.listenerForm['validate'] &&
         this.$refs.listenerForm['validate']((valid) => {
           if (!valid) {
             return
           }
-          // 由于Vue的数据响应原理，当在抽屉中清空listenerForm时，传递给onSubmit的数据也会被清空
-          // 所以此处必须解构this.listenerForm为新的对象，再向onSubmit传递，保证传递出去的数据不被清空
-          this.onSubmit({ ...this.listenerForm })
+          // 由于Vue的数据响应原理，当清空listenerForm时传递给onSubmit(..)的数据也会被清空
+          // 所以此处拷贝this.listenerForm为新的对象，再向onSubmit传递，保证传递出去的数据不受this.listenerForm的影响
+          this.onSubmit(deepCopy(this.listenerForm))
           this.onCloseDrawer()
         })
     },
-    saveListenerFiled() {},
-    openListenerFieldForm(field, index) {
-      this.listenerFieldFormModelVisible = true
+    onAddField() {
+      this.fieldModalVisible = true
+    },
+    closeFieldModal() {
+      this.fieldModalVisible = false
+      this.fieldForm = {}
+    },
+    onFieldFormCancel() {
+      this.closeFieldModal()
+    },
+    onFieldFormSubmit() {
+      this.$refs.fieldForm['validate'] &&
+        this.$refs.fieldForm['validate']((valid) => {
+          if (!valid) {
+            return
+          }
+          if (!this.listenerForm['fields']) {
+            this.listenerForm['fields'] = []
+          }
+          // 由于Vue的数据响应原理，当清空fieldForm时传递给listenerForm的对象也会被清空
+          // 所以此处拷贝this.fieldForm为新的对象，再向listenerForm中添加，保证不受到this.fieldForm的影响
+          this.listenerForm['fields'].push(deepCopy(this.fieldForm))
+          this.closeFieldModal()
+        })
+    },
+    onEditField(index) {
+      this.fieldForm =
+        this.listenerForm['fields'] && this.listenerForm['fields'][index]
+      this.fieldModalVisible = true
+    },
+    onRemoveField(index) {
+      if (this.listenerForm['fields'] && this.listenerForm['fields'][index]) {
+        this.listenerForm['fields'].splice(index, 1)
+      }
     },
   },
 }

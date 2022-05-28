@@ -94,6 +94,11 @@ const getters = {
       return state.eventTypeOptions.find(({ value }) => value === eventType)?.label;
     };
   },
+  fieldTypeLabel(state) {
+    return ({ fieldType }) => {
+      return state.fieldTypeOptions.find(({ value }) => value === fieldType)?.label;
+    };
+  },
 };
 
 const mutations = {};
