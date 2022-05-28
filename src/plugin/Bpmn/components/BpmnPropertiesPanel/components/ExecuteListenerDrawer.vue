@@ -157,13 +157,13 @@
         </el-form-item>
         <el-form-item v-if="fieldTypeIs('string')"
                       label="字段值"
-                      prop="value">
+                      prop="string">
           <el-input v-model="fieldForm.string"
                     clearable />
         </el-form-item>
         <el-form-item v-if="fieldTypeIs('expression')"
                       label="表达式"
-                      prop="value">
+                      prop="expression">
           <el-input v-model="fieldForm.expression"
                     clearable />
         </el-form-item>
