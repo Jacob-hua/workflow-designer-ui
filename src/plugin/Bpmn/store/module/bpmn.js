@@ -53,6 +53,7 @@ const getters = {
   findListenerByIndex(state) {
     return (index) => {
       // 为了保证数据是单向流动的，这里需要将匹配的对象重新解构为新的对象
+      // 这样做的目的是防止Vue响应式的双向数据绑定会直接修改state中的数据
       return { ...(state.listeners[index] ?? {}) };
     };
   },

@@ -81,6 +81,47 @@
             <el-input v-model="listenerForm.timer" />
           </el-form-item>
         </template>
+        <template>
+          <div>
+            <span>注入字段</span>
+            <el-button size="mini"
+                       type="primary"
+                       @click="openListenerFieldForm(null)">添加字段</el-button>
+          </div>
+          <el-table size="mini"
+                    max-height="240"
+                    border
+                    fit
+                    style="flex: none">
+            <el-table-column label="序号"
+                             width="50px"
+                             type="index" />
+            <el-table-column label="字段名称"
+                             min-width="100px"
+                             prop="name" />
+            <el-table-column label="字段类型"
+                             min-width="80px"
+                             show-overflow-tooltip
+                             :formatter="row => fieldTypeObject[row.fieldType]" />
+            <el-table-column label="字段值/表达式"
+                             min-width="100px"
+                             show-overflow-tooltip
+                             :formatter="row => row.string || row.expression" />
+            <el-table-column label="操作"
+                             width="100px">
+              <template slot-scope="{ row, $index }">
+                <el-button size="mini"
+                           type="text"
+                           @click="openListenerFieldForm(row, $index)">编辑</el-button>
+                <el-divider direction="vertical" />
+                <el-button size="mini"
+                           type="text"
+                           style="color: #ff4d4f"
+                           @click="removeListenerField(row, $index)">移除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </template>
         <el-form-item>
           <el-button @click="onClickCancel">取消</el-button>
           <el-button type="primary"
@@ -88,6 +129,58 @@
         </el-form-item>
       </el-form>
     </el-drawer>
+    <el-dialog title="字段配置"
+               :visible.sync="listenerFieldFormModelVisible"
+               width="600px"
+               append-to-body
+               destroy-on-close>
+      <el-form :model="listenerFieldForm"
+               size="mini"
+               label-width="96px"
+               ref="listenerFieldFormRef"
+               style="height: 136px"
+               @submit.native.prevent>
+        <el-form-item label="字段名称："
+                      prop="name"
+                      :rules="{ required: true, trigger: ['blur', 'change'] }">
+          <el-input v-model="listenerFieldForm.name"
+                    clearable />
+        </el-form-item>
+        <el-form-item label="字段类型："
+                      prop="fieldType"
+                      :rules="{ required: true, trigger: ['blur', 'change'] }">
+          <el-select v-model="listenerFieldForm.fieldType">
+            <el-option v-for="({label, value}, index) in fieldTypeOptions"
+                       :key="index"
+                       :label="label"
+                       :value="value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="listenerFieldForm.fieldType === 'string'"
+                      label="字段值："
+                      prop="string"
+                      key="field-string"
+                      :rules="{ required: true, trigger: ['blur', 'change'] }">
+          <el-input v-model="listenerFieldForm.string"
+                    clearable />
+        </el-form-item>
+        <el-form-item v-if="listenerFieldForm.fieldType === 'expression'"
+                      label="表达式："
+                      prop="expression"
+                      key="field-expression"
+                      :rules="{ required: true, trigger: ['blur', 'change'] }">
+          <el-input v-model="listenerFieldForm.expression"
+                    clearable />
+        </el-form-item>
+      </el-form>
+      <template slot="footer">
+        <el-button size="mini"
+                   @click="listenerFieldFormModelVisible = false">取 消</el-button>
+        <el-button size="mini"
+                   type="primary"
+                   @click="saveListenerFiled">确 定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -124,6 +217,8 @@ export default {
   },
   data() {
     return {
+      listenerFieldFormModelVisible: false,
+      listenerFieldForm: {},
       listenerForm: {},
       listenerRules: {
         eventType: [...requiredRule('请选择事件类型')],
@@ -145,6 +240,7 @@ export default {
       'eventTypeOptions',
       'scriptTypeOptions',
       'timerTypeOptions',
+      'fieldTypeOptions',
     ]),
   },
   watch: {
@@ -185,7 +281,7 @@ export default {
     onClickCancel() {
       this.onCloseDrawer()
     },
-    async onClickSubmit() {
+    onClickSubmit() {
       this.$refs.listenerForm['validate'] &&
         this.$refs.listenerForm['validate']((valid) => {
           if (!valid) {
@@ -196,6 +292,10 @@ export default {
           this.onSubmit({ ...this.listenerForm })
           this.onCloseDrawer()
         })
+    },
+    saveListenerFiled() {},
+    openListenerFieldForm(field, index) {
+      this.listenerFieldFormModelVisible = true
     },
   },
 }
