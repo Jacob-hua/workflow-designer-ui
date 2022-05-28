@@ -138,7 +138,8 @@ export default {
       this.$refs.guide.form =  {
             name: '',
             type: '',
-            code: ''
+            code: '',
+            tenantId: this.$store.state.tenantId
       }
     }
   }
