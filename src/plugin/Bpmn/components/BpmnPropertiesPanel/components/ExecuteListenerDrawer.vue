@@ -103,11 +103,12 @@
             <el-table-column label="字段类型"
                              min-width="80px"
                              show-overflow-tooltip
+                             prop="fieldType"
                              :formatter="fieldTypeLabel" />
-            <el-table-column label="字段值/表达式"
+            <el-table-column label="字段值"
                              min-width="100px"
                              show-overflow-tooltip
-                             :formatter="row => row.string || row.expression" />
+                             prop="value" />
             <el-table-column label="操作"
                              width="100px">
               <template slot-scope="{ $index }">
@@ -132,6 +133,7 @@
     </el-drawer>
     <el-dialog title="字段配置"
                :visible.sync="fieldModalVisible"
+               @close="onCloseFieldModal"
                width="600px"
                append-to-body
                destroy-on-close>
@@ -157,14 +159,14 @@
         </el-form-item>
         <el-form-item v-if="fieldTypeIs('string')"
                       label="字段值"
-                      prop="string">
-          <el-input v-model="fieldForm.string"
+                      prop="value">
+          <el-input v-model="fieldForm.value"
                     clearable />
         </el-form-item>
         <el-form-item v-if="fieldTypeIs('expression')"
                       label="表达式"
-                      prop="expression">
-          <el-input v-model="fieldForm.expression"
+                      prop="value">
+          <el-input v-model="fieldForm.value"
                     clearable />
         </el-form-item>
       </el-form>
@@ -231,8 +233,7 @@ export default {
       fieldFormRules: {
         name: [...requiredRule('请填写字段名称')],
         fieldType: [...requiredRule('请选择字段类型')],
-        string: [...requiredRule('请输入字段值')],
-        expression: [...requiredRule('请输入表达式')],
+        value: [...requiredRule('请输入字段值')],
       },
     }
   },
@@ -304,12 +305,12 @@ export default {
     onAddField() {
       this.fieldModalVisible = true
     },
-    closeFieldModal() {
+    onCloseFieldModal() {
       this.fieldModalVisible = false
       this.fieldForm = {}
     },
     onFieldFormCancel() {
-      this.closeFieldModal()
+      this.onCloseFieldModal()
     },
     onFieldFormSubmit() {
       this.$refs.fieldForm['validate'] &&
@@ -323,7 +324,7 @@ export default {
           // 由于Vue的数据响应原理，当清空fieldForm时传递给listenerForm的对象也会被清空
           // 所以此处拷贝this.fieldForm为新的对象，再向listenerForm中添加，保证不受到this.fieldForm的影响
           this.listenerForm['fields'].push(deepCopy(this.fieldForm))
-          this.closeFieldModal()
+          this.onCloseFieldModal()
         })
     },
     onEditField(index) {
