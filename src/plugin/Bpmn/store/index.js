@@ -1,7 +1,3 @@
-import bpmn from "./module/bpmn";
-import bpmnStorePlugin from "./plugin/bpmnStorePlugin";
+import bpmnVuexPlugin from "./plugin";
 
-export default {
-  store: bpmn,
-  plugin: bpmnStorePlugin,
-};
+export { bpmnVuexPlugin };

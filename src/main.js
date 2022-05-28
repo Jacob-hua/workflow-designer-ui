@@ -21,9 +21,9 @@ import JsonViewer from "vue-json-viewer";
 Vue.use(ElementUI);
 Vue.use(JsonViewer);
 
-import Plugin from "./plugin";
+import { Bpmn } from "./plugin";
 
-Vue.use(Plugin.Bpmn, {
+Vue.use(Bpmn, {
   name: "Test",
   key: "Test",
 });

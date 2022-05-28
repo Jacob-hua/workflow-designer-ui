@@ -70,7 +70,7 @@ const mutations = {
   },
   updateName(state, name) {
     state.name = name;
-    this.$iBpmn.updateSelectedShapeProperties({ name });
+    // this.$iBpmn.updateSelectedShapeProperties({ name });
   },
   addListener(state, { listener }) {
     if (isEmptyArray(Object.keys(listener))) {
@@ -95,17 +95,18 @@ const mutations = {
 const actions = {};
 
 export const iBpmnListener = {
-  "selection.changed": ({ newSelection }, refreshBpmnState) => {
+  "selection.changed": ({ newSelection }) => {
     if (Array.isArray(newSelection) && newSelection[0]) {
-      refreshBpmnState(newSelection[0].businessObject);
+      return newSelection[0]?.businessObject;
     } else {
-      refreshBpmnState(generateState());
+      return generateState();
     }
   },
-  "shape.changed": ({ element }, refreshBpmnState) => {
-    if (element) {
-      refreshBpmnState(element.businessObject);
+  "shape.changed": ({ element }) => {
+    if (!element) {
+      return;
     }
+    return element.businessObject;
   },
 };
 

@@ -1,10 +1,10 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import plugin from "../plugin";
+import { Bpmn } from "../plugin";
 
 const debug = process.env.NODE_ENV !== "production";
 
-const { bpmnStore } = plugin.Bpmn;
+const { bpmnVuexPlugin } = Bpmn;
 
 Vue.use(Vuex);
 
@@ -72,8 +72,5 @@ export default new Vuex.Store({
   },
   mutations: {},
   actions: {},
-  modules: {
-    bpmn: bpmnStore.store,
-  },
-  plugins: [bpmnStore.plugin],
+  plugins: [bpmnVuexPlugin],
 });
