@@ -91,17 +91,17 @@ import {
           });
           console.log(definitions)
           let formData = new FormData()
-          if (_this.currentRowData.id) {
+          if (_this.currentRowData?.id) {
             formData.append('id', _this.currentRowData.id )
           }
           let names = ''
-          if (definitions.process._name) {
+          if (definitions?.process._name) {
             names = definitions.process._name
           }
-          if ( _this.formData.name) {
+          if ( _this.formData?.name) {
             names =  _this.formData.name
           }
-          if (_this.currentRowData.name) {
+          if (_this.currentRowData?.name) {
             names = _this.currentRowData.name
           }
 
