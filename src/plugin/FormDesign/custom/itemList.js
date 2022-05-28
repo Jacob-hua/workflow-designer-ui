@@ -15,7 +15,7 @@ import {cascader} from "./items/cascader";
 import {upload} from "./items/upload";
 import {dialogList} from "./items/dialogList";
 
-import {dynamicTable} from "./items/dynamicTable";
+// import {dynamicTable} from "./items/dynamicTable";
 import {button} from "./items/button";
 import {divider} from "./items/divider";
 import {row} from "./items/row";
@@ -27,7 +27,7 @@ import {barCode} from "./items/barCode";
 
 export  const formItems = [
   input,select,radio,checkbox,Switch,inputNumber,textarea,slider
-  ,rate,date,time,editor,colorPicker,cascader,upload,dialogList,barCode,dynamicTable
+  ,rate,date,time,editor,colorPicker,cascader,upload,dialogList,barCode
 ];
 export  const assistFormItems = [button,divider,alert,link,text];
 export  const layoutFormItems = [row];

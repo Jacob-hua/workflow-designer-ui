@@ -3,7 +3,6 @@
     <div class="left-board">
       <div class="d-logo-wrapper">
         <div class="d-logo">
-            表单设计器
         </div>
       </div>
       
