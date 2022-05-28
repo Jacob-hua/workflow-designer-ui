@@ -2,14 +2,14 @@
   <div>
     <el-drawer :title="title"
                :visible="visible"
-               :before-close="onClose"
+               :before-close="onCloseDrawer"
                direction="rtl">
-      <el-form :model="listener"
+      <el-form :model="listenerForm"
                :rules="listenerRules"
-               ref="listener">
+               ref="listenerForm">
         <el-form-item label="事件类型"
                       prop="eventType">
-          <el-select v-model="listener.eventType">
+          <el-select v-model="listenerForm.eventType">
             <el-option v-for="({label, value}, index) in eventTypeOptions"
                        :key="index"
                        :label="label"
@@ -18,7 +18,7 @@
         </el-form-item>
         <el-form-item label="监听器类型"
                       prop="listenerType">
-          <el-select v-model="listener.listenerType">
+          <el-select v-model="listenerForm.listenerType">
             <el-option v-for="({label, value}, index) in listenerTypeOptions"
                        :key="index"
                        :label="label"
@@ -28,26 +28,26 @@
         <el-form-item v-if="listenerTypeIs('class')"
                       label="Java类"
                       prop="class">
-          <el-input v-model="listener.class" />
+          <el-input v-model="listenerForm.class" />
         </el-form-item>
         <el-form-item v-if="listenerTypeIs('expression')"
                       label="表达式"
                       prop="expression">
-          <el-input v-model="listener.expression" />
+          <el-input v-model="listenerForm.expression" />
         </el-form-item>
         <el-form-item v-if="listenerTypeIs('delegateExpression')"
                       label="代理表达式"
                       prop="delegateExpression">
-          <el-input v-model="listener.delegateExpression" />
+          <el-input v-model="listenerForm.delegateExpression" />
         </el-form-item>
         <template v-if="listenerTypeIs('script')">
           <el-form-item label="脚本格式"
                         prop="scriptFormat">
-            <el-input v-model="listener.scriptFormat" />
+            <el-input v-model="listenerForm.scriptFormat" />
           </el-form-item>
           <el-form-item label="脚本类型"
                         prop="scriptType">
-            <el-select v-model="listener.scriptType">
+            <el-select v-model="listenerForm.scriptType">
               <el-option v-for="({label, value}, index) in scriptTypeOptions"
                          :key="index"
                          :label="label"
@@ -57,18 +57,18 @@
           <el-form-item v-if="scriptTypeIs('inline')"
                         label="脚本内容"
                         prop="scriptValue">
-            <el-input v-model="listener.scriptValue" />
+            <el-input v-model="listenerForm.scriptValue" />
           </el-form-item>
           <el-form-item v-if="scriptTypeIs('outside')"
                         label="资源地址"
                         prop="resource">
-            <el-input v-model="listener.resource" />
+            <el-input v-model="listenerForm.resource" />
           </el-form-item>
         </template>
         <template v-if="eventTypeIs('timeout')">
           <el-form-item label="定时器类型"
                         prop="timerType">
-            <el-select v-model="listener.timerType">
+            <el-select v-model="listenerForm.timerType">
               <el-option v-for="({label, value}, index) in timerTypeOptions"
                          :key="index"
                          :label="label"
@@ -78,7 +78,7 @@
           <el-form-item v-if="timerTypeIsNotNull()"
                         label="定时器"
                         prop="timer">
-            <el-input v-model="listener.timer" />
+            <el-input v-model="listenerForm.timer" />
           </el-form-item>
         </template>
         <el-form-item>
@@ -92,7 +92,8 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
+
 function requiredRule(message) {
   return [{ required: true, trigger: ['blur', 'change'], message }]
 }
@@ -100,9 +101,9 @@ function requiredRule(message) {
 export default {
   name: 'executeListenerDrawer',
   props: {
-    id: {
-      type: Number,
-      default: undefined,
+    listener: {
+      type: Object,
+      default: () => ({}),
     },
     title: {
       type: String,
@@ -116,23 +117,14 @@ export default {
       type: Function,
       required: true,
     },
+    onSubmit: {
+      type: Function,
+      required: true,
+    },
   },
   data() {
     return {
-      listener: {
-        id: this.id,
-        eventType: '',
-        listenerType: '',
-        class: '',
-        expression: '',
-        delegateExpression: '',
-        scriptFormat: '',
-        scriptType: '',
-        scriptValue: '',
-        resource: '',
-        timerType: '',
-        timer: '',
-      },
+      listenerForm: {},
       listenerRules: {
         eventType: [...requiredRule('请选择事件类型')],
         listenerType: [...requiredRule('请选择监听器类型')],
@@ -155,38 +147,55 @@ export default {
       'timerTypeOptions',
     ]),
   },
+  watch: {
+    listener(value) {
+      this.listenerForm = { ...value }
+    },
+  },
   methods: {
-    ...mapMutations('bpmn', ['updateListener', 'addListener']),
     eventTypeIs(eventType) {
-      return this.listener.eventType && this.listener.eventType === eventType
+      return (
+        this.listenerForm['eventType'] &&
+        this.listenerForm['eventType'] === eventType
+      )
     },
     listenerTypeIs(listenerType) {
       return (
-        this.listener.listenerType &&
-        this.listener.listenerType === listenerType
+        this.listenerForm['listenerType'] &&
+        this.listenerForm['listenerType'] === listenerType
       )
     },
     scriptTypeIs(scriptType) {
-      return this.listener.scriptType && this.listener.scriptType === scriptType
+      return (
+        this.listenerForm['scriptType'] &&
+        this.listenerForm['scriptType'] === scriptType
+      )
     },
     timerTypeIsNotNull() {
-      return this.listener.timerType && this.listener.timerType !== 'null'
+      return (
+        this.listenerForm['timerType'] &&
+        this.listenerForm['timerType'] !== 'null'
+      )
+    },
+    onCloseDrawer() {
+      this.onClose()
+      this.$refs.listenerForm['resetFields'] &&
+        this.$refs.listenerForm['resetFields']()
     },
     onClickCancel() {
-      this.onClose()
+      this.onCloseDrawer()
     },
     async onClickSubmit() {
-      try {
-        await this.$refs.listener.validate()
-        if (this.listener.id) {
-          this.updateListener(this.listener)
-        } else {
-          this.addListener(this.listener)
-        }
-        this.onClose()
-      } catch (validFail) {
-        return
-      }
+      this.$refs.listenerForm['validate'] &&
+        this.$refs.listenerForm['validate']((valid) => {
+          if (!valid) {
+            return
+          }
+          // 由于Vue的数据响应原理，当在抽屉中清空listenerForm时，传递给onSubmit的数据也会被清空
+          // 所以此处必须解构this.listenerForm为新的对象，再向onSubmit传递，保证传递出去的数据不被清空
+          this.onSubmit({ ...this.listenerForm })
+          this.onCloseDrawer()
+        })
     },
   },
 }

@@ -18,10 +18,10 @@ import "bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css";
 // bpmn lint css
 import "bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css";
 
-function functionMapping(target, sources = {}) {
+function functionMapping(target, sources, modulesConfig = {}) {
   let newPrototype = Object.getPrototypeOf(target);
-  for (const module of Object.keys(sources)) {
-    const methods = filterPublicFunction(target.modeler.get(module), sources[module]?.prefix);
+  for (const module of Object.keys(modulesConfig)) {
+    const methods = filterPublicFunction(sources.get(module), modulesConfig[module]?.prefix);
     newPrototype = Object.assign(newPrototype, methods);
   }
   Object.setPrototypeOf(target, newPrototype);
@@ -36,6 +36,8 @@ const defaultIBpmnProps = {
 };
 
 class IBpmn {
+  #modeler = {};
+
   constructor(props = {}) {
     props = { ...defaultIBpmnProps, ...props };
     this.name = props.name;
@@ -44,7 +46,7 @@ class IBpmn {
     this.lintActive = props.lintActive;
     this.i18n = props.i18n;
 
-    this.modeler = new BpmnModeler({
+    this.#modeler = new BpmnModeler({
       additionalModules: [
         lintModule,
         {
@@ -56,26 +58,26 @@ class IBpmn {
       },
     });
 
-    functionMapping(this, moduleConfigs);
+    functionMapping(this, this.#modeler, moduleConfigs);
 
     this.linterToggle(this.lintActive);
     this.#getModule("linting")._button.style = "pointer-events: none";
   }
 
   #getModule(module) {
-    return this.modeler.get(module);
+    return this.#modeler.get(module);
   }
 
   attachTo(element) {
-    this.modeler.attachTo(element);
+    this.#modeler.attachTo(element);
   }
 
   detach() {
-    this.modeler.detach();
+    this.#modeler.detach();
   }
 
   clear() {
-    this.modeler.clear();
+    this.#modeler.clear();
   }
 
   getSelectedShape() {
@@ -107,7 +109,7 @@ class IBpmn {
 
   async loadDiagram(xml) {
     try {
-      const { warnings } = await this.modeler.importXML(xml);
+      const { warnings } = await this.#modeler.importXML(xml);
       if (warnings && warnings.length) {
         warnings.forEach(console.warn);
       }

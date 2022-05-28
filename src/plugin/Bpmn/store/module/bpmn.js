@@ -1,4 +1,5 @@
 import config from "./config";
+import { isEmptyArray } from "../../utils/array";
 
 function generateState() {
   return {
@@ -48,7 +49,14 @@ function generateState() {
 
 const state = generateState();
 
-const getters = {};
+const getters = {
+  findListenerByIndex(state) {
+    return (index) => {
+      // 为了保证数据是单向流动的，这里需要将匹配的对象重新解构为新的对象
+      return { ...(state.listeners[index] ?? {}) };
+    };
+  },
+};
 
 const mutations = {
   initState() {
@@ -63,14 +71,23 @@ const mutations = {
     state.name = name;
     this.$iBpmn.updateSelectedShapeProperties({ name });
   },
-  addListener(state, listener = {}) {
-    listener.id = state.listeners.length;
-    state.listeners = [...state.listeners, listener];
+  addListener(state, { listener }) {
+    if (isEmptyArray(Object.keys(listener))) {
+      return;
+    }
+    state.listeners.push(listener);
   },
-  updateListener(state, newListener = {}) {
-    state.listeners = state.listeners.map((listener) => {
-      return listener.id === newListener.id ? newListener : listener;
-    });
+  updateListener(state, { index, newListener }) {
+    if (!state.listeners[index] && isEmptyArray(Object.keys(newListener))) {
+      return;
+    }
+    state.listeners.splice(index, 1, newListener);
+  },
+  removeListener(state, { index }) {
+    if (!state.listeners[index]) {
+      return;
+    }
+    state.listeners.splice(index, 1);
   },
 };
 
