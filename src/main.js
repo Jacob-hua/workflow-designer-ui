@@ -1,9 +1,8 @@
 import Vue from "vue";
+import Vuex from "vuex";
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
-
-Vue.config.productionTip = false;
+import stores from "./store";
 
 import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
@@ -18,27 +17,38 @@ import "@/plugin/package/theme/element-variables.scss";
 
 import JsonViewer from "vue-json-viewer";
 
+import { Bpmn, FormPlugin } from "./plugin";
+import { bpmnVuexPlugin } from "./plugin/Bpmn";
+
+import "./assets/iconfont/iconfont.js";
+
+import { vuePlugin } from "@/plugin/package/highlight";
+import "highlight.js/styles/atom-one-dark-reasonable.css";
+
+import MyPD from "@/plugin/package/index.js";
+import "@/plugin/package/theme/index.scss";
+
+Vue.config.productionTip = false;
+
 Vue.use(ElementUI);
 Vue.use(JsonViewer);
 
-import {Bpmn, FormPlugin} from "./plugin";
-
-import './assets/iconfont/iconfont.js'
-
-
-Vue.use(FormPlugin)
+Vue.use(FormPlugin);
 Vue.use(Bpmn, {
   name: "Test",
   key: "Test",
 });
 
-import { vuePlugin } from "@/plugin/package/highlight";
-import "highlight.js/styles/atom-one-dark-reasonable.css";
 Vue.use(vuePlugin);
 
-import MyPD from "@/plugin/package/index.js";
 Vue.use(MyPD);
-import "@/plugin/package/theme/index.scss";
+
+Vue.use(Vuex);
+
+const store = new Vuex.Store({
+  ...stores,
+  plugins: [bpmnVuexPlugin],
+});
 
 new Vue({
   router,
