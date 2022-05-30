@@ -30,7 +30,7 @@ function listenBpmn(store) {
     const iBpmn = store._vm.$iBpmn;
     Object.keys(listeners).forEach((eventName) => {
       iBpmn.on(eventName, (event) => {
-        listeners[eventName](event, moduleCommit(store, module));
+        listeners[eventName](event, moduleCommit(store, module), iBpmn);
       });
     });
   }
