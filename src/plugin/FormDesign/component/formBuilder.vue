@@ -12,66 +12,12 @@
           :label-width="formConf.labelWidth + 'px'"
         >
           <template v-for="(element,index) in itemList"  >
-             <preview-row-item 
+             <preview-row-item
               v-if="element.compType === 'row'"
-              :key="'row-'+index" 
+              :key="'row-'+index"
               :model="element"
               >
-              <el-col v-for="(column) in element.columns" :key="column.index" :span="column.span">
-                <template v-for="(col) in column.list">
-                  <preview-item
-                      v-if="col.compType!== 'dynamicTable'"
-                      :key="col.id"
-                      :model="col"
-                      v-model="form[col.id]"
-                      @valChange="handlerValChange"
-                  />
-                  <fancy-dynamic-table
-                      v-else-if="col.compType === 'dynamicTable'"
-                      ref="dynamicTable"
-                      :key="'dynamic-'+index"
-                      :data="form[col.id]"
-                      :conf="col"
-                      @addRow="handlerAddRow"
-                      @deleteRow="handlerDeleteRow"
-                  >
-                    <template v-slot:item="{rowScope,item}">
-                      <fancy-dynamic-table-item
-                          :model="item"
-                          :parent="col"
-                          :key="'tableIndex-'+rowScope.$index"
-                          :index="rowScope.$index"
-                          v-model="rowScope.row[item.id]"
-                          @valChange="handlerDynamicValChange"
-                      />
-                    </template>
-                  </fancy-dynamic-table>
-                </template>
-              </el-col>
             </preview-row-item>
-            <fancy-dynamic-table
-                v-else-if="element.compType === 'dynamicTable'"
-                :key="'dynamic-'+index"
-                :data="form[element.id]"
-                :ref="element.id"
-                :conf="element"
-                @addRow="handlerAddRow"
-                @deleteRow="handlerDeleteRow"
-            >
-              <template v-slot:item="{rowScope,item}">
-                <fancy-dynamic-table-item
-                    :model="item"
-                    :ref="item.id+rowScope.$index"
-                    :parent="element"
-                    :key="'tableIndex-'+rowScope.$index"
-                    :index="rowScope.$index"
-                    v-model="rowScope.row[item.id]"
-                    @valChange="handlerDynamicValChange"
-                />
-              </template>
-            </fancy-dynamic-table>
-            <!--item-->
-            
             <el-col class="drag-col-wrapper" :key="index"   :span="element.span" v-else>
               <preview-item 
                 :model="element"
@@ -88,8 +34,7 @@
 <script>
 import previewItem from "./previewItem";
 import previewRowItem from "./previewRowItem";
-import fancyDynamicTable from "../dynamic/fancyDynamicTable";
-import fancyDynamicTableItem from "../dynamic/fancyDynamicTableItem";
+
 import {datas,addRow,deleteRow} from "../custom/formDraw";
 
 export default {
@@ -111,8 +56,6 @@ export default {
   components:{
     previewItem,
     previewRowItem,
-    fancyDynamicTable,
-    fancyDynamicTableItem
   },
   data(){
     return{
