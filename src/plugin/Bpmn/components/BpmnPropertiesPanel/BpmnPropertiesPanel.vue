@@ -1,16 +1,19 @@
 <template>
   <div>
-    <base-info />
+    <base-info-panel />
+    <execute-listener-panel />
   </div>
 </template>
 
 <script>
-import BaseInfo from './components/BaseInfo.vue'
+import BaseInfoPanel from './components/BaseInfoPanel.vue'
+import ExecuteListenerPanel from './components/ExecuteListenerPanel.vue'
 
 export default {
   name: 'bpmnPropertiesPanel',
   components: {
-    BaseInfo,
+    BaseInfoPanel,
+    ExecuteListenerPanel,
   },
 }
 </script>

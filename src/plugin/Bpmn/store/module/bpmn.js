@@ -1,3 +1,6 @@
+import config from "./config";
+import { isEmptyArray } from "../../utils/array";
+
 function generateState() {
   return {
     name: "",
@@ -41,68 +44,19 @@ function generateState() {
     extendProperties: [],
     configBtton: [],
     elementText: "",
-    configurationInfo: {
-      listenerType: {
-        class: {
-          label: "Java 类",
-          value: "Java 类",
-        },
-        expression: {
-          label: "表达式",
-          value: "表达式",
-        },
-        delegateExpression: {
-          label: "代理表达式",
-          value: "代理表达式",
-        },
-        script: {
-          label: "脚本",
-          value: "脚本",
-        },
-      },
-      eventType: {
-        create: {
-          label: "创建",
-          value: "创建",
-        },
-        assignment: {
-          label: "指派",
-          value: "指派",
-        },
-        complete: {
-          label: "完成",
-          value: "完成",
-        },
-        delete: {
-          label: "删除",
-          value: "删除",
-        },
-        update: {
-          label: "更新",
-          value: "更新",
-        },
-        timeout: {
-          label: "超时",
-          value: "超时",
-        },
-      },
-      fieldType: {
-        string: {
-          label: "字符串",
-          value: "字符串",
-        },
-        expression: {
-          label: "表达式",
-          value: "表达式",
-        },
-      },
-    },
   };
 }
 
 const state = generateState();
 
-const getter = {};
+const getters = {
+  findListenerByIndex(state) {
+    return (index) => {
+      // 为了保证数据是单向流动的，这里需要将匹配的对象重新解构为新的对象
+      return { ...(state.listeners[index] ?? {}) };
+    };
+  },
+};
 
 const mutations = {
   initState() {
@@ -116,6 +70,24 @@ const mutations = {
   updateName(state, name) {
     state.name = name;
     this.$iBpmn.updateSelectedShapeProperties({ name });
+  },
+  addListener(state, { listener }) {
+    if (isEmptyArray(Object.keys(listener))) {
+      return;
+    }
+    state.listeners.push(listener);
+  },
+  updateListener(state, { index, newListener }) {
+    if (!state.listeners[index] && isEmptyArray(Object.keys(newListener))) {
+      return;
+    }
+    state.listeners.splice(index, 1, newListener);
+  },
+  removeListener(state, { index }) {
+    if (!state.listeners[index]) {
+      return;
+    }
+    state.listeners.splice(index, 1);
   },
 };
 
@@ -137,9 +109,12 @@ export const iBpmnListener = {
 };
 
 export default {
+  modules: {
+    config,
+  },
   namespaced: true,
   state,
-  getter,
+  getters,
   mutations,
   actions,
 };
