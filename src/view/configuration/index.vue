@@ -21,19 +21,11 @@
   import visitCall from './visitCall/index.vue'
   import businessCall from './businessCall/index.vue'
   import StartItemConfig from "@/view/configuration/startItemConfig";
+  import { ApiEnum } from '@/enum/index'
   export default {
     data() {
       return {
-        activeName: 'first',
-        jsonData: {
-          total: 25,
-          limit: 10,
-          skip: 0,
-          link: {
-            previous: 'LL',
-            Evle: 'KK'
-          }
-        }
+        activeName: 'first'
       }
     },
     methods:{

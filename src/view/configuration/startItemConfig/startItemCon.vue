@@ -79,7 +79,7 @@
                 width="280">
               <template slot-scope="scope">
                 <el-radio @change="radioChange" :disabled="scope.row.disabled" v-model="scope.row.startType" label="1">输入框</el-radio>
-                <el-radio  @change="radioChange" :disabled="scope.row.disabled" v-model="scope.row.startType" label="2">单选框</el-radio>
+                <el-radio  @change="radioChange" :disabled="scope.row.disabled" v-model="scope.row.startType" label="2">下拉框</el-radio>
               </template>
             </el-table-column>
             <el-table-column
@@ -126,6 +126,8 @@
 <script>
 import {getThirdInterfaceList, selectProcessStartConfigList, startConfig} from "@/api/globalConfig";
 
+import FormTypeEnum from "@/enum/FormTypeEnum";
+import StartItemEnum from "@/enum/StartItemEnum";
 export default {
   name: "startItemCon",
   props: {
@@ -156,17 +158,11 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      console.log(this.data)
-      console.log(this.currentId)
-    })
-
 
   },
   methods: {
    radioChange(val) {
-     console.log(typeof val)
-     if (val === '2') {
+     if (val === FormTypeEnum.FORM_TYPE_SELECT) {
        getThirdInterfaceList(this.$store.state.tenantId).then(res => {
          console.log(res)
          this.optionsList = res.result
@@ -176,9 +172,15 @@ export default {
     saveStart() {
       let res = this.tempArr.concat(this.tableData)
       res.forEach(item => {
-        item.isSetting?  item.isSetting=1 :  item.isSetting = 0
-        item.isRequired?  item.isRequired = 1 : item.isRequired = 1
-        item.startType = +item.startType
+        item.isSetting?
+            item.isSetting= StartItemEnum.SURE_SETTING
+            :  item.isSetting = StartItemEnum.NOT_SETTING
+
+        item.isRequired?
+            item.isRequired = StartItemEnum.SURE_REQUIRED
+            : item.isRequired = StartItemEnum.NOT_SETTING
+
+             item.startType = +item.startType
       })
 
       startConfig( {businessConfigId:res[0].businessConfigId, list: res}).then(res => {
@@ -195,7 +197,6 @@ export default {
     handleNodeClick(data) {
      if (!this.footFlag) {
        selectProcessStartConfigList(data.id, +this.$store.state.tenantId).then(res => {
-         console.log(res)
          res.result.forEach(item => {
            item.disabled = true
            item.startType = item.startType+ ''
@@ -207,8 +208,6 @@ export default {
 
        })
      } else {
-       console.log(data)
-       console.log(this.tags)
        this.currentId = data.id
        this.tempArr = this.tempArr.concat(this.tableData)
        this.tags = []
@@ -217,7 +216,6 @@ export default {
 
     },
     editTable() {
-      console.log(this.tableData)
       this.processFlag =true
       this.tableData.forEach(item => item.disabled = false)
     },

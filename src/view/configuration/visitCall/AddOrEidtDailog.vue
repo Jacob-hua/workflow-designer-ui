@@ -129,6 +129,8 @@ import {
   saveOrEdite, simulationRequest
 } from "@/api/globalConfig";
 
+import ApiEnum from "@/enum/ApiTypeEnum";
+
 export default {
   name: "AddOrEidtDailog",
   props: {
@@ -144,24 +146,6 @@ export default {
       jsonData: [],
       value: '',
       apiBoxList: [
-        // {
-        //   source: '', //系统名称
-        //   sourceMark: '', // 系统标识
-        //   name: '', //api名称
-        //   apiMark: '', // api标识
-        //   type: '', // api类型,
-        //   typeName: '', //api类型名称
-        //   host: '',// 系统host
-        //   path: '',// 请求路径
-        //   method: '', //请求方式
-        //   headers: '', //请求头信息
-        //   parameter: '', // GET请求参数 eg: ?id=${id}&&name=${name}
-        //   body: '', //POST请求参数 eg: {\"id\":\"${id}\",\"name\":\"${name}\"}
-        //   dataParse: '', //解析配置
-        //   isUse: '', // 是否使用 1 使用 0禁用 2删除
-        //   createTime: '', //创建时间
-        //   tenantId: '' //租户id
-        // },
         {
             ...this.guideForm,
             name: '', //api名称
@@ -207,8 +191,6 @@ export default {
     }
   },
   mounted() {
-      console.log(this.guideForm)
-      console.log(this.apiBoxList)
     this.apiTypeList()
   },
   methods: {
@@ -218,7 +200,6 @@ export default {
         ...this.typeForm,
         tenantId: this.$store.state.tenantId
       }).then(res => {
-        console.log(res)
         if (res.result) {
           this.apiOptions.push(this.typeForm)
           this.dialogVisible2 = false
@@ -240,14 +221,13 @@ export default {
     },
 
     excuteParse(api) {
-      if (api.method === 'POST') {
+      if (api.method === ApiEnum.API_TYPE_POST) {
         simulationRequest({
           "body": api.body,
           "headers": api.headers,
           "method": api.method,
           "url": api.url
         }).then(res => {
-          console.log(res)
           this.jsonData = res
         })
       } else {
@@ -294,7 +274,7 @@ export default {
             pars[parse.key] =  parse.value
         })
         apibox.dataParse = JSON.stringify(pars)
-        if (apibox.method === 'POST') {
+        if (apibox.method === ApiEnum.API_TYPE_POST) {
           let obj = {}
             apibox.configParams.forEach(item=> {
               obj[item.key] = item.value

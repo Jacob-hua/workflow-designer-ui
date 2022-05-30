@@ -63,6 +63,8 @@ import {
   apiDetail,
   GetGlobalList
 } from "@/api/globalConfig";
+import CONSTANT from '@/constant'
+import ApiEnum from "@/enum/ApiTypeEnum";
 export default {
   components: {
     Guide,
@@ -85,9 +87,9 @@ export default {
         }
       ],
       pageInfo: {
-        page: 1,
-        limit: 10,
-        total: 0
+        [CONSTANT.PAGE]: 1,
+        [CONSTANT.LIMIT]: 10,
+        [CONSTANT.TOTAL]: 0
       }
     }
   },
@@ -109,7 +111,7 @@ export default {
       }).then((res)=> {
         res.result.forEach(api => {
           api.configParams = []
-          if (api.method === 'POST') {
+          if (api.method === ApiEnum.API_TYPE_POST) {
             let obj= {key: '', value: ''}
             let body = JSON.parse(api.body)
             Object.keys(body).forEach(keys => {
@@ -161,7 +163,7 @@ export default {
         console.log(res)
         res.result.forEach(api => {
           api.configParams = []
-          if (api.method === 'POST') {
+          if (api.method === ApiEnum.API_TYPE_POST) {
             let obj= {key: '', value: ''}
             let body = JSON.parse(api.body)
             let bodyArr = Object.keys(body)

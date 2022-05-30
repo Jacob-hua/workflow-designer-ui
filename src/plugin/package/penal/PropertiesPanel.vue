@@ -136,7 +136,7 @@ export default {
   watch: {
     elementId: {
       handler() {
-        this.activeTab = "base";
+        this.activeTab = "btnSetting";
       }
     }
   },
@@ -156,9 +156,16 @@ export default {
         let element = doc.getElementById(window.bpmnInstances.bpmnElement.id)
           element.setAttribute('camunda:btnList', JSON.stringify(_this.btnList) )
           let serializer = new XMLSerializer();
-         _this.bpmnModeler.importXML( serializer.serializeToString(doc))
-          let shape = window.bpmnInstances.elementRegistry.get(_this.currentId)
-          window.bpmnInstances.selection.select(shape)
+         _this.bpmnModeler.importXML( serializer.serializeToString(doc), (error)=> {
+            if (error) {
+            } else {
+
+            }
+           console.log('xml重新加载了')
+           let shape = window.bpmnInstances.elementRegistry.get(_this.currentId)
+           window.bpmnInstances.selection.select(shape)
+         })
+
       });
 
       console.log(window.bpmnInstances)
@@ -185,6 +192,9 @@ export default {
       this.getActiveElement();
     },
     getActiveElement() {
+      let _this = this
+      let flag = true
+      let firstElement, currentLine
       // 初始第一个选中元素 bpmn:Process
       this.initFormOnChanged(null);
       this.bpmnModeler.on("import.done", e => {
@@ -193,14 +203,30 @@ export default {
       // 监听选择事件，修改当前激活的元素以及表单
       this.bpmnModeler.on("selection.changed", ({ newSelection }) => {
         this.initFormOnChanged(newSelection[0] || null);
+
       });
       this.bpmnModeler.on("element.changed", ({ element }) => {
+        if (_this.bpmnElement.id.includes('Process')) {
+          firstElement =  _this.bpmnElement.children[0].id
+        } else {
+          flag = _this.bpmnElement.id !== firstElement;
+          console.log('后来元素改变')
+          if (flag) {
+            if (_this.bpmnElement.incoming.length > 0) {
+
+              if (_this.bpmnElement.incoming[0].id !== currentLine) {
+                _this.btnList = []
+                currentLine = _this.bpmnElement.incoming[0].id
+              }
+            } else {
+
+            }
+          }
+        }
 
         // 保证 修改 "默认流转路径" 类似需要修改多个元素的事件发生的时候，更新表单的元素与原选中元素不一致。
         this.addOrSub = false
-        // this.btnList  = []
         if (element && element.id === this.elementId) {
-
           this.initFormOnChanged(element);
         }
       });
@@ -212,10 +238,11 @@ export default {
         activatedElement =
           window.bpmnInstances.elementRegistry.find(el => el.type === "bpmn:Process") ??
           window.bpmnInstances.elementRegistry.find(el => el.type === "bpmn:Collaboration");
+          console.log(activatedElement)
       }
       if (!activatedElement) return;
-      Log.printBack(`select element changed: id: ${activatedElement.id} , type: ${activatedElement.businessObject.$type}`);
-      Log.prettyInfo("businessObject", activatedElement.businessObject);
+      // Log.printBack(`select element changed: id: ${activatedElement.id} , type: ${activatedElement.businessObject.$type}`);
+      // Log.prettyInfo("businessObject", activatedElement.businessObject);
       window.bpmnInstances.bpmnElement = activatedElement;
        if (Object.keys(activatedElement.businessObject).includes('loopCharacteristics')) {
          this.addOrSub = true

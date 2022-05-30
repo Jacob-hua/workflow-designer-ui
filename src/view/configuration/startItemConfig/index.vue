@@ -54,7 +54,6 @@ export default {
       this.footFlag = true
       let _this = this
         getBusinessConfigWithTree(id, +_this.$store.state.tenantId).then(res => {
-          console.log(res)
           this.itemconFlag = true
           this.$nextTick(() => {
             _this.$refs.StartItemCon.dialogVisible = true
@@ -69,12 +68,11 @@ export default {
       this.footFlag = false
       this.itemconFlag = true
       getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
-        console.log(res)
+
         this.$refs.StartItemCon.dialogVisible = true
         this.$refs.StartItemCon.data = res.result
         this.$refs.StartItemCon.tableData = []
         selectProcessStartConfigList(id, +this.$store.state.tenantId).then(res => {
-          console.log(res)
           res.result.forEach(item => {
             item.disabled = true
             item.startType = item.startType+ ''

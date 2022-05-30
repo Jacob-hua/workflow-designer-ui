@@ -1,6 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import layout from "@/layout/index.vue";
+import designer from '@/plugin/FormDesign/component/formDesigner'
+import dialogTest from '@/plugin/FormDesign/component/dialogTest'
+import queryDialogTest from '@/plugin/FormDesign/component/queryDialogTest'
+import view from '@/plugin/FormDesign/component/view'
 
 Vue.use(VueRouter);
 
@@ -77,6 +81,23 @@ const routes = [
         component: () => import("@/view/debugBpmn"),
         meta: { title: "bpmn", icon: "dashboard" },
       },
+      {
+        path: '/home/designer',
+        name: 'designer',
+        component: designer
+      },{
+        path: '/dialog',
+        name: 'dialogTest',
+        component: dialogTest
+      },{
+        path: '/queryDialog',
+        name: 'queryDialogTest',
+        component: queryDialogTest
+      },{
+        path: '/view',
+        name: 'view',
+        component: view
+      }
     ],
   },
 ];
