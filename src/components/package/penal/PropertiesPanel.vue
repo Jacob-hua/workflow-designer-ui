@@ -45,7 +45,7 @@
         <div slot="title" class="panel-tab__title"><i class="el-icon-circle-plus"></i>操作按钮配置</div>
         <div style="margin-left: 10px;">
           <el-checkbox-group @change="btnListChange" v-model="btnList">
-            <el-checkbox label="待办"></el-checkbox>
+            <el-checkbox label="代办"></el-checkbox>
             <el-checkbox label="传阅"></el-checkbox>
             <el-checkbox label="挂起"></el-checkbox>
             <el-checkbox v-if="addOrSub" label="加减签"></el-checkbox>
