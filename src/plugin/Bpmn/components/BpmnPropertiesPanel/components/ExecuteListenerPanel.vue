@@ -21,12 +21,12 @@
         <template slot-scope="{ $index }">
           <el-button size="mini"
                      type="text"
-                     @click="onClickEditButton($index)">编辑</el-button>
+                     @click="onEditListener($index)">编辑</el-button>
           <el-divider direction="vertical" />
           <el-button size="mini"
                      type="text"
                      style="color: #ff4d4f"
-                     @click="onClickRemoveButton($index)">移除</el-button>
+                     @click="onRemoveListener($index)">移除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -34,7 +34,7 @@
       <el-button size="mini"
                  type="primary"
                  icon="el-icon-plus"
-                 @click="onClickAddListenerButton">添加监听器</el-button>
+                 @click="onAddListener">添加监听器</el-button>
     </div>
     <execute-listener-drawer :listener="listener"
                              :visible="drawerVisible"
@@ -68,15 +68,15 @@ export default {
       'addListener',
       'removeListener',
     ]),
-    onClickEditButton(index) {
+    onEditListener(index) {
       this.editIndex = index
       this.listener = this.findListenerByIndex(index)
       this.drawerVisible = true
     },
-    onClickRemoveButton(index) {
+    onRemoveListener(index) {
       this.removeListener({ index })
     },
-    onClickAddListenerButton() {
+    onAddListener() {
       this.drawerVisible = true
     },
     onDrawerClose() {
