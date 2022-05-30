@@ -21,13 +21,13 @@ import JsonViewer from "vue-json-viewer";
 Vue.use(ElementUI);
 Vue.use(JsonViewer);
 
-import Plugin from "./plugin";
+import {Bpmn, FormPlugin} from "./plugin";
 
 import './assets/iconfont/iconfont.js'
 
 
-Vue.use(Plugin.FormPlugin)
-Vue.use(Plugin.Bpmn, {
+Vue.use(FormPlugin)
+Vue.use(Bpmn, {
   name: "Test",
   key: "Test",
 });

@@ -1,8 +1,4 @@
 import Bpmn from "./Bpmn";
+import FormPlugin from "@/plugin/FormDesign";
 
-import FormPlugin from './FormDesign'
-
-export default {
-  Bpmn,
-  FormPlugin
-}
+export { Bpmn, FormPlugin };
