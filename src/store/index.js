@@ -1,14 +1,4 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import { Bpmn } from "../plugin";
-
-const debug = process.env.NODE_ENV !== "production";
-
-const { bpmnVuexPlugin } = Bpmn;
-
-Vue.use(Vuex);
-
-const oldTestState = {
+const state = {
   optionsAscription: [
     {
       value: "beiqijia",
@@ -66,11 +56,15 @@ const oldTestState = {
   },
 };
 
-export default new Vuex.Store({
-  state: {
-    ...oldTestState,
-  },
-  mutations: {},
-  actions: {},
-  plugins: [bpmnVuexPlugin],
-});
+const getters = {};
+
+const mutations = {};
+
+const actions = {};
+
+export default {
+  state,
+  getters,
+  mutations,
+  actions,
+};
