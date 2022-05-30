@@ -26,10 +26,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn', ['name']),
+    ...mapState('bpmn/panel', ['name']),
   },
   methods: {
-    ...mapMutations('bpmn', ['updateName']),
+    ...mapMutations('bpmn/panel', ['updateName']),
   }
 }
 </script>

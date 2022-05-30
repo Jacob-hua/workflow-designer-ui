@@ -58,12 +58,12 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn', ['listeners']),
+    ...mapState('bpmn/panel', ['listeners']),
     ...mapGetters('bpmn/config', ['eventTypeLabel', 'listenerTypeLabel']),
     ...mapGetters('bpmn', ['findListenerByIndex']),
   },
   methods: {
-    ...mapMutations('bpmn', [
+    ...mapMutations('bpmn/panel', [
       'updateListener',
       'addListener',
       'removeListener',
