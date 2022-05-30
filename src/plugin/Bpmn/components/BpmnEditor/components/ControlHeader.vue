@@ -177,9 +177,12 @@ export default {
       this.$iBpmn.canvasZoom('fit-viewport', 'auto')
     },
     operationUndo() {
-      console.log(this.$iBpmn)
+      console.log(this.$iBpmn);
+      this.$iBpmn.commandUndo()
     },
-    operationRedo() {},
+    operationRedo() {
+      this.$iBpmn.commandRedo()
+    },
     repaint() {},
   },
 }

@@ -1,5 +1,8 @@
 export default {
-  "commandStack.changed": (e) => {
-    // console.log(e);
+  "commandStack.changed": (_, commit, iBpmn) => {
+    commit("refreshState", {
+      undoable: iBpmn.commandCanUndo(),
+      redoable: iBpmn.commandCanRedo(),
+    });
   },
 };
