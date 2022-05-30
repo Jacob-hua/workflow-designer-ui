@@ -1,92 +1,109 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import layout from'@/views/layout/index.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import layout from "@/layout/index.vue";
+import designer from '@/plugin/FormDesign/component/formDesigner'
+import dialogTest from '@/plugin/FormDesign/component/dialogTest'
+import queryDialogTest from '@/plugin/FormDesign/component/queryDialogTest'
+import view from '@/plugin/FormDesign/component/view'
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    name: '/',
-    redirect: 'login',
+    path: "/",
+    name: "/",
+    redirect: "login",
     // redirect: 'home',
   },
   {
-  	path: '/login',
-    name: 'login',
-  	component: () => import('@/views/login/login'),
-  	hidden: true
+    path: "/login",
+    name: "login",
+    component: () => import("@/view/login/login"),
+    hidden: true,
   },
   {
-    path: '/home',
-    name: 'first',
+    path: "/home",
+    name: "first",
     component: layout,
-    redirect: '/home/bpmn',
+    redirect: "/home/bpmn",
     children: [
       {
-        path: '/home/bpmn',
-        name: 'bpmn',
-        component: () => import('@/views/workflow/index'),
-        meta: { title: 'bpmn', icon: 'dashboard' }
+        path: "/home/bpmn",
+        name: "bpmn",
+        component: () => import("@/view/workflow/index"),
+        meta: { title: "bpmn", icon: "dashboard" },
       },
       {
-        path: '/home/form',
-        name: 'form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'bpmn', icon: 'dashboard' }
+        path: "/home/form",
+        name: "form",
+        component: () => import("@/view/form/index"),
+        meta: { title: "bpmn", icon: "dashboard" },
       },
       {
-        path: '/home/home',
-        name: 'home',
-        component: () => import('@/views/home/index'),
-        meta: { title: 'bpmn', icon: 'dashboard' }
+        path: "/home/home",
+        name: "home",
+        component: () => import("@/view/home/index"),
+        meta: { title: "bpmn", icon: "dashboard" },
       },
       {
-        path: '/home/history',
-        name: 'history',
-        component: () => import('@/views/historyWorkflow/HistoryWorkflow'),
-        meta: { title: 'history', icon: 'dashboard' }
+        path: "/home/history",
+        name: "history",
+        component: () => import("@/view/historyWorkflow/HistoryWorkflow"),
+        meta: { title: "history", icon: "dashboard" },
       },
       {
-        path: '/home/runTime',
-        name: 'runTime',
-        component: () => import('@/views/runtime/index'),
-        hidden: true
-      },
-      {
-        path: '5',
-        name: '5',
-        component: () => import('@/views/404'),
-        hidden: true
-      },
-      {
-        path: '/home/all',
-        name: 'all',
-        component: () => import('@/views/configuration'),
+        path: "/home/runTime",
+        name: "runTime",
+        component: () => import("@/view/runtime/index"),
         hidden: true,
       },
       {
-        path: '/home/power',
-        name: 'power',
-        component: () => import('@/views/power'),
+        path: "5",
+        name: "5",
+        component: () => import("@/layout/404"),
         hidden: true,
+      },
+      {
+        path: "/home/all",
+        name: "all",
+        component: () => import("@/view/configuration"),
+        hidden: true,
+      },
+      {
+        path: "/home/power",
+        name: "power",
+        component: () => import("@/view/power"),
+        hidden: true,
+      },
+      {
+        path: "/home/debugBpmn",
+        name: "debugBpmn",
+        component: () => import("@/view/debugBpmn"),
+        meta: { title: "bpmn", icon: "dashboard" },
+      },
+      {
+        path: '/home/designer',
+        name: 'designer',
+        component: designer
+      },{
+        path: '/dialog',
+        name: 'dialogTest',
+        component: dialogTest
+      },{
+        path: '/queryDialog',
+        name: 'queryDialogTest',
+        component: queryDialogTest
+      },{
+        path: '/view',
+        name: 'view',
+        component: view
       }
-      // {
-      //    path: '6-1',
-      //    name: '6-1',
-      //    component: () => import('@/views/configuration'),
-      // },
-      // {
-      //    path: '6-2',
-      //    name: '6-2',
-      //    component: () => import('@/views/404'),
-      // }
-    ]
+    ],
   },
-]
+];
 
 const router = new VueRouter({
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;
