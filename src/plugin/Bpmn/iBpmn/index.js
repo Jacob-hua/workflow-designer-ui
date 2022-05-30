@@ -77,6 +77,11 @@ class IBpmn {
     this.#modeler.detach();
   }
 
+  repaint() {
+    this.createEmptyDiagram();
+    this.commandClear();
+  }
+
   clear() {
     this.#modeler.clear();
   }
