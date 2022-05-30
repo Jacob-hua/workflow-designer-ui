@@ -79,13 +79,11 @@ export default {
     },
     getDicDataByClassify() {
       getDicDataByClassify().then(res=> {
-        console.log(res)
         this.$refs.guide.projectOption = res.result
       })
     },
     getBusinessConfigBasicList() {
       getBusinessConfigBasicList(this.$store.state.tenantId).then(res => {
-        console.log(res)
         this.businessList = res.result
       })
     },
@@ -93,7 +91,6 @@ export default {
     lookBusiness(id) {
       // 获取组织 结构树
       getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
-        console.log(res)
         this.$refs.BusinessCon.dialogVisible = true
         this.$refs.BusinessCon.editFlag = false
         this.showBtn = false

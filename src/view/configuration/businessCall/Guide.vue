@@ -65,7 +65,6 @@ export default {
     },
     checkBusinessConfig() {
       checkBusinessConfig(this.form).then(res=> {
-        console.log(res)
         if (res.result) {
           this.dialogVisible = false;
           this.$emit('showAddDialog', this.form)

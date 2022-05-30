@@ -191,8 +191,6 @@ export default {
     }
   },
   mounted() {
-      console.log(this.guideForm)
-      console.log(this.apiBoxList)
     this.apiTypeList()
   },
   methods: {
@@ -202,7 +200,6 @@ export default {
         ...this.typeForm,
         tenantId: this.$store.state.tenantId
       }).then(res => {
-        console.log(res)
         if (res.result) {
           this.apiOptions.push(this.typeForm)
           this.dialogVisible2 = false
@@ -231,7 +228,6 @@ export default {
           "method": api.method,
           "url": api.url
         }).then(res => {
-          console.log(res)
           this.jsonData = res
         })
       } else {

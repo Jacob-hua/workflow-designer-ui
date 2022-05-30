@@ -13,7 +13,7 @@
     config: true,
   
     form:true, //是否表单组件
-    // 控件左侧label内容
+    // 件左侧label内容控
     showLabel:false,
     labelWidth: '0',
     label:'条形码',

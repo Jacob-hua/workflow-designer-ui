@@ -197,7 +197,6 @@ export default {
     handleNodeClick(data) {
      if (!this.footFlag) {
        selectProcessStartConfigList(data.id, +this.$store.state.tenantId).then(res => {
-         console.log(res)
          res.result.forEach(item => {
            item.disabled = true
            item.startType = item.startType+ ''
@@ -209,8 +208,6 @@ export default {
 
        })
      } else {
-       console.log(data)
-       console.log(this.tags)
        this.currentId = data.id
        this.tempArr = this.tempArr.concat(this.tableData)
        this.tags = []
@@ -219,7 +216,6 @@ export default {
 
     },
     editTable() {
-      console.log(this.tableData)
       this.processFlag =true
       this.tableData.forEach(item => item.disabled = false)
     },

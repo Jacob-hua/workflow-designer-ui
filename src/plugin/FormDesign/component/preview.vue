@@ -121,7 +121,6 @@ export default {
       this.$set(this.form,key,origin);
     },
     handlerDynamicValChange(parentId,index,key,origin){
-      console.log(1);
       this.$set(this.form[parentId][index],key,origin);
       this.currentIndex = index;
     },

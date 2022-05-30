@@ -92,7 +92,6 @@ export default {
     preview() {
       let _this = this
       if (this.btnTxt === '保存') {
-        console.log(this.data)
         if (!_this.edit) {
           delete this.data[0].id
         }

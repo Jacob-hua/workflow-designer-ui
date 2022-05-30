@@ -20,7 +20,6 @@ export let button = {
   label: '单行文本',
   labelWidth: 0,
   //是否可以禁用
-  disabled:false,
   //大小，medium / small / mini
   size:'medium',
   //primary / success / warning / danger / info / text
