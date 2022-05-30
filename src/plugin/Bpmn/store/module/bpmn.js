@@ -1,4 +1,5 @@
 import config from "./config";
+import editor from "./editor";
 import { isEmptyArray } from "../../utils/array";
 
 function generateState() {
@@ -112,6 +113,7 @@ export const iBpmnListener = {
 export default {
   modules: {
     config,
+    editor,
   },
   namespaced: true,
   state,

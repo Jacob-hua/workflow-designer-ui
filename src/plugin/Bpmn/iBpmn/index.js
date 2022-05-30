@@ -1,5 +1,6 @@
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import lintModule from "bpmn-js-bpmnlint";
+import X2JS from "x2js";
 import bpmnlintConfig from "./.bpmnlintrc";
 import customTranslate from "./utils/customTranslate";
 import { filterPublicFunction } from "./utils/function";
@@ -116,6 +117,21 @@ class IBpmn {
     } catch (e) {
       console.error(`[Process Designer Warn]: ${e?.message || e}`);
     }
+  }
+
+  async saveSVG() {
+    return this.#modeler.saveSVG();
+  }
+
+  async saveXML() {
+    return this.#modeler.saveXML();
+  }
+
+  async saveJSON() {
+    const { xml } = await this.saveXML();
+    const x2js = new X2JS();
+    const { definitions: json } = x2js.xml2js(xml);
+    return { json };
   }
 }
 
