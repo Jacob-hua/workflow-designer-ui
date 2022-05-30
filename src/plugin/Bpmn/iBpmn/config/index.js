@@ -29,4 +29,10 @@ export const moduleConfigs = {
   selection: {
     prefix: "selection",
   },
+  canvas: {
+    prefix: 'canvas'
+  },
+  commandStack: {
+    prefix: 'command'
+  }
 };

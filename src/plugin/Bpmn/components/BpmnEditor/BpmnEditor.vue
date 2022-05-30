@@ -1,12 +1,17 @@
 <template>
-  <div class="containers"
-       ref="containers">
+  <div class="wrapper">
+    <control-header />
+    <div class="containers"
+         ref="containers"></div>
   </div>
 </template>
 
 <script>
+import ControlHeader from './components/ControlHeader.vue'
+
 export default {
   name: 'bpmnEditor',
+  components: { ControlHeader },
   props: {
     pelatteVisiable: {
       type: Boolean,
@@ -32,15 +37,14 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
 .containers {
   background-color: #ffffff;
   width: 100%;
   height: 100%;
-}
-.panel {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 300px;
 }
 </style>
