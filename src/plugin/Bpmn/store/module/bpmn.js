@@ -70,7 +70,6 @@ const mutations = {
   },
   updateName(state, name) {
     state.name = name;
-    // this.$iBpmn.updateSelectedShapeProperties({ name });
   },
   addListener(state, { listener }) {
     if (isEmptyArray(Object.keys(listener))) {

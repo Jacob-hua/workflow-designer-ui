@@ -26,11 +26,10 @@ function listenBpmn(store) {
   function registerBpmnListener(iBpmn, bpmnListeners = {}) {
     Object.keys(bpmnListeners).forEach((eventName) => {
       iBpmn.on(eventName, (event) => {
-        const modelElementInfo = bpmnListeners[eventName](event, refreshBpmnState);
-        if (!modelElementInfo) {
-          return;
+        const modelElementInfo = bpmnListeners[eventName](event);
+        if (modelElementInfo) {
+          refreshBpmnState(modelElementInfo);
         }
-        refreshBpmnState(modelElementInfo);
       });
     });
   }
