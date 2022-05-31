@@ -140,11 +140,11 @@ export default {
     async previewAs(type) {
       try {
         if ('xml' === type) {
-          const { xml } = await this.$iBpmn.saveXML()
+          const { xml } = await this.$iBpmn.saveXML({ format: true })
           this.previewModal.code = xml
         } else if ('json' === type) {
-          const { json } = await this.$iBpmn.saveJSON()
-          this.previewModal.code = JSON.stringify(json, null, 2)
+          const { json } = await this.$iBpmn.saveJSON({ format: true })
+          this.previewModal.code = json
         }
         this.previewModal.language = type
         this.previewModal.visible = true
