@@ -11,9 +11,7 @@ function listenBpmn(store) {
     });
   }
 
-  Object.keys(listeners).forEach((listenerKey) => {
-    registerBpmnListener(store, listenerKey, listeners[listenerKey]);
-  });
+  regisetrBpmnListeners(listeners);
 
   mutationElementProperties(store);
 
@@ -24,6 +22,12 @@ function listenBpmn(store) {
       }
       const iBpmn = store._vm.$iBpmn;
       iBpmn.updateSelectedShapeProperties(state.bpmn["panel"]);
+    });
+  }
+
+  function regisetrBpmnListeners(listeners) {
+    Object.keys(listeners).forEach((listenerKey) => {
+      registerBpmnListener(store, listenerKey, listeners[listenerKey]);
     });
   }
 
