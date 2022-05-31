@@ -124,18 +124,21 @@ class IBpmn {
     }
   }
 
-  async saveSVG() {
-    return this.#modeler.saveSVG();
+  async saveSVG(args) {
+    return this.#modeler.saveSVG(args);
   }
 
-  async saveXML() {
-    return this.#modeler.saveXML();
+  async saveXML(args) {
+    return this.#modeler.saveXML(args);
   }
 
-  async saveJSON() {
-    const { xml } = await this.saveXML();
+  async saveJSON(args) {
+    const { xml } = await this.saveXML(args);
     const x2js = new X2JS();
-    const { definitions: json } = x2js.xml2js(xml);
+    let { definitions: json } = x2js.xml2js(xml);
+    if (args.format) {
+      json = JSON.stringify(json, null, 2);
+    }
     return { json };
   }
 }
