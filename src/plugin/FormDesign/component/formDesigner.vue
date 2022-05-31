@@ -97,8 +97,8 @@ let tempActiveData;
 export default {
   name:"formDesigner",
   components:{
-    draggable
-    ,Icon,
+    draggable,
+    Icon,
     designer
   },
   data() {
