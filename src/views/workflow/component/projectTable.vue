@@ -25,12 +25,12 @@
             <span class="status" :class="scope.row.status === 'enabled' ? '' : 'statusFalse'">{{ scope.row.status === 'enabled' ? '可部署' : '不可部署' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" align="center" v-role="{ id: ['WorkflowLook', 'WorkflowDelete'], type: 'contain', business: business }">
           <template  slot-scope="scope">
-            <el-button @click.native.prevent="lookBpmnShow(scope.row)" type="text" size="small" class="button1">
+            <el-button @click.native.prevent="lookBpmnShow(scope.row)" v-role="{ id: 'WorkflowLook', type: 'button', business: business }" type="text" size="small" class="button1">
               查看
             </el-button>
-            <el-button @click.native.prevent="deleteRow(scope.row)" type="text" size="small">
+            <el-button @click.native.prevent="deleteRow(scope.row)" v-role="{ id: 'WorkflowDelete', type: 'button', business: business }" type="text" size="small">
               删除
             </el-button>
           </template>

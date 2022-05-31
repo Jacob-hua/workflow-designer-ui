@@ -53,7 +53,7 @@ export default {
     }
   },
   mounted() {
-    window.bpmnInstances.elementRegistry.updateId(this.bpmnElement, `Process_${new Date().getTime()}`)
+    // window.bpmnInstances.elementRegistry.updateId(this.bpmnElement, `Process_${new Date().getTime()}`)
   },
   methods: {
     resetBaseInfo() {
@@ -61,6 +61,11 @@ export default {
       if (!window.oneBpmnInstances) {
         this.bpmnElement.businessObject.name = this.$parent.$parent.$parent.$parent.$parent.$parent.formData.name
         window.oneBpmnInstances = true
+      }
+      if (this.businessObject.$type === 'bpmn:Process') {
+        // window.bpmnInstances.elementRegistry.updateId(this.bpmnElement, `Process_${new Date().getTime()}`)
+        this.elementBaseInfo.id = `Process_${new Date().getTime()}`
+        this.updateBaseInfo('id')
       }
       this.elementBaseInfo = JSON.parse(JSON.stringify(this.bpmnElement.businessObject));
       if (this.elementBaseInfo && this.elementBaseInfo.$type === "bpmn:SubProcess") {

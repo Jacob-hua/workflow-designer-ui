@@ -56,7 +56,7 @@ export const postFormDesignRecordFormDesignRecordInfo = (params) =>
   
 // 删除表单
 export const deleteFormDesignService = (id) =>
-  deletefn('/design/formDesignService/' + id);
+  deletefn('/design/formDesignService', { id: id });
   
 //查询所有表单
 export const designFormDesignServiceAll = (params) =>
@@ -86,7 +86,7 @@ export const getProcessDraftList = (params) =>
 
 // 删除草稿列表
 export const deleteDraft = (id) =>
-  deletefn('/process/draft/' + id);
+  deletefn('/process/draft', { id: id });
 
 // 部署工作流
 export const postDeployForOnline = (params) =>

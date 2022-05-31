@@ -48,14 +48,17 @@
       <div v-for="(item, index) in detailData.map[checkRole]" :key="index" class="RoleList">
         <div>
           <label class="roleTitle">应用菜单权限</label><br>
-          <el-checkbox :label="item.id" v-model="item.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'" :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
+          <el-checkbox :label="item.id" v-model="item.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'"
+            :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
         </div>
         <div class="role-item">
           <label class="roleTitle">操作权限</label><br>
           <div v-for="(item1, index1) in item.children" :key="index1" style="display: inline-block;margin-right: 20px;">
-            <el-checkbox :label="item1.id" v-model="item1.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !=='edit'" :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{ item1.name }}</el-checkbox>
+            <el-checkbox :label="item1.id" v-model="item1.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !=='edit'"
+              :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{ item1.name }}</el-checkbox>
             <div v-if="item1.children.length > 0" style="margin-top: 20px;margin-bottom: 20px;margin-left: 20px;">
-              <el-checkbox :label="item2.id" v-model="item2.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'" :true-label="0" v-for="(item2, index2) in item1.children" :key="index2" :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}</el-checkbox>
+              <el-checkbox :label="item2.id" v-model="item2.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'"
+                :true-label="0" v-for="(item2, index2) in item1.children" :key="index2" :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}</el-checkbox>
             </div>
           </div>
         </div>
@@ -69,7 +72,11 @@
 </template>
 
 <script>
-  import { getUserPermission, postMapping } from '@/unit/api.js'
+  import {
+    getUserPermission,
+    postMapping,
+    userLogin
+  } from '@/unit/api.js'
   export default {
     props: {
       dialogVisible: {
@@ -125,12 +132,12 @@
         let recursionItem = function(item, arr) {
           if (item.children.length === 0) {
             return
-          } else{
+          } else {
             item.children.forEach((item1) => {
               if (item1.flag === 0) {
                 arr.push(item1.permission)
               }
-              recursionItem(item1)
+              recursionItem(item1, arr)
             })
           }
         }
@@ -158,6 +165,7 @@
         })
         postMapping(postArr).then((res) => {
           this.$message.success('权限修改成功')
+          this.login()
           this.$emit('handleClose')
         })
       },
@@ -173,7 +181,7 @@
       changeFlag(item, item1, event) {
         if (event == 0) {
           item.flag = 0
-        } else if(event == 1 && item1) {
+        } else if (event == 1 && item1) {
           if (item1.children.length > 0) {
             item1.children.forEach((item2) => {
               item2.flag = 1
@@ -207,9 +215,20 @@
           tenantId: item.tenantList[0].id,
           userId: item.userId
         }).then((res) => {
-           this.detailData = res.result
-           this.checkRole = Object.keys(this.detailData.map)[0]
+          this.detailData = res.result
+          this.checkRole = Object.keys(this.detailData.map)[0]
         })
+      },
+      login() {
+        if (this.$store.state.userInfo.name === 'admin') {
+          userLogin({
+            account: 'admin',
+            password: 'admin'
+          }).then((res) => {
+            sessionStorage.setItem('loginData', JSON.stringify(res.result))
+            this.$store.state.userInfo.name = res.result.account
+          })
+        }
       }
     }
   }
@@ -294,26 +313,31 @@
     padding: 20px;
     overflow: auto;
   }
+
   .RoleList {
     margin-bottom: 20px;
     padding: 30px 20px;
     background-color: #f2f2f2;
   }
+
   .RoleList .el-checkbox__input {
     position: absolute;
     left: 110px;
   }
+
   .roleTitle {
     color: #0066cc;
     font-weight: 700;
     margin-bottom: 20px;
     display: inline-block;
   }
+
   .role-item {
     border-top: 1px solid #d6d6d6;
     margin-top: 20px;
     padding-top: 15px;
   }
+
   .checkRole {
     background-color: #0368cd;
     color: white;

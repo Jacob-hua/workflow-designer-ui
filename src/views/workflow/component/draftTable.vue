@@ -22,10 +22,10 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="draftTableEdit(scope.row)" type="text" size="small" class="button1">
+            <el-button @click.native.prevent="draftTableEdit(scope.row)" v-role="{ id: 'WorkflowEdit', type: 'button', business: business }" type="text" size="small" class="button1">
               编辑
             </el-button>
-            <el-button @click.native.prevent="deleteRow(scope.row)" type="text" size="small">
+            <el-button @click.native.prevent="deleteRow(scope.row)" v-role="{ id: 'WorkflowDelete', type: 'button', business: business }" type="text" size="small">
               删除
             </el-button>
           </template>
