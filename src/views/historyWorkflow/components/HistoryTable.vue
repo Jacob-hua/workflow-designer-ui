@@ -38,7 +38,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="$emit('showDetail', scope.row)" type="text" size="small" >
+            <el-button @click.native.prevent="$emit('showDetail', scope.row)" type="text" size="small" v-role="{ id: 'HistoryLook', type: 'button', business: projectValue }">
               查看
             </el-button>
           </template>
@@ -70,6 +70,7 @@ export default {
       dateRang: ["2022-01-01","2022-12-31"],
       radio: '1',
       tableData: [],
+      projectValue: '',
       pageInfo: {
         page: 1,
         limit: 10,

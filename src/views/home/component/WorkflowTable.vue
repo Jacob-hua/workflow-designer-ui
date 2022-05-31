@@ -22,10 +22,10 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" class="button1">
+            <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" class="button1" v-role="{ id: 'HomeDeploy', type: 'button', business: business }">
               部署
             </el-button>
-            <el-button @click.native.prevent="detailsDiolog(scope.row)" type="text" size="small">
+            <el-button @click.native.prevent="detailsDiolog(scope.row)" type="text" size="small" v-role="{ id: 'HomeLook', type: 'button', business: business }">
               查看
             </el-button>
           </template>
@@ -37,8 +37,8 @@
         :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
       </el-pagination>
     </div>
-    <deploy ref="deploy" :editData="editData" @addWorkSuccess="getManyData()" dataType="enabled"  @addDraftSuccess="getManyData()"></deploy>
-    <detailsBnpm ref="detailsBnpm" @deleteSuccess="getTableData()"></detailsBnpm>
+    <deploy ref="deploy" :editData="editData" @addWorkSuccess="getManyData()" dataType="enabled" :business="business" @addDraftSuccess="getManyData()"></deploy>
+    <detailsBnpm ref="detailsBnpm" :business="business" @deleteSuccess="getTableData()"></detailsBnpm>
   </div>
 </template>
 
