@@ -28,6 +28,7 @@ Vue.use(vuePlugin);
 import MyPD from "@/components/package/index.js";
 Vue.use(MyPD);
 import "@/components/package/theme/index.scss";
+import "@/directive/RoleDirective.js"
 
 
 new Vue({

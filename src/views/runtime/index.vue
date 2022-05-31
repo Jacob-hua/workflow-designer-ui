@@ -200,10 +200,11 @@
            this.tableData = res.result.dataList
            this.tableData.forEach((item) => {
              if (item.taskAssignee.split(',').indexOf(this.$store.state.userInfo.name) !== -1) {
-               item.newTaskId = item.taskId
+               item.newTaskId = item.taskId.split(',')[item.taskAssignee.split(',').indexOf(this.$store.state.userInfo.name)]
              } else{
                item.trackList[item.trackList.length - 1].candidateUsers.forEach((item1) => {
                  if (item1.candidateUsers.indexOf(this.$store.state.userInfo.name) !== -1) {
+                   console.log('xx')
                    item.newTaskId = item1.taskId
                  }
                })

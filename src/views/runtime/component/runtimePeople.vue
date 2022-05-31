@@ -251,7 +251,7 @@
                 unitList: strData,
                 operateType: 'add',
                 taskId: this.taskId,
-                type: 'user' ,
+                type: 'user',
                 operator: this.$store.state.userInfo.name,
                 processInstanceId: this.processInstanceId,
               }).then((res) => {
