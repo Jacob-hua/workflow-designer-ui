@@ -8,6 +8,9 @@
       <el-button icon="el-icon-tickets" type="text" @click="viewJSON">
         JSON
       </el-button>
+<!--      <el-button icon="el-icon-s-tools" type="text" @click="setting">-->
+<!--        设置-->
+<!--      </el-button>-->
       <el-button class="delete-btn" icon="el-icon-delete-solid" type="text" @click="clear">
         清空
       </el-button>
@@ -21,9 +24,9 @@
           :label-width="formConf.labelWidth + 'px'"
         >
         <draggable class="drawing-board" 
-                   :list="list" 
+                   :list="list"
                    :animation="100" 
-                   group="componentsGroup" 
+                   group="componentsGroup"
                    draggable=".drawing-item"
                    >
         <design-item 
@@ -45,10 +48,10 @@
     </el-scrollbar>
     <config-panel :activeItem="activeItem" :itemList="list"/>
     <!-- 设计器配置弹出框 -->
-    <el-dialog :visible.sync="previewVisible" width="70%" title="预览">
+    <el-dialog :visible.sync="previewVisible" width="70%" title="预览" append-to-body>
       <preview :itemList="itemList"  :formConf="formConf" v-if="previewVisible"/>
     </el-dialog>
-    <el-dialog :visible.sync="JSONVisible" width="70%" title="JSON" center :close-on-click-modal="false">
+    <el-dialog :visible.sync="JSONVisible" width="70%" title="JSON" center :close-on-click-modal="false" append-to-body>
       <codemirror v-model="viewCode" :options="options"/>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="handlerSetJson()">确 定</el-button>
@@ -118,6 +121,9 @@ export default {
   mounted() {
   },
   methods: {
+    setting(){
+      this.formConfVisible = true;
+    },
     preview(){
       const clone = JSON.parse(JSON.stringify(this.list))
       this.itemList = clone;

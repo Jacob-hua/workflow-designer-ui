@@ -30,7 +30,7 @@
         <el-button @click="dialogVisible1 = false">取消</el-button>
       </span>
     </el-dialog>
-    <el-dialog :title="title" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog :title="title" :visible.sync="dialogVisible2" width="95%" height="100%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
           <!-- <div class="title-item">
@@ -206,6 +206,7 @@
         })
       },
       addDraftForm() {
+        debugger
         const xml  = this.$refs.formbpmn.importData();
         xml.id = 'form_' + Date.parse(new Date())
         var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
@@ -327,8 +328,14 @@
     height: 40px;
     line-height: 40px;
   }
-  
-  /deep/ .el-input__inner {
+  >>> .form-Main .el-input__inner {
+    border-color: #C0C4CC;
+  }
+ >>> .form-Main .el-input__inner:focus {
+   outline: none;
+   border-color: #1890ff;
+ }
+  /deep/ . .el-input__inner {
     color: black;
   }
   
@@ -338,7 +345,7 @@
   
   .form-title {
     border-bottom: 1px solid #CCCCCC;
-    margin-bottom: 40px;
+    /*margin-bottom: 40px;*/
   }
   .title-item {
     display: inline-block;
@@ -350,7 +357,7 @@
   .title-item-main {
     display: inline-block;
   }
-  /deep/ .dialogVisible2 .el-input.is-disabled .el-input__inner {
+  /deep/  .dialogVisible2 .form-title .el-input.is-disabled .el-input__inner {
     color: black;
     width: 180px;
     height: 43px;
@@ -358,7 +365,7 @@
     padding: 0px 10px;
     background-color: #f2f2f2;
   }
-  /deep/ .dialogVisible2 .el-input__inner {
+  /deep/ .dialogVisible2 .form-title .el-input__inner {
     width: 180px;
     height: 43px;
     line-height: 43px;
@@ -371,8 +378,8 @@
   .form-Main {
     height: 630px;
   }
-  
-  #form {
+
+ .form-title #form {
     height: 100%;
     background-color: aliceblue;
   }

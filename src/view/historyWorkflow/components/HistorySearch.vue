@@ -6,9 +6,7 @@
     <el-select  v-model="systemValue">
       <el-option v-for="item in systemOption" :key="item.value" :label="item.label" :value="item.value"></el-option>
     </el-select>
-    <el-select v-model="statusValue">
-      <el-option v-for="item in statusOption" :key="item.value" :label="item.label" :value="item.value"></el-option>
-    </el-select>
+
     <div class="history_date">
       <span class="datePickTitle">创建时间</span>
       <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
@@ -28,24 +26,6 @@
           projectValue: '1',
           systemValue: '1',
           statusValue: '1',
-          statusOption: [
-            {
-              value: '1',
-              label: '全部状态'
-            },
-            {
-              value: '2',
-              label: '待执行'
-            },
-            {
-              value: '3',
-              label: '执行中'
-            },
-            {
-              value: '4',
-              label: '已完成'
-            }
-          ],
           projectOption: [
             {
               value: '1',

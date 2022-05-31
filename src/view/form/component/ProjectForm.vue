@@ -315,7 +315,7 @@
 </script>
 
 <style scoped="scoped">
-  /deep/ .el-input__inner {
+  /deep/  .el-input__inner {
     border: 1px solid black;
   }
 

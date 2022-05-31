@@ -118,7 +118,6 @@ export default {
     }
   },
   mounted() {
-    
   },
   methods: {
     addComponent(element){
