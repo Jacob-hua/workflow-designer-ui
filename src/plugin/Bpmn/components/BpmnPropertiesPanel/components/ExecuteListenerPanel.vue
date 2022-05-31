@@ -60,7 +60,7 @@ export default {
   computed: {
     ...mapState('bpmn/panel', ['listeners']),
     ...mapGetters('bpmn/config', ['eventTypeLabel', 'listenerTypeLabel']),
-    ...mapGetters('bpmn', ['findListenerByIndex']),
+    ...mapGetters('bpmn/panel', ['findListenerByIndex']),
   },
   methods: {
     ...mapMutations('bpmn/panel', [

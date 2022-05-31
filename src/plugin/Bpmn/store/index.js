@@ -1,6 +1,7 @@
 import modules from "./module";
 import listeners from "./listener";
 import { vuexNamespace } from "../config";
+import ListenerConvertor from "./convertor/ListenerConvertor";
 
 function listenBpmn(store) {
   if (!store.hasModule(vuexNamespace)) {
@@ -22,7 +23,7 @@ function listenBpmn(store) {
         return;
       }
       const iBpmn = store._vm.$iBpmn;
-      iBpmn.updateSelectedShapeProperties(state.bpmn['panel']);
+      iBpmn.updateSelectedShapeProperties(state.bpmn["panel"]);
     });
   }
 

@@ -8,7 +8,7 @@ import { filterPublicFunction } from "./utils/function";
 import zh from "./i18n/zh";
 import defaultEmpty from "./utils/defaultEmpty";
 
-import { moduleConfigs } from "./config";
+import config from "./config";
 
 // bpmn左侧工具栏样式
 import "bpmn-js/dist/assets/diagram-js.css";
@@ -54,12 +54,13 @@ class IBpmn {
           translate: ["value", customTranslate(this.i18n)],
         },
       ],
+      moddleExtensions: config.extensions[this.type],
       linting: {
         bpmnlint: bpmnlintConfig,
       },
     });
 
-    functionMapping(this, this.#modeler, moduleConfigs);
+    functionMapping(this, this.#modeler, config.moduleConfig);
 
     this.linterToggle(this.lintActive);
     this.#getModule("linting")._button.style = "pointer-events: none";
@@ -109,8 +110,16 @@ class IBpmn {
     this.#getModule("palette")._container.style = visable ? "" : "display: none";
   }
 
+  createDefaultModdleInstance(localName, attrs) {
+    return this.createModdleInstance(`${this.type}:${localName}`, attrs);
+  }
+
+  createModdleInstance(descriptor, attrs) {
+    return this.#getModule("moddle").create(descriptor, attrs);
+  }
+
   async createEmptyDiagram() {
-    this.loadDiagram(defaultEmpty(this.key, this.name, this.props));
+    this.loadDiagram(defaultEmpty(this.key, this.name, this.type));
   }
 
   async loadDiagram(xml) {
