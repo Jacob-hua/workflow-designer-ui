@@ -46,10 +46,10 @@
         <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary" @click="application()">应用表单</el-button>
+        <el-button type="primary" @click="application()" v-role="{ id: 'FromUse', type: 'button', business: projectCode }">应用表单</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary" @click="addForm()">新建表单</el-button>
+        <el-button type="primary" @click="addForm()" v-role="{ id: 'FromAdd', type: 'button', business: projectCode }">新建表单</el-button>
       </div>
     </div>
     <div class="home-main">
@@ -62,7 +62,7 @@
           <div class="home-table-card" v-for="(item, index) in formListFirst" :key="index">
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
-              <span class="detailWord" @click="detailsDiolog(item)">详情</span>
+              <span class="detailWord" @click="detailsDiolog(item)" v-role="{ id: 'FromLook', type: 'button', business: projectCode }">详情</span>
             </div>
             <div class="card-main">
               <div class="card-main-item">

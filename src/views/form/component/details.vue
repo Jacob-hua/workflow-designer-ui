@@ -13,9 +13,9 @@
           <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formData.count }}</span> </div>
           
          <div class="detail-title-item-button">
-           <el-button type="primary" @click="editForm()">编辑</el-button>
-           <el-button type="primary" @click="deleteRow()" v-if="quote == 'delete'">删除</el-button>
-           <el-button type="primary" @click="quot()" v-if="quote == 'quote' && status !== 'drafted' ">应用</el-button>
+           <el-button type="primary" @click="editForm()" v-role="{ id: 'FromEdit', type: 'button', business: business }">编辑</el-button>
+           <el-button type="primary" @click="deleteRow()" v-if="quote == 'delete'" v-role="{ id: 'FromDelete', type: 'button', business: business }">删除</el-button>
+           <el-button type="primary" @click="quot()" v-if="quote == 'quote' && status !== 'drafted' " v-role="{ id: 'FromUse', type: 'button', business: business }">应用</el-button>
          </div>
           
         </div>

@@ -26,14 +26,16 @@ export default {
     LookOver
   },
   data() {
-    return {}
+    return {
+    }
   },
 
   mounted() {
   },
   methods: {
-    searchHistory(dateRang) {
+    searchHistory(dateRang, projectValue) {
       this.$refs.historyTable.dateRang = dateRang
+      this.$refs.historyTable.projectValue = projectValue
       this.$refs.historyTable.getHistoryTaskList(this.$refs.historyTable.pageInfo)
     },
     // 获取任务历史列表

@@ -87,7 +87,7 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addWorkFlow()">部署</el-button>
+        <el-button type="primary" @click="addWorkFlow()" v-role="{ id: 'HomeDeploy', type: 'button', business: business }">部署</el-button>
         <el-button @click="Adddraft()">保存</el-button>
         <el-button @click="dialogVisible2 = false">取消</el-button>
       </span>
@@ -106,6 +106,10 @@
         type: Object
       },
       dataType: {
+        type: String,
+        default: ''
+      },
+      business: {
         type: String,
         default: ''
       }
@@ -199,7 +203,7 @@
               break;
           }
           // formData.append('createTime', new Date())
-          formData.append('createBy', this.$refs.ProcessInformation.postData.createBy)
+          formData.append('createBy', this.$store.state.userInfo.name)
           formData.append('deployKey', definitions.process['_id'] )
           formData.append('deployName', this.$refs.ProcessInformation.postData.deployName)
           formData.append('draftId', this.$refs.ProcessInformation.postData.id)
@@ -208,7 +212,7 @@
           formData.append('operatorName', 'admin')
           formData.append('processResource', file1)
           formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
-          formData.append('updateBy', this.$refs.ProcessInformation.postData.createBy)
+          formData.append('updateBy', this.$store.state.userInfo.name)
           // formData.append('processResource', '')
           formData.append('tenantId', this.$store.state.tenantId)
           postDeployForOnline(formData).then((res) => {
@@ -298,6 +302,7 @@
               break;
           }
           // formData.append('createTime', new Date())
+          formData.append('createBy', this.$store.state.userInfo.name)
           formData.append('deployKey', Date.parse(new Date()))
           formData.append('deployName', this.$refs.ProcessInformation.postData.deployName)
           formData.append('formIds', formIds)
