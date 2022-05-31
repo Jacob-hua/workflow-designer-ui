@@ -191,6 +191,7 @@
         }
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.form')
+        formData.append('docType', '.form')
         formData.append('ascription', this.postData.ascription)
         formData.append('code', xml.id)
         formData.append('business', this.postData.business)
@@ -227,6 +228,7 @@
         }
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.form')
+        formData.append('docType', '.form')
         formData.append('ascription', this.postData.ascription)
         formData.append('code', xml.id)
         formData.append('business', this.postData.business)
