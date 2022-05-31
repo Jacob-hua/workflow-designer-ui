@@ -95,6 +95,20 @@ class IBpmn {
     return null;
   }
 
+  updateSelectedShapeExtensions(extensions = {}) {
+    if (!this.getSelectedShape()) {
+      return;
+    }
+    this.updateShapeExtensions(this.getSelectedShape(), extensions);
+  }
+
+  updateShapeExtensions(shape, extensions) {
+    const extensionElements = this.#getModule("moddle").create("bpmn:ExtensionElements", {
+      values: extensions,
+    });
+    this.updateShapeProperties(shape, { extensionElements });
+  }
+
   updateSelectedShapeProperties(payload = {}) {
     if (!this.getSelectedShape()) {
       return;

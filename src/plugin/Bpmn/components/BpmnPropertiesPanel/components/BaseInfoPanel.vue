@@ -2,35 +2,30 @@
   <div>
     <el-form size="mini"
              label-width="90px"
-             ref="baseInfo"
-             :model="baseInfo">
+             ref="baseInfo">
       <el-form-item label="名称">
-        <el-input :value="name"
+        <el-input :value="baseInfo.name"
                   clearable
-                  @input="updateName"></el-input>
+                  @input="onNameChange"></el-input>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'baseInfo',
-  data() {
-    return {
-      baseInfo: {
-        name: '',
-      },
-    }
-  },
   computed: {
-    ...mapState('bpmn/panel', ['name']),
+    ...mapGetters('bpmn/panel', ['baseInfo']),
   },
   methods: {
-    ...mapMutations('bpmn/panel', ['updateName']),
-  }
+    ...mapMutations('bpmn/panel', ['updateBaseInfo']),
+    onNameChange(name) {
+      this.updateBaseInfo({ name })
+    },
+  },
 }
 </script>
 

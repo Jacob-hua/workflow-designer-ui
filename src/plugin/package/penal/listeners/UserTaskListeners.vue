@@ -275,6 +275,7 @@ export default {
         this.bpmnElementListeners.splice(this.editingListenerIndex, 1, listenerObject);
         this.elementListenersList.splice(this.editingListenerIndex, 1, this.listenerForm);
       }
+      console.log('--------------->', this.bpmnElementListeners);
       // 保存其他配置
       this.otherExtensionList = this.bpmnElement.businessObject?.extensionElements?.values?.filter(ex => ex.$type !== `${this.prefix}:TaskListener`) ?? [];
       updateElementExtensions(this.bpmnElement, this.otherExtensionList.concat(this.bpmnElementListeners));

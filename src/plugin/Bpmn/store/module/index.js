@@ -48,12 +48,28 @@ function injectCommonMutations(modules, commonMutations) {
   });
 }
 
+function makeMutationsEffectBill(modules) {
+  const result = Object.keys(modules).reduce((mutationsEffectBill, moduleName) => {
+    const module = modules[moduleName];
+    const bill = Object.keys(module.mutationsEffect).reduce(
+      (effectBill, mutation) => ({
+        ...effectBill,
+        [`${vuexNamespace}/${moduleName}/${mutation}`]: module.mutationsEffect[mutation],
+      }),
+      {}
+    );
+    return { ...mutationsEffectBill, ...bill };
+  }, {});
+  return result;
+}
+
 const modules = loadModules();
 
 checkModules(modules, {
   state: () => ({}),
   getters: () => ({}),
   mutations: () => ({}),
+  mutationsEffect: () => ({}),
   actions: () => ({}),
   namespaced: () => true,
 });
@@ -76,5 +92,9 @@ const commonMutations = {
 };
 
 injectCommonMutations(modules, commonMutations);
+
+const mutationsEffectBill = makeMutationsEffectBill(modules);
+
+export { mutationsEffectBill };
 
 export default modules;

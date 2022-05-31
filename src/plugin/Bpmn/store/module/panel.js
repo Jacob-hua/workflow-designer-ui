@@ -1,10 +1,14 @@
 import { isEmptyArray } from "../../utils/array";
 import { deepCopy } from "../../utils/object";
+import BaseInfoConvertor from "../convertor/BaseInfoConvertor";
+import ListenerConvertor from "../convertor/ListenerConvertor";
 
 const state = {
-  name: "",
-  versionLabel: "",
-  isImplement: false,
+  baseInfo: {
+    name: "",
+    versionLabel: "",
+    isImplement: false,
+  },
   news: [],
   signals: [],
   listeners: [],
@@ -14,6 +18,9 @@ const state = {
 };
 
 const getters = {
+  baseInfo(state) {
+    return deepCopy(state.baseInfo);
+  },
   findListenerByIndex(state) {
     return (index) => {
       // 为了保证数据是单向流动的，这里需要将匹配的对象重新解构为新的对象
@@ -24,8 +31,8 @@ const getters = {
 };
 
 const mutations = {
-  updateName(state, name) {
-    state.name = name;
+  updateBaseInfo(state, { name }) {
+    state.baseInfo.name = name;
   },
   addListener(state, { listener }) {
     if (isEmptyArray(Object.keys(listener))) {
@@ -47,6 +54,25 @@ const mutations = {
   },
 };
 
+const mutationsEffect = {
+  updateBaseInfo: {
+    effectBpmn: true,
+    convertor: BaseInfoConvertor,
+  },
+  addListener: {
+    effectBpmn: true,
+    convertor: ListenerConvertor,
+  },
+  updateListener: {
+    effectBpmn: true,
+    convertor: ListenerConvertor,
+  },
+  removeListener: {
+    effectBpmn: true,
+    convertor: ListenerConvertor,
+  },
+};
+
 const actions = {};
 
 export default {
@@ -54,5 +80,6 @@ export default {
   state,
   getters,
   mutations,
+  mutationsEffect,
   actions,
 };
