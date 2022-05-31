@@ -1,7 +1,6 @@
-import modules from "./module";
+import modules, { mutationsEffectBill } from "./module";
 import listeners from "./listener";
 import { vuexNamespace } from "../config";
-import ListenerConvertor from "./convertor/ListenerConvertor";
 
 function listenBpmn(store) {
   if (!store.hasModule(vuexNamespace)) {
@@ -17,11 +16,13 @@ function listenBpmn(store) {
 
   function mutationElementProperties(store) {
     store.subscribe((mutation, state) => {
-      if (isNotBpmnMutation(mutation) || isRefreshStateMutation(mutation)) {
+      if (isNotEffectMutation(mutation)) {
         return;
       }
       const iBpmn = store._vm.$iBpmn;
-      iBpmn.updateSelectedShapeProperties(state.bpmn["panel"]);
+      const Convertor = mutationsEffectBill[mutation.type].convertor;
+      const properties = new Convertor({ iBpmn, state: state.bpmn["panel"] }).convert();
+      iBpmn.updateSelectedShapeExtensions(properties);
     });
   }
 
@@ -40,14 +41,8 @@ function listenBpmn(store) {
     });
   }
 
-  function isNotBpmnMutation(mutation) {
-    const mutationType = mutation?.type ?? "";
-    return !mutationType.startsWith(`${vuexNamespace}/panel`);
-  }
-
-  function isRefreshStateMutation(mutation) {
-    const reg = new RegExp(`^${vuexNamespace}\/[a-zA-Z\d]*\/refreshState$`);
-    return reg.test(mutation?.type ?? "");
+  function isNotEffectMutation(mutation) {
+    return !mutationsEffectBill[mutation.type] || !mutationsEffectBill[mutation.type].effectBpmn;
   }
 
   function moduleCommit(store, module) {

@@ -18,18 +18,18 @@ export function createListenerObject(options, isTask, prefix) {
   }
   // 注入字段
   if (options.fields) {
-    listenerObj.fields = options.fields.map(field => {
+    listenerObj.fields = options.fields.map((field) => {
       return createFieldObject(field, prefix);
     });
   }
   // 任务监听器的 定时器 设置
   if (isTask && options.event === "timeout" && !!options.eventDefinitionType) {
     const timeDefinition = window.bpmnInstances.moddle.create("bpmn:FormalExpression", {
-      body: options.eventTimeDefinitions
+      body: options.eventTimeDefinitions,
     });
     const TimerEventDefinition = window.bpmnInstances.moddle.create("bpmn:TimerEventDefinition", {
       id: `TimerEventDefinition_${uuid(8)}`,
-      [`time${options.eventDefinitionType.replace(/^\S/, s => s.toUpperCase())}`]: timeDefinition
+      [`time${options.eventDefinitionType.replace(/^\S/, (s) => s.toUpperCase())}`]: timeDefinition,
     });
     listenerObj.eventDefinitions = [TimerEventDefinition];
   }
@@ -52,11 +52,12 @@ export function createScriptObject(options, prefix) {
 
 // 更新元素扩展属性
 export function updateElementExtensions(element, extensionList) {
+  console.log("===========================>", extensionList);
   const extensions = window.bpmnInstances.moddle.create("bpmn:ExtensionElements", {
-    values: extensionList
+    values: extensionList,
   });
   window.bpmnInstances.modeling.updateProperties(element, {
-    extensionElements: extensions
+    extensionElements: extensions,
   });
 }
 

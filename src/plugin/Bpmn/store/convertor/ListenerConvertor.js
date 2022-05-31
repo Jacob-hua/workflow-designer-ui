@@ -7,28 +7,27 @@ class ListenerConvertor extends BaseConvertor {
   }
 
   convert() {
-    this.result = this.listeners.reduce((listeners, listener) => [...listeners, this.#convertListener(listener)], []);
-    return this;
+    return this.listeners.reduce((listeners, listener) => [...listeners, this.convertListener(listener)], []);
   }
 
-  #convertListener(listener) {
+  convertListener(listener) {
     let result = {};
     result.id = listener.id;
     result.event = listener.eventType;
 
     const computeProperties = {
-      script: () => ({ script: this.#convertScript(listener) }),
+      script: () => ({ script: this.convertScript(listener) }),
       expression: () => ({ expression: listener.expression }),
       delegateExpression: () => ({ delegateExpression: listener.delegateExpression }),
       class: () => ({ class: listener.class }),
     };
 
     result = { ...result, ...computeProperties[listener.listenerType]() };
-    result.fields = this.#convertFields(listener);
-    return result;
+    result.fields = this.convertFields(listener);
+    return this.iBpmn.createDefaultModdleInstance("ExecutionListener", result);
   }
 
-  #convertScript(listener) {
+  convertScript(listener) {
     return this.iBpmn.createDefaultModdleInstance("Script", generateScriptAttrs(listener));
 
     function generateScriptAttrs(listener) {
@@ -40,14 +39,14 @@ class ListenerConvertor extends BaseConvertor {
     }
   }
 
-  #convertFields(listener) {
+  convertFields(listener) {
     if (!listener.fields) {
       return [];
     }
-    return listener.fields.reduce((fields, field) => [...fields, this.#convertField(field)], []);
+    return listener.fields.reduce((fields, field) => [...fields, this.convertField(field)], []);
   }
 
-  #convertField(field) {
+  convertField(field) {
     return this.iBpmn.createDefaultModdleInstance("Field", generateFieldAttrs(field));
 
     function generateFieldAttrs(field) {
