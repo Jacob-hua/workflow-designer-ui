@@ -8,13 +8,41 @@
   export default {
     data() {
       return {
-
+        routerMapping: {
+          'bpmn': 'Workflow',
+          'form': 'Form',
+          'home': 'Home',
+          'runTime': 'RunTime',
+          'history': 'History',
+          'all': 'Configuration',
+          'power': 'Power'
+        },
+        roleGo: ['login', 'noPermission']
       }
     },
     methods: {},
+    // watch: {
+    //   $route(to, from) {
+    //     let routerName = to.name
+    //     let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
+    //     let proJectRole = permissions.filter((item) => {
+    //       // return item.projectCode === this.business
+    //       return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
+    //     })[0].permissionSet
+    //     let findEle = proJectRole.findIndex((item) => {
+    //       return item.frontRoute === this.routerMapping[routerName]
+    //     })
+    //     if (findEle === -1) {
+    //       console.log('无权限')
+    //     } else {
+    //       console.log('有权限')
+    //     }
+    //   }
+    // },
     mounted() {
 
     }
+    
   };
 </script>
 

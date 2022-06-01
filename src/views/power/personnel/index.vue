@@ -27,8 +27,8 @@
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="seeData(scope.row)">查看</el-button>
-              <el-button type="text" size="small" @click="editData(scope.row)">编辑</el-button>
+              <el-button type="text" size="small" @click="seeData(scope.row)" v-role="{ id: 'PowerLook', type: 'button', business: business }">查看</el-button>
+              <el-button type="text" size="small" @click="editData(scope.row)" v-role="{ id: 'PowerLook', type: 'button', business: business }">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -43,6 +43,12 @@
   import editRole from './component/editRole.vue'
   import { getSystemGroupTree, postPersonUser } from '@/unit/api.js'
   export default {
+    props:{
+      business: {
+        type: String,
+        default: ''
+      }
+    },
     data() {
       return {
         data: [],
