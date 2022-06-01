@@ -81,6 +81,24 @@ const state = {
       value: "expression",
     },
   ],
+  variableTypeOptions: [
+    {
+      label: "字符串或表达式",
+      value: "string/expression",
+    },
+    {
+      label: "脚本",
+      value: "script",
+    },
+    {
+      label: "列表",
+      value: "list",
+    },
+    {
+      label: "键值对",
+      value: "map",
+    },
+  ],
 };
 
 const getters = {

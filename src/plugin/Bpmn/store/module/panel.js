@@ -1,4 +1,3 @@
-import { isEmptyArray } from "../../utils/array";
 import { deepCopy, emptyPropertiesObject } from "../../utils/object";
 import BaseInfoConvertor from "../convertor/BaseInfoConvertor";
 import ListenerConvertor from "../convertor/ListenerConvertor";
@@ -13,7 +12,8 @@ const state = {
   signals: [],
   listeners: [],
   extendProperties: [],
-  configBtton: [],
+  inputParameters: [],
+  outputParameters: [],
   elementText: "",
 };
 

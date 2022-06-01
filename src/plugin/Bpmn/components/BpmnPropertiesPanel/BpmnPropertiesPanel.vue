@@ -19,6 +19,12 @@
         </template>
         <signal-message-panel />
       </el-collapse-item>
+      <el-collapse-item>
+        <template slot="title">
+          输入/输出
+        </template>
+        <input-output-panel />
+      </el-collapse-item>
     </el-collapse>
   </div>
 </template>
@@ -26,6 +32,7 @@
 <script>
 import BaseInfoPanel from './components/BaseInfoPanel.vue'
 import ExecuteListenerPanel from './components/ExecuteListenerPanel.vue'
+import InputOutputPanel from './components/InputOutputPanel.vue'
 import SignalMessagePanel from './components/SignalMessagePanel.vue'
 
 export default {
@@ -34,6 +41,7 @@ export default {
     BaseInfoPanel,
     ExecuteListenerPanel,
     SignalMessagePanel,
+    InputOutputPanel,
   },
 }
 </script>
