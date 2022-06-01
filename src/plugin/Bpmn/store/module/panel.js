@@ -108,7 +108,6 @@ const mutations = {
     if (!state.inputParameters[index] || emptyPropertiesObject(newInputParameter)) {
       return;
     }
-    console.log('ddddd');
     state.inputParameters.splice(index, 1, newInputParameter);
   },
   removeInputParameter(state, { index }) {

@@ -89,7 +89,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import { deepCopy } from '../../../utils/object'
+import { deepCopy, deepEquals } from '../../../utils/object'
 
 export default {
   name: 'InputOutputForm',
@@ -133,6 +133,31 @@ export default {
       immediate: true,
       handler(value) {
         this.parameterForm = { ...this.parameterForm, ...deepCopy(value) }
+      },
+    },
+    parameterForm: {
+      deep: true,
+      handler(value) {
+        // 如果传入的parameter和parameterForm内容一样，则不做赋值操作
+        // 这样做的目的是为了避免Vue的双向引用和Vuex的state的死循环
+        if (deepEquals(value, this.parameter)) {
+          return
+        }
+        if (this.type === 'inputParameter') {
+          this.updateInputParameter({
+            index: this.index,
+            newInputParameter: {
+              ...deepCopy(value),
+            },
+          })
+        } else if (this.type === 'outputParameter') {
+          this.updateOutputParameter({
+            index: this.index,
+            newOutputParameter: {
+              ...deepCopy(value),
+            },
+          })
+        }
       },
     },
   },

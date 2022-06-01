@@ -56,9 +56,25 @@ export default {
     return {
       defaultInputParameter: {
         name: 'Input',
+        type: '',
+        value: null,
+        scriptFormat: '',
+        scriptType: '',
+        script: '',
+        resource: '',
+        listValues: [],
+        mapValues: [],
       },
       defaultOutputParameter: {
         name: 'Output',
+        type: '',
+        value: null,
+        scriptFormat: '',
+        scriptType: '',
+        script: '',
+        resource: '',
+        listValues: [],
+        mapValues: [],
       },
     }
   },
