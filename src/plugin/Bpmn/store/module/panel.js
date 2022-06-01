@@ -98,6 +98,43 @@ const mutations = {
     }
     state.messages.splice(index, 1);
   },
+  addInputParameter(state, { inputParameter }) {
+    if (emptyPropertiesObject(inputParameter)) {
+      return;
+    }
+    state.inputParameters.push(inputParameter);
+  },
+  updateInputParameter(state, { index, newInputParameter }) {
+    if (!state.inputParameters[index] || emptyPropertiesObject(newInputParameter)) {
+      return;
+    }
+    console.log('ddddd');
+    state.inputParameters.splice(index, 1, newInputParameter);
+  },
+  removeInputParameter(state, { index }) {
+    if (!state.inputParameters[index]) {
+      return;
+    }
+    state.inputParameters.splice(index, 1);
+  },
+  addOutputParameter(state, { outputParameter }) {
+    if (emptyPropertiesObject(outputParameter)) {
+      return;
+    }
+    state.outputParameters.push(outputParameter);
+  },
+  updateOutputParameter(state, { index, newOutputParameter }) {
+    if (!state.outputParameters[index] || emptyPropertiesObject(newOutputParameter)) {
+      return;
+    }
+    state.outputParameters.splice(index, 1, newOutputParameter);
+  },
+  removeOutputParameter(state, { index }) {
+    if (!state.outputParameters[index]) {
+      return;
+    }
+    state.outputParameters.splice(index, 1);
+  },
 };
 
 const mutationsEffect = {

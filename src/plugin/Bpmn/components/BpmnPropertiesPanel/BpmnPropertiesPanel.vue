@@ -1,5 +1,5 @@
 <template>
-  <div :style="{ width: '500px' }">
+  <div class="wrapper">
     <el-collapse>
       <el-collapse-item>
         <template slot="title">
@@ -46,5 +46,12 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.wrapper {
+  width: 500px;
+  overflow: auto;
+}
+::v-deep .el-collapse {
+  width: 100%;
+}
 </style>

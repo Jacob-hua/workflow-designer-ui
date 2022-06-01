@@ -88,17 +88,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
+import { deepCopy } from '../../../utils/object'
+
 export default {
   name: 'InputOutputForm',
   props: {
+    index: {
+      type: Number,
+      required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
     parameter: {
       type: Object,
-      default: () => ({
-        name: '测试',
-        type: 'list',
-        value: 2323,
-      }),
+      required: true,
     },
   },
   data() {
@@ -123,11 +129,18 @@ export default {
     },
   },
   watch: {
-    parameter(value) {
-      this.parameterForm = { ...this.parameterForm, ...value }
+    parameter: {
+      immediate: true,
+      handler(value) {
+        this.parameterForm = { ...this.parameterForm, ...deepCopy(value) }
+      },
     },
   },
   methods: {
+    ...mapMutations('bpmn/panel', [
+      'updateInputParameter',
+      'updateOutputParameter',
+    ]),
     variableTypeIs(variableType) {
       return (
         this.parameterForm['type'] &&
