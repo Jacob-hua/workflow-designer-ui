@@ -21,6 +21,9 @@ function listenBpmn(store) {
       }
       const iBpmn = store._vm.$iBpmn;
       const Convertor = mutationsEffectBill[mutation.type].convertor;
+      if (!Convertor) {
+        return;
+      }
       const properties = new Convertor({ iBpmn, state: state.bpmn["panel"] }).convert();
       iBpmn.updateSelectedShapeExtensions(properties);
     });
