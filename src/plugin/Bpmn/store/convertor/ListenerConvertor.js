@@ -54,7 +54,7 @@ class ListenerConvertor extends BaseConvertor {
         string: { name: field.name, string: field.value },
         expression: { name: field.name, expression: field.value },
       };
-      return fieldAttrs[field.type];
+      return fieldAttrs[field.fieldType];
     }
   }
 }
