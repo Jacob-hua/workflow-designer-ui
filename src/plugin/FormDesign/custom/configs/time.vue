@@ -3,7 +3,7 @@
     <!-- <el-form-item label="字段名">
       <el-input class="input" v-model="props"></el-input>
     </el-form-item> -->
-    <el-form-item label="ID">
+    <el-form-item label="字段">
       <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
         <el-input class="input" v-model="props.id" @change="handlerChangeId"></el-input>
       </el-tooltip>
