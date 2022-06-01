@@ -1,3 +1,5 @@
+import { isEmptyArray } from "./array";
+
 export function deepCopy(obj, cache = []) {
   if (Object.prototype.toString.call(obj) === "[object Function]") {
     return new Function(`return ${obj.toString()}`)();
@@ -39,4 +41,8 @@ export function deepCopy(obj, cache = []) {
     }
   }
   return copy;
+}
+
+export function emptyPropertiesObject(obj) {
+  return isEmptyArray(Object.keys(obj));
 }

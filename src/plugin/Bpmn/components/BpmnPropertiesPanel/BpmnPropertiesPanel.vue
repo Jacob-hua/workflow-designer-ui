@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{ width: '500px' }">
     <el-collapse>
       <el-collapse-item>
         <template slot="title">
@@ -13,6 +13,12 @@
         </template>
         <execute-listener-panel />
       </el-collapse-item>
+      <el-collapse-item>
+        <template slot="title">
+          信号与消息
+        </template>
+        <signal-message-panel />
+      </el-collapse-item>
     </el-collapse>
   </div>
 </template>
@@ -20,12 +26,14 @@
 <script>
 import BaseInfoPanel from './components/BaseInfoPanel.vue'
 import ExecuteListenerPanel from './components/ExecuteListenerPanel.vue'
+import SignalMessagePanel from './components/SignalMessagePanel.vue'
 
 export default {
   name: 'BpmnPropertiesPanel',
   components: {
     BaseInfoPanel,
     ExecuteListenerPanel,
+    SignalMessagePanel,
   },
 }
 </script>
