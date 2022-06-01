@@ -52,7 +52,7 @@ export const addBusinessConfig = (params) =>
 
  // 查询配置树状结构
 export const getBusinessConfigWithTree = (id, tenantId ) =>
-    get(`/config/businessConfig/getBusinessConfigWithTree/${tenantId}/${id}`);
+    get(`/config/businessConfig/getBusinessConfigWithTree?tenantId=${tenantId}&id=${id}`);
 // 删除配置
 export const deleteBusinessConfig = (id) =>
     deletefn(`/config/businessConfig`, { id: id })
