@@ -91,7 +91,7 @@ import { readFile, selectFile, downloadFile } from '../../../utils/file'
 import { curryFunction } from '../../../utils/function'
 
 export default {
-  name: 'controlHeader',
+  name: 'ControlHeader',
   data() {
     return {
       buttonSize: 'small',

@@ -16,7 +16,7 @@
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
-  name: 'baseInfo',
+  name: 'BaseInfo',
   computed: {
     ...mapGetters('bpmn/panel', ['baseInfo']),
   },

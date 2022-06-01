@@ -190,7 +190,7 @@ function requiredRule(message) {
 }
 
 export default {
-  name: 'executeListenerDrawer',
+  name: 'ExecuteListenerDrawer',
   props: {
     listener: {
       type: Object,

@@ -49,7 +49,7 @@ import ExecuteListenerDrawer from './ExecuteListenerDrawer.vue'
 import { isEmptyArray } from '../../../utils/array'
 
 export default {
-  name: 'executeListenerPanel',
+  name: 'ExecuteListenerPanel',
   components: { ExecuteListenerDrawer },
   data() {
     return {
