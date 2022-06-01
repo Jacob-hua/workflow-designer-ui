@@ -23,7 +23,7 @@ export const changeId = {
                 this.$message.error('该ID已经存在，请修改');
                 this.props.id=this.props._id;
             }else{
-                this.props._id=val;
+                // this.props._id=val;
             }
         }
     }
