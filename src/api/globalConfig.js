@@ -3,7 +3,17 @@ import {
     post,
     deletefn,
     put
-} from '../unit/request'
+} from './unit/request'
+
+// api 分页列表
+// export const GetGlobalList = async (params) => {
+//       try {
+//         const res = await  post('/config/global/list', params);
+//         return res?.data.roluelist ?? []
+//       } catch(e)  {
+//         return []
+//       }
+//     }
 
 // api 分页列表
 export const GetGlobalList = (params) =>
