@@ -1,10 +1,15 @@
 <template>
   <div class="businessCall">
     <div class="businessCall-main">
-      <div class="businessCall-main-title">
-        <el-button type="primary" v-role="{ id: 'BusinessCallImport', type: 'button', business: business }">批量导入</el-button>
-      </div>
+<!--      <div class="businessCall-main-title">-->
+<!--        <el-button type="primary" v-role="{ id: 'BusinessCallImport', type: 'button', business: business }">批量导入</el-button>-->
+<!--      </div>-->
       <div class="businessCall-main-list">
+        <div @click="showGuide" class="businessCall-main-list-add" style="margin-right: 40px" v-role="{ id: 'BusinessCallAdd', type: 'button', business: business }">
+          <div>
+            <i class="el-icon-plus"></i>
+          </div>
+        </div>
         <div v-for="(item,index) in businessList" :key="index" class="businessCall-main-list-card">
           <div class="card-popover">
             <el-popover
@@ -23,11 +28,7 @@
             <div><label>创建时间:</label> <span>{{ item.createTime }}</span></div>
           </div>
         </div>
-        <div @click="showGuide" class="businessCall-main-list-add" v-role="{ id: 'BusinessCallAdd', type: 'button', business: business }">
-          <div>
-            <i class="el-icon-plus"></i>
-          </div>
-        </div>
+
       </div>
     </div>
     <Guide

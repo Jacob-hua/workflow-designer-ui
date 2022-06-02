@@ -14,13 +14,6 @@
         node-key="id"
         default-expand-all
         :expand-on-click-node="false"
-        @node-drag-start="handleDragStart"
-        @node-drag-enter="handleDragEnter"
-        @node-drag-leave="handleDragLeave"
-        @node-drag-over="handleDragOver"
-        @node-drag-end="handleDragEnd"
-        @node-drop="handleDrop"
-        draggable
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span >{{ data.name }}<el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
@@ -148,61 +141,46 @@ export default {
               <el-button size="mini" type="text" on-click={ () => this.remove(node, data) }>Delete</el-button>
             </span>
           </span>);
-    },
-    handleDragStart(node, ev) {
-      console.log('drag start', node);
-    },
-    handleDragEnter(draggingNode, dropNode, ev) {
-      console.log('tree drag enter: ', dropNode.label);
-    },
-    handleDragLeave(draggingNode, dropNode, ev) {
-      console.log('tree drag leave: ', dropNode.label);
-    },
-    handleDragOver(draggingNode, dropNode, ev) {
-      console.log('tree drag over: ', dropNode.label);
-    },
-    handleDragEnd(draggingNode, dropNode, dropType, ev) {
-      console.log('tree drag end: ', dropNode && dropNode.label, dropType);
-    },
-    handleDrop(draggingNode, dropNode, dropType, ev) {
-      console.log('tree drop: ', dropNode.label, dropType);
-    },
+    }
   }
 }
 </script>
 
 <style scoped>
+>>> .el-tree-node__content {
+  padding-left: 0 !important;
+}
 
-/deep/ .el-dialog__header {
+>>> .el-dialog__header {
   background-color: #e4e4e4;
   border-bottom: 1px solid #000000;
 }
-/deep/ .el-input--mini {
+>>> .el-input--mini {
   width: 150px;
 }
-.tree /deep/ .el-tree-node {
+.tree >>> .el-tree-node {
   position: relative;
   padding-left: 0 ;
 }
 
-.tree /deep/ .el-tree-node__children {
+.tree >>> .el-tree-node__children {
   padding-left: 26px;
   padding-top: 20px;
 }
 
-.tree /deep/ .el-tree-node :last-child:before {
+.tree >>> .el-tree-node :last-child:before {
   height: 12px;
 }
 
-.tree /deep/ .el-tree > .el-tree-node:before {
+.tree >>> .el-tree > .el-tree-node:before {
   border-left: none;
 }
 
-.tree-container /deep/ .el-tree > .el-tree-node:after {
+.tree-container >>> .el-tree > .el-tree-node:after {
   border-top: none;
 }
 
-.tree /deep/ .el-tree-node:before {
+.tree >>> .el-tree-node:before {
   content: '';
   left: -4px;
   position: absolute;
@@ -215,7 +193,7 @@ export default {
   width: 1px;
 }
 
-.tree /deep/ .el-tree-node:after {
+.tree >>> .el-tree-node:after {
   content: '';
   left: -4px;
   position: absolute;
