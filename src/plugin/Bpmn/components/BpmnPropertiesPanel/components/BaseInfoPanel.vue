@@ -1,8 +1,6 @@
 <template>
   <div>
-    <el-form size="mini"
-             label-width="90px"
-             ref="baseInfo">
+    <el-form>
       <el-form-item label="名称">
         <el-input :value="baseInfo.name"
                   clearable
