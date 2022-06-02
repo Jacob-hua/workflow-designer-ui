@@ -25,6 +25,5 @@ Vue.directive('role', {
       default:
         break;
     }
-    // console.log(el, '0')
   }
 })
