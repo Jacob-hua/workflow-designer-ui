@@ -10,7 +10,7 @@
       <div class="home-table">
         <visitCall v-if="activeName === 'first' && permissionRole" ref="first" @editTable="editTable()" @deleteTable="deleteTable()"></visitCall>
         <businessCall v-if="activeName === 'second' && permissionRole" ref="second"></businessCall>
-        <StartItemConfig v-if="activeName === 'third' && permissionRole" ref="third" />
+        <StartItemConfig v-if="activeName === 'third' && permissionRole" ref="third"  />
         <permission v-if="!permissionRole"></permission>
       </div>
     </div>
@@ -22,31 +22,36 @@
   import visitCall from './visitCall/index.vue'
   import businessCall from './businessCall/index.vue'
   import StartItemConfig from "@/view/configuration/startItemConfig";
-  import {
-    ApiEnum
-  } from '@/enum/index'
   import permission from '@/component/permission/index.vue'
   export default {
     data() {
       return {
+        activeName: 'first',
         business: '',
         activeNameMapping: {
           first: 'VisitCall',
           second: 'BusinessCall',
           third: 'StartItemConfig'
         },
-        permissionRole: true
+        permissionRole: true,
+        jsonData: {
+          total: 25,
+          limit: 10,
+          skip: 0,
+          link: {
+            previous: 'LL',
+            Evle: 'KK'
+          }
+        }
       }
     },
     created() {
       this.changeActiveName('first')
     },
-    methods: {
+    methods:{
       changeActiveName(value) {
         this.activeName = value
-        let {
-          permissions
-        } = JSON.parse(sessionStorage.getItem('loginData'))
+        let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
         let proJectRole = permissions.filter((item) => {
           // return item.projectCode === this.business
           return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
@@ -86,11 +91,11 @@
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });
+          });          
         });
       }
     },
-    components: {
+    components:{
       visitCall,
       businessCall,
       StartItemConfig,
@@ -100,23 +105,24 @@
 </script>
 
 <style scoped="scoped">
+  
   .buttonTab {
     margin: 15px 0;
   }
-
+  
   .configuration {
     padding: 20px;
   }
-
+  
   .home-main {
     position: relative;
     margin-top: 40px;
   }
-
+  
   .home-main-tab {
     display: flex;
   }
-
+  
   .home-main-tab-item {
     display: inline-block;
     height: 60px;
@@ -127,7 +133,7 @@
     cursor: pointer;
     border: 1px solid #cccccc;
   }
-
+  
   .active {
     background-color: #030303;
     color: white;
