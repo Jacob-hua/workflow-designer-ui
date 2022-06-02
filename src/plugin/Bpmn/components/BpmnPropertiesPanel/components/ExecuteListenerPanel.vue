@@ -56,7 +56,26 @@ export default {
     return {
       drawerVisible: false,
       editIndex: null,
-      listener: {},
+      defaultListener: {
+        event: '',
+        listenerType: '',
+        expression: '',
+        class: '',
+        delegateExpression: '',
+        scriptType: '',
+        scriptFormat: '',
+        scriptValue: '',
+        scriptResource: '',
+        /**
+         * {
+         *    name: 'String',
+         *    string: 'String',
+         *    expression: 'String',
+         * },
+         */
+        fields: [],
+      },
+      listener: this.defaultListener,
     }
   },
   computed: {
@@ -83,7 +102,7 @@ export default {
       this.editIndex = null
     },
     onDrawerClose() {
-      this.listener = {}
+      this.listener = this.defaultListener
       this.drawerVisible = false
     },
     onDrawerSubmit(listener) {

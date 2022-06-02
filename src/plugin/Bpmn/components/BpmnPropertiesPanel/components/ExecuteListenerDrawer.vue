@@ -41,10 +41,6 @@
           <el-input v-model="listenerForm.delegateExpression" />
         </el-form-item>
         <template v-if="listenerTypeIs('script')">
-          <el-form-item label="脚本格式"
-                        prop="scriptFormat">
-            <el-input v-model="listenerForm.scriptFormat" />
-          </el-form-item>
           <el-form-item label="脚本类型"
                         prop="scriptType">
             <el-select v-model="listenerForm.scriptType">
@@ -54,6 +50,10 @@
                          :value="value" />
             </el-select>
           </el-form-item>
+          <el-form-item label="脚本格式"
+                        prop="scriptFormat">
+            <el-input v-model="listenerForm.scriptFormat" />
+          </el-form-item>
           <el-form-item v-if="scriptTypeIs('inline')"
                         label="脚本内容"
                         prop="scriptValue">
@@ -61,8 +61,8 @@
           </el-form-item>
           <el-form-item v-if="scriptTypeIs('outside')"
                         label="资源地址"
-                        prop="resource">
-            <el-input v-model="listenerForm.resource" />
+                        prop="scriptResource">
+            <el-input v-model="listenerForm.scriptResource" />
           </el-form-item>
         </template>
         <template v-if="eventIs('timeout')">
@@ -225,7 +225,7 @@ export default {
         scriptFormat: [...requiredRule('请填写脚本格式')],
         scriptType: [...requiredRule('请选择脚本类型')],
         scriptValue: [...requiredRule('请填写脚本内容')],
-        resource: [...requiredRule('请填写资源地址')],
+        scriptResource: [...requiredRule('请填写资源地址')],
         timer: [...requiredRule('请填写定时器配置')],
       },
       fieldModalVisible: false,
@@ -254,10 +254,7 @@ export default {
   },
   methods: {
     eventIs(event) {
-      return (
-        this.listenerForm['event'] &&
-        this.listenerForm['event'] === event
-      )
+      return this.listenerForm['event'] && this.listenerForm['event'] === event
     },
     listenerTypeIs(listenerType) {
       return (

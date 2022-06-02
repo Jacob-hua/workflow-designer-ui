@@ -26,7 +26,7 @@ function convertor(listeners, iBpmn = new IBpmn()) {
     function generateScriptAttrs(listener) {
       const scriptAttrs = {
         inline: { scriptFormat: listener.scriptFormat, value: listener.scriptValue },
-        outside: { scriptFormat: listener.scriptFormat, resource: listener.resource },
+        outside: { scriptFormat: listener.scriptFormat, resource: listener.scriptResource },
       };
       return scriptAttrs[listener.scriptType];
     }
