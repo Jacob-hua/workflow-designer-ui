@@ -1,5 +1,12 @@
 <template>
   <div>
+    <div>
+      <span><i class="el-icon-menu"></i>执行监听器</span>
+      <el-button size="mini"
+                 type="primary"
+                 icon="el-icon-plus"
+                 @click="onAddListener">添加监听器</el-button>
+    </div>
     <el-table :data="listeners"
               size="mini"
               border>
@@ -30,12 +37,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <div>
-      <el-button size="mini"
-                 type="primary"
-                 icon="el-icon-plus"
-                 @click="onAddListener">添加监听器</el-button>
-    </div>
     <execute-listener-drawer title="执行监听器"
                              :listener="listener"
                              :visible="drawerVisible"
