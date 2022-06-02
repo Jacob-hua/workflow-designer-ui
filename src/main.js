@@ -3,6 +3,8 @@ import Vuex from "vuex";
 import App from "./App.vue";
 import router from "./router";
 import stores from "./store";
+import axios  from "axios";
+Vue.prototype.$axios = axios
 
 import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";

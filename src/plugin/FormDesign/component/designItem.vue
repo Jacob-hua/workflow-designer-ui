@@ -2,9 +2,7 @@
 import draggable from 'vuedraggable'
 import render from '../custom/render'
 import {getSimpleId} from "../utils/IdGenerate";
-import {dynamicTableAllowedItems} from "../custom/formConf";
-import dynamicTable from '../dynamic/dynamicTable'
-import dynamicTableItem from '../dynamic/dynamicTableItem'
+
 
 /**
  * 动态表单允许增加的组件列表
@@ -125,8 +123,6 @@ export default {
   components: {
     render,
     draggable,
-    dynamicTable,
-    dynamicTableItem
   },
   props: {
     model: { 
@@ -164,28 +160,6 @@ export default {
           const rowItem = item.list[newIndex];
           item.list.splice(newIndex,1);
           this.$message.error('布局组件不允许被嵌套！');
-          this.$emit('rowItemRollBack',rowItem,oldIndex);  //还原到原先的列表中
-          return false;
-        }
-      }
-    },
-    /**
-     * 动态表单
-     */
-    handlerDynamicAdd(evt,item){
-      if(evt.pullMode === 'clone'){
-        if(dynamicTableAllowedItems.includes(this.activeItem.compType)){
-          item.columns.splice(evt.newIndex,0,this.activeItem);
-        }else{
-          this.$message.error('该组件不允许被放入动态表格内！');
-        }
-      }else{
-        if(evt.item.className.indexOf('el-row')>-1){  //防止row嵌套
-          const newIndex = evt.newIndex;
-          const oldIndex = evt.oldIndex;
-          const rowItem = item.columns[newIndex];
-          item.columns.splice(newIndex,1);
-          this.$message.error('布局组件不允许放入动态表格！');
           this.$emit('rowItemRollBack',rowItem,oldIndex);  //还原到原先的列表中
           return false;
         }

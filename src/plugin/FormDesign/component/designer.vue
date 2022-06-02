@@ -5,15 +5,12 @@
       <el-button icon="el-icon-view" type="text" @click="preview">
         预览
       </el-button>
-      <el-button icon="el-icon-view" type="text" @click="view">
-        查看
-      </el-button>
       <el-button icon="el-icon-tickets" type="text" @click="viewJSON">
         JSON
       </el-button>
-      <el-button icon="el-icon-s-tools" type="text" @click="setting">
-        设置
-      </el-button>
+<!--      <el-button icon="el-icon-s-tools" type="text" @click="setting">-->
+<!--        设置-->
+<!--      </el-button>-->
       <el-button class="delete-btn" icon="el-icon-delete-solid" type="text" @click="clear">
         清空
       </el-button>
@@ -27,9 +24,9 @@
           :label-width="formConf.labelWidth + 'px'"
         >
         <draggable class="drawing-board" 
-                   :list="list" 
+                   :list="list"
                    :animation="100" 
-                   group="componentsGroup" 
+                   group="componentsGroup"
                    draggable=".drawing-item"
                    >
         <design-item 
@@ -51,57 +48,10 @@
     </el-scrollbar>
     <config-panel :activeItem="activeItem" :itemList="list"/>
     <!-- 设计器配置弹出框 -->
-    <el-dialog  :visible.sync="formConfVisible" width="50%" top="30px" :center="true">
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="表单配置" name="formConf">
-          <el-form ref="formConf" :model="formConf" label-width="100px">
-            <el-form-item label="表单名">
-                <el-input class="input" v-model="formConf.formRef"></el-input>
-            </el-form-item>
-            <el-form-item label="表单模型">
-                <el-input class="input" v-model="formConf.formModel"></el-input>
-            </el-form-item>
-            <el-form-item label="校验模型">
-                <el-input class="input" v-model="formConf.formRules"></el-input>
-            </el-form-item>
-            <el-form-item label="表单尺寸">
-                <el-radio-group v-model="formConf.size">
-                  <el-radio-button label="medium">中等</el-radio-button>
-                  <el-radio-button label="small">较小</el-radio-button>
-                  <el-radio-button label="mini">迷你</el-radio-button>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item label="标签对齐">
-                <el-radio-group v-model="formConf.labelPosition">
-                  <el-radio-button label="right">右对齐</el-radio-button>
-                  <el-radio-button label="left">左对齐</el-radio-button>
-                  <el-radio-button label="top">顶部对齐</el-radio-button>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item label="标签宽度">
-                <el-input-number v-model="formConf.labelWidth"  :min="60" :max="140"></el-input-number>
-            </el-form-item>
-            <el-form-item label="栅格间隔">
-                <el-input-number v-model="formConf.gutter"  :min="0" :max="30"></el-input-number>
-            </el-form-item>
-            <el-form-item label="动态表格支持组件高亮显示">
-              <el-switch v-model="formConfig.dynamicTableAllowed"></el-switch>
-            </el-form-item>
-            <el-form-item label="禁用表单">
-                <el-switch v-model="formConf.disabled"></el-switch>
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-        <!-- <el-tab-pane label="提交前" name="fourth">开发中...</el-tab-pane> -->
-      </el-tabs>
-        <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="handlerSaveFormConf">确 定</el-button>
-        </span>
-    </el-dialog>
-    <el-dialog :visible.sync="previewVisible" width="70%" title="预览">
+    <el-dialog :visible.sync="previewVisible" width="70%" title="预览" append-to-body>
       <preview :itemList="itemList"  :formConf="formConf" v-if="previewVisible"/>
     </el-dialog>
-    <el-dialog :visible.sync="JSONVisible" width="70%" title="JSON" center :close-on-click-modal="false">
+    <el-dialog :visible.sync="JSONVisible" width="70%" title="JSON" center :close-on-click-modal="false" append-to-body>
       <codemirror v-model="viewCode" :options="options"/>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="handlerSetJson()">确 定</el-button>
@@ -171,6 +121,9 @@ export default {
   mounted() {
   },
   methods: {
+    setting(){
+      this.formConfVisible = true;
+    },
     preview(){
       const clone = JSON.parse(JSON.stringify(this.list))
       this.itemList = clone;
@@ -179,13 +132,6 @@ export default {
     viewJSON(){
       this.viewCode = this.code;
       this.JSONVisible = true;
-    },
-    view(){
-      localStorage.setItem("formValue",this.code);
-      window.open('#/view');
-    },
-    setting(){
-      this.formConfVisible = true;
     },
     clear(){
       this.$confirm('此操作将清空整个表单,是否继续?').then(() => {

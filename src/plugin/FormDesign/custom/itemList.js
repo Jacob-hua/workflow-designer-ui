@@ -15,7 +15,6 @@ import {cascader} from "./items/cascader";
 import {upload} from "./items/upload";
 import {dialogList} from "./items/dialogList";
 
-// import {dynamicTable} from "./items/dynamicTable";
 import {button} from "./items/button";
 import {divider} from "./items/divider";
 import {row} from "./items/row";

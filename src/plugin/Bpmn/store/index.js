@@ -1,58 +1,47 @@
-import modules, { mutationsEffectBill } from "./module";
-import listeners from "./listener";
-import { vuexNamespace } from "../config";
+import bpmn, { iBpmnListener } from "./module/bpmn";
+
+const MODULE_NAME = "bpmn";
+const REFRESH_STATE_MUTATION = "refreshBpmnState";
 
 function listenBpmn(store) {
-  if (!store.hasModule(vuexNamespace)) {
-    store.registerModule(vuexNamespace, {
-      modules,
-      namespaced: true,
-    });
+  const iBpmn = store._vm.$iBpmn;
+
+  if (!store.hasModule(MODULE_NAME)) {
+    store.registerModule(MODULE_NAME, bpmn);
   }
 
-  regisetrBpmnListeners(listeners);
+  mutationBpmnProperties(iBpmn, store);
 
-  mutationElementProperties(store);
+  registerBpmnListener(iBpmn, iBpmnListener);
 
-  function mutationElementProperties(store) {
+  function mutationBpmnProperties(iBpmn, store) {
     store.subscribe((mutation, state) => {
-      if (isNotEffectMutation(mutation)) {
+      if (!isBpmnMutation(mutation) || mutation.type === `${MODULE_NAME}/${REFRESH_STATE_MUTATION}`) {
         return;
       }
-      const iBpmn = store._vm.$iBpmn;
-      const Convertor = mutationsEffectBill[mutation.type].convertor;
-      const properties = new Convertor({ iBpmn, state: state.bpmn["panel"] }).convert();
-      iBpmn.updateSelectedShapeExtensions(properties);
+      iBpmn.updateSelectedShapeProperties(state.bpmn);
     });
   }
 
-  function regisetrBpmnListeners(listeners) {
-    Object.keys(listeners).forEach((listenerKey) => {
-      registerBpmnListener(store, listenerKey, listeners[listenerKey]);
-    });
-  }
-
-  function registerBpmnListener(store, module, listeners = {}) {
-    const iBpmn = store._vm.$iBpmn;
-    Object.keys(listeners).forEach((eventName) => {
+  function registerBpmnListener(iBpmn, bpmnListeners = {}) {
+    Object.keys(bpmnListeners).forEach((eventName) => {
       iBpmn.on(eventName, (event) => {
-        listeners[eventName](event, moduleCommit(store, module), iBpmn);
+        const modelElementInfo = bpmnListeners[eventName](event, refreshBpmnState);
+        if (!modelElementInfo) {
+          return;
+        }
+        refreshBpmnState(modelElementInfo);
       });
     });
   }
 
-  function isNotEffectMutation(mutation) {
-    return !mutationsEffectBill[mutation.type] || !mutationsEffectBill[mutation.type].effectBpmn;
+  function refreshBpmnState(payload = {}) {
+    store.commit(`${MODULE_NAME}/${REFRESH_STATE_MUTATION}`, payload);
   }
 
-  function moduleCommit(store, module) {
-    return function (path, payload = {}) {
-      store.commit(generateCommitMutationPath(module, path), payload);
-    };
-  }
-
-  function generateCommitMutationPath(module, path) {
-    return `${vuexNamespace}/${module}/${path}`;
+  function isBpmnMutation(mutation) {
+    const mutationType = mutation.type ?? "";
+    return mutationType.startsWith(`${MODULE_NAME}/`);
   }
 }
 

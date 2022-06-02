@@ -10,7 +10,6 @@
     </el-tabs>
   </div>
 </template>
-
 <script>
   import ProjectForm from './component/ProjectForm.vue'
   import PublicForm from './component/PublicForm.vue'
