@@ -31,6 +31,12 @@
         </template>
         <element-task-panel />
       </el-collapse-item>
+      <el-collapse-item>
+        <template slot="title">
+          多实例
+        </template>
+        <multi-instance-panel />
+      </el-collapse-item>
     </el-collapse>
   </div>
 </template>
@@ -41,6 +47,7 @@ import ExecuteListenerPanel from './components/ExecuteListenerPanel.vue'
 import InputOutputPanel from './components/InputOutputPanel.vue'
 import SignalMessagePanel from './components/SignalMessagePanel.vue'
 import ElementTaskPanel from './components/ElementTaskPanel.vue'
+import MultiInstancePanel from './components/MultiInstancePanel.vue'
 
 export default {
   name: 'BpmnPropertiesPanel',
@@ -50,6 +57,7 @@ export default {
     SignalMessagePanel,
     InputOutputPanel,
     ElementTaskPanel,
+    MultiInstancePanel,
   },
 }
 </script>
