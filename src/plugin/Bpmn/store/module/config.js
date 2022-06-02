@@ -17,7 +17,7 @@ const state = {
       value: "script",
     },
   ],
-  eventTypeOptions: [
+  eventOptions: [
     {
       label: "创建",
       value: "create",
@@ -81,6 +81,37 @@ const state = {
       value: "expression",
     },
   ],
+  variableTypeOptions: [
+    {
+      label: "字符串或表达式",
+      value: "string/expression",
+    },
+    {
+      label: "脚本",
+      value: "script",
+    },
+    {
+      label: "列表",
+      value: "list",
+    },
+    {
+      label: "键值对",
+      value: "map",
+    },
+  ],
+  userGroupOptions: [],
+  userOptions: [],
+  loopCharacteristicsOptions: [
+    {
+      label: "并行多重事件",
+      value: "ParallelMultiInstance",
+    },
+    {
+      label: "时序多重事件",
+      value: "SequentialMultiInstance",
+    },
+  ],
+  actionButtons: ["待办", "传阅", "挂起", "加减签", "驳回", "终止"],
 };
 
 const getters = {
@@ -89,9 +120,9 @@ const getters = {
       return state.listenerTypeOptions.find(({ value }) => value === listenerType)?.label;
     };
   },
-  eventTypeLabel(state) {
-    return ({ eventType }) => {
-      return state.eventTypeOptions.find(({ value }) => value === eventType)?.label;
+  eventLabel(state) {
+    return ({ event }) => {
+      return state.eventOptions.find(({ value }) => value === event)?.label;
     };
   },
   fieldTypeLabel(state) {
@@ -99,11 +130,24 @@ const getters = {
       return state.fieldTypeOptions.find(({ value }) => value === fieldType)?.label;
     };
   },
+  variableTypeLabel(state) {
+    return ({ type }) => {
+      return state.variableTypeOptions.find(({ value }) => value === type)?.label;
+    };
+  },
 };
 
-const mutations = {};
+const mutations = {
+  updateUserGroupOptions(state, { userGroupOptions }) {},
+};
 
-const actions = {};
+const actions = {
+  actionRequestUserGroup({ commit }, actionFunc) {
+    Promise.resolve(actionFunc).then((res) => {
+      commit("bpmn/config/updateUserGroupOptions", { userGroupOptions: res });
+    });
+  },
+};
 
 export default {
   namespaced: true,

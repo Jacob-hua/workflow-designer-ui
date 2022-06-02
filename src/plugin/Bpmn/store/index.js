@@ -2,7 +2,15 @@ import modules, { mutationsEffectBill } from "./module";
 import listeners from "./listener";
 import { vuexNamespace } from "../config";
 
-function listenBpmn(store) {
+/**
+ * 桥接Bpmn和Vuex
+ * 主要工作：
+ * - 动态注册bpmn的modules
+ * - 注册bpmn事件监听
+ * - 订阅Vuex的mutation提交
+ * @param {*} store
+ */
+function bridgingBpmn(store) {
   if (!store.hasModule(vuexNamespace)) {
     store.registerModule(vuexNamespace, {
       modules,
@@ -20,9 +28,9 @@ function listenBpmn(store) {
         return;
       }
       const iBpmn = store._vm.$iBpmn;
-      const Convertor = mutationsEffectBill[mutation.type].convertor;
-      const properties = new Convertor({ iBpmn, state: state.bpmn["panel"] }).convert();
-      iBpmn.updateSelectedShapeExtensions(properties);
+      const effect = mutationsEffectBill[mutation.type].effect ?? (() => {});
+      const module = mutationsEffectBill[mutation.type].module;
+      effect(state[vuexNamespace][module], iBpmn);
     });
   }
 
@@ -42,7 +50,7 @@ function listenBpmn(store) {
   }
 
   function isNotEffectMutation(mutation) {
-    return !mutationsEffectBill[mutation.type] || !mutationsEffectBill[mutation.type].effectBpmn;
+    return !mutationsEffectBill[mutation.type];
   }
 
   function moduleCommit(store, module) {
@@ -58,10 +66,10 @@ function listenBpmn(store) {
 
 const bpmnVuexPlugin = (store) => {
   if (store._vm.$iBpmn) {
-    listenBpmn(store);
+    bridgingBpmn(store);
   } else {
     setTimeout(() => {
-      listenBpmn(store);
+      bridgingBpmn(store);
     });
   }
 };

@@ -10,7 +10,7 @@
 import ControlHeader from './components/ControlHeader.vue'
 
 export default {
-  name: 'bpmnEditor',
+  name: 'BpmnEditor',
   components: { ControlHeader },
   props: {
     pelatteVisiable: {
