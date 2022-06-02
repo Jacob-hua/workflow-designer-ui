@@ -162,13 +162,13 @@ export default {
       this.drawerVisible = false
     },
     onDrawerSubmit(parameter) {
-      if (this.editIndex !== null) {
+      if (this.editIndex === null) {
+        this.addParameter({ parameter })
+      } else {
         this.updateParameter({
           index: this.editIndex,
           newParameter: parameter,
         })
-      } else {
-        this.addParameter({ parameter })
       }
     },
   },

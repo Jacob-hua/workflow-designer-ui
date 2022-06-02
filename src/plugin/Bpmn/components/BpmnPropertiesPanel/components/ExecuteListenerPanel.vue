@@ -54,6 +54,7 @@ export default {
   data() {
     return {
       drawerVisible: false,
+      editIndex: null,
       listener: {},
     }
   },
@@ -78,13 +79,14 @@ export default {
     },
     onAddListener() {
       this.drawerVisible = true
+      this.editIndex = null
     },
     onDrawerClose() {
       this.listener = {}
       this.drawerVisible = false
     },
     onDrawerSubmit(listener) {
-      if (isEmptyArray(Object.keys(this.listener))) {
+      if (this.editIndex == null) {
         this.addListener({ listener })
       } else {
         this.updateListener({
