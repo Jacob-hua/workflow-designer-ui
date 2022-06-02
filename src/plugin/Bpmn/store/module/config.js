@@ -103,14 +103,15 @@ const state = {
   userOptions: [],
   loopCharacteristicsOptions: [
     {
-      label: '并行多重事件',
-      value: 'ParallelMultiInstance',
+      label: "并行多重事件",
+      value: "ParallelMultiInstance",
     },
     {
-      label: '时序多重事件',
-      value: 'SequentialMultiInstance',
+      label: "时序多重事件",
+      value: "SequentialMultiInstance",
     },
   ],
+  actionButtons: ["待办", "传阅", "挂起", "加减签", "驳回", "终止"],
 };
 
 const getters = {
