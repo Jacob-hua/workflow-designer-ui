@@ -30,7 +30,8 @@
         </el-table-column>
       </el-table>
     </section>
-    <input-output-drawer :parameter="parameter"
+    <input-output-drawer :title="drawerTitle"
+                         :parameter="parameter"
                          :visible="drawerVisible"
                          :onClose="onDrawerClose"
                          :onSubmit="onDrawerSubmit" />
@@ -46,7 +47,7 @@ export default {
   name: 'InputOutputPanel',
   data() {
     return {
-      type: '',
+      type: 'inputParameter',
       drawerVisible: false,
       editIndex: null,
       parameter: {},
@@ -100,6 +101,9 @@ export default {
         parameter.parameters = parameters[parameter.type]
       })
       return Object.values(this.parameterConfig)
+    },
+    drawerTitle() {
+      return this.parameterConfig[this.type].title
     },
     defaultParameter() {
       return this.parameterConfig[this.type]['defaultParameter']

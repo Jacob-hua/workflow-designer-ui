@@ -36,7 +36,8 @@
                  icon="el-icon-plus"
                  @click="onAddListener">添加监听器</el-button>
     </div>
-    <execute-listener-drawer :listener="listener"
+    <execute-listener-drawer title="执行监听器"
+                             :listener="listener"
                              :visible="drawerVisible"
                              :onClose="onDrawerClose"
                              :onSubmit="onDrawerSubmit" />
@@ -46,7 +47,6 @@
 <script>
 import { mapGetters, mapState, mapMutations } from 'vuex'
 import ExecuteListenerDrawer from './ExecuteListenerDrawer.vue'
-import { isEmptyArray } from '../../../utils/array'
 
 export default {
   name: 'ExecuteListenerPanel',
