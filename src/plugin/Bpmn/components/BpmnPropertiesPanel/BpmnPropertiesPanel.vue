@@ -25,6 +25,12 @@
         </template>
         <input-output-panel />
       </el-collapse-item>
+      <el-collapse-item>
+        <template slot="title">
+          任务
+        </template>
+        <element-task-panel />
+      </el-collapse-item>
     </el-collapse>
   </div>
 </template>
@@ -34,6 +40,7 @@ import BaseInfoPanel from './components/BaseInfoPanel.vue'
 import ExecuteListenerPanel from './components/ExecuteListenerPanel.vue'
 import InputOutputPanel from './components/InputOutputPanel.vue'
 import SignalMessagePanel from './components/SignalMessagePanel.vue'
+import ElementTaskPanel from './components/ElementTaskPanel.vue'
 
 export default {
   name: 'BpmnPropertiesPanel',
@@ -42,6 +49,7 @@ export default {
     ExecuteListenerPanel,
     SignalMessagePanel,
     InputOutputPanel,
+    ElementTaskPanel,
   },
 }
 </script>

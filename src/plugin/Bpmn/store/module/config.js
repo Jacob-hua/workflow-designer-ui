@@ -99,6 +99,8 @@ const state = {
       value: "map",
     },
   ],
+  userGroupOptions: [],
+  userOptions: [],
 };
 
 const getters = {
@@ -119,9 +121,17 @@ const getters = {
   },
 };
 
-const mutations = {};
+const mutations = {
+  updateUserGroupOptions(state, { userGroupOptions }) {},
+};
 
-const actions = {};
+const actions = {
+  actionRequestUserGroup({ commit }, actionFunc) {
+    Promise.resolve(actionFunc).then((res) => {
+      commit("bpmn/config/updateUserGroupOptions", { userGroupOptions: res });
+    });
+  },
+};
 
 export default {
   namespaced: true,
