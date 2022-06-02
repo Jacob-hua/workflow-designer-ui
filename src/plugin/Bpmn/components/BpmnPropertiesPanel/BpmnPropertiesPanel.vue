@@ -37,6 +37,12 @@
         </template>
         <multi-instance-panel />
       </el-collapse-item>
+      <el-collapse-item>
+        <template slot="title">
+          操作按钮配置
+        </template>
+        <action-button-panel />
+      </el-collapse-item>
     </el-collapse>
   </div>
 </template>
@@ -48,6 +54,7 @@ import InputOutputPanel from './components/InputOutputPanel.vue'
 import SignalMessagePanel from './components/SignalMessagePanel.vue'
 import ElementTaskPanel from './components/ElementTaskPanel.vue'
 import MultiInstancePanel from './components/MultiInstancePanel.vue'
+import ActionButtonPanel from './components/ActionButtonPanel.vue'
 
 export default {
   name: 'BpmnPropertiesPanel',
@@ -58,6 +65,7 @@ export default {
     InputOutputPanel,
     ElementTaskPanel,
     MultiInstancePanel,
+    ActionButtonPanel,
   },
 }
 </script>
