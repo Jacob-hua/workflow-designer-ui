@@ -53,6 +53,7 @@ function convertor(listeners, iBpmn = new IBpmn()) {
 }
 
 function listenerEffect({ listeners }, iBpmn = new IBpmn()) {
+  console.log(listeners);
   const parameters = convertor(listeners, iBpmn);
   iBpmn.updateSelectedShapeExtensions(parameters);
 }

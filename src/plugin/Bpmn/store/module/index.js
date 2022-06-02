@@ -89,7 +89,7 @@ const commonMutations = {
   },
   initState(moduleName) {
     return function () {
-      this.commit(`${vuexNamespace}/${moduleName}/refreshState`, initialModuleState[moduleName]);
+      this.commit(`${vuexNamespace}/${moduleName}/refreshState`, deepCopy(initialModuleState[moduleName]));
     };
   },
 };
