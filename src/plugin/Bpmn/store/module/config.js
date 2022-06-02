@@ -119,6 +119,11 @@ const getters = {
       return state.fieldTypeOptions.find(({ value }) => value === fieldType)?.label;
     };
   },
+  variableTypeLabel(state) {
+    return ({ type }) => {
+      return state.variableTypeOptions.find(({ value }) => value === type)?.label;
+    };
+  },
 };
 
 const mutations = {

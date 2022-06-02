@@ -1,114 +1,175 @@
 <template>
   <div>
-    <section>
+    <section v-for="({title, type, parameters}, index) in parameterTypes"
+             :key="index">
       <div>
-        <span>输入参数</span>
-        <el-button size="small"
-                   @click="onAddInputParameter">添加</el-button>
+        <span><i class="el-icon-menu"></i>{{title}}</span>
+        <el-button size="mini"
+                   type="primary"
+                   icon="el-icon-plus"
+                   @click="onAddParameter(type)">新建参数</el-button>
       </div>
-      <el-collapse v-if="inputParametersIsNotEmpty"
-                   accordion>
-        <el-collapse-item v-for="(parameter, index) in inputParameters"
-                          :key="index">
-          <template slot="title">
-            {{parameter.name}}
-            <el-button size="small"
-                       @click.stop="onRevmoveInputParameter(index)">删除</el-button>
+      <el-table :data="parameters">
+        <el-table-column prop="name"
+                         label="变量名" />
+        <el-table-column prop="type"
+                         label="变量类型"
+                         :formatter="variableTypeLabel" />
+        <el-table-column label="操作"
+                         width="90px">
+          <template slot-scope="{ $index }">
+            <el-button size="mini"
+                       type="text"
+                       @click="onEditParameter(type, $index)">编辑</el-button>
+            <el-divider direction="vertical" />
+            <el-button size="mini"
+                       type="text"
+                       style="color: #ff4d4f"
+                       @click="onRemoveParameter(type, $index)">移除</el-button>
           </template>
-          <input-output-form :parameter="parameter"
-                             :index="index"
-                             type="inputParameter" />
-        </el-collapse-item>
-      </el-collapse>
+        </el-table-column>
+      </el-table>
     </section>
-    <section>
-      <div>
-        <span>输出参数</span>
-        <el-button size="small"
-                   @click="onAddOutputParameter">添加</el-button>
-      </div>
-      <el-collapse v-if="outputParametersIsNotEmpty"
-                   accordion>
-        <el-collapse-item v-for="(parameter, index) in outputParameters"
-                          :key="index">
-          <template slot="title">
-            {{parameter.name}}
-            <el-button size="small"
-                       @click.stop="onRemoveOutputParameter(index)">删除</el-button>
-          </template>
-          <input-output-form :parameter="parameter"
-                             :index="index"
-                             type="outputParameter" />
-        </el-collapse-item>
-      </el-collapse>
-    </section>
+    <input-output-drawer :parameter="parameter"
+                         :visible="drawerVisible"
+                         :onClose="onDrawerClose"
+                         :onSubmit="onDrawerSubmit" />
   </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
-import InputOutputForm from './InputOutputForm.vue'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+import InputOutputDrawer from './InputOutputDrawer.vue'
 
 export default {
-  components: { InputOutputForm },
+  components: { InputOutputDrawer },
   name: 'InputOutputPanel',
   data() {
     return {
-      defaultInputParameter: {
-        name: 'Input',
-        type: '',
-        value: null,
-        scriptFormat: '',
-        scriptType: '',
-        script: '',
-        resource: '',
-        listValues: [],
-        mapValues: [],
-      },
-      defaultOutputParameter: {
-        name: 'Output',
-        type: '',
-        value: null,
-        scriptFormat: '',
-        scriptType: '',
-        script: '',
-        resource: '',
-        listValues: [],
-        mapValues: [],
+      type: '',
+      drawerVisible: false,
+      editIndex: null,
+      parameter: {},
+      parameterConfig: {
+        inputParameter: {
+          type: 'inputParameter',
+          title: '输入参数',
+          defaultParameter: {
+            name: '',
+            type: '',
+            value: null,
+            scriptFormat: '',
+            scriptType: '',
+            script: '',
+            resource: '',
+            listValues: [],
+            mapValues: [],
+          },
+        },
+        outputParameter: {
+          type: 'outputParameter',
+          title: '输出参数',
+          defaultParameter: {
+            name: '',
+            type: '',
+            value: null,
+            scriptFormat: '',
+            scriptType: '',
+            script: '',
+            resource: '',
+            listValues: [],
+            mapValues: [],
+          },
+        },
       },
     }
   },
   computed: {
     ...mapState('bpmn/panel', ['inputParameters', 'outputParameters']),
-    inputParametersIsNotEmpty() {
-      return this.inputParameters.length > 0
+    ...mapGetters('bpmn/panel', [
+      'findInputParameterByIndex',
+      'findOutputParameterByIndex',
+    ]),
+    ...mapGetters('bpmn/config', ['variableTypeLabel']),
+    parameterTypes() {
+      const parameters = {
+        inputParameter: this.inputParameters,
+        outputParameter: this.outputParameters,
+      }
+      Object.values(this.parameterConfig).forEach((parameter) => {
+        parameter.parameters = parameters[parameter.type]
+      })
+      return Object.values(this.parameterConfig)
     },
-    outputParametersIsNotEmpty() {
-      return this.outputParameters.length > 0
+    defaultParameter() {
+      return this.parameterConfig[this.type]['defaultParameter']
+    },
+    addParameter() {
+      const addParameters = {
+        inputParameter: this.addInputParameter,
+        outputParameter: this.addOutputParameter,
+      }
+      return addParameters[this.type]
+    },
+    updateParameter() {
+      const updateParameters = {
+        inputParameter: this.updateInputParameter,
+        outputParameter: this.updateOutputParameter,
+      }
+      return updateParameters[this.type]
+    },
+    removeParameter() {
+      const removeParameters = {
+        inputParameter: this.removeInputParameter,
+        outputParameter: this.removeOutputParameter,
+      }
+      return removeParameters[this.type]
+    },
+    findParameterByIndex() {
+      const findParameters = {
+        inputParameter: this.findInputParameterByIndex,
+        outputParameter: this.findOutputParameterByIndex,
+      }
+      return findParameters[this.type]
     },
   },
   methods: {
     ...mapMutations('bpmn/panel', [
       'addInputParameter',
+      'updateInputParameter',
       'removeInputParameter',
       'addOutputParameter',
+      'updateOutputParameter',
       'removeOutputParameter',
     ]),
-    onAddInputParameter() {
-      this.addInputParameter({
-        inputParameter: { ...this.defaultInputParameter },
-      })
+    onEditParameter(type, index) {
+      this.type = type
+      this.editIndex = index
+      this.parameter = this.findParameterByIndex(index)
+      this.drawerVisible = true
     },
-    onRevmoveInputParameter(index) {
-      this.removeInputParameter({ index })
+    onRemoveParameter(type, index) {
+      this.type = type
+      this.removeParameter({ index })
     },
-    onAddOutputParameter() {
-      this.addOutputParameter({
-        outputParameter: { ...this.defaultOutputParameter },
-      })
+    onAddParameter(type) {
+      this.type = type
+      this.editIndex = null
+      this.drawerVisible = true
     },
-    onRemoveOutputParameter(index) {
-      this.removeOutputParameter({ index })
+    onDrawerClose() {
+      this.parameter = this.defaultParameter
+      this.drawerVisible = false
+    },
+    onDrawerSubmit(parameter) {
+      if (this.editIndex !== null) {
+        this.updateParameter({
+          index: this.editIndex,
+          newParameter: parameter,
+        })
+      } else {
+        this.addParameter({ parameter })
+      }
     },
   },
 }

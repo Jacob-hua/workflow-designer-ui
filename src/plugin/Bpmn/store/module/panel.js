@@ -37,6 +37,16 @@ const getters = {
       return deepCopy(state.messages[index] ?? {});
     };
   },
+  findInputParameterByIndex(state) {
+    return (index) => {
+      return deepCopy(state.inputParameters[index] ?? {});
+    };
+  },
+  findOutputParameterByIndex(state) {
+    return (index) => {
+      return deepCopy(state.outputParameters[index] ?? {});
+    };
+  },
 };
 
 const mutations = {
@@ -97,17 +107,17 @@ const mutations = {
     }
     state.messages.splice(index, 1);
   },
-  addInputParameter(state, { inputParameter }) {
-    if (emptyPropertiesObject(inputParameter)) {
+  addInputParameter(state, { parameter }) {
+    if (emptyPropertiesObject(parameter)) {
       return;
     }
-    state.inputParameters.push(inputParameter);
+    state.inputParameters.push(parameter);
   },
-  updateInputParameter(state, { index, newInputParameter }) {
-    if (!state.inputParameters[index] || emptyPropertiesObject(newInputParameter)) {
+  updateInputParameter(state, { index, newParameter }) {
+    if (!state.inputParameters[index] || emptyPropertiesObject(newParameter)) {
       return;
     }
-    state.inputParameters.splice(index, 1, newInputParameter);
+    state.inputParameters.splice(index, 1, newParameter);
   },
   removeInputParameter(state, { index }) {
     if (!state.inputParameters[index]) {
@@ -115,17 +125,17 @@ const mutations = {
     }
     state.inputParameters.splice(index, 1);
   },
-  addOutputParameter(state, { outputParameter }) {
-    if (emptyPropertiesObject(outputParameter)) {
+  addOutputParameter(state, { parameter }) {
+    if (emptyPropertiesObject(parameter)) {
       return;
     }
-    state.outputParameters.push(outputParameter);
+    state.outputParameters.push(parameter);
   },
-  updateOutputParameter(state, { index, newOutputParameter }) {
-    if (!state.outputParameters[index] || emptyPropertiesObject(newOutputParameter)) {
+  updateOutputParameter(state, { index, newParameter }) {
+    if (!state.outputParameters[index] || emptyPropertiesObject(newParameter)) {
       return;
     }
-    state.outputParameters.splice(index, 1, newOutputParameter);
+    state.outputParameters.splice(index, 1, newParameter);
   },
   removeOutputParameter(state, { index }) {
     if (!state.outputParameters[index]) {
