@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-dialog title="流程挂起" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog :title="dialogValue('title')" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
       <div class="runtimeConfirmation">
-        <div class="title">请输入账号密码进行校验，将此工作流程挂起</div>
+        <div class="title">{{ dialogValue('message') }}</div>
         <el-form ref="form" :model="form" label-width="40px">
           <el-form-item label="账号">
             <el-input v-model="form.username" @keyup.native.enter="handleOK"></el-input>
@@ -88,10 +88,27 @@
         form: {
           username: '',
           password: ''
+        },
+        messageDiolog: {
+          Hang: {
+            title: '流程挂起',
+            message: '请输入账号密码进行校验，将此工作流程挂起'
+          },
+          Reject: {
+            title: '流程驳回',
+            message: '请输入账号密码进行校验，将此工作流程驳回'
+          },
+          Termination: {
+            title: '流程终止',
+            message: '请输入账号密码进行校验，将此工作流程终止'
+          }
         }
       }
     },
     methods: {
+      dialogValue(value) {
+        return this.messageDiolog[this.$parent.functionCheck][value]
+      },
       handleClose() {
         this.dialogVisible = false
         this.dialogVisible2 = false
@@ -144,10 +161,10 @@
                 })
               }
               break;
-            case 'reject':
+            case 'Reject':
               this.dialogVisible2 = true
               break;
-            case 'termination':
+            case 'Termination':
               this.dialogVisible3 = true
               break;
             default:

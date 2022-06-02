@@ -11,17 +11,17 @@
           </div>
           <div class="function-main" :class="btnList.length === 0 ? 'noData': ''">
             <div v-if="functionCheck === 'Agency' && roleBoolean">
-              <div v-if="dataList.agency.length > 0">
+              <div v-if="dataList.Agency.length > 0">
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
-                  <div v-for="(item, index) in dataList.agency">
+                  <div v-for="(item, index) in dataList.Agency">
                     <span> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1, index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
                     <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
                         <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length == 0">点击添加</span>
                     </div>
                     <div v-if="item.candidateUsers.length > 0" style="display: inline-block;">
-                        <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'agency', item.candidateUsers )" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length > 0">编辑</span>
+                        <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'Agency', item.candidateUsers )" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length > 0">编辑</span>
                     </div>
                   </div>
                 </div>
@@ -51,9 +51,9 @@
               <div style="margin-top: 15px;">
                 <div class="peopleList-title">加签:</div>
                 <div class="peopleList">
-                  <div class="peopleList-item" v-for="(item, index) in dataList.signature">{{ item.userId }}</div>
+                  <div class="peopleList-item" v-for="(item, index) in dataList.Signature">{{ item.userId }}</div>
                 </div>
-                <span class="editButton" @click="editDataList('signature')">编辑</span>
+                <span class="editButton" @click="editDataList('Signature')">编辑</span>
               </div>
             </div>
             <div v-if="functionCheck === 'Hang' && roleBoolean">
@@ -67,34 +67,34 @@
               </div>
             </div>
             <div v-if="functionCheck === 'Reject' && roleBoolean">
-              <div v-if="dataList.reject.rejectBollen" class="HangStyle">
+              <div v-if="dataList.Reject.rejectBollen" class="HangStyle">
                 <span style="color: #0066cc;">当前流程正常运行，如需将流程驳回，请进行认证操作</span>
                 <div class="confirm" @click="confirmation()">驳回验证</div>
               </div>
-              <div v-if="!dataList.reject.rejectBollen">
+              <div v-if="!dataList.Reject.rejectBollen">
                 <div class="rejectData">
-                  <span>{{ dataList.reject.data }}</span>
+                  <span>{{ dataList.Reject.data }}</span>
                 </div>
                 <div class="rejectName">
-                  <span>{{ dataList.reject.userId }}</span>
+                  <span>{{ dataList.Reject.userId }}</span>
                 </div>
                 <div>
                   <span class="rejectWord">驳回至</span>
-                  <span class="rejectResult">{{ dataList.reject.rejectResult }}</span>
+                  <span class="rejectResult">{{ dataList.Reject.rejectResult }}</span>
                 </div>
               </div>
             </div>
             <div v-if="functionCheck === 'Termination' && roleBoolean">
-              <div v-if="dataList.termination.terminationBollon" class="HangStyle">
+              <div v-if="dataList.Termination.terminationBollon" class="HangStyle">
                 <span style="color: #0066cc;">当前流程正常运行，如需将流程终止，请进行认证操作</span>
                 <div class="confirm" @click="confirmation()">终止确认</div>
               </div>
-              <div v-if="!dataList.termination.terminationBollon">
+              <div v-if="!dataList.Termination.terminationBollon">
                 <div class="rejectData">
-                  <span>{{ dataList.termination.data }}</span>
+                  <span>{{ dataList.Termination.data }}</span>
                 </div>
                 <div class="rejectName">
-                  <span>{{ dataList.termination.name }}</span>
+                  <span>{{ dataList.Termination.name }}</span>
                 </div>
                 <div class="rejectWord">
                   流程终止
@@ -191,17 +191,17 @@
         },
         btnList: [],
         dataList: {
-          agency: [],
+          Agency: [],
           Circulate: [],
-          signature: [],
+          Signature: [],
           Hang: true,
-          reject: {
+          Reject: {
             rejectBollen: true,
             data: '',
             name: '',
             rejectResult: ''
           },
-          termination: {
+          Termination: {
             terminationBollon: true,
             data: '',
             name: ''
@@ -219,18 +219,18 @@
       },
       getNachList(result) {
         this.dataList.Circulate = []
-        this.dataList.signature = []
-        this.dataList.agency = []
+        this.dataList.Signature = []
+        this.dataList.Agency = []
         this.processTaskList = result
         this.dataList.Circulate = result[result.length - 1].circulationList
         if (result[result.length - 1].assignee) {
           result[result.length - 1].assignee.split(',').forEach((item) => {
-            this.dataList.signature.push({
+            this.dataList.Signature.push({
               userId: item
             })
           })
         }
-        this.dataList.agency = result[result.length - 1].candidateUsers
+        this.dataList.Agency = result[result.length - 1].candidateUsers
       },
       functionItemShow(item) {
         let value = this.btnListKey[item]
