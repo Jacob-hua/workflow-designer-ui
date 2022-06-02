@@ -2,7 +2,15 @@ import modules, { mutationsEffectBill } from "./module";
 import listeners from "./listener";
 import { vuexNamespace } from "../config";
 
-function listenBpmn(store) {
+/**
+ * 桥接Bpmn和Vuex
+ * 主要工作：
+ * - 动态注册bpmn的modules
+ * - 注册bpmn事件监听
+ * - 订阅Vuex的mutation提交
+ * @param {*} store
+ */
+function bridgingBpmn(store) {
   if (!store.hasModule(vuexNamespace)) {
     store.registerModule(vuexNamespace, {
       modules,
@@ -58,10 +66,10 @@ function listenBpmn(store) {
 
 const bpmnVuexPlugin = (store) => {
   if (store._vm.$iBpmn) {
-    listenBpmn(store);
+    bridgingBpmn(store);
   } else {
     setTimeout(() => {
-      listenBpmn(store);
+      bridgingBpmn(store);
     });
   }
 };
