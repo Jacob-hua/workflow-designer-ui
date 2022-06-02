@@ -13,6 +13,13 @@ const state = {
   extendProperties: [],
   inputParameters: [],
   outputParameters: [],
+  multiInstance: {
+    loopCharacteristics: "",
+    loopCardinality: "",
+    collection: "",
+    elementVariable: "",
+    completionCondition: "",
+  },
   elementText: "",
 };
 

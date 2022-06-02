@@ -101,6 +101,16 @@ const state = {
   ],
   userGroupOptions: [],
   userOptions: [],
+  loopCharacteristicsOptions: [
+    {
+      label: '并行多重事件',
+      value: 'ParallelMultiInstance',
+    },
+    {
+      label: '时序多重事件',
+      value: 'SequentialMultiInstance',
+    },
+  ],
 };
 
 const getters = {
