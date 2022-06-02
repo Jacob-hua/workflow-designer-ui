@@ -36,7 +36,8 @@
                  icon="el-icon-plus"
                  @click="onAddListener">添加监听器</el-button>
     </div>
-    <execute-listener-drawer :listener="listener"
+    <execute-listener-drawer title="执行监听器"
+                             :listener="listener"
                              :visible="drawerVisible"
                              :onClose="onDrawerClose"
                              :onSubmit="onDrawerSubmit" />
@@ -46,14 +47,14 @@
 <script>
 import { mapGetters, mapState, mapMutations } from 'vuex'
 import ExecuteListenerDrawer from './ExecuteListenerDrawer.vue'
-import { isEmptyArray } from '../../../utils/array'
 
 export default {
-  name: 'executeListenerPanel',
+  name: 'ExecuteListenerPanel',
   components: { ExecuteListenerDrawer },
   data() {
     return {
       drawerVisible: false,
+      editIndex: null,
       listener: {},
     }
   },
@@ -78,13 +79,14 @@ export default {
     },
     onAddListener() {
       this.drawerVisible = true
+      this.editIndex = null
     },
     onDrawerClose() {
       this.listener = {}
       this.drawerVisible = false
     },
     onDrawerSubmit(listener) {
-      if (isEmptyArray(Object.keys(this.listener))) {
+      if (this.editIndex == null) {
         this.addListener({ listener })
       } else {
         this.updateListener({

@@ -54,7 +54,10 @@ function makeMutationsEffectBill(modules) {
     const bill = Object.keys(module.mutationsEffect).reduce(
       (effectBill, mutation) => ({
         ...effectBill,
-        [`${vuexNamespace}/${moduleName}/${mutation}`]: module.mutationsEffect[mutation],
+        [`${vuexNamespace}/${moduleName}/${mutation}`]: {
+          effect: module.mutationsEffect[mutation],
+          module: moduleName,
+        },
       }),
       {}
     );

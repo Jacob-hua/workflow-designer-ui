@@ -13,10 +13,10 @@
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-promotion"></i>流转条件</div>
         <flow-condition :business-object="elementBusinessObject" :type="elementType" />
       </el-collapse-item>
-<!--      <el-collapse-item name="condition" v-if="formVisible" key="form">
-        <div slot="title" class="panel-tab__title"><i class="el-icon-s-order"></i>表单</div>
-        <element-form :id="elementId" :type="elementType" />
-      </el-collapse-item> -->
+      <!--      <el-collapse-item name="condition" v-if="formVisible" key="form">
+              <div slot="title" class="panel-tab__title"><i class="el-icon-s-order"></i>表单</div>
+              <element-form :id="elementId" :type="elementType" />
+            </el-collapse-item> -->
       <el-collapse-item name="task" v-if="elementType.indexOf('Task') !== -1" key="task">
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-claim"></i>任务</div>
         <element-task :id="elementId" :type="elementType" />
@@ -43,16 +43,16 @@
       </el-collapse-item>
       <el-collapse-item v-if="elementType.indexOf('Task') !== -1" name="btnSetting" key="btnSetting">
         <div slot="title" class="panel-tab__title"><i class="el-icon-circle-plus"></i>操作按钮配置</div>
-          <div style="margin-left: 10px;">
-            <el-checkbox-group @change="btnListChange" v-model="btnList">
-              <el-checkbox label="待办"></el-checkbox>
-              <el-checkbox label="传阅"></el-checkbox>
-              <el-checkbox label="挂起"></el-checkbox>
-              <el-checkbox v-if="addOrSub" label="加减签"></el-checkbox>
-              <el-checkbox label="驳回"></el-checkbox>
-              <el-checkbox label="终止"></el-checkbox>
-            </el-checkbox-group>
-          </div>
+        <div style="margin-left: 10px;">
+          <el-checkbox-group @change="btnListChange" v-model="btnList">
+            <el-checkbox label="待办"></el-checkbox>
+            <el-checkbox label="传阅"></el-checkbox>
+            <el-checkbox label="挂起"></el-checkbox>
+            <el-checkbox v-if="addOrSub" label="加减签"></el-checkbox>
+            <el-checkbox label="驳回"></el-checkbox>
+            <el-checkbox label="终止"></el-checkbox>
+          </el-checkbox-group>
+        </div>
       </el-collapse-item>
       <el-collapse-item name="other" key="other">
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-promotion"></i>其他</div>
@@ -146,25 +146,24 @@ export default {
   methods: {
     btnListChange() {
       let _this = this
-        const newConvert = new X2JS();
-        this.bpmnModeler.saveXML({ format: true }).then((obj) => {
+      const newConvert = new X2JS();
+      this.bpmnModeler.saveXML({ format: true }).then((obj) => {
         const { definitions } = newConvert.xml2js(obj.xml);
         console.log(window.bpmnInstances.bpmnElement.id)
         let domParse = new DOMParser()
         let doc = domParse.parseFromString(obj.xml, 'text/xml')
-          this.currentId = window.bpmnInstances.bpmnElement.id
+        this.currentId = window.bpmnInstances.bpmnElement.id
         let element = doc.getElementById(window.bpmnInstances.bpmnElement.id)
-          element.setAttribute('camunda:btnList', JSON.stringify(_this.btnList) )
-          let serializer = new XMLSerializer();
-         _this.bpmnModeler.importXML( serializer.serializeToString(doc), (error)=> {
-            if (error) {
-            } else {
-
-            }
-           console.log('xml重新加载了')
-           let shape = window.bpmnInstances.elementRegistry.get(_this.currentId)
-           window.bpmnInstances.selection.select(shape)
-         })
+        element.setAttribute('camunda:btnList', JSON.stringify(_this.btnList) )
+        let serializer = new XMLSerializer();
+        _this.bpmnModeler.importXML( serializer.serializeToString(doc), (error)=> {
+          if (error) {
+          } else {
+          }
+          console.log('xml重新加载了')
+          let shape = window.bpmnInstances.elementRegistry.get(_this.currentId)
+          window.bpmnInstances.selection.select(shape)
+        })
 
       });
 
@@ -236,26 +235,26 @@ export default {
       let activatedElement = element;
       if (!activatedElement) {
         activatedElement =
-          window.bpmnInstances.elementRegistry.find(el => el.type === "bpmn:Process") ??
-          window.bpmnInstances.elementRegistry.find(el => el.type === "bpmn:Collaboration");
-          console.log(activatedElement)
+            window.bpmnInstances.elementRegistry.find(el => el.type === "bpmn:Process") ??
+            window.bpmnInstances.elementRegistry.find(el => el.type === "bpmn:Collaboration");
+        console.log(activatedElement)
       }
       if (!activatedElement) return;
-      // Log.printBack(`select element changed: id: ${activatedElement.id} , type: ${activatedElement.businessObject.$type}`);
-      // Log.prettyInfo("businessObject", activatedElement.businessObject);
+      Log.printBack(`select element changed: id: ${activatedElement.id} , type: ${activatedElement.businessObject.$type}`);
+      Log.prettyInfo("businessObject", activatedElement.businessObject);
       window.bpmnInstances.bpmnElement = activatedElement;
-       if (Object.keys(activatedElement.businessObject).includes('loopCharacteristics')) {
-         this.addOrSub = true
-       }
+      if (Object.keys(activatedElement.businessObject).includes('loopCharacteristics')) {
+        this.addOrSub = true
+      }
       this.bpmnElement = activatedElement;
       this.elementId = activatedElement.id;
       this.elementType = activatedElement.type.split(":")[1] || "";
       this.elementTimerEventDefinition = activatedElement.businessObject.eventDefinitions && activatedElement.businessObject.eventDefinitions[0].$type
       this.elementBusinessObject = JSON.parse(JSON.stringify(activatedElement.businessObject));
       this.conditionFormVisible = !!(
-        this.elementType === "SequenceFlow" &&
-        activatedElement.source &&
-        activatedElement.source.type.indexOf("StartEvent") === -1
+          this.elementType === "SequenceFlow" &&
+          activatedElement.source &&
+          activatedElement.source.type.indexOf("StartEvent") === -1
       );
       this.formVisible = this.elementType === "UserTask" || this.elementType === "StartEvent";
     },
