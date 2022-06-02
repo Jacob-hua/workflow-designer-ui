@@ -16,8 +16,8 @@
       <el-table-column label="事件类型"
                        min-width="80px"
                        show-overflow-tooltip
-                       prop="eventType"
-                       :formatter="eventTypeLabel" />
+                       prop="event"
+                       :formatter="eventLabel" />
       <el-table-column label="监听器类型"
                        min-width="80px"
                        show-overflow-tooltip
@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     ...mapState('bpmn/panel', ['listeners']),
-    ...mapGetters('bpmn/config', ['eventTypeLabel', 'listenerTypeLabel']),
+    ...mapGetters('bpmn/config', ['eventLabel', 'listenerTypeLabel']),
     ...mapGetters('bpmn/panel', ['findListenerByIndex']),
   },
   methods: {

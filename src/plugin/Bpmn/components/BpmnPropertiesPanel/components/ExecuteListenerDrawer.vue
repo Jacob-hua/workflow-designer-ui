@@ -8,9 +8,9 @@
                :rules="listenerFormRules"
                ref="listenerForm">
         <el-form-item label="事件类型"
-                      prop="eventType">
-          <el-select v-model="listenerForm.eventType">
-            <el-option v-for="({label, value}, index) in eventTypeOptions"
+                      prop="event">
+          <el-select v-model="listenerForm.event">
+            <el-option v-for="({label, value}, index) in eventOptions"
                        :key="index"
                        :label="label"
                        :value="value"></el-option>
@@ -65,7 +65,7 @@
             <el-input v-model="listenerForm.resource" />
           </el-form-item>
         </template>
-        <template v-if="eventTypeIs('timeout')">
+        <template v-if="eventIs('timeout')">
           <el-form-item label="定时器类型"
                         prop="timerType">
             <el-select v-model="listenerForm.timerType">
@@ -217,7 +217,7 @@ export default {
     return {
       listenerForm: {},
       listenerFormRules: {
-        eventType: [...requiredRule('请选择事件类型')],
+        event: [...requiredRule('请选择事件类型')],
         listenerType: [...requiredRule('请选择监听器类型')],
         class: [...requiredRule('请输入Java类名')],
         expression: [...requiredRule('请输入表达式')],
@@ -240,7 +240,7 @@ export default {
   computed: {
     ...mapState('bpmn/config', [
       'listenerTypeOptions',
-      'eventTypeOptions',
+      'eventOptions',
       'scriptTypeOptions',
       'timerTypeOptions',
       'fieldTypeOptions',
@@ -253,10 +253,10 @@ export default {
     },
   },
   methods: {
-    eventTypeIs(eventType) {
+    eventIs(event) {
       return (
-        this.listenerForm['eventType'] &&
-        this.listenerForm['eventType'] === eventType
+        this.listenerForm['event'] &&
+        this.listenerForm['event'] === event
       )
     },
     listenerTypeIs(listenerType) {

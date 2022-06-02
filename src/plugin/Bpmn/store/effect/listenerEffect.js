@@ -6,7 +6,7 @@ function convertor(listeners, iBpmn = new IBpmn()) {
   function convertListener(listener) {
     let result = {};
     result.id = listener.id;
-    result.event = listener.eventType;
+    result.event = listener.event;
 
     const computeProperties = {
       script: () => ({ script: convertScript(listener) }),

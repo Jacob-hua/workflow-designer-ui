@@ -17,7 +17,7 @@ const state = {
       value: "script",
     },
   ],
-  eventTypeOptions: [
+  eventOptions: [
     {
       label: "创建",
       value: "create",
@@ -120,9 +120,9 @@ const getters = {
       return state.listenerTypeOptions.find(({ value }) => value === listenerType)?.label;
     };
   },
-  eventTypeLabel(state) {
-    return ({ eventType }) => {
-      return state.eventTypeOptions.find(({ value }) => value === eventType)?.label;
+  eventLabel(state) {
+    return ({ event }) => {
+      return state.eventOptions.find(({ value }) => value === event)?.label;
     };
   },
   fieldTypeLabel(state) {
