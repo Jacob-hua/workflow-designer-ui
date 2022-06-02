@@ -62,7 +62,7 @@
           type: 'energy-1',
           order: 'desc',
           page: 1,
-          limit: 6,
+          limit: 9,
           tenantId: this.$store.state.tenantId,
           total: 1
         }
@@ -80,6 +80,7 @@
       getProcessList() {
         getProcessDefinitionList(this.getData).then((res) => {
           this.processListList = res.result.dataList
+          this.getData.total = res.result.count * 1
         })
       },
       handleSizeChange() {
