@@ -1,34 +1,27 @@
-import BaseConvertor from "./BaseConvertor";
+import IBpmn from "../../iBpmn";
 
-class ListenerConvertor extends BaseConvertor {
-  constructor(props) {
-    super(props);
-    this.listeners = this.state["listeners"] ?? [];
-  }
+function convertor(listeners, iBpmn = new IBpmn()) {
+  return listeners.reduce((listeners, listener) => [...listeners, convertListener(listener)], []);
 
-  convert() {
-    return this.listeners.reduce((listeners, listener) => [...listeners, this.convertListener(listener)], []);
-  }
-
-  convertListener(listener) {
+  function convertListener(listener) {
     let result = {};
     result.id = listener.id;
     result.event = listener.eventType;
 
     const computeProperties = {
-      script: () => ({ script: this.convertScript(listener) }),
+      script: () => ({ script: convertScript(listener) }),
       expression: () => ({ expression: listener.expression }),
       delegateExpression: () => ({ delegateExpression: listener.delegateExpression }),
       class: () => ({ class: listener.class }),
     };
 
     result = { ...result, ...computeProperties[listener.listenerType]() };
-    result.fields = this.convertFields(listener);
-    return this.iBpmn.createDefaultModdleInstance("ExecutionListener", result);
+    result.fields = convertFields(listener);
+    return iBpmn.createDefaultModdleInstance("ExecutionListener", result);
   }
 
-  convertScript(listener) {
-    return this.iBpmn.createDefaultModdleInstance("Script", generateScriptAttrs(listener));
+  function convertScript(listener) {
+    return iBpmn.createDefaultModdleInstance("Script", generateScriptAttrs(listener));
 
     function generateScriptAttrs(listener) {
       const scriptAttrs = {
@@ -39,15 +32,15 @@ class ListenerConvertor extends BaseConvertor {
     }
   }
 
-  convertFields(listener) {
+  function convertFields(listener) {
     if (!listener.fields) {
       return [];
     }
-    return listener.fields.reduce((fields, field) => [...fields, this.convertField(field)], []);
+    return listener.fields.reduce((fields, field) => [...fields, convertField(field)], []);
   }
 
-  convertField(field) {
-    return this.iBpmn.createDefaultModdleInstance("Field", generateFieldAttrs(field));
+  function convertField(field) {
+    return iBpmn.createDefaultModdleInstance("Field", generateFieldAttrs(field));
 
     function generateFieldAttrs(field) {
       const fieldAttrs = {
@@ -59,4 +52,9 @@ class ListenerConvertor extends BaseConvertor {
   }
 }
 
-export default ListenerConvertor;
+function listenerEffect({ listeners }, iBpmn = new IBpmn()) {
+  const parameters = convertor(listeners, iBpmn);
+  iBpmn.updateSelectedShapeExtensions(parameters);
+}
+
+export default listenerEffect;

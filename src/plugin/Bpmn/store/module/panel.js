@@ -1,6 +1,5 @@
 import { deepCopy, emptyPropertiesObject } from "../../utils/object";
-import BaseInfoConvertor from "../convertor/BaseInfoConvertor";
-import ListenerConvertor from "../convertor/ListenerConvertor";
+import { baseInfoEffect, listenerEffect } from "../effect";
 
 const state = {
   baseInfo: {
@@ -137,22 +136,10 @@ const mutations = {
 };
 
 const mutationsEffect = {
-  updateBaseInfo: {
-    effectBpmn: true,
-    convertor: BaseInfoConvertor,
-  },
-  addListener: {
-    effectBpmn: true,
-    convertor: ListenerConvertor,
-  },
-  updateListener: {
-    effectBpmn: true,
-    convertor: ListenerConvertor,
-  },
-  removeListener: {
-    effectBpmn: true,
-    convertor: ListenerConvertor,
-  },
+  updateBaseInfo: baseInfoEffect,
+  addListener: listenerEffect,
+  updateListener: listenerEffect,
+  removeListener: listenerEffect,
 };
 
 const actions = {};

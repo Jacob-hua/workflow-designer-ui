@@ -20,12 +20,9 @@ function listenBpmn(store) {
         return;
       }
       const iBpmn = store._vm.$iBpmn;
-      const Convertor = mutationsEffectBill[mutation.type].convertor;
-      if (!Convertor) {
-        return;
-      }
-      const properties = new Convertor({ iBpmn, state: state.bpmn["panel"] }).convert();
-      iBpmn.updateSelectedShapeExtensions(properties);
+      const effect = mutationsEffectBill[mutation.type].effect ?? (() => {});
+      const module = mutationsEffectBill[mutation.type].module;
+      effect(state[vuexNamespace][module], iBpmn);
     });
   }
 
@@ -45,7 +42,7 @@ function listenBpmn(store) {
   }
 
   function isNotEffectMutation(mutation) {
-    return !mutationsEffectBill[mutation.type] || !mutationsEffectBill[mutation.type].effectBpmn;
+    return !mutationsEffectBill[mutation.type];
   }
 
   function moduleCommit(store, module) {
