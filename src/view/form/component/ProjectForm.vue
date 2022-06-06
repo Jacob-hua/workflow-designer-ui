@@ -250,6 +250,12 @@
       addForm() {
         this.$refs.projectFormDiolog.postData.ascription = this.projectCode
         this.$refs.projectFormDiolog.dialogVisible1 = true
+        this.$refs.projectFormDiolog.postData = {
+          ascription: '',
+          business: '',
+          energy: '',
+          name: ''
+        }
       },
       
       addForm2(item) {
