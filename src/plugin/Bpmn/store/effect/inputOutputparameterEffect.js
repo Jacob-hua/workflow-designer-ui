@@ -41,7 +41,7 @@ function parametersState2Parameter(inputParameters = [], iBpmn = new IBpmn(), lo
   }
 }
 
-function inputParameterEffect({ inputParameters, outputParameters }, iBpmn = new IBpmn()) {
+function inputOutputParameterEffect({ inputParameters, outputParameters }, iBpmn = new IBpmn()) {
   const parameters = iBpmn.createDefaultModdleInstance("InputOutput", {
     inputParameters: parametersState2Parameter(inputParameters, iBpmn, "InputParameter"),
     outputParameters: parametersState2Parameter(outputParameters, iBpmn, "OutputParameter"),
@@ -49,4 +49,4 @@ function inputParameterEffect({ inputParameters, outputParameters }, iBpmn = new
   iBpmn.updateSelectedShapeExtensions([parameters]);
 }
 
-export default inputParameterEffect;
+export default inputOutputParameterEffect;
