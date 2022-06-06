@@ -6,11 +6,11 @@
           表单模板
         </div>
         <div class="detail-title">
-          <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>{{ formData.numberCode }}</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>{{ formData.name }}</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>{{ formData.createBy }}</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>{{ formData.createTime }}</span> </div>
-          <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formData.count }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>{{ formDatas.numberCode }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>{{ formDatas.name }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>{{ formDatas.createBy }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>{{ formDatas.createTime }}</span> </div>
+          <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formDatas.count }}</span> </div>
           
          <div class="detail-title-item-button">
            <el-button type="primary" @click="editForm()" v-role="{ id: 'FromEdit', type: 'button', business: business }">编辑</el-button>
@@ -32,7 +32,8 @@
           </div>
         </div>
         <div class="fromEdit">
-          <formBpmnEdit v-if="dialogVisible2" ref="formbpmn" :key="formBpmnEditKey"></formBpmnEdit>
+<!--          <formBpmnEdit v-if="dialogVisible2" ref="formbpmn" :key="formBpmnEditKey"></formBpmnEdit>-->
+          <preview :itemList="itemList"  :formConf="formConf" v-if="previewVisible"></preview>
         </div>
       </div>
     </el-dialog>
@@ -74,7 +75,9 @@
 
 <script>
   import formBpmnEdit from './formBpmnEdit.vue'
+  import preview from "@/plugin/FormDesign/component/preview";
   import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
+  import Preview from "@/plugin/FormDesign/component/preview";
   export default {
     props:{
       quote: {
@@ -92,18 +95,54 @@
       business: {
         type: String,
         default: ''
+      },
+      formDatas: {
+        type: Object
+      }
+    },
+    watch: {
+      formDatas:{
+        deep: true,
+        immediate: true,
+        handler(newValue, oldValue) {
+          console.log('21213')
+          debugger
+          let content = JSON.parse(newValue.content)
+          let list = content.list
+          for (const formItem of list) {
+            if (formItem.columns && formItem.columns.length) {
+              for (const formItemElement of formItem.columns) {
+                for (const formItemElementElement of formItemElement.list) {
+                  formItemElementElement.disabled = true
+                }
+              }
+            } else {
+              if ( Object.keys(formItem).includes('disabled')) {
+                formItem.disabled  =  true
+              } else  {}
+            }
+          }
+        this.itemList = list
+        }
+      }
+    },
+    computed: {
+      formConf: function ()  {
+        return JSON.parse(this.formDatas.content).config
       }
     },
     data() {
       return {
+        itemList: [],
+        previewVisible:false,
         dialogVisible2: false,
         dialogVisible1: false,
-        formData: {
-          numberCode: '',
-          name: '',
-          createName: '',
-          createTime: ''
-        },
+        // formData: {
+        //   numberCode: '',
+        //   name: '',
+        //   createName: '',
+        //   createTime: ''
+        // },
         options: [],
         formBpmnEditKey: 0,
         value: '',
@@ -155,7 +194,9 @@
       }
     },
     components:{
-      formBpmnEdit
+      Preview,
+      formBpmnEdit,
+      preview
     },
     methods:{
       deleteRow() {
@@ -164,7 +205,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteFormDesignService(this.value || this.formData.id ).then((res) => {
+          deleteFormDesignService(this.value || this.formDatas.id ).then((res) => {
             this.$message({
               type: 'success',
               message: '删除成功!'
@@ -187,7 +228,7 @@
           business: this.business,
           createBy: this.$store.state.userInfo.name
         }).then((res) => {
-          this.formData = res.result
+          this.formDatas = res.result
           this.formBpmnEditKey++
           this.$nextTick(() => {
             this.$refs.formbpmn.schema = JSON.parse(res.result.content)
@@ -196,7 +237,7 @@
         })
       },
       editForm() {
-        this.$emit('editForm', this.formData)
+        this.$emit('editForm', this.formDatas)
       },
       nextDiolog() {
         const xml  = this.$refs.formbpmn.importData();
