@@ -136,6 +136,39 @@ class IBpmn {
     return this.#getModule("moddle").create(descriptor, attrs);
   }
 
+  getSelectedShapeInfo() {
+    return this.getSelectedShape()?.businessObject ?? {};
+  }
+
+  getSelectedShapeInfoByDefaultLocalName(localName) {
+    return this.getSelectedShapeInfoByType(`${this.type}:${localName}`);
+  }
+
+  getSelectedShapeInfoByLocalName(localName) {
+    return this.getSelectedShapeInfoByType(`bpmn:${localName}`);
+  }
+
+  getSelectedShapeInfoByType(type) {
+    const selectedShapeProperties = this.getSelectedShape()?.businessObject;
+    if (!selectedShapeProperties) {
+      return;
+    }
+    if (selectedShapeProperties.$type === type) {
+      return selectedShapeProperties;
+    }
+    const extensionElements = selectedShapeProperties.extensionElements;
+    if (!extensionElements) {
+      return;
+    }
+    if (extensionElements.$type === type) {
+      return extensionElements;
+    }
+    if (Array.isArray(extensionElements.values) && extensionElements.values.length > 0) {
+      return extensionElements.values.filter(({ $type }) => $type === type);
+    }
+    return;
+  }
+
   async createEmptyDiagram() {
     this.loadDiagram(defaultEmpty(this.key, this.name, this.type));
   }

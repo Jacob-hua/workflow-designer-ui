@@ -151,8 +151,8 @@ router.beforeEach((to, from, next) => {
   })
   if (findEle === -1) {
     console.log('无权限')
-    next('/home/noPermission')
-    // next()
+    // next('/home/noPermission')
+    next()
   } else {
     console.log('有权限')
     next()

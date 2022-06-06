@@ -106,7 +106,7 @@ export default {
       this.drawerVisible = false
     },
     onDrawerSubmit(listener) {
-      if (this.editIndex == null) {
+      if (this.editIndex === null) {
         this.addListener({ listener })
       } else {
         this.updateListener({
