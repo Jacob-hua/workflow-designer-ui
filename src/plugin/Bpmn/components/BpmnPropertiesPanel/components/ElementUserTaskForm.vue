@@ -1,12 +1,16 @@
 <template>
   <div>
-    <el-form :inline="true">
+    <el-form :inline="true"
+             :model="userTaskForm">
       <el-form-item label="处理用户">
         <el-row>
           <el-col :span="18">
-            <el-input v-if="customAssignee" />
+            <el-input v-if="customAssignee"
+                      v-model="userTaskForm.assignee" />
             <el-cascader v-else
-                         :options="userGroupOptions">
+                         :options="userGroupOptions"
+                         v-model="userTaskForm.assignee"
+                         clearable>
             </el-cascader>
           </el-col>
           <el-col :span="6">
@@ -17,9 +21,12 @@
       <el-form-item label="候选用户">
         <el-row>
           <el-col :span="18">
-            <el-input v-if="customCandidate" />
+            <el-input v-if="customCandidate"
+                      v-model="userTaskForm.candidateUsers" />
             <el-cascader v-else
-                         :options="userGroupOptions">
+                         :options="userGroupOptions"
+                         v-model="userTaskForm.candidateUsers"
+                         clearable>
             </el-cascader>
           </el-col>
           <el-col :span="6">
@@ -30,9 +37,12 @@
       <el-form-item label="候选分组">
         <el-row>
           <el-col :span="18">
-            <el-input v-if="customCandidateGroup" />
+            <el-input v-if="customCandidateGroup"
+                      v-model="userTaskForm.candidateGroups" />
             <el-cascader v-else
-                         :options="userGroupOptions">
+                         :options="userGroupOptions"
+                         v-model="userTaskForm.candidateGroups"
+                         clearable>
             </el-cascader>
           </el-col>
           <el-col :span="6">
@@ -45,7 +55,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
+import { deepCopy, deepEquals } from '../../../utils/object'
 
 export default {
   name: 'ElementUserTaskForm',
@@ -55,10 +66,30 @@ export default {
       customAssignee: false,
       customCandidate: false,
       customCandidateGroup: false,
+      userTaskForm: {},
     }
   },
   computed: {
     ...mapState('bpmn/config', ['userGroupOptions', 'userOptions']),
+    ...mapState('bpmn/panel', ['userTask']),
+  },
+  watch: {
+    userTask(value) {
+      if (deepEquals(value, this.userTaskForm)) {
+        return
+      }
+      this.userTaskForm = { ...value }
+    },
+    userTaskForm: {
+      deep: true,
+      immediate: true,
+      handler(value) {
+        this.updateUserTask({ newUserTask: deepCopy(value) })
+      },
+    },
+  },
+  methods: {
+    ...mapMutations('bpmn/panel', ['updateUserTask']),
   },
 }
 </script>

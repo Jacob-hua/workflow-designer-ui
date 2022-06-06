@@ -17,7 +17,11 @@ const state = {
     elementVariable: "",
     completionCondition: "",
   },
-  elementText: "",
+  userTask: {
+    assignee: "",
+    candidateUsers: "",
+    candidateGroups: "",
+  },
 };
 
 const getters = {
@@ -146,6 +150,9 @@ const mutations = {
       return;
     }
     state.outputParameters.splice(index, 1);
+  },
+  updateUserTask(state, { newUserTask }) {
+    state.userTask = deepCopy(newUserTask);
   },
 };
 
