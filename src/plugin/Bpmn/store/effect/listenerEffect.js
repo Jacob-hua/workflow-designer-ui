@@ -1,12 +1,12 @@
 import IBpmn from "../../iBpmn";
 
-function convertor(listeners, iBpmn = new IBpmn()) {
+function listenersState2Parameter(listeners, iBpmn = new IBpmn()) {
   return listeners.reduce((listeners, listener) => [...listeners, convertListener(listener)], []);
 
   function convertListener(listener) {
-    let result = {};
-    result.id = listener.id;
-    result.event = listener.event;
+    let attrs = {};
+    attrs.id = listener.id;
+    attrs.event = listener.event;
 
     const computeProperties = {
       script: () => ({ script: convertScript(listener) }),
@@ -15,21 +15,17 @@ function convertor(listeners, iBpmn = new IBpmn()) {
       class: () => ({ class: listener.class }),
     };
 
-    result = { ...result, ...computeProperties[listener.listenerType]() };
-    result.fields = convertFields(listener);
-    return iBpmn.createDefaultModdleInstance("ExecutionListener", result);
+    attrs = { ...attrs, ...computeProperties[listener.listenerType]() };
+    attrs.fields = convertFields(listener);
+    return iBpmn.createDefaultModdleInstance("ExecutionListener", attrs);
   }
 
   function convertScript(listener) {
-    return iBpmn.createDefaultModdleInstance("Script", generateScriptAttrs(listener));
-
-    function generateScriptAttrs(listener) {
-      const scriptAttrs = {
-        inline: { scriptFormat: listener.scriptFormat, value: listener.scriptValue },
-        outside: { scriptFormat: listener.scriptFormat, resource: listener.scriptResource },
-      };
-      return scriptAttrs[listener.scriptType];
-    }
+    const scriptAttrs = {
+      inline: { scriptFormat: listener.scriptFormat, value: listener.scriptValue },
+      outside: { scriptFormat: listener.scriptFormat, resource: listener.scriptResource },
+    };
+    return iBpmn.createDefaultModdleInstance("Script", scriptAttrs[listener.scriptType]);
   }
 
   function convertFields(listener) {
@@ -40,20 +36,16 @@ function convertor(listeners, iBpmn = new IBpmn()) {
   }
 
   function convertField(field) {
-    return iBpmn.createDefaultModdleInstance("Field", generateFieldAttrs(field));
-
-    function generateFieldAttrs(field) {
-      const fieldAttrs = {
-        string: { name: field.name, string: field.value },
-        expression: { name: field.name, expression: field.value },
-      };
-      return fieldAttrs[field.fieldType];
-    }
+    const fieldAttrs = {
+      string: { name: field.name, string: field.value },
+      expression: { name: field.name, expression: field.value },
+    };
+    return iBpmn.createDefaultModdleInstance("Field", fieldAttrs[field.fieldType]);
   }
 }
 
 function listenerEffect({ listeners }, iBpmn = new IBpmn()) {
-  const parameters = convertor(listeners, iBpmn);
+  const parameters = listenersState2Parameter(listeners, iBpmn);
   iBpmn.updateSelectedShapeExtensions(parameters);
 }
 

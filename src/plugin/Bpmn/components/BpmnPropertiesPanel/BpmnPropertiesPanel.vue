@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <el-collapse>
+    <el-collapse accordion>
       <el-collapse-item>
         <template slot="title">
           基础信息

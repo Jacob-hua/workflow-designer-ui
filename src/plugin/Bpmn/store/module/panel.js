@@ -1,5 +1,6 @@
 import { deepCopy, emptyPropertiesObject } from "../../utils/object";
-import { baseInfoEffect, listenerEffect, signalEffect, inputParameterEffect } from "../effect";
+import { baseInfoEffect, listenerEffect, signalEffect, inputOutputParameterEffect } from "../effect";
+import { onSelectionChanged, onShapeChanged } from "../listener";
 
 const state = {
   baseInfo: {},
@@ -16,13 +17,14 @@ const state = {
     elementVariable: "",
     completionCondition: "",
   },
-  elementText: "",
+  userTask: {
+    assignee: "",
+    candidateUsers: "",
+    candidateGroups: "",
+  },
 };
 
 const getters = {
-  baseInfo(state) {
-    return deepCopy(state.baseInfo);
-  },
   findListenerByIndex(state) {
     return (index) => {
       // 为了保证数据是单向流动的，这里需要将匹配的对象重新解构为新的对象
@@ -53,8 +55,8 @@ const getters = {
 };
 
 const mutations = {
-  updateBaseInfo(state, { name }) {
-    state.baseInfo.name = name;
+  updateBaseInfo(state, { newBaseInfo = {} }) {
+    state.baseInfo = deepCopy(newBaseInfo);
   },
   addListener(state, { listener }) {
     if (emptyPropertiesObject(listener)) {
@@ -146,6 +148,9 @@ const mutations = {
     }
     state.outputParameters.splice(index, 1);
   },
+  updateUserTask(state, { newUserTask }) {
+    state.userTask = deepCopy(newUserTask);
+  },
 };
 
 const mutationsEffect = {
@@ -156,9 +161,17 @@ const mutationsEffect = {
   addSignal: signalEffect,
   updateSignal: signalEffect,
   removeSignal: signalEffect,
-  addInputParameter: inputParameterEffect,
-  updateInputParameter: inputParameterEffect,
-  removeInputParameter: inputParameterEffect,
+  addInputParameter: inputOutputParameterEffect,
+  updateInputParameter: inputOutputParameterEffect,
+  removeInputParameter: inputOutputParameterEffect,
+  addOutputParameter: inputOutputParameterEffect,
+  updateOutputParameter: inputOutputParameterEffect,
+  removeOutputParameter: inputOutputParameterEffect,
+};
+
+const eventsListener = {
+  "selection.changed": onSelectionChanged,
+  "shape.changed": onShapeChanged,
 };
 
 const actions = {};
@@ -168,6 +181,7 @@ export default {
   state,
   getters,
   mutations,
-  mutationsEffect,
   actions,
+  mutationsEffect,
+  eventsListener,
 };
