@@ -124,7 +124,7 @@
           this.$nextTick(() => {
             let ql_blank = document.querySelector('.ql-blank')
             if (ql_blank) {
-              ql_blank.setAttribute('contenteditable', false)
+               ql_blank.setAttribute('contenteditable', false)
             }
           })
 
