@@ -25,9 +25,6 @@ const state = {
 };
 
 const getters = {
-  baseInfo(state) {
-    return deepCopy(state.baseInfo);
-  },
   findListenerByIndex(state) {
     return (index) => {
       // 为了保证数据是单向流动的，这里需要将匹配的对象重新解构为新的对象
@@ -58,8 +55,8 @@ const getters = {
 };
 
 const mutations = {
-  updateBaseInfo(state, { name }) {
-    state.baseInfo.name = name;
+  updateBaseInfo(state, { newBaseInfo = {} }) {
+    state.baseInfo = deepCopy(newBaseInfo);
   },
   addListener(state, { listener }) {
     if (emptyPropertiesObject(listener)) {
