@@ -1,5 +1,12 @@
 <template>
   <div>
+    <div>
+      <span><i class="el-icon-menu"></i>执行监听器</span>
+      <el-button size="mini"
+                 type="primary"
+                 icon="el-icon-plus"
+                 @click="onAddListener">添加监听器</el-button>
+    </div>
     <el-table :data="listeners"
               size="mini"
               border>
@@ -9,8 +16,8 @@
       <el-table-column label="事件类型"
                        min-width="80px"
                        show-overflow-tooltip
-                       prop="eventType"
-                       :formatter="eventTypeLabel" />
+                       prop="event"
+                       :formatter="eventLabel" />
       <el-table-column label="监听器类型"
                        min-width="80px"
                        show-overflow-tooltip
@@ -30,12 +37,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <div>
-      <el-button size="mini"
-                 type="primary"
-                 icon="el-icon-plus"
-                 @click="onAddListener">添加监听器</el-button>
-    </div>
     <execute-listener-drawer title="执行监听器"
                              :listener="listener"
                              :visible="drawerVisible"
@@ -55,12 +56,31 @@ export default {
     return {
       drawerVisible: false,
       editIndex: null,
-      listener: {},
+      defaultListener: {
+        event: '',
+        listenerType: '',
+        expression: '',
+        class: '',
+        delegateExpression: '',
+        scriptType: '',
+        scriptFormat: '',
+        scriptValue: '',
+        scriptResource: '',
+        /**
+         * {
+         *    name: 'String',
+         *    string: 'String',
+         *    expression: 'String',
+         * },
+         */
+        fields: [],
+      },
+      listener: this.defaultListener,
     }
   },
   computed: {
     ...mapState('bpmn/panel', ['listeners']),
-    ...mapGetters('bpmn/config', ['eventTypeLabel', 'listenerTypeLabel']),
+    ...mapGetters('bpmn/config', ['eventLabel', 'listenerTypeLabel']),
     ...mapGetters('bpmn/panel', ['findListenerByIndex']),
   },
   methods: {
@@ -82,7 +102,7 @@ export default {
       this.editIndex = null
     },
     onDrawerClose() {
-      this.listener = {}
+      this.listener = this.defaultListener
       this.drawerVisible = false
     },
     onDrawerSubmit(listener) {

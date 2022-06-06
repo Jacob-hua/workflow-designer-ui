@@ -46,10 +46,10 @@
         <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary" @click="quoteBpmnShow()">引用工作流</el-button>
+        <el-button type="primary" @click="quoteBpmnShow()" v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">引用工作流</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary" @click="addProjectShow()">新建工作流</el-button>
+        <el-button type="primary" @click="addProjectShow()" v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
       </div>
     </div>
     <div class="home-main">
@@ -65,7 +65,7 @@
     <addProject  ref="addpro"   :projectCode="projectCode" :dialogVisible="addProjectVisible" @close="addProjectHidden()" @define="addProjectDefine"></addProject>
     <addBpmn :pubFlag="pubFlag"  :formData="formData" :flag="flag" :currentRowData="currentRowData" v-if="addBpmnVisible" :dialogVisible="addBpmnVisible" @close="addBpmnHidden()" @define="addBpmnDefine" :xmlString="xmlString"></addBpmn>
     <quoteBpmn  v-if="quoteBpmnVisible" :valueDate="valueDate" :ascription="projectCode" :business ="projectValue" :dialogVisible="quoteBpmnVisible" @close="quoteBpmnHidden()" @lookBpmnShow="lookBpmnShow" @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn :showFlag="showFlag" :isEdit="isEdit" :rowData="rowData" :dep="dep"   v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
+    <lookBpmn :showFlag="showFlag" :business="projectValue" :isEdit="isEdit" :rowData="rowData" :dep="dep"  v-if="lookBpmnVisible" ref="bpmn"  :dialogVisible="lookBpmnVisible" @close="lookBpmnHidden()" @edit="lookBpmnEdit" @quote="addProjectShow()"></lookBpmn>
   </div>
 </template>
 

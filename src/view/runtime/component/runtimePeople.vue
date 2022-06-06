@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="代办指定" :visible.sync="dialogVisible" width="70%" :before-close="handleClose" @open="open()">
+  <el-dialog :title="titlePeople()" :visible.sync="dialogVisible" width="70%" :before-close="handleClose" @open="open()">
     <div class="people">
       <div>
         <span>组织结构</span>
@@ -96,12 +96,20 @@
         letterList: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
           'U', 'V', 'W', 'X', 'Y', 'Z'
         ],
-        data: []
+        data: [],
+        peopleTitle: {
+          Agency: '指定代办',
+          Circulate: '指定传阅',
+          Signature: '指定加减签',
+        }
       }
     },
     methods: {
       handleClick() {
 
+      },
+      titlePeople() {
+        return this.peopleTitle[this.$parent.functionCheck]
       },
       open() {
         this.getTreeData()
@@ -172,7 +180,7 @@
         })
         
         switch (this.$parent.functionCheck){
-          case 'agency':
+          case 'Agency':
             if (deleteList.length) {
               let strDelete = deleteList.join(',')
               getModifyCandidate({
@@ -251,7 +259,7 @@
                 unitList: strData,
                 operateType: 'add',
                 taskId: this.taskId,
-                type: 'user' ,
+                type: 'user',
                 operator: this.$store.state.userInfo.name,
                 processInstanceId: this.processInstanceId,
               }).then((res) => {
@@ -265,7 +273,7 @@
               this.$parent.$emit('taskSuccess')
             }
             break;
-          case 'signature':
+          case 'Signature':
             let dataListsignature = []
             this.multipleSelection.forEach((item) => {
               dataListsignature.push(item.userId)

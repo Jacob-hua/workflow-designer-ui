@@ -1,5 +1,6 @@
 module.exports = {
   publicPath: "./",
+  runtimeCompiler: true,
   devServer: {
     proxy: {
       "": {

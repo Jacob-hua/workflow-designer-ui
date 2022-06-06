@@ -124,6 +124,10 @@ class IBpmn {
     this.#getModule("palette")._container.style = visable ? "" : "display: none";
   }
 
+  createBpmnModdleInstance(localName, attrs) {
+    return this.createModdleInstance(`bpmn:${localName}`, attrs);
+  }
+
   createDefaultModdleInstance(localName, attrs) {
     return this.createModdleInstance(`${this.type}:${localName}`, attrs);
   }

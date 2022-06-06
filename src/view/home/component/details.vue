@@ -34,7 +34,7 @@
                 <span>部署时间:</span>
                 <span>{{ item.createTime }}</span>
               </div>
-              <div class="item-item">
+              <div class="item-item" v-role="{ id: 'HomeStart', type: 'button', business: business }">
                 <span>状态:</span>
                 <span>{{ item.status === 'activation' ? '已激活' : '未激活' }}</span>
               </div>
@@ -85,6 +85,10 @@
       seeType: {
         type: String,
         default: 'delete'
+      },
+      business: {
+        type: String,
+        default: ''
       }
     },
     data() {

@@ -40,7 +40,7 @@
           <p>自定义启动项</p>
           <div v-if="!tableData.length" class="tip_content">当前未配置自定义启动项</div>
           <el-button  v-if="footFlag" @click="showSelf">自定义</el-button>
-          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary">编辑</el-button>
+          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary" v-role="{ id: 'StartItemConfigEdit', type: 'button', business: business }">编辑</el-button>
           <el-table
               v-if="tableFlag && tableData.length > 0"
               :data="tableData"
@@ -105,7 +105,7 @@
                 prop=""
                 label="操作">
               <template slot-scope="scope">
-                <span style="color: #1d89ff; cursor: pointer">删除</span>
+                <span style="color: #1d89ff; cursor: pointer" v-role="{ id: 'StartItemConfigDelete', type: 'button', business: business }">删除</span>
               </template>
             </el-table-column>
           </el-table>
@@ -152,6 +152,7 @@ export default {
         children: 'children',
         label: 'name'
       },
+      business: '',
       tempArr: [],
       optionsList: [],
       currentId: null

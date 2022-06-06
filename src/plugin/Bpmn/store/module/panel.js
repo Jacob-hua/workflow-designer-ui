@@ -1,5 +1,5 @@
 import { deepCopy, emptyPropertiesObject } from "../../utils/object";
-import { baseInfoEffect, listenerEffect } from "../effect";
+import { baseInfoEffect, listenerEffect, signalEffect } from "../effect";
 
 const state = {
   baseInfo: {
@@ -157,6 +157,7 @@ const mutationsEffect = {
   addListener: listenerEffect,
   updateListener: listenerEffect,
   removeListener: listenerEffect,
+  addSignal: signalEffect,
 };
 
 const actions = {};

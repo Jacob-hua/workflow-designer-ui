@@ -6,7 +6,7 @@ function convertor(listeners, iBpmn = new IBpmn()) {
   function convertListener(listener) {
     let result = {};
     result.id = listener.id;
-    result.event = listener.eventType;
+    result.event = listener.event;
 
     const computeProperties = {
       script: () => ({ script: convertScript(listener) }),
@@ -26,7 +26,7 @@ function convertor(listeners, iBpmn = new IBpmn()) {
     function generateScriptAttrs(listener) {
       const scriptAttrs = {
         inline: { scriptFormat: listener.scriptFormat, value: listener.scriptValue },
-        outside: { scriptFormat: listener.scriptFormat, resource: listener.resource },
+        outside: { scriptFormat: listener.scriptFormat, resource: listener.scriptResource },
       };
       return scriptAttrs[listener.scriptType];
     }

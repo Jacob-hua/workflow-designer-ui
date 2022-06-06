@@ -4,8 +4,8 @@
       <bpmnView ref="bpmnView" :valueType="valueType" @edit="edit()" @quote="quote()"></bpmnView>
     </div>
     <span slot="footer" class="dialog-footer" >
-      <el-button v-if="isEdit" @click="edit()">编辑</el-button>
-      <el-button v-if="isEdit" @click="Deactivate()">{{rowData.status === 'enabled'? '停用' : '启用'}}</el-button>
+      <el-button v-if="isEdit" @click="edit()" v-role="{ id: 'WorkflowEdit', type: 'button', business: business }">编辑</el-button>
+      <el-button v-if="isEdit" @click="Deactivate()" v-role="{ id: 'WorkflowStart', type: 'button', business: business }">{{rowData.status === 'enabled'? '停用' : '启用'}}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -34,6 +34,10 @@
       valueType: {
         type: String,
         default: 'project'
+      },
+      business: {
+        type: String,
+        default: ''
       },
       showFlag: Boolean
     },

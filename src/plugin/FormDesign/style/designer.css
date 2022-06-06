@@ -166,7 +166,7 @@ body{
   margin-right:30px;
 }
 .el-checkbox:last-of-type{
-  margin-right:30px;
+  /* margin-right:30px; */
 }
 .el-rate{
   margin-top:10px;

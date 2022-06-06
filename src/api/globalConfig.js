@@ -38,7 +38,7 @@ export const executeApi = (params) =>
 // 访问配置删除
 // 删除表单
 export const deleteApi = (id) =>
-    deletefn('/config/global/' + id);
+    deletefn('/config/global', { id: id });
 
 
 export const simulationRequest = (params) =>
@@ -62,10 +62,10 @@ export const addBusinessConfig = (params) =>
 
  // 查询配置树状结构
 export const getBusinessConfigWithTree = (id, tenantId ) =>
-    get(`/config/businessConfig/getBusinessConfigWithTree/${tenantId}/${id}`);
+    get(`/config/businessConfig/getBusinessConfigWithTree?tenantId=${tenantId}&id=${id}`);
 // 删除配置
 export const deleteBusinessConfig = (id) =>
-    deletefn(`/config/businessConfig/${id}`)
+    deletefn(`/config/businessConfig`, { id: id })
 export const UpdatebusinessConfig = (params) =>
     put(`/config/businessConfig`, params)
 

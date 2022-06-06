@@ -22,10 +22,10 @@
         </el-table-column>
         <el-table-column prop="name" label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" class="button1">
+            <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" class="button1" v-role="{ id: 'HomeLook', type: 'button', business: business }">
               编辑
             </el-button>
-            <el-button @click.native.prevent="deleteRow(scope.row.id)" type="text" size="small">
+            <el-button @click.native.prevent="deleteRow(scope.row.id)" type="text" size="small" v-role="{ id: 'HomeDelete', type: 'button', business: business }">
               删除
             </el-button>
           </template>

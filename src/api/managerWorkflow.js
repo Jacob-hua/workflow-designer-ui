@@ -31,4 +31,4 @@ export const publishWorkflow = (params) =>
 
 // 删除 工作流
 export const deleteWorkflow = (id) =>
-    deletefn('/design/processDesignService/' + id);
+    deletefn('/design/processDesignService', {id:id});

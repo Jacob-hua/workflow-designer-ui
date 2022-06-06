@@ -47,7 +47,7 @@
           <div class="titLabel">已完成数量</div>
         </div>
       </div>
-      <div class="runtime-home-button">
+      <div class="runtime-home-button" v-role="{ id: 'RunTimeAdd', type: 'button', business: getData.projectCode }">
         <div class="button1" @click="goAdd()">
           <div class="title">
             <i class="el-icon-circle-plus"></i>
@@ -100,7 +100,7 @@
               <el-button @click.native.prevent="deployDiolog(scope.row)" type="text" size="small" v-if="showDeployDiologButton(scope.row)">
                 执行
               </el-button>
-              <el-button @click.native.prevent="detailsDiolog(scope.row)" type="text" size="small">
+              <el-button @click.native.prevent="detailsDiolog(scope.row)" type="text" size="small" v-role="{ id: 'RunTimeLook', type: 'button', business: getData.projectCode }">
                 查看
               </el-button>
             </template>
@@ -115,7 +115,7 @@
     </div>
     <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtimeAdd>
     <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog" ref="runTimeImplement"
-      @taskSuccess="taskSuccess()"></runTimeImplement>
+      @taskSuccess="taskSuccess()" :business="getData.projectCode"></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
 </template>
@@ -200,10 +200,11 @@
            this.tableData = res.result.dataList
            this.tableData.forEach((item) => {
              if (item.taskAssignee.split(',').indexOf(this.$store.state.userInfo.name) !== -1) {
-               item.newTaskId = item.taskId
+               item.newTaskId = item.taskId.split(',')[item.taskAssignee.split(',').indexOf(this.$store.state.userInfo.name)]
              } else{
                item.trackList[item.trackList.length - 1].candidateUsers.forEach((item1) => {
                  if (item1.candidateUsers.indexOf(this.$store.state.userInfo.name) !== -1) {
+                   console.log('xx')
                    item.newTaskId = item1.taskId
                  }
                })

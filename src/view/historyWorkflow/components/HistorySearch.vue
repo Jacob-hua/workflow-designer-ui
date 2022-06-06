@@ -12,7 +12,7 @@
       <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
                       start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
       </el-date-picker>
-      <el-button @click="$emit('searchHistory', valueDate) " style="margin-left: 15px" type="primary">查询</el-button>
+      <el-button @click="$emit('searchHistory', valueDate, projectValue) " style="margin-left: 15px" type="primary">查询</el-button>
     </div>
 
   </div>

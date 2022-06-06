@@ -10,24 +10,24 @@
             <!-- <span class="function-see" @click="goSee()">查看</span> -->
           </div>
           <div class="function-main" :class="btnList.length === 0 ? 'noData': ''">
-            <div v-if="functionCheck === 'agency'">
-              <div v-if="dataList.agency.length > 0">
+            <div v-if="functionCheck === 'Agency' && roleBoolean">
+              <div v-if="dataList.Agency.length > 0">
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
-                  <div v-for="(item, index) in dataList.agency">
+                  <div v-for="(item, index) in dataList.Agency">
                     <span> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1, index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
                     <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
                         <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length == 0">点击添加</span>
                     </div>
                     <div v-if="item.candidateUsers.length > 0" style="display: inline-block;">
-                        <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'agency', item.candidateUsers )" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length > 0">编辑</span>
+                        <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'Agency', item.candidateUsers )" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length > 0">编辑</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div v-if="functionCheck === 'Circulate'">
+            <div v-if="functionCheck === 'Circulate' && roleBoolean">
               <div v-if="dataList.Circulate.length > 0">
                 <div class="peopleList-title">指定传阅人员:</div>
                 <div class="peopleList">
@@ -44,19 +44,19 @@
                 </div>
               </div>
             </div>
-            <div v-if="functionCheck === 'signature'">
+            <div v-if="functionCheck === 'Signature' && roleBoolean">
               <!-- <div class="peopleListDefatil">
                 <div class="peopleList-item-defail" v-for="(item, index) in peopleListDefatil">{{ item.userId }}</div>
               </div> -->
               <div style="margin-top: 15px;">
                 <div class="peopleList-title">加签:</div>
                 <div class="peopleList">
-                  <div class="peopleList-item" v-for="(item, index) in dataList.signature">{{ item.userId }}</div>
+                  <div class="peopleList-item" v-for="(item, index) in dataList.Signature">{{ item.userId }}</div>
                 </div>
-                <span class="editButton" @click="editDataList('signature')">编辑</span>
+                <span class="editButton" @click="editDataList('Signature')">编辑</span>
               </div>
             </div>
-            <div v-if="functionCheck === 'Hang'">
+            <div v-if="functionCheck === 'Hang' && roleBoolean">
               <div v-if="dataList.Hang" class="HangStyle">
                 <span style="color: #0066cc;">当前流程正常运行，如需将流程挂起，请进行认证操作</span>
                 <div class="confirm" @click="confirmation()">挂起确认</div>
@@ -66,35 +66,35 @@
                 <div class="confirm" @click="confirmation()">重新激活</div>
               </div>
             </div>
-            <div v-if="functionCheck === 'reject'">
-              <div v-if="dataList.reject.rejectBollen" class="HangStyle">
+            <div v-if="functionCheck === 'Reject' && roleBoolean">
+              <div v-if="dataList.Reject.rejectBollen" class="HangStyle">
                 <span style="color: #0066cc;">当前流程正常运行，如需将流程驳回，请进行认证操作</span>
                 <div class="confirm" @click="confirmation()">驳回验证</div>
               </div>
-              <div v-if="!dataList.reject.rejectBollen">
+              <div v-if="!dataList.Reject.rejectBollen">
                 <div class="rejectData">
-                  <span>{{ dataList.reject.data }}</span>
+                  <span>{{ dataList.Reject.data }}</span>
                 </div>
                 <div class="rejectName">
-                  <span>{{ dataList.reject.userId }}</span>
+                  <span>{{ dataList.Reject.userId }}</span>
                 </div>
                 <div>
                   <span class="rejectWord">驳回至</span>
-                  <span class="rejectResult">{{ dataList.reject.rejectResult }}</span>
+                  <span class="rejectResult">{{ dataList.Reject.rejectResult }}</span>
                 </div>
               </div>
             </div>
-            <div v-if="functionCheck === 'termination'">
-              <div v-if="dataList.termination.terminationBollon" class="HangStyle">
+            <div v-if="functionCheck === 'Termination' && roleBoolean">
+              <div v-if="dataList.Termination.terminationBollon" class="HangStyle">
                 <span style="color: #0066cc;">当前流程正常运行，如需将流程终止，请进行认证操作</span>
                 <div class="confirm" @click="confirmation()">终止确认</div>
               </div>
-              <div v-if="!dataList.termination.terminationBollon">
+              <div v-if="!dataList.Termination.terminationBollon">
                 <div class="rejectData">
-                  <span>{{ dataList.termination.data }}</span>
+                  <span>{{ dataList.Termination.data }}</span>
                 </div>
                 <div class="rejectName">
-                  <span>{{ dataList.termination.name }}</span>
+                  <span>{{ dataList.Termination.name }}</span>
                 </div>
                 <div class="rejectWord">
                   流程终止
@@ -103,6 +103,9 @@
             </div>
             <div v-if="btnList.length === 0" class="heightFunction">
               无信息
+            </div>
+            <div v-if="!roleBoolean" class="heightFunction">
+              无权限
             </div>
           </div>
         </div>
@@ -147,13 +150,18 @@
     postCompleteTask,
     putHangInstance,
     putCancelInstance,
-    getTaskDetailList
+    getTaskDetailList,
+    getProcessNodeInfo
   } from '@/api/unit/api.js'
   export default {
     props: {
       dialogVisible: {
         type: Boolean,
         default: false
+      },
+      business: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -166,6 +174,7 @@
         formShow: false,
         peopleListDefatil: [],
         taskId: '',
+        roleBoolean: true,
         bpmnData: {
           name: '',
           grounp: '',
@@ -173,28 +182,26 @@
           document: ''
         },
         btnListKey: {
-          "待办": "agency",
+          "代办": "Agency",
           "传阅": "Circulate",
-          "加减签": "signature",
+          "加减签": "Signature",
           "挂起": "Hang",
-          "驳回": "reject",
-          "终止": "termination"
+          "驳回": "Reject",
+          "终止": "Termination"
         },
-        btnList: [
-          '待办', '传阅', '加减签', '挂起', '驳回', '终止'
-        ],
+        btnList: [],
         dataList: {
-          agency: [],
+          Agency: [],
           Circulate: [],
-          signature: [],
+          Signature: [],
           Hang: true,
-          reject: {
+          Reject: {
             rejectBollen: true,
             data: '',
             name: '',
             rejectResult: ''
           },
-          termination: {
+          Termination: {
             terminationBollon: true,
             data: '',
             name: ''
@@ -212,66 +219,38 @@
       },
       getNachList(result) {
         this.dataList.Circulate = []
-        this.dataList.signature = []
-        this.dataList.agency = []
+        this.dataList.Signature = []
+        this.dataList.Agency = []
         this.processTaskList = result
         this.dataList.Circulate = result[result.length - 1].circulationList
         if (result[result.length - 1].assignee) {
           result[result.length - 1].assignee.split(',').forEach((item) => {
-            this.dataList.signature.push({
+            this.dataList.Signature.push({
               userId: item
             })
           })
         }
-        this.dataList.agency = result[result.length - 1].candidateUsers
+        this.dataList.Agency = result[result.length - 1].candidateUsers
       },
-      
-      // getNachList(processInstanceId) {
-      //   this.dataList.Circulate = []
-      //   this.dataList.signature = []
-      //   this.dataList.agency = []
-      //   return getTaskDetailList({
-      //     processInstanceId: processInstanceId
-      //   }).then((res) => {
-      //     this.processTaskList = res.result
-      //     res.result[res.result.length - 1].circulationList.forEach((item) => {
-      //       this.dataList.Circulate.push({
-      //         userId: item
-      //       })
-      //     })
-      //     if (res.result[res.result.length - 1].assignee) {
-      //       res.result[res.result.length - 1].assignee.split(',').forEach((item) => {
-      //         this.dataList.signature.push({
-      //           userId: item
-      //         })
-      //       })
-      //     }
-      //     res.result[res.result.length - 1].candidateUsers.forEach((item) => {
-      //       this.dataList.agency.push({
-      //         userId: item
-      //       })
-      //     })
-      //   })
-      // },
       functionItemShow(item) {
         let value = this.btnListKey[item]
         switch (value){
-          case 'agency':
+          case 'Agency':
             return !!this.dataList.Hang
             break;
           case 'Circulate':
             return !!this.dataList.Hang
             break;
-          case 'signature':
+          case 'Signature':
             return !!(this.dataList.Hang && this.bpmnTypeloopChara === 'bpmn:MultiInstanceLoopCharacteristics')
             break;
           case 'Hang':
             return true
             break;
-          case 'reject':
+          case 'Reject':
             return !!this.dataList.Hang
             break;
-          case 'termination':
+          case 'Termination':
             return !!this.dataList.Hang
             break;
           default:
@@ -280,6 +259,19 @@
       },
       changeFunction(value) {
         this.functionCheck = value
+        let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
+        let proJectRole = permissions.filter((item) => {
+          // return item.projectCode === this.business
+          return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
+        })[0].permissionSet
+        let findEle = proJectRole.findIndex((item) => {
+          return item.frontRoute === 'RunTime' + value
+        })
+        if (findEle === -1) {
+          this.roleBoolean = false
+        } else {
+          this.roleBoolean = true
+        }
       },
       changePeopleList(taskId, type, value, item) {
         if (type === 'edit') {
@@ -294,7 +286,6 @@
               this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
               break;
             case 'Circulate':
-              // this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(item))
               this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
               break;
             default:
@@ -322,8 +313,7 @@
         this.$emit('goSee', this.$refs.ProcessInformation.postData)
       },
       selectOneSet(value) {
-        // this.btnList = JSON.parse(value?.businessObject?.$attrs['camunda:btnList'] || '[]' )
-        console.log(this.btnList)
+        this.btnList = JSON.parse(value?.businessObject?.$attrs['camunda:btnList'] || '[]' )
         if (this.btnList.length > 0) {
           this.changeFunction(this.btnListKey[this.btnList[0]])
         } else {
@@ -338,7 +328,12 @@
         let data = {}
         let formData = []
         if (this.formShow) {
-          data = this.$refs.formRuntime.formEditor.submit().data
+          let { data, errors } = this.$refs.formRuntime.formEditor.submit()
+          if (Object.keys(errors).length > 0) {
+            this.$message.error('有必填项未填写')
+            return
+          }
+          
           formData = JSON.parse(this.formContant).components
           formData.forEach((item) => {
             switch (item.type) {
@@ -352,37 +347,33 @@
                 break;
             }
           })
-          // if ( this.$refs.ProcessInformation.postData.taskId === '4c1f5686-c6c2-11ec-bd33-005056c00001') {
-          //   let userList = []
-          //   Object.keys(data).forEach((item) => {
-          //     if (data[item]) {
-          //       userList.push(item)
-          //     }
-          //   })
-          //   data = {
-          //     userList: userList
-          //   }
-          // }
         }
-        let a = this.$refs.ProcessInformation.postData.taskAssignee.split(',')
-        let b = this.$refs.ProcessInformation.postData.taskId.split(',')
-        let c = a.indexOf(this.$store.state.userInfo.name)
-
-        postCompleteTask({
-          assignee: this.$store.state.userInfo.name,
-          commentList: [],
-          formDataList: formData,
-          processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
-          processKey: this.$refs.ProcessInformation.postData.deployKey,
-          taskId: this.$refs.ProcessInformation.postData.newTaskId,
-          taskKey: this.$refs.ProcessInformation.postData.taskKey,
-          taskName: this.$refs.ProcessInformation.postData.taskName,
-          variable: data
+        
+        getProcessNodeInfo({
+          processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId
         }).then((res) => {
-          this.formShow = false
-          this.$message.success('执行成功')
-          this.$emit('taskSuccess')
+          if (res.result.assignee || res.result.candidateGroup || res.result.candidateGroup) {
+            postCompleteTask({
+              assignee: this.$store.state.userInfo.name,
+              commentList: [],
+              formDataList: formData,
+              processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
+              processKey: this.$refs.ProcessInformation.postData.deployKey,
+              taskId: this.$refs.ProcessInformation.postData.newTaskId,
+              taskKey: this.$refs.ProcessInformation.postData.taskKey,
+              taskName: this.$refs.ProcessInformation.postData.taskName,
+              variable: data
+            }).then((res) => {
+              this.formShow = false
+              this.$message.success('执行成功')
+              this.$emit('taskSuccess')
+            })
+          } else{
+            this.$message.error('下一步流程无执行人')
+          }
         })
+        
+        
       },
 
       selection(element) {

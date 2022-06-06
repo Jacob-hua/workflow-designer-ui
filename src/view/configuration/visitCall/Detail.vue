@@ -15,8 +15,8 @@
         <el-input disabled v-model="currentRow[0].sourceMark"></el-input>
       </el-form-item>
       <div>
-        <el-button @click="$emit('showAddOrEidtDailog',currentRow,'edit')" type="primary">编辑</el-button>
-        <el-button @click="deleteApis()" type="primary">删除</el-button>
+        <el-button @click="$emit('showAddOrEidtDailog',currentRow,'edit')" type="primary" v-role="{ id: 'VisitCallEdit', type: 'button', business: business }">编辑</el-button>
+        <el-button @click="deleteApis()" type="primary" v-role="{ id: 'VisitCallDelete', type: 'button', business: business }">删除</el-button>
       </div>
     </div>
     <div style="display: flex">

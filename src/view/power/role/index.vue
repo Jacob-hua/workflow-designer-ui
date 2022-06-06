@@ -14,8 +14,8 @@
         <i class="el-icon-share"></i>
         <span class="personnel-header-word">权限详情</span>
         <div class="personnel-header-button">
-          <el-button type="primary" plain icon="el-icon-search" @click="seeHandle()">查看</el-button>
-          <el-button type="primary" plain icon="el-icon-s-finance" @click="editHandle()">编辑</el-button>
+          <el-button type="primary" plain icon="el-icon-search" @click="seeHandle()" v-role="{ id: 'PowerLook', type: 'button', business: business }">查看</el-button>
+          <el-button type="primary" plain icon="el-icon-s-finance" @click="editHandle()" v-role="{ id: 'PowerLook', type: 'button', business: business }">编辑</el-button>
         </div>
       </div>
       <div class="personnel-right-main">
@@ -47,6 +47,12 @@
   import editRole from './component/editRole.vue'
   import { getSystemGroupTree, getGroupPermission } from '@/api/unit/api.js'
   export default {
+    props:{
+      business: {
+        type: String,
+        default: ''
+      }
+    },
     data() {
       return {
         dialogVisible: false,

@@ -2,7 +2,7 @@
   <div class="businessCall">
     <div class="businessCall-main">
       <div class="businessCall-main-title">
-        <el-button type="primary">批量导入</el-button>
+        <el-button type="primary" v-role="{ id: 'BusinessCallImport', type: 'button', business: business }">批量导入</el-button>
       </div>
       <div class="businessCall-main-list">
         <div v-for="(item,index) in businessList" :key="index" class="businessCall-main-list-card">
@@ -10,9 +10,9 @@
             <el-popover
                 placement="bottom"
                 trigger="click">
-              <div  @click="lookBusiness(item.id)"><i style="margin-top: 10px; margin-right: 15px; font-size: 20px; color: #333333" class=" el-icon-s-order"></i>查看</div>
-              <div  @click="editBusiness(item.id)"><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class=" el-icon-edit-outline"></i>编辑</div>
-              <div @click ='deleteBusinessConfig(item.id)' ><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete"></i>删除</div>
+              <div  @click="lookBusiness(item.id)"><i style="margin-top: 10px; margin-right: 15px; font-size: 20px; color: #333333" class=" el-icon-s-order" v-role="{ id: 'BusinessCallLook', type: 'button', business: business }"></i>查看</div>
+              <div  @click="editBusiness(item.id)"><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class=" el-icon-edit-outline" v-role="{ id: 'BusinessCallEdit', type: 'button', business: business }"></i>编辑</div>
+              <div @click ='deleteBusinessConfig(item.id)' ><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete" v-role="{ id: 'BusinessCallDelete', type: 'button', business: business }"></i>删除</div>
               <el-button slot="reference">···</el-button>
             </el-popover>
           </div>
@@ -23,7 +23,7 @@
             <div><label>创建时间:</label> <span>{{ item.createTime }}</span></div>
           </div>
         </div>
-        <div @click="showGuide" class="businessCall-main-list-add">
+        <div @click="showGuide" class="businessCall-main-list-add" v-role="{ id: 'BusinessCallAdd', type: 'button', business: business }">
           <div>
             <i class="el-icon-plus"></i>
           </div>
@@ -60,7 +60,8 @@ export default {
     return {
       edit: false,
       showBtn: true,
-      businessList: []
+      businessList: [],
+      business: ''
     }
   },
   mounted() {

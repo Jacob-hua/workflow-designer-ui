@@ -16,10 +16,10 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="showAddOrEidtDailog(scope.row, )" type="text" size="small" >
+            <el-button @click.native.prevent="showAddOrEidtDailog(scope.row)" type="text" size="small" v-role="{ id: 'VisitCallEdit', type: 'button', business: business }">
               编辑
             </el-button>
-            <el-button @click.native.prevent="showDetail(scope.row)" type="text" size="small" >
+            <el-button @click.native.prevent="showDetail(scope.row)" type="text" size="small" v-role="{ id: 'VisitCallLook', type: 'button', business: business }">
               查看
             </el-button>
           </template>
@@ -80,6 +80,7 @@ export default {
       AddOrEidtDailogFlag: false,
       dateRang: ["2022-01-01","2022-12-31"],
       radio: '1',
+      business: '',
       tableData: [
         {
           id: 1,
