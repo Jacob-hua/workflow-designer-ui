@@ -149,14 +149,14 @@ router.beforeEach((to, from, next) => {
   let findEle = proJectRole.findIndex((item) => {
     return item.frontRoute === routerMapping[routerName]
   })
-  // if (findEle === -1) {
-  //   console.log('无权限')
-  //   next('/home/noPermission')
-  //   // next()
-  // } else {
+  if (findEle === -1) {
+    console.log('无权限')
+    // next('/home/noPermission')
+    next()
+  } else {
     console.log('有权限')
     next()
-  // }
+  }
 })
 
 export default router

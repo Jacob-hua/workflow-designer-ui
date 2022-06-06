@@ -229,6 +229,7 @@ export default {
         timer: [...requiredRule('请填写定时器配置')],
       },
       fieldModalVisible: false,
+      editFieldIndex: null,
       fieldForm: {},
       fieldFormRules: {
         name: [...requiredRule('请填写字段名称')],
@@ -300,6 +301,7 @@ export default {
         })
     },
     onAddField() {
+      this.editFieldIndex = null
       this.fieldModalVisible = true
     },
     onCloseFieldModal() {
@@ -318,15 +320,24 @@ export default {
           if (!this.listenerForm['fields']) {
             this.listenerForm['fields'] = []
           }
-          // 由于Vue的数据响应原理，当清空fieldForm时传递给listenerForm的对象也会被清空
-          // 所以此处拷贝this.fieldForm为新的对象，再向listenerForm中添加，保证不受到this.fieldForm的影响
-          this.listenerForm['fields'].push(deepCopy(this.fieldForm))
+          if (this.editFieldIndex === null) {
+            // 由于Vue的数据响应原理，当清空fieldForm时传递给listenerForm的对象也会被清空
+            // 所以此处拷贝this.fieldForm为新的对象，再向listenerForm中添加，保证不受到this.fieldForm的影响
+            this.listenerForm['fields'].push(deepCopy(this.fieldForm))
+          } else {
+            this.listenerForm['fields'].splice(
+              this.editFieldIndex,
+              1,
+              deepCopy(this.fieldForm)
+            )
+          }
           this.onCloseFieldModal()
         })
     },
     onEditField(index) {
       this.fieldForm =
-        this.listenerForm['fields'] && this.listenerForm['fields'][index]
+        this.listenerForm['fields'] && deepCopy(this.listenerForm['fields'][index])
+      this.editFieldIndex = index
       this.fieldModalVisible = true
     },
     onRemoveField(index) {
