@@ -105,8 +105,6 @@
         deep: true,
         immediate: true,
         handler(newValue, oldValue) {
-          console.log('21213')
-          debugger
           let content = JSON.parse(newValue.content)
           let list = content.list
           for (const formItem of list) {

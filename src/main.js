@@ -47,7 +47,6 @@ const store = new Vuex.Store({
   ...stores,
   plugins: [bpmnVuexPlugin],
 });
-
 new Vue({
   router,
   store,
