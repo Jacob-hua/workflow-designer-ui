@@ -1,3 +1,5 @@
+import IBpmn from "../../iBpmn";
+
 function selectedElementBaseInfo(iBpmn = new IBpmn()) {
   const state = {};
   const shapeInfo = iBpmn.getSelectedShapeInfo();
