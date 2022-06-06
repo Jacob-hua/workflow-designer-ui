@@ -51,6 +51,53 @@ function baseInfoParameter2State(iBpmn = new IBpmn()) {
   return state;
 }
 
+function inputOutputParameter2State(iBpmn = new IBpmn()) {
+  const state = {};
+  const inputOutputParameters = iBpmn.getSelectedShapeInfoByDefaultLocalName("InputOutput") ?? [];
+  const inputOutputParameter = inputOutputParameters[0] ?? {};
+  if (inputOutputParameter["outputParameters"]) {
+    state.outputParameters = inputOutputParameter.outputParameters.map(parameter2State);
+  }
+  if (inputOutputParameter["inputParameters"]) {
+    state.inputParameters = inputOutputParameter.inputParameters.map(parameter2State);
+  }
+  return state;
+
+  function parameter2State(parameter) {
+    let state = {};
+    state.name = parameter.name;
+    if (parameter["definition"]) {
+      state = { ...state, ...parameterDefinition2State(parameter.definition) };
+    } else {
+      state.type = "string/expression";
+      state.value = parameter.value;
+    }
+    return state;
+  }
+
+  function parameterDefinition2State(definition) {
+    const state = {};
+    if (definition["scriptFormat"]) {
+      state.type = "script";
+      state.scriptFormat = definition.scriptFormat;
+      if (definition["value"]) {
+        state.scriptType = "inline";
+        state.scriptValue = definition.value;
+      } else {
+        state.scriptType = "outside";
+        state.scriptResource = definition.resource;
+      }
+    } else if (definition["items"]) {
+      state.type = "list";
+      state.listValues = definition.items?.map(({ value }) => value) ?? [];
+    } else if (definition["entries"]) {
+      state.type = "map";
+      state.mapValues = definition.entries?.map(({ key, value }) => ({ key, value })) ?? [];
+    }
+    return state;
+  }
+}
+
 function selectionChangedListener(_, commit, iBpmn) {
   if (!iBpmn.getSelectedShape()) {
     commit("initState");
@@ -58,8 +105,10 @@ function selectionChangedListener(_, commit, iBpmn) {
   const baseInfo = baseInfoParameter2State(iBpmn);
 
   const listeners = listenersParameter2State(iBpmn);
-  
-  commit("refreshState", { baseInfo, listeners });
+
+  const { inputParameters, outputParameters } = inputOutputParameter2State(iBpmn);
+
+  commit("refreshState", { baseInfo, listeners, inputParameters, outputParameters });
 }
 
 export default selectionChangedListener;
