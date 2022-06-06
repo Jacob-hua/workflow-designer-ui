@@ -157,9 +157,9 @@
       nextDiolog() {
         if (this.postData.name) {
           if (this.postData.name.length > 2) {
-            this.dialogVisible1 = false
-            this.dialogVisible2 = true
-            this.$refs.formDesigner.clear()
+              this.dialogVisible1 = false
+              this.dialogVisible2 = true
+              this.$refs.formDesigner.clear()
           } else {
             this.$message.error('表单名称必须大于两个字符')
           }
