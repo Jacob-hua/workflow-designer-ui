@@ -174,13 +174,15 @@
       },
       
       addForm(item) {
-        let content = JSON.parse(item.content)
+        if (item) {
+          let content = JSON.parse(item.content)
+          this.$nextTick(() => {
+            this.$refs.PublicFormDiolog.$refs.formDesigner.designList =  content.list
+            this.$refs.PublicFormDiolog.$refs.formDesigner.formConfig = content.config
+            this.$refs.PublicFormDiolog.postData = item
+          })
+        }
         this.$refs.PublicFormDiolog.dialogVisible2 = true
-        this.$nextTick(() => {
-          this.$refs.PublicFormDiolog.$refs.formDesigner.designList =  content.list
-          this.$refs.PublicFormDiolog.$refs.formDesigner.formConfig = content.config
-          this.$refs.PublicFormDiolog.postData = item
-        })
       },
       detailsDiolog(item) {
         this.$refs.detailsDiolog.dialogVisible2 = true
