@@ -1,0 +1,6 @@
+projectKey=com.siact.product.jwp:workflow-design-ui
+serverUrl=http://192.100.30.169
+serverVersion=7.8.0.26217
+dashboardUrl=http://192.100.30.169/dashboard?=com.siact.product.jwp%3Aworkflow-design-ui
+ceTaskId=AX_p1aaNnfB2uW1v2taH
+ceTaskUrl=http://192.100.30.169/api/ce/task?id=AX_p1aaNnfB2uW1v2taH

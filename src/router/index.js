@@ -1,120 +1,133 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import layout from '@/views/layout/index.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import layout from "@/layout/index.vue";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [{
-    path: '/',
-    name: '/',
+    path: "/",
+    name: "/",
     redirect: 'login',
-    // redirect: 'home',
   },
   {
-    path: '/login',
-    name: 'login',
-    component: () => import('@/views/login/login'),
+    path: "/login",
+    name: "login",
+    component: () => import("@/view/login/login"),
     hidden: true
   },
   {
-    path: '/home',
-    name: 'first',
+    path: "/home",
+    name: "first",
     component: layout,
-    redirect: '/home/bpmn',
+    redirect: "/home/bpmn",
     children: [{
-        path: '/home/bpmn',
-        name: 'bpmn',
-        component: () => import('@/views/workflow/index'),
+        path: "/home/bpmn",
+        name: "bpmn",
+        component: () => import("@/view/workflow/index"),
         meta: {
-          title: 'bpmn',
-          icon: 'dashboard'
+          title: "bpmn",
+          icon: "dashboard"
         }
       },
       {
-        path: '/home/form',
-        name: 'form',
-        component: () => import('@/views/form/index'),
+        path: "/home/form",
+        name: "form",
+        component: () => import("@/view/form/index"),
         meta: {
-          title: 'bpmn',
-          icon: 'dashboard'
+          title: "bpmn",
+          icon: "dashboard"
         }
       },
       {
-        path: '/home/home',
-        name: 'home',
-        component: () => import('@/views/home/index'),
+        path: "/home/home",
+        name: "home",
+        component: () => import("@/view/home/index"),
         meta: {
-          title: 'bpmn',
-          icon: 'dashboard'
-        }
+          title: "bpmn",
+          icon: "dashboard"
+        },
       },
       {
-        path: '/home/history',
-        name: 'history',
-        component: () => import('@/views/historyWorkflow/HistoryWorkflow'),
+        path: "/home/history",
+        name: "history",
+        component: () => import("@/view/historyWorkflow/HistoryWorkflow"),
         meta: {
-          title: 'history',
-          icon: 'dashboard'
-        }
+          title: "history",
+          icon: "dashboard"
+        },
       },
       {
-        path: '/home/runTime',
-        name: 'runTime',
-        component: () => import('@/views/runtime/index'),
-        hidden: true
+        path: "/home/runTime",
+        name: "runTime",
+        component: () => import("@/view/runtime/index"),
+        hidden: true,
       },
       {
-        path: '5',
-        name: '5',
-        component: () => import('@/views/404'),
-        hidden: true
+        path: "5",
+        name: "5",
+        component: () => import("@/layout/404"),
+        hidden: true,
       },
       {
         path: '/home/noPermission',
         name: 'noPermission',
-        component: () => import('@/components/permission/index'),
+        component: () => import('@/component/permission/index'),
         hidden: true
       },
       {
-        path: '/home/all',
-        name: 'all',
-        component: () => import('@/views/configuration'),
+        path: "/home/all",
+        name: "all",
+        component: () => import("@/view/configuration"),
         hidden: true,
       },
       {
-        path: '/home/power',
-        name: 'power',
-        component: () => import('@/views/power'),
+        path: "/home/power",
+        name: "power",
+        component: () => import("@/view/power"),
         hidden: true,
+      },
+      {
+        path: "/home/debugBpmn",
+        name: "debugBpmn",
+        component: () => import("@/view/debugBpmn"),
+        meta: {
+          title: "bpmn",
+          icon: "dashboard"
+        },
+      },
+      {
+        path: '/home/designer',
+        name: 'designer',
+        component: () => import('@/plugin/FormDesign/component/formDesigner')
       }
-    ]
+    ],
   },
-]
+];
 
 
 const originalPush = VueRouter.prototype.push
-//修改原型对象中的push方法
+//�޸�ԭ�Ͷ����е�push����
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 
 
 const router = new VueRouter({
-  routes
-})
+  routes,
+});
 
 router.beforeEach((to, from, next) => {
-  
-  if(to.name === 'login') {
+
+  if (to.name === 'login') {
     next()
     return
   }
-  
-  if(to.name === 'noPermission') {
+
+  if (to.name === 'noPermission') {
     next()
     return
   }
-  
+
   let routerMapping = {
     'bpmn': 'Workflow',
     'form': 'Form',
@@ -128,7 +141,7 @@ router.beforeEach((to, from, next) => {
   let {
     permissions
   } = JSON.parse(sessionStorage.getItem('loginData'))
-  
+
   let proJectRole = permissions.filter((item) => {
     // return item.projectCode === this.business
     return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
