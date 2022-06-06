@@ -109,7 +109,7 @@
       </div>
     </div>
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></projectFormDiolog>
-    <detailsDiologForm ref="detailsDiolog" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
+    <detailsDiologForm ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
     <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode" :projectValue="projectValue" @close="close()"></application>
   </div>
 </template>
@@ -125,6 +125,7 @@
   export default {
     data() {
       return {
+        formData: {},
         projectValue: '',
         projectOption: [
           {
@@ -252,27 +253,12 @@
       },
       
       addForm2(item) {
+        let content = JSON.parse(item.content)
         this.$refs.projectFormDiolog.dialogVisible2 = true
         this.$nextTick(() => {
-          if (item) {
-            this.dataType = this.activeName + '-edit'
-            this.$refs.projectFormDiolog.postData = item
-            this.$refs.projectFormDiolog.$refs.formbpmn.schema = JSON.parse(item.content)
-          } else{
-            this.dataType = this.activeName
-            this.$refs.projectFormDiolog.postData = {
-              name: ''
-            }
-            this.$refs.projectFormDiolog.$refs.formbpmn.schema = {
-              schemaVersion: 1,
-              type: "default",
-              exporter: {
-                name: "form-js",
-                version: "0.7.0"
-              }
-            }
-          }
-          this.$refs.projectFormDiolog.$refs.formbpmn.init()
+          this.$refs.projectFormDiolog.$refs.formDesigner.designList =  content.list
+          this.$refs.projectFormDiolog.$refs.formDesigner.formConfig = content.config
+          this.$refs.projectFormDiolog.postData = item
         })
       },
       detailsDiolog(item) {
@@ -285,8 +271,9 @@
           business: this.projectValue,
           createBy: this.$store.state.userInfo.name
         }).then((res) => {
-          this.$refs.detailsDiolog.formData = res.result
-          this.$nextTick(() => {
+          this.$refs.detailsDiolog.previewVisible = true
+          // this.$nextTick(() => {
+            this.formData = res.result
             let arr = []
             res.result.versions.forEach((item,index) => {
               arr.push({
@@ -296,10 +283,10 @@
             })
             this.$refs.detailsDiolog.options = arr
             this.$refs.detailsDiolog.value = res.result.childIds[0]
-            this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
-            this.$refs.detailsDiolog.$refs.formbpmn.init()
+            // this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
+            // this.$refs.detailsDiolog.$refs.formbpmn.init()
           })
-        })
+        // })
       },
       editForm(item) {
         this.addForm2(item)

@@ -78,7 +78,7 @@
         </div>
       </el-scrollbar>
     </div>
-    <designer ref="designer" :list="designList" :formConfig="formConfig" @clear="designList = []" @updateJSON="handlerUpdateJSON" :activeData="activeData"/>
+    <designer ref="designer" :list="designList" :formConfig="formConfig" @clear="" @updateJSON="handlerUpdateJSON" :activeData="activeData"/>
   </div>
 </template>
 <script>
@@ -120,6 +120,9 @@ export default {
   mounted() {
   },
   methods: {
+    clear() {
+      this.designList = []
+    },
     addComponent(element){
 
     },
