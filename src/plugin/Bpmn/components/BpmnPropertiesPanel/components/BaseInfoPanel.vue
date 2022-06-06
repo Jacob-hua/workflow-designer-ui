@@ -1,6 +1,8 @@
 <template>
   <div>
-    <el-form :model="baseInfoForm">
+    <el-form :model="baseInfoForm"
+             label-position="right"
+             label-width="80px">
       <el-form-item label="名称">
         <el-input v-model="baseInfoForm.name"
                   clearable></el-input>

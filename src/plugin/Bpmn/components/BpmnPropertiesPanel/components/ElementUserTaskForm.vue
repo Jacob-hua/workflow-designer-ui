@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-form :inline="true"
+    <el-form label-position="right"
+             label-width="80px"
              :model="userTaskForm">
       <el-form-item label="处理用户">
         <el-row>

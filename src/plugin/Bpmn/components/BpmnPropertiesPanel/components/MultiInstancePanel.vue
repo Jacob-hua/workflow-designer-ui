@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-form>
+    <el-form label-position="right"
+             label-width="80px">
       <el-form-item label="回路特性">
         <el-select v-model="instanceForm.loopCharacteristics">
           <el-option v-for="({label, value}, index) in loopCharacteristicsOptions"
