@@ -42,14 +42,14 @@
           </el-form-item>
           <el-form-item v-if="scriptTypeIs('inline')"
                         label="脚本"
-                        prop="script">
-            <el-input v-model="parameterForm.script"
+                        prop="scriptValue">
+            <el-input v-model="parameterForm.scriptValue"
                       type="textarea" />
           </el-form-item>
           <el-form-item v-if="scriptTypeIs('outside')"
                         label="资源链接"
-                        prop="resource">
-            <el-input v-model="parameterForm.resource" />
+                        prop="scriptResource">
+            <el-input v-model="parameterForm.scriptResource" />
           </el-form-item>
         </template>
         <template v-if="variableTypeIs('list')">
@@ -147,8 +147,8 @@ export default {
         value: null,
         scriptFormat: '',
         scriptType: '',
-        script: '',
-        resource: '',
+        scriptValue: '',
+        scriptResource: '',
         listValues: [],
         mapValues: [],
       },
@@ -158,8 +158,8 @@ export default {
         value: [...requiredRule('请输入变量值')],
         scriptFormat: [...requiredRule('请输入脚本格式')],
         scriptType: [...requiredRule('请选择脚本类型')],
-        script: [...requiredRule('请输入脚本')],
-        resource: [...requiredRule('请输入资源位置')],
+        scriptValue: [...requiredRule('请输入脚本')],
+        scriptResource: [...requiredRule('请输入资源位置')],
       },
     }
   },

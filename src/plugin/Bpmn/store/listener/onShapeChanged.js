@@ -1,6 +1,6 @@
 import IBpmn from "../../iBpmn";
 
-function selectedElementBaseInfo(iBpmn = new IBpmn()) {
+function baseInfoParameter2State(iBpmn = new IBpmn()) {
   const state = {};
   const shapeInfo = iBpmn.getSelectedShapeInfo();
   state.name = shapeInfo.name;
@@ -12,7 +12,7 @@ function shapeChangedListener({ element }, commit, iBpmn) {
   if (!element) {
     return;
   }
-  const baseInfo = selectedElementBaseInfo(iBpmn);
+  const baseInfo = baseInfoParameter2State(iBpmn);
   commit("refreshState", { baseInfo });
 }
 

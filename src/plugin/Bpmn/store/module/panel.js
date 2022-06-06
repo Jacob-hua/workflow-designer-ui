@@ -1,5 +1,5 @@
 import { deepCopy, emptyPropertiesObject } from "../../utils/object";
-import { baseInfoEffect, listenerEffect, signalEffect, inputParameterEffect } from "../effect";
+import { baseInfoEffect, listenerEffect, signalEffect, parameterEffect } from "../effect";
 import { onSelectionChanged, onShapeChanged } from "../listener";
 
 const state = {
@@ -157,9 +157,12 @@ const mutationsEffect = {
   addSignal: signalEffect,
   updateSignal: signalEffect,
   removeSignal: signalEffect,
-  addInputParameter: inputParameterEffect,
-  updateInputParameter: inputParameterEffect,
-  removeInputParameter: inputParameterEffect,
+  addInputParameter: parameterEffect,
+  updateInputParameter: parameterEffect,
+  removeInputParameter: parameterEffect,
+  addOutputParameter: parameterEffect,
+  updateOutputParameter: parameterEffect,
+  removeOutputParameter: parameterEffect,
 };
 
 const eventsListener = {

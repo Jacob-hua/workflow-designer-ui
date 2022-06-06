@@ -1,8 +1,8 @@
 import IBpmn from "../../iBpmn";
 
-function selectedElementListeners(iBpmn = new IBpmn()) {
-  const listeners = iBpmn.getSelectedShapeInfoByDefaultLocalName("ExecutionListener");
-  return listeners?.map(listener2State);
+function listenersParameter2State(iBpmn = new IBpmn()) {
+  const listeners = iBpmn.getSelectedShapeInfoByDefaultLocalName("ExecutionListener") ?? [];
+  return listeners.map(listener2State);
 
   function listener2State(listener) {
     const state = {};
@@ -43,7 +43,7 @@ function selectedElementListeners(iBpmn = new IBpmn()) {
   }
 }
 
-function selectedElementBaseInfo(iBpmn = new IBpmn()) {
+function baseInfoParameter2State(iBpmn = new IBpmn()) {
   const state = {};
   const shapeInfo = iBpmn.getSelectedShapeInfo();
   state.name = shapeInfo.name;
@@ -55,13 +55,11 @@ function selectionChangedListener(_, commit, iBpmn) {
   if (!iBpmn.getSelectedShape()) {
     commit("initState");
   }
-  const baseInfo = selectedElementBaseInfo(iBpmn);
-  commit("refreshState", { baseInfo });
+  const baseInfo = baseInfoParameter2State(iBpmn);
 
-  const listeners = selectedElementListeners(iBpmn);
-  if (listeners) {
-    commit("refreshState", { listeners });
-  }
+  const listeners = listenersParameter2State(iBpmn);
+  
+  commit("refreshState", { baseInfo, listeners });
 }
 
 export default selectionChangedListener;
