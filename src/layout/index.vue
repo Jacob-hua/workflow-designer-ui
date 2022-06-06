@@ -8,11 +8,11 @@
             流程引擎工作台
           </div>
           <el-menu :default-active="$route.name" class="el-menu-vertical-demo" router @open="handleOpen" @close="handleClose" v-if="!status">
-            <el-menu-item index="bpmn">
+            <el-menu-item :index="menuListMapping[item.menuRoute]" v-for="(item, index) in menuList" :key="index">
               <i class="el-icon-location"></i>
-              <span>工作流管理</span>
+              <span>{{ menuListNameMapping[item.menuRoute] }}</span>
             </el-menu-item>
-            <el-menu-item index="form">
+            <!-- <el-menu-item index="form">
               <i class="el-icon-menu"></i>
               <span slot="title">表单管理</span>
             </el-menu-item>
@@ -35,7 +35,7 @@
              <el-menu-item index="power">
                <i class="el-icon-setting"></i>
                <span slot="title">权限管理</span>
-             </el-menu-item>
+             </el-menu-item> -->
           </el-menu>
         </el-aside>
         <el-main>
@@ -56,7 +56,26 @@
   export default {
     data() {
       return {
-        status: false
+        status: false,
+        menuList: [],
+        menuListMapping: {
+          Workflow: 'bpmn',
+          Form: 'form',
+          Home: 'home',
+          RunTime: 'runTime',
+          History: 'history',
+          Configuration: 'all',
+          Power: 'power',
+        },
+        menuListNameMapping: {
+          Workflow: '工作流管理',
+          Form: '表单管理',
+          Home: '工作流驾驶舱',
+          RunTime: '运行中工作流',
+          History: '历史工作流',
+          Configuration: '工作流全局配置',
+          Power: '权限管理',
+        }
       }
     },
     methods: {
@@ -80,6 +99,25 @@
         this.$store.state.userInfo.name = JSON.parse(userInfo).account
       } else{
         this.$router.push('/')
+      }
+      
+      let {
+        menuProjectList
+      } = JSON.parse(sessionStorage.getItem('loginData'))
+      
+      this.menuList = menuProjectList.filter((item) => {
+        return item.projectList.length > 0
+      })
+      if(this.menuList.length > 0) {
+        let findRole = this.menuList.filter((item) => {
+          return item.menuRoute === this.$route.name
+        })
+        if (findRole === -1) {
+          this.$router.push(this.menuListMapping[this.menuList[0].menuRoute])
+        }
+      } else {
+        this.$router.push('/')
+        this.$message.error('该账号无任何菜单访问权限')
       }
     }
   }

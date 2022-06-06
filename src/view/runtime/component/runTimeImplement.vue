@@ -6,7 +6,8 @@
           <ProcessInformation ref="ProcessInformation" :processTaskList="processTaskList" v-if="dialogVisible"
             @selectOneSet="selectOneSet" seeType="runTime"></ProcessInformation>
           <div class="function-list" v-if="bpmnType === 'bpmn:UserTask' && btnList.length > 0">
-            <span class="function-item" v-for="(item, index) in btnList" :key="index" v-if="functionItemShow(item)" @click="changeFunction(btnListKey[item])" :class="functionCheck === btnListKey[item] ? 'function-check' : ''">{{ item }}</span>
+            <span class="function-item" v-for="(item, index) in btnList" :key="index" v-if="functionItemShow(item)"
+              @click="changeFunction(btnListKey[item])" :class="functionCheck === btnListKey[item] ? 'function-check' : ''">{{ item }}</span>
             <!-- <span class="function-see" @click="goSee()">查看</span> -->
           </div>
           <div class="function-main" :class="btnList.length === 0 ? 'noData': ''">
@@ -18,10 +19,11 @@
                     <span> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1, index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
                     <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
-                        <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length == 0">点击添加</span>
+                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length == 0">点击添加</span>
                     </div>
                     <div v-if="item.candidateUsers.length > 0" style="display: inline-block;">
-                        <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'Agency', item.candidateUsers )" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length > 0">编辑</span>
+                      <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'Agency', item.candidateUsers )"
+                        v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length > 0">编辑</span>
                     </div>
                   </div>
                 </div>
@@ -35,10 +37,11 @@
                     <span> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1, index1) in item.circulations[0].unitList" v-if="item.circulations[0].unitList.length > 0">{{ item1 }}</div>
                     <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span>
-                        <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name">点击添加</span>
+                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name">点击添加</span>
                     </div>
                     <div v-if="item.circulations[0].unitList.length > 0" style="display: inline-block;">
-                        <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'Circulate', item.circulations[0].unitList)" v-if="item.assignee === $store.state.userInfo.name">编辑</span>
+                      <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'Circulate', item.circulations[0].unitList)"
+                        v-if="item.assignee === $store.state.userInfo.name">编辑</span>
                     </div>
                   </div>
                 </div>
@@ -110,7 +113,7 @@
           </div>
         </div>
         <div class="Implement-right">
-          <div class="bpmn-configure-basic">
+          <!-- <div class="bpmn-configure-basic">
             <div class="bpmn-configure-title">工单分配</div>
             <div class="bpmn-configure-Main">
               <div class="bpmn-configure-Main-item"> <span>名<span style="visibility: hidden;">占位</span>称</span>: <span>{{ bpmnData.name }}</span>
@@ -120,7 +123,7 @@
               <div class="bpmn-configure-Main-item"> <span>备<span style="visibility: hidden;">占位</span>注</span>: <span>{{ bpmnData.document }}</span>
               </div>
             </div>
-          </div>
+          </div> -->
           <div style="margin-top: 20px;margin-bottom: 10px;">表单内容</div>
           <div class="Implement-right-form">
             <formRuntime :formContant="formContant" v-if="formShow" ref="formRuntime"></formRuntime>
@@ -132,8 +135,8 @@
         <el-button type="primary" @click="implement()" :disabled="!dataList.Hang">执 行</el-button>
       </span>
     </el-dialog>
-    <runtimePeople ref="runtimePeople" v-if="$refs.ProcessInformation" :taskId="taskId"
-      :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :taskKey="$refs.ProcessInformation.postData.taskKey"></runtimePeople>
+    <runtimePeople ref="runtimePeople" v-if="$refs.ProcessInformation" :taskId="taskId" :processInstanceId="$refs.ProcessInformation.postData.processInstanceId"
+      :taskKey="$refs.ProcessInformation.postData.taskKey"></runtimePeople>
     <runtimeConfirmation v-if="$refs.ProcessInformation" ref="runtimeConfirmation" :processInstanceDetail="$refs.ProcessInformation.postData"
       :processInstanceId="$refs.ProcessInformation.postData.processInstanceId" :BpmnContant="$refs.ProcessInformation.postData.content"
       :taskId="$refs.ProcessInformation.postData.taskKey" :taskKey="$refs.ProcessInformation.postData.taskId"></runtimeConfirmation>
@@ -234,7 +237,7 @@
       },
       functionItemShow(item) {
         let value = this.btnListKey[item]
-        switch (value){
+        switch (value) {
           case 'Agency':
             return !!this.dataList.Hang
             break;
@@ -259,7 +262,9 @@
       },
       changeFunction(value) {
         this.functionCheck = value
-        let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
+        let {
+          permissions
+        } = JSON.parse(sessionStorage.getItem('loginData'))
         let proJectRole = permissions.filter((item) => {
           // return item.projectCode === this.business
           return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
@@ -281,8 +286,8 @@
               userId: item1
             })
           })
-          switch (value){
-            case 'agency':
+          switch (value) {
+            case 'Agency':
               this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
               break;
             case 'Circulate':
@@ -313,9 +318,13 @@
         this.$emit('goSee', this.$refs.ProcessInformation.postData)
       },
       selectOneSet(value) {
-        this.btnList = JSON.parse(value?.businessObject?.$attrs['camunda:btnList'] || '[]' )
+        this.btnList = JSON.parse(value?.businessObject?.$attrs['camunda:btnList'] || '[]')
         if (this.btnList.length > 0) {
-          this.changeFunction(this.btnListKey[this.btnList[0]])
+          if (!this.dataList.Hang) {
+            this.changeFunction('Hang')
+          } else {
+            this.changeFunction(this.btnListKey[this.btnList[0]])
+          }
         } else {
           this.changeFunction('')
         }
@@ -328,12 +337,15 @@
         let data = {}
         let formData = []
         if (this.formShow) {
-          let { data, errors } = this.$refs.formRuntime.formEditor.submit()
+          let {
+            data,
+            errors
+          } = this.$refs.formRuntime.formEditor.submit()
           if (Object.keys(errors).length > 0) {
             this.$message.error('有必填项未填写')
             return
           }
-          
+
           formData = JSON.parse(this.formContant).components
           formData.forEach((item) => {
             switch (item.type) {
@@ -348,7 +360,7 @@
             }
           })
         }
-        
+
         getProcessNodeInfo({
           processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId
         }).then((res) => {
@@ -368,12 +380,12 @@
               this.$message.success('执行成功')
               this.$emit('taskSuccess')
             })
-          } else{
+          } else {
             this.$message.error('下一步流程无执行人')
           }
         })
-        
-        
+
+
       },
 
       selection(element) {
@@ -476,13 +488,13 @@
     position: relative;
     color: #000000;
   }
-  
+
   .heightFunction {
     line-height: 141px;
     text-align: center;
     display: block;
   }
-  
+
   .noPeopleList {
     line-height: 181px;
     text-align: center;
@@ -589,7 +601,7 @@
   }
 
   .Implement-right-form {
-    height: 475px;
+    height: 768px;
     border: 1px solid #000000;
     overflow: auto;
   }
@@ -600,7 +612,7 @@
     color: #5b5091;
     cursor: pointer;
   }
-  
+
   .noData {
     margin-top: 68px;
   }
