@@ -136,6 +136,10 @@ class IBpmn {
     return this.#getModule("moddle").create(descriptor, attrs);
   }
 
+  getSelectedShapeInfo() {
+    return this.getSelectedShape()?.businessObject ?? {};
+  }
+
   getSelectedShapeInfoByDefaultLocalName(localName) {
     return this.getSelectedShapeInfoByType(`${this.type}:${localName}`);
   }

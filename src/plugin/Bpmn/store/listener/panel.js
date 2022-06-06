@@ -43,19 +43,32 @@ function selectedElementListeners(iBpmn = new IBpmn()) {
   }
 }
 
+function selectedElementBaseInfo(iBpmn = new IBpmn()) {
+  const state = {};
+  const shapeInfo = iBpmn.getSelectedShapeInfo();
+  state.name = shapeInfo.name;
+  state.id = shapeInfo.id;
+  return state;
+}
+
 export default {
   "selection.changed": (_, commit, iBpmn) => {
+    if (!iBpmn.getSelectedShape()) {
+      commit("initState");
+    }
+    const baseInfo = selectedElementBaseInfo(iBpmn);
+    commit("refreshState", { baseInfo });
+
     const listeners = selectedElementListeners(iBpmn);
     if (listeners) {
       commit("refreshState", { listeners });
-    } else {
-      commit("initState");
     }
   },
-  "shape.changed": ({ element }, commit) => {
+  "shape.changed": ({ element }, commit, iBpmn) => {
     if (!element) {
       return;
     }
-    commit("refreshState", element.businessObject);
+    const baseInfo = selectedElementBaseInfo(iBpmn);
+    commit("refreshState", { baseInfo });
   },
 };

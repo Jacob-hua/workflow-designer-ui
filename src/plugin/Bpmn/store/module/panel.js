@@ -2,11 +2,7 @@ import { deepCopy, emptyPropertiesObject } from "../../utils/object";
 import { baseInfoEffect, listenerEffect, signalEffect } from "../effect";
 
 const state = {
-  baseInfo: {
-    name: "",
-    versionLabel: "",
-    isImplement: false,
-  },
+  baseInfo: {},
   messages: [],
   signals: [],
   listeners: [],
