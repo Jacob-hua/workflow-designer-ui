@@ -66,15 +66,33 @@ function makeMutationsEffectBill(modules) {
   return result;
 }
 
+function makeEventsListenerBill(modules) {
+  const result = Object.keys(modules).reduce((eventsListener, moduleName) => {
+    const module = modules[moduleName];
+    Object.keys(module.eventsListener).forEach((eventName) => {
+      if (!eventsListener[eventName]) {
+        eventsListener[eventName] = {
+          module: moduleName,
+          listeners: []
+        };
+      }
+      eventsListener[eventName].listeners.push(module.eventsListener[eventName]);
+    });
+    return eventsListener;
+  }, {});
+  return result;
+}
+
 const modules = loadModules();
 
 checkModules(modules, {
   state: () => ({}),
   getters: () => ({}),
   mutations: () => ({}),
-  mutationsEffect: () => ({}),
   actions: () => ({}),
   namespaced: () => true,
+  mutationsEffect: () => ({}),
+  eventsListener: () => ({}),
 });
 
 const initialModuleState = cacheModuleState(modules);
@@ -98,6 +116,8 @@ injectCommonMutations(modules, commonMutations);
 
 const mutationsEffectBill = makeMutationsEffectBill(modules);
 
-export { mutationsEffectBill };
+const eventsListenerBill = makeEventsListenerBill(modules);
+
+export { mutationsEffectBill, eventsListenerBill };
 
 export default modules;

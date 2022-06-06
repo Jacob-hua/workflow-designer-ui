@@ -51,24 +51,17 @@ function selectedElementBaseInfo(iBpmn = new IBpmn()) {
   return state;
 }
 
-export default {
-  "selection.changed": (_, commit, iBpmn) => {
-    if (!iBpmn.getSelectedShape()) {
-      commit("initState");
-    }
-    const baseInfo = selectedElementBaseInfo(iBpmn);
-    commit("refreshState", { baseInfo });
+function selectionChangedListener(_, commit, iBpmn) {
+  if (!iBpmn.getSelectedShape()) {
+    commit("initState");
+  }
+  const baseInfo = selectedElementBaseInfo(iBpmn);
+  commit("refreshState", { baseInfo });
 
-    const listeners = selectedElementListeners(iBpmn);
-    if (listeners) {
-      commit("refreshState", { listeners });
-    }
-  },
-  "shape.changed": ({ element }, commit, iBpmn) => {
-    if (!element) {
-      return;
-    }
-    const baseInfo = selectedElementBaseInfo(iBpmn);
-    commit("refreshState", { baseInfo });
-  },
-};
+  const listeners = selectedElementListeners(iBpmn);
+  if (listeners) {
+    commit("refreshState", { listeners });
+  }
+}
+
+export default selectionChangedListener;

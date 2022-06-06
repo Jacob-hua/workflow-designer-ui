@@ -1,5 +1,4 @@
-import modules, { mutationsEffectBill } from "./module";
-import listeners from "./listener";
+import modules, { mutationsEffectBill, eventsListenerBill } from "./module";
 import { vuexNamespace } from "../config";
 
 /**
@@ -18,7 +17,7 @@ function bridgingBpmn(store) {
     });
   }
 
-  regisetrBpmnListeners(listeners);
+  regisetrBpmnListeners(store);
 
   mutationElementProperties(store);
 
@@ -34,17 +33,18 @@ function bridgingBpmn(store) {
     });
   }
 
-  function regisetrBpmnListeners(listeners) {
-    Object.keys(listeners).forEach((listenerKey) => {
-      registerBpmnListener(store, listenerKey, listeners[listenerKey]);
+  function regisetrBpmnListeners(store) {
+    Object.keys(eventsListenerBill).forEach((eventName) => {
+      const { module, listeners } = eventsListenerBill[eventName];
+      registerBpmnListener(eventName, listeners, store, module);
     });
   }
 
-  function registerBpmnListener(store, module, listeners = {}) {
+  function registerBpmnListener(eventName, listeners, store, module) {
     const iBpmn = store._vm.$iBpmn;
-    Object.keys(listeners).forEach((eventName) => {
+    listeners.forEach((listener) => {
       iBpmn.on(eventName, (event) => {
-        listeners[eventName](event, moduleCommit(store, module), iBpmn);
+        listener(event, moduleCommit(store, module), iBpmn);
       });
     });
   }

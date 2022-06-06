@@ -1,11 +1,5 @@
-const requireListener = require.context(".", false, /\.js$/);
-const listeners = requireListener.keys().reduce((listeners, listenerPath) => {
-  const listenerName = listenerPath.replace(/^\.\/(.*)\.\w+$/, "$1");
-  if (listenerName === "index") {
-    return listeners;
-  }
-  listeners[listenerName] = requireListener(listenerPath).default;
-  return listeners;
-}, {});
+import onSelectionChanged from "./onSelectionChanged";
+import onShapeChanged from "./onShapeChanged";
+import onCommandStackChanged from "./onCommandStackChanged";
 
-export default listeners;
+export { onSelectionChanged, onShapeChanged, onCommandStackChanged };
