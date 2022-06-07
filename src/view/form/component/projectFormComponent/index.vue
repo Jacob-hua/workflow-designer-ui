@@ -83,7 +83,7 @@
 <script>
   import formbpmn from '../formBpmn.vue'
   // import formComponent from '@/plugin/formComponent/index.vue'
-  import { postFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
+  import { postFormDesignService, putFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
   import {
     FormEditor
   } from '@bpmn-io/form-js-editor';
@@ -239,11 +239,39 @@
         formData.append('createName', this.$store.state.userInfo.name)
         formData.append('tenantId', this.$store.state.tenantId)
         formData.append('file', formFile)
-        postFormDesignService(formData).then((res) => {
-          this.$message.success('保存草稿成功')
-          this.$emit('addSuccess', 'drafted')
-          this.dialogVisible2 = false
-        })
+        switch (this.dataType){
+          case 'enabled':
+            postFormDesignService(formData).then((res) => {
+              this.$message.success('保存草稿成功')
+              this.$emit('addSuccess', 'drafted')
+              this.dialogVisible2 = false
+            })
+            break;
+          case 'drafted':
+            postFormDesignService(formData).then((res) => {
+              this.$message.success('保存草稿成功')
+              this.$emit('addSuccess', 'drafted')
+              this.dialogVisible2 = false
+            })
+            break;
+          case 'enabled-edit':
+            postFormDesignService(formData).then((res) => {
+              this.$message.success('保存草稿成功')
+              this.$emit('addSuccess', 'drafted')
+              this.dialogVisible2 = false
+            })
+            break;
+          case 'drafted-edit':
+            putFormDesignService(formData).then((res) => {
+              this.$message.success('保存草稿成功')
+              this.$emit('addSuccess', 'drafted')
+              this.dialogVisible2 = false
+            })
+            break;
+          default:
+            break;
+        }
+        
       },
       async init() {
         const container = this.$refs.form

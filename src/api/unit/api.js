@@ -38,6 +38,10 @@ export const postProcessDesignService = (params) =>
 export const postFormDesignService = (params) =>
   post('/design/formDesignService/create', params);
 
+// 修改草稿表单
+export const putFormDesignService = (params) =>
+  put('/design/formDesignService/update', params);
+
 // 发布到可用表单
 export const postFormDesignServiceRealiseProcessData = (params) =>
   post('/design/formDesignService/realiseFormData', params);
@@ -77,8 +81,16 @@ export const postDraftlist = (params) =>
   post('/process/draft/list', params);
   
 // 保存到草稿箱
+// export const postProcessDraft = (params) =>
+//   post('/process/draft', params);
+
+// 保存草稿
 export const postProcessDraft = (params) =>
-  post('/process/draft', params);
+  post('/process/draft/create', params);
+
+// 修改草稿
+export const putProcessDraft = (params) =>
+  put('/process/draft/update', params);
 
 // 部署时草稿列表
 export const getProcessDraftList = (params) =>
