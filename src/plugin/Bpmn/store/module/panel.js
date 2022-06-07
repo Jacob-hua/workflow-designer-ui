@@ -166,7 +166,6 @@ const mutations = {
 
 const mutationsEffect = {
   updateBaseInfo: panelEffect.baseInfoEffect,
-  updateUserTask: panelEffect.userTaskEffect,
   addListener: panelEffect.listenerEffect,
   updateListener: panelEffect.listenerEffect,
   removeListener: panelEffect.listenerEffect,
@@ -179,6 +178,8 @@ const mutationsEffect = {
   addOutputParameter: panelEffect.inputOutputParameterEffect,
   updateOutputParameter: panelEffect.inputOutputParameterEffect,
   removeOutputParameter: panelEffect.inputOutputParameterEffect,
+  updateUserTask: panelEffect.userTaskEffect,
+  updateMultiInstance: panelEffect.multiInstanceEffect,
   updateActions: panelEffect.actionsEffect,
 };
 

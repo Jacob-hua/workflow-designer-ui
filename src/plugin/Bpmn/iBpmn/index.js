@@ -185,6 +185,17 @@ class IBpmn {
     this.modelingUpdateProperties(shape, payload);
   }
 
+  updateSelectedShapeModdleProperties(moddleElement, payload = {}) {
+    if (!this.getSelectedShape() || !moddleElement) {
+      return;
+    }
+    this.updateShapeModdleProperties(this.getSelectedShape(), moddleElement, payload);
+  }
+
+  updateShapeModdleProperties(shape, moddleElement, payload = {}) {
+    this.modelingUpdateModdleProperties(shape, moddleElement, payload);
+  }
+
   paletteVisible(visable) {
     this.#getModule("palette")._container.style = visable ? "" : "display: none";
   }
