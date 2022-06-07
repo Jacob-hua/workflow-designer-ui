@@ -3,6 +3,7 @@ import { panel as panelEffect } from "../effect";
 import { panel as panelListener } from "../listener";
 
 const state = {
+  selectedType: {},
   baseInfo: {},
   messages: [],
   signals: [],
