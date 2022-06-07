@@ -1,4 +1,4 @@
-import IBpmn from "../../iBpmn";
+import IBpmn from "../../../iBpmn";
 
 function parametersState2Parameter(inputParameters = [], iBpmn = new IBpmn(), localName = "InputParameter") {
   return inputParameters.reduce((parameters, parameter) => [...parameters, convertParameter(parameter)], []);

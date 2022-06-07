@@ -1,4 +1,4 @@
-import IBpmn from "../../iBpmn";
+import IBpmn from "../../../iBpmn";
 
 function signalEffect({ signals }, iBpmn = new IBpmn()) {
   console.log(iBpmn.createBpmnModdleInstance("Signal", signals));

@@ -73,7 +73,7 @@ function makeEventsListenerBill(modules) {
       if (!eventsListener[eventName]) {
         eventsListener[eventName] = {
           module: moduleName,
-          listeners: []
+          listeners: [],
         };
       }
       eventsListener[eventName].listeners.push(module.eventsListener[eventName]);
