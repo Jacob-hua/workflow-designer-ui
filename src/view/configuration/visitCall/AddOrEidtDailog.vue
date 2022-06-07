@@ -134,7 +134,11 @@ import ApiEnum from "@/enum/ApiTypeEnum";
 export default {
   name: "AddOrEidtDailog",
   props: {
-    guideForm: Object
+    guideForm: Object,
+    business: {
+      type: String,
+      default: ''
+    }
   },
   data() {
     return {
@@ -198,7 +202,8 @@ export default {
       // get(`/config/global/checkApiType?typeName=${params.typeName}&type=user&tenantId=18`);
       checkApiType({
         ...this.typeForm,
-        tenantId: this.$store.state.tenantId
+        tenantId: this.$store.state.tenantId,
+        ascription: this.business
       }).then(res => {
         if (res.result) {
           this.apiOptions.push(this.typeForm)
@@ -262,7 +267,10 @@ export default {
 
     },
     apiTypeList() {
-      apiTypeList(this.$store.state.tenantId).then(res => {
+      apiTypeList({
+        tenantId: this.$store.state.tenantId,
+        ascription: this.business
+      }).then(res => {
           this.apiOptions = res.result
       })
     },
@@ -300,9 +308,11 @@ export default {
         })
         apiBox.parameterMap = parameterMap
       })
-      this.apiBoxList.forEach(apiBox => delete apiBox.configParams)
+      this.apiBoxList.forEach(apiBox => {
+        delete apiBox.configParams
+        apiBox.ascription = this.business
+      })
       saveOrEdite(this.apiBoxList).then(res => {
-        console.log(res)
         this.dialogVisible = false
         this.$message({
           type:'success',

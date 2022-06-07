@@ -25,7 +25,7 @@ export const saveOrEdite = (params) =>
     post('/config/global', params);
 // 获取api 类型
 export const apiTypeList = (params) =>
-    get(`config/global/apiTypeList?tenantId=${params}`);
+    get(`config/global/apiTypeList`, params);
 
 // 获取详情
 export const apiDetail = (params) =>
@@ -56,9 +56,17 @@ export const checkBusinessConfig = (params) =>
     // get(`/config/businessConfig/checkBusinessConfig?type=${params.type}&name=${params.name}`);
     get('/config/businessConfig/checkBusinessConfig', params);
 
+
 export const addBusinessConfig = (params) =>
     post('/config/businessConfig/saveBusinessConfigWithTree', params);
-
+    
+// // 新增项目资源树
+// export const createBusinessConfig = (params) =>
+//     post('/config/businessConfig/businessConfigWithTree/create', params);
+    
+// // 修改项目资源树
+// export const updateBusinessConfig = (params) =>
+//     put('/config/businessConfig/businessConfigWithTree/update', params);
 
  // 查询配置树状结构
 export const getBusinessConfigWithTree = (id, tenantId ) =>
@@ -73,8 +81,8 @@ export const UpdatebusinessConfig = (params) =>
 export const startConfig = (params) =>
     post('/config/startConfig', params);
 
-export const getThirdInterfaceList = ( tenantId ) =>
-    get(`/config/global/getThirdInterfaceList?tenantId=${tenantId}`);
+export const getThirdInterfaceList = ( params ) =>
+    get(`/config/global/getThirdInterfaceList`, params);
 //根据业务节点获取配置
 export const selectProcessStartConfigList = (id, tenantId ) =>
     get(`/config/startConfig/selectProcessStartConfigList?tenantId=${tenantId}&businessConfigId=${id}`);
