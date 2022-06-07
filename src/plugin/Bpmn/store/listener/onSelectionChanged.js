@@ -43,14 +43,6 @@ function listenersParameter2State(iBpmn = new IBpmn()) {
   }
 }
 
-function baseInfoParameter2State(iBpmn = new IBpmn()) {
-  const state = {};
-  const shapeInfo = iBpmn.getSelectedShapeInfo();
-  state.name = shapeInfo.name;
-  state.id = shapeInfo.id;
-  return state;
-}
-
 function inputOutputParameter2State(iBpmn = new IBpmn()) {
   const state = {};
   const inputOutputParameters = iBpmn.getSelectedShapeInfoByDefaultLocalName("InputOutput") ?? [];
@@ -98,6 +90,23 @@ function inputOutputParameter2State(iBpmn = new IBpmn()) {
   }
 }
 
+function baseInfoParameter2State(iBpmn = new IBpmn()) {
+  const state = {};
+  const shapeInfo = iBpmn.getSelectedShapeInfo();
+  state.name = shapeInfo.name;
+  state.id = shapeInfo.id;
+  return state;
+}
+
+function userTaskParameter2State(iBpmn = new IBpmn()) {
+  const state = {};
+  const shapeInfo = iBpmn.getSelectedShapeInfo();
+  state.assignee = shapeInfo["assignee"];
+  state.candidateUsers = shapeInfo["candidateUsers"];
+  state.candidateGroups = shapeInfo["candidateGroups"];
+  return state;
+}
+
 function selectionChangedListener(_, commit, iBpmn) {
   if (!iBpmn.getSelectedShape()) {
     commit("initState");
@@ -108,7 +117,9 @@ function selectionChangedListener(_, commit, iBpmn) {
 
   const { inputParameters, outputParameters } = inputOutputParameter2State(iBpmn);
 
-  commit("refreshState", { baseInfo, listeners, inputParameters, outputParameters });
+  const userTask = userTaskParameter2State(iBpmn);
+
+  commit("refreshState", { baseInfo, listeners, inputParameters, outputParameters, userTask });
 }
 
 export default selectionChangedListener;
