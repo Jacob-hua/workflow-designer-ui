@@ -98,7 +98,7 @@
 <script>
   import ProcessInformation from './ProcessInformation.vue'
   import formOB from './formOB.vue'
-  import { postProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
+  import { postProcessDraft, putProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
   import X2JS from "x2js";
   export default {
     props:{
@@ -312,11 +312,19 @@
           formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
           // formData.append('processResource', '')
           formData.append('tenantId', this.$store.state.tenantId)
-          postProcessDraft(formData).then((res) => {
-            this.$message.success('保存成功')
-            this.dialogVisible2 = false
-            this.$emit('addDraftSuccess')
-          })
+          if (this.dataType === 'enabled') {
+            postProcessDraft(formData).then((res) => {
+              this.$message.success('保存成功')
+              this.dialogVisible2 = false
+              this.$emit('addDraftSuccess')
+            })
+          } else {
+            putProcessDraft(formData).then((res) => {
+              this.$message.success('保存成功')
+              this.dialogVisible2 = false
+              this.$emit('addDraftSuccess')
+            })
+          }
         });
       },
       getFormData(formKey) {

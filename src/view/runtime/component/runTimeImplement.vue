@@ -334,10 +334,9 @@
       },
 
       implement() {
-        let data = {}
         let formData = []
         if (this.formShow) {
-          let {
+          var {
             data,
             errors
           } = this.$refs.formRuntime.formEditor.submit()
@@ -360,7 +359,6 @@
             }
           })
         }
-
         getProcessNodeInfo({
           processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId
         }).then((res) => {
