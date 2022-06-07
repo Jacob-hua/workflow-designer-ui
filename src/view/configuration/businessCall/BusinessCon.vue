@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {addBusinessConfig, UpdatebusinessConfig} from "@/api/globalConfig";
+import {createBusinessConfig, UpdatebusinessConfig} from "@/api/globalConfig";
 
 let id = 2;
 export default {
@@ -55,6 +55,10 @@ export default {
       type: Boolean,
       default: true
     },
+    type: {
+      type: String,
+      default: 'edit'
+    }
   },
 
   data() {
@@ -95,15 +99,27 @@ export default {
         if (!_this.edit) {
           delete this.data[0].id
         }
-        addBusinessConfig(this.data).then((res)=> {
-          this.dialogVisible = false
-          this.$message({
-            type: 'success',
-            message: '保存成功'
+        if(this.type == 'see') {
+          createBusinessConfig(this.data).then((res)=> {
+            this.dialogVisible = false
+            this.$message({
+              type: 'success',
+              message: '保存成功'
+            })
+          
+            _this.$parent.getBusinessConfigBasicList()
           })
-
-          _this.$parent.getBusinessConfigBasicList()
-        })
+        } else {
+          UpdatebusinessConfig(this.data).then((res)=> {
+            this.dialogVisible = false
+            this.$message({
+              type: 'success',
+              message: '保存成功'
+            })
+          
+            _this.$parent.getBusinessConfigBasicList()
+          })
+        }
       } else {
         this.editFlag = false
         this.btnTxt = '保存'
