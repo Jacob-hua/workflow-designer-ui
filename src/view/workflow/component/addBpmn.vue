@@ -38,7 +38,7 @@ export default {
     },
     formData: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     dialogVisible: {
       type: Boolean,
@@ -50,10 +50,10 @@ export default {
     },
     currentRowData: {
       type: Object,
-      default: {
+      default: () => ({
         name: '',
         id: '',
-      },
+      }),
     },
     xmlString: {
       type: String,
@@ -84,7 +84,7 @@ export default {
     publish() {
       let _this = this
       const newConvert = new X2JS()
-      this.modeler
+      this.$iBpmn
         .saveXML({
           format: true,
         })
@@ -151,7 +151,7 @@ export default {
       let _this = this
       let names
       const newConvert = new X2JS()
-      this.modeler
+      this.$iBpmn
         .saveXML({
           format: true,
         })
