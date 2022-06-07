@@ -85,7 +85,7 @@
       getTableData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
-        this.getData.business = this.business
+        this.getData.business = this.business.at(-1)
         this.getData.ascription = this.ascription
         getProcessDraftList(this.getData).then((res) => {
           this.tableData = res.result.dataList

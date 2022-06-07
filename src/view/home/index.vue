@@ -42,16 +42,25 @@
     </div>
     <div class="home-filter">
       <div class="projectSelect">
-        <el-select v-model="value1" placeholder="请选择" @change="getManyData()">
-          <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
+        <el-select  @change="projectChange" v-model="value1">
+          <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
         </el-select>
+<!--        <el-select v-model="value1" placeholder="请选择" @change="getManyData()">-->
+<!--          <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
       </div>
       <div class="businessSelect">
-        <el-select v-model="value2" placeholder="请选择" @change="getManyData()">
-          <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
+        <el-cascader
+            style="width: 400px; margin-right: 10px;"
+            v-model="value2"
+            :options="systemOption"
+            :props = 'sysProps'
+            @change="handleChange"></el-cascader>
+<!--        <el-select v-model="value2" placeholder="请选择" @change="getManyData()">-->
+<!--          <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
       </div>
       <div class="datePick">
         <span class="datePickTitle">时间</span>
@@ -85,9 +94,16 @@
     getDeployCount,
     getTaskCountStatistic
   } from '@/api/unit/api.js'
+  import {getProjectList} from "@/api/globalConfig";
   export default {
     data() {
       return {
+        sysProps:{
+          label: 'name',
+          value: 'code'
+        },
+        projectOption: [],
+        systemOption: [],
         valueDate: [format(new Date(), 'yyyy-MM-1') + ' 00:00:00', format(new Date(), 'yyyy-MM-dd') + ' 23:59:59'],
         numberList: {
           executionCompleteCount: 0,
@@ -120,6 +136,42 @@
       }
     },
     methods: {
+      handleChange() {
+        this.getManyData()
+      },
+      deleteEmptyChildren(arr) {
+        for (let i = 0; i < arr.length; i++) {
+          const arrElement = arr[i];
+          if (!arrElement.children.length) {
+            delete arrElement.children
+            continue
+          }
+          if (arrElement.children) {
+            this.deleteEmptyChildren(arrElement.children)
+          }
+        }
+
+      },
+      projectChange(val) {
+        this.getManyData()
+        this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
+        this.deleteEmptyChildren(this.systemOption)
+        console.log(this.systemOption)
+        // this.systemValue = this.systemOption[0]?.id  ??  ''
+      },
+      async getProjectList(){
+        let res = await  getProjectList({
+          count: -1,
+          projectCode: '',
+          tenantId:  this.$store.state.tenantId,
+          type: ''
+        })
+        this.projectOption = res?.result ?? []
+        this.value1 = this.projectOption[0].code
+        this.systemOption = this.projectOption[0].children
+        this.deleteEmptyChildren(this.systemOption)
+        this.value2 =  this.systemOption[0].code
+      },
       goBpmn() {
         this.$router.push('/home/bpmn')
       },
@@ -133,7 +185,7 @@
       getDeployCountList() {
         getDeployCount({
           ascription: this.value1,
-          business: this.value2,
+          business: this.value2.at(-1),
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
           status: 'activation',
@@ -154,7 +206,7 @@
         getTaskCountStatistic({
           ascription: this.value1,
           assignee: this.$store.state.userInfo.name,
-          business: this.value2,
+          business: this.value2.at(-1),
           endTime: this.valueDate[1],
           startTime: this.valueDate[0],
           tenantId: this.$store.state.tenantId
@@ -178,6 +230,7 @@
     mounted() {
       this.getDeployCountList()
       this.getDataNumber()
+      this.getProjectList()
     }
   }
 </script>
@@ -197,7 +250,14 @@
     font-size: 16px;
     color: #000000;
   }
-
+  .home-filter /deep/ .el-cascader .el-input__inner {
+    border: 1px solid #000;
+    height: 50px;
+    line-height: 50px;
+    width: 320px;
+    font-size: 16px;
+    color: #000000;
+  }
 
   .home-header {
     display: flex;

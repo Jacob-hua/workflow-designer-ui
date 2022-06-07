@@ -58,8 +58,8 @@
         default: ''
       },
       business: {
-        type: String,
-        default: ''
+        type: Array,
+        default: []
       }
     },
     data() {
@@ -84,7 +84,7 @@
       getTableData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
-        this.getData.business = this.business
+        this.getData.business = this.business.at(-1)
         this.getData.ascription = this.ascription
         postProcessDesignServicePage(this.getData).then((res) => {
           this.tableData = res.result.list
@@ -112,7 +112,7 @@
         this.editData = JSON.parse(JSON.stringify(row))
         this.$refs.deploy.dialogVisible1 = true
         this.$refs.deploy.firstData.ascription = row.ascription
-        this.$refs.deploy.firstData.business = row.business
+        this.$refs.deploy.firstData.business = row.business.at(-1)
         this.$refs.deploy.firstData.id = row.id
       },
       detailsDiolog(item) {

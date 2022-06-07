@@ -14,6 +14,10 @@ import {
 //         return []
 //       }
 //     }
+// 获取项目列表及子业务级联
+
+export const getProjectList =  (params) =>
+    post('/config/businessConfig/projectList', params)
 
 // api 分页列表
 export const GetGlobalList = (params) =>
