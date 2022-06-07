@@ -23,7 +23,7 @@ export const workFlowSave = (params) =>
 // 工作流 草稿 新增
 
 export const workFlowSaveDraft = (params) =>
-    put('/design/processDesignService', params);
+    put('/design/processDesignService/update', params);
 
 // 发布工作流
 export const publishWorkflow = (params) =>
@@ -31,4 +31,4 @@ export const publishWorkflow = (params) =>
 
 // 删除 工作流
 export const deleteWorkflow = (id) =>
-    deletefn('/design/processDesignService', {id:id});
+    deletefn('/design/processDesignService/delete', {id:id});

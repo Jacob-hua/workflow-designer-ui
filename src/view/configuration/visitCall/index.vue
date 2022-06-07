@@ -87,6 +87,7 @@ export default {
       AddOrEidtDailogFlag: false,
       dateRang: ["2022-01-01","2022-12-31"],
       radio: '1',
+      type: '',
       tableData: [
         {
           id: 1,
@@ -215,6 +216,7 @@ export default {
       })
     },
     showAddOrEidtDailog(row, code){
+      this.type = 'edit'
       if (code === 'pre') {
         this.$refs.guide.dialogVisible = true
       }  else if(code === 'detail') {
@@ -248,6 +250,7 @@ export default {
     },
     showAddDialog(form) {
       this.AddOrEidtDailogFlag = true
+      this.type = 'see'
       this.guideForm = form
       this.$nextTick(() => {
         this.$refs.AddOrEidtDailog.dialogVisible = true

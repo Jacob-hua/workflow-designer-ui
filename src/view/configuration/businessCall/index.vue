@@ -38,6 +38,7 @@
         ref="BusinessCon"
         :showBtn="showBtn"
         :edit = "edit"
+        :type="type"
         @showAddOrEidtDailog="showAddOrEidtDailog"
     />
   </div>
@@ -61,7 +62,8 @@ export default {
       edit: false,
       showBtn: true,
       businessList: [],
-      business: ''
+      business: '',
+      type: ''
     }
   },
   mounted() {
@@ -90,6 +92,7 @@ export default {
     },
 
     lookBusiness(id) {
+      this.type = 'see'
       // 获取组织 结构树
       getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
         this.$refs.BusinessCon.dialogVisible = true
@@ -100,6 +103,7 @@ export default {
 
     },
     editBusiness(id) {
+      this.type = 'edit'
       getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
         console.log(res)
         this.$refs.BusinessCon.dialogVisible = true

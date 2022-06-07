@@ -19,10 +19,13 @@ import {
 export const GetGlobalList = (params) =>
     post('/config/global/list', params);
 
-// api 保存修改
-
-export const saveOrEdite = (params) =>
-    post('/config/global', params);
+// api新增
+export const postSaveOrEdite = (params) =>
+    post('/config/global/create', params);
+// api修改
+export const putSaveOrEdite = (params) =>
+    put('/config/global/update', params);
+    
 // 获取api 类型
 export const apiTypeList = (params) =>
     get(`config/global/apiTypeList`, params);
@@ -38,7 +41,7 @@ export const executeApi = (params) =>
 // 访问配置删除
 // 删除表单
 export const deleteApi = (id) =>
-    deletefn('/config/global', { id: id });
+    deletefn('/config/global/delete', { id: id });
 
 
 export const simulationRequest = (params) =>
@@ -57,29 +60,29 @@ export const checkBusinessConfig = (params) =>
     get('/config/businessConfig/checkBusinessConfig', params);
 
 
-export const addBusinessConfig = (params) =>
-    post('/config/businessConfig/saveBusinessConfigWithTree', params);
+// export const addBusinessConfig = (params) =>
+//     post('/config/businessConfig/saveBusinessConfigWithTree', params);
     
-// // 新增项目资源树
-// export const createBusinessConfig = (params) =>
-//     post('/config/businessConfig/businessConfigWithTree/create', params);
+// 新增项目资源树
+export const createBusinessConfig = (params) =>
+    post('/config/businessConfig/businessConfigWithTree/create', params);
     
-// // 修改项目资源树
-// export const updateBusinessConfig = (params) =>
-//     put('/config/businessConfig/businessConfigWithTree/update', params);
+// 修改项目资源树
+export const updateBusinessConfig = (params) =>
+    put('/config/businessConfig/businessConfigWithTree/update', params);
 
  // 查询配置树状结构
 export const getBusinessConfigWithTree = (id, tenantId ) =>
     get(`/config/businessConfig/getBusinessConfigWithTree?tenantId=${tenantId}&id=${id}`);
 // 删除配置
 export const deleteBusinessConfig = (id) =>
-    deletefn(`/config/businessConfig`, { id: id })
+    deletefn(`/config/businessConfig/delete`, { id: id })
 export const UpdatebusinessConfig = (params) =>
     put(`/config/businessConfig`, params)
 
 
 export const startConfig = (params) =>
-    post('/config/startConfig', params);
+    put('/config/startConfig/update', params);
 
 export const getThirdInterfaceList = ( params ) =>
     get(`/config/global/getThirdInterfaceList`, params);

@@ -283,7 +283,7 @@
             postModifyProcessUser({
               processInstanceId: this.processInstanceId,
               taskKey: this.taskKey,
-              userList: str2
+              userList: dataListsignature
             }).then(() => {
               this.$message.success('加减签成功')
               this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection

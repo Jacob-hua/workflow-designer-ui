@@ -8,7 +8,7 @@
     >
       <div style="display: flex">
         <div class="container">
-          <div v-for="(item,index)  in apiBoxList " :key="index">
+          <div v-for="(item,index) in apiBoxList " :key="index">
             <p>API{{index+1}}
               <i @click="addApiBox" v-if="index === 0" class="el-icon-circle-plus-outline"></i>
               <span @click="deleteApiBox(index)" v-else class="el-icon-delete"></span>
@@ -126,7 +126,8 @@
 <script>
 import {
   apiTypeList, checkApiType,
-  saveOrEdite, simulationRequest
+  postSaveOrEdite, simulationRequest,
+  putSaveOrEdite
 } from "@/api/globalConfig";
 
 import ApiEnum from "@/enum/ApiTypeEnum";
@@ -138,6 +139,10 @@ export default {
     business: {
       type: String,
       default: ''
+    },
+    type: {
+      type: String,
+      default: 'edit'
     }
   },
   data() {
@@ -312,14 +317,25 @@ export default {
         delete apiBox.configParams
         apiBox.ascription = this.business
       })
-      saveOrEdite(this.apiBoxList).then(res => {
-        this.dialogVisible = false
-        this.$message({
-          type:'success',
-          message: '保存成功'
+      if (this.type === 'see') {
+        postSaveOrEdite(this.apiBoxList).then(res => {
+          this.dialogVisible = false
+          this.$message({
+            type:'success',
+            message: '保存成功'
+          })
+          this.$parent.GetGlobalList(this.$parent.pageInfo)
         })
-        this.$parent.GetGlobalList(this.$parent.pageInfo)
-      })
+      } else{
+        putSaveOrEdite(this.apiBoxList).then(res => {
+          this.dialogVisible = false
+          this.$message({
+            type:'success',
+            message: '保存成功'
+          })
+          this.$parent.GetGlobalList(this.$parent.pageInfo)
+        })
+      }
     },
     addApiBox() {
 
