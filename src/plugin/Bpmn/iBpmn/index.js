@@ -212,6 +212,15 @@ class IBpmn {
     return this.#getModule("moddle").create(descriptor, attrs);
   }
 
+  async validate() {
+    const valid = await this.linterLint()
+    if (Object.keys(valid).length === 0) {
+      return true;
+    }
+
+    throw new Error(`This canvas has ${Object.keys(valid).length} errors`)
+  }
+
   async createEmptyDiagram() {
     this.loadDiagram(defaultEmpty(this.key, this.name, this.type));
   }
