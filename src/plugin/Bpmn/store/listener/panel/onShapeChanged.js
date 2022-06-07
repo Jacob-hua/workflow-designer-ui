@@ -1,4 +1,4 @@
-import IBpmn from "../../iBpmn";
+import IBpmn from "../../../iBpmn";
 
 function baseInfoParameter2State(iBpmn = new IBpmn()) {
   const state = {};
@@ -8,12 +8,17 @@ function baseInfoParameter2State(iBpmn = new IBpmn()) {
   return state;
 }
 
+function shapeType2State(element, iBpmn = new IBpmn()) {
+  return { ...iBpmn.getShapeType(element) };
+}
+
 function shapeChangedListener({ element }, commit, iBpmn) {
   if (!element) {
     return;
   }
   const baseInfo = baseInfoParameter2State(iBpmn);
-  commit("refreshState", { baseInfo });
+  const shapeType = shapeType2State(element, iBpmn);
+  commit("refreshState", { baseInfo, shapeType });
 }
 
 export default shapeChangedListener;

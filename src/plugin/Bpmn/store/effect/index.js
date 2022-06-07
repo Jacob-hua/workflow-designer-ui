@@ -1,6 +1,3 @@
-import baseInfoEffect from "./baseInfoEffect";
-import listenerEffect from "./listenerEffect";
-import signalEffect from "./signalEffect";
-import inputOutputParameterEffect from "./inputOutputparameterEffect";
+import panel from "./panel";
 
-export { listenerEffect, baseInfoEffect, signalEffect, inputOutputParameterEffect };
+export { panel };

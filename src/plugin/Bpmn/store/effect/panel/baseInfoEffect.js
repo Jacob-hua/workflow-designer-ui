@@ -1,4 +1,4 @@
-import IBpmn from "../../iBpmn";
+import IBpmn from "../../../iBpmn";
 
 function baseInfoEffect({ baseInfo }, iBpmn = new IBpmn()) {
   iBpmn.updateSelectedShapeProperties(baseInfo);

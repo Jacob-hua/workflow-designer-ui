@@ -1,47 +1,12 @@
 <template>
   <div class="wrapper">
     <el-collapse accordion>
-      <el-collapse-item>
+      <el-collapse-item v-for="({title, component}, index) in panels"
+                        :key="index">
         <template slot="title">
-          基础信息
+          {{title}}
         </template>
-        <base-info-panel />
-      </el-collapse-item>
-      <el-collapse-item>
-        <template slot="title">
-          执行监听器
-        </template>
-        <execute-listener-panel />
-      </el-collapse-item>
-      <el-collapse-item>
-        <template slot="title">
-          信号与消息
-        </template>
-        <signal-message-panel />
-      </el-collapse-item>
-      <el-collapse-item>
-        <template slot="title">
-          输入/输出
-        </template>
-        <input-output-panel />
-      </el-collapse-item>
-      <el-collapse-item>
-        <template slot="title">
-          任务
-        </template>
-        <element-task-panel />
-      </el-collapse-item>
-      <el-collapse-item>
-        <template slot="title">
-          多实例
-        </template>
-        <multi-instance-panel />
-      </el-collapse-item>
-      <el-collapse-item>
-        <template slot="title">
-          操作按钮配置
-        </template>
-        <action-button-panel />
+        <component :is="component" />
       </el-collapse-item>
     </el-collapse>
   </div>
@@ -55,6 +20,7 @@ import SignalMessagePanel from './components/SignalMessagePanel.vue'
 import ElementTaskPanel from './components/ElementTaskPanel.vue'
 import MultiInstancePanel from './components/MultiInstancePanel.vue'
 import ActionButtonPanel from './components/ActionButtonPanel.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'BpmnPropertiesPanel',
@@ -66,6 +32,64 @@ export default {
     ElementTaskPanel,
     MultiInstancePanel,
     ActionButtonPanel,
+  },
+  data() {
+    return {
+      baseInfoPanelInfo: {
+        title: '基础信息',
+        component: BaseInfoPanel,
+      },
+      executeListenerPanelInfo: {
+        title: '执行监听器',
+        component: ExecuteListenerPanel,
+      },
+      inputOutputPanelInfo: {
+        title: '输入/输出',
+        component: InputOutputPanel,
+      },
+      elementTaskPanelInfo: {
+        title: '任务',
+        component: ElementTaskPanel,
+      },
+      multiInstancePanelInfo: {
+        title: '多实例',
+        component: MultiInstancePanel,
+      },
+      actionButtonPanelInfo: {
+        title: '操作按钮配置',
+        component: ActionButtonPanel,
+      },
+    }
+  },
+  computed: {
+    ...mapState('bpmn/panel', ['shapeType']),
+    panels() {
+      const elementPanels = {
+        StartEvent: [
+          this.baseInfoPanelInfo,
+          this.executeListenerPanelInfo,
+          this.inputOutputPanelInfo,
+        ],
+        EndEvent: [
+          this.baseInfoPanelInfo,
+          this.executeListenerPanelInfo,
+          this.inputOutputPanelInfo,
+        ],
+        UserTask: [
+          this.baseInfoPanelInfo,
+          this.executeListenerPanelInfo,
+          this.inputOutputPanelInfo,
+          this.elementTaskPanelInfo,
+          this.multiInstancePanelInfo,
+          this.actionButtonPanelInfo,
+        ],
+        ExclusiveGateway: [
+          this.baseInfoPanelInfo,
+          this.executeListenerPanelInfo,
+        ],
+      }
+      return elementPanels[this.shapeType.type] ?? [this.baseInfoPanelInfo]
+    },
   },
 }
 </script>

@@ -361,6 +361,11 @@
           "name": "priority",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "actions",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },

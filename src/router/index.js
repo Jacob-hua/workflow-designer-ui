@@ -138,9 +138,9 @@ router.beforeEach((to, from, next) => {
     'power': 'Power'
   }
   let routerName = to.name
-  let {
-    permissions
-  } = JSON.parse(sessionStorage.getItem('loginData'))
+  // let {
+  //   permissions
+  // } = JSON.parse(sessionStorage.getItem('loginData'))
 
   let proJectRole = permissions.filter((item) => {
     // return item.projectCode === this.business
@@ -153,10 +153,7 @@ router.beforeEach((to, from, next) => {
     console.log('无权限')
     // next('/home/noPermission')
     next()
-  } else {
-    console.log('有权限')
-    next()
-  }
+  // }
 })
 
 export default router
