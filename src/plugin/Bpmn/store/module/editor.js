@@ -1,4 +1,4 @@
-import { onCommandStackChanged } from "../listener";
+import { editor as editorListener } from "../listener";
 
 const state = {
   undoable: false,
@@ -12,7 +12,7 @@ const mutations = {};
 const actions = {};
 
 const eventsListener = {
-  "commandStack.changed": onCommandStackChanged,
+  "commandStack.changed": editorListener.onCommandStackChanged,
 };
 
 export default {

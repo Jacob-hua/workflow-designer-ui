@@ -1,4 +1,4 @@
-import IBpmn from "../../iBpmn";
+import IBpmn from "../../../iBpmn";
 
 function baseInfoParameter2State(iBpmn = new IBpmn()) {
   const state = {};

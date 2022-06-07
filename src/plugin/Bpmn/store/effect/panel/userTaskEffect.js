@@ -1,4 +1,4 @@
-import IBpmn from "../../iBpmn";
+import IBpmn from "../../../iBpmn";
 
 function userTaskEffect({ userTask }, iBpmn = new IBpmn()) {
   iBpmn.updateSelectedShapeProperties(userTask);

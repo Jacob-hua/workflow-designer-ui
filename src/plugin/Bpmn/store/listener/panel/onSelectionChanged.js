@@ -1,4 +1,5 @@
-import IBpmn from "../../iBpmn";
+import IBpmn from "../../../iBpmn";
+import { deepEquals } from "../../../utils/object";
 
 function listenersParameter2State(iBpmn = new IBpmn()) {
   const listeners = iBpmn.getSelectedShapeInfoByDefaultLocalName("ExecutionListener") ?? [];
@@ -111,6 +112,7 @@ function selectionChangedListener(_, commit, iBpmn) {
   if (!iBpmn.getSelectedShape()) {
     commit("initState");
   }
+
   const baseInfo = baseInfoParameter2State(iBpmn);
 
   const listeners = listenersParameter2State(iBpmn);

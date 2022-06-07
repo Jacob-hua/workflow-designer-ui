@@ -1,12 +1,6 @@
 import { deepCopy, emptyPropertiesObject } from "../../utils/object";
-import {
-  baseInfoEffect,
-  listenerEffect,
-  signalEffect,
-  inputOutputParameterEffect,
-  userTaskEffect,
-} from "../effect";
-import { onSelectionChanged, onShapeChanged } from "../listener";
+import { panel as panelEffect } from "../effect";
+import { panel as panelListener } from "../listener";
 
 const state = {
   baseInfo: {},
@@ -160,25 +154,25 @@ const mutations = {
 };
 
 const mutationsEffect = {
-  updateBaseInfo: baseInfoEffect,
-  updateUserTask: userTaskEffect,
-  addListener: listenerEffect,
-  updateListener: listenerEffect,
-  removeListener: listenerEffect,
-  addSignal: signalEffect,
-  updateSignal: signalEffect,
-  removeSignal: signalEffect,
-  addInputParameter: inputOutputParameterEffect,
-  updateInputParameter: inputOutputParameterEffect,
-  removeInputParameter: inputOutputParameterEffect,
-  addOutputParameter: inputOutputParameterEffect,
-  updateOutputParameter: inputOutputParameterEffect,
-  removeOutputParameter: inputOutputParameterEffect,
+  updateBaseInfo: panelEffect.baseInfoEffect,
+  updateUserTask: panelEffect.userTaskEffect,
+  addListener: panelEffect.listenerEffect,
+  updateListener: panelEffect.listenerEffect,
+  removeListener: panelEffect.listenerEffect,
+  addSignal: panelEffect.signalEffect,
+  updateSignal: panelEffect.signalEffect,
+  removeSignal: panelEffect.signalEffect,
+  addInputParameter: panelEffect.inputOutputParameterEffect,
+  updateInputParameter: panelEffect.inputOutputParameterEffect,
+  removeInputParameter: panelEffect.inputOutputParameterEffect,
+  addOutputParameter: panelEffect.inputOutputParameterEffect,
+  updateOutputParameter: panelEffect.inputOutputParameterEffect,
+  removeOutputParameter: panelEffect.inputOutputParameterEffect,
 };
 
 const eventsListener = {
-  "selection.changed": onSelectionChanged,
-  "shape.changed": onShapeChanged,
+  "selection.changed": panelListener.onSelectionChanged,
+  "shape.changed": panelListener.onShapeChanged,
 };
 
 const actions = {};
