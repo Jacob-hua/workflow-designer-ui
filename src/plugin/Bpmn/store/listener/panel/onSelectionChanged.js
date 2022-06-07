@@ -69,43 +69,48 @@ function inputOutputParameter2State(iBpmn = new IBpmn()) {
   }
 
   function parameterDefinition2State(definition) {
-    const state = {};
+    const parameter = {};
     if (definition["scriptFormat"]) {
-      state.type = "script";
-      state.scriptFormat = definition.scriptFormat;
+      parameter.type = "script";
+      parameter.scriptFormat = definition.scriptFormat;
       if (definition["value"]) {
-        state.scriptType = "inline";
-        state.scriptValue = definition.value;
+        parameter.scriptType = "inline";
+        parameter.scriptValue = definition.value;
       } else {
-        state.scriptType = "outside";
-        state.scriptResource = definition.resource;
+        parameter.scriptType = "outside";
+        parameter.scriptResource = definition.resource;
       }
     } else if (definition["items"]) {
-      state.type = "list";
-      state.listValues = definition.items?.map(({ value }) => value) ?? [];
+      parameter.type = "list";
+      parameter.listValues = definition.items?.map(({ value }) => value) ?? [];
     } else if (definition["entries"]) {
-      state.type = "map";
-      state.mapValues = definition.entries?.map(({ key, value }) => ({ key, value })) ?? [];
+      parameter.type = "map";
+      parameter.mapValues = definition.entries?.map(({ key, value }) => ({ key, value })) ?? [];
     }
-    return state;
+    return parameter;
   }
 }
 
 function baseInfoParameter2State(iBpmn = new IBpmn()) {
-  const state = {};
+  const baseInfo = {};
   const shapeInfo = iBpmn.getSelectedShapeInfo();
-  state.name = shapeInfo.name;
-  state.id = shapeInfo.id;
-  return state;
+  baseInfo.name = shapeInfo.name;
+  baseInfo.id = shapeInfo.id;
+  return baseInfo;
 }
 
 function userTaskParameter2State(iBpmn = new IBpmn()) {
-  const state = {};
+  const userTask = {};
   const shapeInfo = iBpmn.getSelectedShapeInfo();
-  state.assignee = shapeInfo["assignee"];
-  state.candidateUsers = shapeInfo["candidateUsers"];
-  state.candidateGroups = shapeInfo["candidateGroups"];
-  return state;
+  userTask.assignee = shapeInfo["assignee"];
+  userTask.candidateUsers = shapeInfo["candidateUsers"];
+  userTask.candidateGroups = shapeInfo["candidateGroups"];
+  return userTask;
+}
+
+function actionsParameter2State(iBpmn = new IBpmn()) {
+  const shapeInfo = iBpmn.getSelectedShapeInfo();
+  return [...(shapeInfo["actions"] ?? [])];
 }
 
 function selectionChangedListener(_, commit, iBpmn) {
@@ -121,7 +126,9 @@ function selectionChangedListener(_, commit, iBpmn) {
 
   const userTask = userTaskParameter2State(iBpmn);
 
-  commit("refreshState", { baseInfo, listeners, inputParameters, outputParameters, userTask });
+  const actions = actionsParameter2State(iBpmn);
+
+  commit("refreshState", { baseInfo, listeners, inputParameters, outputParameters, userTask, actions });
 }
 
 export default selectionChangedListener;

@@ -10,6 +10,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
+import { deepEquals } from '../../../utils/object'
 
 export default {
   name: 'ActionButtonPanel',
@@ -20,9 +21,16 @@ export default {
   },
   computed: {
     ...mapState('bpmn/config', ['actionButtons']),
+    ...mapState('bpmn/panel', ['actions']),
   },
   watch: {
+    actions(value) {
+      this.btnList = [...value]
+    },
     btnList(value) {
+      if (deepEquals(value, this.actions)) {
+        return
+      }
       this.updateActions({ newActions: [...value] })
     },
   },
