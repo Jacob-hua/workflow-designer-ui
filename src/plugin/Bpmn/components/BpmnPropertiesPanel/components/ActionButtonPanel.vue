@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'ActionButtonPanel',
@@ -20,6 +20,14 @@ export default {
   },
   computed: {
     ...mapState('bpmn/config', ['actionButtons']),
+  },
+  watch: {
+    btnList(value) {
+      this.updateActions({ newActions: [...value] })
+    },
+  },
+  methods: {
+    ...mapMutations('bpmn/panel', ['updateActions']),
   },
 }
 </script>

@@ -1,11 +1,11 @@
 import IBpmn from "../../../iBpmn";
 
-function userTaskEffect({ userTask }, iBpmn = new IBpmn()) {
+function actionsEffect({ actions }, iBpmn = new IBpmn()) {
   const { namespace, type } = iBpmn.getSelectedShapeType();
   if (namespace !== "bpmn" || type !== "UserTask") {
     return;
   }
-  iBpmn.updateSelectedShapeProperties(userTask);
+  iBpmn.updateSelectedShapeProperties({ actions });
 }
 
-export default userTaskEffect;
+export default actionsEffect;

@@ -22,6 +22,7 @@ const state = {
     candidateUsers: "",
     candidateGroups: "",
   },
+  actions: [],
 };
 
 const getters = {
@@ -151,6 +152,12 @@ const mutations = {
   updateUserTask(state, { newUserTask }) {
     state.userTask = deepCopy(newUserTask);
   },
+  updateActions(state, { newActions }) {
+    if (!Array.isArray(newActions) || newActions.length < 1) {
+      return;
+    }
+    state.actions = [...newActions];
+  },
 };
 
 const mutationsEffect = {
@@ -168,6 +175,7 @@ const mutationsEffect = {
   addOutputParameter: panelEffect.inputOutputParameterEffect,
   updateOutputParameter: panelEffect.inputOutputParameterEffect,
   removeOutputParameter: panelEffect.inputOutputParameterEffect,
+  updateActions: panelEffect.actionsEffect,
 };
 
 const eventsListener = {

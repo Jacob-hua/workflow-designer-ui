@@ -100,7 +100,17 @@ class IBpmn {
   }
 
   getSelectedShapeType() {
-    return this.getSelectedShapeInfo().$type;
+    if (this.getSelectedShapeInfo().$type) {
+      const [namespace, type] = this.getSelectedShapeInfo().$type.split(":");
+      return {
+        namespace,
+        type,
+      };
+    }
+    return {
+      namespace: null,
+      type: null,
+    };
   }
 
   getSelectedShapeInfoByDefaultLocalName(localName) {
