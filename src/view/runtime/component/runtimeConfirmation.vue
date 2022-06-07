@@ -5,7 +5,7 @@
         <div class="title">{{ dialogValue('message') }}</div>
         <el-form ref="form" :model="form" label-width="40px">
           <el-form-item label="账号">
-            <el-input v-model="form.username" @keyup.native.enter="handleOK"></el-input>
+            <el-input v-model="form.username" @keyup.native.enter="handleOK" :disabled="true"></el-input>
           </el-form-item>
           <el-form-item label="密码">
             <el-input v-model="form.password" show-password @keyup.native.enter="handleOK"></el-input>
@@ -86,7 +86,7 @@
         selectData: null,
         selectValue: null,
         form: {
-          username: '',
+          username: this.$store.state.userInfo.name,
           password: ''
         },
         messageDiolog: {

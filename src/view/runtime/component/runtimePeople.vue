@@ -45,7 +45,7 @@
         <span>指定人员</span>
       </div>
       <div class="people-footer">
-        <div class="peopleList-title">运维一班</div>
+        <!-- <div class="peopleList-title">运维一班</div> -->
         <div class="peopleList">
           <div class="peopleList-item" v-for="(item, index) in multipleSelection">{{ item.userId }} <i class="el-icon-remove-outline" @click="deletePeople(item, index)"></i> </div>
         </div>
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-  import { getPersonUser, getThreeSystemOrganize, getModifyCandidate, getCirculation, getModifyProcessUser } from '@/api/unit/api.js'
+  import { getPersonUser, getThreeSystemOrganize, getModifyCandidate, getCirculation, postModifyProcessUser } from '@/api/unit/api.js'
   export default {
     props:{
       taskId: {
@@ -118,6 +118,7 @@
         this.multipleSelection = val;
       },
       toggleRowSelection() {
+        console.log(this.detailSelection)
          this.detailSelection.forEach((item) => {
            this.$refs.multipleTable.toggleRowSelection(item)
          })
@@ -279,7 +280,7 @@
               dataListsignature.push(item.userId)
             })
             let str2 = dataListsignature.join(',')
-            getModifyProcessUser({
+            postModifyProcessUser({
               processInstanceId: this.processInstanceId,
               taskKey: this.taskKey,
               userList: str2

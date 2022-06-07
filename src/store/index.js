@@ -1,7 +1,7 @@
 const state = {
   optionsAscription: [
     {
-      value: "beiqijia",
+      value: "XM_aff0659724a54c119ac857d4e560b47b",
       label: "北七家人才基地",
     },
     {

@@ -21,7 +21,8 @@
           </div>
         </div>
         <div class="form-Main">
-            <formbpmn ref="formbpmn" v-if="dialogVisible2"></formbpmn>
+<!--            <formbpmn ref="formbpmn" v-if="dialogVisible2"></formbpmn>-->
+          <form-designer ref="formDesigner"></form-designer>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -71,16 +72,15 @@
           this.$message.error('表单名称的长度必须大于两个字符')
           return
         }
-        
-        const xml  = this.$refs.formbpmn.importData();
-        
-        if (xml.components && xml.components.length === 0) {
+
+
+        let formDatas = { list : this.$refs.formDesigner.designList, config: this.$refs.formDesigner.formConfig}
+        if ( formDatas.list.length === 0) {
           this.$message.error('不允许提交空表单')
           return
         }
-        
-        xml.id = 'form_' + Date.parse(new Date())
-        var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
+        const id = 'form_' + Date.parse(new Date())
+        var file1 = new File([JSON.stringify(formDatas)], 'form.json', {type: 'text/json'});
         let formData = new FormData()
         switch (this.dataType){
           case 'enabled':
@@ -98,9 +98,10 @@
             break;
         }
         formData.append('name', this.postData.name)
-        formData.append('docName', this.postData.name +'.form')
+        formData.append('docName', this.postData.name +'.json')
+        formData.append('docType', 'json')
         formData.append('ascription', 'public')
-        formData.append('code', xml.id)
+        formData.append('code', id)
         formData.append('business', '')
         formData.append('status', 'enabled')
         formData.append('createBy', this.$store.state.userInfo.name)
@@ -114,9 +115,8 @@
         })
       },
       addDraftForm() {
-        const xml  = this.$refs.formbpmn.importData();
-        xml.id = 'form_' + Date.parse(new Date())
-        var file1 = new File([JSON.stringify(xml)], 'test.form', {type: 'text/xml'});
+         const id = 'form_' + Date.parse(new Date())
+        const formFile= new File([this.$refs.formDesigner.getFormData()], 'form.json', {type: 'text/json'});
         let formData = new FormData()
         switch (this.dataType){
           case 'enabled':
@@ -134,15 +134,16 @@
             break;
         }
         formData.append('name', this.postData.name)
-        formData.append('docName', this.postData.name +'.form')
+        formData.append('docName', this.postData.name +'.json')
+        formData.append('docType', 'json')
         formData.append('ascription', 'public')
-        formData.append('code', xml.id)
+        formData.append('code', id)
         formData.append('business', '')
         formData.append('status', 'drafted')
         formData.append('createBy', this.$store.state.userInfo.name)
         formData.append('createName', 'admin')
         formData.append('tenantId', this.$store.state.tenantId)
-        formData.append('file', file1)
+        formData.append('file', formFile)
         postFormDesignService(formData).then((res) => {
           this.$message.success('保存草稿成功')
           this.$emit('addSuccess', 'drafted')

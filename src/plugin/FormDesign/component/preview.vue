@@ -11,7 +11,7 @@
           :validate-on-rule-change="false"
           label-width="formConf.labelWidth + 'px'"
         >
-          <template v-for="(element,index) in list"  >
+          <template v-for="(element,index) in this.itemList"  >
             <!-- <el-input v-model="element.id" placeholder=""></el-input> -->
              <preview-row-item 
               v-if="element.compType === 'row'"
@@ -42,12 +42,12 @@
           </template>
         </el-form>
     </el-row>
-    <el-divider></el-divider>
-    <div style="text-align: center;">
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handlerSubForm">提交</el-button>
-      </span>
-    </div>
+<!--    <el-divider></el-divider>-->
+<!--    <div style="text-align: center;">-->
+<!--      <span slot="footer" class="dialog-footer">-->
+<!--        <el-button type="primary" @click="handlerSubForm">提交</el-button>-->
+<!--      </span>-->
+<!--    </div>-->
   </div>
 </template>
 <script>
@@ -67,7 +67,6 @@ export default {
   },
   data(){
     return{
-      list: this.itemList,
       form:{},
       rules:{},
       currentIndex:-1

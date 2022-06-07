@@ -71,7 +71,7 @@
       </div>
     </div>
     <PublicFormDiolog ref="PublicFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></PublicFormDiolog>
-    <detailsDiolog ref="detailsDiolog" @editForm="editForm" :status="activeName" ascription="public"></detailsDiolog>
+    <detailsDiolog ref="detailsDiolog" :formDatas="formData" @editForm="editForm" :status="activeName" ascription="public"></detailsDiolog>
   </div>
 </template>
 
@@ -85,6 +85,7 @@
   export default {
     data() {
       return {
+        formData: {},
         valueDate: [format(new Date(), 'yyyy-MM-1'), format(new Date(), 'yyyy-MM-dd')],
         input: '',
         activeName: 'enabled',
@@ -173,28 +174,15 @@
       },
       
       addForm(item) {
-        this.$refs.PublicFormDiolog.dialogVisible2 = true
-        this.$nextTick(() => {
-          if (item) {
-            this.dataType = this.activeName + '-edit'
+        if (item) {
+          let content = JSON.parse(item.content)
+          this.$nextTick(() => {
+            this.$refs.PublicFormDiolog.$refs.formDesigner.designList =  content.list
+            this.$refs.PublicFormDiolog.$refs.formDesigner.formConfig = content.config
             this.$refs.PublicFormDiolog.postData = item
-            this.$refs.PublicFormDiolog.$refs.formbpmn.schema = JSON.parse(item.content)
-          } else{
-            this.dataType = this.activeName
-            this.$refs.PublicFormDiolog.postData = {
-              name: ''
-            }
-            this.$refs.PublicFormDiolog.$refs.formbpmn.schema = {
-              schemaVersion: 1,
-              type: "default",
-              exporter: {
-                name: "form-js",
-                version: "0.7.0"
-              }
-            }
-          }
-          this.$refs.PublicFormDiolog.$refs.formbpmn.init()
-        })
+          })
+        }
+        this.$refs.PublicFormDiolog.dialogVisible2 = true
       },
       detailsDiolog(item) {
         this.$refs.detailsDiolog.dialogVisible2 = true
@@ -206,7 +194,8 @@
           business: '',
           createBy: this.$store.state.userInfo.name
         }).then((res) => {
-          this.$refs.detailsDiolog.formData = res.result
+          this.$refs.detailsDiolog.previewVisible = true
+          this.formData = res.result
           this.$nextTick(() => {
             let arr = []
             res.result.versions.forEach((item, index) => {
@@ -217,8 +206,8 @@
             })
             this.$refs.detailsDiolog.options = arr
             this.$refs.detailsDiolog.value = res.result.childIds[0]
-            this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
-            this.$refs.detailsDiolog.$refs.formbpmn.init()
+            // this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
+            // this.$refs.detailsDiolog.$refs.formbpmn.init()
           })
         })
       },
