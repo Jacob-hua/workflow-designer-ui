@@ -1,4 +1,13 @@
 const state = {
+  panelItems: {
+    baseInfoPanel: ["StartEvent", "EndEvent", "UserTask", "ExclusiveGateway"],
+    executeListenerPanel: ["StartEvent", "EndEvent", "UserTask", "ExclusiveGateway"],
+    signalMessagePanel: [],
+    inputOutpuPanel: ["StartEvent", "EndEvent", "UserTask"],
+    taskPanel: ["UserTask", "Task"],
+    multiInstancePanel: ["UserTask", "Task"],
+    actionButtonPanel: ["UserTask", "Task"],
+  },
   listenerTypeOptions: [
     {
       label: "Java 类",
