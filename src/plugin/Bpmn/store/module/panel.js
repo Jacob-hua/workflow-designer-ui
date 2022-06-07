@@ -3,7 +3,7 @@ import { panel as panelEffect } from "../effect";
 import { panel as panelListener } from "../listener";
 
 const state = {
-  selectedType: {},
+  shapeType: {},
   baseInfo: {},
   messages: [],
   signals: [],
@@ -153,6 +153,9 @@ const mutations = {
   updateUserTask(state, { newUserTask }) {
     state.userTask = deepCopy(newUserTask);
   },
+  updateMultiInstance(state, { newMultiInstance }) {
+    state.multiInstance = deepCopy(newMultiInstance);
+  },
   updateActions(state, { newActions }) {
     if (!Array.isArray(newActions) || newActions.length < 1) {
       return;
@@ -182,6 +185,7 @@ const mutationsEffect = {
 const eventsListener = {
   "selection.changed": panelListener.onSelectionChanged,
   "shape.changed": panelListener.onShapeChanged,
+  "shape.move.move": panelListener.onShapeMove,
 };
 
 const actions = {};

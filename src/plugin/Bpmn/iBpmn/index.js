@@ -142,6 +142,24 @@ class IBpmn {
     return;
   }
 
+  getShapeInfo(element) {
+    return element.businessObject ?? {};
+  }
+
+  getShapeType(element) {
+    if (this.getShapeInfo(element).$type) {
+      const [namespace, type] = this.getShapeInfo(element).$type.split(":");
+      return {
+        namespace,
+        type,
+      };
+    }
+    return {
+      namespace: null,
+      type: null,
+    };
+  }
+
   updateSelectedShapeExtensions(extensions = {}) {
     if (!this.getSelectedShape()) {
       return;

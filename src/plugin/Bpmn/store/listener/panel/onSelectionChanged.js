@@ -113,7 +113,7 @@ function actionsParameter2State(iBpmn = new IBpmn()) {
   return [...(shapeInfo["actions"] ?? [])];
 }
 
-function selectedType2State(iBpmn = new IBpmn()) {
+function shapeType2State(iBpmn = new IBpmn()) {
   return { ...(iBpmn.getSelectedShapeType() ?? {}) };
 }
 
@@ -132,9 +132,9 @@ function selectionChangedListener(_, commit, iBpmn) {
 
   const actions = actionsParameter2State(iBpmn);
 
-  const selectedType = selectedType2State(iBpmn);
+  const shapeType = shapeType2State(iBpmn);
 
-  commit("refreshState", { selectedType, baseInfo, listeners, inputParameters, outputParameters, userTask, actions });
+  commit("refreshState", { shapeType, baseInfo, listeners, inputParameters, outputParameters, userTask, actions });
 }
 
 export default selectionChangedListener;

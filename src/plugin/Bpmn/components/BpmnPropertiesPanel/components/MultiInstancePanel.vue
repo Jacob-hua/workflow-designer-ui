@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { deepCopy } from '../../../utils/object'
+import { mapMutations, mapState } from 'vuex'
+import { deepCopy, deepEquals } from '../../../utils/object'
 
 export default {
   name: 'MultiInstancePanel',
@@ -67,6 +67,19 @@ export default {
     multiInstance(value) {
       this.instanceForm = { ...this.instanceForm, ...deepCopy(value) }
     },
+    instanceForm: {
+      deep: true,
+      immediate: true,
+      handler(value) {
+        if (deepEquals(value, this.multiInstance)) {
+          return
+        }
+        this.updateMultiInstance({ newMultiInstance: deepCopy(value) })
+      },
+    },
+  },
+  methods: {
+    ...mapMutations('bpmn/panel', ['updateMultiInstance']),
   },
 }
 </script>

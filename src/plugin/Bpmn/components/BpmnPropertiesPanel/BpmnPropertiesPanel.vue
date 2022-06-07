@@ -62,7 +62,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn/panel', ['selectedType']),
+    ...mapState('bpmn/panel', ['shapeType']),
     panels() {
       const elementPanels = {
         StartEvent: [
@@ -88,7 +88,7 @@ export default {
           this.executeListenerPanelInfo,
         ],
       }
-      return elementPanels[this.selectedType.type] ?? [this.baseInfoPanelInfo]
+      return elementPanels[this.shapeType.type] ?? [this.baseInfoPanelInfo]
     },
   },
 }
