@@ -49,9 +49,13 @@ function inputOutputParameter2State(iBpmn = new IBpmn()) {
   const inputOutputParameter = inputOutputParameters[0] ?? {};
   if (inputOutputParameter["outputParameters"]) {
     state.outputParameters = inputOutputParameter.outputParameters.map(parameter2State);
+  } else {
+    state.outputParameters = [];
   }
   if (inputOutputParameter["inputParameters"]) {
     state.inputParameters = inputOutputParameter.inputParameters.map(parameter2State);
+  } else {
+    state.inputParameters = [];
   }
   return state;
 
@@ -99,7 +103,11 @@ function baseInfoParameter2State(iBpmn = new IBpmn()) {
 }
 
 function userTaskParameter2State(iBpmn = new IBpmn()) {
-  const userTask = {};
+  const userTask = {
+    assignee: "",
+    candidateUsers: "",
+    candidateGroups: "",
+  };
   const shapeInfo = iBpmn.getSelectedShapeInfo();
   userTask.assignee = shapeInfo["assignee"];
   userTask.candidateUsers = shapeInfo["candidateUsers"];
@@ -117,7 +125,13 @@ function shapeType2State(iBpmn = new IBpmn()) {
 }
 
 function multiInstance2State(iBpmn = new IBpmn()) {
-  const multiInstance = {};
+  const multiInstance = {
+    loopCharacteristics: "",
+    loopCardinality: "",
+    collection: "",
+    elementVariable: "",
+    completionCondition: "",
+  };
   const shapeInfo = iBpmn.getSelectedShapeInfo();
   if (!shapeInfo.loopCharacteristics) {
     return multiInstance;
