@@ -143,6 +143,7 @@ const mutations = {
 
 const actions = {
   actionRequestUserGroup({ commit }, actionFunc) {
+    // TODO: 此处需要考虑如何在外部控制数据源
     Promise.resolve(actionFunc).then((res) => {
       commit("bpmn/config/updateUserGroupOptions", { userGroupOptions: res });
     });
