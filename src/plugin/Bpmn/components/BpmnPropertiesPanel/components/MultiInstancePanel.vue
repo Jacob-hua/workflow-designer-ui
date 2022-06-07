@@ -38,19 +38,17 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import { deepCopy, deepEquals } from '../../../utils/object'
+import {
+  deepCopy,
+  deepEquals,
+  emptyPropertiesObject,
+} from '../../../utils/object'
 
 export default {
   name: 'MultiInstancePanel',
   data() {
     return {
-      instanceForm: {
-        loopCharacteristics: '',
-        loopCardinality: '',
-        collection: '',
-        elementVariable: '',
-        completionCondition: '',
-      },
+      instanceForm: {},
     }
   },
   computed: {
@@ -71,12 +69,18 @@ export default {
       deep: true,
       immediate: true,
       handler(value) {
-        if (deepEquals(value, this.multiInstance)) {
+        if (
+          emptyPropertiesObject(value) ||
+          deepEquals(value, this.multiInstance)
+        ) {
           return
         }
         this.updateMultiInstance({ newMultiInstance: deepCopy(value) })
       },
     },
+  },
+  mounted() {
+    this.instanceForm = { ...deepCopy(this.multiInstance) }
   },
   methods: {
     ...mapMutations('bpmn/panel', ['updateMultiInstance']),

@@ -40,6 +40,9 @@ export default {
       },
     },
   },
+  mounted() {
+    this.baseInfoForm = deepCopy(this.baseInfo)
+  },
   methods: {
     ...mapMutations('bpmn/panel', ['updateBaseInfo']),
   },
