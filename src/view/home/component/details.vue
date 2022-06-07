@@ -34,7 +34,7 @@
                 <span>部署时间:</span>
                 <span>{{ item.createTime }}</span>
               </div>
-              <div class="item-item" v-role="{ id: 'HomeStart', type: 'button', business: business }">
+              <div class="item-item">
                 <span>状态:</span>
                 <span>{{ item.status === 'activation' ? '已激活' : '未激活' }}</span>
               </div>
@@ -45,7 +45,7 @@
     </el-dialog>
     <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="70%" custom-class="dialogVisible1">
       <div>
-        <ProcessInformation type="details2" ref="details2" v-if="dialogVisible2" @selection="selection" :seeType="seeType"></ProcessInformation>
+        <ProcessInformation type="details2" ref="details2" v-if="dialogVisible2" @selection="selection" :seeType="seeType" :business="business"></ProcessInformation>
       </div>
       <div class="bpmn-configure">
         <div class="bpmn-configure-basic">
@@ -70,7 +70,7 @@
       </div>
       <span slot="footer" class="dialog-footer" v-if="seeType === 'delete'">
         <!-- <el-button @click="dialogVisible2 = false">回收</el-button> -->
-        <el-button @click="deleteDeployment()">删除</el-button>
+        <el-button @click="deleteDeployment()" v-role="{ id: 'HomeDelete', type: 'button', business: business }">删除</el-button>
       </span>
     </el-dialog>
   </div>
