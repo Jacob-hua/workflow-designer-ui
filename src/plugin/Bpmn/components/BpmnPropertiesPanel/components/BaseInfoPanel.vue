@@ -27,15 +27,15 @@ export default {
   },
   watch: {
     baseInfo(value) {
-      if (deepEquals(value, this.baseInfoForm)) {
-        return
-      }
       this.baseInfoForm = { ...value }
     },
     baseInfoForm: {
       deep: true,
       immediate: true,
       handler(value) {
+        if (deepEquals(value, this.baseInfo)) {
+        return
+      }
         this.updateBaseInfo({ newBaseInfo: deepCopy(value) })
       },
     },
