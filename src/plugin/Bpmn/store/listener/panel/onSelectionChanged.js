@@ -1,5 +1,4 @@
 import IBpmn from "../../../iBpmn";
-import { deepEquals } from "../../../utils/object";
 
 function listenersParameter2State(iBpmn = new IBpmn()) {
   const listeners = iBpmn.getSelectedShapeInfoByDefaultLocalName("ExecutionListener") ?? [];
@@ -117,9 +116,29 @@ function shapeType2State(iBpmn = new IBpmn()) {
   return { ...(iBpmn.getSelectedShapeType() ?? {}) };
 }
 
+function multiInstance2State(iBpmn = new IBpmn()) {
+  const multiInstance = {};
+  const shapeInfo = iBpmn.getSelectedShapeInfo();
+  if (!shapeInfo.loopCharacteristics) {
+    return multiInstance;
+  }
+  const loopCharacteristics = shapeInfo.loopCharacteristics;
+  if (loopCharacteristics.isSequential) {
+    multiInstance.loopCharacteristics = "SequentialMultiInstance";
+  } else {
+    multiInstance.loopCharacteristics = "ParallelMultiInstance";
+  }
+  multiInstance.loopCardinality = loopCharacteristics.loopCardinality?.body;
+  multiInstance.completionCondition = loopCharacteristics.completionCondition?.body;
+  multiInstance.collection = loopCharacteristics.collection;
+  multiInstance.elementVariable = loopCharacteristics.elementVariable;
+  return multiInstance;
+}
+
 function selectionChangedListener(_, commit, iBpmn) {
   if (!iBpmn.getSelectedShape()) {
     commit("initState");
+    return;
   }
 
   const baseInfo = baseInfoParameter2State(iBpmn);
@@ -134,7 +153,18 @@ function selectionChangedListener(_, commit, iBpmn) {
 
   const shapeType = shapeType2State(iBpmn);
 
-  commit("refreshState", { shapeType, baseInfo, listeners, inputParameters, outputParameters, userTask, actions });
+  const multiInstance = multiInstance2State(iBpmn);
+
+  commit("refreshState", {
+    shapeType,
+    baseInfo,
+    listeners,
+    inputParameters,
+    outputParameters,
+    userTask,
+    actions,
+    multiInstance,
+  });
 }
 
 export default selectionChangedListener;

@@ -34,8 +34,8 @@ export default {
       immediate: true,
       handler(value) {
         if (deepEquals(value, this.baseInfo)) {
-        return
-      }
+          return
+        }
         this.updateBaseInfo({ newBaseInfo: deepCopy(value) })
       },
     },
