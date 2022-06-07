@@ -17,11 +17,11 @@
     </div>
     <div v-if="itemconFlag">
       <StartItemCon
+          :businessData="businessData"
           :footFlag = "footFlag"
           ref="StartItemCon"
       />
     </div>
-
   </div>
 </template>
 
@@ -43,15 +43,18 @@ export default {
       businessList: [],
       footFlag: false,
       StartFlag: false,
-      currentId: null
+      currentId: null,
+      businessData: {},
+      business: ''
     }
   },
   mounted() {
     this.getBusinessConfigBasicList()
   },
   methods: {
-    showSartDailog(id) {
+    showSartDailog(id, item) {
       this.footFlag = true
+      this.businessData = item
       let _this = this
         getBusinessConfigWithTree(id, +_this.$store.state.tenantId).then(res => {
           this.itemconFlag = true
@@ -64,9 +67,10 @@ export default {
 
         })
     },
-    lookDetail(id) {
+    lookDetail(id, item) {
       this.footFlag = false
       this.itemconFlag = true
+      this.businessData = item
       getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
 
         this.$refs.StartItemCon.dialogVisible = true

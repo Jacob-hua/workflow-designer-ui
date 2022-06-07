@@ -6,11 +6,18 @@
         <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="changeActiveName('second')">业务配置</span>
         <span class="home-main-tab-item" :class="activeName === 'third' ? 'active' : ''" @click="changeActiveName('third')">启动项配置</span>
       </div>
+      <div class="projectHeader" v-if="activeName === 'first'">
+        <el-select v-model="business" placeholder="请选择">
+          <el-option v-for="item in $store.state.optionsAscription" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
+      <br>
       <el-button type="primary" class="buttonTab" v-if="activeName === 'first'" @click="showDiolog" v-role="{ id: 'VisitCallAdd', type: 'button', business: business }">新增第三方接口</el-button>
       <div class="home-table">
-        <visitCall v-if="activeName === 'first' && permissionRole" ref="first" @editTable="editTable()" @deleteTable="deleteTable()"></visitCall>
+        <visitCall v-if="activeName === 'first' && permissionRole" ref="first" @editTable="editTable()" @deleteTable="deleteTable()" :business="business"></visitCall>
         <businessCall v-if="activeName === 'second' && permissionRole" ref="second"></businessCall>
-        <StartItemConfig v-if="activeName === 'third' && permissionRole" ref="third"  />
+        <StartItemConfig v-if="activeName === 'third' && permissionRole" ref="third" />
         <permission v-if="!permissionRole"></permission>
       </div>
     </div>
@@ -27,7 +34,7 @@
     data() {
       return {
         activeName: 'first',
-        business: '',
+        business: 'XM_aff0659724a54c119ac857d4e560b47b',
         activeNameMapping: {
           first: 'VisitCall',
           second: 'BusinessCall',
@@ -137,5 +144,14 @@
   .active {
     background-color: #030303;
     color: white;
+  }
+  
+  .projectHeader {
+    display: inline-block;
+    margin: 15px 0px 15px 0px;
+  }
+  
+  .projectHeader /deep/ .el-input__inner {
+    border: 1px solid black;
   }
 </style>

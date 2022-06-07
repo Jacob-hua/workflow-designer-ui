@@ -28,6 +28,12 @@
 <script>
 export default {
   name: "Guide",
+  props:{
+    business: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       dialogVisible: false,

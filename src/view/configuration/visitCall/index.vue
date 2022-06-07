@@ -38,10 +38,12 @@
     </div>
     <Guide
         ref="guide"
+        :business="business"
         @showAddDialog="showAddDialog"
     />
     <AddOrEidtDailog
         ref="AddOrEidtDailog"
+        :business="business"
         @showAddOrEidtDailog="showAddOrEidtDailog"
         v-if="AddOrEidtDailogFlag"
         :guideForm="guideForm"
@@ -71,7 +73,12 @@ export default {
     AddOrEidtDailog,
     Detail
   },
-  props: {},
+  props: {
+    business: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       currentRow: [],
@@ -80,7 +87,6 @@ export default {
       AddOrEidtDailogFlag: false,
       dateRang: ["2022-01-01","2022-12-31"],
       radio: '1',
-      business: '',
       tableData: [
         {
           id: 1,
@@ -209,7 +215,6 @@ export default {
       })
     },
     showAddOrEidtDailog(row, code){
-      console.log('222222222222',row)
       if (code === 'pre') {
         this.$refs.guide.dialogVisible = true
       }  else if(code === 'detail') {
@@ -285,7 +290,8 @@ export default {
     async GetGlobalList(pageInfo) {
       let data =  await GetGlobalList({
         ...pageInfo,
-        "tenantId": this.$store.state.tenantId // 租户id
+        "tenantId": this.$store.state.tenantId ,// 租户id
+        "ascription": this.business
       })
       if (data.result) {
         this.tableData =  data.result.dataList

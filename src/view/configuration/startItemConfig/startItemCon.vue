@@ -134,6 +134,9 @@ export default {
     footFlag: {
       type:Boolean,
       default: true
+    },
+    businessData: {
+      type:Object,
     }
   },
   data() {
@@ -164,8 +167,10 @@ export default {
   methods: {
    radioChange(val) {
      if (val === FormTypeEnum.FORM_TYPE_SELECT) {
-       getThirdInterfaceList(this.$store.state.tenantId).then(res => {
-         console.log(res)
+       getThirdInterfaceList({
+         tenantId: this.$store.state.tenantId,
+         ascription: this.businessData.code
+       }).then(res => {
          this.optionsList = res.result
        })
      }

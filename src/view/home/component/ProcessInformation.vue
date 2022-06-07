@@ -67,7 +67,7 @@
     </div>
     <div v-if="type == 'details2'">
       <span class="bnpmTitle">巡视工作流</span>
-      <span class="bnpmSwitch" v-if="seeType === 'delete'">
+      <span class="bnpmSwitch" v-if="seeType === 'delete'" v-role="{ id: 'HomeStart', type: 'button', business: business }">
         <el-switch v-model="switchValue" active-color="#13ce66" active-text="激活">
         </el-switch>
       </span>
@@ -100,6 +100,10 @@
       seeType: {
         type: String,
         default: 'delete'
+      },
+      business: {
+        type: String,
+        default: ''
       },
       value: String, // xml 字符串
       processId: String,
