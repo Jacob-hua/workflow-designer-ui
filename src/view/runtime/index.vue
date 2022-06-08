@@ -2,16 +2,26 @@
   <div class="runtime">
     <div class="runtime-filter">
       <div class="projectSelect marginRight20">
-        <el-select v-model="getData.projectCode" placeholder="请选择" @change="getAllApi()">
-          <el-option v-for="item in $store.state.optionsAscription" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
+<!--        <el-select v-model="getData.projectCode" placeholder="请选择" @change="getAllApi()">-->
+<!--          <el-option v-for="item in $store.state.optionsAscription" :key="item.value" :label="item.label" :value="item.value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+        <el-select  @change="projectChange" v-model="getData.projectCode">
+          <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
         </el-select>
       </div>
       <div class="businessSelect marginRight20">
-        <el-select v-model="getData.businessCode" placeholder="请选择" @change="getAllApi()">
-          <el-option v-for="item in this.$store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
+<!--        <el-select v-model="getData.businessCode" placeholder="请选择" @change="getAllApi()">-->
+<!--          <el-option v-for="item in this.$store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+        <el-cascader
+            style="width: 400px; margin-right: 10px;"
+            v-model="getData.businessCode"
+            :options="systemOption"
+            :props = 'sysProps'
+            @change="getAllApi()"
+            ></el-cascader>
       </div>
       <!-- <div class="marginRight20">
         <el-select v-model="value" placeholder="请选择">
@@ -134,9 +144,16 @@
   import {
     format
   } from '@/assets/js/unit.js'
+  import {getProjectList} from "@/api/globalConfig";
   export default {
     data() {
       return {
+        sysProps:{
+          label: 'name',
+          value: 'code'
+        },
+        projectOption: [],
+        systemOption: [],
         numberList: {
           executionCount: 0,
           completeCount: 0,
@@ -185,6 +202,39 @@
       }
     },
     methods: {
+      deleteEmptyChildren(arr) {
+        for (let i = 0; i < arr.length; i++) {
+          const arrElement = arr[i];
+          if (!arrElement.children.length) {
+            delete arrElement.children
+            continue
+          }
+          if (arrElement.children) {
+            this.deleteEmptyChildren(arrElement.children)
+          }
+        }
+
+      },
+      projectChange(val) {
+        this.getAllApi()
+        this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
+        this.deleteEmptyChildren(this.systemOption)
+        console.log(this.systemOption)
+        // this.systemValue = this.systemOption[0]?.id  ??  ''
+      },
+      async getProjectList(){
+        let res = await  getProjectList({
+          count: -1,
+          projectCode: '',
+          tenantId: this.$store.state.tenantId,
+          type: ''
+        })
+        this.projectOption = res?.result ?? []
+        this.getData.projectCode = this.projectOption[0].code
+        this.systemOption = this.projectOption[0].children
+        this.deleteEmptyChildren(this.systemOption)
+        this.getData.businessCode =  this.systemOption[0].code
+      },
       changeGroup() {
         this.getData.page = 1
         this.getData.limit = 10
@@ -193,7 +243,7 @@
       getManyData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
-        this.getData.businessCode = this.getData.businessCode
+        this.getData.businessCode = this.getData.businessCode.at(-1)
         this.getData.projectCode = this.getData.projectCode
         getNewTaskList(this.getData).then((res) => {
          if (res) {
@@ -220,7 +270,7 @@
       getAmount() {
         let obj = {
           assignee: this.$store.state.userInfo.name,
-          businessCode: this.getData.businessCode,
+          businessCode: this.getData.businessCode.at(-1),
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
           projectCode: this.getData.projectCode,
@@ -327,7 +377,7 @@
         getTaskCountStatistic({
           ascription: this.getData.projectCode,
           assignee: this.$store.state.userInfo.name,
-          business: this.getData.businessCode,
+          business: this.getData.businessCode.at(-1),
           endTime: this.valueDate[1],
           startTime: this.valueDate[0],
           tenantId: this.$store.state.tenantId
@@ -351,6 +401,7 @@
     },
     mounted() {
       // this.getDataNumber()
+      this.getProjectList()
     },
     components: {
       runtimeAdd,
@@ -370,6 +421,14 @@
   }
 
   .runtime-filter /deep/ .el-select .el-input__inner {
+    border: 1px solid #000;
+    height: 50px;
+    line-height: 50px;
+    width: 320px;
+    font-size: 16px;
+    color: #000000;
+  }
+  .runtime-filter /deep/ .el-cascader .el-input__inner {
     border: 1px solid #000;
     height: 50px;
     line-height: 50px;

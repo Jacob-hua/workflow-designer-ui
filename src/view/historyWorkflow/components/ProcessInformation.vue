@@ -17,14 +17,6 @@
           <el-input v-model="postData.processInstanceName" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
-<!--      <div class="title-item">-->
-<!--        <span class="title-item-label marginLeft40">-->
-<!--          流程版本-->
-<!--        </span>-->
-<!--        <div class="title-item-main">-->
-<!--          <el-input v-model="postData.version" placeholder="" :disabled="true"></el-input>-->
-<!--        </div>-->
-<!--      </div>-->
       <div class="title-item">
         <span class="title-item-label marginLeft40">
           创建时间
