@@ -95,49 +95,22 @@ class IBpmn {
     return null;
   }
 
-  updateSelectedShapeExtensions(extensions = {}) {
-    if (!this.getSelectedShape()) {
-      return;
-    }
-    this.updateShapeExtensions(this.getSelectedShape(), extensions);
-  }
-
-  updateShapeExtensions(shape, extensions) {
-    const extensionElements = this.#getModule("moddle").create("bpmn:ExtensionElements", {
-      values: extensions,
-    });
-    this.updateShapeProperties(shape, { extensionElements });
-  }
-
-  updateSelectedShapeProperties(payload = {}) {
-    if (!this.getSelectedShape()) {
-      return;
-    }
-    this.updateShapeProperties(this.getSelectedShape(), payload);
-  }
-
-  updateShapeProperties(shape, payload = {}) {
-    this.modelingUpdateProperties(shape, payload);
-  }
-
-  paletteVisible(visable) {
-    this.#getModule("palette")._container.style = visable ? "" : "display: none";
-  }
-
-  createBpmnModdleInstance(localName, attrs) {
-    return this.createModdleInstance(`bpmn:${localName}`, attrs);
-  }
-
-  createDefaultModdleInstance(localName, attrs) {
-    return this.createModdleInstance(`${this.type}:${localName}`, attrs);
-  }
-
-  createModdleInstance(descriptor, attrs) {
-    return this.#getModule("moddle").create(descriptor, attrs);
-  }
-
   getSelectedShapeInfo() {
     return this.getSelectedShape()?.businessObject ?? {};
+  }
+
+  getSelectedShapeType() {
+    if (this.getSelectedShapeInfo().$type) {
+      const [namespace, type] = this.getSelectedShapeInfo().$type.split(":");
+      return {
+        namespace,
+        type,
+      };
+    }
+    return {
+      namespace: null,
+      type: null,
+    };
   }
 
   getSelectedShapeInfoByDefaultLocalName(localName) {
@@ -167,6 +140,85 @@ class IBpmn {
       return extensionElements.values.filter(({ $type }) => $type === type);
     }
     return;
+  }
+
+  getShapeInfo(element) {
+    return element.businessObject ?? {};
+  }
+
+  getShapeType(element) {
+    if (this.getShapeInfo(element).$type) {
+      const [namespace, type] = this.getShapeInfo(element).$type.split(":");
+      return {
+        namespace,
+        type,
+      };
+    }
+    return {
+      namespace: null,
+      type: null,
+    };
+  }
+
+  updateSelectedShapeExtensions(extensions = {}) {
+    if (!this.getSelectedShape()) {
+      return;
+    }
+    this.updateShapeExtensions(this.getSelectedShape(), extensions);
+  }
+
+  updateShapeExtensions(shape, extensions) {
+    const extensionElements = this.#getModule("moddle").create("bpmn:ExtensionElements", {
+      values: extensions,
+    });
+    this.updateShapeProperties(shape, { extensionElements });
+  }
+
+  updateSelectedShapeProperties(payload = {}) {
+    if (!this.getSelectedShape()) {
+      return;
+    }
+    this.updateShapeProperties(this.getSelectedShape(), payload);
+  }
+
+  updateShapeProperties(shape, payload = {}) {
+    this.modelingUpdateProperties(shape, payload);
+  }
+
+  updateSelectedShapeModdleProperties(moddleElement, payload = {}) {
+    if (!this.getSelectedShape() || !moddleElement) {
+      return;
+    }
+    this.updateShapeModdleProperties(this.getSelectedShape(), moddleElement, payload);
+  }
+
+  updateShapeModdleProperties(shape, moddleElement, payload = {}) {
+    this.modelingUpdateModdleProperties(shape, moddleElement, payload);
+  }
+
+  paletteVisible(visable) {
+    this.#getModule("palette")._container.style = visable ? "" : "display: none";
+  }
+
+  createBpmnModdleInstance(localName, attrs) {
+    return this.createModdleInstance(`bpmn:${localName}`, attrs);
+  }
+
+  createDefaultModdleInstance(localName, attrs) {
+    return this.createModdleInstance(`${this.type}:${localName}`, attrs);
+  }
+
+  createModdleInstance(descriptor, attrs) {
+    return this.#getModule("moddle").create(descriptor, attrs);
+  }
+
+  async validate() {
+    const valid = await this.linterLint()
+    if (Object.keys(valid).length === 0) {
+      return true;
+    }
+
+    throw new Error(`This canvas has ${Object.keys(valid).length} errors`)
   }
 
   async createEmptyDiagram() {

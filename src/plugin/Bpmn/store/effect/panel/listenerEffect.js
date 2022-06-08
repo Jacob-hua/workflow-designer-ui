@@ -1,4 +1,4 @@
-import IBpmn from "../../iBpmn";
+import IBpmn from "../../../iBpmn";
 
 function listenersState2Parameter(listeners, iBpmn = new IBpmn()) {
   return listeners.reduce((listeners, listener) => [...listeners, convertListener(listener)], []);

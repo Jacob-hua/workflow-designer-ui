@@ -9,7 +9,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
+import { deepEquals } from '../../../utils/object'
 
 export default {
   name: 'ActionButtonPanel',
@@ -20,6 +21,24 @@ export default {
   },
   computed: {
     ...mapState('bpmn/config', ['actionButtons']),
+    ...mapState('bpmn/panel', ['actions']),
+  },
+  watch: {
+    actions(value) {
+      this.btnList = [...value]
+    },
+    btnList(value) {
+      if (deepEquals(value, this.actions)) {
+        return
+      }
+      this.updateActions({ newActions: [...value] })
+    },
+  },
+  mounted() {
+    this.btnList = [...this.actions]
+  },
+  methods: {
+    ...mapMutations('bpmn/panel', ['updateActions']),
   },
 }
 </script>

@@ -76,18 +76,21 @@ export default {
   },
   watch: {
     userTask(value) {
-      if (deepEquals(value, this.userTaskForm)) {
-        return
-      }
       this.userTaskForm = { ...value }
     },
     userTaskForm: {
       deep: true,
       immediate: true,
       handler(value) {
+        if (deepEquals(value, this.userTask)) {
+          return
+        }
         this.updateUserTask({ newUserTask: deepCopy(value) })
       },
     },
+  },
+  mounted() {
+    this.userTaskForm = deepCopy(this.userTask)
   },
   methods: {
     ...mapMutations('bpmn/panel', ['updateUserTask']),

@@ -1,5 +1,4 @@
-import onSelectionChanged from "./onSelectionChanged";
-import onShapeChanged from "./onShapeChanged";
-import onCommandStackChanged from "./onCommandStackChanged";
+import panel from "./panel";
+import editor from "./editor";
 
-export { onSelectionChanged, onShapeChanged, onCommandStackChanged };
+export { panel, editor };

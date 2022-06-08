@@ -32,11 +32,15 @@ export const getProcessDesignService = (params) =>
 
 // 工作流保存
 export const postProcessDesignService = (params) =>
-  post('/design/processDesignService', params);
+  post('/design/processDesignService/create', params);
   
 // 保存草稿表单
 export const postFormDesignService = (params) =>
-  post('/design/formDesignService', params);
+  post('/design/formDesignService/create', params);
+
+// 修改草稿表单
+export const putFormDesignService = (params) =>
+  put('/design/formDesignService/update', params);
 
 // 发布到可用表单
 export const postFormDesignServiceRealiseProcessData = (params) =>
@@ -56,7 +60,7 @@ export const postFormDesignRecordFormDesignRecordInfo = (params) =>
   
 // 删除表单
 export const deleteFormDesignService = (id) =>
-  deletefn('/design/formDesignService', { id: id });
+  deletefn('/design/formDesignService/delete', { id: id });
   
 //查询所有表单
 export const designFormDesignServiceAll = (params) =>
@@ -77,8 +81,16 @@ export const postDraftlist = (params) =>
   post('/process/draft/list', params);
   
 // 保存到草稿箱
+// export const postProcessDraft = (params) =>
+//   post('/process/draft', params);
+
+// 保存草稿
 export const postProcessDraft = (params) =>
-  post('/process/draft', params);
+  post('/process/draft/create', params);
+
+// 修改草稿
+export const putProcessDraft = (params) =>
+  put('/process/draft/update', params);
 
 // 部署时草稿列表
 export const getProcessDraftList = (params) =>
@@ -86,7 +98,7 @@ export const getProcessDraftList = (params) =>
 
 // 删除草稿列表
 export const deleteDraft = (id) =>
-  deletefn('/process/draft', { id: id });
+  deletefn('/process/draft/delete', { id: id });
 
 // 部署工作流
 export const postDeployForOnline = (params) =>
@@ -102,7 +114,7 @@ export const getDeployAndProcessInfo = (id) =>
   
 // 删除部署列表
 export const getDeleteDeployment = (params) =>
-  deletefn('/process/deploy/deleteDeployment', params);
+  deletefn('/process/deploy/deleteDeployment/delete', params);
 
 // api类型下拉框
 export const getApiTypeList = (params) =>
