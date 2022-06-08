@@ -1,14 +1,14 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-<!--      <el-select v-model="projectValue"-->
-<!--                 placeholder="请选择">-->
-<!--        <el-option v-for="item in projectOption"-->
-<!--                   :key="item.value"-->
-<!--                   :label="item.label"-->
-<!--                   :value="item.value">-->
-<!--        </el-option>-->
-<!--      </el-select>-->
+  <!--      <el-select v-model="projectValue"-->
+  <!--                 placeholder="请选择">-->
+  <!--        <el-option v-for="item in projectOption"-->
+  <!--                   :key="item.value"-->
+  <!--                   :label="item.label"-->
+  <!--                   :value="item.value">-->
+  <!--        </el-option>-->
+  <!--      </el-select>-->
       <el-select  @change="projectChange" v-model="projectCode">
         <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
       </el-select>
