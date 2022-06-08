@@ -81,7 +81,7 @@ export default {
             resolve()
             return
           }
-          this.actionRequestUser(node.value).then(resolve)
+          this.dispatchRequestUser(node.value).then(resolve)
         },
       },
     }
@@ -111,7 +111,7 @@ export default {
   },
   methods: {
     ...mapMutations('bpmn/panel', ['updateUserTask']),
-    ...mapActions('bpmn/config', ['actionRequestUser']),
+    ...mapActions('bpmn/config', ['dispatchRequestUser']),
   },
 }
 </script>

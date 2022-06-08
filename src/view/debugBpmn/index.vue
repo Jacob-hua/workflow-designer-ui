@@ -41,16 +41,13 @@ export default {
     // 设置请求用户的方法
     this.updateRequestUserFunc({ newFunc: this.fetchUser })
     // 触发请求用户组
-    this.actionRequestUserGroup({
+    this.dispatchRequestUserGroup({
       projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
       displayType: 'tree',
     })
   },
   methods: {
-    ...mapActions('bpmn/config', [
-      'actionRequestUserGroup',
-      'actionRequestUser',
-    ]),
+    ...mapActions('bpmn/config', ['dispatchRequestUserGroup']),
     ...mapMutations('bpmn/config', [
       'updateRequestUserGroupFunc',
       'updateRequestUserFunc',

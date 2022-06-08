@@ -162,12 +162,12 @@ const mutations = {
 };
 
 const actions = {
-  async actionRequestUser({ commit, state: { requestUserFunc } }, payload) {
+  async dispatchRequestUser({ commit, state: { requestUserFunc } }, payload) {
     const res = await Promise.resolve(requestUserFunc(payload));
     commit("updateUserOptions", { newUserOptions: res });
     return res;
   },
-  async actionRequestUserGroup({ commit, state: { requestUserGroupFunc } }, payload) {
+  async dispatchRequestUserGroup({ commit, state: { requestUserGroupFunc } }, payload) {
     const res = await Promise.resolve(requestUserGroupFunc(payload));
     commit("updateUserGroupOptions", { newUserGroupOptions: res });
     return res;
