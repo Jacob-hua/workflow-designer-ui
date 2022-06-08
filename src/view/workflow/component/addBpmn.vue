@@ -72,11 +72,6 @@ export default {
       },
     }
   },
-  watch: {
-    formData(value) {
-      console.log('ddddddd', value)
-    },
-  },
   mounted() {
     this.$nextTick(() => {
       if (this.$refs.bpmnJsELe) {

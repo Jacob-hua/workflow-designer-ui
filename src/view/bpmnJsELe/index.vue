@@ -1,6 +1,7 @@
 <template>
   <div class="bpmnEle">
-    <bpmn-editor :name="name" />
+    <bpmn-editor :name="name"
+                 :xml="xmlString" />
     <bpmn-properties-panel />
   </div>
 </template>
