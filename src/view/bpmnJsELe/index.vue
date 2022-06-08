@@ -1,6 +1,6 @@
 <template>
   <div class="bpmnEle">
-    <bpmn-editor />
+    <bpmn-editor :name="name" />
     <bpmn-properties-panel />
   </div>
 </template>
@@ -39,6 +39,10 @@ export default {
     xmlString: {
       type: String,
       default: '',
+    },
+    name: {
+      type: String,
+      default: () => new Date().getTime().toString(),
     },
   },
   mounted() {

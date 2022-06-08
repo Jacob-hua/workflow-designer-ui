@@ -1,6 +1,6 @@
 <template>
-  <div class="PublicForm">
-    <div class="projectHeader">
+  <div class="public-form">
+    <div class="project-header">
       <el-select v-model="projectValue"
                  placeholder="请选择">
         <el-option v-for="item in projectOption"
@@ -10,8 +10,8 @@
         </el-option>
       </el-select>
     </div>
-    <div class="projectList">
-      <div class="projectList-item"
+    <div class="project-list">
+      <div class="project-list-item"
            :class="projectCode === 'beiqijia' ? 'checkPro' : '' "
            @click="changProjectCode('beiqijia')">
         <img src="@/assets/img/projectcccccc.svg"
@@ -24,10 +24,9 @@
              width="32px"
              height="32px"
              v-show="projectCode == 'beiqijia'">
-        <span class="projectList-item-word">北七家人才基地</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
+        <span class="project-list-item-word">北七家人才基地</span>
       </div>
-      <div class="projectList-item"
+      <div class="project-list-item"
            :class="projectCode === 'laiwu' ? 'checkPro' : '' "
            @click="changProjectCode('laiwu')">
         <img src="@/assets/img/projectcccccc.svg"
@@ -40,10 +39,10 @@
              width="32px"
              height="32px"
              v-show="projectCode == 'laiwu'">
-        <span class="projectList-item-word">莱芜供热项目</span>
+        <span class="project-list-item-word">莱芜供热项目</span>
         <!-- <i class="el-icon-close item-icon"></i> -->
       </div>
-      <div class="projectList-item"
+      <div class="project-list-item"
            :class="projectCode === 'xilaideng' ? 'checkPro' : '' "
            @click="changProjectCode('xilaideng')">
         <img src="@/assets/img/projectcccccc.svg"
@@ -56,12 +55,12 @@
              width="32px"
              height="32px"
              v-show="projectCode == 'xilaideng'">
-        <span class="projectList-item-word">海口喜来登酒店</span>
+        <span class="project-list-item-word">海口喜来登酒店</span>
         <!-- <i class="el-icon-close item-icon"></i> -->
       </div>
     </div>
-    <div class="PublicForm-title">
-      <div class="PublicForm-title-option">
+    <div class="public-form-title">
+      <div class="public-form-title-option">
         <el-select v-model="projectValue"
                    placeholder="请选择">
           <el-option v-for="item in projectOption2"
@@ -71,8 +70,8 @@
           </el-option>
         </el-select>
       </div>
-      <div class="datePick">
-        <span class="datePickTitle">创建时间</span>
+      <div class="date-pick">
+        <span class="date-pick-title">创建时间</span>
         <el-date-picker v-model="valueDate"
                         type="daterange"
                         align="right"
@@ -83,20 +82,20 @@
                         value-format="yyyy-MM-dd">
         </el-date-picker>
       </div>
-      <div class="PublicForm-title-input">
+      <div class="public-form-title-input">
         <el-input v-model="input"
                   placeholder="请输入内容"></el-input>
       </div>
-      <div class="PublicForm-title-input">
+      <div class="public-form-title-input">
         <el-button type="primary"
                    @click="getManyData()">查询</el-button>
       </div>
-      <div class="PublicForm-title-button">
+      <div class="public-form-title-button">
         <el-button type="primary"
                    @click="quoteBpmnShow()"
                    v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">引用工作流</el-button>
       </div>
-      <div class="PublicForm-title-button">
+      <div class="public-form-title-button">
         <el-button type="primary"
                    @click="addProjectShow()"
                    v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
@@ -396,28 +395,28 @@ export default {
 </script>
 
 <style scoped>
-.projectHeader /deep/ .el-input__inner {
+.project-header /deep/ .el-input__inner {
   border: 1px solid black;
 }
 
-.PublicForm-title /deep/ .el-input__inner {
+.public-form-title /deep/ .el-input__inner {
   border: 1px solid black;
 }
 
-.PublicForm-title {
+.public-form-title {
 }
 
 .checkPro {
   border: 1px solid #0066cc !important;
 }
 
-.projectList {
+.project-list {
   padding: 0px 0px 20px 0px;
   border-bottom: 1px solid #eeeeee;
   margin-bottom: 20px;
 }
 
-.projectList-item {
+.project-list-item {
   position: relative;
   font-size: 18px;
   width: 260px;
@@ -429,7 +428,7 @@ export default {
   padding: 0px 20px;
 }
 
-.projectList-item-word {
+.project-list-item-word {
   vertical-align: super;
   display: inline-block;
   margin-left: 15px;
@@ -441,32 +440,32 @@ export default {
   right: 20px;
 }
 
-.projectHeader {
+.project-header {
   display: inline-block;
   margin: 0px 0px 20px 0px;
 }
 
-.datePick {
+.date-pick {
   display: inline-block;
 }
 
-.datePickTitle {
+.date-pick-title {
   display: inline-block;
   font-size: 14px;
   margin-right: 20px;
 }
 
-.PublicForm-title-option {
+.public-form-title-option {
   display: inline-block;
   margin-right: 40px;
 }
 
-.PublicForm-title-input {
+.public-form-title-input {
   display: inline-block;
   margin-left: 40px;
 }
 
-.PublicForm-title-button {
+.public-form-title-button {
   display: inline-block;
   margin-left: 40px;
   float: right;
