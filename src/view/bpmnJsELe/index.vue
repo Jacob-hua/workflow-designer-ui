@@ -1,6 +1,7 @@
 <template>
   <div class="bpmnEle">
-    <bpmn-editor />
+    <bpmn-editor :name="name"
+                 :xml="xmlString" />
     <bpmn-properties-panel />
   </div>
 </template>
@@ -40,6 +41,10 @@ export default {
       type: String,
       default: '',
     },
+    name: {
+      type: String,
+      default: () => new Date().getTime().toString(),
+    },
   },
   mounted() {
     // 定义请求用户组的方法
@@ -48,16 +53,13 @@ export default {
     this.updateRequestUserFunc({ newFunc: this.fetchUser })
     // 触发请求用户组，也就是会在action中调用this.fetchUserGroup，
     // 并将数据同步到state
-    this.actionRequestUserGroup({
+    this.dispatchRequestUserGroup({
       projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
       displayType: 'tree',
     })
   },
   methods: {
-    ...mapActions('bpmn/config', [
-      'actionRequestUserGroup',
-      'actionRequestUser',
-    ]),
+    ...mapActions('bpmn/config', ['dispatchRequestUserGroup']),
     ...mapMutations('bpmn/config', [
       'updateRequestUserGroupFunc',
       'updateRequestUserFunc',

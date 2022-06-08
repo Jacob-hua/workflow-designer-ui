@@ -74,6 +74,7 @@ export default {
       customCandidateGroup: false,
       userTaskForm: {},
       userCascaderProps: {
+        emitPath: false,
         lazy: true,
         lazyLoad: (node, resolve) => {
           // 如果原来的结构中有子节点，则直接返回
@@ -81,7 +82,7 @@ export default {
             resolve()
             return
           }
-          this.actionRequestUser(node.value).then(resolve)
+          this.dispatchRequestUser(node.value).then(resolve)
         },
       },
     }
@@ -111,7 +112,7 @@ export default {
   },
   methods: {
     ...mapMutations('bpmn/panel', ['updateUserTask']),
-    ...mapActions('bpmn/config', ['actionRequestUser']),
+    ...mapActions('bpmn/config', ['dispatchRequestUser']),
   },
 }
 </script>

@@ -20,10 +20,19 @@ export default {
     name: {
       type: String,
     },
+    xml: {
+      type: String,
+    },
   },
   watch: {
     pelatteVisible(value) {
       this.$iBpmn.paletteVisible(value)
+    },
+    xml: {
+      immediate: true,
+      handler(value) {
+        this.$iBpmn.loadDiagram(value)
+      },
     },
   },
   mounted() {
@@ -32,8 +41,10 @@ export default {
   methods: {
     initBpmn() {
       this.$iBpmn.attachTo(this.$refs.containers)
-      this.$iBpmn.createEmptyDiagram(this.name)
       this.$iBpmn.paletteVisible(this.pelatteVisible)
+      if (!this.xml) {
+        this.$iBpmn.createEmptyDiagram(this.name)
+      }
     },
   },
 }
