@@ -74,6 +74,7 @@ export default {
       customCandidateGroup: false,
       userTaskForm: {},
       userCascaderProps: {
+        emitPath: false,
         lazy: true,
         lazyLoad: (node, resolve) => {
           // 如果原来的结构中有子节点，则直接返回
