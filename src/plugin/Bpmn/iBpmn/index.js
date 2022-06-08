@@ -138,6 +138,14 @@ class IBpmn {
     return;
   }
 
+  getRootShapeInfo() {
+    const root = this.elementRegistryFind((elem) => elem.type === "bpmn:Process");
+    if (!root) {
+      return {};
+    }
+    return this.getShapeInfo(root);
+  }
+
   getShapeInfo(element) {
     return element.businessObject ?? {};
   }
@@ -172,6 +180,8 @@ class IBpmn {
 
   updateSelectedShapeProperties(payload = {}) {
     if (!this.getSelectedShape()) {
+      const root = this.elementRegistryFind((elem) => elem.type === "bpmn:Process");
+      this.updateShapeProperties(root, payload);
       return;
     }
     this.updateShapeProperties(this.getSelectedShape(), payload);
@@ -217,7 +227,7 @@ class IBpmn {
     throw new Error(`This canvas has ${Object.keys(valid).length} errors`);
   }
 
-  async createEmptyDiagram(name) {
+  async createEmptyDiagram(name = new Date().getTime()) {
     this.loadDiagram(defaultEmpty(`process_${new Date().getTime()}`, name, this.type));
   }
 
