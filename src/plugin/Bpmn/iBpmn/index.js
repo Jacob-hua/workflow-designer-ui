@@ -29,8 +29,6 @@ function functionMapping(target, sources, modulesConfig = {}) {
 }
 
 const defaultIBpmnProps = {
-  name: "iBpmn",
-  key: "iBpmn",
   type: "camunda",
   lintActive: true,
   i18n: zh,
@@ -41,8 +39,6 @@ class IBpmn {
 
   constructor(props = {}) {
     props = { ...defaultIBpmnProps, ...props };
-    this.name = props.name;
-    this.key = props.key;
     this.type = props.type;
     this.lintActive = props.lintActive;
     this.i18n = props.i18n;
@@ -213,16 +209,16 @@ class IBpmn {
   }
 
   async validate() {
-    const valid = await this.linterLint()
+    const valid = await this.linterLint();
     if (Object.keys(valid).length === 0) {
       return true;
     }
 
-    throw new Error(`This canvas has ${Object.keys(valid).length} errors`)
+    throw new Error(`This canvas has ${Object.keys(valid).length} errors`);
   }
 
-  async createEmptyDiagram() {
-    this.loadDiagram(defaultEmpty(this.key, this.name, this.type));
+  async createEmptyDiagram(name) {
+    this.loadDiagram(defaultEmpty(`process_${new Date().getTime()}`, name, this.type));
   }
 
   async loadDiagram(xml) {
