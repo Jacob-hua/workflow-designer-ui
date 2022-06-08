@@ -149,10 +149,15 @@ function multiInstance2State(iBpmn = new IBpmn()) {
   return multiInstance;
 }
 
-function selectionChangedListener(_, commit, iBpmn) {
+function selectionChangedListener(_, commit, iBpmn = new IBpmn()) {
   if (!iBpmn.getSelectedShape()) {
-    // TODO: 当没有选中元素时baseInfo应该时整个流程的基本信息
     commit("initState");
+    commit("refreshState", {
+      baseInfo: {
+        name: iBpmn.getRootShapeInfo().name,
+        id: iBpmn.getRootShapeInfo().id,
+      },
+    });
     return;
   }
 
