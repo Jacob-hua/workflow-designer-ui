@@ -1,3 +1,5 @@
+import { deepCopy } from "../../utils/object";
+
 const state = {
   listenerTypeOptions: [
     {
@@ -112,6 +114,8 @@ const state = {
     },
   ],
   actionButtons: ["待办", "传阅", "挂起", "加减签", "驳回", "终止"],
+  requestUserGroupFunc: () => {},
+  requestUserFunc: () => {},
 };
 
 const getters = {
@@ -135,18 +139,38 @@ const getters = {
       return state.variableTypeOptions.find(({ value }) => value === type)?.label;
     };
   },
+  findUserGroupChildren(state) {
+    return ({ value }) => {
+      return state.userGroupOptions.find((option) => option.value === value)?.children;
+    };
+  },
 };
 
 const mutations = {
-  updateUserGroupOptions(state, { userGroupOptions }) {},
+  updateUserOptions(state, { newUserOptions = [] }) {
+    state.userOptions = deepCopy(newUserOptions);
+  },
+  updateUserGroupOptions(state, { newUserGroupOptions = [] }) {
+    state.userGroupOptions = deepCopy(newUserGroupOptions);
+  },
+  updateRequestUserFunc(state, { newFunc = () => {} }) {
+    state.requestUserFunc = newFunc;
+  },
+  updateRequestUserGroupFunc(state, { newFunc = () => {} }) {
+    state.requestUserGroupFunc = newFunc;
+  },
 };
 
 const actions = {
-  actionRequestUserGroup({ commit }, actionFunc) {
-    // TODO: 此处需要考虑如何在外部控制数据源
-    Promise.resolve(actionFunc).then((res) => {
-      commit("bpmn/config/updateUserGroupOptions", { userGroupOptions: res });
-    });
+  async dispatchRequestUser({ commit, state: { requestUserFunc } }, payload) {
+    const res = await Promise.resolve(requestUserFunc(payload));
+    commit("updateUserOptions", { newUserOptions: res });
+    return res;
+  },
+  async dispatchRequestUserGroup({ commit, state: { requestUserGroupFunc } }, payload) {
+    const res = await Promise.resolve(requestUserGroupFunc(payload));
+    commit("updateUserGroupOptions", { newUserGroupOptions: res });
+    return res;
   },
 };
 
