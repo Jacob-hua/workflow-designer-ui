@@ -6,6 +6,7 @@
              @close="close">
     <div class="dialogVisible-main">
       <bpmnJsELe :xmlString="xmlString"
+                 :name="formData.name"
                  v-if="dialogVisible"></bpmnJsELe>
     </div>
     <span slot="footer"
