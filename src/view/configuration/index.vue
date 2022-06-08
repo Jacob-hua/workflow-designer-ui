@@ -8,7 +8,7 @@
       </div>
       <div class="projectHeader" v-if="activeName === 'first'">
         <el-select v-model="business" placeholder="请选择">
-          <el-option v-for="item in $store.state.optionsAscription" :key="item.value" :label="item.label" :value="item.value">
+          <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code">
           </el-option>
         </el-select>
       </div>
@@ -30,9 +30,11 @@
   import businessCall from './businessCall/index.vue'
   import StartItemConfig from "@/view/configuration/startItemConfig";
   import permission from '@/component/permission/index.vue'
+  import {getProjectList} from "@/api/globalConfig";
   export default {
     data() {
       return {
+        projectOption: [],
         activeName: 'first',
         business: 'XM_aff0659724a54c119ac857d4e560b47b',
         activeNameMapping: {
@@ -55,7 +57,20 @@
     created() {
       this.changeActiveName('first')
     },
+    mounted() {
+      this.getProjectList();
+    },
     methods:{
+      async getProjectList(){
+        let res = await  getProjectList({
+          count: -1,
+          projectCode: '',
+          tenantId: this.$store.state.tenantId,
+          type: ''
+        })
+        this.projectOption = res?.result ?? []
+        this.business = this.projectOption[0].code
+      },
       changeActiveName(value) {
         this.activeName = value
         let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))

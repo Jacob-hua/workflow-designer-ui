@@ -1,75 +1,84 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-      <el-select v-model="projectValue"
-                 placeholder="请选择">
-        <el-option v-for="item in projectOption"
-                   :key="item.value"
-                   :label="item.label"
-                   :value="item.value">
-        </el-option>
+<!--      <el-select v-model="projectValue"-->
+<!--                 placeholder="请选择">-->
+<!--        <el-option v-for="item in projectOption"-->
+<!--                   :key="item.value"-->
+<!--                   :label="item.label"-->
+<!--                   :value="item.value">-->
+<!--        </el-option>-->
+<!--      </el-select>-->
+      <el-select  @change="projectChange" v-model="projectCode">
+        <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
       </el-select>
     </div>
-    <div class="projectList">
-      <div class="projectList-item"
-           :class="projectCode === 'beiqijia' ? 'checkPro' : '' "
-           @click="changProjectCode('beiqijia')">
-        <img src="@/assets/img/projectcccccc.svg"
-             alt=""
-             width="32px"
-             height="32px"
-             v-show="projectCode !== 'beiqijia'">
-        <img src="@/assets/img/project0066cc.svg"
-             alt=""
-             width="32px"
-             height="32px"
-             v-show="projectCode == 'beiqijia'">
-        <span class="projectList-item-word">北七家人才基地</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
-      </div>
-      <div class="projectList-item"
-           :class="projectCode === 'laiwu' ? 'checkPro' : '' "
-           @click="changProjectCode('laiwu')">
-        <img src="@/assets/img/projectcccccc.svg"
-             alt=""
-             width="32px"
-             height="32px"
-             v-show="projectCode !== 'laiwu'">
-        <img src="@/assets/img/project0066cc.svg"
-             alt=""
-             width="32px"
-             height="32px"
-             v-show="projectCode == 'laiwu'">
-        <span class="projectList-item-word">莱芜供热项目</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
-      </div>
-      <div class="projectList-item"
-           :class="projectCode === 'xilaideng' ? 'checkPro' : '' "
-           @click="changProjectCode('xilaideng')">
-        <img src="@/assets/img/projectcccccc.svg"
-             alt=""
-             width="32px"
-             height="32px"
-             v-show="projectCode !== 'xilaideng'">
-        <img src="@/assets/img/project0066cc.svg"
-             alt=""
-             width="32px"
-             height="32px"
-             v-show="projectCode == 'xilaideng'">
-        <span class="projectList-item-word">海口喜来登酒店</span>
-        <!-- <i class="el-icon-close item-icon"></i> -->
-      </div>
-    </div>
+<!--    <div class="projectList">-->
+<!--      <div class="projectList-item"-->
+<!--           :class="projectCode === 'beiqijia' ? 'checkPro' : '' "-->
+<!--           @click="changProjectCode('beiqijia')">-->
+<!--        <img src="@/assets/img/projectcccccc.svg"-->
+<!--             alt=""-->
+<!--             width="32px"-->
+<!--             height="32px"-->
+<!--             v-show="projectCode !== 'beiqijia'">-->
+<!--        <img src="@/assets/img/project0066cc.svg"-->
+<!--             alt=""-->
+<!--             width="32px"-->
+<!--             height="32px"-->
+<!--             v-show="projectCode == 'beiqijia'">-->
+<!--        <span class="projectList-item-word">北七家人才基地</span>-->
+<!--        &lt;!&ndash; <i class="el-icon-close item-icon"></i> &ndash;&gt;-->
+<!--      </div>-->
+<!--      <div class="projectList-item"-->
+<!--           :class="projectCode === 'laiwu' ? 'checkPro' : '' "-->
+<!--           @click="changProjectCode('laiwu')">-->
+<!--        <img src="@/assets/img/projectcccccc.svg"-->
+<!--             alt=""-->
+<!--             width="32px"-->
+<!--             height="32px"-->
+<!--             v-show="projectCode !== 'laiwu'">-->
+<!--        <img src="@/assets/img/project0066cc.svg"-->
+<!--             alt=""-->
+<!--             width="32px"-->
+<!--             height="32px"-->
+<!--             v-show="projectCode == 'laiwu'">-->
+<!--        <span class="projectList-item-word">莱芜供热项目</span>-->
+<!--        &lt;!&ndash; <i class="el-icon-close item-icon"></i> &ndash;&gt;-->
+<!--      </div>-->
+<!--      <div class="projectList-item"-->
+<!--           :class="projectCode === 'xilaideng' ? 'checkPro' : '' "-->
+<!--           @click="changProjectCode('xilaideng')">-->
+<!--        <img src="@/assets/img/projectcccccc.svg"-->
+<!--             alt=""-->
+<!--             width="32px"-->
+<!--             height="32px"-->
+<!--             v-show="projectCode !== 'xilaideng'">-->
+<!--        <img src="@/assets/img/project0066cc.svg"-->
+<!--             alt=""-->
+<!--             width="32px"-->
+<!--             height="32px"-->
+<!--             v-show="projectCode == 'xilaideng'">-->
+<!--        <span class="projectList-item-word">海口喜来登酒店</span>-->
+<!--        &lt;!&ndash; <i class="el-icon-close item-icon"></i> &ndash;&gt;-->
+<!--      </div>-->
+<!--    </div>-->
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
-        <el-select v-model="projectValue"
-                   placeholder="请选择">
-          <el-option v-for="item in projectOption2"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value">
-          </el-option>
-        </el-select>
+<!--        <el-select v-model="projectValue"-->
+<!--                   placeholder="请选择">-->
+<!--          <el-option v-for="item in projectOption2"-->
+<!--                     :key="item.value"-->
+<!--                     :label="item.label"-->
+<!--                     :value="item.value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+        <el-cascader
+            style="width: 350px"
+            v-model="projectValue"
+            :options="systemOption"
+            :props = 'sysProps'
+             ></el-cascader>
       </div>
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
@@ -176,6 +185,7 @@ import {
   workFlowRecord,
   designProcessCountStatistics,
 } from '@/api/managerWorkflow'
+import {getProjectList} from "@/api/globalConfig";
 
 export default {
   components: {
@@ -188,6 +198,11 @@ export default {
   },
   data() {
     return {
+      sysProps:{
+        label: 'name',
+        value: 'code'
+      },
+      systemOption: [],
       draftProcessCount: 0,
       processCount: 0,
       isEdit: true,
@@ -236,6 +251,38 @@ export default {
     }
   },
   methods: {
+
+    deleteEmptyChildren(arr) {
+      for (let i = 0; i < arr.length; i++) {
+        const arrElement = arr[i];
+        if (!arrElement.children.length) {
+          delete arrElement.children
+          continue
+        }
+        if (arrElement.children) {
+          this.deleteEmptyChildren(arrElement.children)
+        }
+      }
+
+    },
+    projectChange(val) {
+      this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
+      this.deleteEmptyChildren(this.systemOption)
+    },
+    async getProjectList(){
+      let res = await  getProjectList({
+        count: -1,
+        projectCode: '',
+        tenantId: this.$store.state.tenantId,
+        type: ''
+      })
+      this.projectOption = res?.result ?? []
+      this.projectCode = this.projectOption[0].code
+      this.systemOption = this.projectOption[0].children
+      this.deleteEmptyChildren(this.systemOption)
+      this.projectValue =  this.systemOption[0].code
+    },
+
     // 修改code
     changProjectCode(code) {
       this.projectCode = code
@@ -322,7 +369,7 @@ export default {
         tenantId: this.$store.state.tenantId,
         status: 'drafted',
         ascription: this.projectCode,
-        business: this.projectValue,
+        business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
         createBy: this.$store.state.userInfo.name,
         numberCode: '',
         name: this.input,
@@ -338,7 +385,7 @@ export default {
         tenantId: this.$store.state.tenantId,
         status: 'enabled',
         ascription: this.projectCode,
-        business: this.projectValue,
+        business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
         createBy: this.$store.state.userInfo.name,
         numberCode: '',
         name: this.input,
@@ -358,7 +405,7 @@ export default {
         tenantId: this.$store.state.tenantId || null,
         status,
         ascription: this.projectCode || '',
-        business: this.projectValue || '',
+        business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1) || '',
         createBy: this.$store.state.userInfo.name || '',
         numberCode: '',
         name: this.input,
@@ -379,10 +426,11 @@ export default {
     },
   },
   mounted() {
+    this.getProjectList()
     designProcessCountStatistics({
       tenantId: this.$store.state.tenantId,
       ascription: this.projectCode,
-      business: this.projectValue,
+      business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
       startTime: this.valueDate[0],
       endTime: this.valueDate[1],
       createBy: this.$store.state.userInfo.name,
