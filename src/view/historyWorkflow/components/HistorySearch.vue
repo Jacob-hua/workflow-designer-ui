@@ -1,12 +1,14 @@
 <template>
   <div class="history_head">
-    <el-select  v-model="projectValue">
-      <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value"></el-option>
+    <el-select  @change="projectChange" v-model="projectValue">
+      <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
     </el-select>
-    <el-select  v-model="systemValue">
-      <el-option v-for="item in systemOption" :key="item.value" :label="item.label" :value="item.value"></el-option>
-    </el-select>
-
+    <el-cascader
+        style="width: 400px; margin-right: 10px;"
+        v-model="systemValue"
+        :options="systemOption"
+        :props = 'sysProps'
+        @change="handleChange"></el-cascader>
     <div class="history_date">
       <span class="datePickTitle">创建时间</span>
       <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
@@ -19,28 +21,64 @@
 </template>
 
 <script>
-    export default {
-      data() {
-        return {
-          valueDate: [],
-          projectValue: '1',
-          systemValue: '1',
-          statusValue: '1',
-          projectOption: [
-            {
-              value: '1',
-              label: '全部项目'
-            }
-          ],
-          systemOption: [
-            {
-              value: '1',
-              label: '能源系统'
-            }
-          ],
+import { mapState } from "vuex";
+import { getProjectList } from "@/api/globalConfig";
+export default {
+  data() {
+    return {
+      sysProps:{
+        label: 'name',
+        value: 'code'
+      },
+      valueDate: [],
+      projectValue: '1',
+      systemValue: '1',
+      projectOption: [],
+      systemOption: [],
+    }
+  },
+  computed: {
+    ...mapState(['tenantId'])
+  },
+  mounted() {
+    this.getProjectList()
+  },
+  methods: {
+    handleChange() {},
+    deleteEmptyChildren(arr) {
+      for (let i = 0; i < arr.length; i++) {
+        const arrElement = arr[i];
+        if (!arrElement.children.length) {
+          delete arrElement.children
+          continue
+        }
+        if (arrElement.children) {
+          this.deleteEmptyChildren(arrElement.children)
         }
       }
+
+    },
+    projectChange(val) {
+      this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
+      this.deleteEmptyChildren(this.systemOption)
+      console.log(this.systemOption)
+      // this.systemValue = this.systemOption[0]?.id  ??  ''
+    },
+    async getProjectList(){
+      let res = await  getProjectList({
+        count: -1,
+        projectCode: '',
+        tenantId: +this.tenantId,
+        type: ''
+      })
+      this.projectOption = res?.result ?? []
+      this.projectValue = this.projectOption[0].code
+      this.systemOption = this.projectOption[0].children
+      this.deleteEmptyChildren(this.systemOption)
+      this.systemValue =  this.systemOption[0].code
     }
+  }
+}
 </script>
 
 <style scoped>
