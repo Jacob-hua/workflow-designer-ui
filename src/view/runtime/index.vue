@@ -224,7 +224,7 @@
       },
       async getProjectList(){
         let _this = this
-        let res = await  getProjectList({
+        let res = await getProjectList({
           count: -1,
           projectCode: '',
           tenantId: this.$store.state.tenantId,
