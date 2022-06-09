@@ -48,6 +48,7 @@
                          v-model="userTaskForm.candidateGroups"
                          :options="userGroupOptions"
                          :show-all-levels="false"
+                         :props="{emitPath: false}"
                          clearable>
             </el-cascader>
           </el-col>

@@ -1,230 +1,246 @@
 <template>
   <div>
-    <el-dialog title="新建执行" :visible="dialogVisible" width="66%" :before-close="handleClose" @open="openDialog">
-      <div class="diologMain">
-        <div class="diologMain-left">
-          <!-- <el-input v-model="input" placeholder="请输入内容" prefix-icon="el-icon-search"></el-input> -->
-          <div class="energyList">
-            <div v-for="(item, index) in $store.state.optionsSystemType" class="energyList-item" :class="getData.type === item.value ? 'checkPro' : ''"
-              @click="changEnergy(item.value)"> {{ item.label }}系统 </div>
+    <el-dialog title="新建执行"
+               width="66%"
+               :visible="dialogVisible"
+               :before-close="handleClose"
+               @open="openDialog">
+      <div class="diolog-main">
+        <div class="diolog-main-left">
+          <div class="energy-list">
+            <div v-for="({label, value}, index) in optionsSystemType"
+                 class="energy-list-item"
+                 :class="energyListItemClass(value)"
+                 :key="index"
+                 @click="changEnergy(value)"> {{ label }}系统 </div>
           </div>
         </div>
-        <div class="diologMain-right">
-          <div class="processList">
-            <div class="processList-item" v-for="(item, index) in processListList" :key="index">
-              <div class="processList-item-detail" @click="detailsShow(item)">
+        <div class="diolog-main-right">
+          <div class="process-list">
+            <div class="process-list-item"
+                 v-for="(process, index) in processList"
+                 :key="index">
+              <div class="process-list-item-detail"
+                   @click="detailsShow(process)">
                 <span>详情</span>
               </div>
-              <div class="processList-item-word">
+              <div class="process-list-item-word">
                 <label>部署名称:</label>
-                <span>{{ item.deployName }}</span>
+                <span>{{ process.deployName }}</span>
               </div>
-              <div class="processList-item-word">
+              <div class="process-list-item-word">
                 <label>部署人:</label>
-                <span>{{ item.user }}</span>
+                <span>{{ process.user }}</span>
               </div>
-              <div class="processList-item-word">
+              <div class="process-list-item-word">
                 <label>部署时间:</label>
-                <span>{{ item.createTime }}</span>
+                <span>{{ process.createTime }}</span>
               </div>
-              <div class="processList-item-button">
-                <el-button type="primary" plain @click="open(item)">创建</el-button>
+              <div class="process-list-item-button">
+                <el-button type="primary"
+                           plain
+                           @click="open(process)">创建</el-button>
               </div>
             </div>
           </div>
           <div class="process-page">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="getData.page"
-              :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
+            <el-pagination @size-change="handleSizeChange"
+                           @current-change="handleCurrentChange"
+                           :current-page.sync="getData.page"
+                           :page-size="getData.limit"
+                           layout="prev, pager, next, jumper"
+                           :total="getData.total">
             </el-pagination>
           </div>
         </div>
       </div>
     </el-dialog>
-    <detailsRem ref="detailsRem" seeType="runTime"></detailsRem>
+    <detailsRem ref="detailsRem"
+                seeType="runTime"></detailsRem>
   </div>
 </template>
 
 <script>
-  import detailsRem from '@/view/home/component/details.vue'
-  import { getProcessDefinitionList, getStartProcess } from '@/api/unit/api.js'
-  export default {
-    props: {
-      dialogVisible: {
-        type: Boolean,
-        default: false
-      }
+import detailsRem from '@/view/home/component/details.vue'
+import { getProcessDefinitionList, getStartProcess } from '@/api/unit/api.js'
+import { mapState } from 'vuex'
+
+export default {
+  name: 'RuntimeAdd',
+  components: {
+    detailsRem,
+  },
+  props: {
+    dialogVisible: {
+      type: Boolean,
+      default: false,
     },
-    data() {
-      return {
-        input: '',
-        processListList: [],
-        getData: {
-          type: 'energy-1',
-          order: 'desc',
-          page: 1,
-          limit: 9,
-          tenantId: this.$store.state.tenantId,
-          total: 1
-        }
-      }
+  },
+  data() {
+    return {
+      input: '',
+      processList: [],
+      getData: {
+        type: 'energy-1',
+        order: 'desc',
+        page: 1,
+        limit: 9,
+        tenantId: this.$store.state.tenantId,
+        total: 1,
+      },
+    }
+  },
+  computed: {
+    ...mapState(['optionsSystemType']),
+  },
+  methods: {
+    energyListItemClass(value) {
+      return this.getData.type === value ? 'check-pro' : ''
     },
-    
-    created() {
-      // this.getProcessList()
+    handleClose() {
+      this.$emit('close')
     },
-    
-    methods: {
-      handleClose() {
-        this.$emit('close')
-      },
-      getProcessList() {
-        getProcessDefinitionList(this.getData).then((res) => {
-          this.processListList = res.result.dataList
-          this.getData.total = res.result.count * 1
-        })
-      },
-      handleSizeChange() {
-        this.getProcessList()
-      },
-      handleCurrentChange() {
-        this.getProcessList()
-      },
-      open(item) {
-        this.$confirm('创建的执行会进入执行列表并开始执行流程,是否继续', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消'
-        }).then(() => {
+    getProcessList() {
+      getProcessDefinitionList(this.getData).then((res) => {
+        this.processList = res.result.dataList
+        this.getData.total = res.result.count * 1
+      })
+    },
+    handleSizeChange() {
+      this.getProcessList()
+    },
+    handleCurrentChange() {
+      this.getProcessList()
+    },
+    open(item) {
+      this.$confirm('创建的执行会进入执行列表并开始执行流程,是否继续', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      })
+        .then(() => {
           getStartProcess({
             businessKey: '',
             definitionKey: item.key,
             createBy: this.$store.state.userInfo.name,
             startProcessId: item.id,
-            variables: {}
+            variables: {},
           }).then((res) => {
             this.$message({
               type: 'success',
-              message: '创建成功'
-            });
+              message: '创建成功',
+            })
             this.$emit('succseeAdd')
           })
-          
-        }).catch(() => {
-          // this.$message({
-          //   type: 'info',
-          //   message: '取消创建'
-          // });
-        });
-      },
-      changEnergy(value) {
-        this.getData.type = value
-        this.getProcessList()
-      },
-      openDialog() {
-        this.getProcessList()
-      },
-      detailsShow(item) {
-        this.$refs.detailsRem.dialogVisible2 = true
-        this.$nextTick(() => {
-          this.$refs.detailsRem.$refs.details2.postData = item
-          this.$refs.detailsRem.$refs.details2.postData.version = item.user
-          this.$refs.detailsRem.$refs.details2.createNewDiagram(item.content)
         })
-      }
+        .catch(() => {})
     },
-    components: {
-      detailsRem
-    }
-  }
+    changEnergy(value) {
+      this.getData.type = value
+      this.getProcessList()
+    },
+    openDialog() {
+      this.getProcessList()
+    },
+    detailsShow(item) {
+      this.$refs.detailsRem.dialogVisible2 = true
+      this.$nextTick(() => {
+        this.$refs.detailsRem.$refs.details2.postData = item
+        this.$refs.detailsRem.$refs.details2.postData.version = item.user
+        this.$refs.detailsRem.$refs.details2.createNewDiagram(item.content)
+      })
+    },
+  },
+}
 </script>
 
-<style scoped="scoped">
-  .diologMain {
-    display: flex;
-  }
+<style scoped>
+.diolog-main {
+  display: flex;
+}
 
-  .diologMain-left {
-    flex: 2;
-    background-color: #f3f3f3;
-    text-align: center;
-    height: 695px;
-  }
+.diolog-main-left {
+  flex: 2;
+  background-color: #f3f3f3;
+  text-align: center;
+  height: 695px;
+}
 
-  .diologMain-right {
-    flex: 8;
-    background-color: #f3f3f3;
-    margin-left: 20px;
-    height: 695px;
-    padding: 0px 20px;
-  }
+.diolog-main-right {
+  flex: 8;
+  background-color: #f3f3f3;
+  margin-left: 20px;
+  height: 695px;
+  padding: 0px 20px;
+}
 
-  .diologMain-left /deep/ .el-input {
-    width: 220px;
-  }
+.diolog-main-left ::v-deep .el-input {
+  width: 220px;
+}
 
-  .diologMain-left /deep/ .el-input .el-input__inner {
-    border-radius: 20px;
-  }
+.diolog-main-left ::v-deep .el-input .el-input__inner {
+  border-radius: 20px;
+}
 
-  .energyList {
-    margin-top: 30px;
-  }
+.energy-list {
+  margin-top: 30px;
+}
 
-  .energyList-item {
-    width: 220px;
-    height: 44px;
-    line-height: 44px;
-    border: 1px solid #000000;
-    margin: 0 auto;
-    cursor: pointer;
-  }
+.energy-list-item {
+  width: 220px;
+  height: 44px;
+  line-height: 44px;
+  border: 1px solid #000000;
+  margin: 0 auto;
+  cursor: pointer;
+}
 
-  .checkPro {
-    border-color: #0066cc;
-    color: #0066cc;
-  }
-  
-  .processList {
-    height: 624px;
-  } 
-  
-  .processList-item {
-    width: 290px;
-    height: 178px;
-    background-color: #e4e4e4;
-    padding: 20px 0px 0px 20px;
-    position: relative;
-    margin-right: 20px;
-    display: inline-block;
-    margin-top: 30px;
-  }
+.check-pro {
+  border-color: #0066cc;
+  color: #0066cc;
+}
 
-  .processList-item-detail {
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    color: #1890ff;
-    cursor: pointer;
-  }
+.process-list {
+  height: 624px;
+}
 
-  .processList-item-word {
-    font-size: 14px;
-    color: #000000;
-    margin-bottom: 20px;
-  }
+.process-list-item {
+  width: 290px;
+  height: 178px;
+  background-color: #e4e4e4;
+  padding: 20px 0px 0px 20px;
+  position: relative;
+  margin-right: 20px;
+  display: inline-block;
+  margin-top: 30px;
+}
 
-  .processList-item-button {
-    text-align: center;
-  }
+.process-list-item-detail {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  color: #1890ff;
+  cursor: pointer;
+}
 
-  .processList-item-button /deep/ .el-button {
-    height: 30px;
-    line-height: 30px;
-    padding: 0px 20px;
-  }
+.process-list-item-word {
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 20px;
+}
 
-  .process-page {
-    text-align: right;
-    margin-top: 20px;
-    margin-right: 20px;
-  }
+.process-list-item-button {
+  text-align: center;
+}
+
+.process-list-item-button ::v-deep .el-button {
+  height: 30px;
+  line-height: 30px;
+  padding: 0px 20px;
+}
+
+.process-page {
+  text-align: right;
+  margin-top: 20px;
+  margin-right: 20px;
+}
 </style>

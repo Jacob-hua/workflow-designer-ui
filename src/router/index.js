@@ -118,7 +118,6 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   try {
-    console.log('ddd');
     if (to.name === "login") {
       next();
       return;
