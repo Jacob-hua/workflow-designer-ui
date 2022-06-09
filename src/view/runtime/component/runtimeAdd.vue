@@ -24,7 +24,7 @@
                 <span>{{ item.user }}</span>
               </div>
               <div class="processList-item-word">
-                <label>部署时间:</label>
+                <label> 部署时间:</label>
                 <span>{{ item.createTime }}</span>
               </div>
               <div class="processList-item-button">
