@@ -8,17 +8,17 @@
       <div class="diologMain">
         <div class="diologMain-left">
           <div class="energyList">
-            <div v-for="(item, index) in $store.state.optionsSystemType"
-                 :class="getData.type === item.value ? 'checkPro' : ''"
+            <div v-for="({label, value}, index) in optionsSystemType"
+                 :class="energyListClass(value)"
                  :key="index"
-                 @click="changEnergy(item.value)"
-                 class="energyList-item"> {{ item.label }}系统 </div>
+                 @click="changEnergy(value)"
+                 class="energyList-item"> {{ label }}系统 </div>
           </div>
         </div>
         <div class="diologMain-right">
           <div class="processList">
             <div class="processList-item"
-                 v-for="(item, index) in processListList"
+                 v-for="(item, index) in processList"
                  :key="index">
               <div class="processList-item-detail"
                    @click="detailsShow(item)">
@@ -63,6 +63,7 @@
 <script>
 import detailsRem from '@/view/home/component/details.vue'
 import { getProcessDefinitionList, getStartProcess } from '@/api/unit/api.js'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -77,7 +78,7 @@ export default {
   data() {
     return {
       input: '',
-      processListList: [],
+      processList: [],
       getData: {
         type: 'energy-1',
         order: 'desc',
@@ -88,13 +89,19 @@ export default {
       },
     }
   },
+  computed: {
+    ...mapState(['optionsSystemType']),
+  },
   methods: {
+    energyListClass(value) {
+      return this.getData.type === value ? 'checkPro' : ''
+    },
     handleClose() {
       this.$emit('close')
     },
     getProcessList() {
       getProcessDefinitionList(this.getData).then((res) => {
-        this.processListList = res.result.dataList
+        this.processList = res.result.dataList
         this.getData.total = res.result.count * 1
       })
     },
