@@ -1,40 +1,40 @@
 <template>
   <div>
     <el-dialog title="新建执行"
-               width="66%"
                :visible="dialogVisible"
+               width="66%"
                :before-close="handleClose"
                @open="openDialog">
-      <div class="diolog-main">
-        <div class="diolog-main-left">
-          <div class="energy-list">
-            <div v-for="({label, value}, index) in optionsSystemType"
-                 class="energy-list-item"
-                 :class="energyListItemClass(value)"
-                 :key="index"
-                 @click="changEnergy(value)"> {{ label }}系统 </div>
+      <div class="diologMain">
+        <div class="diologMain-left">
+          <!-- <el-input v-model="input" placeholder="请输入内容" prefix-icon="el-icon-search"></el-input> -->
+          <div class="energyList">
+            <div v-for="(item, index) in projectOption"
+                 class="energyList-item"
+                 :class="getData.type === item.code ? 'checkPro' : ''"
+                 @click="changEnergy(item.code)"> {{ item.name }}系统 </div>
           </div>
         </div>
-        <div class="diolog-main-right">
-          <div class="process-list">
-            <div class="process-list-item"
-                 v-for="(process, index) in processList"
+        <div class="diologMain-right">
+          <div class="processList">
+            <div class="processList-item"
+                 v-for="(item, index) in processListList"
                  :key="index">
-              <div class="process-list-item-detail"
-                   @click="detailsShow(process)">
+              <div class="processList-item-detail"
+                   @click="detailsShow(item)">
                 <span>详情</span>
               </div>
-              <div class="process-list-item-word">
+              <div class="processList-item-word">
                 <label>部署名称:</label>
-                <span>{{ process.deployName }}</span>
+                <span>{{ item.deployName }}</span>
               </div>
-              <div class="process-list-item-word">
+              <div class="processList-item-word">
                 <label>部署人:</label>
-                <span>{{ process.user }}</span>
+                <span>{{ item.user }}</span>
               </div>
-              <div class="process-list-item-word">
-                <label>部署时间:</label>
-                <span>{{ process.createTime }}</span>
+              <div class="processList-item-word">
+                <label> 部署时间:</label>
+                <span>{{ item.createTime }}</span>
               </div>
               <div class="process-list-item-button">
                 <el-button type="primary"
@@ -80,22 +80,41 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      input: '',
-      processList: [],
-      getData: {
-        type: 'energy-1',
-        order: 'desc',
-        page: 1,
-        limit: 9,
-        tenantId: this.$store.state.tenantId,
-        total: 1,
+    data() {
+      return {
+        projectOption: [],
+        input: '',
+        processListList: [],
+        getData: {
+          type: 'energy-1',
+          order: 'desc',
+          page: 1,
+          limit: 9,
+          tenantId: this.$store.state.tenantId,
+          total: 1,
+        },
+      }
+    },
+
+    created() {
+      // this.getProcessList()
+    },
+    mounted() {
+      this.getProjectList()
+    },
+    methods: {
+      async getProjectList() {
+        let res = await getProjectList({
+          count: -1,
+          projectCode: '',
+          tenantId: this.$store.state.tenantId,
+          type: '',
+        })
+        this.projectOption = res?.result ?? []
       },
       createTicketVisible: false,
       process: {},
-    }
+    },
   },
   computed: {
     ...mapState(['optionsSystemType']),
@@ -146,38 +165,26 @@ export default {
       //   })
       //   .catch(() => {})
     },
-    changEnergy(value) {
-      this.getData.type = value
-      this.getProcessList()
-    },
-    openDialog() {
-      this.getProcessList()
-    },
-    detailsShow(item) {
-      this.$refs.detailsRem.dialogVisible2 = true
-      this.$nextTick(() => {
-        this.$refs.detailsRem.$refs.details2.postData = item
-        this.$refs.detailsRem.$refs.details2.postData.version = item.user
-        this.$refs.detailsRem.$refs.details2.createNewDiagram(item.content)
-      })
+    components: {
+      detailsRem,
     },
   },
 }
 </script>
 
-<style scoped>
-.diolog-main {
+<style scoped="scoped">
+.diologMain {
   display: flex;
 }
 
-.diolog-main-left {
+.diologMain-left {
   flex: 2;
   background-color: #f3f3f3;
   text-align: center;
   height: 695px;
 }
 
-.diolog-main-right {
+.diologMain-right {
   flex: 8;
   background-color: #f3f3f3;
   margin-left: 20px;
@@ -185,19 +192,19 @@ export default {
   padding: 0px 20px;
 }
 
-.diolog-main-left ::v-deep .el-input {
+.diologMain-left /deep/ .el-input {
   width: 220px;
 }
 
-.diolog-main-left ::v-deep .el-input .el-input__inner {
+.diologMain-left /deep/ .el-input .el-input__inner {
   border-radius: 20px;
 }
 
-.energy-list {
+.energyList {
   margin-top: 30px;
 }
 
-.energy-list-item {
+.energyList-item {
   width: 220px;
   height: 44px;
   line-height: 44px;
@@ -206,16 +213,16 @@ export default {
   cursor: pointer;
 }
 
-.check-pro {
+.checkPro {
   border-color: #0066cc;
   color: #0066cc;
 }
 
-.process-list {
+.processList {
   height: 624px;
 }
 
-.process-list-item {
+.processList-item {
   width: 290px;
   height: 178px;
   background-color: #e4e4e4;
@@ -226,7 +233,7 @@ export default {
   margin-top: 30px;
 }
 
-.process-list-item-detail {
+.processList-item-detail {
   position: absolute;
   right: 20px;
   top: 10px;
@@ -234,17 +241,17 @@ export default {
   cursor: pointer;
 }
 
-.process-list-item-word {
+.processList-item-word {
   font-size: 14px;
   color: #000000;
   margin-bottom: 20px;
 }
 
-.process-list-item-button {
+.processList-item-button {
   text-align: center;
 }
 
-.process-list-item-button ::v-deep .el-button {
+.processList-item-button /deep/ .el-button {
   height: 30px;
   line-height: 30px;
   padding: 0px 20px;
