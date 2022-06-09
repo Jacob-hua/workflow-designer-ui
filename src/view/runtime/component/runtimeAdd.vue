@@ -1,18 +1,18 @@
 <template>
   <div>
     <el-dialog title="新建执行"
-               :visible="dialogVisible"
                width="66%"
+               :visible="dialogVisible"
                :before-close="handleClose"
                @open="openDialog">
       <div class="diolog-main">
         <div class="diolog-main-left">
           <div class="energy-list">
             <div v-for="({label, value}, index) in optionsSystemType"
-                 :class="energyListClass(value)"
+                 class="energy-list-item"
+                 :class="energyListItemClass(value)"
                  :key="index"
-                 @click="changEnergy(value)"
-                 class="energy-list-item"> {{ label }}系统 </div>
+                 @click="changEnergy(value)"> {{ label }}系统 </div>
           </div>
         </div>
         <div class="diolog-main-right">
@@ -93,7 +93,7 @@ export default {
     ...mapState(['optionsSystemType']),
   },
   methods: {
-    energyListClass(value) {
+    energyListItemClass(value) {
       return this.getData.type === value ? 'check-pro' : ''
     },
     handleClose() {
