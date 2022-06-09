@@ -5,38 +5,38 @@
                width="66%"
                :before-close="handleClose"
                @open="openDialog">
-      <div class="diologMain">
-        <div class="diologMain-left">
-          <div class="energyList">
+      <div class="diolog-main">
+        <div class="diolog-main-left">
+          <div class="energy-list">
             <div v-for="({label, value}, index) in optionsSystemType"
                  :class="energyListClass(value)"
                  :key="index"
                  @click="changEnergy(value)"
-                 class="energyList-item"> {{ label }}系统 </div>
+                 class="energy-list-item"> {{ label }}系统 </div>
           </div>
         </div>
-        <div class="diologMain-right">
-          <div class="processList">
-            <div class="processList-item"
+        <div class="diolog-main-right">
+          <div class="process-list">
+            <div class="process-list-item"
                  v-for="(process, index) in processList"
                  :key="index">
-              <div class="processList-item-detail"
+              <div class="process-list-item-detail"
                    @click="detailsShow(process)">
                 <span>详情</span>
               </div>
-              <div class="processList-item-word">
+              <div class="process-list-item-word">
                 <label>部署名称:</label>
                 <span>{{ process.deployName }}</span>
               </div>
-              <div class="processList-item-word">
+              <div class="process-list-item-word">
                 <label>部署人:</label>
                 <span>{{ process.user }}</span>
               </div>
-              <div class="processList-item-word">
+              <div class="process-list-item-word">
                 <label>部署时间:</label>
                 <span>{{ process.createTime }}</span>
               </div>
-              <div class="processList-item-button">
+              <div class="process-list-item-button">
                 <el-button type="primary"
                            plain
                            @click="open(process)">创建</el-button>
@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     energyListClass(value) {
-      return this.getData.type === value ? 'checkPro' : ''
+      return this.getData.type === value ? 'check-pro' : ''
     },
     handleClose() {
       this.$emit('close')
@@ -152,19 +152,19 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-.diologMain {
+<style scoped>
+.diolog-main {
   display: flex;
 }
 
-.diologMain-left {
+.diolog-main-left {
   flex: 2;
   background-color: #f3f3f3;
   text-align: center;
   height: 695px;
 }
 
-.diologMain-right {
+.diolog-main-right {
   flex: 8;
   background-color: #f3f3f3;
   margin-left: 20px;
@@ -172,19 +172,19 @@ export default {
   padding: 0px 20px;
 }
 
-.diologMain-left /deep/ .el-input {
+.diolog-main-left ::v-deep .el-input {
   width: 220px;
 }
 
-.diologMain-left /deep/ .el-input .el-input__inner {
+.diolog-main-left ::v-deep .el-input .el-input__inner {
   border-radius: 20px;
 }
 
-.energyList {
+.energy-list {
   margin-top: 30px;
 }
 
-.energyList-item {
+.energy-list-item {
   width: 220px;
   height: 44px;
   line-height: 44px;
@@ -193,16 +193,16 @@ export default {
   cursor: pointer;
 }
 
-.checkPro {
+.check-pro {
   border-color: #0066cc;
   color: #0066cc;
 }
 
-.processList {
+.process-list {
   height: 624px;
 }
 
-.processList-item {
+.process-list-item {
   width: 290px;
   height: 178px;
   background-color: #e4e4e4;
@@ -213,7 +213,7 @@ export default {
   margin-top: 30px;
 }
 
-.processList-item-detail {
+.process-list-item-detail {
   position: absolute;
   right: 20px;
   top: 10px;
@@ -221,17 +221,17 @@ export default {
   cursor: pointer;
 }
 
-.processList-item-word {
+.process-list-item-word {
   font-size: 14px;
   color: #000000;
   margin-bottom: 20px;
 }
 
-.processList-item-button {
+.process-list-item-button {
   text-align: center;
 }
 
-.processList-item-button /deep/ .el-button {
+.process-list-item-button ::v-deep .el-button {
   height: 30px;
   line-height: 30px;
   padding: 0px 20px;
