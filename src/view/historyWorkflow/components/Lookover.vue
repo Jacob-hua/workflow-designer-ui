@@ -11,9 +11,18 @@
             <el-timeline>
               <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData" :key="index">
                 <div class="contant">
-                  <div v-for="(item, index) in JSON.parse(item.formVariable)">
-                    <span>{{ item.label }}</span>
-                    <span style="margin-left: 20px;">{{ item.value }}</span>
+                  <div v-if="item.formVariable && JSON.parse(item.formVariable).list" class="form">
+                    <!-- <div v-for="(item2, index2) in JSON.parse(item1.formData).list">
+                       <span>{{ item2.label }}</span>
+                       <span style="margin-left: 20px;">{{ item2.value }}</span>
+                     </div> -->
+                     <preview :itemList="formListFun(item.formVariable)"  :formConf="configFun(item.formVariable)"></preview>
+                  </div>
+                  <div v-if="item.formVariable && JSON.parse(item.formVariable).components">
+                    <div v-for="(item, index) in JSON.parse(item.formVariable).components">
+                      <span>{{ item.label }}</span>
+                      <span style="margin-left: 20px;">{{ item.value }}</span>
+                    </div>
                   </div>
                   <div v-if="item.status === 'completed'">
                     <i class="el-icon-check" :class="item.time === '-' ? 'error' : 'success'"></i>
@@ -33,54 +42,6 @@
                   </div>
                 </div>
               </el-timeline-item>
-              <!--            <el-timeline-item timestamp="任务#2" placement="top">
-                            <div class="contant">
-                              <div>
-                                <span>现场负责人</span>
-                                <span style="margin-left: 20px;">昊昊</span>
-                              </div>
-                              <div>
-                                <span>现场操作人</span>
-                                <span style="margin-left: 20px;">旺仔</span>
-                                <span style="margin-left: 20px;">京博</span>
-                              </div>
-                              <div>
-                                <i class="el-icon-check success"></i>
-                                <span class="word1">大乔</span>
-                                <span class="dataYear">2020-04-01</span>
-                                <span class="dataMin">14:11:12</span>
-                              </div>
-                            </div>
-                          </el-timeline-item>
-                          <el-timeline-item timestamp="任务#3" placement="top">
-                            <div class="contant">
-                              <div>
-                                <i class="el-icon-check success"></i>
-                                <span class="word1">昊昊</span>
-                                <span class="dataYear">2020-04-01</span>
-                                <span class="dataMin">14:11:12</span>
-                              </div>
-                              <div>
-                                <i class="el-icon-check success"></i>
-                                <span class="word1">旺仔</span>
-                                <span class="dataYear">2020-04-01</span>
-                                <span class="dataMin">14:11:12</span>
-                              </div>
-                              <div>
-                                <i class="el-icon-check"></i>
-                                <span class="word1">京博</span>
-                              </div>
-                            </div>
-                          </el-timeline-item>
-                          <el-timeline-item timestamp="任务#4" placement="top">
-                            <div class="contant">
-                              <i class="el-icon-check success"></i>
-                              <span class="word1">昊昊</span>
-                              <span class="dataYear">2020-04-01</span>
-                              <span class="dataMin">14:11:12</span>
-                            </div>
-                          </el-timeline-item>
-                        -->
             </el-timeline>
           </template>
 
@@ -93,6 +54,7 @@
 <script>
   import ProcessInformation from '@/view/historyWorkflow/components/ProcessInformation'
   import { getTaskTrackList } from '@/api/unit/api.js'
+  import preview from "@/plugin/FormDesign/component/preview";
   export default {
     data() {
       return {
@@ -110,10 +72,32 @@
         }).then((res) => {
           this.listData = res.result
         })
-      }
+      },
+      formListFun(item) {
+        let content = JSON.parse(item)
+          let list = content.list
+          for (const formItem of list) {
+            if (formItem.columns && formItem.columns.length) {
+              for (const formItemElement of formItem.columns) {
+                for (const formItemElementElement of formItemElement.list) {
+                  formItemElementElement.disabled = true
+                }
+              }
+            } else {
+              if ( Object.keys(formItem).includes('disabled')) {
+                formItem.disabled  =  true
+              } else  {}
+            }
+          }
+        return list
+      },
+      configFun(item) {
+        return JSON.parse(item).config
+      },
     },
     components:{
-      ProcessInformation
+      ProcessInformation,
+      preview
     }
   }
 </script>
@@ -164,5 +148,8 @@
   .dataMin {
     position: absolute;
     right: 20px;
+  }
+  .contant .form {
+    padding-top: 20px;
   }
 </style>

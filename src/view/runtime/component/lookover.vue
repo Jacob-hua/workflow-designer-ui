@@ -12,11 +12,20 @@
             <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData" :key="index">
               <div class="contant">
                 <div v-for="(item1, index1) in item.formDataList">
-                  <div v-for="(item2, index2) in JSON.parse(item1.formData)">
-                    <span>{{ item2.label }}</span>
-                    <span style="margin-left: 20px;">{{ item2.value }}</span>
-                  </div>
-                  <div v-if="item1.status === 'completed'">
+                 <div v-if="item1.formData && JSON.parse(item1.formData).list" class="form">
+                   <!-- <div v-for="(item2, index2) in JSON.parse(item1.formData).list">
+                      <span>{{ item2.label }}</span>
+                      <span style="margin-left: 20px;">{{ item2.value }}</span>
+                    </div> -->
+                    <preview :itemList="formListFun(item1.formData)"  :formConf="configFun(item1.formData)"></preview>
+                 </div>
+                 <div v-if="item1.formData && JSON.parse(item1.formData).component">
+                   <div v-for="(item2, index2) in JSON.parse(item1.formData).component">
+                      <span>{{ item2.label }}</span>
+                      <span style="margin-left: 20px;">{{ item2.value }}</span>
+                    </div>
+                 </div>
+                 <div v-if="item1.status === 'completed'">
                     <i class="el-icon-check" :class="item.endTime === '-' ? 'error' : 'success'"></i>
                     <span class="word1">{{ item1.assignee }} <span>(执行)</span></span>
                     <span class="dataYear">{{ item.endTime }}</span>
@@ -66,6 +75,7 @@
 
 <script>
   import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
+  import preview from "@/plugin/FormDesign/component/preview";
   import {
     getTaskTrackList
   } from '@/api/unit/api.js'
@@ -92,6 +102,27 @@
         })
         
       },
+      formListFun(item) {
+        let content = JSON.parse(item)
+          let list = content.list
+          for (const formItem of list) {
+            if (formItem.columns && formItem.columns.length) {
+              for (const formItemElement of formItem.columns) {
+                for (const formItemElementElement of formItemElement.list) {
+                  formItemElementElement.disabled = true
+                }
+              }
+            } else {
+              if ( Object.keys(formItem).includes('disabled')) {
+                formItem.disabled  =  true
+              } else  {}
+            }
+          }
+        return list
+      },
+      configFun(item) {
+        return JSON.parse(item).config
+      },
       // getListData(id) {
       //   return getTaskTrackList({
       //     processInstanceId: id
@@ -101,7 +132,8 @@
       // }
     },
     components: {
-      ProcessInformation
+      ProcessInformation,
+      preview
     }
   }
 </script>
@@ -129,10 +161,14 @@
   .contant {
     background-color: #f2f2f2;
     line-height: 54px;
-    padding: 0px 20px;
+    padding: 0px 20px 0px 20px;
     position: relative;
   }
-
+  
+  .contant .form {
+    padding-top: 20px;
+  }
+  
   .el-icon-check {
     font-size: 20px;
     margin-right: 20px;
