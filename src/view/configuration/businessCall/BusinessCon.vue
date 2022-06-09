@@ -25,8 +25,8 @@
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span >{{ data.name }}<el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
         <span>
-          <i v-if="editFlag" @click="(e)=> append(data,node)" style="font-size: 20px !important; color: #409eff;margin-left: 10px" class="el-icon-circle-plus-outline"></i>
-          <i v-if="data.id !==1" @click="remove(node, data)" style="font-size: 20px !important; color: red;margin-left: 10px" class="el-icon-remove-outline"></i>
+          <i v-if="editFlag && node.level < 3" @click="(e)=> append(data,node)" style="font-size: 20px !important; color: #409eff;margin-left: 10px" class="el-icon-circle-plus-outline"></i>
+          <i v-if="data.id !==1 && data.parentId != -1" @click="remove(node, data)" style="font-size: 20px !important; color: red;margin-left: 10px" class="el-icon-remove-outline"></i>
         </span>
       </span>
     </el-tree>
@@ -182,37 +182,39 @@ export default {
 </script>
 
 <style scoped>
-
-/deep/ .el-dialog__header {
+>>> .el-tree-node__content {
+  padding-left: 0 !important;
+}
+>>> .el-dialog__header {
   background-color: #e4e4e4;
   border-bottom: 1px solid #000000;
 }
-/deep/ .el-input--mini {
+>>> .el-input--mini {
   width: 150px;
 }
-.tree /deep/ .el-tree-node {
+.tree >>> .el-tree-node {
   position: relative;
   padding-left: 0 ;
 }
 
-.tree /deep/ .el-tree-node__children {
+.tree >>> .el-tree-node__children {
   padding-left: 26px;
   padding-top: 20px;
 }
 
-.tree /deep/ .el-tree-node :last-child:before {
+.tree >>> .el-tree-node :last-child:before {
   height: 12px;
 }
 
-.tree /deep/ .el-tree > .el-tree-node:before {
+.tree >>> .el-tree > .el-tree-node:before {
   border-left: none;
 }
 
-.tree-container /deep/ .el-tree > .el-tree-node:after {
+.tree-container >>> .el-tree > .el-tree-node:after {
   border-top: none;
 }
 
-.tree /deep/ .el-tree-node:before {
+.tree >>> .el-tree-node:before {
   content: '';
   left: -4px;
   position: absolute;
@@ -225,7 +227,7 @@ export default {
   width: 1px;
 }
 
-.tree /deep/ .el-tree-node:after {
+.tree >>> .el-tree-node:after {
   content: '';
   left: -4px;
   position: absolute;

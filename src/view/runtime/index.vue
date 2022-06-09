@@ -240,10 +240,10 @@
         this.getData.limit = 10
         this.getManyData()
       },
-      getManyData() {
+      async getManyData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
-        this.getData.businessCode = this.getData.businessCode.at(-1)
+        this.getData.businessCode = Array.isArray(this.getData.businessCode)? this.getData.businessCode :  this.getData.businessCode.at(-1),
         this.getData.projectCode = this.getData.projectCode
         getNewTaskList(this.getData).then((res) => {
          if (res) {
@@ -267,10 +267,10 @@
          } 
         })
       },
-      getAmount() {
+      async getAmount() {
         let obj = {
           assignee: this.$store.state.userInfo.name,
-          businessCode: this.getData.businessCode.at(-1),
+          business:Array.isArray(this.getData.businessCode)? this.getData.businessCode :  this.getData.businessCode.at(-1),
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
           projectCode: this.getData.projectCode,
@@ -373,11 +373,11 @@
         this.getManyData()
         this.getAmount()
       },
-      getDataNumber() {
+      async getDataNumber() {
         getTaskCountStatistic({
           ascription: this.getData.projectCode,
           assignee: this.$store.state.userInfo.name,
-          business: this.getData.businessCode.at(-1),
+          business:Array.isArray(this.getData.businessCode)? this.getData.businessCode :  this.getData.businessCode.at(-1),
           endTime: this.valueDate[1],
           startTime: this.valueDate[0],
           tenantId: this.$store.state.tenantId
@@ -395,13 +395,14 @@
       }
     },
     created() {
-      this.getManyData()
-      this.getAmount()
-      this.getDataNumber()
+
     },
-    mounted() {
+   async mounted() {
       // this.getDataNumber()
-      this.getProjectList()
+      await this.getProjectList()
+      await this.getManyData()
+      await this.getAmount()
+      await this.getDataNumber()
     },
     components: {
       RuntimeAdd,
