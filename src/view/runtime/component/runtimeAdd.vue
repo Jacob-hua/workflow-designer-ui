@@ -18,28 +18,28 @@
         <div class="diologMain-right">
           <div class="processList">
             <div class="processList-item"
-                 v-for="(item, index) in processList"
+                 v-for="(process, index) in processList"
                  :key="index">
               <div class="processList-item-detail"
-                   @click="detailsShow(item)">
+                   @click="detailsShow(process)">
                 <span>详情</span>
               </div>
               <div class="processList-item-word">
                 <label>部署名称:</label>
-                <span>{{ item.deployName }}</span>
+                <span>{{ process.deployName }}</span>
               </div>
               <div class="processList-item-word">
                 <label>部署人:</label>
-                <span>{{ item.user }}</span>
+                <span>{{ process.user }}</span>
               </div>
               <div class="processList-item-word">
                 <label>部署时间:</label>
-                <span>{{ item.createTime }}</span>
+                <span>{{ process.createTime }}</span>
               </div>
               <div class="processList-item-button">
                 <el-button type="primary"
                            plain
-                           @click="open(item)">创建</el-button>
+                           @click="open(process)">创建</el-button>
               </div>
             </div>
           </div>
