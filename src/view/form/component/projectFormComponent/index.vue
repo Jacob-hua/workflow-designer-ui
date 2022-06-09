@@ -4,7 +4,7 @@
       <div>
         <div class="from-item">
           <span>应用项目</span>
-          <el-input v-model="postData.ascription" placeholder="请输入应用项目" :disabled="true"></el-input>
+          <el-input v-model="projectCodeObj[postData.ascription]" placeholder="请输入应用项目" :disabled="true"></el-input>
         </div>
         <div class="from-item">
           <span>流程类型</span>
