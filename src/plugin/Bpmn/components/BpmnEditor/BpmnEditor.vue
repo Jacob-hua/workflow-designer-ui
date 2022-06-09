@@ -31,6 +31,9 @@ export default {
     xml: {
       immediate: true,
       handler(value) {
+        if (!value || !String.prototype.trim.call(value)) {
+          return
+        }
         this.$iBpmn.loadDiagram(value)
       },
     },
