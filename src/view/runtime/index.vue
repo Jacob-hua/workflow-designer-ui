@@ -394,7 +394,7 @@
     margin-right: 20px;
   }
 
-  /deep/ .el-date-editor {
+  .datePick /deep/ .el-date-editor {
     height: 50px;
     border: 1px solid #000000;
     width: 500px;
