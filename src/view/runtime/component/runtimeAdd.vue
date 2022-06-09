@@ -66,6 +66,7 @@ import { getProcessDefinitionList, getStartProcess } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 
 export default {
+  name: 'RuntimeAdd',
   components: {
     detailsRem,
   },
