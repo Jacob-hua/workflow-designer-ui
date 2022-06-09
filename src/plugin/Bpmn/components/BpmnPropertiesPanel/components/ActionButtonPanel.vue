@@ -34,6 +34,9 @@ export default {
       this.updateActions({ newActions: [...value] })
     },
   },
+  mounted() {
+    this.btnList = [...this.actions]
+  },
   methods: {
     ...mapMutations('bpmn/panel', ['updateActions']),
   },

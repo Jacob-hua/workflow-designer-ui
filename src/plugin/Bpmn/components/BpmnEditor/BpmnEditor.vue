@@ -13,15 +13,30 @@ export default {
   name: 'BpmnEditor',
   components: { ControlHeader },
   props: {
-    pelatteVisiable: {
+    pelatteVisible: {
       type: Boolean,
       default: true,
     },
+    name: {
+      type: String,
+    },
+    xml: {
+      type: String,
+    },
   },
-  data: () => {
-    return {
-      canvas: null,
-    }
+  watch: {
+    pelatteVisible(value) {
+      this.$iBpmn.paletteVisible(value)
+    },
+    xml: {
+      immediate: true,
+      handler(value) {
+        if (!value || !String.prototype.trim.call(value)) {
+          return
+        }
+        this.$iBpmn.loadDiagram(value)
+      },
+    },
   },
   mounted() {
     this.initBpmn()
@@ -29,8 +44,10 @@ export default {
   methods: {
     initBpmn() {
       this.$iBpmn.attachTo(this.$refs.containers)
-      this.$iBpmn.createEmptyDiagram()
-      this.$iBpmn.paletteVisible(this.pelatteVisiable)
+      this.$iBpmn.paletteVisible(this.pelatteVisible)
+      if (!this.xml) {
+        this.$iBpmn.createEmptyDiagram(this.name)
+      }
     },
   },
 }

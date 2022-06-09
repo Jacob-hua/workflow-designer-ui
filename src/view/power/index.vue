@@ -2,7 +2,7 @@
   <div class="power">
     <div class="projectHeader">
       <el-select v-model="projectCode" placeholder="请选择" @change="changProjectCode">
-        <el-option v-for="item in $store.state.optionsAscription" :key="item.value" :label="item.label" :value="item.value">
+        <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code">
         </el-option>
       </el-select>
     </div>
@@ -30,15 +30,30 @@
   import personel from './personnel/index.vue'
   import role from './role/index.vue'
   import permission from '@/component/permission/index.vue'
+  import {getProjectList} from "@/api/globalConfig";
   export default {
     data() {
       return {
+        projectOption: [],
         projectCode: 'beiqijia',
         power: 'Personnel',
         permissionRole: true
       }
     },
+    mounted() {
+      this.getProjectList()
+    },
     methods:{
+      async getProjectList(){
+        let res = await  getProjectList({
+          count: -1,
+          projectCode: '',
+          tenantId: this.$store.state.tenantId,
+          type: ''
+        })
+        this.projectOption = res?.result ?? []
+        this.projectCode = this.projectOption[0].code
+      },
       changePower(value) {
         this.power = value
         let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))

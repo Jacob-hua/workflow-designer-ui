@@ -1,12 +1,10 @@
-
 import Vue from "vue";
 import Vuex from "vuex";
 import App from "./App.vue";
 import router from "./router";
 import stores from "./store";
-import axios  from "axios";
-Vue.prototype.$axios = axios
-
+import axios from "axios";
+Vue.prototype.$axios = axios;
 
 import "bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css";
 
@@ -32,14 +30,14 @@ Vue.use(ElementUI);
 Vue.use(JsonViewer);
 Vue.use(FormPlugin);
 Vue.use(Bpmn, {
-  name: "Test",
-  key: "Test",
+  type: "camunda",
+  lintActive: true,
 });
 
 Vue.use(vuePlugin);
 
 Vue.use(MyPD);
-import "@/directive/RoleDirective.js"
+import "@/directive/RoleDirective.js";
 
 Vue.use(Vuex);
 
@@ -50,5 +48,5 @@ const store = new Vuex.Store({
 new Vue({
   router,
   store,
-  render: h => h(App)
-}).$mount('#app');
+  render: (h) => h(App),
+}).$mount("#app");

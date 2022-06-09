@@ -149,9 +149,15 @@ function multiInstance2State(iBpmn = new IBpmn()) {
   return multiInstance;
 }
 
-function selectionChangedListener(_, commit, iBpmn) {
+function selectionChangedListener(_, commit, iBpmn = new IBpmn()) {
   if (!iBpmn.getSelectedShape()) {
     commit("initState");
+    commit("refreshState", {
+      baseInfo: {
+        name: iBpmn.getRootShapeInfo().name,
+        id: iBpmn.getRootShapeInfo().id,
+      },
+    });
     return;
   }
 

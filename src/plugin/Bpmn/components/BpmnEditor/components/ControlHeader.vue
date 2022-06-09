@@ -124,7 +124,7 @@ export default {
     },
     async downloadAs(fileType) {
       try {
-        const fileName = 'test'
+        const fileName = this.$iBpmn.getRootShapeInfo().name
         const download = curryFunction(downloadFile)(fileName, fileType)
         if (['xml', 'bpmn'].includes(fileType)) {
           const { xml } = await this.$iBpmn.saveXML()

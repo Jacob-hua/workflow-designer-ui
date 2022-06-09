@@ -9,8 +9,10 @@
             <el-input v-if="customAssignee"
                       v-model="userTaskForm.assignee" />
             <el-cascader v-else
-                         :options="userGroupOptions"
                          v-model="userTaskForm.assignee"
+                         :options="userGroupOptions"
+                         :props="userCascaderProps"
+                         :show-all-levels="false"
                          clearable>
             </el-cascader>
           </el-col>
@@ -25,8 +27,10 @@
             <el-input v-if="customCandidate"
                       v-model="userTaskForm.candidateUsers" />
             <el-cascader v-else
-                         :options="userGroupOptions"
                          v-model="userTaskForm.candidateUsers"
+                         :options="userGroupOptions"
+                         :props="userCascaderProps"
+                         :show-all-levels="false"
                          clearable>
             </el-cascader>
           </el-col>
@@ -41,8 +45,10 @@
             <el-input v-if="customCandidateGroup"
                       v-model="userTaskForm.candidateGroups" />
             <el-cascader v-else
-                         :options="userGroupOptions"
                          v-model="userTaskForm.candidateGroups"
+                         :options="userGroupOptions"
+                         :show-all-levels="false"
+                         :props="{emitPath: false}"
                          clearable>
             </el-cascader>
           </el-col>
@@ -56,7 +62,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { deepCopy, deepEquals } from '../../../utils/object'
 
 export default {
@@ -68,11 +74,24 @@ export default {
       customCandidate: false,
       customCandidateGroup: false,
       userTaskForm: {},
+      userCascaderProps: {
+        emitPath: false,
+        lazy: true,
+        lazyLoad: (node, resolve) => {
+          // 如果原来的结构中有子节点，则直接返回
+          if (this.findUserGroupChildren(node)) {
+            resolve()
+            return
+          }
+          this.dispatchRequestUser(node.value).then(resolve)
+        },
+      },
     }
   },
   computed: {
     ...mapState('bpmn/config', ['userGroupOptions', 'userOptions']),
     ...mapState('bpmn/panel', ['userTask']),
+    ...mapGetters('bpmn/config', ['findUserGroupChildren']),
   },
   watch: {
     userTask(value) {
@@ -94,6 +113,7 @@ export default {
   },
   methods: {
     ...mapMutations('bpmn/panel', ['updateUserTask']),
+    ...mapActions('bpmn/config', ['dispatchRequestUser']),
   },
 }
 </script>
