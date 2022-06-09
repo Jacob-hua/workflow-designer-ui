@@ -123,7 +123,7 @@
         </el-pagination>
       </div>
     </div>
-    <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtimeAdd>
+    <runtime-add :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtime-add>
     <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog" ref="runTimeImplement"
       @taskSuccess="taskSuccess()" :business="getData.projectCode"></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
@@ -132,7 +132,7 @@
 
 <script>
   import bpmnData from "@/assets/js/bpmnMock.js"
-  import runtimeAdd from './component/RuntimeAdd.vue'
+  import RuntimeAdd from './component/RuntimeAdd.vue'
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
   import {
@@ -223,28 +223,27 @@
         // this.systemValue = this.systemOption[0]?.id  ??  ''
       },
       async getProjectList(){
-        let _this = this
-        let res = await getProjectList({
+        let res = await  getProjectList({
           count: -1,
           projectCode: '',
           tenantId: this.$store.state.tenantId,
           type: ''
         })
-        _this.projectOption = res?.result ?? []
-        _this.getData.projectCode = _this.projectOption[0].code
-        _this.systemOption = _this.projectOption[0].children
-        _this.deleteEmptyChildren(_this.systemOption)
-        _this.getData.businessCode =  _this.systemOption[0].code
+        this.projectOption = res?.result ?? []
+        this.getData.projectCode = this.projectOption[0].code
+        this.systemOption = this.projectOption[0].children
+        this.deleteEmptyChildren(this.systemOption)
+        this.getData.businessCode =  this.systemOption[0].code
       },
       changeGroup() {
         this.getData.page = 1
         this.getData.limit = 10
         this.getManyData()
       },
-      async getManyData() {
+      getManyData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
-        this.getData.businessCode = Array.isArray(this.getData.businessCode)? this.getData.businessCode.at(-1) : this.getData.businessCode,
+        this.getData.businessCode = this.getData.businessCode.at(-1)
         this.getData.projectCode = this.getData.projectCode
         getNewTaskList(this.getData).then((res) => {
          if (res) {
@@ -268,10 +267,10 @@
          } 
         })
       },
-     async getAmount() {
+      getAmount() {
         let obj = {
           assignee: this.$store.state.userInfo.name,
-          businessCode:Array.isArray(this.getData.businessCode)? this.getData.businessCode.at(-1) : this.getData.businessCode,
+          businessCode: this.getData.businessCode.at(-1),
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
           projectCode: this.getData.projectCode,
@@ -374,11 +373,11 @@
         this.getManyData()
         this.getAmount()
       },
-      async getDataNumber() {
+      getDataNumber() {
         getTaskCountStatistic({
           ascription: this.getData.projectCode,
           assignee: this.$store.state.userInfo.name,
-          business: Array.isArray(this.getData.businessCode)? this.getData.businessCode.at(-1) : this.getData.businessCode,
+          business: this.getData.businessCode.at(-1),
           endTime: this.valueDate[1],
           startTime: this.valueDate[0],
           tenantId: this.$store.state.tenantId
@@ -396,17 +395,16 @@
       }
     },
     created() {
-
+      this.getManyData()
+      this.getAmount()
+      this.getDataNumber()
     },
-    async mounted() {
+    mounted() {
       // this.getDataNumber()
-        await this.getProjectList()
-        await this.getManyData()
-        await this.getAmount()
-        await this.getDataNumber()
+      this.getProjectList()
     },
     components: {
-      runtimeAdd,
+      RuntimeAdd,
       runTimeImplement,
       lookover
     }

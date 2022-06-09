@@ -21,7 +21,6 @@ pipeline {
 					git branch: 'develop', credentialsId: 'lulongchao', url: 'http://192.100.30.115:9000/job_workflow_platform/workflow-designer-ui.git'
 					script {
 						build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-						commit_message = sh(returnStdout: true, script: 'git log --pretty=format:"[%cn] - %s - %b" -1 |  grep -v See | sed "/^\\$/d" ').trim()
 					}
 				}  
 			}
@@ -129,7 +128,6 @@ pipeline {
 			        		"- 服务名称：${JOB_BASE_NAME}",
 			        		"- 发版方式：手动 ",
 			        		"- 任务ID：[${BUILD_ID}](${RUN_DISPLAY_URL})",
-							"- 提交信息：${commit_message}",
 			        		"- 发布状态：<font color=\"#80FF00\">成功</font> "
                         ],
                         at: []
@@ -146,7 +144,6 @@ pipeline {
 			            		"- 服务名称：${JOB_BASE_NAME}",
 			            		"- 发版方式：GitLab WebHook",
 			            		"- 任务ID：[${BUILD_ID}](${RUN_DISPLAY_URL})",
-								"- 提交信息：${commit_message}",
 			            		"- 发布状态：<font  color=\"#80FF00\">成功</font> "
                             ],
                             at: []
@@ -167,7 +164,6 @@ pipeline {
 			        		"- 服务名称：${JOB_BASE_NAME}",
 			        		"- 发版方式：手动",
 			        		"- 任务ID：[${BUILD_ID}](${RUN_DISPLAY_URL})",
-							"- 提交信息：${commit_message}",
 			        		"- 发布状态：<font color=\"#FF0000\">失败</font>"
                         ],
                         at: []
@@ -184,7 +180,6 @@ pipeline {
 			        		"- 服务名称：${JOB_BASE_NAME}",
 			        		"- 发版方式：GitLab WebHook",
 			        		"- 任务ID：[${BUILD_ID}](${RUN_DISPLAY_URL})",
-							"- 提交信息：${commit_message}",
 			        		"- 发布状态：<font color=\"#FF0000\">失败</font>"
                         ],
                         at: []
