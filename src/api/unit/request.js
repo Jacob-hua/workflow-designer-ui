@@ -104,7 +104,7 @@ export function put(url, params) {
   return service.put(url, params)
 }
 
-export function deletefn(url, params, config) {
+export function deletefn(url, data) {
   return service({
     url: url,
     method: 'delete',
