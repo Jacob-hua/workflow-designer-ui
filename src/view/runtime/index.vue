@@ -223,27 +223,28 @@
         // this.systemValue = this.systemOption[0]?.id  ??  ''
       },
       async getProjectList(){
+        let _this = this
         let res = await  getProjectList({
           count: -1,
           projectCode: '',
           tenantId: this.$store.state.tenantId,
           type: ''
         })
-        this.projectOption = res?.result ?? []
-        this.getData.projectCode = this.projectOption[0].code
-        this.systemOption = this.projectOption[0].children
-        this.deleteEmptyChildren(this.systemOption)
-        this.getData.businessCode =  this.systemOption[0].code
+        _this.projectOption = res?.result ?? []
+        _this.getData.projectCode = _this.projectOption[0].code
+        _this.systemOption = _this.projectOption[0].children
+        _this.deleteEmptyChildren(_this.systemOption)
+        _this.getData.businessCode =  _this.systemOption[0].code
       },
       changeGroup() {
         this.getData.page = 1
         this.getData.limit = 10
         this.getManyData()
       },
-      getManyData() {
+      async getManyData() {
         this.getData.startTime = this.valueDate[0]
         this.getData.endTime = this.valueDate[1]
-        this.getData.businessCode = this.getData.businessCode.at(-1)
+        this.getData.businessCode = Array.isArray(this.getData.businessCode)? this.getData.businessCode.at(-1) : this.getData.businessCode,
         this.getData.projectCode = this.getData.projectCode
         getNewTaskList(this.getData).then((res) => {
          if (res) {
@@ -267,10 +268,10 @@
          } 
         })
       },
-      getAmount() {
+     async getAmount() {
         let obj = {
           assignee: this.$store.state.userInfo.name,
-          businessCode: this.getData.businessCode.at(-1),
+          businessCode:Array.isArray(this.getData.businessCode)? this.getData.businessCode.at(-1) : this.getData.businessCode,
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
           projectCode: this.getData.projectCode,
@@ -373,11 +374,11 @@
         this.getManyData()
         this.getAmount()
       },
-      getDataNumber() {
+      async getDataNumber() {
         getTaskCountStatistic({
           ascription: this.getData.projectCode,
           assignee: this.$store.state.userInfo.name,
-          business: this.getData.businessCode.at(-1),
+          business: Array.isArray(this.getData.businessCode)? this.getData.businessCode.at(-1) : this.getData.businessCode,
           endTime: this.valueDate[1],
           startTime: this.valueDate[0],
           tenantId: this.$store.state.tenantId
@@ -395,13 +396,14 @@
       }
     },
     created() {
-      this.getManyData()
-      this.getAmount()
-      this.getDataNumber()
+
     },
-    mounted() {
+    async mounted() {
       // this.getDataNumber()
-      this.getProjectList()
+        await this.getProjectList()
+        await this.getManyData()
+        await this.getAmount()
+        await this.getDataNumber()
     },
     components: {
       runtimeAdd,
