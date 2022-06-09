@@ -1,19 +1,11 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-<!--      <el-select v-model="projectCode" placeholder="请选择" @change="changProjectCode">-->
-<!--        <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">-->
-<!--        </el-option>-->
-<!--      </el-select>-->
-      <el-select style="width: 300px; margin-right: 20px"   @change="projectChange" v-model="projectCode">
-        <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
+      <el-select v-model="projectCode" placeholder="请选择" @change="changProjectCode">
+        <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">
+        </el-option>
       </el-select>
-      <el-cascader
-          style="width: 350px"
-          v-model="projectValue"
-          :options="systemOption"
-          :props = 'sysProps'
-          @change="handleChange"></el-cascader>
+    </div>
     <!-- <div class="projectList">
       <div class="projectList-item" :class="projectCode === 'beiqijia' ? 'checkPro' : '' " @click="changProjectCode('beiqijia')">
         <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'beiqijia'">
@@ -36,12 +28,10 @@
     </div> -->
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
-<!--        <el-select v-model="projectValue" placeholder="请选择">-->
-<!--          <el-option v-for="item in $store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">-->
-<!--          </el-option>-->
-<!--        </el-select>-->
-
-      </div>
+        <el-select v-model="projectValue" placeholder="请选择">
+          <el-option v-for="item in $store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
       </div>
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
@@ -132,15 +122,9 @@
   import detailsDiologForm from './details.vue'
   import application from './projectFormComponent/application.vue'
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
-  import {getProjectList} from "@/api/globalConfig";
   export default {
     data() {
       return {
-        sysProps:{
-          label: 'name',
-          value: 'code'
-        },
-        systemOption: [],
         formData: {},
         projectValue: '',
         projectOption: [
@@ -182,38 +166,6 @@
       }
     },
     methods: {
-      deleteEmptyChildren(arr) {
-        for (let i = 0; i < arr.length; i++) {
-          const arrElement = arr[i];
-          if (!arrElement.children.length) {
-            delete arrElement.children
-            continue
-          }
-          if (arrElement.children) {
-            this.deleteEmptyChildren(arrElement.children)
-          }
-        }
-
-      },
-      projectChange(val) {
-        this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
-        this.deleteEmptyChildren(this.systemOption)
-        console.log(this.systemOption)
-        // this.systemValue = this.systemOption[0]?.id  ??  ''
-      },
-      async getProjectList(){
-        let res = await  getProjectList({
-          count: -1,
-          projectCode: '',
-          tenantId: this.$store.state.tenantId,
-          type: ''
-        })
-        this.projectOption = res?.result ?? []
-        this.projectCode = this.projectOption[0].code
-        this.systemOption = this.projectOption[0].children
-        this.deleteEmptyChildren(this.systemOption)
-        this.projectValue =  this.systemOption[0].code
-      },
       application() {
         this.dialogVisible = true
       },
@@ -226,14 +178,13 @@
           tenantId: this.$store.state.tenantId,
           status: 'drafted',
           ascription: this.projectCode,
-          business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
+          business: this.projectValue,
           createBy: this.$store.state.userInfo.name,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] + ' 00:00:00',
           endTime: this.valueDate[1] + ' 23:59:59',
           ...this.getDataSecond
-
         }).then((res) => {
           this.formListSecond = res.result.dataList
           this.getDataSecond.total = res.result.count
@@ -245,7 +196,7 @@
           tenantId: this.$store.state.tenantId,
           status: 'enabled',
           ascription: this.projectCode,
-          business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
+          business: this.projectValue,
           createBy: this.$store.state.userInfo.name,
           numberCode: '',
           name: this.input,
@@ -257,12 +208,12 @@
           this.getDataFirst.total = res.result.count
         })
       },
-      
+
       getManyData() {
         this.getEnableData()
         this.getDraftData()
       },
-      
+
       getData() {
         switch (this.activeName){
           case 'enabled':
@@ -275,29 +226,28 @@
             break;
         }
       },
-      
+
       changeActiveName(value) {
         this.activeName = value
         this.getData()
       },
-      
+
       deleteSuccsee() {
         this.$refs.detailsDiolog.dialogVisible2 = false
         this.getData()
       },
-      
+
       addSuccess() {
         this.$refs.detailsDiolog.dialogVisible2 = false
         this.$refs.projectFormDiolog.dialogVisible2 = false
         this.getData()
       },
-      
+
       changProjectCode(code) {
         this.projectCode = code
         this.getManyData()
       },
       addForm() {
-        this.$refs.projectFormDiolog.postData.ascription = this.projectCode
         this.$refs.projectFormDiolog.dialogVisible1 = true
         this.$refs.projectFormDiolog.postData = {
           ascription: '',
@@ -305,8 +255,9 @@
           energy: '',
           name: ''
         }
+        this.$refs.projectFormDiolog.postData.ascription = this.projectCode
       },
-      
+
       addForm2(item) {
         let content = JSON.parse(item.content)
         this.$refs.projectFormDiolog.dialogVisible2 = true
@@ -323,7 +274,7 @@
           status: this.activeName,
           tenantId: this.$store.state.tenantId,
           ascription: this.projectCode,
-          business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
+          business: this.projectValue,
           createBy: this.$store.state.userInfo.name
         }).then((res) => {
           this.$refs.detailsDiolog.previewVisible = true
@@ -348,7 +299,6 @@
       }
     },
     mounted() {
-      this.getProjectList()
       this.getDraftData()
       this.getEnableData()
     },
