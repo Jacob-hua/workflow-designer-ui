@@ -5,8 +5,8 @@
         <div class="diologMain-left">
           <!-- <el-input v-model="input" placeholder="请输入内容" prefix-icon="el-icon-search"></el-input> -->
           <div class="energyList">
-            <div v-for="(item, index) in $store.state.optionsSystemType" class="energyList-item" :class="getData.type === item.value ? 'checkPro' : ''"
-              @click="changEnergy(item.value)"> {{ item.label }}系统 </div>
+            <div v-for="(item, index) in projectOption" class="energyList-item" :class="getData.type === item.code ? 'checkPro' : ''"
+              @click="changEnergy(item.code)"> {{ item.name }}系统 </div>
           </div>
         </div>
         <div class="diologMain-right">
@@ -47,6 +47,7 @@
 <script>
   import detailsRem from '@/view/home/component/details.vue'
   import { getProcessDefinitionList, getStartProcess } from '@/api/unit/api.js'
+  import {getProjectList} from "@/api/globalConfig";
   export default {
     props: {
       dialogVisible: {
@@ -56,6 +57,7 @@
     },
     data() {
       return {
+        projectOption: [],
         input: '',
         processListList: [],
         getData: {
@@ -72,8 +74,19 @@
     created() {
       // this.getProcessList()
     },
-    
+    mounted() {
+      this.getProjectList()
+    },
     methods: {
+      async getProjectList(){
+        let res = await  getProjectList({
+          count: -1,
+          projectCode: '',
+          tenantId: this.$store.state.tenantId,
+          type: ''
+        })
+        this.projectOption = res?.result ?? []
+      },
       handleClose() {
         this.$emit('close')
       },
