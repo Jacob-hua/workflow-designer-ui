@@ -123,7 +123,7 @@
         </el-pagination>
       </div>
     </div>
-    <runtimeAdd :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtimeAdd>
+    <runtime-add :dialogVisible="dialogVisibleAdd" @close="closeDialogAdd" @succseeAdd="succseeAdd()"></runtime-add>
     <runTimeImplement :dialogVisible="dialogVisibleImplement" @close="closeDialogImplement" @goSee="detailsDiolog" ref="runTimeImplement"
       @taskSuccess="taskSuccess()" :business="getData.projectCode"></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
@@ -132,7 +132,7 @@
 
 <script>
   import bpmnData from "@/assets/js/bpmnMock.js"
-  import runtimeAdd from './component/RuntimeAdd.vue'
+  import RuntimeAdd from './component/RuntimeAdd.vue'
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
   import {
@@ -404,7 +404,7 @@
       this.getProjectList()
     },
     components: {
-      runtimeAdd,
+      RuntimeAdd,
       runTimeImplement,
       lookover
     }

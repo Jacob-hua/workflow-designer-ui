@@ -39,7 +39,7 @@
               <div class="process-list-item-button">
                 <el-button type="primary"
                            plain
-                           @click="open(process)">创建</el-button>
+                           @click="createTicket(process)">创建</el-button>
               </div>
             </div>
           </div>
@@ -55,6 +55,9 @@
         </div>
       </div>
     </el-dialog>
+    <runtime-creat-ticket :visible="createTicketVisible"
+                          :process="process"
+                          @close="onCreateTicketVisible" />
     <detailsRem ref="detailsRem"
                 seeType="runTime"></detailsRem>
   </div>
@@ -62,13 +65,15 @@
 
 <script>
 import detailsRem from '@/view/home/component/details.vue'
-import { getProcessDefinitionList, getStartProcess } from '@/api/unit/api.js'
+import { getProcessDefinitionList } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
+import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
 
 export default {
   name: 'RuntimeAdd',
   components: {
     detailsRem,
+    RuntimeCreatTicket,
   },
   props: {
     dialogVisible: {
@@ -88,12 +93,17 @@ export default {
         tenantId: this.$store.state.tenantId,
         total: 1,
       },
+      createTicketVisible: false,
+      process: {},
     }
   },
   computed: {
     ...mapState(['optionsSystemType']),
   },
   methods: {
+    onCreateTicketVisible() {
+      this.createTicketVisible = false
+    },
     energyListItemClass(value) {
       return this.getData.type === value ? 'check-pro' : ''
     },
@@ -112,27 +122,29 @@ export default {
     handleCurrentChange() {
       this.getProcessList()
     },
-    open(item) {
-      this.$confirm('创建的执行会进入执行列表并开始执行流程,是否继续', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-      })
-        .then(() => {
-          getStartProcess({
-            businessKey: '',
-            definitionKey: item.key,
-            createBy: this.$store.state.userInfo.name,
-            startProcessId: item.id,
-            variables: {},
-          }).then((res) => {
-            this.$message({
-              type: 'success',
-              message: '创建成功',
-            })
-            this.$emit('succseeAdd')
-          })
-        })
-        .catch(() => {})
+    createTicket(process) {
+      this.createTicketVisible = true
+      this.process = process
+      // this.$confirm('创建的执行会进入执行列表并开始执行流程,是否继续', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      // })
+      //   .then(() => {
+      //     getStartProcess({
+      //       businessKey: '',
+      //       definitionKey: process.key,
+      //       createBy: this.$store.state.userInfo.name,
+      //       startProcessId: process.id,
+      //       variables: {},
+      //     }).then(() => {
+      //       this.$message({
+      //         type: 'success',
+      //         message: '创建成功',
+      //       })
+      //       this.$emit('succseeAdd')
+      //     })
+      //   })
+      //   .catch(() => {})
     },
     changEnergy(value) {
       this.getData.type = value
