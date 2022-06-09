@@ -132,7 +132,7 @@
 
 <script>
   import bpmnData from "@/assets/js/bpmnMock.js"
-  import runtimeAdd from './component/runtimeAdd.vue'
+  import runtimeAdd from './component/RuntimeAdd.vue'
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
   import {
