@@ -10,7 +10,7 @@
                       :label="label"
                       :prop="prop"
                       :rules="{required, message: '请输入' + label, trigger: 'blur'}">
-          <el-input v-if="type === 1"
+          <el-input v-if="isInput(type)"
                     v-model="startForm[prop]"
                     :placeholder="placeholder"></el-input>
           <el-select v-else
@@ -38,6 +38,7 @@
 import { mapState } from 'vuex'
 import { selectProcessStartConfigByCode } from '../../../api/globalConfig'
 import { getStartProcess } from '../../../api/unit/api.js'
+import { FormTypeEnum } from '../../../enum'
 
 export default {
   name: 'RuntimeCreatTicket',
@@ -110,6 +111,9 @@ export default {
     },
   },
   methods: {
+    isInput(type) {
+      return type === FormTypeEnum.FORM_TYPE_INPUT
+    },
     onCloseModal() {
       this.$emit('close')
     },
