@@ -96,6 +96,8 @@
           this.data = res.result
           if (res.result[0]) {
             this.getRole(res.result[0])
+          } else {
+            this.roleList = []
           }
         })
       },

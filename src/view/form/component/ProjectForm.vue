@@ -164,7 +164,6 @@
       projectChange(val) {
         this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
         this.deleteEmptyChildren(this.systemOption)
-        console.log(this.systemOption)
         // this.systemValue = this.systemOption[0]?.id  ??  ''
       },
       async getProjectList(){
