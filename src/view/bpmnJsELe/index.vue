@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import { getSystemGroupTree, postPersonUser } from '../../api/unit/api'
 
 function groupTree2CascaderData(data) {
@@ -46,6 +46,9 @@ export default {
       default: () => new Date().getTime().toString(),
     },
   },
+  computed: {
+    ...mapState(['tenantId'])
+  },
   mounted() {
     // 定义请求用户组的方法
     this.updateRequestUserGroupFunc({ newFunc: this.fetchUserGroup })
@@ -82,7 +85,7 @@ export default {
           limit: 999999,
           name: '',
           page: 1,
-          tenantId: '18',
+          tenantId: this.tenantId,
           userId: 'admin',
         })
         if (errorInfo.errorCode) {

@@ -3,6 +3,7 @@
     <el-drawer :title="title"
                :visible="visible"
                @close="onCloseDrawer"
+               append-to-body
                direction="rtl">
       <el-form :model="parameterForm"
                :rules="parameterFormRules"

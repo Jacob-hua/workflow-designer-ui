@@ -12,17 +12,26 @@
           <el-input v-if="type === 1"
                     :placeholder="placeholder"></el-input>
           <el-select v-else>
-            <el-option></el-option>
+            <el-option v-for="({value, label}) in getStartFormOptions(prop)"
+                       :key="value"
+                       :value="value"
+                       :label="label"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
+      <!-- <el-empty description="创建的执行会进入执行列表并开始执行流程,是否继续？"></el-empty> -->
+      <span slot="footer">
+        <el-button type="primary"
+                   @click="onSubmit">立即创建</el-button>
+        <el-button @click="onCancel">取消</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { selectProcessStartConfigList } from '../../../api/globalConfig'
+import { selectProcessStartConfigByCode } from '../../../api/globalConfig'
 
 export default {
   name: 'RuntimeCreatTicket',
@@ -33,7 +42,7 @@ export default {
     },
     visible: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     process: {
       type: Object,
@@ -42,49 +51,9 @@ export default {
   },
   data() {
     return {
-      businessConfigCode: null,
-      startConfigList: [
-        {
-          id: '64',
-          code: 'type',
-          name: '类型',
-          businessConfigId: '424',
-          isSetting: 1,
-          isRequired: 1,
-          startType: 2,
-          thirdInterfaceId: null,
-          tenantId: '18',
-          isUse: 0,
-          value: null,
-        },
-        {
-          id: '63',
-          code: 'dis',
-          name: '项目简介',
-          businessConfigId: '424',
-          isSetting: 1,
-          isRequired: 1,
-          startType: 1,
-          thirdInterfaceId: null,
-          tenantId: '18',
-          isUse: 0,
-          value: null,
-        },
-        {
-          id: '62',
-          code: 'name',
-          name: '项目名',
-          businessConfigId: '424',
-          isSetting: 1,
-          isRequired: 1,
-          startType: 1,
-          thirdInterfaceId: null,
-          tenantId: '18',
-          isUse: 0,
-          value: null,
-        },
-      ],
+      startConfigList: [],
       startForm: {},
+      startFormOptions: {},
     }
   },
   computed: {
@@ -92,12 +61,13 @@ export default {
     startFormFields() {
       return this.startConfigList
         .filter(({ isSetting }) => isSetting)
-        .map(({ id, name, code, startType, isRequired }) => ({
+        .map(({ id, name, code, startType, isRequired, value }) => ({
           id,
           label: name,
           prop: code,
           type: startType,
-          required: isRequired,
+          required: Boolean(isRequired),
+          apiId: value,
           placeholder: '请输入' + name,
         }))
     },
@@ -105,11 +75,14 @@ export default {
   watch: {
     process: {
       immediate: true,
-      handler({ business }) {
-        if (!business) {
+      handler(process) {
+        console.log(process)
+        if (!process.business) {
           return
         }
-        this.businessConfigCode = business
+        this.fetchProcessStartConfigList(7).then((res) => {
+          this.startConfigList = res
+        })
       },
     },
   },
@@ -117,9 +90,18 @@ export default {
     onCloseModal() {
       this.$emit('close')
     },
+    onSubmit() {
+      this.onCloseModal()
+    },
+    onCancel() {
+      this.onCloseModal()
+    },
+    getStartFormOptions(prop) {
+      return this.startFormOptions[prop]?.options ?? []
+    },
     async fetchProcessStartConfigList(businessConfigCode) {
       try {
-        const { errorInfo, result } = await selectProcessStartConfigList({
+        const { errorInfo, result } = await selectProcessStartConfigByCode({
           businessConfigCode,
           tenantId: this.tenantId,
         })

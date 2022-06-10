@@ -260,7 +260,6 @@
         this.getManyData()
       },
       addForm() {
-        this.$refs.projectFormDiolog.postData.ascription = this.projectCode
         this.$refs.projectFormDiolog.dialogVisible1 = true
         this.$refs.projectFormDiolog.postData = {
           ascription: '',
@@ -268,6 +267,7 @@
           energy: '',
           name: ''
         }
+        this.$refs.projectFormDiolog.postData.ascription = this.projectCode
       },
       
       addForm2(item) {
