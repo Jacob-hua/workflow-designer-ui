@@ -56,7 +56,8 @@
     </el-dialog>
     <runtime-creat-ticket :visible="createTicketVisible"
                           :process="process"
-                          @close="onCreateTicketVisible" />
+                          @close="onCreateTicketVisible"
+                          @submit="onCreateTicketSubmit" />
     <detailsRem ref="detailsRem"
                 seeType="runTime"></detailsRem>
   </div>
@@ -128,6 +129,11 @@ export default {
     },
     onCurrentChange() {
       this.getProcessList()
+    },
+    onCreateTicketSubmit(signal) {
+      if (signal) {
+        this.$emit('succseeAdd')
+      }
     },
     createTicket(process) {
       this.createTicketVisible = true

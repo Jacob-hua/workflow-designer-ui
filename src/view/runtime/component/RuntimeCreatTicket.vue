@@ -127,15 +127,18 @@ export default {
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo)
+          this.$emit('submit', false)
           return
         }
         this.$message({
           type: 'success',
           message: '创建成功',
         })
+        this.$emit('submit', true)
         this.onCloseModal()
         this.$refs['startForm'] && this.$refs['startForm'].resetFields()
       } catch (error) {
+        this.$emit('submit', false)
       } finally {
         this.isSubmiting = false
       }
