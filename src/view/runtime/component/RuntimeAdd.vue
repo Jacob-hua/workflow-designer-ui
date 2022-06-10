@@ -17,23 +17,23 @@
         <div class="diolog-main-right">
           <div class="process-list">
             <div class="process-list-item"
-                 v-for="(item, index) in processListList"
+                 v-for="(process, index) in processListList"
                  :key="index">
               <div class="process-list-item-detail"
-                   @click="detailsShow(item)">
+                   @click="detailsShow(process)">
                 <span>详情</span>
               </div>
               <div class="process-list-item-word">
                 <label>部署名称:</label>
-                <span>{{ item.deployName }}</span>
+                <span>{{ process.deployName }}</span>
               </div>
               <div class="process-list-item-word">
                 <label>部署人:</label>
-                <span>{{ item.user }}</span>
+                <span>{{ process.user }}</span>
               </div>
               <div class="process-list-item-word">
                 <label> 部署时间:</label>
-                <span>{{ item.createTime }}</span>
+                <span>{{ process.createTime }}</span>
               </div>
               <div class="process-list-item-button">
                 <el-button type="primary"
@@ -82,8 +82,6 @@ export default {
   },
   data() {
     return {
-      projectOption: [],
-      input: '',
       processListList: [],
       getData: {
         type: 'energy-1',
