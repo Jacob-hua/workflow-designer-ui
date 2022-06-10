@@ -57,7 +57,7 @@
       return {
         dialogVisible: false,
         data: [],
-        currentNodeKey: 'XM_aff0659724a54c119ac857d4e560b47b:-1:template:78',
+        currentNodeKey: '',
         currentNodeName: '',
         defaultProps: {
           children: 'children',
@@ -67,9 +67,6 @@
       }
     },
     methods: {
-      handleNodeClick(data) {
-        console.log(data);
-      },
       handleClose() {
         this.getRole({
           groupId: this.currentNodeKey,
@@ -93,11 +90,13 @@
       },
       getTree() {
         getSystemGroupTree({
-          projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
+          projectCode: this.business,
           displayType: 'tree'
         }).then((res) => {
           this.data = res.result
-          this.getRole(res.result[0])
+          if (res.result[0]) {
+            this.getRole(res.result[0])
+          }
         })
       },
       getRole(result) {
@@ -105,7 +104,7 @@
         this.currentNodeName = result.groupName
         getGroupPermission({
           groupCode: result.groupId,
-          projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
+          projectCode: this.business,
           tenantId: this.$store.state.tenantId
         }).then((res) => {
           this.roleList = res.result
@@ -147,8 +146,15 @@
       PeTree,
       editRole
     },
-    created() {
-      this.getTree()
+    mounted() {
+      // this.getTree()
+    },
+    watch:{
+      business: {
+        handler() {
+          this.getTree()
+        }
+      }
     }
   }
 </script>

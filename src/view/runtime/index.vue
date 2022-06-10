@@ -223,7 +223,7 @@
         // this.systemValue = this.systemOption[0]?.id  ??  ''
       },
       async getProjectList(){
-        let res = await  getProjectList({
+        let res = await getProjectList({
           count: -1,
           projectCode: '',
           tenantId: this.$store.state.tenantId,
@@ -245,7 +245,7 @@
         this.getData.endTime = this.valueDate[1]
         this.getData.businessCode = Array.isArray(this.getData.businessCode)? this.getData.businessCode :  this.getData.businessCode.at(-1),
         this.getData.projectCode = this.getData.projectCode
-        getNewTaskList(this.getData).then((res) => {
+        await getNewTaskList(this.getData).then((res) => {
          if (res) {
            this.tableData = res.result.dataList
            this.tableData.forEach((item) => {
@@ -394,11 +394,8 @@
         })
       }
     },
-    created() {
 
-    },
    async mounted() {
-      // this.getDataNumber()
       await this.getProjectList()
       await this.getManyData()
       await this.getAmount()

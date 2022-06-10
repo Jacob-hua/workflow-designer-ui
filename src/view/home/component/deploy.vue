@@ -183,15 +183,18 @@
         this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
           let a = xml.replaceAll(this.$refs.ProcessInformation.postData.code, `Process_${new Date().getTime()}`)
           const { definitions } = newConvert.xml2js(a);
+          console.log(definitions, '0000')
           var file1 = new File([a], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
-          if (Array.isArray(definitions.process.userTask)) {
-            definitions.process.userTask.forEach((item, index) => {
-              if (item['_camunda:formKey']) {
-                formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
-              }
-            })
-          } else{
-            formIds = (definitions.process.userTask['_camunda:formKey'] && definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) || ''
+          if (definitions.process.userTask) {
+            if (Array.isArray(definitions.process.userTask)) {
+              definitions.process.userTask.forEach((item, index) => {
+                if (item['_camunda:formKey']) {
+                  formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
+                }
+              })
+            } else{
+              formIds = (definitions.process.userTask['_camunda:formKey'] && definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) || ''
+            }
           }
           let formData = new FormData()
           switch (this.dataType){
@@ -270,6 +273,10 @@
           }
       },
       showForm(item) {
+        console.log(window.bpmnInstances.modeler)
+        if (true) {
+          return
+        }
         if (window.bpmnInstances.modeler) {
           window.bpmnInstances.modeling.updateProperties(window.bpmnInstances.modeler , { 'camunda:formKey': 'camunda-forms:deployment:' + item.docName });
           this.formShow = true

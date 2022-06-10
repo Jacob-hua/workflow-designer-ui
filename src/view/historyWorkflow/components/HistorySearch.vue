@@ -31,8 +31,8 @@ export default {
         value: 'code'
       },
       valueDate: [],
-      projectValue: '1',
-      systemValue: '1',
+      projectValue: '',
+      systemValue: '',
       projectOption: [],
       systemOption: [],
     }

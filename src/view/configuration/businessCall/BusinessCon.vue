@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {createBusinessConfig, UpdatebusinessConfig} from "@/api/globalConfig";
+import {createBusinessConfig, updateBusinessConfig} from "@/api/globalConfig";
 
 let id = 2;
 export default {
@@ -103,7 +103,7 @@ export default {
             _this.$parent.getBusinessConfigBasicList()
           })
         } else {
-          UpdatebusinessConfig(this.data).then((res)=> {
+          updateBusinessConfig(this.data).then((res)=> {
             this.dialogVisible = false
             this.$message({
               type: 'success',
