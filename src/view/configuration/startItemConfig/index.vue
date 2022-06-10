@@ -1,8 +1,7 @@
 <template>
   <div>
-    <div v-if="1==0" class="empty">
+    <div v-if="businessList.length === 0" class="empty">
       <p>当前尚无业务数据,请先进行业务配置</p>
-      <el-button>创建</el-button>
     </div>
     <div class="businessCall-main-list">
       <div v-for="(item,index) in businessList" :key="index" class="businessCall-main-list-card">

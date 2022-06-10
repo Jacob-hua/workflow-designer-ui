@@ -1,9 +1,9 @@
 <template>
   <div class="businessCall">
     <div class="businessCall-main">
-      <div class="businessCall-main-title">
-        <el-button type="primary" v-role="{ id: 'BusinessCallImport', type: 'button', business: business }">批量导入</el-button>
-      </div>
+<!--      <div class="businessCall-main-title">-->
+<!--        <el-button type="primary" v-role="{ id: 'BusinessCallImport', type: 'button', business: business }">批量导入</el-button>-->
+<!--      </div>-->
       <div class="businessCall-main-list">
         <div v-for="(item,index) in businessList" :key="index" class="businessCall-main-list-card">
           <div class="card-popover">
@@ -152,7 +152,7 @@ export default {
 </script>
 
 <style scoped="scoped">
-/deep/ .el-popover {
+>>> .el-popover {
   min-width: unset !important;
   background-color: rgb(242,242,242);
 }
@@ -167,7 +167,7 @@ export default {
   right: 10px;
   top: 0px;
 }
-.card-popover /deep/ .el-button {
+.card-popover >>> .el-button {
   padding: 0px;
   border: none;
   background-color: transparent;
