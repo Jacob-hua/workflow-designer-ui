@@ -4,20 +4,13 @@
       <div>
         <div class="from-item">
           <span>应用项目</span>
-          <el-select v-model="postData.ascription" :disabled="true">
-            <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
-          </el-select>
-          <!-- <el-input v-model="postData.ascription" placeholder="请输入应用项目" :disabled="true"></el-input> -->
+          <el-input v-show="false" v-model="postData.ascription" placeholder="请输入应用项目" :disabled="true"></el-input>
+          <el-input  v-model="postData.ascriptionName" placeholder="请输入应用项目" :disabled="true"></el-input>
         </div>
         <div class="from-item">
           <span>流程类型</span>
-          <el-cascader
-              style="width: 350px"
-              v-model="postData.business"
-              :options="systemOption"
-              :props = 'sysProps'></el-cascader>
-          <!-- <el-select v-model="postData.business" placeholder="请选择流程类型">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="postData.business" placeholder="请选择流程类型">
+            <el-option @click.native="onOptionClick(item.name)" v-for="item in options" :key="item.id" :label="item.name" :value="item.code">
             </el-option>
           </el-select> -->
         </div>
@@ -39,10 +32,8 @@
               业务类型
             </span>
             <div class="title-item-main">
-              <el-select v-model="postData.ascription" :disabled="true">
-                <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
-              </el-select>
-             <!-- <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input> -->
+              <el-input :disabled="true"  v-model="postData.ascName"></el-input>
+              <el-input v-show="false" v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
             </div>
           </div>
           <div class="title-item">
@@ -113,6 +104,8 @@
           '': '全部项目'
         },
         postData: {
+          ascriptionName: '',
+          ascName: '',
           ascription: '',
           business: '',
           energy: '',
@@ -154,6 +147,9 @@
       }
     },
     methods:{
+      onOptionClick(name) {
+        this.postData.ascName = name
+      },
       nextDiolog() {
         if (this.postData.name) {
           if (this.postData.name.length > 2) {

@@ -162,22 +162,29 @@
         this.getManyData()
       },
       projectChange(val) {
-        this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
+        this.systemOption =  this.projectOption.filter(({ code }) => code === val)[0].children
         this.deleteEmptyChildren(this.systemOption)
-        // this.systemValue = this.systemOption[0]?.id  ??  ''
+        this.projectValue = this.systemOption[0]?.code  ??  ''
+        this.$refs.projectFormDiolog.postData.business = this.projectValue
       },
       async getProjectList(){
+        let _this = this
         let res = await  getProjectList({
           count: -1,
           projectCode: '',
           tenantId: this.$store.state.tenantId,
           type: ''
         })
-        this.projectOption = res?.result ?? []
-        this.projectCode = this.projectOption[0].code
-        this.systemOption = this.projectOption[0].children
-        this.deleteEmptyChildren(this.systemOption)
-        this.projectValue =  this.systemOption[0].code
+        _this.projectOption = res?.result ?? []
+        _this.projectCode = _this.projectOption[0].code
+        _this.ascriptionName = _this.projectOption[0].name
+        _this.systemOption = _this.projectOption[0].children
+        _this.deleteEmptyChildren(_this.systemOption)
+        _this.projectValue =  _this.systemOption[0].code
+        _this.$nextTick(() => {
+          _this.$refs.projectFormDiolog.options = _this.systemOption
+          _this.$refs.projectFormDiolog.postData.business = _this.projectValue
+        })
       },
       application() {
         this.dialogVisible = true
@@ -264,12 +271,15 @@
       addForm() {
         this.$refs.projectFormDiolog.dialogVisible1 = true
         this.$refs.projectFormDiolog.postData = {
+          ascriptionName: '',
+          ascName: '',
           ascription: '',
           business: '',
           energy: '',
           name: ''
         }
         this.$refs.projectFormDiolog.postData.ascription = this.projectCode
+        this.$refs.projectFormDiolog.postData.ascriptionName = this.ascriptionName
       },
       
       addForm2(item) {
