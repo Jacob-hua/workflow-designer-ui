@@ -96,7 +96,7 @@
                 prop=""
                 label="必填">
               <template slot-scope="scope">
-                <el-checkbox :disabled="scope.row.disabled" v-model="scope.row.isRequired"></el-checkbox>
+                <el-checkbox @change="write(scope.row)" :disabled="scope.row.disabled" v-model="scope.row.isRequired"></el-checkbox>
               </template>
             </el-table-column>
             <el-table-column
@@ -165,6 +165,11 @@ export default {
 
   },
   methods: {
+    write(data) {
+      if (data.isRequired) {
+        data.isSetting = true
+      }
+    },
    radioChange(val) {
      if (val === FormTypeEnum.FORM_TYPE_SELECT) {
        getThirdInterfaceList({

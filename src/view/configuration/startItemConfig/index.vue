@@ -11,7 +11,7 @@
           <div><label>项目类型:</label> <span>{{item.typeName}}</span></div>
           <div><label>配置时间:</label> <span>{{item.createTime}}</span></div>
         </div>
-        <el-button @click="showSartDailog(item.id)" class="config" v-role="{ id: 'StartItemConfigAdd', type: 'button', business: business }">配置</el-button>
+        <el-button @click="showSartDailog(item.id, item)" class="config" v-role="{ id: 'StartItemConfigAdd', type: 'button', business: business }">配置</el-button>
         <el-button @click="lookDetail(item.id)" v-role="{ id: 'StartItemConfigLook', type: 'button', business: business }">查看</el-button>
       </div>
     </div>

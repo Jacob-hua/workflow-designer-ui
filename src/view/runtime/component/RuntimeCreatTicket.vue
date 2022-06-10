@@ -12,7 +12,10 @@
           <el-input v-if="type === 1"
                     :placeholder="placeholder"></el-input>
           <el-select v-else>
-            <el-option></el-option>
+            <el-option v-for="({value, label}) in startFormOptions[prop].options"
+                       :key="value"
+                       :value="value"
+                       :label="label"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -22,7 +25,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import { selectProcessStartConfigList } from '../../../api/globalConfig'
+import { extraApi } from '../../../api/unit/api'
+import { selectProcessStartConfigByCode } from '../../../api/globalConfig'
 
 export default {
   name: 'RuntimeCreatTicket',
@@ -33,7 +37,7 @@ export default {
     },
     visible: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     process: {
       type: Object,
@@ -85,6 +89,7 @@ export default {
         },
       ],
       startForm: {},
+      startFormOptions: {},
     }
   },
   computed: {
@@ -92,12 +97,13 @@ export default {
     startFormFields() {
       return this.startConfigList
         .filter(({ isSetting }) => isSetting)
-        .map(({ id, name, code, startType, isRequired }) => ({
+        .map(({ id, name, code, startType, isRequired, value }) => ({
           id,
           label: name,
           prop: code,
           type: startType,
           required: isRequired,
+          apiId: value,
           placeholder: '请输入' + name,
         }))
     },
@@ -110,16 +116,69 @@ export default {
           return
         }
         this.businessConfigCode = business
+        this.fetchProcessStartConfigList()
       },
+    },
+    startFormFields(fields) {
+      this.startFormOptions = fields.reduce(
+        (startFormOptions, { prop, type, apiId }) => {
+          if (type === 1) {
+            return startFormOptions
+          }
+          startFormOptions[prop] = {
+            apiId,
+            options: [],
+          }
+          return startFormOptions
+        },
+        {}
+      )
+      this.fetchRemoteOptions()
     },
   },
   methods: {
     onCloseModal() {
       this.$emit('close')
     },
+    fetchRemoteOptions() {
+      // 获取远程数据
+      const apiPromises =
+        Object.keys(this.startFormOptions).map((prop) => {
+          return this.fetchExtraApi(prop, this.startFormOptions[prop].apiId)
+        }) ?? []
+      // 等待所有options接口请求完成
+      Promise.all(apiPromises).then((apiResults) => {
+        apiResults.forEach(({ prop, options }) => {
+          this.startFormOptions[prop].options = options
+        })
+      })
+    },
+    async fetchExtraApi(prop, apiId) {
+      try {
+        const { errorInfo, result } = await extraApi({
+          tenantId: this.tenantId,
+          apiId,
+        })
+        if (errorInfo.errorCode) {
+          return {
+            prop,
+            options: [],
+          }
+        }
+        return {
+          prop,
+          options: result ?? [],
+        }
+      } catch (error) {
+        return {
+          prop,
+          options: [],
+        }
+      }
+    },
     async fetchProcessStartConfigList(businessConfigCode) {
       try {
-        const { errorInfo, result } = await selectProcessStartConfigList({
+        const { errorInfo, result } = await selectProcessStartConfigByCode({
           businessConfigCode,
           tenantId: this.tenantId,
         })
