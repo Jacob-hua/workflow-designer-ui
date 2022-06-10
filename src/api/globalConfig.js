@@ -73,4 +73,4 @@ export const selectProcessStartConfigList = (id, tenantId) =>
 export const checkApiType = (params) => get(`/config/global/checkApiType`, params);
 
 export const selectProcessStartConfigByCode = (params) =>
-  get(`/config/startConfig/selectProcessStartConfigByCode`, params);
+  post(`/config/startConfig/selectProcessStartConfigByCode`, params);

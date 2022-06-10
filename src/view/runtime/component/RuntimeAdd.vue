@@ -1,40 +1,39 @@
 <template>
   <div>
     <el-dialog title="新建执行"
-               :visible="dialogVisible"
                width="66%"
-               :before-close="handleClose"
-               @open="openDialog">
-      <div class="diologMain">
-        <div class="diologMain-left">
-          <!-- <el-input v-model="input" placeholder="请输入内容" prefix-icon="el-icon-search"></el-input> -->
-          <div class="energyList">
-            <div v-for="(item, index) in projectOption"
-                 class="energyList-item"
-                 :class="getData.type === item.code ? 'checkPro' : ''"
-                 @click="changEnergy(item.code)"> {{ item.name }}系统 </div>
+               :visible="dialogVisible"
+               @close="onClose">
+      <div class="diolog-main">
+        <div class="diolog-main-left">
+          <div class="system-list">
+            <div v-for="({label, value}, index) in optionsSystemType"
+                 :key="index"
+                 :class="systemListItemClass(value)"
+                 class="system-list-item"
+                 @click="changSystem(value)"> {{ label }}系统 </div>
           </div>
         </div>
-        <div class="diologMain-right">
-          <div class="processList">
-            <div class="processList-item"
-                 v-for="(item, index) in processListList"
+        <div class="diolog-main-right">
+          <div class="process-list">
+            <div class="process-list-item"
+                 v-for="(process, index) in processList"
                  :key="index">
-              <div class="processList-item-detail"
-                   @click="detailsShow(item)">
+              <div class="process-list-item-detail"
+                   @click="detailsShow(process)">
                 <span>详情</span>
               </div>
-              <div class="processList-item-word">
+              <div class="process-list-item-word">
                 <label>部署名称:</label>
-                <span>{{ item.deployName }}</span>
+                <span>{{ process.deployName }}</span>
               </div>
-              <div class="processList-item-word">
+              <div class="process-list-item-word">
                 <label>部署人:</label>
-                <span>{{ item.user }}</span>
+                <span>{{ process.user }}</span>
               </div>
-              <div class="processList-item-word">
+              <div class="process-list-item-word">
                 <label> 部署时间:</label>
-                <span>{{ item.createTime }}</span>
+                <span>{{ process.createTime }}</span>
               </div>
               <div class="process-list-item-button">
                 <el-button type="primary"
@@ -44,8 +43,8 @@
             </div>
           </div>
           <div class="process-page">
-            <el-pagination @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange"
+            <el-pagination @size-change="onSizeChange"
+                           @current-change="onCurrentChange"
                            :current-page.sync="getData.page"
                            :page-size="getData.limit"
                            layout="prev, pager, next, jumper"
@@ -80,65 +79,54 @@ export default {
       type: Boolean,
       default: false,
     },
-    data() {
-      return {
-        projectOption: [],
-        input: '',
-        processListList: [],
-        getData: {
-          type: 'energy-1',
-          order: 'desc',
-          page: 1,
-          limit: 9,
-          tenantId: this.$store.state.tenantId,
-          total: 1,
-        },
-      }
-    },
-
-    created() {
-      // this.getProcessList()
-    },
-    mounted() {
-      this.getProjectList()
-    },
-    methods: {
-      async getProjectList() {
-        let res = await getProjectList({
-          count: -1,
-          projectCode: '',
-          tenantId: this.$store.state.tenantId,
-          type: '',
-        })
-        this.projectOption = res?.result ?? []
+  },
+  data() {
+    return {
+      processList: [],
+      getData: {
+        type: 'energy-1',
+        order: 'desc',
+        page: 1,
+        limit: 9,
+        total: 1,
       },
       createTicketVisible: false,
       process: {},
-    },
+    }
   },
   computed: {
-    ...mapState(['optionsSystemType']),
+    ...mapState(['optionsSystemType', 'tenantId']),
+  },
+  mounted() {
+    this.getProcessList()
   },
   methods: {
     onCreateTicketVisible() {
       this.createTicketVisible = false
     },
-    energyListItemClass(value) {
+    changSystem(energyType) {
+      this.getData.type = energyType
+      this.getProcessList()
+    },
+    systemListItemClass(value) {
       return this.getData.type === value ? 'check-pro' : ''
     },
-    handleClose() {
+    onClose() {
       this.$emit('close')
     },
     getProcessList() {
-      getProcessDefinitionList(this.getData).then((res) => {
+      getProcessDefinitionList({
+        ...this.getData,
+        tenantId: this.tenantId,
+      }).then((res) => {
         this.processList = res.result.dataList
         this.getData.total = res.result.count * 1
       })
     },
-    handleSizeChange() {
+    onSizeChange() {
       this.getProcessList()
     },
-    handleCurrentChange() {
+    onCurrentChange() {
       this.getProcessList()
     },
     createTicket(process) {
@@ -165,26 +153,23 @@ export default {
       //   })
       //   .catch(() => {})
     },
-    components: {
-      detailsRem,
-    },
   },
 }
 </script>
 
 <style scoped="scoped">
-.diologMain {
+.diolog-main {
   display: flex;
 }
 
-.diologMain-left {
+.diolog-main-left {
   flex: 2;
   background-color: #f3f3f3;
   text-align: center;
   height: 695px;
 }
 
-.diologMain-right {
+.diolog-main-right {
   flex: 8;
   background-color: #f3f3f3;
   margin-left: 20px;
@@ -192,19 +177,19 @@ export default {
   padding: 0px 20px;
 }
 
-.diologMain-left /deep/ .el-input {
+.diolog-main-left /deep/ .el-input {
   width: 220px;
 }
 
-.diologMain-left /deep/ .el-input .el-input__inner {
+.diolog-main-left /deep/ .el-input .el-input__inner {
   border-radius: 20px;
 }
 
-.energyList {
+.system-list {
   margin-top: 30px;
 }
 
-.energyList-item {
+.system-list-item {
   width: 220px;
   height: 44px;
   line-height: 44px;
@@ -213,16 +198,16 @@ export default {
   cursor: pointer;
 }
 
-.checkPro {
+.check-pro {
   border-color: #0066cc;
   color: #0066cc;
 }
 
-.processList {
+.process-list {
   height: 624px;
 }
 
-.processList-item {
+.process-list-item {
   width: 290px;
   height: 178px;
   background-color: #e4e4e4;
@@ -233,7 +218,7 @@ export default {
   margin-top: 30px;
 }
 
-.processList-item-detail {
+.process-list-item-detail {
   position: absolute;
   right: 20px;
   top: 10px;
@@ -241,17 +226,17 @@ export default {
   cursor: pointer;
 }
 
-.processList-item-word {
+.process-list-item-word {
   font-size: 14px;
   color: #000000;
   margin-bottom: 20px;
 }
 
-.processList-item-button {
+.process-list-item-button {
   text-align: center;
 }
 
-.processList-item-button /deep/ .el-button {
+.process-list-item-button /deep/ .el-button {
   height: 30px;
   line-height: 30px;
   padding: 0px 20px;
