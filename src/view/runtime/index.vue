@@ -395,13 +395,7 @@
       }
     },
 
-    async mounted() {
-      // this.getDataNumber()
-      await this.getProjectList()
-
-    },
    async mounted() {
-      // this.getDataNumber()
       await this.getProjectList()
       await this.getManyData()
       await this.getAmount()
