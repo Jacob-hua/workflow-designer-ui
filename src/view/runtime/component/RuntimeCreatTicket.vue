@@ -3,33 +3,38 @@
     <el-dialog :title="title"
                :visible="visible"
                @close="onCloseModal">
-      <el-form :model="startForm"
-               ref="startForm">
-        <el-form-item v-for="({id, label, prop, type, required, placeholder, options}) in startFormFields"
-                      :key="id"
-                      :label="label"
-                      :prop="prop"
-                      :rules="{required, message: '请输入' + label, trigger: 'blur'}">
-          <el-input v-if="isInput(type)"
-                    v-model="startForm[prop]"
-                    :placeholder="placeholder"></el-input>
-          <el-select v-else
-                     v-model="startForm[prop]">
-            <el-option v-for="({value, label}) in options"
-                       :key="value"
-                       :value="value"
-                       :label="label"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <el-empty v-show="isEmptyConfig"
-                description="创建的执行会进入执行列表并开始执行流程,是否继续？"></el-empty>
-      <span slot="footer">
-        <el-button type="primary"
-                   :loading="isSubmiting"
-                   @click="onSubmit">立即创建</el-button>
-        <el-button @click="onCancel">取消</el-button>
-      </span>
+      <el-skeleton v-if="isLoading" />
+      <div v-else>
+        <el-form :model="startForm"
+                 ref="startForm">
+          <el-form-item v-for="({id, label, prop, type, required, placeholder, options}) in startFormFields"
+                        :key="id"
+                        :label="label"
+                        :prop="prop"
+                        :rules="{required, message: '请输入' + label, trigger: 'blur'}">
+            <el-input v-if="isInput(type)"
+                      v-model="startForm[prop]"
+                      :placeholder="placeholder"></el-input>
+            <el-select v-else
+                       v-model="startForm[prop]">
+              <el-option v-for="({value, label}) in options"
+                         :key="value"
+                         :value="value"
+                         :label="label"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div v-if="isEmptyConfig"
+             class="dialog-message">
+          创建的执行会进入执行列表并开始执行流程,是否继续？
+        </div>
+        <div slot="footer">
+          <el-button type="primary"
+                     :loading="isSubmiting"
+                     @click="onSubmit">立即创建</el-button>
+          <el-button @click="onCancel">取消</el-button>
+        </div>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -61,6 +66,7 @@ export default {
       startConfigList: [],
       startForm: {},
       isSubmiting: false,
+      isLoading: false,
     }
   },
   computed: {
@@ -104,7 +110,9 @@ export default {
         if (!process.business) {
           return
         }
+        this.isLoading = true
         this.fetchProcessStartConfigList(process.business).then((res) => {
+          this.isLoading = false
           this.startConfigList = res
         })
       },
@@ -115,6 +123,8 @@ export default {
       return type === FormTypeEnum.FORM_TYPE_INPUT
     },
     onCloseModal() {
+      this.startConfigList = []
+      this.$refs['startForm'] && this.$refs['startForm'].resetFields()
       this.$emit('close')
     },
     async onSubmit() {
@@ -129,7 +139,7 @@ export default {
           variables: { ...this.startForm },
         })
         if (errorInfo.errorCode) {
-          this.$message.error(errorInfo)
+          this.$message.error(errorInfo.errorMsg)
           this.$emit('submit', false)
           return
         }
@@ -139,7 +149,6 @@ export default {
         })
         this.$emit('submit', true)
         this.onCloseModal()
-        this.$refs['startForm'] && this.$refs['startForm'].resetFields()
       } catch (error) {
         this.$emit('submit', false)
       } finally {
@@ -148,7 +157,6 @@ export default {
     },
     onCancel() {
       this.onCloseModal()
-      this.$refs['startForm'] && this.$refs['startForm'].resetFields()
     },
     async fetchProcessStartConfigList(businessConfigCode) {
       try {
@@ -168,5 +176,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.dialog-message {
+  margin: 20px 20px;
+  font-size: 14px;
+}
 </style>
