@@ -56,7 +56,6 @@
         default: ''
       },
       projectValue: {
-        type: String,
         default: ''
       }
     },

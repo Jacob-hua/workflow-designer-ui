@@ -4,22 +4,23 @@
       <div>
         <div class="from-item">
           <span>应用项目</span>
-          <el-input v-model="postData.ascription" placeholder="请输入应用项目" :disabled="true"></el-input>
+          <el-select v-model="postData.ascription" :disabled="true">
+            <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
+          </el-select>
+          <!-- <el-input v-model="postData.ascription" placeholder="请输入应用项目" :disabled="true"></el-input> -->
         </div>
         <div class="from-item">
           <span>流程类型</span>
-          <el-select v-model="postData.business" placeholder="请选择流程类型">
+          <el-cascader
+              style="width: 350px"
+              v-model="postData.business"
+              :options="systemOption"
+              :props = 'sysProps'></el-cascader>
+          <!-- <el-select v-model="postData.business" placeholder="请选择流程类型">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
-          </el-select>
+          </el-select> -->
         </div>
-        <!-- <div class="from-item">
-          <span>能源系统</span>
-          <el-select v-model="postData.energy" placeholder="请选择能源系统">
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </div> -->
         <div class="from-item">
           <span>表单名称</span>
           <el-input v-model="postData.name" placeholder="请输入表单名称"></el-input>
@@ -33,30 +34,17 @@
     <el-dialog :title="title" :visible.sync="dialogVisible2" width="95%" height="100%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
-          <!-- <div class="title-item">
-            <span class="title-item-label">
-              表单编码
-            </span>
-            <div class="title-item-main">
-              <el-input v-model="postData.code" placeholder="" :disabled="true"></el-input>
-            </div>
-          </div> -->
           <div class="title-item">
             <span class="title-item-label">
               业务类型
             </span>
             <div class="title-item-main">
-              <el-input v-model="projectCodeObj[postData.ascription]" placeholder="" :disabled="true"></el-input>
+              <el-select v-model="postData.ascription" :disabled="true">
+                <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
+              </el-select>
+             <!-- <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input> -->
             </div>
           </div>
-          <!-- <div class="title-item">
-            <span class="title-item-label marginLeft40">
-              能源系统
-            </span>
-            <div class="title-item-main">
-              <el-input v-model="projectCodeObj[postData.energy]" placeholder="" :disabled="true"></el-input>
-            </div>
-          </div> -->
           <div class="title-item">
             <span class="title-item-label marginLeft40">
               表单名称
@@ -96,6 +84,18 @@
       title: {
         type: String,
         default: '新增表单'
+      },
+      projectOption: {
+        type: Array,
+        default: () => {[]}
+      },
+      systemOption: {
+        type: Array,
+        default: () => {[]}
+      },
+      sysProps: {
+        type: Object,
+        default: () => {{}}
       }
     },
     data() {
