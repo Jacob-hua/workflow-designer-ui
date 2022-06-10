@@ -256,7 +256,7 @@ export default {
 
     },
     projectChange(val) {
-      this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
+      this.systemOption =  this.projectOption.filter(({ code }) => code === val)[0].children
       this.deleteEmptyChildren(this.systemOption)
     },
     async getProjectList(){

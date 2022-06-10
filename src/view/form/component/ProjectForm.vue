@@ -159,7 +159,7 @@
 
       },
       projectChange(val) {
-        this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
+        this.systemOption =  this.projectOption.filter(({ code }) => code === val)[0].children
         this.deleteEmptyChildren(this.systemOption)
         this.projectValue = this.systemOption[0]?.code  ??  ''
         this.$refs.projectFormDiolog.postData.business = this.projectValue
