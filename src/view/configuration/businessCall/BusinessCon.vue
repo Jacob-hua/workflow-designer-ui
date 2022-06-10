@@ -4,6 +4,7 @@
       :visible.sync="dialogVisible"
       v-if="dialogVisible"
       width="50%"
+      @close="handleClose()"
       append-to-body
   >
     <el-button @click="goEdit" v-if="!editFlag && showBtn  " type="primary" class="btn">继续编辑</el-button>
@@ -16,7 +17,9 @@
         :expand-on-click-node="false"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span >{{ data.name }}<el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
+        <span>{{ data.name }}
+          <el-input size="mini" v-if="showinput && data.id === currentNode.id" v-model="nodeCode" placeholder="请输入项目code"></el-input>
+          <el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
         <span>
           <i v-if="editFlag && node.level < 3" @click="(e)=> append(data,node)" style="font-size: 20px !important; color: #409eff;margin-left: 10px" class="el-icon-circle-plus-outline"></i>
           <i v-if="data.id !==1 && data.parentId != -1" @click="remove(node, data)" style="font-size: 20px !important; color: red;margin-left: 10px" class="el-icon-remove-outline"></i>
@@ -27,14 +30,15 @@
     <span slot="footer" class="dialog-footer">
       <el-button v-if="editFlag && !edit"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
       <el-button v-if="showBtn"  @click="preview">{{btnTxt}}</el-button>
-      <el-button v-if="showBtn"  @click="dialogVisible = false">取 消</el-button>
+      <el-button v-if="showBtn"  @click="exit">取 消</el-button>
   </span>
   </el-dialog>
 </template>
 
 <script>
-import {createBusinessConfig, updateBusinessConfig} from "@/api/globalConfig";
+import {checkCode, clearRedisBusinessConfigCode, createBusinessConfig, UpdatebusinessConfig} from "@/api/globalConfig";
 
+import { mapState } from 'vuex'
 let id = 2;
 export default {
   name: "BusinessCon",
@@ -56,6 +60,7 @@ export default {
 
   data() {
     return {
+      nodeCode: '',
       btnTxt: '预览',
       editFlag: true,
       forms: {},
@@ -81,7 +86,17 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState(['tenantId'])
+  },
   methods: {
+    exit() {
+      this.dialogVisible = false
+      this.clearRedisBusinessConfigCode({},true)
+    },
+    handleClose() {
+      this.clearRedisBusinessConfigCode({},true)
+    },
     goEdit() {
       this.editFlag = true
       this.btnTxt = '预览'
@@ -103,7 +118,7 @@ export default {
             _this.$parent.getBusinessConfigBasicList()
           })
         } else {
-          updateBusinessConfig(this.data).then((res)=> {
+          UpdatebusinessConfig(this.data).then((res)=> {
             this.dialogVisible = false
             this.$message({
               type: 'success',
@@ -120,22 +135,41 @@ export default {
 
     },
     onblur() {
-      this.showinput = false
-      const newChild = { "id": id++,  "code": id++, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
-      if (!this.currentNode.children) {
-        this.$set(this.currentNode, 'children', []);
-      }
-      this.currentNode.children.push(newChild);
+      checkCode({
+        tenantId: this.tenantId,
+        code: this.nodeCode,
+        projectCode: this.forms.code
+      }).then(res => {
+        if (res.errorInfo.errorMsg) {
+          return
+        }
+        this.showinput = false
+        const newChild = { "id": id++,  "code":this.nodeCode, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
+        if (!this.currentNode.children) {
+          this.$set(this.currentNode, 'children', []);
+        }
+        this.currentNode.children.push(newChild);
+      })
+
     },
     handleNodeClick(data) {
     },
     append(data, node) {
+      this.nodeCode = ''
       this.inptVal = ''
       this.showinput = true
       this.currentNode = data
     },
-
+    clearRedisBusinessConfigCode(data, cleaAllFlag = false) {
+      clearRedisBusinessConfigCode({
+        tenantId: this.tenantId,
+        code: data.code ?? '',
+        projectCode: this.forms.code,
+        cleaAllFlag
+      })
+    },
     remove(node, data) {
+     this.clearRedisBusinessConfigCode(data)
       const parent = node.parent;
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);
