@@ -139,7 +139,7 @@
       },
       projectChange(val) {
         this.getManyData()
-        this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
+        this.systemOption =  this.projectOption.filter(({ code }) => code === val)[0].children
         this.deleteEmptyChildren(this.systemOption)
         console.log(this.systemOption)
         // this.systemValue = this.systemOption[0]?.id  ??  ''
