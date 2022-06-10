@@ -18,8 +18,8 @@
         </div>
       </div>
       <div class="power-body-main">
-        <personel v-if="power === 'Personnel' && permissionRole" :business="projectCode"></personel>
-        <role v-if="power === 'Role' && permissionRole" :business="projectCode"></role>
+        <personel v-show="power === 'Personnel' && permissionRole" :business="projectCode"></personel>
+        <role v-show="power === 'Role' && permissionRole" :business="projectCode"></role>
         <permission v-if="!permissionRole"></permission>
       </div>
     </div>
@@ -35,7 +35,7 @@
     data() {
       return {
         projectOption: [],
-        projectCode: 'beiqijia',
+        projectCode: '',
         power: 'Personnel',
         permissionRole: true
       }
@@ -45,7 +45,7 @@
     },
     methods:{
       async getProjectList(){
-        let res = await  getProjectList({
+        let res = await getProjectList({
           count: -1,
           projectCode: '',
           tenantId: this.$store.state.tenantId,
@@ -53,14 +53,14 @@
         })
         this.projectOption = res?.result ?? []
         this.projectCode = this.projectOption[0].code
+        this.changePower('Personnel')
       },
       changePower(value) {
         this.power = value
         let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
         let proJectRole = permissions.filter((item) => {
-          // return item.projectCode === this.business
-          return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
-        })[0].permissionSet
+          return item.projectCode === this.projectCode
+        })[0]?.permissionSet || []
         let findEle = proJectRole.findIndex((item) => {
           return item.frontRoute === 'Power' + value
         })
@@ -82,9 +82,6 @@
       role,
       permission
     },
-    created() {
-      this.changePower('Personnel')
-    }
   }
 </script>
 

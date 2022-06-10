@@ -61,7 +61,10 @@ export const getBusinessConfigWithTree = (id, tenantId) =>
   get(`/config/businessConfig/getBusinessConfigWithTree?tenantId=${tenantId}&id=${id}`);
 // 删除配置
 export const deleteBusinessConfig = (id) => deletefn(`/config/businessConfig/delete`, { id: id });
-export const UpdatebusinessConfig = (params) => put(`/config/businessConfig`, params);
+
+// export const UpdatebusinessConfig = (params) => put(`/config/businessConfig`, params);
+// export const UpdatebusinessConfig = (params) => put(`/config/businessConfig/businessConfigWithTree/create`, params);
+
 
 export const startConfig = (params) => put("/config/startConfig/update", params);
 

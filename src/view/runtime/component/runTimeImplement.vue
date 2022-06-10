@@ -269,8 +269,7 @@
           permissions
         } = JSON.parse(sessionStorage.getItem('loginData'))
         let proJectRole = permissions.filter((item) => {
-          // return item.projectCode === this.business
-          return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
+          return item.projectCode === this.business
         })[0]?.permissionSet || []
         let findEle = proJectRole.findIndex((item) => {
           return item.frontRoute === 'RunTime' + value
