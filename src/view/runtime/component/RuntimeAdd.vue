@@ -3,15 +3,15 @@
     <el-dialog title="新建执行"
                width="66%"
                :visible="dialogVisible"
-               :before-close="handleClose">
-      <div class="diolog-main">
+               @close="onClose">
+      <div class="diolog-main"> 
         <div class="diolog-main-left">
-          <div class="energy-list">
+          <div class="system-list">
             <div v-for="({label, value}, index) in optionsSystemType"
                  :key="index"
-                 :class="energyListItemClass(value)"
-                 class="energy-list-item"
-                 @click="changEnergy(value)"> {{ label }}系统 </div>
+                 :class="systemListItemClass(value)"
+                 class="system-list-item"
+                 @click="changSystem(value)"> {{ label }}系统 </div>
           </div>
         </div>
         <div class="diolog-main-right">
@@ -43,8 +43,8 @@
             </div>
           </div>
           <div class="process-page">
-            <el-pagination @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange"
+            <el-pagination @size-change="onSizeChange"
+                           @current-change="onCurrentChange"
                            :current-page.sync="getData.page"
                            :page-size="getData.limit"
                            layout="prev, pager, next, jumper"
@@ -101,14 +101,14 @@ export default {
     onCreateTicketVisible() {
       this.createTicketVisible = false
     },
-    changEnergy(energyType) {
+    changSystem(energyType) {
       this.getData.type = energyType
       this.getProcessList()
     },
-    energyListItemClass(value) {
+    systemListItemClass(value) {
       return this.getData.type === value ? 'check-pro' : ''
     },
-    handleClose() {
+    onClose() {
       this.$emit('close')
     },
     getProcessList() {
@@ -120,10 +120,10 @@ export default {
         this.getData.total = res.result.count * 1
       })
     },
-    handleSizeChange() {
+    onSizeChange() {
       this.getProcessList()
     },
-    handleCurrentChange() {
+    onCurrentChange() {
       this.getProcessList()
     },
     createTicket(process) {
@@ -182,11 +182,11 @@ export default {
   border-radius: 20px;
 }
 
-.energy-list {
+.system-list {
   margin-top: 30px;
 }
 
-.energy-list-item {
+.system-list-item {
   width: 220px;
   height: 44px;
   line-height: 44px;
