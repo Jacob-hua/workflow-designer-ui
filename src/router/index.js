@@ -18,7 +18,7 @@ const routes = [
   },
   {
     path: "/home",
-    name: "first",
+    name: "index",
     component: layout,
     redirect: "/home/bpmn",
     children: [
@@ -62,12 +62,6 @@ const routes = [
         path: "/home/runTime",
         name: "runTime",
         component: () => import("@/view/runtime/index"),
-        hidden: true,
-      },
-      {
-        path: "5",
-        name: "5",
-        component: () => import("@/layout/404"),
         hidden: true,
       },
       {

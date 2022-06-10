@@ -1,33 +1,32 @@
+import { userLogin } from '@/constant/index.js'
 <template>
-  <div class="hello body" v-show="showHtml">
+  <div class="background body" v-show="showHtml">
      <div class="box">
-         <h2>Login</h2>
+         <h2>登录</h2>
          <form method="post" >
              <div class="inputbox">
-                 <input type="text" name="" v-model="username" required="" oninvalid="setCustomValidity('请输入用户名');" @keyup.enter="login">
+                 <input type="text" name="username" v-model="username" required="" oninvalid="setCustomValidity('请输入用户名');" @keyup.enter="login">
                  <label>Username</label>
              </div>
        
             <div class="inputbox">
-                 <input type="password" name=" "  v-model="password" required="" oninvalid="setCustomValidity('请输入登陆密码');" @keyup.enter="login">
+                 <input type="password" name="password"  v-model="password" required="" oninvalid="setCustomValidity('请输入登陆密码');" @keyup.enter="login">
                  <label>Password</label>
              </div>
 
              <input type="button" value="submit" @click="login()">
          </form>
-
-         
      </div>
 
   </div>
 </template>
 
 <script>
-
+import CONSTANT from '@/constant'
 import { userLogin } from '@/api/unit/api.js'
-// import md5 from 'js-md5'
+
 export default {
-  name: 'HelloWorld',
+  name: 'LoginPage',
   data () {
     return {
        username:'',
@@ -39,7 +38,7 @@ export default {
     if(this.$route.query.account) {
       this.username = this.$route.query.account
       this.password = this.$route.query.account
-      sessionStorage.setItem('status', '我是菜鸡')
+      sessionStorage.setItem('status', CONSTANT.LOGIN_FROM_WORKFLOW_ITSELF)
       this.login()
     } else {
       sessionStorage.clear()
@@ -68,7 +67,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.hello{
+.background{
   height: 100%;
   width: 100%;
   background-image: url("~@/assets/background.gif");
