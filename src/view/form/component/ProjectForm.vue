@@ -118,7 +118,8 @@
       return {
         sysProps:{
           label: 'name',
-          value: 'code'
+          value: 'code',
+          emitPath: false,
         },
         systemOption: [],
         formData: {},

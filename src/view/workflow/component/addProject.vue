@@ -7,20 +7,20 @@
     <div>
       <div class="from-item">
         <span>应用项目</span>
-        <el-input v-model="projectCode"
-                  :disabled="true"
-                  placeholder="请输入应用项目"></el-input>
+        <el-select v-model="projectCode"
+                   disabled>
+          <el-option v-for="item in projectOption"
+                     :key="item.id"
+                     :label="item.name"
+                     :value="item.code"></el-option>
+        </el-select>
       </div>
       <div class="from-item">
         <span>流程类型</span>
-        <el-select v-model="postData.business"
-                   placeholder="请选择流程类型">
-          <el-option v-for="({label, value}) in optionsBusiness"
-                     :key="value"
-                     :label="label"
-                     :value="value">
-          </el-option>
-        </el-select>
+        <el-cascader style="width: 350px"
+                     v-model="postData.business"
+                     :options="systemOption"
+                     :props='sysProps'></el-cascader>
       </div>
       <div class="from-item">
         <span>流程名称</span>
@@ -48,6 +48,18 @@ export default {
     dialogVisible: {
       type: Boolean,
       default: true,
+    },
+    projectOption: {
+      type: Array,
+      default: () => [],
+    },
+    systemOption: {
+      type: Array,
+      default: () => [],
+    },
+    sysProps: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
