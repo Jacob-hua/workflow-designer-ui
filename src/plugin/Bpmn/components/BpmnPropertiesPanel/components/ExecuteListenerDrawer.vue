@@ -3,6 +3,7 @@
     <el-drawer :title="title"
                :visible="visible"
                @close="onCloseDrawer"
+               append-to-body
                direction="rtl">
       <el-form :model="listenerForm"
                :rules="listenerFormRules"
@@ -336,7 +337,8 @@ export default {
     },
     onEditField(index) {
       this.fieldForm =
-        this.listenerForm['fields'] && deepCopy(this.listenerForm['fields'][index])
+        this.listenerForm['fields'] &&
+        deepCopy(this.listenerForm['fields'][index])
       this.editFieldIndex = index
       this.fieldModalVisible = true
     },
