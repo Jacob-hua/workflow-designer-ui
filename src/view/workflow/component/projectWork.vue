@@ -212,18 +212,8 @@ export default {
       secondtTotal: 0,
       firstTotal: 0,
       projectValue: '',
-      projectOption: [
-        {
-          value: '',
-          label: '全部项目',
-        },
-      ],
-      projectOption2: [
-        {
-          value: '',
-          label: '全部业务',
-        },
-      ],
+      projectOption: [],
+      projectOption2: [],
       formData: {},
       getData: {
         page: 1,
@@ -236,7 +226,7 @@ export default {
       quoteBpmnVisible: false,
       lookBpmnVisible: false,
       dataType: 'enabled',
-      projectCode: 'beiqijia',
+      projectCode: '',
       valueDate: [],
       input: '',
       activeName: 'enabled,disabled',
@@ -270,7 +260,7 @@ export default {
       this.deleteEmptyChildren(this.systemOption)
     },
     async getProjectList(){
-      let res = await  getProjectList({
+      let res = await getProjectList({
         count: -1,
         projectCode: '',
         tenantId: this.$store.state.tenantId,
@@ -425,9 +415,9 @@ export default {
           (this.formListFirst = data.result.list))
     },
   },
-  mounted() {
-    this.getProjectList()
-    designProcessCountStatistics({
+  async mounted() {
+    await this.getProjectList()
+    await designProcessCountStatistics({
       tenantId: this.$store.state.tenantId,
       ascription: this.projectCode,
       business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),

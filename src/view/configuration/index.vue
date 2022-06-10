@@ -36,7 +36,7 @@
       return {
         projectOption: [],
         activeName: 'first',
-        business: 'XM_aff0659724a54c119ac857d4e560b47b',
+        business: '',
         activeNameMapping: {
           first: 'VisitCall',
           second: 'BusinessCall',

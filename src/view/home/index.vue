@@ -52,7 +52,7 @@
       </div>
       <div class="businessSelect">
         <el-cascader
-            style="width: 400px; margin-right: 10px;"
+            style="margin-right: 10px;"
             v-model="value2"
             :options="systemOption"
             :props = 'sysProps'
@@ -111,28 +111,13 @@
           executionTotalProcessCount: 0
         },
         activeName: 'first',
-        value1: 'beiqijia',
+        value1: '',
         value2: '',
         WorkflowTableNum: 0,
         draftsTableNum: 0,
         deployNumber: 0,
-        options1: [{
-            value: 'beiqijia',
-            label: '北七家人才基地'
-          },
-          {
-            value: 'laiwu',
-            label: '莱芜供热项目'
-          },
-          {
-            value: 'xilaideng',
-            label: '海口喜来登酒店'
-          }
-        ],
-        options2: [{
-          value: '',
-          label: '全部业务'
-        }]
+        options1: [],
+        options2: []
       }
     },
     methods: {
