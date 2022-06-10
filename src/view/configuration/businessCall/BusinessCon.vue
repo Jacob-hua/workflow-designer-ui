@@ -4,6 +4,7 @@
       :visible.sync="dialogVisible"
       v-if="dialogVisible"
       width="50%"
+      @close="handleClose()"
       append-to-body
   >
     <el-button @click="goEdit" v-if="!editFlag && showBtn  " type="primary" class="btn">继续编辑</el-button>
@@ -29,13 +30,13 @@
     <span slot="footer" class="dialog-footer">
       <el-button v-if="editFlag && !edit"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
       <el-button v-if="showBtn"  @click="preview">{{btnTxt}}</el-button>
-      <el-button v-if="showBtn"  @click="dialogVisible = false">取 消</el-button>
+      <el-button v-if="showBtn"  @click="exit">取 消</el-button>
   </span>
   </el-dialog>
 </template>
 
 <script>
-import {checkCode, createBusinessConfig, UpdatebusinessConfig} from "@/api/globalConfig";
+import {checkCode, clearRedisBusinessConfigCode, createBusinessConfig, UpdatebusinessConfig} from "@/api/globalConfig";
 
 import { mapState } from 'vuex'
 let id = 2;
@@ -89,6 +90,13 @@ export default {
     ...mapState(['tenantId'])
   },
   methods: {
+    exit() {
+      this.dialogVisible = false
+      this.clearRedisBusinessConfigCode({},true)
+    },
+    handleClose() {
+      this.clearRedisBusinessConfigCode({},true)
+    },
     goEdit() {
       this.editFlag = true
       this.btnTxt = '预览'
@@ -129,12 +137,12 @@ export default {
     onblur() {
       checkCode({
         tenantId: this.tenantId,
-        code: this.nodeCode
+        code: this.nodeCode,
+        projectCode: this.forms.code
       }).then(res => {
-        console.log(res)
-      if (res.errorInfo.errorMsg) {
-        return
-      }
+        if (res.errorInfo.errorMsg) {
+          return
+        }
         this.showinput = false
         const newChild = { "id": id++,  "code":this.nodeCode, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
         if (!this.currentNode.children) {
@@ -147,12 +155,21 @@ export default {
     handleNodeClick(data) {
     },
     append(data, node) {
+      this.nodeCode = ''
       this.inptVal = ''
       this.showinput = true
       this.currentNode = data
     },
-
+    clearRedisBusinessConfigCode(data, cleaAllFlag = false) {
+      clearRedisBusinessConfigCode({
+        tenantId: this.tenantId,
+        code: data.code ?? '',
+        projectCode: this.forms.code,
+        cleaAllFlag
+      })
+    },
     remove(node, data) {
+     this.clearRedisBusinessConfigCode(data)
       const parent = node.parent;
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);

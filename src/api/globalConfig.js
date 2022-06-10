@@ -10,8 +10,12 @@ import { get, post, deletefn, put } from "./unit/request";
 //       }
 //     }
 
+
+// 清除缓存的数据
+export const clearRedisBusinessConfigCode = (params) => get(`/config/businessConfig/clearRedisBusinessConfigCode`, params);
+
 // 校验业务code
-export const checkCode = (params) => get(`/config/businessConfig/checkCode`, params);
+export const checkCode = (params) => get(`/config/businessConfig/checkBusinessConfigCode`, params);
 
 
 // 获取项目列表及子业务级联

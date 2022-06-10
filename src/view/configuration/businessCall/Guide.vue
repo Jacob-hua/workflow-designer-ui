@@ -11,7 +11,7 @@
           <el-form-item label="项目名称">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
-           <el-form-item label="项目  类型">
+           <el-form-item label="项目类型">
                   <el-select v-model="form.type" placeholder="请选择api类型">
                     <el-option
                         v-for="item in projectOption"
