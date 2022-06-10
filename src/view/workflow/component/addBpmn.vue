@@ -3,7 +3,7 @@
              :visible="dialogVisible"
              width="90%"
              custom-class="dialogVisible"
-             @close="close">
+             @close="onClose">
     <div class="dialogVisible-main">
       <bpmnJsELe :xmlString="xmlString"
                  :name="formData.name"
@@ -12,9 +12,9 @@
     <span slot="footer"
           class="dialog-footer">
       <el-button type="primary"
-                 @click="publish()">发布</el-button>
-      <el-button @click="confirm()">保存</el-button>
-      <el-button @click="cancel()">取消</el-button>
+                 @click="onPublish">发布</el-button>
+      <el-button @click="onSave">保存</el-button>
+      <el-button @click="onCancel">取消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -26,7 +26,7 @@ import {
   publishWorkflow,
 } from '@/api/managerWorkflow'
 import bpmnJsELe from '@/view/bpmnJsELe/index.vue'
-import X2JS from 'x2js'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -73,6 +73,31 @@ export default {
       },
     }
   },
+  computed: {
+    ...mapState(['userInfo', 'tenantId']),
+    processFormData() {
+      const { name: processName, id: processId } =
+        this.$iBpmn.getRootShapeInfo()
+      let processFormData = new FormData()
+      if (this.currentRowData?.id) {
+        processFormData.set('id', this.currentRowData.id)
+      }
+      processFormData.set('name', processName)
+      processFormData.set('docName', processName + '.bpmn')
+      if (this.publick) {
+        processFormData.set('ascription', 'public')
+      } else {
+        processFormData.set('ascription', this.$parent.projectCode)
+      }
+      processFormData.set('code', processId)
+      processFormData.set('business', this.formData.business)
+      processFormData.set('status', 'enabled')
+      processFormData.set('createBy', this.userInfo.name)
+      processFormData.set('updateBy', this.userInfo.name)
+      processFormData.set('tenantId', this.tenantId)
+      return processFormData
+    },
+  },
   mounted() {
     this.$nextTick(() => {
       if (this.$refs.bpmnJsELe) {
@@ -82,61 +107,46 @@ export default {
     })
   },
   methods: {
-    async publish() {
+    async onPublish() {
       try {
         await this.$iBpmn.validate()
-        const newConvert = new X2JS()
         const { xml } = await this.$iBpmn.saveXML({
           format: true,
         })
-        const { definitions } = newConvert.xml2js(xml)
-        var file1 = new File([xml], definitions.process._name + '.bpmn', {
-          type: 'bpmn20-xml',
-        })
-        let formData = new FormData()
-        if (this.currentRowData?.id) {
-          formData.append('id', this.currentRowData.id)
-        }
-        let names = ''
-        if (definitions?.process._name) {
-          names = definitions.process._name
-        }
-        if (this.formData?.name) {
-          names = this.formData.name
-        }
-        if (this.currentRowData?.name) {
-          names = this.currentRowData.name
-        }
-
-        formData.append('name', names)
-        formData.append('docName', names + '.bpmn')
-        if (this.publick) {
-          formData.append('ascription', 'public')
-        } else {
-          formData.append('ascription', this.$parent.projectCode)
-        }
-
-        formData.append('code', definitions.process._id)
-        formData.append('business', 'zhihuiyunwei')
-        formData.append('status', 'enabled')
-        formData.append('createBy', this.$store.state.userInfo.name)
-        formData.append('updateBy', this.$store.state.userInfo.name)
-        formData.append('tenantId', this.$store.state.tenantId)
-        formData.append('file', file1)
+        this.processFormData.set(
+          'file',
+          new File([xml], this.processFormData.name + '.bpmn', {
+            type: 'bpmn20-xml',
+          })
+        )
         // 已发布的 走修改的流程
         if (this.pubFlag) {
-          formData.append('id', this.currentRowData.id)
-          workFlowSaveDraft(formData).then(() => {
-            this.$message.success('保存成功')
-            this.$emit('close')
-            this.$parent.findWorkFlowRecord()
-          })
+          this.processFormData.set('id', this.currentRowData.id)
+          workFlowSaveDraft(this.processFormData)
+            .then(() => {
+              this.$message.success('保存成功')
+              this.$emit('close')
+              this.$parent.findWorkFlowRecord()
+            })
+            .catch(({ errorMsg }) => {
+              this.$message({
+                message: errorMsg,
+                type: 'error',
+              })
+            })
         } else {
-          publishWorkflow(formData).then(() => {
-            this.$message.success('发布成功')
-            this.$emit('close')
-            this.$parent.findWorkFlowRecord('enabled,disabled')
-          })
+          publishWorkflow(this.processFormData)
+            .then(() => {
+              this.$message.success('发布成功')
+              this.$emit('close')
+              this.$parent.findWorkFlowRecord('enabled,disabled')
+            })
+            .catch(({ errorMsg }) => {
+              this.$message({
+                message: errorMsg,
+                type: 'error',
+              })
+            })
         }
         this.$emit('confirm')
       } catch (e) {
@@ -146,71 +156,51 @@ export default {
         })
       }
     },
-    cancel() {
+    onCancel() {
       this.$emit('close')
     },
-    close() {
+    onClose() {
       this.$emit('close')
     },
-    async confirm() {
+    async onSave() {
       try {
         await this.$iBpmn.validate()
-        let names
-        const newConvert = new X2JS()
         const { xml } = await this.$iBpmn.saveXML({
           format: true,
         })
-        const { definitions } = newConvert.xml2js(xml)
-        if (definitions.process._name) {
-          names = definitions.process._name
-        }
-        if (this.formData.name) {
-          names = this.formData.name
-        }
-        if (this.currentRowData.name) {
-          names = this.currentRowData.name
-        }
-        var file1 = new File([xml], names + '.bpmn', {
-          type: 'bpmn20-xml',
-        })
-        let formData = new FormData()
-        formData.append('id', this.currentRowData.id)
-        formData.append(
-          'name',
-          this.currentRowData.name ||
-            this.formData.name ||
-            definitions.process._name
+        this.processFormData.set(
+          'file',
+          new File([xml], this.processFormData.name + '.bpmn', {
+            type: 'bpmn20-xml',
+          })
         )
-        formData.append(
-          'docName',
-          definitions.process._name + '.bpmn' ||
-            this.currentRowData.name + '.bpmn' ||
-            this.formData.name + '.bpmn'
-        )
-        if (this.flag && Object.values(this.formData).length > 0) {
-          formData.append('ascription', this.$parent.projectCode)
+        if (this.flag) {
+          workFlowSave(this.processFormData)
+            .then(() => {
+              this.$message.success('保存成功')
+              this.$emit('close')
+              this.$parent.findWorkFlowRecord('drafted')
+            })
+            .catch(({ errorMsg }) => {
+              this.$message({
+                message: errorMsg,
+                type: 'error',
+              })
+            })
         } else {
-          formData.append('ascription', 'public')
+          workFlowSaveDraft(this.processFormData)
+            .then(() => {
+              this.$message.success('保存成功')
+              this.$emit('close')
+              this.$parent.findWorkFlowRecord('drafted')
+            })
+            .catch(({ errorMsg }) => {
+              this.$message({
+                message: errorMsg,
+                type: 'error',
+              })
+            })
         }
-
-        formData.append('code', definitions.process._id)
-        formData.append('business', 'zhihuiyunwei')
-        formData.append('status', 'drafted')
-        formData.append('createBy', this.$store.state.userInfo.name)
-        formData.append('updateBy', this.$store.state.userInfo.name)
-        formData.append('tenantId', this.$store.state.tenantId)
-        formData.append('file', file1)
-        this.flag
-          ? workFlowSave(formData).then(() => {
-              this.$message.success('保存成功')
-              this.$emit('close')
-              this.$parent.findWorkFlowRecord('drafted')
-            })
-          : workFlowSaveDraft(formData).then(() => {
-              this.$message.success('保存成功')
-              this.$emit('close')
-              this.$parent.findWorkFlowRecord('drafted')
-            })
         this.$emit('confirm')
       } catch (error) {
         this.$message({
