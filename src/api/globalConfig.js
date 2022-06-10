@@ -9,6 +9,11 @@ import { get, post, deletefn, put } from "./unit/request";
 //         return []
 //       }
 //     }
+
+// 校验业务code
+export const checkCode = (params) => get(`/config/businessConfig/checkCode`, params);
+
+
 // 获取项目列表及子业务级联
 
 export const getProjectList = (params) => post("/config/businessConfig/projectList", params);

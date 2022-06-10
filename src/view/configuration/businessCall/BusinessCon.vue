@@ -16,7 +16,9 @@
         :expand-on-click-node="false"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span >{{ data.name }}<el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
+        <span>{{ data.name }}
+          <el-input size="mini" v-if="showinput && data.id === currentNode.id" v-model="nodeCode" placeholder="请输入项目code"></el-input>
+          <el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
         <span>
           <i v-if="editFlag && node.level < 3" @click="(e)=> append(data,node)" style="font-size: 20px !important; color: #409eff;margin-left: 10px" class="el-icon-circle-plus-outline"></i>
           <i v-if="data.id !==1 && data.parentId != -1" @click="remove(node, data)" style="font-size: 20px !important; color: red;margin-left: 10px" class="el-icon-remove-outline"></i>
@@ -33,8 +35,9 @@
 </template>
 
 <script>
-import {createBusinessConfig, UpdatebusinessConfig} from "@/api/globalConfig";
+import {checkCode, createBusinessConfig, UpdatebusinessConfig} from "@/api/globalConfig";
 
+import { mapState } from 'vuex'
 let id = 2;
 export default {
   name: "BusinessCon",
@@ -56,6 +59,7 @@ export default {
 
   data() {
     return {
+      nodeCode: '',
       btnTxt: '预览',
       editFlag: true,
       forms: {},
@@ -80,6 +84,9 @@ export default {
         label: 'name'
       }
     }
+  },
+  computed: {
+    ...mapState(['tenantId'])
   },
   methods: {
     goEdit() {
@@ -120,12 +127,22 @@ export default {
 
     },
     onblur() {
-      this.showinput = false
-      const newChild = { "id": id++,  "code": id++, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
-      if (!this.currentNode.children) {
-        this.$set(this.currentNode, 'children', []);
+      checkCode({
+        tenantId: this.tenantId,
+        code: this.nodeCode
+      }).then(res => {
+        console.log(res)
+      if (res.errorInfo.errorMsg) {
+        return
       }
-      this.currentNode.children.push(newChild);
+        this.showinput = false
+        const newChild = { "id": id++,  "code":this.nodeCode, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
+        if (!this.currentNode.children) {
+          this.$set(this.currentNode, 'children', []);
+        }
+        this.currentNode.children.push(newChild);
+      })
+
     },
     handleNodeClick(data) {
     },
