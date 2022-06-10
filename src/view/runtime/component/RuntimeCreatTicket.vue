@@ -12,7 +12,7 @@
           <el-input v-if="type === 1"
                     :placeholder="placeholder"></el-input>
           <el-select v-else>
-            <el-option v-for="({value, label}) in startFormOptions[prop].options"
+            <el-option v-for="({value, label}) in getStartFormOptions(prop)"
                        :key="value"
                        :value="value"
                        :label="label"></el-option>
@@ -139,6 +139,9 @@ export default {
   methods: {
     onCloseModal() {
       this.$emit('close')
+    },
+    getStartFormOptions(prop) {
+      return this.startFormOptions[prop]?.options ?? []
     },
     fetchRemoteOptions() {
       // 获取远程数据
