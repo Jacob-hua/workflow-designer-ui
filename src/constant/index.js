@@ -17,4 +17,5 @@ export default {
   STR_DAY: "day",
   DATE_TIME: "yyyy-MM-dd HH:mm:ss",
   DATE_TIME_CODE: "yyyyMMddHHmmss",
+  LOGIN_FROM_WORKFLOW_ITSELF: "login_from_workflow_itself"
 };

@@ -53,6 +53,8 @@
 </template>
 
 <script>
+import CONSTANT from '@/constant'
+
   export default {
     data() {
       return {
@@ -94,7 +96,7 @@
     },
     created() {
       let userInfo = sessionStorage.getItem('loginData')
-      this.status = (sessionStorage.getItem('status') === '我是菜鸡')
+      this.status = (sessionStorage.getItem('status') === CONSTANT.LOGIN_FROM_WORKFLOW_ITSELF)
       if (userInfo) {
         this.$store.state.userInfo.name = JSON.parse(userInfo).account
       } else{

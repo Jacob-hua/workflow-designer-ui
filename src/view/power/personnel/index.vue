@@ -87,6 +87,8 @@
          if (res.result[0]) {
            this.currentNodeKey = res.result[0].groupId
            this.getTable(res.result[0])
+         } else {
+           this.tableData = []
          }
         })
       },

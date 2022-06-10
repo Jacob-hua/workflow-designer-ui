@@ -3,14 +3,6 @@
     <el-dialog title="新建表单" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
-          <!-- <div class="title-item">
-            <span class="title-item-label">
-              表单编码
-            </span>
-            <div class="title-item-main">
-              <el-input v-model="postData.code" placeholder="" :disabled="true"></el-input>
-            </div>
-          </div> -->
           <div class="title-item">
             <span class="title-item-label">
               表单名称
@@ -21,7 +13,6 @@
           </div>
         </div>
         <div class="form-Main">
-<!--            <formbpmn ref="formbpmn" v-if="dialogVisible2"></formbpmn>-->
           <form-designer ref="formDesigner"></form-designer>
         </div>
       </div>

@@ -98,7 +98,7 @@
         </div>
       </div>
     </div>
-    <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></projectFormDiolog>
+    <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType" :projectOption="projectOption" :systemOption="systemOption" :sysProps="sysProps"></projectFormDiolog>
     <detailsDiologForm ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
     <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode" :projectValue="projectValue" @close="close()"></application>
   </div>
@@ -157,6 +157,9 @@
           }
         }
 
+      },
+      handleChange() {
+        this.getManyData()
       },
       projectChange(val) {
         this.systemOption =  this.projectOption.filter(({ code }) => code === val)[0].children
@@ -319,8 +322,8 @@
         this.addForm2(item)
       }
     },
-    mounted() {
-      this.getProjectList()
+    async mounted() {
+      await this.getProjectList()
       this.getDraftData()
       this.getEnableData()
     },

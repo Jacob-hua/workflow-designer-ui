@@ -12,15 +12,8 @@
           <el-select v-model="postData.business" placeholder="请选择流程类型">
             <el-option @click.native="onOptionClick(item.name)" v-for="item in options" :key="item.id" :label="item.name" :value="item.code">
             </el-option>
-          </el-select>
+          </el-select> -->
         </div>
-        <!-- <div class="from-item">
-          <span>能源系统</span>
-          <el-select v-model="postData.energy" placeholder="请选择能源系统">
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </div> -->
         <div class="from-item">
           <span>表单名称</span>
           <el-input v-model="postData.name" placeholder="请输入表单名称"></el-input>
@@ -34,14 +27,6 @@
     <el-dialog :title="title" :visible.sync="dialogVisible2" width="95%" height="100%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
-          <!-- <div class="title-item">
-            <span class="title-item-label">
-              表单编码
-            </span>
-            <div class="title-item-main">
-              <el-input v-model="postData.code" placeholder="" :disabled="true"></el-input>
-            </div>
-          </div> -->
           <div class="title-item">
             <span class="title-item-label">
               业务类型
@@ -51,14 +36,6 @@
               <el-input v-show="false" v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
             </div>
           </div>
-          <!-- <div class="title-item">
-            <span class="title-item-label marginLeft40">
-              能源系统
-            </span>
-            <div class="title-item-main">
-              <el-input v-model="projectCodeObj[postData.energy]" placeholder="" :disabled="true"></el-input>
-            </div>
-          </div> -->
           <div class="title-item">
             <span class="title-item-label marginLeft40">
               表单名称
@@ -98,6 +75,18 @@
       title: {
         type: String,
         default: '新增表单'
+      },
+      projectOption: {
+        type: Array,
+        default: () => {[]}
+      },
+      systemOption: {
+        type: Array,
+        default: () => {[]}
+      },
+      sysProps: {
+        type: Object,
+        default: () => {{}}
       }
     },
     data() {
