@@ -28,8 +28,8 @@
     </div>
     <div class="home-table-page">
       <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          @size-change.sync="GetGlobalList"
+          @current-change.sync="GetGlobalList"
           :current-page="pageInfo.page"
           :page-size="pageInfo.limit"
           layout="prev, pager, next, jumper"
@@ -88,12 +88,7 @@ export default {
       dateRang: ["2022-01-01","2022-12-31"],
       radio: '1',
       type: '',
-      tableData: [
-        {
-          id: 1,
-          processInstanceName: '第三方api'
-        }
-      ],
+      tableData: [],
       pageInfo: {
         [CONSTANT.PAGE]: 1,
         [CONSTANT.LIMIT]: 10,
@@ -101,15 +96,15 @@ export default {
       }
     }
   },
-  watch: {
-    pageInfo:{
-      deep: true,
-      immediate: true,
-      handler(newValue) {
-        this.GetGlobalList(newValue)
-      }
-    }
-  },
+  // watch: {
+  //   pageInfo:{
+  //     deep: true,
+  //     immediate: true,
+  //     handler(newValue) {
+  //       this.GetGlobalList(newValue)
+  //     }
+  //   }
+  // },
   methods: {
     showDetail(row) {
       apiDetail({
@@ -290,15 +285,15 @@ export default {
         ]
       })
     },
-    async GetGlobalList(pageInfo) {
+    async GetGlobalList() {
       let data =  await GetGlobalList({
-        ...pageInfo,
+        ...this.pageInfo,
         "tenantId": this.$store.state.tenantId ,// 租户id
         "ascription": this.business
       })
       if (data.result) {
-        this.tableData =  data.result.dataList
-        this.pageInfo.total =  +data.result.count
+        this.tableData = data.result.dataList
+        this.pageInfo.total = data.result.count
       }
     },
     handleSizeChange(val) {

@@ -1,9 +1,6 @@
 import ProcessState from "./ProcessState";
 import Status from "./Status";
-import ApiEnum from "@/enum/ApiTypeEnum";
+import ApiEnum from "./ApiTypeEnum";
+import FormTypeEnum from "./FormTypeEnum";
 
-export default {
-  ProcessState,
-  Status,
-  ApiEnum
-};
+export { ProcessState, Status, ApiEnum, FormTypeEnum };

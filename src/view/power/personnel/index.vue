@@ -54,7 +54,7 @@
         data: [],
         dialogVisible: false,
         tableData: [],
-        currentNodeKey: 'XM_aff0659724a54c119ac857d4e560b47b:-1:template:78'
+        currentNodeKey: ''
       }
     },
     methods: {
@@ -80,12 +80,14 @@
       },
       getTree() {
         getSystemGroupTree({
-          projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
+          projectCode: this.business,
           displayType: 'tree'
         }).then((res) => {
           this.data = res.result
-          this.currentNodeKey = res.result[0].groupId
-          this.getTable(res.result[0])
+         if (res.result[0]) {
+           this.currentNodeKey = res.result[0].groupId
+           this.getTable(res.result[0])
+         }
         })
       },
       getTable(value) {
@@ -106,8 +108,16 @@
       PeTree,
       editRole
     },
-    created() {
-      this.getTree()
+    // created() {
+    //   this.getTree()
+    // }
+    watch:{
+      business: {
+        handler() {
+          console.log(this.business)
+          this.getTree()
+        }
+      }
     }
   }
 </script>

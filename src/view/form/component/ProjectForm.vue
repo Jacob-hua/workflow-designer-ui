@@ -14,26 +14,6 @@
           :options="systemOption"
           :props = 'sysProps'
           @change="handleChange"></el-cascader>
-    <!-- <div class="projectList">
-      <div class="projectList-item" :class="projectCode === 'beiqijia' ? 'checkPro' : '' " @click="changProjectCode('beiqijia')">
-        <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'beiqijia'">
-        <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'beiqijia'">
-        <span class="projectList-item-word">北七家人才基地</span>
-        <i class="el-icon-close item-icon"></i>
-      </div>
-      <div class="projectList-item" :class="projectCode === 'laiwu' ? 'checkPro' : '' " @click="changProjectCode('laiwu')">
-        <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'laiwu'">
-        <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'laiwu'">
-        <span class="projectList-item-word">莱芜供热项目</span>
-        <i class="el-icon-close item-icon"></i>
-      </div>
-      <div class="projectList-item" :class="projectCode === 'xilaideng' ? 'checkPro' : '' " @click="changProjectCode('xilaideng')">
-        <img src="@/assets/img/projectcccccc.svg" alt="" width="32px" height="32px" v-show="projectCode !== 'xilaideng'">
-        <img src="@/assets/img/project0066cc.svg" alt="" width="32px" height="32px" v-show="projectCode == 'xilaideng'">
-        <span class="projectList-item-word">海口喜来登酒店</span>
-        <i class="el-icon-close item-icon"></i>
-      </div>
-    </div> -->
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
 <!--        <el-select v-model="projectValue" placeholder="请选择">-->
@@ -143,27 +123,9 @@
         systemOption: [],
         formData: {},
         projectValue: '',
-        projectOption: [
-          {
-            value: '',
-            label: '全部项目'
-          },
-          {
-            value: 'beiqijia',
-            label: '北七家人才基地'
-          },
-          {
-            value: 'laiwu',
-            label: '莱芜供热项目'
-          },
-          {
-            value: 'xilaideng',
-            label: '海口喜来登酒店'
-          }
-        ],
-        ascriptionName: '',
+        projectOption: [],
         dataType: 'enabled',
-        projectCode: 'beiqijia',
+        projectCode: '',
         valueDate: [format(new Date(), 'yyyy-MM-1'), format(new Date(), 'yyyy-MM-dd')],
         input: '',
         activeName: 'enabled',
@@ -183,7 +145,6 @@
       }
     },
     methods: {
-      handleChange() {},
       deleteEmptyChildren(arr) {
         for (let i = 0; i < arr.length; i++) {
           const arrElement = arr[i];
@@ -195,31 +156,26 @@
             this.deleteEmptyChildren(arrElement.children)
           }
         }
+
       },
       projectChange(val) {
         this.systemOption =  this.projectOption.filter(({ id }) => id === val)[0].children
         this.deleteEmptyChildren(this.systemOption)
-        this.projectValue = this.systemOption[0]?.code  ??  ''
-        this.$refs.projectFormDiolog.postData.business = this.projectValue
+        console.log(this.systemOption)
+        // this.systemValue = this.systemOption[0]?.id  ??  ''
       },
       async getProjectList(){
-        let _this = this
         let res = await  getProjectList({
           count: -1,
           projectCode: '',
           tenantId: this.$store.state.tenantId,
           type: ''
         })
-        _this.projectOption = res?.result ?? []
-        _this.projectCode = _this.projectOption[0].code
-        _this.ascriptionName = _this.projectOption[0].name
-        _this.systemOption = _this.projectOption[0].children
-        _this.deleteEmptyChildren(_this.systemOption)
-        _this.projectValue =  _this.systemOption[0].code
-        _this.$nextTick(() => {
-          _this.$refs.projectFormDiolog.options = _this.systemOption
-          _this.$refs.projectFormDiolog.postData.business = _this.projectValue
-        })
+        this.projectOption = res?.result ?? []
+        this.projectCode = this.projectOption[0].code
+        this.systemOption = this.projectOption[0].children
+        this.deleteEmptyChildren(this.systemOption)
+        this.projectValue =  this.systemOption[0].code
       },
       application() {
         this.dialogVisible = true
@@ -306,15 +262,12 @@
       addForm() {
         this.$refs.projectFormDiolog.dialogVisible1 = true
         this.$refs.projectFormDiolog.postData = {
-          ascriptionName: '',
-          ascName: '',
           ascription: '',
           business: '',
           energy: '',
           name: ''
         }
         this.$refs.projectFormDiolog.postData.ascription = this.projectCode
-        this.$refs.projectFormDiolog.postData.ascriptionName = this.ascriptionName
       },
       
       addForm2(item) {

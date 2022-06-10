@@ -70,7 +70,10 @@ export const getBusinessConfigWithTree = (id, tenantId) =>
   get(`/config/businessConfig/getBusinessConfigWithTree?tenantId=${tenantId}&id=${id}`);
 // 删除配置
 export const deleteBusinessConfig = (id) => deletefn(`/config/businessConfig/delete`, { id: id });
-export const UpdatebusinessConfig = (params) => put(`/config/businessConfig`, params);
+
+// export const UpdatebusinessConfig = (params) => put(`/config/businessConfig`, params);
+// export const UpdatebusinessConfig = (params) => put(`/config/businessConfig/businessConfigWithTree/create`, params);
+
 
 export const startConfig = (params) => put("/config/startConfig/update", params);
 
@@ -82,4 +85,4 @@ export const selectProcessStartConfigList = (id, tenantId) =>
 export const checkApiType = (params) => get(`/config/global/checkApiType`, params);
 
 export const selectProcessStartConfigByCode = (params) =>
-  get(`/config/startConfig/selectProcessStartConfigByCode`, params);
+  post(`/config/startConfig/selectProcessStartConfigByCode`, params);

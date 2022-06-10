@@ -48,7 +48,8 @@
               <span v-if="!formShow" class="noneForm"> 当前未关联表单 </span>
               <span v-if="formShow" class="formRemove" @click="removeForm()">移除表单</span>
               <div v-if="formShow" class="formShowForm">
-                <formOB v-if="formShow" :formContant="formContent" :key="formOBKey"></formOB>
+                <formOB v-if="formShow && (formContent.docType === '.form' || formContent.docType === null)" :formContant="formContent.content" :key="formOBKey"></formOB>
+                <preview :itemList="formListFun(formContent)"  :formConf="configFun(formContent)" v-if="formShow && formContent.docType === 'json'"></preview>
               </div>
             </div>
           </div>
@@ -75,7 +76,8 @@
                 placement="right"
                 width="400"
                 trigger="click">
-                <formOB :formContant="item.content"></formOB>
+                <formOB :formContant="item.content" v-if="item.docType === '.form' || item.docType === null"></formOB>
+                <preview :itemList="formListFun(item)"  :formConf="configFun(item)" v-if="item.docType === 'json'"></preview>
                 <el-button type="text" size="small" class="listItem-button1" slot="reference">查看</el-button>
               </el-popover>
 
@@ -100,6 +102,7 @@
   import formOB from './formOB.vue'
   import { postProcessDraft, putProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
   import X2JS from "x2js";
+  import preview from "@/plugin/FormDesign/component/preview";
   export default {
     props:{
       editData: {
@@ -180,15 +183,18 @@
         this.bpmnModeler.saveXML({ format: true }).then(({ xml }) => {
           let a = xml.replaceAll(this.$refs.ProcessInformation.postData.code, `Process_${new Date().getTime()}`)
           const { definitions } = newConvert.xml2js(a);
+          console.log(definitions, '0000')
           var file1 = new File([a], definitions.process._name + '.bpmn', {type: 'bpmn20-xml'});
-          if (Array.isArray(definitions.process.userTask)) {
-            definitions.process.userTask.forEach((item, index) => {
-              if (item['_camunda:formKey']) {
-                formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
-              }
-            })
-          } else{
-            formIds = (definitions.process.userTask['_camunda:formKey'] && definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) || ''
+          if (definitions.process.userTask) {
+            if (Array.isArray(definitions.process.userTask)) {
+              definitions.process.userTask.forEach((item, index) => {
+                if (item['_camunda:formKey']) {
+                  formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
+                }
+              })
+            } else{
+              formIds = (definitions.process.userTask['_camunda:formKey'] && definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) || ''
+            }
           }
           let formData = new FormData()
           switch (this.dataType){
@@ -267,10 +273,14 @@
           }
       },
       showForm(item) {
+        console.log(window.bpmnInstances.modeler)
+        if (true) {
+          return
+        }
         if (window.bpmnInstances.modeler) {
           window.bpmnInstances.modeling.updateProperties(window.bpmnInstances.modeler , { 'camunda:formKey': 'camunda-forms:deployment:' + item.docName });
           this.formShow = true
-          this.formContent = item.content
+          this.formContent = item
         }
       },
       Adddraft() {
@@ -340,7 +350,7 @@
             name: '',
             docName: docName
           }).then((res) => {
-            this.formContent = res.result[0].content
+            this.formContent = res.result[0]
             this.formOBKey++
             this.formShow = true
           })
@@ -355,11 +365,33 @@
           this.formShow = false
           this.formContent = ''
         }
+      },
+      formListFun(item) {
+        let content = JSON.parse(item.content)
+          let list = content.list
+          for (const formItem of list) {
+            if (formItem.columns && formItem.columns.length) {
+              for (const formItemElement of formItem.columns) {
+                for (const formItemElementElement of formItemElement.list) {
+                  formItemElementElement.disabled = true
+                }
+              }
+            } else {
+              if ( Object.keys(formItem).includes('disabled')) {
+                formItem.disabled  =  true
+              } else  {}
+            }
+          }
+        return list
+      },
+      configFun(item) {
+        return JSON.parse(item.content).config
       }
     },
     components:{
       ProcessInformation,
-      formOB
+      formOB,
+      preview
     }
   }
 </script>

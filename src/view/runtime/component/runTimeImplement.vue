@@ -17,7 +17,8 @@
                 <div class="peopleList">
                   <div v-for="(item, index) in dataList.Agency">
                     <span> {{ item.assignee }}: </span>
-                    <div class="peopleList-item" v-for="(item1, index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
+                    <div class="peopleList-item" v-for="(item1
+                    , index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
                     <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
                       <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length == 0">点击添加</span>
                     </div>
@@ -126,7 +127,8 @@
           </div> -->
           <div style="margin-top: 20px;margin-bottom: 10px;">表单内容</div>
           <div class="Implement-right-form">
-            <formRuntime :formContant="formContant" v-if="formShow" ref="formRuntime"></formRuntime>
+            <formRuntime :formContant="formContant.content" v-if="formShow && (formContant.docType === '.form' || formContant.docType === null)" ref="formRuntime"></formRuntime>
+            <preview :itemList="formListFun(formContant)"  :formConf="configFun(formContant)" v-if="formShow && formContant.docType === 'json'" ref="preview"></preview>
           </div>
         </div>
       </div>
@@ -148,6 +150,7 @@
   import runtimePeople from './runtimePeople.vue'
   import runtimeConfirmation from './runtimeConfirmation.vue'
   import formRuntime from './formRuntime.vue'
+  import preview from "@/plugin/FormDesign/component/preview";
   import {
     designFormDesignServiceAll,
     postCompleteTask,
@@ -266,9 +269,8 @@
           permissions
         } = JSON.parse(sessionStorage.getItem('loginData'))
         let proJectRole = permissions.filter((item) => {
-          // return item.projectCode === this.business
-          return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
-        })[0].permissionSet
+          return item.projectCode === this.business
+        })[0]?.permissionSet || []
         let findEle = proJectRole.findIndex((item) => {
           return item.frontRoute === 'RunTime' + value
         })
@@ -332,41 +334,106 @@
         this.bpmnTypeloopChara = value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
         this.selection(value)
       },
-
+      
+      formListFun(item) {
+        let content = JSON.parse(item.content)
+          let list = content.list
+          // for (const formItem of list) {
+          //   if (formItem.columns && formItem.columns.length) {
+          //     for (const formItemElement of formItem.columns) {
+          //       for (const formItemElementElement of formItemElement.list) {
+          //         formItemElementElement.disabled = true
+          //       }
+          //     }
+          //   } else {
+          //     if ( Object.keys(formItem).includes('disabled')) {
+          //       formItem.disabled  =  true
+          //     } else  {}
+          //   }
+          // }
+        return list
+      },
+      configFun(item) {
+        return JSON.parse(item.content).config
+      },
+      
       implement() {
         let formData = []
+        let data = {}
+        let errors = {}
         if (this.formShow) {
-          var {
-            data,
-            errors
-          } = this.$refs.formRuntime.formEditor.submit()
-          if (Object.keys(errors).length > 0) {
-            this.$message.error('有必填项未填写')
-            return
+          switch (this.formContant.docType){
+            case '.form':
+              data = this.$refs.formRuntime.formEditor.submit().data
+              errors = this.$refs.formRuntime.formEditor.submit().errors
+              
+              formData = JSON.parse(this.formContant.content)
+              // formData.forEach((item) => {
+              //   switch (item.type) {
+              //     case 'radio':
+              //       item.value = item.values.filter((values) => {
+              //         return values.value == data[item.key]
+              //       })[0].label
+              //       break;
+              //     default:
+              //       item.value = data[item.key]
+              //       break;
+              //   }
+              // })
+              break;
+            case null:
+              data = this.$refs.formRuntime.formEditor.submit().data
+              errors = this.$refs.formRuntime.formEditor.submit().errors
+              
+              formData = JSON.parse(this.formContant.content)
+              console.log(formData)
+              formData.components.forEach((item) => {
+                switch (item.type) {
+                  case 'radio':
+                    item.value = item.values.filter((values) => {
+                      return values.value == data[item.key]
+                    })[0].label
+                    break;
+                  default:
+                    item.value = data[item.key]
+                    break;
+                }
+              })
+              break;
+            case 'json':
+              this.$refs.preview.$refs[this.$refs.preview.formConf.formModel].validate((valid) => {
+                if (valid) {
+                  data = this.$refs.preview.form
+                  formData = JSON.parse(this.formContant.content)
+                  formData.list.forEach((item) => {
+                    item.value = data[item.id]
+                  })
+                } else {
+                  errors.boolean = true
+                }
+              })
+              break
+            default:
+              break;
           }
-
-          formData = JSON.parse(this.formContant).components
-          formData.forEach((item) => {
-            switch (item.type) {
-              case 'radio':
-                item.value = item.values.filter((values) => {
-                  return values.value == data[item.key]
-                })[0].label
-                break;
-              default:
-                item.value = data[item.key]
-                break;
-            }
-          })
+        }
+        if (Object.keys(errors).length > 0) {
+          this.$message.error('有必填项未填写')
+          return
         }
         getProcessNodeInfo({
           processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId
         }).then((res) => {
-          if (res.result.assignee || res.result.candidateGroup || res.result.candidateGroup) {
+          let nodeInfoBoole = res.result.some((item) => {
+            if (item.assignee || item.candidateGroup || item.candidateUser) {
+              return true
+            }
+          })
+          if (nodeInfoBoole) {
             postCompleteTask({
               assignee: this.$store.state.userInfo.name,
               commentList: [],
-              formDataList: formData,
+              formData: formData,
               processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
               processKey: this.$refs.ProcessInformation.postData.deployKey,
               taskId: this.$refs.ProcessInformation.postData.newTaskId,
@@ -412,7 +479,7 @@
             name: '',
             docName: docName
           }).then((res) => {
-            this.formContant = res.result[0].content
+            this.formContant = res.result[0]
             this.formShow = true
           })
         } else {
@@ -425,7 +492,8 @@
       ProcessInformation,
       runtimePeople,
       runtimeConfirmation,
-      formRuntime
+      formRuntime,
+      preview
     }
   }
 </script>
@@ -602,6 +670,7 @@
     height: 768px;
     border: 1px solid #000000;
     overflow: auto;
+    padding: 20px 20px 20px 0px;
   }
 
   .addCirculate {

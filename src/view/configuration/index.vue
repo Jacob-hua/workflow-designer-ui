@@ -36,7 +36,7 @@
       return {
         projectOption: [],
         activeName: 'first',
-        business: 'XM_aff0659724a54c119ac857d4e560b47b',
+        business: '',
         activeNameMapping: {
           first: 'VisitCall',
           second: 'BusinessCall',
@@ -54,9 +54,6 @@
         }
       }
     },
-    created() {
-      this.changeActiveName('first')
-    },
     mounted() {
       this.getProjectList();
     },
@@ -70,14 +67,14 @@
         })
         this.projectOption = res?.result ?? []
         this.business = this.projectOption[0].code
+        this.changeActiveName('first')
       },
       changeActiveName(value) {
         this.activeName = value
         let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
         let proJectRole = permissions.filter((item) => {
-          // return item.projectCode === this.business
-          return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
-        })[0].permissionSet
+          return item.projectCode === this.business
+        })[0]?.permissionSet || []
         let findEle = proJectRole.findIndex((item) => {
           return item.frontRoute === this.activeNameMapping[value]
         })
