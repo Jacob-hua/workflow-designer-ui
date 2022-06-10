@@ -103,8 +103,7 @@ export default {
         if (!process.business) {
           return
         }
-        // TODO: 此处的配置项7，是一个临时数据，为了验证是否能够获取到配置项
-        this.fetchProcessStartConfigList(7).then((res) => {
+        this.fetchProcessStartConfigList(process.business).then((res) => {
           this.startConfigList = res
         })
       },
