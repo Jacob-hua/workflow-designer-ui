@@ -3,12 +3,13 @@
     <el-dialog :title="title"
                :visible="visible"
                @close="onCloseModal">
-      <el-form :model="startForm">
+      <el-form :model="startForm"
+               ref="startForm">
         <el-form-item v-for="({id, label, prop, type, required, placeholder, options}) in startFormFields"
                       :key="id"
                       :label="label"
                       :prop="prop"
-                      :required="required">
+                      :rules="{required, message: '请输入' + label, trigger: 'blur'}">
           <el-input v-if="type === 1"
                     v-model="startForm[prop]"
                     :placeholder="placeholder"></el-input>
@@ -25,6 +26,7 @@
                 description="创建的执行会进入执行列表并开始执行流程,是否继续？"></el-empty>
       <span slot="footer">
         <el-button type="primary"
+                   :loading="isSubmiting"
                    @click="onSubmit">立即创建</el-button>
         <el-button @click="onCancel">取消</el-button>
       </span>
@@ -35,6 +37,7 @@
 <script>
 import { mapState } from 'vuex'
 import { selectProcessStartConfigByCode } from '../../../api/globalConfig'
+import { getStartProcess } from '../../../api/unit/api.js'
 
 export default {
   name: 'RuntimeCreatTicket',
@@ -56,10 +59,11 @@ export default {
     return {
       startConfigList: [],
       startForm: {},
+      isSubmiting: false,
     }
   },
   computed: {
-    ...mapState(['tenantId']),
+    ...mapState(['tenantId', 'userInfo']),
     isEmptyConfig() {
       return !this.startConfigList || this.startConfigList.length === 0
     },
@@ -110,11 +114,35 @@ export default {
     onCloseModal() {
       this.$emit('close')
     },
-    onSubmit() {
-      this.onCloseModal()
+    async onSubmit() {
+      try {
+        this.isSubmiting = true
+        await (this.$refs['startForm'] && this.$refs['startForm'].validate())
+        const { errorInfo } = await getStartProcess({
+          businessKey: '',
+          definitionKey: this.process.key,
+          createBy: this.userInfo.name,
+          startProcessId: this.process.id,
+          variables: { ...this.startForm },
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo)
+          return
+        }
+        this.$message({
+          type: 'success',
+          message: '创建成功',
+        })
+        this.onCloseModal()
+        this.$refs['startForm'] && this.$refs['startForm'].resetFields()
+      } catch (error) {
+      } finally {
+        this.isSubmiting = false
+      }
     },
     onCancel() {
       this.onCloseModal()
+      this.$refs['startForm'] && this.$refs['startForm'].resetFields()
     },
     async fetchProcessStartConfigList(businessConfigCode) {
       try {

@@ -132,26 +132,6 @@ export default {
     createTicket(process) {
       this.createTicketVisible = true
       this.process = process
-      // this.$confirm('创建的执行会进入执行列表并开始执行流程,是否继续', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      // })
-      //   .then(() => {
-      //     getStartProcess({
-      //       businessKey: '',
-      //       definitionKey: process.key,
-      //       createBy: this.$store.state.userInfo.name,
-      //       startProcessId: process.id,
-      //       variables: {},
-      //     }).then(() => {
-      //       this.$message({
-      //         type: 'success',
-      //         message: '创建成功',
-      //       })
-      //       this.$emit('succseeAdd')
-      //     })
-      //   })
-      //   .catch(() => {})
     },
   },
 }
