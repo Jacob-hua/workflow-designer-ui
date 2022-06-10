@@ -4,7 +4,7 @@
                width="66%"
                :visible="dialogVisible"
                @close="onClose">
-      <div class="diolog-main"> 
+      <div class="diolog-main">
         <div class="diolog-main-left">
           <div class="system-list">
             <div v-for="({label, value}, index) in optionsSystemType"
@@ -17,7 +17,7 @@
         <div class="diolog-main-right">
           <div class="process-list">
             <div class="process-list-item"
-                 v-for="(process, index) in processListList"
+                 v-for="(process, index) in processList"
                  :key="index">
               <div class="process-list-item-detail"
                    @click="detailsShow(process)">
@@ -82,7 +82,7 @@ export default {
   },
   data() {
     return {
-      processListList: [],
+      processList: [],
       getData: {
         type: 'energy-1',
         order: 'desc',
@@ -96,6 +96,9 @@ export default {
   },
   computed: {
     ...mapState(['optionsSystemType', 'tenantId']),
+  },
+  mounted() {
+    this.getProcessList()
   },
   methods: {
     onCreateTicketVisible() {
