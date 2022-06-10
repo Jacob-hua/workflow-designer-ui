@@ -74,7 +74,7 @@
         return this.power === value ? 'powerList-item-change' : ''
       },
       changProjectCode() {
-        
+        this.changePower(this.power)
       }
     },
     components:{
