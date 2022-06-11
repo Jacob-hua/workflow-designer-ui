@@ -9,6 +9,7 @@
           v-model="projectValue"
           :options="systemOption"
           :props = 'sysProps'
+          clearable
           @change="handleChange"></el-cascader>
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
@@ -110,6 +111,7 @@
         sysProps:{
           label: 'name',
           value: 'code',
+          checkStrictly: true,
           emitPath: false,
         },
         systemOption: [],

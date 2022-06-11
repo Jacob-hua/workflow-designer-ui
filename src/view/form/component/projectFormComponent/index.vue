@@ -16,6 +16,7 @@
               v-model="postData.business"
               :options="systemOption"
               :props='sysProps'
+              clearable
               @change="onOptionClick"
           ></el-cascader>
         </div>
