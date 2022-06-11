@@ -44,6 +44,7 @@
     <AddOrEidtDailog
         ref="AddOrEidtDailog"
         :business="business"
+        :type="type"
         @showAddOrEidtDailog="showAddOrEidtDailog"
         v-if="AddOrEidtDailogFlag"
         :guideForm="guideForm"
