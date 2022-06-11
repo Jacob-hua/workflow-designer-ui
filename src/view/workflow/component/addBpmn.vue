@@ -126,7 +126,7 @@ export default {
             .then(() => {
               this.$message.success('保存成功')
               this.$emit('close')
-              this.$parent.findWorkFlowRecord()
+              this.$parent.findWorkFlowRecord('enabled,disabled')
             })
             .catch(({ errorMsg }) => {
               this.$message({
