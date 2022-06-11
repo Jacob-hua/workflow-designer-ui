@@ -125,6 +125,7 @@ import {
   designProcessCountStatistics,
 } from '@/api/managerWorkflow'
 import { getProjectList } from '@/api/globalConfig'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -141,6 +142,7 @@ export default {
         label: 'name',
         value: 'code',
         emitPath: false,
+        checkStrictly: true,
       },
       systemOption: [],
       draftProcessCount: 0,
@@ -180,6 +182,24 @@ export default {
       showFlag: true,
     }
   },
+  computed: {
+    ...mapState(['tenantId', 'userInfo']),
+  },
+  async mounted() {
+    await this.getProjectList()
+    await designProcessCountStatistics({
+      tenantId: this.tenantId,
+      ascription: this.projectCode,
+      business: this.projectValue,
+      startTime: this.valueDate[0] && `${this.valueDate[0]} 00:00:00`,
+      endTime: this.valueDate[1] && `${this.valueDate[1]} 23:59:59`,
+      createBy: this.userInfo.name,
+    }).then((res) => {
+      this.draftProcessCount = res.result.draftProcessCount
+      this.processCount = res.result.processCount
+    })
+    this.findWorkFlowRecord(this.activeName)
+  },
   methods: {
     deleteEmptyChildren(arr) {
       for (let i = 0; i < arr.length; i++) {
@@ -203,14 +223,13 @@ export default {
       let res = await getProjectList({
         count: -1,
         projectCode: '',
-        tenantId: this.$store.state.tenantId,
+        tenantId: this.tenantId,
         type: '',
       })
       this.projectOption = res?.result ?? []
       this.projectCode = this.projectOption[0].code
       this.systemOption = this.projectOption[0].children
       this.deleteEmptyChildren(this.systemOption)
-      this.projectValue = this.systemOption[0].code
     },
 
     // 修改code
@@ -247,7 +266,7 @@ export default {
     addBpmnHidden() {
       this.addBpmnVisible = false
     },
-    addBpmnDefine(value) {
+    addBpmnDefine() {
       this.flag = false
       this.addBpmnVisible = false
     },
@@ -296,18 +315,15 @@ export default {
     // 查询草稿箱
     getDraftData() {
       postFormDesignRecordDraftInfo({
-        tenantId: this.$store.state.tenantId,
+        tenantId: this.tenantId,
         status: 'drafted',
         ascription: this.projectCode,
-        business:
-          typeof this.projectValue === 'string'
-            ? this.projectValue
-            : this.projectValue.at(-1),
-        createBy: this.$store.state.userInfo.name,
+        business: this.projectValue,
+        createBy: this.userInfo.name,
         numberCode: '',
         name: this.input,
-        startTime: this.valueDate[0],
-        endTime: this.valueDate[1],
+        startTime: this.valueDate[0] ?? undefined,
+        endTime: this.valueDate[1] ?? undefined,
       }).then((res) => {
         this.formListSecond = res.result
       })
@@ -315,18 +331,15 @@ export default {
     // 查询可部署流程
     getEnableData() {
       postFormDesignBasicFormRecord({
-        tenantId: this.$store.state.tenantId,
+        tenantId: this.tenantId,
         status: 'enabled',
         ascription: this.projectCode,
-        business:
-          typeof this.projectValue === 'string'
-            ? this.projectValue
-            : this.projectValue.at(-1),
-        createBy: this.$store.state.userInfo.name,
+        business: this.projectValue,
+        createBy: this.name,
         numberCode: '',
         name: this.input,
-        startTime: this.valueDate[0],
-        endTime: this.valueDate[1],
+        startTime: this.valueDate[0] ?? undefined,
+        endTime: this.valueDate[1] ?? undefined,
       }).then((res) => {
         this.formListFirst = res.result
       })
@@ -338,20 +351,15 @@ export default {
     // 查询项目流程
     async findWorkFlowRecord(status) {
       let data = await workFlowRecord({
-        tenantId: this.$store.state.tenantId || null,
+        tenantId: this.tenantId,
         status,
-        ascription: this.projectCode || '',
-        business:
-          typeof this.projectValue === 'string'
-            ? this.projectValue
-            : this.projectValue.at(-1) || '',
-        createBy: this.$store.state.userInfo.name || '',
+        ascription: this.projectCode,
+        business: this.projectValue,
+        createBy: this.userInfo.name,
         numberCode: '',
         name: this.input,
-        startTime: this.valueDate[0]
-          ? `${this.valueDate[0]} 00:00:00` || ''
-          : '',
-        endTime: this.valueDate[1] ? `${this.valueDate[1]} 23:59:59` || '' : '',
+        startTime: this.valueDate[0] && `${this.valueDate[0]} 00:00:00`,
+        endTime: this.valueDate[1] && `${this.valueDate[1]} 23:59:59`,
         page: this.getData.page,
         limit: this.getData.limit,
       })
@@ -363,24 +371,6 @@ export default {
           (this.$refs.project.getData.total = data.result.total),
           (this.formListFirst = data.result.list))
     },
-  },
-  async mounted() {
-    await this.getProjectList()
-    await designProcessCountStatistics({
-      tenantId: this.$store.state.tenantId,
-      ascription: this.projectCode,
-      business:
-        typeof this.projectValue === 'string'
-          ? this.projectValue
-          : this.projectValue.at(-1),
-      startTime: this.valueDate[0],
-      endTime: this.valueDate[1],
-      createBy: this.$store.state.userInfo.name,
-    }).then((res) => {
-      this.draftProcessCount = res.result.draftProcessCount
-      this.processCount = res.result.processCount
-    })
-    this.findWorkFlowRecord(this.activeName)
   },
 }
 </script>
