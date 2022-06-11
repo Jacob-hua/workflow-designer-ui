@@ -102,6 +102,14 @@ export default {
     this.getProcessList()
   },
   methods: {
+    detailsShow(item) {
+      this.$refs.detailsRem.dialogVisible2 = true
+      this.$nextTick(() => {
+        this.$refs.detailsRem.$refs.details2.postData = item
+        this.$refs.detailsRem.$refs.details2.postData.version = item.user
+        this.$refs.detailsRem.$refs.details2.createNewDiagram(item.content)
+      })
+    },
     onCreateTicketVisible() {
       this.createTicketVisible = false
     },
