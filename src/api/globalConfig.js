@@ -82,7 +82,7 @@ export const getThirdInterfaceList = (params) => get(`/config/global/getThirdInt
 export const selectProcessStartConfigList = (id, tenantId) =>
   get(`/config/startConfig/selectProcessStartConfigList?tenantId=${tenantId}&businessConfigId=${id}`);
 
-export const checkApiType = (params) => get(`/config/global/checkApiType`, params);
+export const checkApiType = (params) => post(`/config/global/checkApiType`, params);
 
 export const selectProcessStartConfigByCode = (params) =>
   post(`/config/startConfig/selectProcessStartConfigByCode`, params);
