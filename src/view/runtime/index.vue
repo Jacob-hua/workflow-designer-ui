@@ -2,33 +2,19 @@
   <div class="runtime">
     <div class="runtime-filter">
       <div class="projectSelect marginRight20">
-<!--        <el-select v-model="getData.projectCode" placeholder="请选择" @change="getAllApi()">-->
-<!--          <el-option v-for="item in $store.state.optionsAscription" :key="item.value" :label="item.label" :value="item.value">-->
-<!--          </el-option>-->
-<!--        </el-select>-->
         <el-select  @change="projectChange" v-model="getData.projectCode">
           <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
         </el-select>
       </div>
       <div class="businessSelect marginRight20">
-<!--        <el-select v-model="getData.businessCode" placeholder="请选择" @change="getAllApi()">-->
-<!--          <el-option v-for="item in this.$store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">-->
-<!--          </el-option>-->
-<!--        </el-select>-->
         <el-cascader
             style="width: 400px; margin-right: 10px;"
             v-model="getData.businessCode"
             :options="systemOption"
-            :props = 'sysProps'
+            :props='sysProps'
             @change="getAllApi()"
             ></el-cascader>
       </div>
-      <!-- <div class="marginRight20">
-        <el-select v-model="value" placeholder="请选择">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-      </div> -->
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
@@ -150,7 +136,9 @@
       return {
         sysProps:{
           label: 'name',
-          value: 'code'
+          value: 'code',
+          checkStrictly: true,
+          emitPath: false,
         },
         projectOption: [],
         systemOption: [],
@@ -219,8 +207,6 @@
         this.getAllApi()
         this.systemOption =  this.projectOption.filter(({ code }) => code === val)[0].children
         this.deleteEmptyChildren(this.systemOption)
-        console.log(this.systemOption)
-        // this.systemValue = this.systemOption[0]?.id  ??  ''
       },
       async getProjectList(){
         let res = await getProjectList({
@@ -313,21 +299,6 @@
           }
         })
       },
-      // deployDiolog(row) {
-      //   this.dialogVisibleImplement = true
-      //   this.$nextTick(() => {
-      //     this.$refs.runTimeImplement.getNachList(row.processInstanceId).then(() => {
-      //       this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-      //     })
-      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
-      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.processStarter
-      //     this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
-      //     this.$refs.runTimeImplement.dataList.Hang = row.status !== 'hang'
-      //     if (!this.$refs.runTimeImplement.dataList.Hang) {
-      //       this.$refs.runTimeImplement.functionCheck = 'Hang'
-      //     }
-      //   })
-      // },
       closeDialogImplement() {
         this.dialogVisibleImplement = false
       },
@@ -347,17 +318,6 @@
           this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
         })
       },
-      // detailsDiolog(row) {
-      //   this.$refs.lookover.dialogVisible = true
-      //   this.$nextTick(() => {
-      //     this.$refs.lookover.$refs.ProcessInformation.postData = row
-      //     this.$refs.lookover.$refs.ProcessInformation.postData.version = row.processStarter
-      //     this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
-      //     this.$refs.lookover.getListData(row.processInstanceId).then(() => {
-      //       this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-      //     })
-      //   })
-      // },
       goAdd() {
         this.dialogVisibleAdd = true
       },
@@ -377,7 +337,7 @@
         getTaskCountStatistic({
           ascription: this.getData.projectCode,
           assignee: this.$store.state.userInfo.name,
-          business:Array.isArray(this.getData.businessCode)? this.getData.businessCode :  this.getData.businessCode.at(-1),
+          business: this.getData.businessCode,
           endTime: this.valueDate[1],
           startTime: this.valueDate[0],
           tenantId: this.$store.state.tenantId
