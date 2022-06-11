@@ -273,10 +273,6 @@
           }
       },
       showForm(item) {
-        console.log(window.bpmnInstances.modeler)
-        if (true) {
-          return
-        }
         if (window.bpmnInstances.modeler) {
           window.bpmnInstances.modeling.updateProperties(window.bpmnInstances.modeler , { 'camunda:formKey': 'camunda-forms:deployment:' + item.docName });
           this.formShow = true
