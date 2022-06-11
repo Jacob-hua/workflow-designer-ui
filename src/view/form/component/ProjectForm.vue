@@ -282,7 +282,11 @@
         this.$nextTick(() => {
           this.$refs.projectFormDiolog.$refs.formDesigner.designList =  content.list
           this.$refs.projectFormDiolog.$refs.formDesigner.formConfig = content.config
-          this.$refs.projectFormDiolog.postData = item
+          this.$refs.projectFormDiolog.postData = {
+            ...item,
+            ascriptionName: '',
+            ascName:  item.business,
+          }
         })
       },
       detailsDiolog(item) {
