@@ -1,10 +1,6 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-<!--      <el-select v-model="projectCode" placeholder="请选择" @change="changProjectCode">-->
-<!--        <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">-->
-<!--        </el-option>-->
-<!--      </el-select>-->
       <el-select style="width: 300px; margin-right: 20px"   @change="projectChange" v-model="projectCode">
         <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
       </el-select>
@@ -13,14 +9,10 @@
           v-model="projectValue"
           :options="systemOption"
           :props = 'sysProps'
+          clearable
           @change="handleChange"></el-cascader>
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
-<!--        <el-select v-model="projectValue" placeholder="请选择">-->
-<!--          <el-option v-for="item in $store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">-->
-<!--          </el-option>-->
-<!--        </el-select>-->
-
       </div>
       </div>
       <div class="datePick">
@@ -119,6 +111,7 @@
         sysProps:{
           label: 'name',
           value: 'code',
+          checkStrictly: true,
           emitPath: false,
         },
         systemOption: [],
@@ -181,7 +174,7 @@
         _this.ascriptionName = _this.projectOption[0].name
         _this.systemOption = _this.projectOption[0].children
         _this.deleteEmptyChildren(_this.systemOption)
-        _this.projectValue =  _this.systemOption[0].code
+        _this.projectValue =  _this.systemOption[0].children[0].code
         _this.$nextTick(() => {
           _this.$refs.projectFormDiolog.options = _this.systemOption
           _this.$refs.projectFormDiolog.postData.business = _this.projectValue
@@ -289,7 +282,11 @@
         this.$nextTick(() => {
           this.$refs.projectFormDiolog.$refs.formDesigner.designList =  content.list
           this.$refs.projectFormDiolog.$refs.formDesigner.formConfig = content.config
-          this.$refs.projectFormDiolog.postData = item
+          this.$refs.projectFormDiolog.postData = {
+            ...item,
+            ascriptionName: '',
+            ascName:  item.business,
+          }
         })
       },
       detailsDiolog(item) {

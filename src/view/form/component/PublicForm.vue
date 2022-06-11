@@ -179,7 +179,12 @@
           this.$nextTick(() => {
             this.$refs.PublicFormDiolog.$refs.formDesigner.designList =  content.list
             this.$refs.PublicFormDiolog.$refs.formDesigner.formConfig = content.config
-            this.$refs.PublicFormDiolog.postData = item
+            this.$refs.PublicFormDiolog.postData = {
+              ascriptionName: '',
+              ascName: item.business,
+              ...item
+            }
+
           })
         }
         this.$refs.PublicFormDiolog.dialogVisible2 = true
