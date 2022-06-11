@@ -1,10 +1,6 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-<!--      <el-select v-model="projectCode" placeholder="请选择" @change="changProjectCode">-->
-<!--        <el-option v-for="item in projectOption" :key="item.value" :label="item.label" :value="item.value">-->
-<!--        </el-option>-->
-<!--      </el-select>-->
       <el-select style="width: 300px; margin-right: 20px"   @change="projectChange" v-model="projectCode">
         <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
       </el-select>
@@ -16,11 +12,6 @@
           @change="handleChange"></el-cascader>
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
-<!--        <el-select v-model="projectValue" placeholder="请选择">-->
-<!--          <el-option v-for="item in $store.state.optionsBusiness" :key="item.value" :label="item.label" :value="item.value">-->
-<!--          </el-option>-->
-<!--        </el-select>-->
-
       </div>
       </div>
       <div class="datePick">
