@@ -17,10 +17,12 @@
             </el-option>
           </el-select> -->
           <el-cascader
+              ref="cascader"
           v-model="postData.business"
           :options="systemOption"
           :props = 'sysProps'
-          @change="handleChange"></el-cascader>
+          @change="onOptionClick"
+          ></el-cascader>
         </div>
         <div class="from-item">
           <span>表单名称</span>
@@ -54,7 +56,6 @@
           </div>
         </div>
         <div class="form-Main">
-<!--            <formbpmn ref="formbpmn" v-if="dialogVisible2"></formbpmn>-->
               <form-designer ref="formDesigner"></form-designer>
         </div>
       </div>
@@ -155,8 +156,9 @@
       }
     },
     methods:{
-      onOptionClick(name) {
-        this.postData.ascName = name
+      onOptionClick() {
+        let nodeInfo = this.$refs.cascader.getCheckedNodes()
+        this.postData.ascName = nodeInfo[0].label
       },
       nextDiolog() {
         if (this.postData.name) {
@@ -330,6 +332,9 @@
 </script>
 
 <style scoped="scoped">
+>>> .el-cascader {
+  width: 320px;
+}
  /deep/ .dialogVisible1 .el-dialog__body {
     padding: 16px 180px 0px 100px;
   }
