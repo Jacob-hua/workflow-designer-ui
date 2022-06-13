@@ -24,7 +24,7 @@ const mutations = {
 };
 
 const actions = {
-  async dispatchRefreshOrganization({ commit, rootState, rootCommit }) {
+  async dispatchRefreshOrganization({ commit, rootState }) {
     const { errorInfo, result } = await getProjectList({
       count: -1,
       projectCode: "",
