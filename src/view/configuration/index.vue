@@ -70,7 +70,7 @@
           type: ''
         })
           this.projectOption = res?.result ?? []
-          this.business = this.projectOption[0].code
+          this.business = this.projectOption[0]?.code
           this.changeActiveName('first')
           this.$nextTick(() => {
             this.$refs.first.GetGlobalList(this.$refs.first.pageInfo)
