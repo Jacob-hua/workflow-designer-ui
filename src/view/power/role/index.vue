@@ -46,6 +46,7 @@
   import PeTree from '@/component/PeTree.vue'
   import editRole from './component/editRole.vue'
   import { getSystemGroupTree, getGroupPermission } from '@/api/unit/api.js'
+  import { mapState } from  'vuex'
   export default {
     props:{
       business: {
@@ -65,6 +66,9 @@
         },
         roleList: []
       }
+    },
+    computed: {
+      ...mapState('account', ['tenantId'])
     },
     methods: {
       handleClose() {
@@ -105,9 +109,9 @@
         this.currentNodeKey = result.groupId
         this.currentNodeName = result.groupName
         getGroupPermission({
-          groupCode: result.groupId.split(':').at(0),
+          groupCode: result.groupId,
           projectCode: this.business,
-          tenantId: this.$store.state.tenantId
+          tenantId: this.tenantId
         }).then((res) => {
           this.roleList = res.result
         })
