@@ -228,13 +228,18 @@ export default {
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
     ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
+    ...mapGetters('config', [
+      'rootOrganizations',
+      'rootOrganizationChildren',
+      'findRootOrganizationByIndex',
+    ]),
   },
   async mounted() {
+    await this.dispatchRefreshOrganization()
+    this.getData['projectData'] = this.findRootOrganizationByIndex(0).value
     await this.getManyData()
     await this.getAmount()
     await this.getDataNumber()
-    this.dispatchRefreshOrganization()
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),

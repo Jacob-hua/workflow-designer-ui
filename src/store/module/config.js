@@ -12,6 +12,9 @@ const getters = {
   rootOrganizationChildren: (state) => (value) => {
     return state.organization.find(({ value: v }) => v === value)?.children ?? [];
   },
+  findRootOrganizationByIndex: (state) => (index) => {
+    return state.organization[index] ?? {};
+  },
 };
 
 const mutations = {
