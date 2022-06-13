@@ -31,6 +31,7 @@
   import role from './role/index.vue'
   import permission from '@/component/permission/index.vue'
   import {getProjectList} from "@/api/globalConfig";
+  import { mapState } from  'vuex'
   export default {
     data() {
       return {
@@ -43,12 +44,15 @@
     mounted() {
       this.getProjectList()
     },
+    computed: {
+      ...mapState('account',['userInfo', 'tenantId'])
+    },
     methods:{
       async getProjectList(){
         let res = await getProjectList({
           count: -1,
           projectCode: '',
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           type: ''
         })
         this.projectOption = res?.result ?? []

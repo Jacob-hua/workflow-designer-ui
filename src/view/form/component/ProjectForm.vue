@@ -105,6 +105,8 @@
   import application from './projectFormComponent/application.vue'
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
   import {getProjectList} from "@/api/globalConfig";
+
+  import { mapState } from 'vuex'
   export default {
     data() {
       return {
@@ -138,6 +140,9 @@
         dialogVisible: false
       }
     },
+    computed:{
+      ...mapState('account', ['tenantId', 'userInfo']),
+    },
     methods: {
       deleteEmptyChildren(arr) {
         for (let i = 0; i < arr.length; i++) {
@@ -166,7 +171,7 @@
         let res = await  getProjectList({
           count: -1,
           projectCode: '',
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           type: ''
         })
         _this.projectOption = res?.result ?? []
@@ -189,11 +194,11 @@
       // 查询草稿箱
       getDraftData() {
         postFormDesignRecordDraftInfo({
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           status: 'drafted',
           ascription: this.projectCode,
           business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
-          createBy: this.$store.state.userInfo.name,
+          createBy: this.userInfo.name,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] + ' 00:00:00',
@@ -208,11 +213,11 @@
       // 查询可部署流程
       getEnableData() {
         postFormDesignBasicFormRecord({
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           status: 'enabled',
           ascription: this.projectCode,
           business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
-          createBy: this.$store.state.userInfo.name,
+          createBy: this.userInfo.account,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] + ' 00:00:00',
@@ -294,10 +299,10 @@
         postFormDesignRecordFormDesignRecordInfo({
           id: item.id,
           status: this.activeName,
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           ascription: this.projectCode,
           business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
-          createBy: this.$store.state.userInfo.name
+          createBy: this.userInfo.account
         }).then((res) => {
           this.$refs.detailsDiolog.previewVisible = true
           // this.$nextTick(() => {

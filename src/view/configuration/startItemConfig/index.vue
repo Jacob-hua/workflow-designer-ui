@@ -8,7 +8,7 @@
         <div class="card-main">
           <div><label>项目名称:</label> <span>{{item.name}}</span></div>
           <div><label>项目类型:</label> <span>{{item.typeName}}</span></div>
-          <div><label>配置时间:</label> <span>{{item.createTime}}</span></div>
+          <div><label>修改时间:</label> <span>{{item.createTime}}</span></div>
         </div>
         <el-button @click="showSartDailog(item.id, item)" class="config" v-role="{ id: 'StartItemConfigAdd', type: 'button', business: business }">配置</el-button>
         <el-button @click="lookDetail(item.id)" v-role="{ id: 'StartItemConfigLook', type: 'button', business: business }">查看</el-button>
@@ -31,6 +31,7 @@
     getBusinessConfigWithTree,
     selectProcessStartConfigList
   } from "@/api/globalConfig";
+  import { mapState } from 'vuex'
 export default {
   components: {
     StartItemCon
@@ -50,12 +51,15 @@ export default {
   mounted() {
     this.getBusinessConfigBasicList()
   },
+  computed: {
+    ...mapState('account', ['userInfo', 'tenantId'])
+  },
   methods: {
     showSartDailog(id, item) {
       this.footFlag = true
       this.businessData = item
       let _this = this
-        getBusinessConfigWithTree(id, +_this.$store.state.tenantId).then(res => {
+        getBusinessConfigWithTree(id, +_this.tenantId).then(res => {
           this.itemconFlag = true
           this.$nextTick(() => {
             _this.$refs.StartItemCon.dialogVisible = true
@@ -70,12 +74,12 @@ export default {
       this.footFlag = false
       this.itemconFlag = true
       this.businessData = item
-      getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
+      getBusinessConfigWithTree(id, +this.tenantId).then(res => {
 
         this.$refs.StartItemCon.dialogVisible = true
         this.$refs.StartItemCon.data = res.result
         this.$refs.StartItemCon.tableData = []
-        selectProcessStartConfigList(id, +this.$store.state.tenantId).then(res => {
+        selectProcessStartConfigList(id, +this.tenantId).then(res => {
           res.result.forEach(item => {
             item.disabled = true
             item.startType = item.startType+ ''
@@ -89,7 +93,7 @@ export default {
       })
     },
     getBusinessConfigBasicList() {
-        getBusinessConfigBasicList(this.$store.state.tenantId).then(res => {
+        getBusinessConfigBasicList(this.tenantId).then(res => {
           console.log(res)
           this.businessList = res.result
         })

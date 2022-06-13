@@ -72,6 +72,8 @@ import {
   FormEditor
 } from '@bpmn-io/form-js-editor';
 
+import { mapState } from 'vuex'
+
 export default {
   props: {
     dataType: {
@@ -127,6 +129,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState('account', ['userInfo', 'tenantId'])
+  },
   methods: {
     onOptionClick() {
       let nodeInfo = this.$refs.cascader.getCheckedNodes()
@@ -177,9 +182,9 @@ export default {
       formData.append('code', id)
       formData.append('business', this.postData.business)
       formData.append('status', 'enabled')
-      formData.append('createBy', this.$store.state.userInfo.name)
-      formData.append('createName', this.$store.state.userInfo.name)
-      formData.append('tenantId', this.$store.state.tenantId)
+      formData.append('createBy', this.userInfo.account)
+      formData.append('createName', this.userInfo.name)
+      formData.append('tenantId', this.tenantId)
       formData.append('file', formFile)
       postFormDesignServiceRealiseProcessData(formData).then((res) => {
         this.$message.success('发布至可用表单成功')
@@ -213,9 +218,9 @@ export default {
       formData.append('code', id)
       formData.append('business', this.postData.business)
       formData.append('status', 'drafted')
-      formData.append('createBy', this.$store.state.userInfo.name)
-      formData.append('createName', this.$store.state.userInfo.name)
-      formData.append('tenantId', this.$store.state.tenantId)
+      formData.append('createBy', this.userInfo.account)
+      formData.append('createName', this.userInfo.name)
+      formData.append('tenantId', this.tenantId)
       formData.append('file', formFile)
       switch (this.dataType) {
         case 'enabled':

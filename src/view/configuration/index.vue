@@ -31,6 +31,7 @@
   import StartItemConfig from "@/view/configuration/startItemConfig";
   import permission from '@/component/permission/index.vue'
   import {getProjectList} from "@/api/globalConfig";
+  import { mapState } from 'vuex'
   export default {
     data() {
       return {
@@ -54,20 +55,27 @@
         }
       }
     },
-    mounted() {
-      this.getProjectList();
+     mounted() {
+       this.getProjectList();
+    },
+    computed: {
+      ...mapState('account', ['userInfo', 'tenantId'])
     },
     methods:{
       async getProjectList(){
         let res = await  getProjectList({
           count: -1,
           projectCode: '',
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           type: ''
         })
-        this.projectOption = res?.result ?? []
-        this.business = this.projectOption[0].code
-        this.changeActiveName('first')
+          this.projectOption = res?.result ?? []
+          this.business = this.projectOption[0]?.code
+          this.changeActiveName('first')
+          this.$nextTick(() => {
+            this.$refs.first.GetGlobalList(this.$refs.first.pageInfo)
+          })
+
       },
       changeActiveName(value) {
         this.activeName = value
