@@ -105,6 +105,8 @@
   import application from './projectFormComponent/application.vue'
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
   import {getProjectList} from "@/api/globalConfig";
+
+  import { mapState } from 'vuex'
   export default {
     data() {
       return {
@@ -138,6 +140,9 @@
         dialogVisible: false
       }
     },
+    computed:{
+      ...mapState('account', ['tenantId', 'userInfo']),
+    },
     methods: {
       deleteEmptyChildren(arr) {
         for (let i = 0; i < arr.length; i++) {
@@ -166,7 +171,7 @@
         let res = await  getProjectList({
           count: -1,
           projectCode: '',
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           type: ''
         })
         _this.projectOption = res?.result ?? []
