@@ -18,8 +18,8 @@
         </div>
       </div>
       <div class="power-body-main">
-        <personel v-show="power === 'Personnel' && permissionRole" :business="projectCode"></personel>
-        <role v-show="power === 'Role' && permissionRole" :business="projectCode"></role>
+        <personel v-if="power === 'Personnel' && permissionRole" :business="projectCode"></personel>
+        <role v-if="power === 'Role' && permissionRole" :business="projectCode"></role>
         <permission v-if="!permissionRole"></permission>
       </div>
     </div>

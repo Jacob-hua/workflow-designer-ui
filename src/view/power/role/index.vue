@@ -148,14 +148,12 @@
       PeTree,
       editRole
     },
-    mounted() {
-      // this.getTree()
-    },
     watch:{
       business: {
         handler() {
           this.getTree()
-        }
+        },
+        immediate: true
       }
     }
   }
