@@ -1,43 +1,56 @@
 <template>
-  <el-dialog :title="title"
+  <el-dialog title="新建工作流"
              :visible="dialogVisible"
              :before-close="handleClose"
              width="35%"
              custom-class="addProject">
-    <div>
-      <div class="from-item">
-        <span>应用项目</span>
-        <el-select v-model="postData.ascription"
-                   clearable>
-          <el-option v-for="{id, label, value} in rootOrganizations"
-                     :key="id"
-                     :label="label"
-                     :value="value"></el-option>
-        </el-select>
-      </div>
-      <div class="from-item">
-        <span>流程类型</span>
-        <el-cascader style="width: 350px"
-                     v-model="postData.business"
-                     :options="rootOrganizationChildren(postData.ascription)"
-                     :props='sysProps'></el-cascader>
-      </div>
-      <div class="from-item">
-        <span>流程名称</span>
-        <el-input v-model="postData.name"
-                  placeholder="请输入流程名称"></el-input>
-      </div>
-    </div>
+    <el-form label-position="right"
+             label-width="80px"
+             ref="formData"
+             :model="formData"
+             :rules="formRules">
+      <el-form-item label="应用项目"
+                    prop="ascription">
+        <el-col :span="24">
+          <el-select v-model="formData.ascription"
+                     clearable>
+            <el-option v-for="{id, label, value} in rootOrganizations"
+                       :key="id"
+                       :label="label"
+                       :value="value"></el-option>
+          </el-select>
+        </el-col>
+      </el-form-item>
+      <el-form-item label="流程类型"
+                    prop="business">
+        <el-col :span="24">
+          <el-cascader v-model="formData.business"
+                       clearable
+                       :style="{width: '100%'}"
+                       :key="formData.ascription"
+                       :options="rootOrganizationChildren(formData.ascription)"
+                       :props='cascaderProps'></el-cascader>
+        </el-col>
+      </el-form-item>
+      <el-form-item label="流程名称"
+                    prop="name">
+        <el-col :span="24">
+          <el-input v-model="formData.name"
+                    placeholder="请输入流程名称"></el-input>
+        </el-col>
+      </el-form-item>
+    </el-form>
     <span slot="footer"
           class="dialog-footer">
-      <el-button @click="define">下一步</el-button>
+      <el-button type="primary"
+                 @click="define">下一步</el-button>
       <el-button @click="cancel">取 消</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: {
@@ -49,26 +62,42 @@ export default {
       type: Boolean,
       default: true,
     },
-    systemOption: {
-      type: Array,
-      default: () => [],
-    },
-    sysProps: {
-      type: Object,
-      default: () => ({}),
-    },
   },
   data() {
     return {
-      postData: {
+      formData: {
         ascription: this.projectCode,
         business: '',
         name: '',
       },
-      title: '新建工作流',
+      formRules: {
+        ascription: [
+          { required: true, message: '请选择应用项目', trigger: 'change' },
+        ],
+        business: [
+          { required: true, message: '请选择流程类型', trigger: 'change' },
+        ],
+        name: [
+          {
+            required: true,
+            trigger: 'blur, change',
+            validator: (_, value, callback) => {
+              console.log('value', value)
+              if (value === '') {
+                callback(new Error('请输入流程名称'))
+              } else if (String.prototype.trim.call(value).length < 2) {
+                callback(new Error('流程名称长度不能小于2'))
+              } else {
+                callback()
+              }
+            },
+          },
+        ],
+      },
     }
   },
   computed: {
+    ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   methods: {
@@ -79,15 +108,13 @@ export default {
       this.$emit('close')
     },
     define() {
-      if (this.postData.name) {
-        if (this.postData.name.length > 2) {
-          this.$emit('define', this.postData)
-        } else {
-          this.$message.warning('流程名称长度必须大于二')
-        }
-      } else {
-        this.$message.warning('请填写流程名称')
-      }
+      this.$refs['formData'] &&
+        this.$refs['formData'].validate((valid) => {
+          if (valid) {
+            this.$emit('define', { ...this.formData })
+            this.$refs['formData'].resetFields()
+          }
+        })
     },
   },
 }
