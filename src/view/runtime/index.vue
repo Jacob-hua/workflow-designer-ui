@@ -237,18 +237,18 @@ export default {
   async mounted() {
     await this.dispatchRefreshOrganization()
     this.getData['projectData'] = this.findRootOrganizationByIndex(0).value
-    await this.getManyData()
-    await this.getAmount()
-    await this.getDataNumber()
+    await this.fetchNewTasks()
+    await this.fetchAmount()
+    await this.fetchDataNumber()
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
     changeGroup() {
       this.getData.page = 1
       this.getData.limit = 10
-      this.getManyData()
+      this.fetchNewTasks()
     },
-    async getManyData() {
+    async fetchNewTasks() {
       try {
         const { errorInfo, result } = await getNewTaskList({
           ...this.getData,
@@ -283,7 +283,7 @@ export default {
         this.tableData = []
       }
     },
-    async getAmount() {
+    async fetchAmount() {
       try {
         const { errorInfo, result } = await postTaskCountStatistics({
           assignee: this.userInfo.account,
@@ -316,10 +316,10 @@ export default {
       )
     },
     handleSizeChange() {
-      this.getManyData()
+      this.fetchNewTasks()
     },
     handleCurrentChange() {
-      this.getManyData()
+      this.fetchNewTasks()
     },
     deployDiolog(row) {
       this.runtimeImplementVisible = true
@@ -350,7 +350,7 @@ export default {
     },
     succseeAdd() {
       this.runtimeAddVisible = false
-      this.getManyData()
+      this.fetchNewTasks()
     },
     detailsDiolog(row) {
       this.$refs.lookover.dialogVisible = true
@@ -379,14 +379,14 @@ export default {
     },
     taskSuccess() {
       this.runtimeImplementVisible = false
-      this.getManyData()
+      this.fetchNewTasks()
     },
     getAllApi() {
-      this.getDataNumber()
-      this.getManyData()
-      this.getAmount()
+      this.fetchDataNumber()
+      this.fetchNewTasks()
+      this.fetchAmount()
     },
-    async getDataNumber() {
+    async fetchDataNumber() {
       getTaskCountStatistic({
         ascription: this.getData.projectCode,
         assignee: this.userInfo.account,
