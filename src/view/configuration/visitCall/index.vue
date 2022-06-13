@@ -103,7 +103,9 @@ export default {
       deep: true,
       immediate: true,
        handler(newValue) {
-         this.GetGlobalList(newValue)
+        setTimeout(()=> {
+          this.GetGlobalList(newValue)
+        },40)
       }
     }
   },
