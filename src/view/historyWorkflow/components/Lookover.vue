@@ -12,10 +12,6 @@
               <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData" :key="index">
                 <div class="contant">
                   <div v-if="item.formVariable && JSON.parse(item.formVariable).list" class="form">
-                    <!-- <div v-for="(item2, index2) in JSON.parse(item1.formData).list">
-                       <span>{{ item2.label }}</span>
-                       <span style="margin-left: 20px;">{{ item2.value }}</span>
-                     </div> -->
                      <preview :itemList="formListFun(item.formVariable)"  :formConf="configFun(item.formVariable)"></preview>
                   </div>
                   <div v-if="item.formVariable && JSON.parse(item.formVariable).components">

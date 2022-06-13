@@ -97,15 +97,15 @@ export default {
       }
     }
   },
-  // watch: {
-  //   pageInfo:{
-  //     deep: true,
-  //     immediate: true,
-  //     handler(newValue) {
-  //       this.GetGlobalList(newValue)
-  //     }
-  //   }
-  // },
+  watch: {
+    pageInfo:{
+      deep: true,
+      immediate: true,
+       handler(newValue) {
+         this.GetGlobalList(newValue)
+      }
+    }
+  },
   methods: {
     showDetail(row) {
       apiDetail({
@@ -115,7 +115,7 @@ export default {
       }).then((res)=> {
         res.result.forEach(api => {
           api.configParams = []
-          if (api.method === ApiEnum.API_TYPE_POST) {
+          if (api.method ==="POST") {
             let obj= {key: '', value: ''}
             let body = JSON.parse(api.body)
             Object.keys(body).forEach(keys => {
@@ -167,14 +167,14 @@ export default {
         console.log(res)
         res.result.forEach(api => {
           api.configParams = []
-          if (api.method === ApiEnum.API_TYPE_POST) {
+          if (api.method === 'POST') {
             let obj= {key: '', value: ''}
             let body = JSON.parse(api.body)
             let bodyArr = Object.keys(body)
             for (const keys of bodyArr) {
               api.configParams.push({
                 key: keys,
-                value: bodyArr[keys]
+                value: body[keys]
               })
             }
 

@@ -54,8 +54,8 @@
         }
       }
     },
-    mounted() {
-      this.getProjectList();
+     mounted() {
+       this.getProjectList();
     },
     methods:{
       async getProjectList(){
@@ -65,9 +65,10 @@
           tenantId: this.$store.state.tenantId,
           type: ''
         })
-        this.projectOption = res?.result ?? []
-        this.business = this.projectOption[0].code
-        this.changeActiveName('first')
+
+          this.projectOption = res?.result ?? []
+          this.business = this.projectOption[0].code
+          this.changeActiveName('first')
       },
       changeActiveName(value) {
         this.activeName = value
