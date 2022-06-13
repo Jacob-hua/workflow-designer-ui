@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="新建工作流"
              :visible="dialogVisible"
-             :before-close="handleClose"
+             @close="onClose"
              width="35%"
              custom-class="addProject">
     <el-form label-position="right"
@@ -43,8 +43,8 @@
     <span slot="footer"
           class="dialog-footer">
       <el-button type="primary"
-                 @click="define">下一步</el-button>
-      <el-button @click="cancel">取 消</el-button>
+                 @click="onSubmit">下一步</el-button>
+      <el-button @click="onCancel">取 消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -101,13 +101,13 @@ export default {
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   methods: {
-    handleClose() {
+    onClose() {
       this.$emit('close')
     },
-    cancel() {
+    onCancel() {
       this.$emit('close')
     },
-    define() {
+    onSubmit() {
       this.$refs['formData'] &&
         this.$refs['formData'].validate((valid) => {
           if (valid) {
