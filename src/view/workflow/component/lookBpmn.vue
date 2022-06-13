@@ -46,10 +46,6 @@
         currentRowData: {},
       }
     },
-    mounted() {
-
-      console.log(this.rowData)
-    },
     methods:{
       edit() {
         window.oneBpmnInstances = true

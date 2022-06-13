@@ -1,83 +1,59 @@
 <template>
   <div class="history_head">
-    <el-select  @change="projectChange" v-model="projectValue">
-      <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
+    <el-select v-model="projectValue">
+      <el-option v-for="{id, label, value} in rootOrganizations"
+                 :key="id"
+                 :label="label"
+                 :value="value"></el-option>
     </el-select>
-    <el-cascader
-        style="width: 400px; margin-right: 10px;"
-        v-model="systemValue"
-        :options="systemOption"
-        :props = 'sysProps'
-        @change="handleChange"></el-cascader>
+    <el-cascader style="width: 400px; margin-right: 10px;"
+                 v-model="business"
+                 :options="rootOrganizationChildren(projectValue)"
+                 :props='cascaderProps'></el-cascader>
     <div class="history_date">
       <span class="datePickTitle">创建时间</span>
-      <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-                      start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
+      <el-date-picker v-model="valueDate"
+                      type="daterange"
+                      align="right"
+                      unlink-panels
+                      range-separator="——"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期"
+                      value-format="yyyy-MM-dd hh:mm:ss">
       </el-date-picker>
-      <el-button @click="$emit('searchHistory', valueDate, projectValue) " style="margin-left: 15px" type="primary">查询</el-button>
+      <el-button @click="$emit('searchHistory', valueDate, projectValue) "
+                 style="margin-left: 15px"
+                 type="primary">查询</el-button>
     </div>
 
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { getProjectList } from "@/api/globalConfig";
+import { mapState, mapGetters, mapActions } from 'vuex'
+
 export default {
+  name: 'HistorySearch',
   data() {
     return {
-      sysProps:{
-        label: 'name',
-        value: 'code'
-      },
       valueDate: [],
       projectValue: '',
-      systemValue: '',
+      business: '',
       projectOption: [],
       systemOption: [],
     }
   },
   computed: {
-    ...mapState(['tenantId'])
+    ...mapState('account', ['tenantId']),
+    ...mapState('uiConfig', ['cascaderProps']),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   mounted() {
-    this.getProjectList()
+    this.dispatchRefreshOrganization()
   },
   methods: {
-    handleChange() {},
-    deleteEmptyChildren(arr) {
-      for (let i = 0; i < arr.length; i++) {
-        const arrElement = arr[i];
-        if (!arrElement.children.length) {
-          delete arrElement.children
-          continue
-        }
-        if (arrElement.children) {
-          this.deleteEmptyChildren(arrElement.children)
-        }
-      }
-
-    },
-    projectChange(val) {
-      this.systemOption =  this.projectOption.filter(({ code }) => code === val)[0].children
-      this.deleteEmptyChildren(this.systemOption)
-      console.log(this.systemOption)
-      // this.systemValue = this.systemOption[0]?.id  ??  ''
-    },
-    async getProjectList(){
-      let res = await  getProjectList({
-        count: -1,
-        projectCode: '',
-        tenantId: +this.tenantId,
-        type: ''
-      })
-      this.projectOption = res?.result ?? []
-      this.projectValue = this.projectOption[0].code
-      this.systemOption = this.projectOption[0].children
-      this.deleteEmptyChildren(this.systemOption)
-      this.systemValue =  this.systemOption[0].code
-    }
-  }
+    ...mapActions('config', ['dispatchRefreshOrganization']),
+  },
 }
 </script>
 
