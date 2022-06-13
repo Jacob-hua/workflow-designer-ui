@@ -1,8 +1,8 @@
 const state = {
   tenantId: "18",
   userInfo: {
-    name: "admin",
-    id: "1",
+    name: "",
+    id: "",
   },
 };
 
