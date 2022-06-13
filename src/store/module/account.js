@@ -1,6 +1,7 @@
 const state = {
   tenantId: "18",
   userInfo: {},
+  currentOrganization: "",
 };
 
 const getters = {};
@@ -11,6 +12,10 @@ const mutations = {
   },
   updateUserInfo(state, { userInfo }) {
     state.userInfo = userInfo;
+    state.tenantId = userInfo.tenants?.[0]?.id;
+  },
+  updateCurrentOrganization(state, { currentOrganization }) {
+    state.currentOrganization = currentOrganization;
   },
 };
 
