@@ -13,7 +13,8 @@
       <div class="PublicForm-title-option">
         <el-cascader style="width: 350px"
                      v-model="projectValue"
-                     :clearable="true"
+                     clearable
+                     :key="projectCode"
                      :options="rootOrganizationChildren(projectCode)"
                      :props='sysProps'></el-cascader>
       </div>
