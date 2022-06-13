@@ -287,9 +287,7 @@ export default {
       try {
         const { errorInfo, result } = await postTaskCountStatistics({
           assignee: this.userInfo.account,
-          business: Array.isArray(this.getData.businessCode)
-            ? this.getData.businessCode
-            : this.getData.businessCode.at(-1),
+          business: this.getData.businessCode,
           startTime: this.timeRange[0],
           endTime: this.timeRange[1],
           projectCode: this.getData.projectCode,
