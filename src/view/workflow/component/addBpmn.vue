@@ -74,7 +74,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['userInfo', 'tenantId']),
+    ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
     processFormData() {
       const { name: processName, id: processId } =
         this.$iBpmn.getRootShapeInfo()
@@ -87,7 +87,7 @@ export default {
       if (this.publick) {
         processFormData.set('ascription', 'public')
       } else {
-        processFormData.set('ascription', this.$parent.projectCode)
+        processFormData.set('ascription', this.currentOrganization)
       }
       processFormData.set('code', processId)
       processFormData.set('business', this.formData.business)
@@ -97,14 +97,6 @@ export default {
       processFormData.set('tenantId', this.tenantId)
       return processFormData
     },
-  },
-  mounted() {
-    this.$nextTick(() => {
-      if (this.$refs.bpmnJsELe) {
-        this.$refs.bpmnJsELe.$refs.panel.$refs.baseInfo.elementBaseInfo.name =
-          this.formData.name
-      }
-    })
   },
   methods: {
     async onPublish() {
@@ -126,34 +118,23 @@ export default {
             .then(() => {
               this.$message.success('保存成功')
               this.$emit('close')
-              this.$parent.findWorkFlowRecord('enabled,disabled')
             })
             .catch(({ errorMsg }) => {
-              this.$message({
-                message: errorMsg,
-                type: 'error',
-              })
+              this.$message.error(errorMsg)
             })
         } else {
           publishWorkflow(this.processFormData)
             .then(() => {
               this.$message.success('发布成功')
               this.$emit('close')
-              this.$parent.findWorkFlowRecord('enabled,disabled')
             })
             .catch(({ errorMsg }) => {
-              this.$message({
-                message: errorMsg,
-                type: 'error',
-              })
+              this.$message.error(errorMsg)
             })
         }
-        this.$emit('confirm')
+        this.$emit('submit', 'enabled,disabled')
       } catch (e) {
-        this.$message({
-          type: 'error',
-          message: '流程设计存在错误/警告',
-        })
+        this.$message.error('流程设计存在错误/警告')
       }
     },
     onCancel() {
@@ -179,34 +160,23 @@ export default {
             .then(() => {
               this.$message.success('保存成功')
               this.$emit('close')
-              this.$parent.findWorkFlowRecord('drafted')
             })
             .catch(({ errorMsg }) => {
-              this.$message({
-                message: errorMsg,
-                type: 'error',
-              })
+              this.$message.error(errorMsg)
             })
         } else {
           workFlowSaveDraft(this.processFormData)
             .then(() => {
               this.$message.success('保存成功')
               this.$emit('close')
-              this.$parent.findWorkFlowRecord('drafted')
             })
             .catch(({ errorMsg }) => {
-              this.$message({
-                message: errorMsg,
-                type: 'error',
-              })
+              this.$message.error(errorMsg)
             })
         }
-        this.$emit('confirm')
+        this.$emit('submit', 'drafted')
       } catch (error) {
-        this.$message({
-          type: 'error',
-          message: '流程设计存在错误/警告',
-        })
+        this.$message.error('流程设计存在错误/警告')
       }
     },
   },
