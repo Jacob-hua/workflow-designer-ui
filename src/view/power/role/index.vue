@@ -88,8 +88,8 @@
       editHandle() {
         this.dialogVisible = true
         this.$nextTick(() => {
-          this.$refs.editRole.type = 'edit'
-          this.$refs.editRole.getListData()
+            this.$refs.editRole.type = 'edit'
+            this.$refs.editRole.getListData()
         })
       },
       getTree() {
