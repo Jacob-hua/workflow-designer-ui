@@ -120,10 +120,7 @@ export default {
               this.$emit('close')
             })
             .catch(({ errorMsg }) => {
-              this.$message({
-                message: errorMsg,
-                type: 'error',
-              })
+              this.$message.error(errorMsg)
             })
         } else {
           publishWorkflow(this.processFormData)
@@ -132,10 +129,7 @@ export default {
               this.$emit('close')
             })
             .catch(({ errorMsg }) => {
-              this.$message({
-                message: errorMsg,
-                type: 'error',
-              })
+              this.$message.error(errorMsg)
             })
         }
         this.$emit('submit', 'enabled,disabled')
@@ -168,10 +162,7 @@ export default {
               this.$emit('close')
             })
             .catch(({ errorMsg }) => {
-              this.$message({
-                message: errorMsg,
-                type: 'error',
-              })
+              this.$message.error(errorMsg)
             })
         } else {
           workFlowSaveDraft(this.processFormData)
@@ -180,10 +171,7 @@ export default {
               this.$emit('close')
             })
             .catch(({ errorMsg }) => {
-              this.$message({
-                message: errorMsg,
-                type: 'error',
-              })
+              this.$message.error(errorMsg)
             })
         }
         this.$emit('submit', 'drafted')
