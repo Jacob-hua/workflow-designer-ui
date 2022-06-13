@@ -82,7 +82,6 @@ export default {
             required: true,
             trigger: 'blur, change',
             validator: (_, value, callback) => {
-              console.log('value', value)
               if (value === '') {
                 callback(new Error('请输入流程名称'))
               } else if (String.prototype.trim.call(value).length < 2) {

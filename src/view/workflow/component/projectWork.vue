@@ -80,8 +80,7 @@
                 :projectCode="projectCode"
                 :dialogVisible="addProjectVisible"
                 :projectOption="projectOption"
-                :systemOption="systemOption"
-                @close="addProjectHidden()"
+                @close="onAddProjectClose"
                 @define="addProjectDefine"></addProject>
     <addBpmn :pubFlag="pubFlag"
              :formData="formData"
@@ -138,7 +137,6 @@ export default {
   },
   data() {
     return {
-      systemOption: [],
       draftProcessCount: 0,
       processCount: 0,
       isEdit: true,
@@ -215,7 +213,7 @@ export default {
       this.addProjectVisible = true
       this.$refs.addpro.postData = row || {}
     },
-    addProjectHidden() {
+    onAddProjectClose() {
       this.addProjectVisible = false
     },
     addProjectDefine(value) {
