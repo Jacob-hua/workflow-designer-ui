@@ -27,7 +27,8 @@
                         range-separator="——"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd">
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        :default-time="['00:00:00', '23:59:59']">
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
@@ -183,8 +184,8 @@ export default {
       tenantId: this.tenantId,
       ascription: this.projectCode,
       business: this.projectValue,
-      startTime: this.valueDate[0] && `${this.valueDate[0]} 00:00:00`,
-      endTime: this.valueDate[1] && `${this.valueDate[1]} 23:59:59`,
+      startTime: this.valueDate[0],
+      endTime: this.valueDate[1],
       createBy: this.userInfo.name,
     }).then((res) => {
       this.draftProcessCount = res.result.draftProcessCount
@@ -285,8 +286,8 @@ export default {
         createBy: this.userInfo.name,
         numberCode: '',
         name: this.input,
-        startTime: this.valueDate[0] ?? undefined,
-        endTime: this.valueDate[1] ?? undefined,
+        startTime: this.valueDate[0],
+        endTime: this.valueDate[1],
       }).then((res) => {
         this.formListSecond = res.result
       })
@@ -301,8 +302,8 @@ export default {
         createBy: this.name,
         numberCode: '',
         name: this.input,
-        startTime: this.valueDate[0] ?? undefined,
-        endTime: this.valueDate[1] ?? undefined,
+        startTime: this.valueDate[0],
+        endTime: this.valueDate[1],
       }).then((res) => {
         this.formListFirst = res.result
       })
@@ -321,8 +322,8 @@ export default {
         createBy: this.userInfo.name,
         numberCode: '',
         name: this.input,
-        startTime: this.valueDate[0] && `${this.valueDate[0]} 00:00:00`,
-        endTime: this.valueDate[1] && `${this.valueDate[1]} 23:59:59`,
+        startTime: this.valueDate[0],
+        endTime: this.valueDate[1],
         page: this.getData.page,
         limit: this.getData.limit,
       })
@@ -339,15 +340,12 @@ export default {
 </script>
 
 <style scoped>
-.projectHeader /deep/ .el-input__inner {
+.projectHeader ::v-deep .el-input__inner {
   border: 1px solid black;
 }
 
-.PublicForm-title /deep/ .el-input__inner {
+.PublicForm-title ::v-deep .el-input__inner {
   border: 1px solid black;
-}
-
-.PublicForm-title {
 }
 
 .checkPro {
@@ -412,7 +410,6 @@ export default {
 .PublicForm-title-button {
   display: inline-block;
   margin-left: 40px;
-  float: right;
 }
 
 .home-main {
