@@ -122,7 +122,7 @@ export default {
             _this.$parent.getBusinessConfigBasicList()
           })
         } else {
-          UpdatebusinessConfig(this.data).then((res)=> {
+          updateBusinessConfig(this.data).then((res)=> {
             this.dialogVisible = false
             this.$message({
               type: 'success',
