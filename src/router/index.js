@@ -101,7 +101,6 @@ const routes = [
 ];
 
 const originalPush = VueRouter.prototype.push;
-//�޸�ԭ�Ͷ����е�push����
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch((err) => err);
 };
@@ -137,6 +136,7 @@ router.beforeEach((to, from, next) => {
 
     let proJectRole =
       permissions.filter((item) => {
+        // TODO: 此处应该判断项目角色
         // return item.projectCode === this.business
         return item.projectCode === "XM_aff0659724a54c119ac857d4e560b47b";
       })[0]?.permissionSet || [];
@@ -144,11 +144,10 @@ router.beforeEach((to, from, next) => {
       return item.frontRoute === routerMapping[routerName];
     });
     if (findEle === -1) {
-      console.log("无权限");
+      // TODO: 在没有权限的时候应该抛出响应的无权限提示
       // next('/home/noPermission')
       next();
     } else {
-      console.log("有权限");
       next();
     }
   } catch (error) {

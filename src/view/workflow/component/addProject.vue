@@ -72,9 +72,6 @@ export default {
       title: '新建工作流',
     }
   },
-  computed: {
-    ...mapState(['optionsBusiness']),
-  },
   methods: {
     handleClose() {
       this.$emit('close')

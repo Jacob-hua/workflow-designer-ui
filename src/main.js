@@ -42,7 +42,7 @@ import "@/directive/RoleDirective.js";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-  ...stores,
+  modules: stores,
   plugins: [bpmnVuexPlugin],
 });
 new Vue({

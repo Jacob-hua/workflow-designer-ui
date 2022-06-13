@@ -184,7 +184,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tenantId', 'userInfo']),
+    ...mapState('account', ['tenantId', 'userInfo']),
   },
   async mounted() {
     await this.getProjectList()
