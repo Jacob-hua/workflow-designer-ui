@@ -165,7 +165,6 @@
         })
         postMapping(postArr).then((res) => {
           this.$message.success('权限修改成功')
-          this.login()
           this.$emit('handleClose')
         })
       },
