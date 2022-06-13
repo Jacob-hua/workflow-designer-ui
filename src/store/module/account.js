@@ -14,14 +14,7 @@ const mutations = {
   },
 };
 
-const actions = {
-  dispatchRefreshTenantId({ commit }) {
-    commit("updateTenantId", { tenantId: "18" });
-  },
-  dispatchRefreshUserInfo({ commit }) {
-    commit("updateUserInfo", { userInfo: { name: "admin", id: "1" } });
-  },
-};
+const actions = {};
 
 export default {
   namespaced: true,
