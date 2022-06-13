@@ -42,6 +42,7 @@
   import PeTree from '@/component/PeTree.vue'
   import editRole from './component/editRole.vue'
   import { getSystemGroupTree, postPersonUser } from '@/api/unit/api.js'
+  import { mapState } from 'vuex'
   export default {
     props:{
       business: {
@@ -56,6 +57,9 @@
         tableData: [],
         currentNodeKey: ''
       }
+    },
+    computed: {
+      ...mapState('account', ['userInfo', 'tenantId'])
     },
     methods: {
       handleNodeClick(data) {
@@ -98,8 +102,8 @@
           limit: 999999,
           name: '',
           page: 1,
-          tenantId: this.$store.state.tenantId,
-          userId: this.$store.state.userInfo.name
+          tenantId: this.tenantId,
+          userId: this.userInfo.name
         }).then((res) => {
           this.tableData = res.result.dataList
         })
