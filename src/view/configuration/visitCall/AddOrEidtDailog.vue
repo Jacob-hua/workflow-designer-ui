@@ -130,6 +130,7 @@ import {
   postSaveOrEdite, simulationRequest,
   putSaveOrEdite
 } from "@/api/globalConfig";
+import { mapState } from 'vuex'
 
 import ApiEnum from "@/enum/ApiTypeEnum";
 
@@ -170,9 +171,10 @@ export default {
             body: '', //POST请求参数 eg: {\"id\":\"${id}\",\"name\":\"${name}\"}
             dataParse: '', //解析配置
             isUse: 1, // 是否使用 1 使用 0禁用 2删除
+
             createTime: '', //创建时间
-            createBy: this.$store.state.userInfo.name, //创建人
-            tenantId: +this.$store.state.tenantId, //租户id
+            createBy: '', //创建人
+            tenantId: '', //租户id
             configParams: [
               {
                 key: '',
@@ -201,7 +203,12 @@ export default {
     }
   },
   mounted() {
+    this.apiBoxList[0].createBy = this.userInfo.name
+    this.apiBoxList[0].tenantId = this.tenantId
     this.apiTypeList()
+  },
+  computed: {
+    ...mapState('account', ['userInfo', 'tenantId'])
   },
   methods: {
     apiTypeChange(currentApi, typeName) {
@@ -211,7 +218,7 @@ export default {
       // get(`/config/global/checkApiType?typeName=${params.typeName}&type=user&tenantId=18`);
       checkApiType({
         ...this.typeForm,
-        tenantId: this.$store.state.tenantId,
+        tenantId: this.tenantId,
         ascription: this.business
       }).then(res => {
         if (res.result) {
@@ -235,7 +242,7 @@ export default {
     },
 
     excuteParse(api) {
-      if (api.method === "POST") {
+      if (api.method === ApiEnum.API_TYPE_POST) {
         simulationRequest({
           "body": api.body,
           "headers": api.headers,
@@ -277,7 +284,7 @@ export default {
     },
     apiTypeList() {
       apiTypeList({
-        tenantId: this.$store.state.tenantId,
+        tenantId: this.tenantId,
         ascription: this.business
       }).then(res => {
           this.apiOptions = res.result
@@ -291,7 +298,7 @@ export default {
             pars[parse.key] =  parse.value
         })
         apibox.dataParse = JSON.stringify(pars)
-        if (apibox.method === "POST") {
+        if (apibox.method === ApiEnum.API_TYPE_POST) {
           let obj = {}
             apibox.configParams.forEach(item=> {
               obj[item.key] = item.value
@@ -308,7 +315,7 @@ export default {
             })
         }
       })
-    debugger
+
 
       let parameterMap = {}
       this.apiBoxList.forEach(apiBox => {
@@ -360,8 +367,8 @@ export default {
               dataParse: '', //解析配置
               isUse: 1, // 是否使用 1 使用 0禁用 2删除
               createTime: '', //创建时间
-              createBy: this.$store.state.userInfo.name, //创建人
-              tenantId: +this.$store.state.tenantId, //租户id
+              createBy: this.userInfo.name, //创建人
+              tenantId: +this.tenantId, //租户id
               configParams: [
                 {
                   key: '',
