@@ -131,8 +131,6 @@ export default {
       WorkflowTableNum: 0,
       draftsTableNum: 0,
       deployNumber: 0,
-      options1: [],
-      options2: [],
     }
   },
   computed: {
@@ -165,8 +163,6 @@ export default {
         ({ code }) => code === val
       )[0].children
       this.deleteEmptyChildren(this.systemOption)
-      console.log(this.systemOption)
-      // this.systemValue = this.systemOption[0]?.id  ??  ''
     },
     async getProjectList() {
       let res = await getProjectList({
@@ -242,7 +238,7 @@ export default {
   padding-right: 20px;
 }
 
-.home-filter /deep/ .el-select .el-input__inner {
+.home-filter ::v-deep .el-select .el-input__inner {
   border: 1px solid #000;
   height: 50px;
   line-height: 50px;
@@ -250,7 +246,7 @@ export default {
   font-size: 16px;
   color: #000000;
 }
-.home-filter /deep/ .el-cascader .el-input__inner {
+.home-filter ::v-deep .el-cascader .el-input__inner {
   border: 1px solid #000;
   height: 50px;
   line-height: 50px;

@@ -1,9 +1,6 @@
 const state = {
   tenantId: "18",
-  userInfo: {
-    name: "",
-    id: "",
-  },
+  userInfo: {},
 };
 
 const getters = {};
