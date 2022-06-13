@@ -62,6 +62,7 @@
 import Guide from "@/view/configuration/visitCall/Guide";
 import AddOrEidtDailog from "@/view/configuration/visitCall/AddOrEidtDailog";
 import Detail from "@/view/configuration/visitCall/Detail";
+import { mapState } from 'vuex'
 import {
   apiDetail,
   GetGlobalList
@@ -106,12 +107,15 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState('account', ['userInfo', 'tenantId' ])
+  },
   methods: {
     showDetail(row) {
       apiDetail({
         source: row.source,
         sourceMark: row.sourceMark,
-        tenantId: this.$store.state.tenantId
+        tenantId: this.tenantId
       }).then((res)=> {
         res.result.forEach(api => {
           api.configParams = []
@@ -237,7 +241,7 @@ export default {
                           this.apiDetail({
                             source: row.source,
                             sourceMark: row.sourceMark,
-                            tenantId: this.$store.state.tenantId
+                            tenantId: this.tenantId
                           })
                     })
             )
@@ -269,7 +273,7 @@ export default {
             isUse: 1, // 是否使用 1 使用 0禁用 2删除
             createTime: '', //创建时间
             createBy: this.$store.state.userInfo.name, //创建人
-            tenantId: +this.$store.state.tenantId, //租户id
+            tenantId: +this.tenantId, //租户id
             configParams: [
               {
                 key: '',
@@ -289,7 +293,7 @@ export default {
     async GetGlobalList() {
       let data =  await GetGlobalList({
         ...this.pageInfo,
-        "tenantId": this.$store.state.tenantId ,// 租户id
+        "tenantId": this.tenantId ,// 租户id
         "ascription": this.business
       })
       if (data.result) {

@@ -52,6 +52,7 @@ import {
   getDicDataByClassify,
   getBusinessConfigWithTree, deleteBusinessConfig
 } from "@/api/globalConfig";
+import { mapState } from  'vuex'
 export default {
   components: {
     Guide,
@@ -70,6 +71,9 @@ export default {
     this.getBusinessConfigBasicList()
     this.getDicDataByClassify()
   },
+  computed: {
+    ...mapState('account', ['userInfo', 'tenantId'])
+  },
   methods: {
     deleteBusinessConfig(id) {
       deleteBusinessConfig(id).then(res=> {
@@ -86,7 +90,7 @@ export default {
       })
     },
     getBusinessConfigBasicList() {
-      getBusinessConfigBasicList(this.$store.state.tenantId).then(res => {
+      getBusinessConfigBasicList(this.tenantId).then(res => {
         this.businessList = res.result
       })
     },
@@ -94,7 +98,7 @@ export default {
     lookBusiness(id) {
       this.type = 'see'
       // 获取组织 结构树
-      getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
+      getBusinessConfigWithTree(id, +this.tenantId).then(res => {
         this.$refs.BusinessCon.dialogVisible = true
         this.$refs.BusinessCon.editFlag = false
         this.showBtn = false
@@ -104,7 +108,7 @@ export default {
     },
     editBusiness(id) {
       this.type = 'edit'
-      getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
+      getBusinessConfigWithTree(id, +this.tenantId).then(res => {
         console.log(res)
         this.$refs.BusinessCon.dialogVisible = true
         this.$refs.BusinessCon.editFlag = true
@@ -130,7 +134,7 @@ export default {
               "type": 'industry',
               "parentId":	-1,
               "createBy": this.$store.state.userInfo.name,
-              "tenantId": this.$store.state.tenantId
+              "tenantId": this.tenantId
             }
         ]
       this.$refs.BusinessCon.data[0].label = form.name
@@ -144,7 +148,7 @@ export default {
             name: '',
             type: '',
             code: '',
-            tenantId: this.$store.state.tenantId
+            tenantId: this.tenantId
       }
     }
   }

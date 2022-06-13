@@ -31,6 +31,7 @@
     getBusinessConfigWithTree,
     selectProcessStartConfigList
   } from "@/api/globalConfig";
+  import { mapState } from 'vuex'
 export default {
   components: {
     StartItemCon
@@ -50,12 +51,15 @@ export default {
   mounted() {
     this.getBusinessConfigBasicList()
   },
+  computed: {
+    ...mapState('account', ['userInfo', 'tenantId'])
+  },
   methods: {
     showSartDailog(id, item) {
       this.footFlag = true
       this.businessData = item
       let _this = this
-        getBusinessConfigWithTree(id, +_this.$store.state.tenantId).then(res => {
+        getBusinessConfigWithTree(id, +_this.tenantId).then(res => {
           this.itemconFlag = true
           this.$nextTick(() => {
             _this.$refs.StartItemCon.dialogVisible = true
@@ -70,12 +74,12 @@ export default {
       this.footFlag = false
       this.itemconFlag = true
       this.businessData = item
-      getBusinessConfigWithTree(id, +this.$store.state.tenantId).then(res => {
+      getBusinessConfigWithTree(id, +this.tenantId).then(res => {
 
         this.$refs.StartItemCon.dialogVisible = true
         this.$refs.StartItemCon.data = res.result
         this.$refs.StartItemCon.tableData = []
-        selectProcessStartConfigList(id, +this.$store.state.tenantId).then(res => {
+        selectProcessStartConfigList(id, +this.tenantId).then(res => {
           res.result.forEach(item => {
             item.disabled = true
             item.startType = item.startType+ ''
@@ -89,7 +93,7 @@ export default {
       })
     },
     getBusinessConfigBasicList() {
-        getBusinessConfigBasicList(this.$store.state.tenantId).then(res => {
+        getBusinessConfigBasicList(this.tenantId).then(res => {
           console.log(res)
           this.businessList = res.result
         })
