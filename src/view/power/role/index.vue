@@ -105,7 +105,7 @@
         this.currentNodeKey = result.groupId
         this.currentNodeName = result.groupName
         getGroupPermission({
-          groupCode: result.groupId,
+          groupCode: result.groupId.split(':').at(0),
           projectCode: this.business,
           tenantId: this.$store.state.tenantId
         }).then((res) => {
