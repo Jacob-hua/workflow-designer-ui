@@ -128,6 +128,7 @@ import {getThirdInterfaceList, selectProcessStartConfigList, startConfig} from "
 
 import FormTypeEnum from "@/enum/FormTypeEnum";
 import StartItemEnum from "@/enum/StartItemEnum";
+import { mapState } from 'vuex'
 export default {
   name: "startItemCon",
   props: {
@@ -161,6 +162,9 @@ export default {
       currentId: null
     }
   },
+  computed: {
+    ...mapState('account', ['userInfo','tenantId'])
+  },
   mounted() {
 
   },
@@ -173,7 +177,7 @@ export default {
    radioChange(val) {
      if (val === FormTypeEnum.FORM_TYPE_SELECT) {
        getThirdInterfaceList({
-         tenantId: this.$store.state.tenantId,
+         tenantId: this.tenantId,
          ascription: this.businessData.code
        }).then(res => {
          this.optionsList = res.result
@@ -207,7 +211,7 @@ export default {
     },
     handleNodeClick(data) {
      if (!this.footFlag) {
-       selectProcessStartConfigList(data.id, +this.$store.state.tenantId).then(res => {
+       selectProcessStartConfigList(data.id, +this.tenantId).then(res => {
          res.result.forEach(item => {
            item.disabled = true
            item.startType = item.startType+ ''
@@ -260,10 +264,10 @@ export default {
             // "type": 0,
             // "updateBy": "string",
             isUse: 0,
-            "createBy": this.$store.state.userInfo.name,
+            "createBy": this.userInfo.name,
             businessConfigId: this.currentId,
             code: "",
-            tenantId: this.$store.state.tenantId,
+            tenantId: this.tenantId,
             thirdInterfaceId: null,
             value: null,
             name: this.inputValue,

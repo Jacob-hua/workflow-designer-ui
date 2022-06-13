@@ -105,7 +105,7 @@ export default {
        handler(newValue) {
         setTimeout(()=> {
           this.GetGlobalList(newValue)
-        },40)
+        },200)
       }
     }
   },
@@ -121,7 +121,7 @@ export default {
       }).then((res)=> {
         res.result.forEach(api => {
           api.configParams = []
-          if (api.method ==="POST") {
+          if (api.method ===ApiEnum.API_TYPE_POST) {
             let obj= {key: '', value: ''}
             let body = JSON.parse(api.body)
             Object.keys(body).forEach(keys => {
@@ -173,7 +173,7 @@ export default {
         console.log(res)
         res.result.forEach(api => {
           api.configParams = []
-          if (api.method === 'POST') {
+          if (api.method === ApiEnum.API_TYPE_POST) {
             let obj= {key: '', value: ''}
             let body = JSON.parse(api.body)
             let bodyArr = Object.keys(body)
