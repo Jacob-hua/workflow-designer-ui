@@ -103,9 +103,9 @@ export default {
       deep: true,
       immediate: true,
        handler(newValue) {
-        setTimeout(()=> {
-          this.GetGlobalList(newValue)
-        },200)
+          if (this.business) {
+            this.GetGlobalList(newValue)
+          }
       }
     }
   },
@@ -300,7 +300,7 @@ export default {
       })
       if (data.result) {
         this.tableData = data.result.dataList
-        this.pageInfo.total = data.result.count
+        this.pageInfo.total = +data.result.count
       }
     },
     handleSizeChange(val) {
