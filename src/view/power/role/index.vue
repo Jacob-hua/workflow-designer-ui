@@ -46,6 +46,7 @@
   import PeTree from '@/component/PeTree.vue'
   import editRole from './component/editRole.vue'
   import { getSystemGroupTree, getGroupPermission } from '@/api/unit/api.js'
+  import { mapState } from  'vuex'
   export default {
     props:{
       business: {
@@ -66,6 +67,9 @@
         roleList: []
       }
     },
+    computed: {
+      ...mapState('account', ['tenantId'])
+    },
     methods: {
       handleClose() {
         this.getRole({
@@ -84,8 +88,8 @@
       editHandle() {
         this.dialogVisible = true
         this.$nextTick(() => {
-          this.$refs.editRole.type = 'edit'
-          this.$refs.editRole.getListData()
+            this.$refs.editRole.type = 'edit'
+            this.$refs.editRole.getListData()
         })
       },
       getTree() {
@@ -107,7 +111,7 @@
         getGroupPermission({
           groupCode: result.groupId,
           projectCode: this.business,
-          tenantId: this.$store.state.tenantId
+          tenantId: this.tenantId
         }).then((res) => {
           this.roleList = res.result
         })

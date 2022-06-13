@@ -18,13 +18,13 @@
         </div>
       </div>
       <div>
-        <div class="item1">
-          <label>业务选择</label>
-          <el-select v-model="value" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </div>
+<!--        <div class="item1">-->
+<!--          <label>业务选择</label>-->
+<!--          <el-select v-model="value" placeholder="请选择">-->
+<!--            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">-->
+<!--            </el-option>-->
+<!--          </el-select>-->
+<!--        </div>-->
       </div>
       <div>
         <label>当前角色</label>

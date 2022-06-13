@@ -36,7 +36,7 @@
 
 <script>
 import {checkBusinessConfig} from "@/api/globalConfig";
-
+import { mapState } from 'vuex'
 export default {
   name: "Guide",
   data() {
@@ -47,7 +47,7 @@ export default {
         name: '',
         type: '',
         code: '',
-        tenantId: this.$store.state.tenantId
+        tenantId: ''
       },
       projectOption: [
         {
@@ -59,6 +59,12 @@ export default {
         },
       ],
     }
+  },
+  computed: {
+    ...mapState('account', ['userInfo', 'tenantId'])
+  },
+  mounted() {
+    this.form.tenantId = this.tenantId
   },
   methods: {
     next() {

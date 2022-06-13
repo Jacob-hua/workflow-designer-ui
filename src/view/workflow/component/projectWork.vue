@@ -1,21 +1,22 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-      <el-select @change="projectChange"
-                 v-model="projectCode">
-        <el-option v-for="item in projectOption"
-                   :key="item.id"
-                   :label="item.name"
-                   :value="item.code"></el-option>
+      <el-select v-model="projectCode"
+                 clearable>
+        <el-option v-for="{id, label, value} in rootOrganizations"
+                   :key="id"
+                   :label="label"
+                   :value="value"></el-option>
       </el-select>
     </div>
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
         <el-cascader style="width: 350px"
                      v-model="projectValue"
-                     :clearable="true"
-                     :options="systemOption"
-                     :props='sysProps'></el-cascader>
+                     clearable
+                     :key="projectCode"
+                     :options="rootOrganizationChildren(projectCode)"
+                     :props='cascaderProps'></el-cascader>
       </div>
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
@@ -79,9 +80,7 @@
                 :projectCode="projectCode"
                 :dialogVisible="addProjectVisible"
                 :projectOption="projectOption"
-                :systemOption="systemOption"
-                :sysProps='sysProps'
-                @close="addProjectHidden()"
+                @close="onAddProjectClose"
                 @define="addProjectDefine"></addProject>
     <addBpmn :pubFlag="pubFlag"
              :formData="formData"
@@ -125,8 +124,7 @@ import {
   workFlowRecord,
   designProcessCountStatistics,
 } from '@/api/managerWorkflow'
-import { getProjectList } from '@/api/globalConfig'
-import { mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
@@ -139,13 +137,6 @@ export default {
   },
   data() {
     return {
-      sysProps: {
-        label: 'name',
-        value: 'code',
-        emitPath: false,
-        checkStrictly: true,
-      },
-      systemOption: [],
       draftProcessCount: 0,
       processCount: 0,
       isEdit: true,
@@ -156,7 +147,6 @@ export default {
       firstTotal: 0,
       projectValue: '',
       projectOption: [],
-      projectOption2: [],
       formData: {},
       getData: {
         page: 1,
@@ -184,11 +174,12 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tenantId', 'userInfo']),
+    ...mapState('account', ['tenantId', 'userInfo']),
+    ...mapState('uiConfig', ['cascaderProps']),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
-  async mounted() {
-    await this.getProjectList()
-    await designProcessCountStatistics({
+  mounted() {
+    designProcessCountStatistics({
       tenantId: this.tenantId,
       ascription: this.projectCode,
       business: this.projectValue,
@@ -200,39 +191,10 @@ export default {
       this.processCount = res.result.processCount
     })
     this.findWorkFlowRecord(this.activeName)
+    this.dispatchRefreshOrganization()
   },
   methods: {
-    deleteEmptyChildren(arr) {
-      for (let i = 0; i < arr.length; i++) {
-        const arrElement = arr[i]
-        if (!arrElement.children.length) {
-          delete arrElement.children
-          continue
-        }
-        if (arrElement.children) {
-          this.deleteEmptyChildren(arrElement.children)
-        }
-      }
-    },
-    projectChange(val) {
-      this.systemOption = this.projectOption.filter(
-        ({ code }) => code === val
-      )[0].children
-      this.deleteEmptyChildren(this.systemOption)
-    },
-    async getProjectList() {
-      let res = await getProjectList({
-        count: -1,
-        projectCode: '',
-        tenantId: this.tenantId,
-        type: '',
-      })
-      this.projectOption = res?.result ?? []
-      this.projectCode = this.projectOption[0].code
-      this.systemOption = this.projectOption[0].children
-      this.deleteEmptyChildren(this.systemOption)
-    },
-
+    ...mapActions('config', ['dispatchRefreshOrganization']),
     // 修改code
     changProjectCode(code) {
       this.projectCode = code
@@ -251,7 +213,7 @@ export default {
       this.addProjectVisible = true
       this.$refs.addpro.postData = row || {}
     },
-    addProjectHidden() {
+    onAddProjectClose() {
       this.addProjectVisible = false
     },
     addProjectDefine(value) {

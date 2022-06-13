@@ -76,8 +76,8 @@ export default {
           "active": "Y",
           "type": 'industry',
           "parentId":	-1,
-          "createBy": this.$store.state.userInfo.name,
-          "tenantId": this.$store.state.tenantId
+          "createBy": '',
+          "tenantId": ''
         }
       ],
       defaultProps: {
@@ -87,7 +87,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tenantId'])
+    ...mapState('account',['tenantId', 'userInfo'])
+  },
+  mounted() {
+    this.data[0].tenantId = this.tenantId
+    this.data[0].createBy = this.userInfo.name
   },
   methods: {
     exit() {
@@ -107,7 +111,7 @@ export default {
         if (!_this.edit) {
           delete this.data[0].id
         }
-        if(this.type == 'see') {
+        if(this.type === 'see') {
           createBusinessConfig(this.data).then((res)=> {
             this.dialogVisible = false
             this.$message({
@@ -144,7 +148,7 @@ export default {
           return
         }
         this.showinput = false
-        const newChild = { "id": id++,  "code":this.nodeCode, "tenantId": this.$store.state.tenantId,  "createBy": this.$store.state.userInfo.name,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
+        const newChild = { "id": id++,  "code":this.nodeCode, "tenantId": this.tenantId,  "createBy": this.userInfo.name,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
         if (!this.currentNode.children) {
           this.$set(this.currentNode, 'children', []);
         }
@@ -164,7 +168,7 @@ export default {
       clearRedisBusinessConfigCode({
         tenantId: this.tenantId,
         code: data.code ?? '',
-        projectCode: this.forms.code,
+        projectCode: this.forms.code?? '',
         cleaAllFlag
       })
     },
