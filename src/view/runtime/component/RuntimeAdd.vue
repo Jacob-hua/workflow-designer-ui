@@ -7,11 +7,6 @@
       <div class="diolog-main">
         <div class="diolog-main-left">
           <div class="system-list">
-            <div v-for="({label, value}, index) in optionsSystemType"
-                 :key="index"
-                 :class="systemListItemClass(value)"
-                 class="system-list-item"
-                 @click="changSystem(value)"> {{ label }}系统 </div>
           </div>
         </div>
         <div class="diolog-main-right">
@@ -96,7 +91,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['optionsSystemType', 'tenantId']),
+    ...mapState(['tenantId']),
   },
   mounted() {
     this.getProcessList()

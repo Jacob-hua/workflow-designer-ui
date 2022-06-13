@@ -7,19 +7,19 @@
     <div>
       <div class="from-item">
         <span>应用项目</span>
-        <el-select v-model="projectCode"
-                   disabled>
-          <el-option v-for="item in projectOption"
-                     :key="item.id"
-                     :label="item.name"
-                     :value="item.code"></el-option>
+        <el-select v-model="postData.ascription"
+                   clearable>
+          <el-option v-for="{id, label, value} in rootOrganizations"
+                     :key="id"
+                     :label="label"
+                     :value="value"></el-option>
         </el-select>
       </div>
       <div class="from-item">
         <span>流程类型</span>
         <el-cascader style="width: 350px"
                      v-model="postData.business"
-                     :options="systemOption"
+                     :options="rootOrganizationChildren(postData.ascription)"
                      :props='sysProps'></el-cascader>
       </div>
       <div class="from-item">
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -48,10 +48,6 @@ export default {
     dialogVisible: {
       type: Boolean,
       default: true,
-    },
-    projectOption: {
-      type: Array,
-      default: () => [],
     },
     systemOption: {
       type: Array,
@@ -73,7 +69,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['optionsBusiness']),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   methods: {
     handleClose() {
