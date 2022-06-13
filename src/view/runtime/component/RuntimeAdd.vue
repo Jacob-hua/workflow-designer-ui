@@ -94,7 +94,8 @@ export default {
     ...mapState(['tenantId']),
   },
   mounted() {
-    this.getProcessList()
+    // TODO: 此处的工单加载需要重新设计
+    // this.getProcessList()
   },
   methods: {
     detailsShow(item) {

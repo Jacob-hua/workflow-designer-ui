@@ -194,7 +194,6 @@ export default {
         selection: this.bpmnModeler.get('selection'),
       }
       this.$nextTick(() => {
-        console.log(this.postData)
         this.createNewDiagram(this.postData.content)
       })
     },
@@ -263,7 +262,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this.postData)
     this.initBpmnModeler()
     this.$once('hook:beforeDestroy', () => {
       if (this.bpmnModeler) this.bpmnModeler.destroy()
@@ -313,7 +311,7 @@ export default {
   margin-bottom: 20px;
 }
 
-/deep/ .el-input.is-disabled .el-input__inner {
+::v-deep .el-input.is-disabled .el-input__inner {
   color: black;
   width: 180px;
   height: 43px;
@@ -322,7 +320,7 @@ export default {
   background-color: #f2f2f2;
 }
 
-/deep/ .el-input__inner {
+::v-deep .el-input__inner {
   width: 180px;
   height: 43px;
   line-height: 43px;
@@ -353,11 +351,11 @@ export default {
   height: 100%;
 }
 
-/deep/ .djs-palette {
+::v-deep .djs-palette {
   display: none;
 }
 
-/deep/ .djs-context-pad {
+::v-deep .djs-context-pad {
   display: none;
 }
 

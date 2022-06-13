@@ -13,9 +13,10 @@
       <div class="PublicForm-title-option">
         <el-cascader style="width: 350px"
                      v-model="projectValue"
-                     :clearable="true"
+                     clearable
+                     :key="projectCode"
                      :options="rootOrganizationChildren(projectCode)"
-                     :props='sysProps'></el-cascader>
+                     :props='cascaderProps'></el-cascader>
       </div>
       <div class="datePick">
         <span class="datePickTitle">创建时间</span>
@@ -79,9 +80,7 @@
                 :projectCode="projectCode"
                 :dialogVisible="addProjectVisible"
                 :projectOption="projectOption"
-                :systemOption="systemOption"
-                :sysProps='sysProps'
-                @close="addProjectHidden()"
+                @close="onAddProjectClose"
                 @define="addProjectDefine"></addProject>
     <addBpmn :pubFlag="pubFlag"
              :formData="formData"
@@ -138,11 +137,6 @@ export default {
   },
   data() {
     return {
-      sysProps: {
-        emitPath: false,
-        checkStrictly: true,
-      },
-      systemOption: [],
       draftProcessCount: 0,
       processCount: 0,
       isEdit: true,
@@ -181,6 +175,7 @@ export default {
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
+    ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   mounted() {
@@ -218,7 +213,7 @@ export default {
       this.addProjectVisible = true
       this.$refs.addpro.postData = row || {}
     },
-    addProjectHidden() {
+    onAddProjectClose() {
       this.addProjectVisible = false
     },
     addProjectDefine(value) {
