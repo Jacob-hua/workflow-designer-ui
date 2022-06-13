@@ -217,17 +217,6 @@
           this.detailData = res.result
           this.checkRole = Object.keys(this.detailData.map)[0]
         })
-      },
-      login() {
-        if (this.$store.state.userInfo.name === 'admin') {
-          userLogin({
-            account: 'admin',
-            password: 'admin'
-          }).then((res) => {
-            sessionStorage.setItem('loginData', JSON.stringify(res.result))
-            this.$store.state.userInfo.name = res.result.account
-          })
-        }
       }
     }
   }
