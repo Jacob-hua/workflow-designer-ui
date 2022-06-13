@@ -29,12 +29,13 @@
                     <el-input v-model="item.path"></el-input>
                   </el-form-item>
                   <el-form-item label="api类型">
-                    <el-select v-model="item.type" placeholder="请选择api类型">
+                    <el-select  v-model="item.type" placeholder="请选择api类型">
                       <el-option
-                          v-for="(item,idxe) in apiOptions"
+                          v-for="(apiItem,idxe) in apiOptions"
                           :key="idxe"
-                          :label="item.typeName"
-                          :value="item.type">
+                          @click.native="apiTypeChange(item, apiItem.typeName)"
+                          :label="apiItem.typeName"
+                          :value="apiItem.type">
                       </el-option>
                     </el-select>
                   </el-form-item>
@@ -43,7 +44,7 @@
                     <el-select v-model="item.method" placeholder="请选择api类型">
                       <el-option
                           v-for="item in methodsOptions"
-                          :key="item.value"
+                          :key="Math.random()"
                           :label="item.label"
                           :value="item.label">
                       </el-option>
@@ -57,7 +58,7 @@
                 <div class="config_tit">
                   <span>配置参数</span> <i @click="addParams(index)"  class="el-icon-circle-plus-outline"></i>
                 </div>
-                <div v-for="(params,idx) in item.configParams" :key="idx" class="params">
+                <div v-for="(params,indexs) in item.configParams" :key="indexs" class="params">
                   <el-form-item label="参数key">
                     <el-input v-model="params.key"></el-input>
                   </el-form-item>
@@ -203,6 +204,9 @@ export default {
     this.apiTypeList()
   },
   methods: {
+    apiTypeChange(currentApi, typeName) {
+      currentApi.typeName =  typeName
+    },
     saveApi() {
       // get(`/config/global/checkApiType?typeName=${params.typeName}&type=user&tenantId=18`);
       checkApiType({
@@ -231,7 +235,7 @@ export default {
     },
 
     excuteParse(api) {
-      if (api.method === ApiEnum.API_TYPE_POST) {
+      if (api.method === "POST") {
         simulationRequest({
           "body": api.body,
           "headers": api.headers,
@@ -287,7 +291,7 @@ export default {
             pars[parse.key] =  parse.value
         })
         apibox.dataParse = JSON.stringify(pars)
-        if (apibox.method === ApiEnum.API_TYPE_POST) {
+        if (apibox.method === "POST") {
           let obj = {}
             apibox.configParams.forEach(item=> {
               obj[item.key] = item.value
@@ -304,7 +308,7 @@ export default {
             })
         }
       })
-
+    debugger
 
       let parameterMap = {}
       this.apiBoxList.forEach(apiBox => {
