@@ -102,7 +102,7 @@
           limit: 999999,
           name: '',
           page: 1,
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           userId: this.userInfo.name
         }).then((res) => {
           this.tableData = res.result.dataList
