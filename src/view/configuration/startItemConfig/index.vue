@@ -98,6 +98,7 @@ export default {
             item.isRequired? item.isRequired = true : item.isRequired = false
           })
           this.$refs.StartItemCon.tableFlag = true
+          this.$refs.StartItemCon.btnFlag = false
           this.$refs.StartItemCon.tableData = res.result
 
         })
