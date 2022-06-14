@@ -71,8 +71,8 @@ export default {
             res.result.forEach(item => {
               item.disabled = true
               item.startType = item.startType+ ''
-              item.isSetting? item.isSetting = true : item.isSetting = false
-              item.isRequired? item.isRequired = true : item.isRequired = false
+              item.isSetting = !!item.isSetting
+              item.isRequired = !!item.isRequired
             })
             this.$refs.StartItemCon.tableFlag = true
             this.$refs.StartItemCon.btnFlag = true
@@ -94,8 +94,8 @@ export default {
           res.result.forEach(item => {
             item.disabled = true
             item.startType = item.startType+ ''
-            item.isSetting? item.isSetting = true : item.isSetting = false
-            item.isRequired? item.isRequired = true : item.isRequired = false
+            item.isSetting = !!item.isSetting
+            item.isRequired = !!item.isRequired
           })
           this.$refs.StartItemCon.tableFlag = true
           this.$refs.StartItemCon.btnFlag = false
