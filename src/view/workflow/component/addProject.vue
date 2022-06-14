@@ -54,10 +54,6 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: {
-    projectCode: {
-      type: String,
-      default: '',
-    },
     dialogVisible: {
       type: Boolean,
       default: true,
@@ -101,8 +97,11 @@ export default {
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   watch: {
-    currentOrganization(value) {
-      this.formData.ascription = value
+    currentOrganization: {
+      immediate: true,
+      handler(value) {
+        this.formData.ascription = value
+      },
     },
   },
   methods: {

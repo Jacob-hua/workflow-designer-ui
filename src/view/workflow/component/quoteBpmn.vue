@@ -129,10 +129,8 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-.dialogVisible-main {
-}
-/deep/ .el-table {
+<style scoped>
+::v-deep .el-table {
   height: 600px;
 }
 .table-page {
