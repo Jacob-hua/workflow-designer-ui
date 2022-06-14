@@ -137,7 +137,7 @@ export default {
     },
   },
   mounted() {
-    this.refreshWorkFlowRecord(this.activeName)
+    this.refreshWorkFlowRecord()
   },
   methods: {
     totalChange(list) {
@@ -151,9 +151,9 @@ export default {
     onAddBpmnClose() {
       this.addBpmnVisible = false
     },
-    onAddBpmnSubmit(value) {
+    onAddBpmnSubmit() {
       this.addBpmnVisible = false
-      this.refreshWorkFlowRecord(value)
+      this.refreshWorkFlowRecord()
     },
     lookBpmnShow(row, tit) {
       tit === 'gongzuoliu' ? (this.isEdit = true) : (this.isEdit = false)
@@ -187,29 +187,30 @@ export default {
       this.findWorkFlowRecord(this.activeName)
     },
     onProjectDeleteRow() {
-      this.refreshWorkFlowRecord('enabled,disabled')
+      this.refreshWorkFlowRecord()
     },
     onProjectTableSizeChange(pageSize) {
       this.getData.limit = pageSize
-      this.refreshWorkFlowRecord('enabled,disabled')
+      this.refreshWorkFlowRecord()
     },
     onProjectTablePageChange(page) {
       this.getData.page = page
-      this.refreshWorkFlowRecord('enabled,disabled')
+      this.refreshWorkFlowRecord()
     },
     onDraftDeleteRow() {
-      this.refreshWorkFlowRecord('drafted')
+      this.refreshWorkFlowRecord()
     },
     onDraftTableSizeChange(pageSize) {
       this.getData.limit = pageSize
-      this.refreshWorkFlowRecord('drafted')
+      this.refreshWorkFlowRecord()
     },
     onDraftTablePageChange(page) {
       this.getData.page = page
-      this.refreshWorkFlowRecord('drafted')
+      this.refreshWorkFlowRecord()
     },
-    async refreshWorkFlowRecord(value) {
-      await this.findWorkFlowRecord(value)
+    async refreshWorkFlowRecord() {
+      await this.findWorkFlowRecord('enabled,disabled')
+      await this.findWorkFlowRecord('drafted')
       await this.fetchDesignProcessCountStatistics()
     },
     // 查询公共流程工作流记录

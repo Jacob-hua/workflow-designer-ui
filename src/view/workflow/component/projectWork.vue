@@ -193,7 +193,7 @@ export default {
     },
   },
   mounted() {
-    this.refreshWorkFlowRecord(this.activeName)
+    this.refreshWorkFlowRecord()
     this.dispatchRefreshOrganization()
   },
   methods: {
@@ -228,10 +228,10 @@ export default {
     onAddBpmnClose() {
       this.addBpmnVisible = false
     },
-    onAddBpmnSubmit(value) {
+    onAddBpmnSubmit() {
       this.flag = false
       this.addBpmnVisible = false
-      this.refreshWorkFlowRecord(value)
+      this.refreshWorkFlowRecord()
     },
     quoteBpmnShow() {
       this.quoteBpmnVisible = true
@@ -277,29 +277,30 @@ export default {
       this.findWorkFlowRecord(this.activeName)
     },
     onProjectDeleteRow() {
-      this.refreshWorkFlowRecord('enabled,disabled')
+      this.refreshWorkFlowRecord()
     },
     onProjectTableSizeChange(pageSize) {
       this.getData.limit = pageSize
-      this.refreshWorkFlowRecord('enabled,disabled')
+      this.refreshWorkFlowRecord()
     },
     onProjectTablePageChange(page) {
       this.getData.page = page
-      this.refreshWorkFlowRecord('enabled,disabled')
+      this.refreshWorkFlowRecord()
     },
     onDraftDeleteRow() {
-      this.refreshWorkFlowRecord('drafted')
+      this.refreshWorkFlowRecord()
     },
     onDraftTableSizeChange(pageSize) {
       this.getData.limit = pageSize
-      this.refreshWorkFlowRecord('drafted')
+      this.refreshWorkFlowRecord()
     },
     onDraftTablePageChange(page) {
       this.getData.page = page
-      this.refreshWorkFlowRecord('drafted')
+      this.refreshWorkFlowRecord()
     },
-    async refreshWorkFlowRecord(value) {
-      await this.findWorkFlowRecord(value)
+    async refreshWorkFlowRecord() {
+      await this.findWorkFlowRecord('enabled,disabled')
+      await this.findWorkFlowRecord('drafted')
       await this.fetchDesignProcessCountStatistics()
     },
     // 查询项目流程
