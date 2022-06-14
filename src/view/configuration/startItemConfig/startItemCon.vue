@@ -209,7 +209,7 @@ export default {
       }
     },
     saveStart() {
-      res.forEach(item => {
+      this.tableData.forEach(item => {
         item.isSetting ?
             item.isSetting = StartItemEnum.SURE_SETTING
             : item.isSetting = StartItemEnum.NOT_SETTING
