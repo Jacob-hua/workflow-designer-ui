@@ -179,7 +179,7 @@
       
       addForm(item) {
         if (item) {
-          this.$refs.PublicFormDiolog.dialogVisible2 = true
+            this.$refs.PublicFormDiolog.dialogVisible2 = true
           let content = JSON.parse(item.content)
           this.$nextTick(() => {
             this.$refs.PublicFormDiolog.$refs.formDesigner.designList =  content.list
