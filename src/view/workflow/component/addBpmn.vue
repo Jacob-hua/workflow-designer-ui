@@ -60,10 +60,6 @@ export default {
       type: String,
       default: '',
     },
-    pubFlag: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -111,28 +107,23 @@ export default {
             type: 'bpmn20-xml',
           })
         )
+        let promise
         // 已发布的 走修改的流程
-        if (this.pubFlag) {
+        if (this.currentRowData.id) {
           this.processFormData.set('id', this.currentRowData.id)
-          workFlowSaveDraft(this.processFormData)
-            .then(() => {
-              this.$message.success('保存成功')
-              this.$emit('close')
-            })
-            .catch(({ errorMsg }) => {
-              this.$message.error(errorMsg)
-            })
+          promise = workFlowSaveDraft(this.processFormData)
         } else {
-          publishWorkflow(this.processFormData)
-            .then(() => {
-              this.$message.success('发布成功')
-              this.$emit('close')
-            })
-            .catch(({ errorMsg }) => {
-              this.$message.error(errorMsg)
-            })
+          promise = publishWorkflow(this.processFormData)
         }
-        this.$emit('submit', 'enabled,disabled')
+        Promise.resolve(promise)
+          .then(() => {
+            this.$message.success('发布成功')
+            this.$emit('submit', 'enabled,disabled')
+            this.onClose()
+          })
+          .catch(({ errorMsg }) => {
+            this.$message.error(errorMsg)
+          })
       } catch (e) {
         this.$message.error('流程设计存在错误/警告')
       }

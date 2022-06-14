@@ -10,8 +10,7 @@
     </div>
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
-        <el-cascader style="width: 350px"
-                     v-model="projectValue"
+        <el-cascader v-model="projectValue"
                      clearable
                      :key="projectCode"
                      :options="rootOrganizationChildren(projectCode)"
@@ -83,7 +82,6 @@
                 @close="onAddProjectClose"
                 @submit="addProjectDefine"></addProject>
     <addBpmn v-if="addBpmnVisible"
-             :pubFlag="pubFlag"
              :formData="formData"
              :flag="flag"
              :currentRowData="currentRowData"
@@ -169,7 +167,6 @@ export default {
       xmlString: '',
       flag: false,
       toData: null,
-      pubFlag: false,
       showFlag: true,
     }
   },
@@ -271,10 +268,7 @@ export default {
     lookBpmnHidden() {
       this.lookBpmnVisible = false
     },
-    lookBpmnEdit(row, flag) {
-      if (flag === '查看') {
-        this.pubFlag = true
-      }
+    lookBpmnEdit(row) {
       this.lookBpmnVisible = false
       this.xmlString = row.content
       this.currentRowData = row
