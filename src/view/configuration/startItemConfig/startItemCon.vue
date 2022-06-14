@@ -220,7 +220,7 @@ export default {
 
         item.startType = +item.startType
       })
-      startConfig({businessConfigId: res[0].businessConfigId, list:  this.tableData}).then(res => {
+      startConfig({businessConfigId:  this.tableData[0].businessConfigId, list:  this.tableData}).then(res => {
         this.$message({
           type: 'success',
           message: '保存成功'
