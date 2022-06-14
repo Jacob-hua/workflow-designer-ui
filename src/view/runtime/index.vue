@@ -263,15 +263,15 @@ export default {
         }
         this.tableData = result.dataList
         this.tableData.forEach((item) => {
-          if (item.taskAssignee.split(',').indexOf(this.userInfo.name) !== -1) {
+          if (item.taskAssignee.split(',').indexOf(this.userInfo.account) !== -1) {
             item.newTaskId =
               item.taskId.split(',')[
-                item.taskAssignee.split(',').indexOf(this.userInfo.name)
+                item.taskAssignee.split(',').indexOf(this.userInfo.account)
               ]
           } else {
             item.trackList[item.trackList.length - 1].candidateUsers.forEach(
               (item1) => {
-                if (item1.candidateUsers.indexOf(this.userInfo.name) !== -1) {
+                if (item1.candidateUsers.indexOf(this.userInfo.account) !== -1) {
                   item.newTaskId = item1.taskId
                 }
               }
@@ -310,7 +310,7 @@ export default {
       return (
         rolePeopleList
           .concat(row.taskAssignee.split(','))
-          .indexOf(this.userInfo.name) !== -1
+          .indexOf(this.userInfo.account) !== -1
       )
     },
     handleSizeChange() {

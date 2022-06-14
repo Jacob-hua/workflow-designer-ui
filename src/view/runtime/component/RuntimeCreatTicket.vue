@@ -134,7 +134,7 @@ export default {
         const { errorInfo } = await getStartProcess({
           businessKey: '',
           definitionKey: this.process.key,
-          createBy: this.userInfo.name,
+          createBy: this.userInfo.account,
           startProcessId: this.process.id,
           variables: { ...this.startForm },
         })

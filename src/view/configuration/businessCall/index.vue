@@ -133,7 +133,7 @@ export default {
               "active": "Y",
               "type": 'industry',
               "parentId":	-1,
-              "createBy": this.userInfo.name,
+              "createBy": this.userInfo.account,
               "tenantId": this.tenantId
             }
         ]

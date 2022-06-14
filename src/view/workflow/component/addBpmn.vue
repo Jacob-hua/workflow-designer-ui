@@ -92,8 +92,8 @@ export default {
       processFormData.set('code', processId)
       processFormData.set('business', this.formData.business)
       processFormData.set('status', 'enabled')
-      processFormData.set('createBy', this.userInfo.name)
-      processFormData.set('updateBy', this.userInfo.name)
+      processFormData.set('createBy', this.userInfo.account)
+      processFormData.set('updateBy', this.userInfo.account)
       processFormData.set('tenantId', this.tenantId)
       return processFormData
     },

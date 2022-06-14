@@ -264,7 +264,7 @@ export default {
             // "type": 0,
             // "updateBy": "string",
             isUse: 0,
-            "createBy": this.userInfo.name,
+            "createBy": this.userInfo.account,
             businessConfigId: this.currentId,
             code: "",
             tenantId: this.tenantId,

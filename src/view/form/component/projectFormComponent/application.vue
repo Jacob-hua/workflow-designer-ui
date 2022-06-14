@@ -49,6 +49,7 @@ import {
   designFormDesignServiceAll,
   postFormDesignServiceRealiseProcessData,
 } from '@/api/unit/api.js'
+import { mapState } from 'vuex'
 export default {
   props: {
     dialogVisible: {
@@ -73,6 +74,9 @@ export default {
       },
       formList: [],
     }
+  },
+  computed: {
+    ...mapState('account', ['userInfo', 'tenantId'])
   },
   methods: {
     handleClose() {
@@ -112,9 +116,9 @@ export default {
           formData.append('code', xml.id)
           formData.append('business', this.projectValue)
           formData.append('status', 'enabled')
-          formData.append('createBy', this.$store.state.userInfo.name)
-          formData.append('createName', this.$store.state.userInfo.name)
-          formData.append('tenantId', this.$store.state.tenantId)
+          formData.append('createBy', this.userInfo.account)
+          formData.append('createName', this.userInfo.name)
+          formData.append('tenantId', this.tenantId)
           formData.append('file', file1)
           postFormDesignServiceRealiseProcessData(formData).then((res) => {
             this.$message.success('应用至项目表单成功')

@@ -185,7 +185,7 @@ export default {
       business: this.projectValue,
       startTime: this.valueDate[0] && `${this.valueDate[0]} 00:00:00`,
       endTime: this.valueDate[1] && `${this.valueDate[1]} 23:59:59`,
-      createBy: this.userInfo.name,
+      createBy: this.userInfo.account,
     }).then((res) => {
       this.draftProcessCount = res.result.draftProcessCount
       this.processCount = res.result.processCount
@@ -282,7 +282,7 @@ export default {
         status: 'drafted',
         ascription: this.projectCode,
         business: this.projectValue,
-        createBy: this.userInfo.name,
+        createBy: this.userInfo.account,
         numberCode: '',
         name: this.input,
         startTime: this.valueDate[0] ?? undefined,
@@ -318,7 +318,7 @@ export default {
         status,
         ascription: this.projectCode,
         business: this.projectValue,
-        createBy: this.userInfo.name,
+        createBy: this.userInfo.account,
         numberCode: '',
         name: this.input,
         startTime: this.valueDate[0] && `${this.valueDate[0]} 00:00:00`,

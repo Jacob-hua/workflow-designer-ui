@@ -78,6 +78,7 @@
   import preview from "@/plugin/FormDesign/component/preview";
   import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
   import Preview from "@/plugin/FormDesign/component/preview";
+  import { mapState } from 'vuex'
   export default {
     props:{
       quote: {
@@ -134,7 +135,8 @@
     computed: {
       formConf: function ()  {
         return JSON.parse(this.formDatas.content).config
-      }
+      },
+      ...mapState('account', ['tenantId', 'userInfo']),
     },
     data() {
       return {
@@ -228,10 +230,10 @@
         postFormDesignRecordFormDesignRecordInfo({
           id: this.value,
           status: this.status,
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           ascription: this.ascription,
           business: this.business,
-          createBy: this.$store.state.userInfo.name
+          createBy: this.userInfo.account
         }).then((res) => {
           this.formDatas = res.result
           this.formBpmnEditKey++
@@ -255,9 +257,9 @@
         formData.append('code', xml.id)
         formData.append('business', this.postData.business)
         formData.append('status', 'enabled')
-        formData.append('createBy', this.$store.state.userInfo.name)
+        formData.append('createBy', this.userInfo.name)
         formData.append('createName', 'admin')
-        formData.append('tenantId', this.$store.state.tenantId)
+        formData.append('tenantId', this.tenantId)
         formData.append('file', file1)
         postFormDesignServiceRealiseProcessData(formData).then((res) => {
           this.$message.success('发布至可用表单成功')
