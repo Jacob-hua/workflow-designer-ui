@@ -1,8 +1,7 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-      <el-select v-model="projectCode"
-                 clearable>
+      <el-select v-model="projectCode">
         <el-option v-for="{id, label, value} in rootOrganizations"
                    :key="id"
                    :label="label"
@@ -11,8 +10,7 @@
     </div>
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
-        <el-cascader style="width: 350px"
-                     v-model="projectValue"
+        <el-cascader v-model="projectValue"
                      clearable
                      :key="projectCode"
                      :options="rootOrganizationChildren(projectCode)"
@@ -27,7 +25,8 @@
                         range-separator="——"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd">
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        :default-time="['00:00:00', '23:59:59']">
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
@@ -59,38 +58,40 @@
               @click="changeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
       </div>
       <div class="home-table">
-        <projectTable ref="project"
+        <projectTable v-if="activeName === 'enabled,disabled'"
+                      ref="project"
                       :formListFirst="formListFirst"
                       :valueDate="valueDate"
-                      :ascription="projectCode"
                       :business="projectValue"
-                      v-if="activeName === 'enabled,disabled'"
-                      @lookBpmnShow="lookBpmnShow"></projectTable>
-        <draftTable ref="draft"
+                      @lookBpmnShow="lookBpmnShow"
+                      @deleteRow="onProjectDeleteRow"
+                      @pageSizeChange="onProjectTableSizeChange"
+                      @pageChange="onProjectTablePageChange"></projectTable>
+        <draftTable v-if="activeName === 'drafted'"
+                    ref="draft"
                     :formListSecond="formListSecond"
-                    @totalChange="totalChange"
                     :valueDate="valueDate"
-                    :ascription="projectCode"
                     :business="projectValue"
-                    v-if="activeName === 'drafted'"
-                    @draftTableEdit="draftTableEdit"></draftTable>
+                    @totalChange="totalChange"
+                    @draftTableEdit="draftTableEdit"
+                    @deleteRow="onDraftDeleteRow"
+                    @pageSizeChange="onDraftTableSizeChange"
+                    @pageChange="onDraftTablePageChange"></draftTable>
       </div>
     </div>
     <addProject ref="addpro"
-                :projectCode="projectCode"
                 :dialogVisible="addProjectVisible"
                 :projectOption="projectOption"
                 @close="onAddProjectClose"
-                @define="addProjectDefine"></addProject>
-    <addBpmn :pubFlag="pubFlag"
+                @submit="onAddProjectSubmit"></addProject>
+    <addBpmn v-if="addBpmnVisible"
              :formData="formData"
              :flag="flag"
              :currentRowData="currentRowData"
-             v-if="addBpmnVisible"
              :dialogVisible="addBpmnVisible"
-             @close="addBpmnHidden()"
-             @define="addBpmnDefine"
-             :xmlString="xmlString"></addBpmn>
+             :xmlString="xmlString"
+             @close="onAddBpmnClose"
+             @submit="onAddBpmnSubmit"></addBpmn>
     <quoteBpmn v-if="quoteBpmnVisible"
                :valueDate="valueDate"
                :ascription="projectCode"
@@ -124,7 +125,7 @@ import {
   workFlowRecord,
   designProcessCountStatistics,
 } from '@/api/managerWorkflow'
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
@@ -169,37 +170,36 @@ export default {
       xmlString: '',
       flag: false,
       toData: null,
-      pubFlag: false,
       showFlag: true,
     }
   },
   computed: {
-    ...mapState('account', ['tenantId', 'userInfo']),
+    ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
     ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
+  watch: {
+    projectCode(value) {
+      if (value === this.currentOrganization) {
+        return
+      }
+      this.updateCurrentOrganization({ currentOrganization: value })
+    },
+    currentOrganization: {
+      immediate: true,
+      handler(value) {
+        this.projectCode = value
+      },
+    },
+  },
   mounted() {
-    designProcessCountStatistics({
-      tenantId: this.tenantId,
-      ascription: this.projectCode,
-      business: this.projectValue,
-      startTime: this.valueDate[0] && `${this.valueDate[0]} 00:00:00`,
-      endTime: this.valueDate[1] && `${this.valueDate[1]} 23:59:59`,
-      createBy: this.userInfo.name,
-    }).then((res) => {
-      this.draftProcessCount = res.result.draftProcessCount
-      this.processCount = res.result.processCount
-    })
+    this.fetchDesignProcessCountStatistics()
     this.findWorkFlowRecord(this.activeName)
     this.dispatchRefreshOrganization()
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
-    // 修改code
-    changProjectCode(code) {
-      this.projectCode = code
-      this.findWorkFlowRecord(this.activeName)
-    },
+    ...mapMutations('account', ['updateCurrentOrganization']),
     totalChange(list) {
       this.formListSecond = list
     },
@@ -216,7 +216,7 @@ export default {
     onAddProjectClose() {
       this.addProjectVisible = false
     },
-    addProjectDefine(value) {
+    onAddProjectSubmit(value) {
       this.formData = value
       Object.keys(value).length ? (this.flag = true) : (this.flag = false)
       this.addProjectVisible = false
@@ -226,12 +226,13 @@ export default {
       this.xmlString = this.toData?.content || ''
       this.addBpmnVisible = true
     },
-    addBpmnHidden() {
+    onAddBpmnClose() {
       this.addBpmnVisible = false
     },
-    addBpmnDefine() {
+    onAddBpmnSubmit(value) {
       this.flag = false
       this.addBpmnVisible = false
+      this.refreshWorkFlowRecord(value)
     },
     quoteBpmnShow() {
       this.quoteBpmnVisible = true
@@ -255,10 +256,7 @@ export default {
     lookBpmnHidden() {
       this.lookBpmnVisible = false
     },
-    lookBpmnEdit(row, flag) {
-      if (flag === '查看') {
-        this.pubFlag = true
-      }
+    lookBpmnEdit(row) {
       this.lookBpmnVisible = false
       this.xmlString = row.content
       this.currentRowData = row
@@ -282,11 +280,11 @@ export default {
         status: 'drafted',
         ascription: this.projectCode,
         business: this.projectValue,
-        createBy: this.userInfo.name,
+        createBy: this.userInfo.account,
         numberCode: '',
         name: this.input,
-        startTime: this.valueDate[0] ?? undefined,
-        endTime: this.valueDate[1] ?? undefined,
+        startTime: this.valueDate[0],
+        endTime: this.valueDate[1],
       }).then((res) => {
         this.formListSecond = res.result
       })
@@ -301,53 +299,102 @@ export default {
         createBy: this.name,
         numberCode: '',
         name: this.input,
-        startTime: this.valueDate[0] ?? undefined,
-        endTime: this.valueDate[1] ?? undefined,
+        startTime: this.valueDate[0],
+        endTime: this.valueDate[1],
       }).then((res) => {
         this.formListFirst = res.result
       })
     },
-
     getManyData() {
       this.findWorkFlowRecord(this.activeName)
     },
+    onProjectDeleteRow() {
+      this.refreshWorkFlowRecord('enabled,disabled')
+    },
+    onProjectTableSizeChange(pageSize) {
+      this.getData.limit = pageSize
+      this.refreshWorkFlowRecord('enabled,disabled')
+    },
+    onProjectTablePageChange(page) {
+      this.getData.page = page
+      this.refreshWorkFlowRecord('enabled,disabled')
+    },
+    onDraftDeleteRow() {
+      this.refreshWorkFlowRecord('drafted')
+    },
+    onDraftTableSizeChange(pageSize) {
+      this.getData.limit = pageSize
+      this.refreshWorkFlowRecord('drafted')
+    },
+    onDraftTablePageChange(page) {
+      this.getData.page = page
+      this.refreshWorkFlowRecord('drafted')
+    },
+    async refreshWorkFlowRecord(value) {
+      await this.findWorkFlowRecord(value)
+      await this.fetchDesignProcessCountStatistics()
+    },
     // 查询项目流程
     async findWorkFlowRecord(status) {
-      let data = await workFlowRecord({
-        tenantId: this.tenantId,
-        status,
-        ascription: this.projectCode,
-        business: this.projectValue,
-        createBy: this.userInfo.name,
-        numberCode: '',
-        name: this.input,
-        startTime: this.valueDate[0] && `${this.valueDate[0]} 00:00:00`,
-        endTime: this.valueDate[1] && `${this.valueDate[1]} 23:59:59`,
-        page: this.getData.page,
-        limit: this.getData.limit,
-      })
-      status === 'drafted'
-        ? ((this.firstTotal = data.result.total),
-          (this.$refs.draft.getData.total = data.result.total),
-          (this.formListSecond = data.result.list))
-        : ((this.secondtTotal = data.result.total),
-          (this.$refs.project.getData.total = data.result.total),
-          (this.formListFirst = data.result.list))
+      try {
+        const { errorInfo, result } = await workFlowRecord({
+          tenantId: this.tenantId,
+          status,
+          ascription: this.projectCode,
+          business: this.projectValue,
+          createBy: this.userInfo.account,
+          name: this.input,
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1],
+          page: this.getData.page,
+          limit: this.getData.limit,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+
+        if (status === 'drafted') {
+          this.firstTotal = result.total
+          this.$refs.draft.getData.total = result.total
+          this.formListSecond = result.list
+        } else {
+          this.secondtTotal = result.total
+          this.$refs.project.getData.total = result.total
+          this.formListFirst = result.list
+        }
+      } catch (error) {}
+    },
+    async fetchDesignProcessCountStatistics() {
+      try {
+        const { errorInfo, result } = await designProcessCountStatistics({
+          tenantId: this.tenantId,
+          ascription: this.projectCode,
+          business: this.projectValue,
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1],
+          createBy: this.userInfo.account,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+
+        this.draftProcessCount = result.draftProcessCount
+        this.processCount = result.processCount
+      } catch (error) {}
     },
   },
 }
 </script>
 
 <style scoped>
-.projectHeader /deep/ .el-input__inner {
+.projectHeader ::v-deep .el-input__inner {
   border: 1px solid black;
 }
 
-.PublicForm-title /deep/ .el-input__inner {
+.PublicForm-title ::v-deep .el-input__inner {
   border: 1px solid black;
-}
-
-.PublicForm-title {
 }
 
 .checkPro {
@@ -412,7 +459,6 @@ export default {
 .PublicForm-title-button {
   display: inline-block;
   margin-left: 40px;
-  float: right;
 }
 
 .home-main {

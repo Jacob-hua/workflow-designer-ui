@@ -13,7 +13,7 @@
                     prop="ascription">
         <el-col :span="24">
           <el-select v-model="formData.ascription"
-                     clearable>
+                     disabled>
             <el-option v-for="{id, label, value} in rootOrganizations"
                        :key="id"
                        :label="label"
@@ -54,10 +54,6 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: {
-    projectCode: {
-      type: String,
-      default: '',
-    },
     dialogVisible: {
       type: Boolean,
       default: true,
@@ -66,7 +62,7 @@ export default {
   data() {
     return {
       formData: {
-        ascription: this.projectCode,
+        ascription: '',
         business: '',
         name: '',
       },
@@ -96,21 +92,32 @@ export default {
     }
   },
   computed: {
+    ...mapState('account', ['currentOrganization']),
     ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
+  },
+  watch: {
+    currentOrganization: {
+      immediate: true,
+      handler(value) {
+        this.formData.ascription = value
+      },
+    },
   },
   methods: {
     onClose() {
       this.$emit('close')
+      this.$refs['formData'].resetFields()
     },
     onCancel() {
       this.$emit('close')
+      this.$refs['formData'].resetFields()
     },
     onSubmit() {
       this.$refs['formData'] &&
         this.$refs['formData'].validate((valid) => {
           if (valid) {
-            this.$emit('define', { ...this.formData })
+            this.$emit('submit', { ...this.formData })
             this.$refs['formData'].resetFields()
           }
         })
