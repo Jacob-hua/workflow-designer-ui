@@ -10,6 +10,7 @@ const getters = {
     return state.organization;
   },
   rootOrganizationChildren: (state) => (value) => {
+    console.log(state.organization, value)
     return state.organization.find(({ value: v }) => v === value)?.children ?? [];
   },
   findRootOrganizationByIndex: (state) => (index) => {

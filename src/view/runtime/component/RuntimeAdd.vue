@@ -1,21 +1,32 @@
 <template>
   <div>
-    <el-dialog title="新建执行"
-               width="66%"
-               :visible="dialogVisible"
-               @close="onClose">
+    <el-dialog
+      title="新建执行"
+      width="66%"
+      :visible="dialogVisible"
+      @close="onClose"
+    >
       <div class="diolog-main">
         <div class="diolog-main-left">
           <div class="system-list">
+            <el-tree
+              :data="rootOrganizationChildren(projectCode)"
+              :props="defaultProps"
+              @node-click="handleNodeClick"
+            ></el-tree>
           </div>
         </div>
         <div class="diolog-main-right">
           <div class="process-list">
-            <div class="process-list-item"
-                 v-for="(process, index) in processList"
-                 :key="index">
-              <div class="process-list-item-detail"
-                   @click="detailsShow(process)">
+            <div
+              class="process-list-item"
+              v-for="(process, index) in processList"
+              :key="index"
+            >
+              <div
+                class="process-list-item-detail"
+                @click="detailsShow(process)"
+              >
                 <span>详情</span>
               </div>
               <div class="process-list-item-word">
@@ -31,41 +42,44 @@
                 <span>{{ process.createTime }}</span>
               </div>
               <div class="process-list-item-button">
-                <el-button type="primary"
-                           plain
-                           @click="createTicket(process)">创建</el-button>
+                <el-button type="primary" plain @click="createTicket(process)"
+                  >创建</el-button
+                >
               </div>
             </div>
           </div>
           <div class="process-page">
-            <el-pagination @size-change="onSizeChange"
-                           @current-change="onCurrentChange"
-                           :current-page.sync="getData.page"
-                           :page-size="getData.limit"
-                           layout="prev, pager, next, jumper"
-                           :total="getData.total">
+            <el-pagination
+              @size-change="onSizeChange"
+              @current-change="onCurrentChange"
+              :current-page.sync="getData.page"
+              :page-size="getData.limit"
+              layout="prev, pager, next, jumper"
+              :total="getData.total"
+            >
             </el-pagination>
           </div>
         </div>
       </div>
     </el-dialog>
-    <runtime-creat-ticket :visible="createTicketVisible"
-                          :process="process"
-                          @close="onCreateTicketVisible"
-                          @submit="onCreateTicketSubmit" />
-    <detailsRem ref="detailsRem"
-                seeType="runTime"></detailsRem>
+    <runtime-creat-ticket
+      :visible="createTicketVisible"
+      :process="process"
+      @close="onCreateTicketVisible"
+      @submit="onCreateTicketSubmit"
+    />
+    <detailsRem ref="detailsRem" seeType="runTime"></detailsRem>
   </div>
 </template>
 
 <script>
-import detailsRem from '@/view/home/component/details.vue'
-import { getProcessDefinitionList } from '@/api/unit/api.js'
-import { mapState } from 'vuex'
-import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
+import detailsRem from "@/view/home/component/details.vue";
+import { getProcessDefinitionList } from "@/api/unit/api.js";
+import { mapState, mapGetters } from "vuex";
+import RuntimeCreatTicket from "./RuntimeCreatTicket.vue";
 
 export default {
-  name: 'RuntimeAdd',
+  name: "RuntimeAdd",
   components: {
     detailsRem,
     RuntimeCreatTicket,
@@ -75,23 +89,33 @@ export default {
       type: Boolean,
       default: false,
     },
+    projectCode: {
+      type: String,
+      default: '',
+    }
   },
   data() {
     return {
       processList: [],
+      energyTree: [],
       getData: {
-        type: 'energy-1',
-        order: 'desc',
+        type: "energy-1",
+        order: "desc",
         page: 1,
         limit: 9,
         total: 1,
       },
       createTicketVisible: false,
       process: {},
-    }
+      defaultProps: {
+        children: "children",
+        label: "label",
+      },
+    };
   },
   computed: {
-    ...mapState(['tenantId']),
+    ...mapState('account', ['tenantId', 'userInfo']),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   mounted() {
     // TODO: 此处的工单加载需要重新设计
@@ -99,52 +123,56 @@ export default {
   },
   methods: {
     detailsShow(item) {
-      this.$refs.detailsRem.dialogVisible2 = true
+      this.$refs.detailsRem.dialogVisible2 = true;
       this.$nextTick(() => {
-        this.$refs.detailsRem.$refs.details2.postData = item
-        this.$refs.detailsRem.$refs.details2.postData.version = item.user
-        this.$refs.detailsRem.$refs.details2.createNewDiagram(item.content)
-      })
+        this.$refs.detailsRem.$refs.details2.postData = item;
+        this.$refs.detailsRem.$refs.details2.postData.version = item.user;
+        this.$refs.detailsRem.$refs.details2.createNewDiagram(item.content);
+      });
     },
-    onCreateTicketVisible() {
-      this.createTicketVisible = false
-    },
-    changSystem(energyType) {
-      this.getData.type = energyType
+    handleNodeClick(data) {
+      this.getData.type = data.value
       this.getProcessList()
     },
+    onCreateTicketVisible() {
+      this.createTicketVisible = false;
+    },
+    changSystem(energyType) {
+      this.getData.type = energyType;
+      this.getProcessList();
+    },
     systemListItemClass(value) {
-      return this.getData.type === value ? 'check-pro' : ''
+      return this.getData.type === value ? "check-pro" : "";
     },
     onClose() {
-      this.$emit('close')
+      this.$emit("close");
     },
     getProcessList() {
       getProcessDefinitionList({
         ...this.getData,
         tenantId: this.tenantId,
       }).then((res) => {
-        this.processList = res.result.dataList
-        this.getData.total = res.result.count * 1
-      })
+        this.processList = res.result.dataList;
+        this.getData.total = res.result.count * 1;
+      });
     },
     onSizeChange() {
-      this.getProcessList()
+      this.getProcessList();
     },
     onCurrentChange() {
-      this.getProcessList()
+      this.getProcessList();
     },
     onCreateTicketSubmit(signal) {
       if (signal) {
-        this.$emit('succseeAdd')
+        this.$emit("succseeAdd");
       }
     },
     createTicket(process) {
-      this.createTicketVisible = true
-      this.process = process
+      this.createTicketVisible = true;
+      this.process = process;
     },
   },
-}
+};
 </script>
 
 <style scoped="scoped">
