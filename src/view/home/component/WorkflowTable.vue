@@ -68,9 +68,11 @@
             :editData="editData"
             @addWorkSuccess="getManyData()"
             dataType="enabled"
+            :ascription="ascription"
             :business="business"
             @addDraftSuccess="getManyData()"></deploy>
     <detailsBnpm ref="detailsBnpm"
+                 :ascription="ascription"
                  :business="business"
                  @deleteSuccess="getTableData()"></detailsBnpm>
   </div>
@@ -80,7 +82,8 @@
 import deploy from './deploy.vue'
 import detailsBnpm from './details.vue'
 import { postProcessDesignServicePage } from '@/api/unit/api.js'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+
 
 export default {
   props: {
@@ -118,6 +121,7 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
   methods: {
+    ...mapActions('config', ['dispatchRefreshOrganization']),
     getTableData() {
       postProcessDesignServicePage({
         ...this.getData,
@@ -169,6 +173,7 @@ export default {
   },
   created() {
     this.getTableData()
+    this.dispatchRefreshOrganization()
   },
   components: {
     deploy,
