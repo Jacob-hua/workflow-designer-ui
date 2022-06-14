@@ -67,7 +67,18 @@ export default {
             _this.$refs.StartItemCon.currentId = +res.result[0].id
             _this.$refs.StartItemCon.tableData = []
           })
+          selectProcessStartConfigList(id, +this.tenantId).then(res => {
+            res.result.forEach(item => {
+              item.disabled = true
+              item.startType = item.startType+ ''
+              item.isSetting? item.isSetting = true : item.isSetting = false
+              item.isRequired? item.isRequired = true : item.isRequired = false
+            })
+            this.$refs.StartItemCon.tableFlag = true
+            this.$refs.StartItemCon.btnFlag = true
+            this.$refs.StartItemCon.tableData = res.result
 
+          })
         })
     },
     lookDetail(id, item) {
