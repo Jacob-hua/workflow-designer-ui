@@ -87,7 +87,6 @@ export default {
       }
       processFormData.set('code', processId)
       processFormData.set('business', this.formData.business)
-      processFormData.set('status', 'enabled')
       processFormData.set('createBy', this.userInfo.name)
       processFormData.set('updateBy', this.userInfo.name)
       processFormData.set('tenantId', this.tenantId)
@@ -107,6 +106,7 @@ export default {
             type: 'bpmn20-xml',
           })
         )
+        this.processFormData.set('status', 'enabled')
         let promise
         // 已发布的 走修改的流程
         if (this.currentRowData.id) {
@@ -146,6 +146,7 @@ export default {
             type: 'bpmn20-xml',
           })
         )
+        this.processFormData.set('status', 'drafted')
         if (this.flag) {
           workFlowSave(this.processFormData)
             .then(() => {

@@ -190,17 +190,7 @@ export default {
     },
   },
   mounted() {
-    designProcessCountStatistics({
-      tenantId: this.tenantId,
-      ascription: this.projectCode,
-      business: this.projectValue,
-      startTime: this.valueDate[0],
-      endTime: this.valueDate[1],
-      createBy: this.userInfo.account,
-    }).then((res) => {
-      this.draftProcessCount = res.result.draftProcessCount
-      this.processCount = res.result.processCount
-    })
+    this.fetchDesignProcessCountStatistics()
     this.findWorkFlowRecord(this.activeName)
     this.dispatchRefreshOrganization()
   },
@@ -241,10 +231,11 @@ export default {
     onAddBpmnClose() {
       this.addBpmnVisible = false
     },
-    onAddBpmnSubmit(value) {
+    async onAddBpmnSubmit(value) {
       this.flag = false
       this.addBpmnVisible = false
-      this.findWorkFlowRecord(value)
+      await this.findWorkFlowRecord(value)
+      await this.fetchDesignProcessCountStatistics()
     },
     quoteBpmnShow() {
       this.quoteBpmnVisible = true
@@ -317,7 +308,6 @@ export default {
         this.formListFirst = res.result
       })
     },
-
     getManyData() {
       this.findWorkFlowRecord(this.activeName)
     },
@@ -343,6 +333,25 @@ export default {
           : ((this.secondtTotal = data.result.total),
             (this.$refs.project.getData.total = data.result.total),
             (this.formListFirst = data.result.list))
+      } catch (error) {}
+    },
+    async fetchDesignProcessCountStatistics() {
+      try {
+        const { errorInfo, result } = await designProcessCountStatistics({
+          tenantId: this.tenantId,
+          ascription: this.projectCode,
+          business: this.projectValue,
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1],
+          createBy: this.userInfo.account,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+
+        this.draftProcessCount = result.draftProcessCount
+        this.processCount = result.processCount
       } catch (error) {}
     },
   },
