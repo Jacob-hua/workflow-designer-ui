@@ -114,6 +114,7 @@ export default {
           let formData = new FormData()
           formData.append('name', item.name)
           formData.append('docName', item.name + '.form')
+          formData.append('docType', 'json')
           formData.append('ascription', this.projectCode)
           formData.append('code', id)
           formData.append('business', this.projectValue)

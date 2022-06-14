@@ -95,6 +95,7 @@
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.json')
         formData.append('docType', 'json')
+        formData.append('docType', 'json')
         formData.append('ascription', 'public')
         formData.append('code', id)
         formData.append('business', '')
