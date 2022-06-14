@@ -99,7 +99,7 @@
       <div class="my-process-designer__canvas"
            ref="bpmn-canvas"></div>
     </div>
-    <div class="bpmnView-data">
+    <!-- <div class="bpmnView-data">
       <div class="bpmn-configure">
         <div class="bpmn-configure-basic">
           <div class="bpmn-configure-title">任务详情</div>
@@ -126,7 +126,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
