@@ -88,6 +88,7 @@ import addProject from './addProject.vue'
 import addBpmn from './addBpmn.vue'
 import lookBpmn from './lookBpmn.vue'
 import { mapState } from 'vuex'
+import { currentOneMonthAgo } from '@/util/date'
 
 export default {
   components: {
@@ -98,6 +99,7 @@ export default {
     addProject,
   },
   data() {
+    const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
       formSecondTotal: '',
       formFirstTotal: '',
@@ -112,7 +114,7 @@ export default {
       currentRowData: {},
       dataType: 'enabled',
       projectCode: '',
-      valueDate: [],
+      valueDate: [start, end],
       input: '',
       activeName: 'enabled,disabled',
       formListFirst: [],

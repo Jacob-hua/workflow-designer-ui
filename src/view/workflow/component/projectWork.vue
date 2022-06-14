@@ -126,6 +126,7 @@ import {
   designProcessCountStatistics,
 } from '@/api/managerWorkflow'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { currentOneMonthAgo } from '@/util/date'
 
 export default {
   components: {
@@ -137,6 +138,7 @@ export default {
     lookBpmn,
   },
   data() {
+    const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
       draftProcessCount: 0,
       processCount: 0,
@@ -161,7 +163,7 @@ export default {
       lookBpmnVisible: false,
       dataType: 'enabled',
       projectCode: '',
-      valueDate: [],
+      valueDate: [start, end],
       input: '',
       activeName: 'enabled,disabled',
       formListFirst: [],
