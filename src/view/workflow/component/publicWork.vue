@@ -247,7 +247,7 @@ export default {
         status: 'enabled',
         ascription: this.projectCode,
         business: this.projectValue,
-        createBy: this.userInfo.name,
+        createBy: this.userInfo.account,
         numberCode: '',
         name: this.input,
         startTime: this.valueDate[0]

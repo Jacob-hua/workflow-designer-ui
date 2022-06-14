@@ -210,7 +210,7 @@ export default {
     getDataNumber() {
       getTaskCountStatistic({
         ascription: this.value1,
-        assignee: this.userInfo.name,
+        assignee: this.userInfo.account,
         business: this.value2.at(-1),
         endTime: this.valueDate[1],
         startTime: this.valueDate[0],
