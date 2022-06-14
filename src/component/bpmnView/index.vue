@@ -135,8 +135,8 @@
 <script>
 import BpmnModeler from 'bpmn-js/lib/Modeler'
 import DefaultEmptyXML from '@/plugin/package/designer/plugins/defaultEmpty'
-import bpmnData from '@/assets/js/bpmnMock.js'
 import { designFormDesignServiceAll } from '@/api/unit/api.js'
+
 export default {
   props: {
     valueType: {

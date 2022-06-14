@@ -258,7 +258,6 @@ export default {
             "method": api.method,
             "url": api.host + api.path + api.parameter
           }).then(res => {
-            console.log(res)
             this.jsonData = res
           })
         } else {
@@ -274,7 +273,6 @@ export default {
             "method": api.method,
             "url": api.host + api.path + api.parameter
           }).then(res => {
-            console.log(res)
             this.jsonData = res
           })
         }

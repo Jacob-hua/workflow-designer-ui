@@ -8,7 +8,7 @@
         <div class="card-main">
           <div><label>项目名称:</label> <span>{{item.name}}</span></div>
           <div><label>项目类型:</label> <span>{{item.typeName}}</span></div>
-          <div><label>修改时间:</label> <span>{{item.createTime}}</span></div>
+          <div><label>创建时间:</label> <span>{{item.createTime}}</span></div>
         </div>
         <el-button @click="showSartDailog(item.id, item)" class="config" v-role="{ id: 'StartItemConfigAdd', type: 'button', business: business }">配置</el-button>
         <el-button @click="lookDetail(item.id)" v-role="{ id: 'StartItemConfigLook', type: 'button', business: business }">查看</el-button>
@@ -67,7 +67,18 @@ export default {
             _this.$refs.StartItemCon.currentId = +res.result[0].id
             _this.$refs.StartItemCon.tableData = []
           })
+          selectProcessStartConfigList(id, +this.tenantId).then(res => {
+            res.result.forEach(item => {
+              item.disabled = true
+              item.startType = item.startType+ ''
+              item.isSetting = !!item.isSetting
+              item.isRequired = !!item.isRequired
+            })
+            this.$refs.StartItemCon.tableFlag = true
+            this.$refs.StartItemCon.btnFlag = true
+            this.$refs.StartItemCon.tableData = res.result
 
+          })
         })
     },
     lookDetail(id, item) {
@@ -83,18 +94,18 @@ export default {
           res.result.forEach(item => {
             item.disabled = true
             item.startType = item.startType+ ''
-            item.isSetting? item.isSetting = true : item.isSetting = false
-            item.isRequired? item.isRequired = true : item.isRequired = false
+            item.isSetting = !!item.isSetting
+            item.isRequired = !!item.isRequired
           })
           this.$refs.StartItemCon.tableFlag = true
+          this.$refs.StartItemCon.btnFlag = false
+          this.$refs.StartItemCon.processFlag = false
           this.$refs.StartItemCon.tableData = res.result
-
         })
       })
     },
     getBusinessConfigBasicList() {
         getBusinessConfigBasicList(this.tenantId).then(res => {
-          console.log(res)
           this.businessList = res.result
         })
      },

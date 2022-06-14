@@ -106,29 +106,30 @@
         deep: true,
         immediate: true,
         handler(newValue, oldValue) {
-          let content = JSON.parse(newValue.content)
-          let list = content.list
-          for (const formItem of list) {
-            if (formItem.columns && formItem.columns.length) {
-              for (const formItemElement of formItem.columns) {
-                for (const formItemElementElement of formItemElement.list) {
-                  formItemElementElement.disabled = true
+          if (newValue.content) {
+            let content = JSON.parse(newValue.content)
+            let list = content.list
+            for (const formItem of list) {
+              if (formItem.columns && formItem.columns.length) {
+                for (const formItemElement of formItem.columns) {
+                  for (const formItemElementElement of formItemElement.list) {
+                    formItemElementElement.disabled = true
+                  }
                 }
+              } else {
+                if ( Object.keys(formItem).includes('disabled')) {
+                  formItem.disabled  =  true
+                } else  {}
               }
-            } else {
-              if ( Object.keys(formItem).includes('disabled')) {
-                formItem.disabled  =  true
-              } else  {}
             }
+            this.itemList = list
+            this.$nextTick(() => {
+              let ql_blank = document.querySelector('.ql-blank')
+              if (ql_blank) {
+                ql_blank.setAttribute('contenteditable', false)
+              }
+            })
           }
-        this.itemList = list
-          this.$nextTick(() => {
-            let ql_blank = document.querySelector('.ql-blank')
-            if (ql_blank) {
-               ql_blank.setAttribute('contenteditable', false)
-            }
-          })
-
         }
       }
     },

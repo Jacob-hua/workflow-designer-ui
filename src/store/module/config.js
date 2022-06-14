@@ -36,6 +36,11 @@ const actions = {
       return;
     }
     commit("updateOrganization", { organization: organization2CascaderData(result ?? []) });
+    commit(
+      "account/updateCurrentOrganization",
+      { currentOrganization: organization2CascaderData(result ?? [])[0]?.value },
+      { root: true }
+    );
 
     function organization2CascaderData(data) {
       if (Array.isArray(data)) {

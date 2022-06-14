@@ -105,8 +105,8 @@
         }
       }
     },
-    computed:{
-      ...mapState('account', ['tenantId', 'userInfo']),
+    computed: {
+      ...mapState('account', ['userInfo', 'tenantId'])
     },
     methods:{
       // 查询草稿箱
