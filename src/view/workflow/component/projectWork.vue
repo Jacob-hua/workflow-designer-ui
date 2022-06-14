@@ -100,16 +100,16 @@
                @close="quoteBpmnHidden()"
                @lookBpmnShow="lookBpmnShow"
                @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn :showFlag="showFlag"
+    <lookBpmn v-if="lookBpmnVisible"
+              :showFlag="showFlag"
               :business="projectValue"
               :isEdit="isEdit"
               :rowData="rowData"
               :dep="dep"
-              v-if="lookBpmnVisible"
               ref="bpmn"
               :dialogVisible="lookBpmnVisible"
-              @close="lookBpmnHidden()"
-              @edit="lookBpmnEdit"
+              @close="onLookBpmnClose"
+              @edit="onLookBpmnEdit"
               @quote="addProjectShow()"></lookBpmn>
   </div>
 </template>
@@ -193,8 +193,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchDesignProcessCountStatistics()
-    this.findWorkFlowRecord(this.activeName)
+    this.refreshWorkFlowRecord(this.activeName)
     this.dispatchRefreshOrganization()
   },
   methods: {
@@ -247,16 +246,17 @@ export default {
         this.showFlag = false
       }
       this.lookBpmnVisible = true
+      this.currentRowData = row
       this.$nextTick(() => {
-        this.$refs.bpmn.currentRowData = row
         this.$refs.bpmn.$refs.bpmnView.postData = row
         this.$refs.bpmn.$refs.bpmnView.showFlag = false
       })
     },
-    lookBpmnHidden() {
+    onLookBpmnClose() {
       this.lookBpmnVisible = false
+      this.currentRowData = {}
     },
-    lookBpmnEdit(row) {
+    onLookBpmnEdit(row) {
       this.lookBpmnVisible = false
       this.xmlString = row.content
       this.currentRowData = row

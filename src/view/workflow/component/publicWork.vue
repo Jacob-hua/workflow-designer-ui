@@ -10,7 +10,8 @@
                         range-separator="——"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd">
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        :default-time="['00:00:00', '23:59:59']">
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
@@ -36,46 +37,43 @@
               @click="changeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
       </div>
       <div class="home-table">
-        <projectTable ref="project"
+        <projectTable v-if="activeName === 'enabled,disabled'"
+                      ref="project"
                       :formListFirst="formListFirst"
                       :valueDate="valueDate"
                       :ascription="projectCode"
                       :business="projectValue"
-                      v-if="activeName === 'enabled,disabled'"
-                      @lookBpmnShow="lookBpmnShow"></projectTable>
-        <draftTable ref="draft"
+                      @lookBpmnShow="lookBpmnShow"
+                      @deleteRow="onProjectDeleteRow"
+                      @pageSizeChange="onProjectTableSizeChange"
+                      @pageChange="onProjectTablePageChange"></projectTable>
+        <draftTable v-if="activeName === 'drafted'"
+                    ref="draft"
                     :formListSecond="formListSecond"
-                    @totalChange="totalChange"
                     :valueDate="valueDate"
                     :ascription="projectCode"
                     :business="projectValue"
-                    v-if="activeName === 'drafted'"
-                    @draftTableEdit="draftTableEdit"></draftTable>
+                    @totalChange="totalChange"
+                    @draftTableEdit="draftTableEdit"
+                    @deleteRow="onDraftDeleteRow"
+                    @pageSizeChange="onDraftTableSizeChange"
+                    @pageChange="onDraftTablePageChange"></draftTable>
       </div>
     </div>
-    <addProject ref="addpro"
-                :dialogVisible="addProjectVisible"
-                @close="addProjectHidden()"
-                @define="addProjectDefine"></addProject>
     <addBpmn :currentRowData="currentRowData"
              :flag="flag"
              publick="publick"
              :dialogVisible="addBpmnVisible"
-             @close="addBpmnHidden()"
-             @define="addBpmnDefine"
-             :xmlString="xmlString"></addBpmn>
-    <quoteBpmn :dialogVisible="quoteBpmnVisible"
-               @close="quoteBpmnHidden()"
-               @lookBpmnShow="lookBpmnShow"
-               @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn ref="bpmn"
+             :xmlString="xmlString"
+             @close="onAddBpmnClose"
+             @submit="onAddBpmnSubmit"></addBpmn>
+    <lookBpmn v-if="lookBpmnVisible"
+              ref="bpmn"
+              valueType="public"
               :rowData="rowData"
-              v-if="lookBpmnVisible"
               :dialogVisible="lookBpmnVisible"
-              @close="lookBpmnHidden()"
-              @edit="lookBpmnEdit"
-              @quote="quoteBpmnShow"
-              valueType="public"></lookBpmn>
+              @close="onLookBpmnClose"
+              @edit="onLookBpmnEdit"></lookBpmn>
   </div>
 </template>
 
@@ -88,7 +86,6 @@ import projectTable from './projectTable.vue'
 import draftTable from './draftTable.vue'
 import addProject from './addProject.vue'
 import addBpmn from './addBpmn.vue'
-import quoteBpmn from './quoteBpmn.vue'
 import lookBpmn from './lookBpmn.vue'
 import { mapState } from 'vuex'
 
@@ -97,7 +94,6 @@ export default {
     projectTable,
     draftTable,
     addBpmn,
-    quoteBpmn,
     lookBpmn,
     addProject,
   },
@@ -108,12 +104,6 @@ export default {
       flag: true,
       rowData: '',
       projectValue: '',
-      projectOption: [
-        {
-          value: '',
-          label: '全部项目',
-        },
-      ],
       getData: {
         page: 1,
         limit: 10,
@@ -121,16 +111,14 @@ export default {
       },
       currentRowData: {},
       dataType: 'enabled',
-      projectCode: 'beiqijia',
+      projectCode: '',
       valueDate: [],
       input: '',
-      activeName: 'drafted',
+      activeName: 'enabled,disabled',
       formListFirst: [],
       formListSecond: [],
       dialogVisible: false,
-      addProjectVisible: false,
       addBpmnVisible: false,
-      quoteBpmnVisible: false,
       lookBpmnVisible: false,
       draftProcessCount: 0,
       processCount: 0,
@@ -138,43 +126,20 @@ export default {
     }
   },
   computed: {
-    ...mapState('account', ['tenantId', 'userInfo']),
+    ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
+  },
+  watch: {
+    currentOrganization: {
+      immediate: true,
+      handler(value) {
+        this.projectCode = value
+      },
+    },
   },
   mounted() {
-    designProcessCountStatistics({
-      tenantId: this.tenantId,
-      ascription: 'public',
-      business: this.projectValue,
-      startTime: this.valueDate[0],
-      endTime: this.valueDate[1],
-      createBy: this.userInfo.name,
-    }).then((res) => {
-      this.draftProcessCount = res.result.draftProcessCount
-      this.processCount = res.result.processCount
-    })
-    this.findWorkFlowRecord()
+    this.refreshWorkFlowRecord(this.activeName)
   },
   methods: {
-    addProjectHidden() {
-      this.addProjectVisible = false
-    },
-    addProjectDefine(value) {
-      console.log(value)
-      this.formData = value
-      Object.keys(value).length ? (this.flag = true) : (this.flag = false)
-      this.addProjectVisible = false
-      this.addBpmnShow()
-    },
-    addProjectShow(dep = '新建工作流', row) {
-      this.toData = row
-      this.$nextTick(() => {
-        this.currentRowData = row
-      })
-
-      this.$refs.addpro.title = dep
-      this.addProjectVisible = true
-      this.$refs.addpro.postData = row || {}
-    },
     totalChange(list) {
       this.formListSecond = list
     },
@@ -183,35 +148,31 @@ export default {
       this.addBpmnVisible = true
       this.flag = true
     },
-    addBpmnHidden() {
+    onAddBpmnClose() {
       this.addBpmnVisible = false
     },
-    addBpmnDefine() {
+    onAddBpmnSubmit(value) {
       this.addBpmnVisible = false
-    },
-
-    quoteBpmnShow() {
-      this.quoteBpmnVisible = true
-    },
-    quoteBpmnHidden() {
-      this.quoteBpmnVisible = false
+      this.refreshWorkFlowRecord(value)
     },
     lookBpmnShow(row, tit) {
       tit === 'gongzuoliu' ? (this.isEdit = true) : (this.isEdit = false)
       this.rowData = row
       this.lookBpmnVisible = true
+      this.currentRowData = row
       this.$nextTick(() => {
-        this.$refs.bpmn.currentRowData = row
         this.$refs.bpmn.$refs.bpmnView.postData = row
       })
     },
-    lookBpmnHidden() {
+    onLookBpmnClose() {
       this.lookBpmnVisible = false
+      this.currentRowData = {}
     },
-    lookBpmnEdit(row) {
+    onLookBpmnEdit(row) {
       this.lookBpmnVisible = false
       this.xmlString = row.content
       this.addBpmnVisible = true
+      this.flag = false
     },
     draftTableEdit(row) {
       this.xmlString = row.content
@@ -259,32 +220,81 @@ export default {
       })
     },
     getManyData() {
-      this.findWorkFlowRecord()
+      this.findWorkFlowRecord(this.activeName)
+    },
+    onProjectDeleteRow() {
+      this.refreshWorkFlowRecord('enabled,disabled')
+    },
+    onProjectTableSizeChange(pageSize) {
+      this.getData.limit = pageSize
+      this.refreshWorkFlowRecord('enabled,disabled')
+    },
+    onProjectTablePageChange(page) {
+      this.getData.page = page
+      this.refreshWorkFlowRecord('enabled,disabled')
+    },
+    onDraftDeleteRow() {
+      this.refreshWorkFlowRecord('drafted')
+    },
+    onDraftTableSizeChange(pageSize) {
+      this.getData.limit = pageSize
+      this.refreshWorkFlowRecord('drafted')
+    },
+    onDraftTablePageChange(page) {
+      this.getData.page = page
+      this.refreshWorkFlowRecord('drafted')
+    },
+    async refreshWorkFlowRecord(value) {
+      await this.findWorkFlowRecord(value)
+      await this.fetchDesignProcessCountStatistics()
     },
     // 查询公共流程工作流记录
-    async findWorkFlowRecord(status = 'drafted') {
-      let data = await workFlowRecord({
-        tenantId: this.tenantId || null,
-        status,
-        ascription: 'public' || '',
-        business: this.projectValue || '',
-        createBy: this.userInfo.name || '',
-        numberCode: '',
-        name: this.input,
-        startTime: this.valueDate[0]
-          ? `${this.valueDate[0]} 00:00:00` || ''
-          : '',
-        endTime: this.valueDate[1] ? `${this.valueDate[1]} 23:59:59` || '' : '',
-        page: this.getData.page,
-        limit: this.getData.limit,
-      })
-      status === 'drafted'
-        ? ((this.formListSecond = data.result.list),
-          (this.$refs.draft.getData.total = data.result.total),
-          (this.formSecondTotal = data.result.total))
-        : ((this.formListFirst = data.result.list),
-          (this.$refs.project.getData.total = data.result.total),
-          (this.formFirstTotal = data.result.total))
+    async findWorkFlowRecord(status) {
+      try {
+        const { errorInfo, result } = await workFlowRecord({
+          tenantId: this.tenantId,
+          status,
+          ascription: 'public',
+          createBy: this.userInfo.account,
+          name: this.input,
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1],
+          page: this.getData.page,
+          limit: this.getData.limit,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+
+        if (status === 'drafted') {
+          this.formListSecond = result.list
+          this.$refs.draft.getData.total = result.total
+          this.formSecondTotal = result.total
+        } else {
+          this.formListFirst = result.list
+          this.$refs.project.getData.total = result.total
+          this.formFirstTotal = result.total
+        }
+      } catch (error) {}
+    },
+    async fetchDesignProcessCountStatistics() {
+      try {
+        const { errorInfo, result } = await designProcessCountStatistics({
+          tenantId: this.tenantId,
+          ascription: 'public',
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1],
+          createBy: this.userInfo.account,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+
+        this.draftProcessCount = result.draftProcessCount
+        this.processCount = result.processCount
+      } catch (error) {}
     },
   },
 }
@@ -293,9 +303,6 @@ export default {
 <style scoped="scoped">
 .PublicForm-title ::v-deep .el-input__inner {
   border: 1px solid black;
-}
-
-.PublicForm-title {
 }
 
 .checkPro {
@@ -360,7 +367,6 @@ export default {
 .PublicForm-title-button {
   display: inline-block;
   margin-left: 40px;
-  float: right;
 }
 
 .home-main {

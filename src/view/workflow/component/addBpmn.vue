@@ -84,9 +84,9 @@ export default {
         processFormData.set('ascription', 'public')
       } else {
         processFormData.set('ascription', this.currentOrganization)
+        processFormData.set('business', this.formData.business)
       }
       processFormData.set('code', processId)
-      processFormData.set('business', this.formData.business)
       processFormData.set('createBy', this.userInfo.name)
       processFormData.set('updateBy', this.userInfo.name)
       processFormData.set('tenantId', this.tenantId)
@@ -97,6 +97,10 @@ export default {
     async onPublish() {
       try {
         await this.$iBpmn.validate()
+      } catch (error) {
+        this.$message.error('流程设计存在错误/警告')
+      }
+      try {
         const { xml } = await this.$iBpmn.saveXML({
           format: true,
         })
@@ -123,9 +127,7 @@ export default {
         this.$message.success('发布成功')
         this.$emit('submit', 'enabled,disabled')
         this.onClose()
-      } catch (e) {
-        this.$message.error('流程设计存在错误/警告')
-      }
+      } catch (e) {}
     },
     onCancel() {
       this.$emit('close')
@@ -136,6 +138,10 @@ export default {
     async onSave() {
       try {
         await this.$iBpmn.validate()
+      } catch (error) {
+        this.$message.error('流程设计存在错误/警告')
+      }
+      try {
         const { xml } = await this.$iBpmn.saveXML({
           format: true,
         })
@@ -160,9 +166,7 @@ export default {
         this.$message.success('保存成功')
         this.$emit('submit', 'drafted')
         this.onClose()
-      } catch (error) {
-        this.$message.error('流程设计存在错误/警告')
-      }
+      } catch (error) {}
     },
   },
 }

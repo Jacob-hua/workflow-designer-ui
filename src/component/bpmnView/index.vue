@@ -92,8 +92,6 @@
       <div class="bpmnView-title-button">
         <el-button type="primary"
                    @click="$emit('edit')">编辑</el-button>
-        <el-button type="primary"
-                   @click="$emit('quote')">引用</el-button>
       </div>
     </div>
     <div class="bpmnView-process">
