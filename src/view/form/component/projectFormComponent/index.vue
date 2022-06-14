@@ -9,8 +9,7 @@
           </el-select>
         </div>
         <div class="from-item">
-          <span>流程类型</span>
-
+          <span style="width: 79px">流程类型</span>
           <el-cascader
               ref="cascader"
               v-model="postData.business"
