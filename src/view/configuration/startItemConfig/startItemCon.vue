@@ -208,8 +208,8 @@ export default {
         })
       }
     },
-    saveStart() {
-      this.tableData.forEach(item => {
+    formatData(data) {
+      data.forEach(item => {
         item.isSetting ?
             item.isSetting = StartItemEnum.SURE_SETTING
             : item.isSetting = StartItemEnum.NOT_SETTING
@@ -220,7 +220,13 @@ export default {
 
         item.startType = +item.startType
       })
-      startConfig({businessConfigId:  this.tableData[0].businessConfigId, list:  this.tableData}).then(res => {
+    },
+    saveStart() {
+      this.formatData(this.tableData)
+      startConfig({
+        businessConfigId:  this.tableData[0].businessConfigId,
+        list:  this.tableData
+      }).then(res => {
         this.$message({
           type: 'success',
           message: '保存成功'
