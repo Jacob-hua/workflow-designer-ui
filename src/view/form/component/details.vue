@@ -267,7 +267,7 @@
         })
       },
       quot() {
-        this.dialogVisible1 = true
+        // this.dialogVisible1 = true
       }
     }
   }

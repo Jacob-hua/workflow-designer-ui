@@ -29,9 +29,6 @@
   import formbpmn from '../formBpmn.vue'
   import { postFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
   import { mapState } from 'vuex'
-  import {
-    FormEditor
-  } from '@bpmn-io/form-js-editor';
   export default {
     props:{
       dataType: {
