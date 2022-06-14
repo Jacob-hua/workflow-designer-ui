@@ -49,6 +49,8 @@ import {
   designFormDesignServiceAll,
   postFormDesignServiceRealiseProcessData,
 } from '@/api/unit/api.js'
+import { mapState } from 'vuex'
+
 export default {
   props: {
     dialogVisible: {
@@ -74,6 +76,9 @@ export default {
       formList: [],
     }
   },
+  computed: {
+    ...mapState('account', ['userInfo','tenantId'])
+  },
   methods: {
     handleClose() {
       this.$emit('close')
@@ -83,7 +88,7 @@ export default {
     getFormList() {
       designFormDesignServiceAll({
         status: 'enabled',
-        tenantId: this.$store.state.tenantId,
+        tenantId: this.tenantId,
         ascription: 'public',
         business: '',
         createBy: '',
@@ -91,30 +96,31 @@ export default {
         name: '',
         docName: '',
       }).then((res) => {
+
         this.formList = res.result
       })
     },
     open(item) {
+
       this.$confirm('应用的公共表单会加入到项目表单中,是否继续', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
       })
         .then(() => {
-          const xml = JSON.parse(item.content)
-          xml.id = 'form_' + Date.parse(new Date())
-          var file1 = new File([JSON.stringify(xml.content)], 'test.form', {
+          const id = 'form_' + Date.parse(new Date())
+          var file1 = new File([item.content], 'test.form', {
             type: 'text/xml',
           })
           let formData = new FormData()
           formData.append('name', item.name)
           formData.append('docName', item.name + '.form')
           formData.append('ascription', this.projectCode)
-          formData.append('code', xml.id)
+          formData.append('code', id)
           formData.append('business', this.projectValue)
           formData.append('status', 'enabled')
-          formData.append('createBy', this.$store.state.userInfo.name)
-          formData.append('createName', this.$store.state.userInfo.name)
-          formData.append('tenantId', this.$store.state.tenantId)
+          formData.append('createBy', this.userInfo.account)
+          formData.append('createName', this.userInfo.name)
+          formData.append('tenantId', this.tenantId)
           formData.append('file', file1)
           postFormDesignServiceRealiseProcessData(formData).then((res) => {
             this.$message.success('应用至项目表单成功')
