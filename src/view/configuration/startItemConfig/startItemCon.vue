@@ -190,7 +190,7 @@ export default {
   methods: {
     deleteRow(row) {
       if (this.processFlag) {
-        this.tableData.splice(this.tableData.findIndex(item => item.id === row.id))
+        this.tableData.splice(this.tableData.findIndex(item => item.id === row.id), 1)
       }
     },
     write(data) {
