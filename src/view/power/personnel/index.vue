@@ -114,15 +114,12 @@
       PeTree,
       editRole
     },
-    // created() {
-    //   this.getTree()
-    // }
     watch:{
       business: {
         handler() {
-          console.log(this.business)
           this.getTree()
-        }
+        },
+        immediate: true
       }
     }
   }
