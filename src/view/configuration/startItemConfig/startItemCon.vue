@@ -105,7 +105,7 @@
                 prop=""
                 label="操作">
               <template slot-scope="scope">
-                <span style="color: #1d89ff; cursor: pointer" v-role="{ id: 'StartItemConfigDelete', type: 'button', business: business }">删除</span>
+                <span @click ='deleteRow(scope.row)'   style="color: #1d89ff; cursor: pointer" v-role="{ id: 'StartItemConfigDelete', type: 'button', business: business }">删除</span>
               </template>
             </el-table-column>
           </el-table>
@@ -114,8 +114,8 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <div v-if="footFlag">
-           <el-button   @click="saveStart">保 存</el-button>
-            <el-button   @click="dialogVisible = false">取 消</el-button>
+           <el-button @click="saveStart">保 存</el-button>
+           <el-button @click="dialogVisible = false">取 消</el-button>
         </div>
 
       </span>
@@ -166,9 +166,20 @@ export default {
     ...mapState('account', ['userInfo','tenantId'])
   },
   mounted() {
-
+    getThirdInterfaceList({
+      tenantId: this.tenantId,
+      ascription: this.businessData.code
+    }).then(res => {
+      this.optionsList = res.result
+    })
   },
   methods: {
+    deleteRow(row) {
+      console.log(row)
+      if (this.processFlag) {
+        this.tableData.splice(this.data.findIndex((item,index) => item.id ===row.id), 1)
+      }
+    },
     write(data) {
       if (data.isRequired) {
         data.isSetting = true
@@ -220,7 +231,6 @@ export default {
          })
          this.tableFlag = true
          this.tableData = res.result
-
        })
      } else {
        this.currentId = data.id

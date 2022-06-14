@@ -19,7 +19,7 @@
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ data.name }}
           <el-input size="mini" v-if="showinput && data.id === currentNode.id" v-model="nodeCode" placeholder="请输入项目code"></el-input>
-          <el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur"  v-model="inptVal"></el-input></span>
+          <el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="onblur" placeholder="请输入节点名称"  v-model="inptVal"></el-input></span>
         <span>
           <i v-if="editFlag && node.level < 3" @click="(e)=> append(data,node)" style="font-size: 20px !important; color: #409eff;margin-left: 10px" class="el-icon-circle-plus-outline"></i>
           <i v-if="data.id !==1 && data.parentId != -1" @click="remove(node, data)" style="font-size: 20px !important; color: red;margin-left: 10px" class="el-icon-remove-outline"></i>
