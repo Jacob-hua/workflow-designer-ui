@@ -288,7 +288,7 @@ export default {
             break
         }
         // formData.append('createTime', new Date())
-        formData.append('createBy', this.userInfo.name)
+        formData.append('createBy', this.userInfo.account)
         formData.append('deployKey', definitions.process['_id'])
         formData.append(
           'deployName',
@@ -303,7 +303,7 @@ export default {
           'systemType',
           this.$refs.ProcessInformation.postData.systemType
         )
-        formData.append('updateBy', this.userInfo.name)
+        formData.append('updateBy', this.userInfo.account)
         // formData.append('processResource', '')
         formData.append('tenantId', this.$store.state.tenantId)
         postDeployForOnline(formData).then((res) => {
@@ -420,7 +420,7 @@ export default {
             break
         }
         // formData.append('createTime', new Date())
-        formData.append('createBy', this.userInfo.name)
+        formData.append('createBy', this.userInfo.account)
         formData.append('deployKey', Date.parse(new Date()))
         formData.append(
           'deployName',

@@ -117,7 +117,7 @@ export default {
       getProcessDraftList({
         ...this.getData,
         tenantId: this.tenantId,
-        createBy: this.userInfo.name,
+        createBy: this.userInfo.account,
         startTime: this.valueDate[0],
         endTime: this.valueDate[1],
         business: this.business.at(-1),
