@@ -128,12 +128,9 @@ export default {
      this.currentPars = this.currentRow[ this.editableTabsValue].parseParams
     },
     deleteApis() {
-      console.log(this.editableTabsValue)
-
       let currentApi = this.currentRow[this.editableTabsValue]
       deleteApi(currentApi.id).then(res => {
         this.currentRow.splice(+this.editableTabsValue,1)
-        console.log(this.currentRow)
         this.editableTabsValue= '0'
         this.$message({
           type: 'success',
@@ -143,7 +140,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.currentRow)
     this.editableTabsValue = '0'
     this.currentPars = this.currentRow[ this.editableTabsValue].parseParams
   }

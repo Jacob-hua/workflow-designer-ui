@@ -170,7 +170,6 @@ export default {
     },
     apiDetail(params) {
       apiDetail(params).then((res)=> {
-        console.log(res)
         res.result.forEach(api => {
           api.configParams = []
           if (api.method === ApiEnum.API_TYPE_POST) {
@@ -304,11 +303,9 @@ export default {
       }
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.pageInfo.limit = val
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.pageInfo.page = val
     }
   }

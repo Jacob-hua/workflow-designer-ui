@@ -118,7 +118,6 @@ export default {
               type: 'success',
               message: '保存成功'
             })
-          
             _this.$parent.getBusinessConfigBasicList()
           })
         } else {
