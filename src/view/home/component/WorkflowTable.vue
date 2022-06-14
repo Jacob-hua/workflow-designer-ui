@@ -156,6 +156,7 @@ export default {
       this.$refs.deploy.dialogVisible1 = true
       this.$refs.deploy.firstData.ascription = row.ascription
       this.$refs.deploy.firstData.business = row.business.at(-1)
+      this.$refs.deploy.changeOptions()
       this.$refs.deploy.firstData.id = row.id
     },
     detailsDiolog(item) {
