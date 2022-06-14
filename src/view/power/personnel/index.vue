@@ -103,7 +103,7 @@
           name: '',
           page: 1,
           tenantId: this.tenantId,
-          userId: this.userInfo.name
+          userId: this.userInfo.account
         }).then((res) => {
           this.tableData = res.result.dataList
         })

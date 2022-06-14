@@ -91,7 +91,7 @@ export default {
   },
   mounted() {
     this.data[0].tenantId = this.tenantId
-    this.data[0].createBy = this.userInfo.name
+    this.data[0].createBy = this.userInfo.account
   },
   methods: {
     exit() {
@@ -118,7 +118,6 @@ export default {
               type: 'success',
               message: '保存成功'
             })
-          
             _this.$parent.getBusinessConfigBasicList()
           })
         } else {
@@ -148,7 +147,7 @@ export default {
           return
         }
         this.showinput = false
-        const newChild = { "id": id++,  "code":this.nodeCode, "tenantId": this.tenantId,  "createBy": this.userInfo.name,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
+        const newChild = { "id": id++,  "code":this.nodeCode, "tenantId": this.tenantId,  "createBy": this.userInfo.account,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
         if (!this.currentNode.children) {
           this.$set(this.currentNode, 'children', []);
         }

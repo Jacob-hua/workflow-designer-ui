@@ -38,6 +38,7 @@ import { userLogin } from '@/constant/index.js'
 import CONSTANT from '@/constant'
 import { userLogin } from '@/api/unit/api.js'
 import { mapMutations } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'LoginPage',

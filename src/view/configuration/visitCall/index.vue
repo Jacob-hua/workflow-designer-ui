@@ -170,7 +170,6 @@ export default {
     },
     apiDetail(params) {
       apiDetail(params).then((res)=> {
-        console.log(res)
         res.result.forEach(api => {
           api.configParams = []
           if (api.method === ApiEnum.API_TYPE_POST) {
@@ -274,7 +273,7 @@ export default {
             dataParse: '', //解析配置
             isUse: 1, // 是否使用 1 使用 0禁用 2删除
             createTime: '', //创建时间
-            createBy: this.$store.state.userInfo.name, //创建人
+            createBy: this.userInfo.account, //创建人
             tenantId: +this.tenantId, //租户id
             configParams: [
               {
@@ -304,11 +303,9 @@ export default {
       }
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.pageInfo.limit = val
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.pageInfo.page = val
     }
   }

@@ -78,6 +78,7 @@
   import preview from "@/plugin/FormDesign/component/preview";
   import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
   import Preview from "@/plugin/FormDesign/component/preview";
+  import { mapState } from 'vuex'
   export default {
     props:{
       quote: {
@@ -105,36 +106,38 @@
         deep: true,
         immediate: true,
         handler(newValue, oldValue) {
-          let content = JSON.parse(newValue.content)
-          let list = content.list
-          for (const formItem of list) {
-            if (formItem.columns && formItem.columns.length) {
-              for (const formItemElement of formItem.columns) {
-                for (const formItemElementElement of formItemElement.list) {
-                  formItemElementElement.disabled = true
+          if (newValue.content) {
+            let content = JSON.parse(newValue.content)
+            let list = content.list
+            for (const formItem of list) {
+              if (formItem.columns && formItem.columns.length) {
+                for (const formItemElement of formItem.columns) {
+                  for (const formItemElementElement of formItemElement.list) {
+                    formItemElementElement.disabled = true
+                  }
                 }
+              } else {
+                if ( Object.keys(formItem).includes('disabled')) {
+                  formItem.disabled  =  true
+                } else  {}
               }
-            } else {
-              if ( Object.keys(formItem).includes('disabled')) {
-                formItem.disabled  =  true
-              } else  {}
             }
+            this.itemList = list
+            this.$nextTick(() => {
+              let ql_blank = document.querySelector('.ql-blank')
+              if (ql_blank) {
+                ql_blank.setAttribute('contenteditable', false)
+              }
+            })
           }
-        this.itemList = list
-          this.$nextTick(() => {
-            let ql_blank = document.querySelector('.ql-blank')
-            if (ql_blank) {
-               ql_blank.setAttribute('contenteditable', false)
-            }
-          })
-
         }
       }
     },
     computed: {
       formConf: function ()  {
         return JSON.parse(this.formDatas.content).config
-      }
+      },
+      ...mapState('account', ['tenantId', 'userInfo']),
     },
     data() {
       return {
@@ -228,10 +231,10 @@
         postFormDesignRecordFormDesignRecordInfo({
           id: this.value,
           status: this.status,
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           ascription: this.ascription,
           business: this.business,
-          createBy: this.$store.state.userInfo.name
+          createBy: this.userInfo.account
         }).then((res) => {
           this.formDatas = res.result
           this.formBpmnEditKey++
@@ -255,9 +258,9 @@
         formData.append('code', xml.id)
         formData.append('business', this.postData.business)
         formData.append('status', 'enabled')
-        formData.append('createBy', this.$store.state.userInfo.name)
+        formData.append('createBy', this.userInfo.name)
         formData.append('createName', 'admin')
-        formData.append('tenantId', this.$store.state.tenantId)
+        formData.append('tenantId', this.tenantId)
         formData.append('file', file1)
         postFormDesignServiceRealiseProcessData(formData).then((res) => {
           this.$message.success('发布至可用表单成功')

@@ -203,7 +203,7 @@ export default {
     }
   },
   mounted() {
-    this.apiBoxList[0].createBy = this.userInfo.name
+    this.apiBoxList[0].createBy = this.userInfo.account
     this.apiBoxList[0].tenantId = this.tenantId
     this.apiTypeList()
   },
@@ -258,7 +258,6 @@ export default {
             "method": api.method,
             "url": api.host + api.path + api.parameter
           }).then(res => {
-            console.log(res)
             this.jsonData = res
           })
         } else {
@@ -274,7 +273,6 @@ export default {
             "method": api.method,
             "url": api.host + api.path + api.parameter
           }).then(res => {
-            console.log(res)
             this.jsonData = res
           })
         }
@@ -367,7 +365,7 @@ export default {
               dataParse: '', //解析配置
               isUse: 1, // 是否使用 1 使用 0禁用 2删除
               createTime: '', //创建时间
-              createBy: this.userInfo.name, //创建人
+              createBy: this.userInfo.account, //创建人
               tenantId: +this.tenantId, //租户id
               configParams: [
                 {

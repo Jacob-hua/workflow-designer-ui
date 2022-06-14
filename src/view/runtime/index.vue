@@ -55,6 +55,7 @@
       <div class="runtime-home-button"
            v-role="{ id: 'RunTimeAdd', type: 'button', business: getData.projectCode }">
         <div class="button1"
+             :class="getData.projectCode ? '' : 'disableStyle'"
              @click="goAdd()">
           <div class="title">
             <i class="el-icon-circle-plus"></i>
@@ -152,6 +153,7 @@
       </div>
     </div>
     <runtime-add :dialogVisible="runtimeAddVisible"
+                 :projectCode="getData.projectCode"
                  @close="closeDialogAdd"
                  @succseeAdd="succseeAdd()"></runtime-add>
     <runTimeImplement :dialogVisible="runtimeImplementVisible"
@@ -222,6 +224,8 @@ export default {
         page: 1,
         limit: 10,
         total: 1,
+        projectCode: '',
+        businessCode: 'undefined'
       },
     }
   },
@@ -263,15 +267,15 @@ export default {
         }
         this.tableData = result.dataList
         this.tableData.forEach((item) => {
-          if (item.taskAssignee.split(',').indexOf(this.userInfo.name) !== -1) {
+          if (item.taskAssignee.split(',').indexOf(this.userInfo.account) !== -1) {
             item.newTaskId =
               item.taskId.split(',')[
-                item.taskAssignee.split(',').indexOf(this.userInfo.name)
+                item.taskAssignee.split(',').indexOf(this.userInfo.account)
               ]
           } else {
             item.trackList[item.trackList.length - 1].candidateUsers.forEach(
               (item1) => {
-                if (item1.candidateUsers.indexOf(this.userInfo.name) !== -1) {
+                if (item1.candidateUsers.indexOf(this.userInfo.account) !== -1) {
                   item.newTaskId = item1.taskId
                 }
               }
@@ -310,7 +314,7 @@ export default {
       return (
         rolePeopleList
           .concat(row.taskAssignee.split(','))
-          .indexOf(this.userInfo.name) !== -1
+          .indexOf(this.userInfo.account) !== -1
       )
     },
     handleSizeChange() {
@@ -370,6 +374,10 @@ export default {
       })
     },
     goAdd() {
+      if (!this.getData.projectCode) {
+        this.$message.error('请选择项目')
+        return
+      }
       this.runtimeAddVisible = true
     },
     closeDialogAdd() {
@@ -516,6 +524,11 @@ export default {
 .runtime-table .home-table-page {
   text-align: right;
   padding: 20px 0px;
+}
+
+.disableStyle {
+  cursor: not-allowed;
+  color: gray;
 }
 
 /deep/ .el-table {

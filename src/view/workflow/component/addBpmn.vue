@@ -87,8 +87,8 @@ export default {
         processFormData.set('business', this.formData.business)
       }
       processFormData.set('code', processId)
-      processFormData.set('createBy', this.userInfo.name)
-      processFormData.set('updateBy', this.userInfo.name)
+      processFormData.set('createBy', this.userInfo.account)
+      processFormData.set('updateBy', this.userInfo.account)
       processFormData.set('tenantId', this.tenantId)
       return processFormData
     },

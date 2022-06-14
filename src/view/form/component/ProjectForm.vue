@@ -4,25 +4,23 @@
       <el-select style="width: 300px; margin-right: 20px"   @change="projectChange" v-model="projectCode">
         <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
       </el-select>
-      <el-cascader
-          style="width: 350px"
-          v-model="projectValue"
-          :options="systemOption"
-          :props = 'sysProps'
-          clearable
-          @change="handleChange"></el-cascader>
-    <div class="PublicForm-title">
-      <div class="PublicForm-title-option">
-      </div>
+      <div class="PublicForm-title">
       </div>
       <div class="datePick">
+        <el-cascader
+            style="width: 350px"
+            v-model="projectValue"
+            :options="systemOption"
+            :props = 'sysProps'
+            clearable
+            @change="handleChange"></el-cascader>
         <span class="datePickTitle">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
           start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
-        <el-input v-model="input" placeholder="请输入内容"></el-input>
+        <el-input v-model="input" placeholder="请输入表单名称或编号"></el-input>
       </div>
       <div class="PublicForm-title-input">
         <el-button type="primary" @click="getManyData()">查询</el-button>
@@ -198,7 +196,7 @@
           status: 'drafted',
           ascription: this.projectCode,
           business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
-          createBy: this.userInfo.name,
+          createBy: this.userInfo.account,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] + ' 00:00:00',
@@ -386,12 +384,14 @@
 
   .datePick {
     display: inline-block;
+    margin-top: 15px ;
   }
 
   .datePickTitle {
     display: inline-block;
     font-size: 14px;
     margin-right: 20px;
+    margin-left: 20px;
   }
 
   .PublicForm-title-option {
@@ -408,6 +408,7 @@
     display: inline-block;
     margin-left: 40px;
     float: right;
+    margin-top: 15px;
   }
 
   .home-main {

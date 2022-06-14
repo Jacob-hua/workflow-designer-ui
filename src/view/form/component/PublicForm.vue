@@ -82,6 +82,7 @@
   import PublicFormDiolog from './PublicFormComponent/index.vue'
   import detailsDiolog from './details.vue'
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
+  import { mapState } from 'vuex'
   export default {
     data() {
       return {
@@ -104,16 +105,19 @@
         }
       }
     },
+    computed: {
+      ...mapState('account', ['userInfo', 'tenantId'])
+    },
     methods:{
       // 查询草稿箱
       getDraftData() {
         this.valueDate = this.valueDate || []
         postFormDesignRecordDraftInfo({
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           status: 'drafted',
           ascription: 'public',
           business: '',
-          createBy: this.$store.state.userInfo.name,
+          createBy: this.userInfo.account,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] + ' 00:00:00',
@@ -128,11 +132,11 @@
       getEnableData() {
         this.valueDate = this.valueDate || []
         postFormDesignBasicFormRecord({
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           status: 'enabled',
           ascription: 'public',
           business: '',
-          createBy: this.$store.state.userInfo.name,
+          createBy: this.userInfo.account,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] + ' 00:00:00',
@@ -194,10 +198,10 @@
         postFormDesignRecordFormDesignRecordInfo({
           id: item.id,
           status: this.activeName,
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           ascription: 'public',
           business: '',
-          createBy: this.$store.state.userInfo.name
+          createBy: this.userInfo.account
         }).then((res) => {
           this.$refs.detailsDiolog.previewVisible = true
           this.formData = res.result
