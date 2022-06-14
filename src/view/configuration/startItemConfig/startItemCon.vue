@@ -209,7 +209,6 @@ export default {
       }
     },
     saveStart() {
-      let res = this.tableData
       res.forEach(item => {
         item.isSetting ?
             item.isSetting = StartItemEnum.SURE_SETTING
@@ -221,8 +220,7 @@ export default {
 
         item.startType = +item.startType
       })
-
-      startConfig({businessConfigId: res[0].businessConfigId, list: res}).then(res => {
+      startConfig({businessConfigId: res[0].businessConfigId, list:  this.tableData}).then(res => {
         this.$message({
           type: 'success',
           message: '保存成功'
