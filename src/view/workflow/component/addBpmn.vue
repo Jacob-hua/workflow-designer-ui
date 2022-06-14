@@ -60,10 +60,6 @@ export default {
       type: String,
       default: '',
     },
-    pubFlag: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -91,7 +87,6 @@ export default {
       }
       processFormData.set('code', processId)
       processFormData.set('business', this.formData.business)
-      processFormData.set('status', 'enabled')
       processFormData.set('createBy', this.userInfo.name)
       processFormData.set('updateBy', this.userInfo.name)
       processFormData.set('tenantId', this.tenantId)
@@ -111,28 +106,23 @@ export default {
             type: 'bpmn20-xml',
           })
         )
+        this.processFormData.set('status', 'enabled')
+        let promise
         // 已发布的 走修改的流程
-        if (this.pubFlag) {
+        if (this.currentRowData.id) {
           this.processFormData.set('id', this.currentRowData.id)
-          workFlowSaveDraft(this.processFormData)
-            .then(() => {
-              this.$message.success('保存成功')
-              this.$emit('close')
-            })
-            .catch(({ errorMsg }) => {
-              this.$message.error(errorMsg)
-            })
+          promise = workFlowSaveDraft(this.processFormData)
         } else {
-          publishWorkflow(this.processFormData)
-            .then(() => {
-              this.$message.success('发布成功')
-              this.$emit('close')
-            })
-            .catch(({ errorMsg }) => {
-              this.$message.error(errorMsg)
-            })
+          promise = publishWorkflow(this.processFormData)
         }
+        const { errorInfo } = await Promise.resolve(promise)
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.$message.success('发布成功')
         this.$emit('submit', 'enabled,disabled')
+        this.onClose()
       } catch (e) {
         this.$message.error('流程设计存在错误/警告')
       }
@@ -155,26 +145,21 @@ export default {
             type: 'bpmn20-xml',
           })
         )
+        this.processFormData.set('status', 'drafted')
+        let promise
         if (this.flag) {
-          workFlowSave(this.processFormData)
-            .then(() => {
-              this.$message.success('保存成功')
-              this.$emit('close')
-            })
-            .catch(({ errorMsg }) => {
-              this.$message.error(errorMsg)
-            })
+          promise = workFlowSave(this.processFormData)
         } else {
-          workFlowSaveDraft(this.processFormData)
-            .then(() => {
-              this.$message.success('保存成功')
-              this.$emit('close')
-            })
-            .catch(({ errorMsg }) => {
-              this.$message.error(errorMsg)
-            })
+          promise = workFlowSaveDraft(this.processFormData)
         }
+        const { errorInfo } = await Promise.resolve(promise)
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.$message.success('保存成功')
         this.$emit('submit', 'drafted')
+        this.onClose()
       } catch (error) {
         this.$message.error('流程设计存在错误/警告')
       }

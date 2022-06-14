@@ -10,8 +10,7 @@
     </div>
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
-        <el-cascader style="width: 350px"
-                     v-model="projectValue"
+        <el-cascader v-model="projectValue"
                      clearable
                      :key="projectCode"
                      :options="rootOrganizationChildren(projectCode)"
@@ -59,21 +58,27 @@
               @click="changeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
       </div>
       <div class="home-table">
-        <projectTable ref="project"
+        <projectTable v-if="activeName === 'enabled,disabled'"
+                      ref="project"
                       :formListFirst="formListFirst"
                       :valueDate="valueDate"
                       :ascription="projectCode"
                       :business="projectValue"
-                      v-if="activeName === 'enabled,disabled'"
-                      @lookBpmnShow="lookBpmnShow"></projectTable>
-        <draftTable ref="draft"
+                      @lookBpmnShow="lookBpmnShow"
+                      @deleteRow="onProjectDeleteRow"
+                      @pageSizeChange="onProjectTableSizeChange"
+                      @pageChange="onProjectTablePageChange"></projectTable>
+        <draftTable v-if="activeName === 'drafted'"
+                    ref="draft"
                     :formListSecond="formListSecond"
-                    @totalChange="totalChange"
                     :valueDate="valueDate"
                     :ascription="projectCode"
                     :business="projectValue"
-                    v-if="activeName === 'drafted'"
-                    @draftTableEdit="draftTableEdit"></draftTable>
+                    @totalChange="totalChange"
+                    @draftTableEdit="draftTableEdit"
+                    @deleteRow="onDraftDeleteRow"
+                    @pageSizeChange="onDraftTableSizeChange"
+                    @pageChange="onDraftTablePageChange"></draftTable>
       </div>
     </div>
     <addProject ref="addpro"
@@ -81,9 +86,8 @@
                 :dialogVisible="addProjectVisible"
                 :projectOption="projectOption"
                 @close="onAddProjectClose"
-                @submit="addProjectDefine"></addProject>
+                @submit="onAddProjectSubmit"></addProject>
     <addBpmn v-if="addBpmnVisible"
-             :pubFlag="pubFlag"
              :formData="formData"
              :flag="flag"
              :currentRowData="currentRowData"
@@ -169,7 +173,6 @@ export default {
       xmlString: '',
       flag: false,
       toData: null,
-      pubFlag: false,
       showFlag: true,
     }
   },
@@ -193,17 +196,7 @@ export default {
     },
   },
   mounted() {
-    designProcessCountStatistics({
-      tenantId: this.tenantId,
-      ascription: this.projectCode,
-      business: this.projectValue,
-      startTime: this.valueDate[0],
-      endTime: this.valueDate[1],
-      createBy: this.userInfo.account,
-    }).then((res) => {
-      this.draftProcessCount = res.result.draftProcessCount
-      this.processCount = res.result.processCount
-    })
+    this.fetchDesignProcessCountStatistics()
     this.findWorkFlowRecord(this.activeName)
     this.dispatchRefreshOrganization()
   },
@@ -231,7 +224,7 @@ export default {
     onAddProjectClose() {
       this.addProjectVisible = false
     },
-    addProjectDefine(value) {
+    onAddProjectSubmit(value) {
       this.formData = value
       Object.keys(value).length ? (this.flag = true) : (this.flag = false)
       this.addProjectVisible = false
@@ -247,7 +240,7 @@ export default {
     onAddBpmnSubmit(value) {
       this.flag = false
       this.addBpmnVisible = false
-      this.findWorkFlowRecord(value)
+      this.refreshWorkFlowRecord(value)
     },
     quoteBpmnShow() {
       this.quoteBpmnVisible = true
@@ -271,10 +264,7 @@ export default {
     lookBpmnHidden() {
       this.lookBpmnVisible = false
     },
-    lookBpmnEdit(row, flag) {
-      if (flag === '查看') {
-        this.pubFlag = true
-      }
+    lookBpmnEdit(row) {
       this.lookBpmnVisible = false
       this.xmlString = row.content
       this.currentRowData = row
@@ -323,14 +313,39 @@ export default {
         this.formListFirst = res.result
       })
     },
-
     getManyData() {
       this.findWorkFlowRecord(this.activeName)
+    },
+    onProjectDeleteRow() {
+      this.refreshWorkFlowRecord('enabled,disabled')
+    },
+    onProjectTableSizeChange(pageSize) {
+      this.getData.limit = pageSize
+      this.refreshWorkFlowRecord('enabled,disabled')
+    },
+    onProjectTablePageChange(page) {
+      this.getData.page = page
+      this.refreshWorkFlowRecord('enabled,disabled')
+    },
+    onDraftDeleteRow() {
+      this.refreshWorkFlowRecord('drafted')
+    },
+    onDraftTableSizeChange(pageSize) {
+      this.getData.limit = pageSize
+      this.refreshWorkFlowRecord('drafted')
+    },
+    onDraftTablePageChange(page) {
+      this.getData.page = page
+      this.refreshWorkFlowRecord('drafted')
+    },
+    async refreshWorkFlowRecord(value) {
+      await this.findWorkFlowRecord(value)
+      await this.fetchDesignProcessCountStatistics()
     },
     // 查询项目流程
     async findWorkFlowRecord(status) {
       try {
-        let data = await workFlowRecord({
+        const { errorInfo, result } = await workFlowRecord({
           tenantId: this.tenantId,
           status,
           ascription: this.projectCode,
@@ -342,13 +357,39 @@ export default {
           page: this.getData.page,
           limit: this.getData.limit,
         })
-        status === 'drafted'
-          ? ((this.firstTotal = data.result.total),
-            (this.$refs.draft.getData.total = data.result.total),
-            (this.formListSecond = data.result.list))
-          : ((this.secondtTotal = data.result.total),
-            (this.$refs.project.getData.total = data.result.total),
-            (this.formListFirst = data.result.list))
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+
+        if (status === 'drafted') {
+          this.firstTotal = result.total
+          this.$refs.draft.getData.total = result.total
+          this.formListSecond = result.list
+        } else {
+          this.secondtTotal = result.total
+          this.$refs.project.getData.total = result.total
+          this.formListFirst = result.list
+        }
+      } catch (error) {}
+    },
+    async fetchDesignProcessCountStatistics() {
+      try {
+        const { errorInfo, result } = await designProcessCountStatistics({
+          tenantId: this.tenantId,
+          ascription: this.projectCode,
+          business: this.projectValue,
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1],
+          createBy: this.userInfo.account,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+
+        this.draftProcessCount = result.draftProcessCount
+        this.processCount = result.processCount
       } catch (error) {}
     },
   },
