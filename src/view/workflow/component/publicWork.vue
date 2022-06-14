@@ -183,42 +183,6 @@ export default {
       this.activeName = value
       this.findWorkFlowRecord(value)
     },
-    // 查询草稿箱
-    getDraftData() {
-      postFormDesignRecordDraftInfo({
-        tenantId: this.tenantId,
-        status: 'drafted',
-        ascription: this.projectCode,
-        business: this.projectValue,
-        createBy: this.userInfo.name,
-        numberCode: '',
-        name: this.input,
-        startTime: this.valueDate[0]
-          ? `${this.valueDate[0]} 00:00:00` || ''
-          : '',
-        endTime: this.valueDate[1] ? `${this.valueDate[1]} 23:59:59` || '' : '',
-      }).then((res) => {
-        this.formListSecond = res.result
-      })
-    },
-    // 查询可部署流程
-    getEnableData() {
-      postFormDesignBasicFormRecord({
-        tenantId: this.tenantId,
-        status: 'enabled',
-        ascription: this.projectCode,
-        business: this.projectValue,
-        createBy: this.userInfo.name,
-        numberCode: '',
-        name: this.input,
-        startTime: this.valueDate[0]
-          ? `${this.valueDate[0]} 00:00:00` || ''
-          : '',
-        endTime: this.valueDate[1] ? `${this.valueDate[1]} 23:59:59` || '' : '',
-      }).then((res) => {
-        this.formListFirst = res.result
-      })
-    },
     getManyData() {
       this.findWorkFlowRecord(this.activeName)
     },
