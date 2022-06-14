@@ -96,7 +96,7 @@ export default {
         status: 'enabled,disabled' || '',
         ascription: 'public' || '',
         business: this.business || '',
-        createBy: this.userInfo.name || '',
+        createBy: this.userInfo.account || '',
         numberCode: '',
         name: this.input,
         startTime: this.valueDate[0]

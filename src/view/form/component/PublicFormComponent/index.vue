@@ -32,6 +32,7 @@
   import {
     FormEditor
   } from '@bpmn-io/form-js-editor';
+  import { mapState } from 'vuex'
   export default {
     props:{
       dataType: {
@@ -99,7 +100,7 @@
         formData.append('code', id)
         formData.append('business', '')
         formData.append('status', 'enabled')
-        formData.append('createBy', this.userInfo.name)
+        formData.append('createBy', this.userInfo.account)
         formData.append('createName', this.userInfo.name)
         formData.append('tenantId', this.tenantId)
         formData.append('file', file1)
@@ -135,7 +136,7 @@
         formData.append('code', id)
         formData.append('business', '')
         formData.append('status', 'drafted')
-        formData.append('createBy', this.userInfo.name)
+        formData.append('createBy', this.userInfo.account)
         formData.append('createName', 'admin')
         formData.append('tenantId', this.tenantId)
         formData.append('file', formFile)
