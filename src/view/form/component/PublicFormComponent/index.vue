@@ -28,6 +28,7 @@
 <script>
   import formbpmn from '../formBpmn.vue'
   import { postFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
+  import { mapState } from 'vuex'
   import {
     FormEditor
   } from '@bpmn-io/form-js-editor';
@@ -47,6 +48,9 @@
           name: ''
         }
       }
+    },
+    computed: {
+        ...mapState('account', ['userInfo', 'tenantId'])
     },
     methods:{
       nextDiolog() {
@@ -95,9 +99,9 @@
         formData.append('code', id)
         formData.append('business', '')
         formData.append('status', 'enabled')
-        formData.append('createBy', this.$store.state.userInfo.name)
-        formData.append('createName', this.$store.state.userInfo.name)
-        formData.append('tenantId', this.$store.state.tenantId)
+        formData.append('createBy', this.userInfo.name)
+        formData.append('createName', this.userInfo.name)
+        formData.append('tenantId', this.tenantId)
         formData.append('file', file1)
         postFormDesignServiceRealiseProcessData(formData).then((res) => {
           this.$message.success('发布至可用表单成功')
@@ -131,9 +135,9 @@
         formData.append('code', id)
         formData.append('business', '')
         formData.append('status', 'drafted')
-        formData.append('createBy', this.$store.state.userInfo.name)
+        formData.append('createBy', this.userInfo.name)
         formData.append('createName', 'admin')
-        formData.append('tenantId', this.$store.state.tenantId)
+        formData.append('tenantId', this.tenantId)
         formData.append('file', formFile)
         postFormDesignService(formData).then((res) => {
           this.$message.success('保存草稿成功')

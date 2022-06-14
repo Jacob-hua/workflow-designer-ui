@@ -109,7 +109,6 @@ export default {
     editBusiness(id) {
       this.type = 'edit'
       getBusinessConfigWithTree(id, +this.tenantId).then(res => {
-        console.log(res)
         this.$refs.BusinessCon.dialogVisible = true
         this.$refs.BusinessCon.editFlag = true
         this.edit = true

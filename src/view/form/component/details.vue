@@ -105,35 +105,36 @@
         deep: true,
         immediate: true,
         handler(newValue, oldValue) {
-          let content = JSON.parse(newValue.content)
-          let list = content.list
-          for (const formItem of list) {
-            if (formItem.columns && formItem.columns.length) {
-              for (const formItemElement of formItem.columns) {
-                for (const formItemElementElement of formItemElement.list) {
-                  formItemElementElement.disabled = true
+          if (newValue.content) {
+            let content = JSON.parse(newValue.content)
+            let list = content.list
+            for (const formItem of list) {
+              if (formItem.columns && formItem.columns.length) {
+                for (const formItemElement of formItem.columns) {
+                  for (const formItemElementElement of formItemElement.list) {
+                    formItemElementElement.disabled = true
+                  }
                 }
+              } else {
+                if ( Object.keys(formItem).includes('disabled')) {
+                  formItem.disabled  =  true
+                } else  {}
               }
-            } else {
-              if ( Object.keys(formItem).includes('disabled')) {
-                formItem.disabled  =  true
-              } else  {}
             }
+            this.itemList = list
+            this.$nextTick(() => {
+              let ql_blank = document.querySelector('.ql-blank')
+              if (ql_blank) {
+                ql_blank.setAttribute('contenteditable', false)
+              }
+            })
           }
-        this.itemList = list
-          this.$nextTick(() => {
-            let ql_blank = document.querySelector('.ql-blank')
-            if (ql_blank) {
-               ql_blank.setAttribute('contenteditable', false)
-            }
-          })
-
         }
       }
     },
     computed: {
       formConf: function ()  {
-        return JSON.parse(this.formDatas.content).config
+          return JSON.parse(this.formDatas.content).config
       }
     },
     data() {
@@ -231,7 +232,7 @@
           tenantId: this.$store.state.tenantId,
           ascription: this.ascription,
           business: this.business,
-          createBy: this.$store.state.userInfo.name
+          createBy: this.$store.state.userInfo.account
         }).then((res) => {
           this.formDatas = res.result
           this.formBpmnEditKey++
