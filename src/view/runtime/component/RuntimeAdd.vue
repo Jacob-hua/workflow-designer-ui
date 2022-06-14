@@ -207,6 +207,11 @@ export default {
   margin-top: 30px;
 }
 
+::v-deep .el-tree {
+    background: transparent;
+    font-size: 15px;
+  }
+
 .system-list-item {
   width: 220px;
   height: 44px;

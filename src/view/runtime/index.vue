@@ -224,6 +224,8 @@ export default {
         page: 1,
         limit: 10,
         total: 1,
+        projectCode: '',
+        businessCode: 'undefined'
       },
     }
   },
