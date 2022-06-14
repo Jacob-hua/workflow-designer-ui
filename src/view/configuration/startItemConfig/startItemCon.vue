@@ -189,7 +189,6 @@ export default {
   },
   methods: {
     deleteRow(row) {
-      console.log(row)
       if (this.processFlag) {
         this.tableData.splice(this.tableData.findIndex(item => item.id === row.id))
       }
@@ -224,7 +223,6 @@ export default {
       })
 
       startConfig({businessConfigId: res[0].businessConfigId, list: res}).then(res => {
-        console.log(res)
         this.$message({
           type: 'success',
           message: '保存成功'
@@ -233,6 +231,7 @@ export default {
       this.dialogVisible = false
     },
     handleNodeClick(data) {
+      this.currentId = data.id
       selectProcessStartConfigList(data.id, +this.tenantId).then(res => {
         res.result.forEach(item => {
           item.disabled = true
@@ -243,14 +242,6 @@ export default {
         this.tableFlag = true
         this.tableData = res.result
       })
-      if (!this.footFlag) {
-
-      } else {
-        this.currentId = data.id
-        this.tempArr = this.tempArr.concat(this.tableData)
-        this.tags = []
-        this.tableData = []
-      }
 
     },
     editTable() {
@@ -259,8 +250,12 @@ export default {
     },
     saveTag() {
       this.dialogVisible2 = false;
-      if (this.tableData.length) {
-        this.tableData = this.tableData.concat(this.tags)
+      if (this.tableData.length ) {
+        if (this.tableData.every(item => Object.keys(item).includes('type') === true)) {
+          this.tableData = this.tags;
+        } else  {
+          this.tableData = this.tableData.concat(this.tags)
+        }
       } else {
         this.tableData = this.tags;
       }
@@ -268,6 +263,7 @@ export default {
       this.btnFlag = true;
     },
     showSelf() {
+      this.tags = []
       this.dialogVisible2 = true
     },
     handleClose(tag) {
@@ -278,7 +274,6 @@ export default {
       let index = parseInt(Math.random() * 5)
       if (inputValue) {
         this.tags.push({
-
           // "businessConfigId": 0,
           // "code": "string",
 
