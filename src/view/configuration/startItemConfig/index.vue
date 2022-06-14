@@ -99,8 +99,8 @@ export default {
           })
           this.$refs.StartItemCon.tableFlag = true
           this.$refs.StartItemCon.btnFlag = false
+          this.$refs.StartItemCon.processFlag = false
           this.$refs.StartItemCon.tableData = res.result
-
         })
       })
     },
