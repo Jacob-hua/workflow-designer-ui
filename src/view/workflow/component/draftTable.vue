@@ -75,10 +75,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    ascription: {
-      type: String,
-      default: '',
-    },
     business: {
       type: String,
       default: '',
@@ -90,7 +86,6 @@ export default {
         page: 1,
         limit: 10,
         total: 1,
-        ascription: '',
         business: '',
         startTime: '',
         endTime: '',

@@ -62,7 +62,6 @@
                       ref="project"
                       :formListFirst="formListFirst"
                       :valueDate="valueDate"
-                      :ascription="projectCode"
                       :business="projectValue"
                       @lookBpmnShow="lookBpmnShow"
                       @deleteRow="onProjectDeleteRow"
@@ -72,7 +71,6 @@
                     ref="draft"
                     :formListSecond="formListSecond"
                     :valueDate="valueDate"
-                    :ascription="projectCode"
                     :business="projectValue"
                     @totalChange="totalChange"
                     @draftTableEdit="draftTableEdit"
@@ -82,7 +80,6 @@
       </div>
     </div>
     <addProject ref="addpro"
-                :projectCode="projectCode"
                 :dialogVisible="addProjectVisible"
                 :projectOption="projectOption"
                 @close="onAddProjectClose"
@@ -203,11 +200,6 @@ export default {
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
     ...mapMutations('account', ['updateCurrentOrganization']),
-    // 修改code
-    changProjectCode(code) {
-      this.projectCode = code
-      this.findWorkFlowRecord(this.activeName)
-    },
     totalChange(list) {
       this.formListSecond = list
     },
