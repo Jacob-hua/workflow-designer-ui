@@ -17,7 +17,7 @@
                      :props='cascaderProps'></el-cascader>
       </div>
       <div class="datePick">
-        <span class="datePickTitle">创建时间</span>
+        <span class="datePickTitle">编辑时间</span>
         <el-date-picker v-model="valueDate"
                         type="daterange"
                         align="right"
