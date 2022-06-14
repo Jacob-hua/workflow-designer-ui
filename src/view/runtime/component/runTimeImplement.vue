@@ -20,11 +20,11 @@
                     <div class="peopleList-item" v-for="(item1
                     , index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
                     <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
-                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length == 0">点击添加</span>
+                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === userInfo.account && item.candidateUsers.length == 0">点击添加</span>
                     </div>
                     <div v-if="item.candidateUsers.length > 0" style="display: inline-block;">
                       <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'Agency', item.candidateUsers )"
-                        v-if="item.assignee === $store.state.userInfo.name && item.candidateUsers.length > 0">编辑</span>
+                        v-if="item.assignee === userInfo.account && item.candidateUsers.length > 0">编辑</span>
                     </div>
                   </div>
                 </div>
@@ -38,11 +38,11 @@
                     <span> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1, index1) in item.circulations[0].unitList" v-if="item.circulations[0].unitList.length > 0">{{ item1 }}</div>
                     <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span>
-                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === $store.state.userInfo.name">点击添加</span>
+                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === userInfo.account">点击添加</span>
                     </div>
                     <div v-if="item.circulations[0].unitList.length > 0" style="display: inline-block;">
                       <span class="addCirculate" @click="changePeopleList(item.taskId, 'edit', 'Circulate', item.circulations[0].unitList)"
-                        v-if="item.assignee === $store.state.userInfo.name">编辑</span>
+                        v-if="item.assignee === userInfo.account">编辑</span>
                     </div>
                   </div>
                 </div>
@@ -159,6 +159,7 @@
     getTaskDetailList,
     getProcessNodeInfo
   } from '@/api/unit/api.js'
+  import { mapState } from 'vuex'
   export default {
     props: {
       dialogVisible: {
@@ -169,6 +170,9 @@
         type: String,
         default: ''
       }
+    },
+    computed:{
+      ...mapState('account', ['tenantId', 'userInfo']),
     },
     data() {
       return {
@@ -431,7 +435,7 @@
           })
           if (nodeInfoBoole) {
             postCompleteTask({
-              assignee: this.$store.state.userInfo.name,
+              assignee: this.userInfo.account,
               commentList: [],
               formData: formData,
               processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,

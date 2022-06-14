@@ -196,7 +196,7 @@
           status: 'drafted',
           ascription: this.projectCode,
           business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
-          createBy: this.userInfo.name,
+          createBy: this.userInfo.account,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] + ' 00:00:00',

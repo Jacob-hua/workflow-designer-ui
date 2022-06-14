@@ -60,6 +60,7 @@
 
 <script>
   import { getPersonUser, getThreeSystemOrganize, getModifyCandidate, getCirculation, postModifyProcessUser } from '@/api/unit/api.js'
+  import { mapState } from 'vuex'
   export default {
     props:{
       taskId: {
@@ -103,6 +104,9 @@
           Signature: '指定加减签',
         }
       }
+    },
+    computed: {
+      ...mapState('account',['userInfo', 'tenantId'])
     },
     methods: {
       handleClick() {
@@ -231,7 +235,7 @@
                 operateType: 'delete',
                 taskId: this.taskId,
                 type: 'user' ,
-                operator: this.$store.state.userInfo.name,
+                operator: this.userInfo.account,
                 processInstanceId: this.processInstanceId,
               }).then((res) => {
                 if (dataList.length) {
@@ -241,7 +245,7 @@
                     operateType: 'add',
                     taskId: this.taskId,
                     type: 'user' ,
-                    operator: this.$store.state.userInfo.name,
+                    operator: this.userInfo.account,
                     processInstanceId: this.processInstanceId,
                   }).then((res) => {
                     this.$message.success('传阅成功')
@@ -261,7 +265,7 @@
                 operateType: 'add',
                 taskId: this.taskId,
                 type: 'user',
-                operator: this.$store.state.userInfo.name,
+                operator: this.userInfo.account,
                 processInstanceId: this.processInstanceId,
               }).then((res) => {
                 this.$message.success('传阅成功')

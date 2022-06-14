@@ -117,7 +117,7 @@
           status: 'drafted',
           ascription: 'public',
           business: '',
-          createBy: this.userInfo.name,
+          createBy: this.userInfo.account,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] + ' 00:00:00',
@@ -136,7 +136,7 @@
           status: 'enabled',
           ascription: 'public',
           business: '',
-          createBy: this.userInfo.name,
+          createBy: this.userInfo.account,
           numberCode: '',
           name: this.input,
           startTime: this.valueDate[0] + ' 00:00:00',
@@ -201,7 +201,7 @@
           tenantId: this.tenantId,
           ascription: 'public',
           business: '',
-          createBy: this.userInfo.name
+          createBy: this.userInfo.account
         }).then((res) => {
           this.$refs.detailsDiolog.previewVisible = true
           this.formData = res.result

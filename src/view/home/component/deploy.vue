@@ -157,6 +157,7 @@ import {
 } from '@/api/unit/api.js'
 import X2JS from 'x2js'
 import preview from '@/plugin/FormDesign/component/preview'
+import { mapState } from 'vuex'
 export default {
   props: {
     editData: {
@@ -221,6 +222,9 @@ export default {
       ],
     }
   },
+  computed:{
+    ...mapState('account', ['tenantId', 'userInfo']),
+  },
   methods: {
     initData() {
       this.bpmnData = {
@@ -284,7 +288,7 @@ export default {
             break
         }
         // formData.append('createTime', new Date())
-        formData.append('createBy', this.$store.state.userInfo.name)
+        formData.append('createBy', this.userInfo.name)
         formData.append('deployKey', definitions.process['_id'])
         formData.append(
           'deployName',
@@ -299,7 +303,7 @@ export default {
           'systemType',
           this.$refs.ProcessInformation.postData.systemType
         )
-        formData.append('updateBy', this.$store.state.userInfo.name)
+        formData.append('updateBy', this.userInfo.name)
         // formData.append('processResource', '')
         formData.append('tenantId', this.$store.state.tenantId)
         postDeployForOnline(formData).then((res) => {
@@ -416,7 +420,7 @@ export default {
             break
         }
         // formData.append('createTime', new Date())
-        formData.append('createBy', this.$store.state.userInfo.name)
+        formData.append('createBy', this.userInfo.name)
         formData.append('deployKey', Date.parse(new Date()))
         formData.append(
           'deployName',

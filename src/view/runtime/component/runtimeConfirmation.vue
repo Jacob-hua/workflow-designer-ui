@@ -62,6 +62,7 @@
     putCancelInstance,
     getActiveInstance
   } from '@/api/unit/api.js'
+  import { mapState } from 'vuex'
   export default {
     props:{
       processInstanceId: {
@@ -86,7 +87,7 @@
         selectData: null,
         selectValue: null,
         form: {
-          username: this.$store.state.userInfo.name,
+          username: this.userInfo.account,
           password: ''
         },
         messageDiolog: {
@@ -104,6 +105,9 @@
           }
         }
       }
+    },
+    computed: {
+      ...mapState('account',['userInfo', 'tenantId'])
     },
     methods: {
       dialogValue(value) {
@@ -123,12 +127,12 @@
           message: this.textarea,
           processInstanceId: this.processInstanceId,
           taskKey: this.selectValue,
-          userId: this.$store.state.userInfo.name,
+          userId: this.userInfo.account,
           currentTaskId: this.taskKey,
           processKey: this.processInstanceDetail.deployKey,
           currentTaskName: this.processInstanceDetail.taskName,
           currentTaskKey: this.processInstanceDetail.taskKey,
-          createBy: this.$store.state.userInfo.name
+          createBy: this.userInfo.account
         }).then((res) => {
           // this.$parent.dataList.reject.rejectBollen = false
           // this.$parent.dataList.reject.data = '2022-04-15 11:11:11'

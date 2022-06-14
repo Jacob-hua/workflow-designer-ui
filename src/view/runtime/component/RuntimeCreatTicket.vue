@@ -70,7 +70,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tenantId', 'userInfo']),
+    ...mapState('account', ['tenantId', 'userInfo']),
     isEmptyConfig() {
       return !this.startConfigList || this.startConfigList.length === 0
     },
@@ -134,7 +134,7 @@ export default {
         const { errorInfo } = await getStartProcess({
           businessKey: '',
           definitionKey: this.process.key,
-          createBy: this.userInfo.name,
+          createBy: this.userInfo.account,
           startProcessId: this.process.id,
           variables: { ...this.startForm },
         })
@@ -159,6 +159,7 @@ export default {
       this.onCloseModal()
     },
     async fetchProcessStartConfigList(businessConfigCode) {
+      console.log(this.tenantId)
       try {
         const { errorInfo, result } = await selectProcessStartConfigByCode({
           businessConfigCode,

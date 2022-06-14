@@ -28,6 +28,9 @@
 <script>
   import formbpmn from '../formBpmn.vue'
   import { postFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
+  import {
+    FormEditor
+  } from '@bpmn-io/form-js-editor';
   import { mapState } from 'vuex'
   export default {
     props:{
@@ -92,12 +95,11 @@
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.json')
         formData.append('docType', 'json')
-        formData.append('docType', 'json')
         formData.append('ascription', 'public')
         formData.append('code', id)
         formData.append('business', '')
         formData.append('status', 'enabled')
-        formData.append('createBy', this.userInfo.name)
+        formData.append('createBy', this.userInfo.account)
         formData.append('createName', this.userInfo.name)
         formData.append('tenantId', this.tenantId)
         formData.append('file', file1)
@@ -133,7 +135,7 @@
         formData.append('code', id)
         formData.append('business', '')
         formData.append('status', 'drafted')
-        formData.append('createBy', this.userInfo.name)
+        formData.append('createBy', this.userInfo.account)
         formData.append('createName', 'admin')
         formData.append('tenantId', this.tenantId)
         formData.append('file', formFile)
