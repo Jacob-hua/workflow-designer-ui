@@ -13,9 +13,17 @@
         </div>
         <div class="from-item">
           <span>流程类型</span>
-          <el-input v-model="firstData.business"
-                    placeholder="请输入流程类型"
-                    :disabled="true"></el-input>
+          <el-select v-model="firstData.business"
+                     placeholder="请输入流程类型"
+                     @change="changeOptions">
+            <el-option v-for="item in rootOrganizationChildren(firstData.ascription)"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <!-- <el-input v-model="firstData.business"
+                    placeholder="请输入流程类型"></el-input> -->
         </div>
         <div class="from-item">
           <span>能源系统</span>
@@ -157,7 +165,7 @@ import {
 } from '@/api/unit/api.js'
 import X2JS from 'x2js'
 import preview from '@/plugin/FormDesign/component/preview'
-import { mapState } from 'vuex'
+import { mapState, mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
   props: {
     editData: {
@@ -171,6 +179,10 @@ export default {
       type: String,
       default: '',
     },
+    ascription: {
+      type: String,
+      default: '',
+    }
   },
   data() {
     return {
@@ -195,24 +207,7 @@ export default {
       formList: [],
       formShow: false,
       input: '',
-      options: [
-        {
-          value: 'energy-1',
-          label: '配电',
-        },
-        {
-          value: 'energy-2',
-          label: '空压',
-        },
-        {
-          value: 'energy-3',
-          label: '供暖',
-        },
-        {
-          value: 'energy-4',
-          label: '空调',
-        },
-      ],
+      options: [],
       valueV: '1.0',
       optionsV: [
         {
@@ -224,6 +219,7 @@ export default {
   },
   computed:{
     ...mapState('account', ['tenantId', 'userInfo']),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   methods: {
     initData() {
@@ -236,6 +232,15 @@ export default {
       }
       this.formShow = false
       this.formContent = ''
+    },
+    changeOptions() {
+      let manyValue = this.rootOrganizationChildren(this.firstData.ascription)
+      let systemOption = manyValue.filter((item) => {
+        return item.value === this.firstData.business
+      })
+      if (systemOption.length > 0) {
+       this.options = systemOption[0].children 
+      }
     },
     addWorkFlow() {
       const newConvert = new X2JS()
@@ -288,7 +293,7 @@ export default {
             break
         }
         // formData.append('createTime', new Date())
-        formData.append('createBy', this.userInfo.name)
+        formData.append('createBy', this.userInfo.account)
         formData.append('deployKey', definitions.process['_id'])
         formData.append(
           'deployName',
@@ -303,9 +308,9 @@ export default {
           'systemType',
           this.$refs.ProcessInformation.postData.systemType
         )
-        formData.append('updateBy', this.userInfo.name)
+        formData.append('updateBy', this.userInfo.account)
         // formData.append('processResource', '')
-        formData.append('tenantId', this.$store.state.tenantId)
+        formData.append('tenantId', this.tenantId)
         postDeployForOnline(formData).then((res) => {
           this.$message.success('保存成功')
           this.dialogVisible2 = false
@@ -420,7 +425,7 @@ export default {
             break
         }
         // formData.append('createTime', new Date())
-        formData.append('createBy', this.userInfo.name)
+        formData.append('createBy', this.userInfo.account)
         formData.append('deployKey', Date.parse(new Date()))
         formData.append(
           'deployName',

@@ -68,9 +68,11 @@
             :editData="editData"
             @addWorkSuccess="getManyData()"
             dataType="enabled"
+            :ascription="ascription"
             :business="business"
             @addDraftSuccess="getManyData()"></deploy>
     <detailsBnpm ref="detailsBnpm"
+                 :ascription="ascription"
                  :business="business"
                  @deleteSuccess="getTableData()"></detailsBnpm>
   </div>
@@ -80,7 +82,8 @@
 import deploy from './deploy.vue'
 import detailsBnpm from './details.vue'
 import { postProcessDesignServicePage } from '@/api/unit/api.js'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+
 
 export default {
   props: {
@@ -118,11 +121,12 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
   methods: {
+    ...mapActions('config', ['dispatchRefreshOrganization']),
     getTableData() {
       postProcessDesignServicePage({
         ...this.getData,
         tenantId: this.tenantId,
-        createBy: this.userInfo.name,
+        createBy: this.userInfo.account,
         startTime: this.valueDate[0],
         endTime: this.valueDate[1],
         business: this.business.at(-1),
@@ -152,6 +156,7 @@ export default {
       this.$refs.deploy.dialogVisible1 = true
       this.$refs.deploy.firstData.ascription = row.ascription
       this.$refs.deploy.firstData.business = row.business.at(-1)
+      this.$refs.deploy.changeOptions()
       this.$refs.deploy.firstData.id = row.id
     },
     detailsDiolog(item) {
@@ -169,6 +174,7 @@ export default {
   },
   created() {
     this.getTableData()
+    this.dispatchRefreshOrganization()
   },
   components: {
     deploy,

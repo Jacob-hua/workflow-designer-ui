@@ -258,7 +258,7 @@
         formData.append('code', xml.id)
         formData.append('business', this.postData.business)
         formData.append('status', 'enabled')
-        formData.append('createBy', this.userInfo.name)
+        formData.append('createBy', this.userInfo.account)
         formData.append('createName', 'admin')
         formData.append('tenantId', this.tenantId)
         formData.append('file', file1)
@@ -269,7 +269,7 @@
         })
       },
       quot() {
-        this.dialogVisible1 = true
+        // this.dialogVisible1 = true
       }
     }
   }
