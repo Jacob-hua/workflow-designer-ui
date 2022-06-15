@@ -30,7 +30,7 @@
       </div>
       <div class="PublicForm-title-input">
         <el-input v-model="input"
-                  placeholder="请输入内容"></el-input>
+                  placeholder="请输入工作流名称"></el-input>
       </div>
       <div class="PublicForm-title-input">
         <el-button type="primary"
