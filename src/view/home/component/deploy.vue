@@ -9,7 +9,7 @@
         </el-form-item>
         <el-form-item label="流程类型" prop="business">
           <el-col :span="24">
-            <el-cascader v-model="firstData.business" clearable :style="{width: '100%'}" :key="projectCode" :options="rootOrganizationChildren(firstData.ascription)"
+            <el-cascader v-model="firstData.business" clearable :style="{width: '100%'}" :options="rootOrganizationChildren(firstData.ascription)"
               :props='cascaderProps' :disabled="true"></el-cascader>
           </el-col>
         </el-form-item>

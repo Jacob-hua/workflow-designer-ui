@@ -269,7 +269,6 @@
         this.bpmnModeler.on("selection.changed", ({
           newSelection
         }) => {
-          console.log(newSelection, '00000')
           this.$emit('selection', newSelection[0] || null, this.bpmnModeler)
         });
         window.bpmnInstances = {

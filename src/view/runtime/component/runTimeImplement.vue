@@ -363,7 +363,7 @@
       },
       
       implement() {
-        let formData = []
+        let formData = {}
         let data = {}
         let errors = {}
         if (this.formShow) {

@@ -104,7 +104,7 @@ export default {
       getData: {
         page: 1,
         limit: 10,
-        total: 100,
+        total: 0,
         tenantId: '',
         ascription: '',
         business: '',
@@ -152,7 +152,6 @@ export default {
       this.$emit('getManyData')
     },
     deployDiolog(row) {
-      console.log('111')
       this.editData = JSON.parse(JSON.stringify(row))
       this.$refs.deploy.dialogVisible1 = true
       this.$refs.deploy.firstData.ascription = row.ascription
@@ -163,11 +162,14 @@ export default {
     detailsDiolog(item) {
       this.$refs.detailsBnpm.dialogVisible1 = true
       this.$nextTick(() => {
+        this.$refs.detailsBnpm.postData.business = item.business
+        this.$refs.detailsBnpm.changeOptions()
         this.$refs.detailsBnpm.$refs.details1.postData = JSON.parse(
           JSON.stringify(item)
         )
         this.$refs.detailsBnpm.$refs.details1.postData.deployName =
           this.$refs.detailsBnpm.$refs.details1.postData.name
+        
         this.$refs.detailsBnpm.$refs.details1.createNewDiagram(item.content)
         this.$refs.detailsBnpm.getDetailList()
       })
