@@ -1,9 +1,6 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-<!--      <el-select style="width: 300px; margin-right: 20px"   @change="projectChange" v-model="projectCode">-->
-<!--        <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>-->
-<!--      </el-select>-->
       <el-select style="width:  229px" v-model="projectCode">
         <el-option v-for="{id, label, value} in rootOrganizations"
                    :key="id"
@@ -13,13 +10,7 @@
       <div class="PublicForm-title">
       </div>
       <div class="datePick">
-<!--        <el-cascader-->
-<!--            style="width: 350px"-->
-<!--            v-model="projectValue"-->
-<!--            :options="systemOption"-->
-<!--            :props = 'sysProps'-->
-<!--            clearable-->
-<!--            @change="handleChange"></el-cascader>-->
+
         <el-cascader v-model="projectValue"
                      :key="projectCode"
                      :options="rootOrganizationChildrenAndAll(projectCode)"
