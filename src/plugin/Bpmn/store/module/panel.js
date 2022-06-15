@@ -22,6 +22,9 @@ const state = {
     assignee: "",
     candidateUsers: "",
     candidateGroups: "",
+    customAssignee: false,
+    customCandidate: false,
+    customCandidateGroup: false,
   },
   actions: [],
 };

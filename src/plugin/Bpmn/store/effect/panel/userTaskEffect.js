@@ -5,7 +5,11 @@ function userTaskEffect({ userTask }, iBpmn = new IBpmn()) {
   if (namespace !== "bpmn" || type !== "UserTask") {
     return;
   }
-  iBpmn.updateSelectedShapeProperties(userTask);
+  iBpmn.updateSelectedShapeProperties({
+    assignee: userTask.assignee,
+    candidateUsers: userTask.candidateUsers,
+    candidateGroups: userTask.candidateGroups,
+  });
 }
 
 export default userTaskEffect;
