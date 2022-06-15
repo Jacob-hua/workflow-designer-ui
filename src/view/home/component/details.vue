@@ -82,6 +82,7 @@
   import formOB from './formOB.vue'
   import { getDeployBasic, designFormDesignServiceAll, getDeleteDeployment, getDeployAndProcessInfo } from '@/api/unit/api.js'
   import preview from "@/plugin/FormDesign/component/preview";
+  import { mapState } from 'vuex'
   export default {
     props:{
       seeType: {
@@ -92,6 +93,9 @@
         type: String,
         default: ''
       }
+    },
+    computed:{
+      ...mapState('account', ['tenantId', 'userInfo']),
     },
     data() {
       return {
@@ -173,7 +177,7 @@
           let docName = formKey.split(':')[2]
           designFormDesignServiceAll({
             status: 'enabled',
-            tenantId: this.$store.state.tenantId,
+            tenantId: this.tenantId,
             ascription: this.$refs.details2.postData.ascription,
             business: '',
             createBy: '',

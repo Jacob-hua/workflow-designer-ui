@@ -173,7 +173,7 @@ export default {
     },
   },
   created() {
-    this.getTableData()
+    // this.getTableData()
     this.dispatchRefreshOrganization()
   },
   components: {
