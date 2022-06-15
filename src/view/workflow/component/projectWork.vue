@@ -116,7 +116,7 @@ import addBpmn from './addBpmn.vue'
 import quoteBpmn from './quoteBpmn.vue'
 import lookBpmn from './lookBpmn.vue'
 import { designProcessCountStatistics } from '@/api/managerWorkflow'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
 
 export default {
@@ -184,10 +184,12 @@ export default {
     },
   },
   mounted() {
+    this.dispatchRefreshOrganization()
     this.refreshWorkFlowRecord()
   },
   methods: {
     ...mapMutations('account', ['updateCurrentOrganization']),
+    ...mapActions('config', ['dispatchRefreshOrganization']),
     addProjectShow(dep = '新建工作流', row) {
       this.toData = row
       this.currentRowData = row
