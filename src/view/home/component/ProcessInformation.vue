@@ -50,7 +50,7 @@
           <el-input v-model="postData.version" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
-      <div class="title-item" v-if="type !== 'details1'">
+      <div class="title-item" v-if="type !== 'details1'" v-show="postData.systemType">
         <span class="title-item-label marginLeft40">
           能源系统
         </span>
