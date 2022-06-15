@@ -110,11 +110,13 @@ export default {
     close() {
       this.$emit('close')
     },
-    lookBpmnShow(tit, index, row) {
+    lookBpmnShow(tit, _, row) {
       this.$emit('lookBpmnShow', row, tit)
     },
-    addProjectShow(title, index, row) {
-      this.$emit('addProjectShow', title, row)
+    addProjectShow(title, _, row) {
+      const newData = {...row}
+      delete newData.id
+      this.$emit('addProjectShow', title, newData)
     },
     handleSizeChange(val) {
       this.getData.limit = val

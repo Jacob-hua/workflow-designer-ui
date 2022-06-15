@@ -41,13 +41,13 @@
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
-                   @click="quoteBpmnShow()"
-                   v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">关联工作流</el-button>
+                   @click="addProjectShow"
+                   v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
-                   @click="addProjectShow"
-                   v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
+                   @click="quoteBpmnShow()"
+                   v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">关联工作流</el-button>
       </div>
     </div>
     <div class="home-main">
@@ -127,7 +127,7 @@ import {
   workFlowRecord,
   designProcessCountStatistics,
 } from '@/api/managerWorkflow'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
 
 export default {
@@ -212,10 +212,7 @@ export default {
     },
     addProjectShow(dep = '新建工作流', row) {
       this.toData = row
-      this.$nextTick(() => {
-        this.currentRowData = row
-      })
-
+      this.currentRowData = row
       this.$refs.addpro.title = dep
       this.addProjectVisible = true
       this.$refs.addpro.postData = row || {}
