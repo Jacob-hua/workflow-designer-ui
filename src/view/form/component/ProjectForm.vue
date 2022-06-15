@@ -23,6 +23,9 @@
         <el-input v-model="input" placeholder="请输入表单名称或编号"></el-input>
       </div>
       <div class="PublicForm-title-input">
+      <el-button @click="reset()" type="primary">重置</el-button>
+    </div>
+      <div class="PublicForm-title-input">
         <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
       <div class="PublicForm-title-button">
@@ -142,6 +145,10 @@
       ...mapState('account', ['tenantId', 'userInfo']),
     },
     methods: {
+      reset() {
+         this.valueDate = []
+         this.input = ''
+      },
       deleteEmptyChildren(arr) {
         for (let i = 0; i < arr.length; i++) {
           const arrElement = arr[i];
