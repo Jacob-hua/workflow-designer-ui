@@ -11,6 +11,9 @@ import { get, post, deletefn, put } from "./unit/request";
 //     }
 
 
+// 获取 节点字典
+
+export const getAllBusinessConfig = (params) => get(`/config/businessConfig/getAllBusinessConfig`, params);
 // 清除缓存的数据
 export const clearRedisBusinessConfigCode = (params) => get(`/config/businessConfig/clearRedisBusinessConfigCode`, params);
 

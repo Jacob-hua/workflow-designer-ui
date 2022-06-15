@@ -91,7 +91,7 @@
                            align="center"
                            show-overflow-tooltip="">
           </el-table-column>
-          <el-table-column prop="energyType"
+          <el-table-column prop="energyTypeName"
                            label="能源系统"
                            align="center">
           </el-table-column>
@@ -178,6 +178,7 @@ import {
 } from '@/api/unit/api.js'
 import { currentMonthRangeFormat } from '@/util/date.js'
 import { mapActions, mapGetters, mapState } from 'vuex'
+import {getAllBusinessConfig} from "@/api/globalConfig";
 
 export default {
   name: 'Runtime',
@@ -246,6 +247,17 @@ export default {
     await this.fetchDataNumber()
   },
   methods: {
+    getAllBusinessConfig() {
+      getAllBusinessConfig({tenantId: this.tenantId}).then(res => {
+        this.tableData.forEach(table => {
+         res.result.forEach(item => {
+           if (table.energyType === item.code) {
+             table.energyTypeName = item.name
+           }
+         })
+        })
+      })
+    },
     ...mapActions('config', ['dispatchRefreshOrganization']),
     changeGroup() {
       this.getData.page = 1
@@ -253,6 +265,7 @@ export default {
       this.fetchNewTasks()
     },
     async fetchNewTasks() {
+      let _this = this
       try {
         const { errorInfo, result } = await getNewTaskList({
           ...this.getData,
@@ -282,6 +295,7 @@ export default {
             )
           }
         })
+        _this.getAllBusinessConfig()
         this.getData.total = +result.count
       } catch (error) {
         this.tableData = []
