@@ -209,11 +209,10 @@
           type: ''
         }).then(res=> {
           _this.projectOption = res?.result ?? []
-          _this.projectCode = _this.projectOption[0].code
+
           _this.ascriptionName = _this.projectOption[0].name
           _this.systemOption = _this.projectOption[0].children
           _this.deleteEmptyChildren(_this.systemOption)
-          _this.projectValue =  _this.systemOption[0].children[0].code
           _this.$nextTick(() => {
             _this.$refs.projectFormDiolog.options = _this.systemOption
             _this.$refs.projectFormDiolog.postData.business = _this.projectValue
