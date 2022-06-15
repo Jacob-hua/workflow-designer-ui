@@ -14,6 +14,7 @@
           class="dialog-footer">
       <el-button v-if="isEdit"
                  @click="onEdit"
+                 type="primary"
                  v-role="{ id: 'WorkflowEdit', type: 'button', business: business }">编辑</el-button>
       <el-button v-if="isEdit"
                  @click="onDeactivate"
