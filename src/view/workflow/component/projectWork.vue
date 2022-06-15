@@ -11,7 +11,6 @@
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
         <el-cascader v-model="projectValue"
-                     clearable
                      :key="projectCode"
                      :options="rootOrganizationChildrenAndAll(projectCode)"
                      :props='cascaderProps'></el-cascader>
@@ -43,7 +42,7 @@
       <div class="PublicForm-title-button">
         <el-button type="primary"
                    @click="quoteBpmnShow()"
-                   v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">引用工作流</el-button>
+                   v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">关联工作流</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
@@ -287,10 +286,10 @@ export default {
     changeActiveName(value) {
       this.getData.page = 1
       this.activeName = value
-      this.findWorkFlowRecord(value)
+      this.refreshWorkFlowRecord()
     },
     getManyData() {
-      this.findWorkFlowRecord(this.activeName)
+      this.refreshWorkFlowRecord()
     },
     onProjectDeleteRow() {
       this.refreshWorkFlowRecord()

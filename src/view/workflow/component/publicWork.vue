@@ -191,10 +191,10 @@ export default {
     },
     changeActiveName(value) {
       this.activeName = value
-      this.findWorkFlowRecord(value)
+      this.refreshWorkFlowRecord()
     },
     getManyData() {
-      this.findWorkFlowRecord(this.activeName)
+      this.refreshWorkFlowRecord()
     },
     onProjectDeleteRow() {
       this.refreshWorkFlowRecord()
