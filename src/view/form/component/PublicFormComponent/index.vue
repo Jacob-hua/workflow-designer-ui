@@ -200,14 +200,6 @@
   .title-item-main {
     display: inline-block;
   }
-  /deep/ .dialogVisible2 .el-input.is-disabled .el-input__inner {
-    color: black;
-    width: 180px;
-    height: 43px;
-    line-height: 43px;
-    padding: 0px 10px;
-    background-color: #f2f2f2;
-  }
   /deep/ .dialogVisible2 .el-input__inner {
     width: 180px;
     height: 43px;
