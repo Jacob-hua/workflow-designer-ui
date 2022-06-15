@@ -254,7 +254,7 @@
       
       changeActiveName(value) {
         this.activeName = value
-        this.getData()
+        this.getManyData()
       },
       
       deleteSuccsee() {
