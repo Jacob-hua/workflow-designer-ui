@@ -3,9 +3,7 @@
     <router-view></router-view>
   </div>
 </template>
-
 <script>
-import {mapActions} from  'vuex'
   export default {
     data() {
       return {
@@ -22,7 +20,7 @@ import {mapActions} from  'vuex'
       }
     },
     methods: {
-      ...mapActions('config', ['dispatchRefreshOrganization']),
+
     },
     // watch: {
     //   $route(to, from) {
@@ -44,7 +42,6 @@ import {mapActions} from  'vuex'
     // },
 
     mounted() {
-      this.dispatchRefreshOrganization()
     }
     
   };

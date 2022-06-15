@@ -158,15 +158,32 @@
         'rootOrganizationChildrenAndAll',
       ]),
     },
+    watch: {
+      projectCode(value) {
+        if (value === this.currentOrganization) {
+          return
+        }
+        this.updateCurrentOrganization({ currentOrganization: value })
+      },
+      currentOrganization: {
+        immediate: true,
+        handler(value) {
+          this.projectCode = value
+        },
+      },
+    },
     methods: {
       ...mapActions('config', ['dispatchRefreshOrganization']),
       ...mapMutations('account', ['updateCurrentOrganization']),
-      async init() {
-        await this.refreshWorkFlowRecord()
+     async init() {
+         await this.dispatchRefreshOrganization()
+         await  this.getDraftData()
+          await  this.getEnableData()
       },
       reset() {
          this.input = ''
-        this.getManyData()
+          this.projectValue = ''
+          this.getManyData()
       },
       deleteEmptyChildren(arr) {
         for (let i = 0; i < arr.length; i++) {
@@ -330,11 +347,8 @@
         this.addForm2(item)
       }
     },
-     mounted() {
-      this.projectCode = this.currentOrganization
+    mounted() {
       this.init()
-      this.getDraftData()
-      this.getEnableData()
     },
     components:{
       projectFormDiolog,
