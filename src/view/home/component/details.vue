@@ -8,7 +8,13 @@
         <div class="details-header">
           <span>能源系统</span>
           <span class="inputSelect">
-            <el-select v-model="postData.systemType" placeholder="请选择">
+            <el-cascader style="margin-right: 10px;"
+                         v-model="postData.business"
+                         :options="rootOrganizationChildren(ascription)"
+                         :props='cascaderProps'
+                         clearable
+                         :disabled="true" v-if="optionSystem.length === 0"></el-cascader>
+            <el-select v-model="postData.systemType" placeholder="请选择" v-if="optionSystem.length !== 0">
                 <el-option
                   v-for="item in optionSystem"
                   :key="item.value"
@@ -82,7 +88,7 @@
   import formOB from './formOB.vue'
   import { getDeployBasic, designFormDesignServiceAll, getDeleteDeployment, getDeployAndProcessInfo } from '@/api/unit/api.js'
   import preview from "@/plugin/FormDesign/component/preview";
-  import { mapState } from 'vuex'
+  import { mapState, mapGetters } from 'vuex'
   export default {
     props:{
       seeType: {
@@ -92,10 +98,16 @@
       business: {
         type: String,
         default: ''
+      },
+      ascription: {
+        type: String,
+        default: ''
       }
     },
     computed:{
       ...mapState('account', ['tenantId', 'userInfo']),
+      ...mapState('uiConfig', ['cascaderProps']),
+      ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
     },
     data() {
       return {
@@ -107,7 +119,7 @@
         formList: [],
         formShow: false,
         DeployBasicList: {
-          'energy-1': []
+          
         },
         bpmnData: {
           name: '',
@@ -118,26 +130,10 @@
         },
         input: '',
         postData: {
-          systemType: 'energy-1'
+          business: '',
+          systemType: ''
         },
-        optionSystem: [
-          {
-            value: 'energy-1',
-            label: '配电'
-          },
-          {
-            value: 'energy-2',
-            label: '空压'
-          },
-          {
-            value: 'energy-3',
-            label: '供暖'
-          },
-          {
-            value: 'energy-4',
-            label: '空调'
-          },
-        ]
+        optionSystem: []
       }
     },
     components:{
@@ -146,6 +142,20 @@
       preview
     },
     methods:{
+      changeOptions() {
+        let manyValue = this.rootOrganizationChildren(this.ascription)
+        let systemOption = manyValue.filter((item) => {
+          return item.value === this.postData.business
+        })
+        if (systemOption.length > 0) {
+          this.optionSystem = systemOption[0].children || []
+        }
+        if (this.optionSystem.length === 0) {
+          this.postData.systemType = this.postData.business
+        } else {
+          this.postData.systemType = this.optionSystem[0].value
+        }
+      },
       initData() {
         this.bpmnData = {
           name: '',
