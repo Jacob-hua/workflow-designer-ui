@@ -200,9 +200,12 @@ export default {
     },
     onReset() {
       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
-      this.input = ''
-      this.valueDate = [start, end]
-      this.projectValue = ''
+      this.searchForm = {
+        ...this.searchForm,
+        business: '',
+        valueDate: [start, end],
+        name: '',
+      }
       this.refreshWorkFlowRecord()
     },
     onAddProjectClose() {

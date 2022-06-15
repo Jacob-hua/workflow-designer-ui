@@ -94,7 +94,6 @@ export default {
     return {
       searchForm: {
         ascription: 'public',
-        business: '',
         valueDate: [start, end],
         name: '',
       },
@@ -128,8 +127,11 @@ export default {
     },
     onReset() {
       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
-      this.input = ''
-      this.valueDate = [start, end]
+      this.searchForm = {
+        ...this.searchForm,
+        valueDate: [start, end],
+        name: '',
+      }
       this.refreshWorkFlowRecord()
     },
     onAddBpmnClose() {
