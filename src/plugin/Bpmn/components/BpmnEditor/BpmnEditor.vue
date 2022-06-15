@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <control-header />
+    <control-header v-if="headerVisible" />
     <div class="containers"
          ref="containers"></div>
   </div>
@@ -14,6 +14,14 @@ export default {
   components: { ControlHeader },
   props: {
     pelatteVisible: {
+      type: Boolean,
+      default: true,
+    },
+    headerVisible: {
+      type: Boolean,
+      default: true,
+    },
+    linterToggle: {
       type: Boolean,
       default: true,
     },
@@ -37,6 +45,12 @@ export default {
         this.$iBpmn.loadDiagram(value)
       },
     },
+    linterToggle: {
+      immediate: true,
+      handler(value) {
+        this.$iBpmn.linterToggle(value)
+      },
+    },
   },
   mounted() {
     this.initBpmn()
@@ -56,6 +70,7 @@ export default {
 <style scoped>
 .wrapper {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }

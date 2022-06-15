@@ -26,11 +26,11 @@
         </el-table-column>
         <el-table-column label="操作"
                          align="center">
-          <template slot-scope="scope">
+          <template slot-scope="{ $index, row }">
             <el-button size="mini"
-                       @click="lookBpmnShow('引用', scope.$index, scope.row)">查看</el-button>
+                       @click="lookBpmnShow('引用', $index, row)">查看</el-button>
             <el-button size="mini"
-                       @click="addProjectShow('引用工作流', scope.$index, scope.row)">引用</el-button>
+                       @click="addProjectShow('引用工作流', $index, row)">引用</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,11 +71,7 @@ export default {
   },
   data() {
     return {
-      tableData: [
-        {
-          date: '王小虎',
-        },
-      ],
+      tableData: [],
       getData: {
         page: 1,
         limit: 10,
@@ -91,22 +87,25 @@ export default {
   },
   methods: {
     async findWorkFlowRecord() {
-      let data = await workFlowRecord({
-        tenantId: this.tenantId || null,
-        status: 'enabled,disabled' || '',
-        ascription: 'public' || '',
-        business: this.business || '',
-        createBy: this.userInfo.account || '',
-        numberCode: '',
-        name: this.input,
-        startTime: this.valueDate[0]
-          ? `${this.valueDate[0]} 00:00:00` || ''
-          : '',
-        endTime: this.valueDate[1] ? `${this.valueDate[1]} 23:59:59` || '' : '',
-        page: this.getData.page,
-        limit: this.getData.limit,
-      })
-      this.tableData = data.result.list
+      try {
+        const { errorInfo, result } = await workFlowRecord({
+          tenantId: this.tenantId,
+          status: 'enabled,disabled',
+          ascription: 'public',
+          business: this.business,
+          createBy: this.userInfo.name,
+          name: this.input,
+          startTime: this.valueDate[0],
+          endTime: this.valueDate[1],
+          page: this.getData.page,
+          limit: this.getData.limit,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.tableData = result.list
+      } catch (error) {}
     },
     close() {
       this.$emit('close')
