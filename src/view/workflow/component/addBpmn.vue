@@ -99,6 +99,7 @@ export default {
         await this.$iBpmn.validate()
       } catch (error) {
         this.$message.error('流程设计存在错误/警告')
+        return
       }
       try {
         const { xml } = await this.$iBpmn.saveXML({
@@ -140,6 +141,7 @@ export default {
         await this.$iBpmn.validate()
       } catch (error) {
         this.$message.error('流程设计存在错误/警告')
+        return
       }
       try {
         const { xml } = await this.$iBpmn.saveXML({
