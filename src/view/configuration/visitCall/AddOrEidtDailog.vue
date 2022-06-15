@@ -65,7 +65,7 @@
                   <el-form-item label="参数value">
                     <el-input v-model="params.value"></el-input>
                   </el-form-item>
-                  <i @click="deleteParams( index,idx)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
+                  <i @click="deleteParams( index,indexs)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
                 </div>
                 <el-button @click="excuteParse(item)" class="parse" type="primary">模拟请求</el-button>
                 <el-divider></el-divider>
@@ -254,15 +254,6 @@ export default {
           this.jsonData = res
         })
       } else {
-        if (api.parameter) {
-          simulationRequest({
-            "headers": api.headers,
-            "method": api.method,
-            "url": api.host + api.path + api.parameter
-          }).then(res => {
-            this.jsonData = res
-          })
-        } else {
           api.configParams.forEach((config,index) => {
             if (index === 0) {
               api.parameter = `?${config.key}=${config.value}`
@@ -277,7 +268,6 @@ export default {
           }).then(res => {
             this.jsonData = res
           })
-        }
 
       }
 
