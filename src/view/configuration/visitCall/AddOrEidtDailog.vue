@@ -67,6 +67,8 @@
                   </el-form-item>
                   <i @click="deleteParams( index,idx)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
                 </div>
+                <el-button @click="excuteParse(item)" class="parse" type="primary">模拟请求</el-button>
+                <el-divider></el-divider>
                 <div class="config_tit">
                   <span style="color: #1d89ff">解析参数</span> <i @click="addParseParams(index)"  class="el-icon-circle-plus-outline"></i>
                 </div>
@@ -79,14 +81,14 @@
                   </el-form-item>
                   <i @click="deleteParseParams( index,idxs)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
                 </div>
-                <el-button @click="excuteParse(item)" class="parse" type="primary">模拟解析</el-button>
+
               </div>
             </el-form>
           </div>
 
         </div>
         <div>
-          <p>解析结果 API1</p>
+          <p>请求结果</p>
           <div class="jsonViewer">
             <json-viewer :value="jsonData"></json-viewer>
           </div>
