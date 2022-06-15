@@ -22,6 +22,9 @@
         <el-button type="primary"
                    @click="getManyData()">查询</el-button>
       </div>
+      <div class="PublicForm-title-input">
+        <el-button @click="onReset">重置</el-button>
+      </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
                    @click="addBpmnShow()">新建工作流</el-button>
@@ -149,6 +152,11 @@ export default {
       this.xmlString = ''
       this.addBpmnVisible = true
       this.flag = true
+    },
+    onReset() {
+      const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
+      this.input = ''
+      this.valueDate = [start, end]
     },
     onAddBpmnClose() {
       this.addBpmnVisible = false
