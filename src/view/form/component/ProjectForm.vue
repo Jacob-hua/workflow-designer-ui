@@ -208,7 +208,6 @@
           tenantId: this.tenantId,
           type: ''
         }).then(res=> {
-          debugger
           _this.projectOption = res?.result ?? []
           _this.projectCode = _this.projectOption[0].code
           _this.ascriptionName = _this.projectOption[0].name
