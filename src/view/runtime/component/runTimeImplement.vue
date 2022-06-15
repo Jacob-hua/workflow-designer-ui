@@ -474,7 +474,7 @@
           let docName = formKey.split(':')[2]
           designFormDesignServiceAll({
             status: 'enabled',
-            tenantId: this.$store.state.tenantId,
+            tenantId: this.tenantId,
             ascription: this.$refs.ProcessInformation.postData.ascription,
             // business: this.$refs.ProcessInformation.postData.business,
             business: '',

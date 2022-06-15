@@ -87,7 +87,7 @@
         getData: {
           groupId: '',
           name: '',
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           userId: '',
           limit: 5,
           page: 1,

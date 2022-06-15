@@ -136,10 +136,9 @@ export default {
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
-  mounted() {
-    this.getDeployCountList()
-    this.getDataNumber()
-    this.getProjectList()
+  async created() {
+    await this.getProjectList()
+    this.getManyData()
   },
   methods: {
     handleChange() {

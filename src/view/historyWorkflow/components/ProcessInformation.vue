@@ -76,6 +76,7 @@ import bpmnData from "@/assets/js/bpmnMock.js"
 import {
   designFormDesignServiceAll
 } from '@/api/unit/api.js'
+import { mapState } from 'vuex'
 export default {
   props:{
     valueType: {
@@ -104,6 +105,9 @@ export default {
       formContent: '',
       formOBKey: 0
     }
+  },
+  computed:{
+    ...mapState('account', ['tenantId', 'userInfo']),
   },
   methods: {
     initBpmnModeler() {
@@ -173,7 +177,7 @@ export default {
         let docName = formKey.split(':')[2]
         designFormDesignServiceAll({
           status: 'enabled',
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           ascription: 'public',
           business: '',
           createBy: '',

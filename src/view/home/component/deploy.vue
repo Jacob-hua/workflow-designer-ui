@@ -321,7 +321,7 @@ export default {
     getFormList() {
       designFormDesignServiceAll({
         status: 'enabled',
-        tenantId: this.$store.state.tenantId,
+        tenantId: this.tenantId,
         ascription: this.$refs.ProcessInformation.postData.ascription,
         business: '',
         createBy: '',
@@ -440,7 +440,7 @@ export default {
           this.$refs.ProcessInformation.postData.systemType
         )
         // formData.append('processResource', '')
-        formData.append('tenantId', this.$store.state.tenantId)
+        formData.append('tenantId', this.tenantId)
         if (this.dataType === 'enabled') {
           postProcessDraft(formData).then((res) => {
             this.$message.success('保存成功')
@@ -461,7 +461,7 @@ export default {
         let docName = formKey.split(':')[2]
         designFormDesignServiceAll({
           status: 'enabled',
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           ascription: this.$refs.ProcessInformation.postData.ascription,
           business: '',
           createBy: '',

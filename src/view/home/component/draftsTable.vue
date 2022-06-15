@@ -181,7 +181,7 @@ export default {
     deploy,
   },
   created() {
-    this.getTableData()
+    // this.getTableData()
   },
 }
 </script>
