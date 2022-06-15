@@ -107,11 +107,17 @@ function userTaskParameter2State(iBpmn = new IBpmn()) {
     assignee: "",
     candidateUsers: "",
     candidateGroups: "",
+    customAssignee: false,
+    customCandidate: false,
+    customCandidateGroup: false,
   };
   const shapeInfo = iBpmn.getSelectedShapeInfo();
   userTask.assignee = shapeInfo["assignee"];
+  userTask.customAssignee = !!shapeInfo["assignee"];
   userTask.candidateUsers = shapeInfo["candidateUsers"];
+  userTask.customCandidate = !!shapeInfo["candidateUsers"];
   userTask.candidateGroups = shapeInfo["candidateGroups"];
+  userTask.customCandidateGroup = !!shapeInfo["candidateGroups"];
   return userTask;
 }
 
