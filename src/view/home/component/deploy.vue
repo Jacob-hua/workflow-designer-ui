@@ -262,10 +262,17 @@
           formData.append('operatorId', '1')
           formData.append('operatorName', this.userInfo.account)
           formData.append('processResource', file1)
-          formData.append(
-            'systemType',
-            this.$refs.ProcessInformation.postData.systemType
-          )
+          if (this.$refs.ProcessInformation.postData.systemType) {
+            formData.append(
+              'systemType',
+              this.$refs.ProcessInformation.postData.systemType
+            )
+          } else{
+            formData.append(
+              'systemType',
+              this.$refs.ProcessInformation.postData.business
+            )
+          }
           formData.append('updateBy', this.userInfo.account)
           // formData.append('processResource', '')
           formData.append('tenantId', this.tenantId)
@@ -400,7 +407,6 @@
           formData.append('operatorId', '1')
           formData.append('operatorName', 'admin')
           formData.append('processFile', file1)
-          
           if (this.$refs.ProcessInformation.postData.systemType) {
             formData.append(
               'systemType',
