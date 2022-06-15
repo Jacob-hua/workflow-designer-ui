@@ -152,6 +152,7 @@ export default {
       this.$emit('getManyData')
     },
     deployDiolog(row) {
+      console.log('111')
       this.editData = JSON.parse(JSON.stringify(row))
       this.$refs.deploy.dialogVisible1 = true
       this.$refs.deploy.firstData.ascription = row.ascription

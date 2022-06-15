@@ -191,7 +191,7 @@
           return item.value === this.firstData.business
         })
         if (systemOption.length > 0) {
-          this.options = systemOption[0].children
+          this.options = systemOption[0].children || []
         }
       },
       addWorkFlow() {
