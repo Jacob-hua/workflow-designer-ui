@@ -1,3 +1,5 @@
+import customRenderer from "@/plugin/package/module/custom-renderer";
+
 const state = {
   tenantId: "18",
   userInfo: {},
@@ -15,6 +17,7 @@ const mutations = {
     state.tenantId = userInfo.tenants?.[0]?.id;
   },
   updateCurrentOrganization(state, { currentOrganization }) {
+    console.log('updateCurrentOrganization', currentOrganization)
     state.currentOrganization = currentOrganization;
   },
 };
