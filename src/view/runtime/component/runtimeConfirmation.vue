@@ -77,6 +77,9 @@
         default: ''
       }
     },
+    computed: {
+      ...mapState('account',['userInfo', 'tenantId'])
+    },
     data() {
       return {
         dialogVisible: false,
@@ -87,7 +90,7 @@
         selectData: null,
         selectValue: null,
         form: {
-          username: this.userInfo.account,
+          username: '',
           password: ''
         },
         messageDiolog: {
@@ -106,8 +109,8 @@
         }
       }
     },
-    computed: {
-      ...mapState('account',['userInfo', 'tenantId'])
+    created() {
+      this.form.username = this.userInfo.account
     },
     methods: {
       dialogValue(value) {
