@@ -1,7 +1,7 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-      <el-select v-model="projectCode">
+      <el-select v-model="searchForm.ascription">
         <el-option v-for="{id, label, value} in rootOrganizations"
                    :key="id"
                    :label="label"
@@ -11,8 +11,8 @@
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
         <el-cascader v-model="searchForm.business"
-                     :key="projectCode"
-                     :options="rootOrganizationChildrenAndAll(projectCode)"
+                     :key="searchForm.ascription"
+                     :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
                      :props='cascaderProps'></el-cascader>
       </div>
       <div class="datePick">
@@ -88,7 +88,7 @@
              @submit="onAddBpmnSubmit"></addBpmn>
     <quoteBpmn v-if="quoteBpmnVisible"
                :valueDate="valueDate"
-               :ascription="projectCode"
+               :ascription="searchForm.ascription"
                :business="projectValue"
                :dialogVisible="quoteBpmnVisible"
                @close="quoteBpmnHidden()"
@@ -168,12 +168,9 @@ export default {
       'rootOrganizations',
       'rootOrganizationChildrenAndAll',
     ]),
-    projectCode() {
-      return this.searchForm.ascription
-    },
   },
   watch: {
-    projectCode(value) {
+    'searchForm.ascription'(value) {
       if (value === this.currentOrganization) {
         return
       }
