@@ -1,4 +1,5 @@
 import IBpmn from "../../../iBpmn";
+import { typeAssert } from "../../../utils/object";
 
 function listenersParameter2State(iBpmn = new IBpmn()) {
   const listeners = iBpmn.getSelectedShapeInfoByDefaultLocalName("ExecutionListener") ?? [];
@@ -123,6 +124,9 @@ function userTaskParameter2State(iBpmn = new IBpmn()) {
 
 function actionsParameter2State(iBpmn = new IBpmn()) {
   const shapeInfo = iBpmn.getSelectedShapeInfo();
+  if (typeAssert(shapeInfo["actions"], String)) {
+    return shapeInfo["actions"].split(",").map((action) => action.trim());
+  }
   return [...(shapeInfo["actions"] ?? [])];
 }
 
