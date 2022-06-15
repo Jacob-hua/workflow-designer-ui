@@ -1,5 +1,38 @@
 <template>
   <div class="home">
+    <div class="home-filter">
+      <div class="projectSelect">
+        <el-select @change="projectChange"
+                   v-model="value1">
+          <el-option v-for="item in projectOption"
+                     :key="item.id"
+                     :label="item.name"
+                     :value="item.code"></el-option>
+        </el-select>
+      </div>
+      <div class="businessSelect">
+        <el-cascader style="margin-right: 10px;"
+                     v-model="value2"
+                     :options="rootOrganizationChildren(value1)"
+                     :props='cascaderProps'
+                     clearable
+                     @change="handleChange"></el-cascader>
+      </div>
+      <div class="datePick">
+        <span class="datePickTitle">时间</span>
+        <el-date-picker v-model="valueDate"
+                        type="daterange"
+                        align="right"
+                        unlink-panels
+                        range-separator="——"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        value-format="yyyy-MM-dd"
+                        :clearable="false"
+                        @change="getManyData()">
+        </el-date-picker>
+      </div>
+    </div>
     <div class="home-header">
       <div class="data1">
         <div>
@@ -32,38 +65,6 @@
           </div>
           <div class="titLabel">新建工作流</div>
         </div>
-      </div>
-    </div>
-    <div class="home-filter">
-      <div class="projectSelect">
-        <el-select @change="projectChange"
-                   v-model="value1">
-          <el-option v-for="item in projectOption"
-                     :key="item.id"
-                     :label="item.name"
-                     :value="item.code"></el-option>
-        </el-select>
-      </div>
-      <div class="businessSelect">
-        <el-cascader style="margin-right: 10px;"
-                     v-model="value2"
-                     :options="systemOption"
-                     :props='sysProps'
-                     @change="handleChange"></el-cascader>
-      </div>
-      <div class="datePick">
-        <span class="datePickTitle">时间</span>
-        <el-date-picker v-model="valueDate"
-                        type="daterange"
-                        align="right"
-                        unlink-panels
-                        range-separator="——"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd"
-                        :clearable="false"
-                        @change="getManyData()">
-        </el-date-picker>
       </div>
     </div>
     <div class="home-main">
@@ -101,7 +102,7 @@ import draftsTable from './component/draftsTable.vue'
 import { format } from '@/assets/js/unit.js'
 import { getDeployCount, getTaskCountStatistic } from '@/api/unit/api.js'
 import { getProjectList } from '@/api/globalConfig'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -135,6 +136,8 @@ export default {
   },
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
+    ...mapState('uiConfig', ['cascaderProps']),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   async created() {
     await this.getProjectList()
@@ -174,7 +177,7 @@ export default {
       this.value1 = this.projectOption[0].code
       this.systemOption = this.projectOption[0].children
       this.deleteEmptyChildren(this.systemOption)
-      this.value2 = this.systemOption[0].code
+      // this.value2 = this.systemOption[0].code
     },
     goBpmn() {
       this.$router.push('/home/bpmn')
@@ -311,7 +314,7 @@ export default {
 }
 
 .home-filter {
-  margin-top: 20px;
+  margin-bottom: 20px;
   display: flex;
 }
 
