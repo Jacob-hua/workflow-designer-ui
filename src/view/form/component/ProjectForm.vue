@@ -22,14 +22,15 @@
       <div class="PublicForm-title-input">
         <el-input v-model="input" placeholder="请输入表单名称或编号"></el-input>
       </div>
-      <div class="PublicForm-title-input">
-      <el-button @click="reset()" type="primary">重置</el-button>
-    </div>
+
       <div class="PublicForm-title-input">
         <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
+      <div class="PublicForm-title-input">
+        <el-button @click="reset()" type="primary">重置</el-button>
+      </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary" @click="application()" v-role="{ id: 'FromUse', type: 'button', business: projectCode }">应用表单</el-button>
+        <el-button type="primary" @click="application()" v-role="{ id: 'FromUse', type: 'button', business: projectCode }">关联表单</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary" @click="addForm()" v-role="{ id: 'FromAdd', type: 'button', business: projectCode }">新建表单</el-button>
@@ -146,8 +147,8 @@
     },
     methods: {
       reset() {
-         this.valueDate = []
          this.input = ''
+        this.getManyData()
       },
       deleteEmptyChildren(arr) {
         for (let i = 0; i < arr.length; i++) {

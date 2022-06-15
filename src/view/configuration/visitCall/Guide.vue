@@ -20,7 +20,6 @@
     <span slot="footer" class="dialog-footer">
       <el-button  @click=" next()">下一步</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
-
   </span>
   </el-dialog>
 </template>
@@ -43,7 +42,6 @@ export default {
         sourceMark: [
           { required: true, message: '请输入资源标识', trigger: 'blur' }
         ],
-
       },
       dialogVisible: false,
       form: {
