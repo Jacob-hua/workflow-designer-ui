@@ -63,9 +63,9 @@
 </template>
 
 <script>
-import { historyTaskList } from '@/api/historyWorkflow'
+import {historyTaskList} from '@/api/historyWorkflow'
 import CONSTANT from '@/constant'
-import { mapState } from 'vuex'
+import {mapState} from 'vuex'
 import {getAllBusinessConfig} from "@/api/globalConfig";
 
 export default {
@@ -96,19 +96,8 @@ export default {
     },
   },
   methods: {
-    getAllBusinessConfig() {
-      getAllBusinessConfig({tenantId: this.tenantId}).then(res => {
-        this.tableData.forEach(table => {
-          res.result.forEach(item => {
-            if (table.businessMap.business === item.code) {
-              table.energyTypeName = item.name
-            }
-          })
-        })
-      })
-    },
     async getHistoryTaskList(pageInfo) {
-      Promise.all([ await historyTaskList({
+      Promise.all([await historyTaskList({
         assignee: this.userInfo.account, // 执行人
         candidate: true, // 是否包含候选
         endTime: `${this.dateRang[1]} 23:59:59`, // 结束时间
@@ -117,7 +106,7 @@ export default {
         startTime: `${this.dateRang[0]} 00:00:00`, // 起始时间
         tenantId: this.tenantId, // 租户id
       }),
-       await  getAllBusinessConfig({tenantId: this.tenantId})
+        await getAllBusinessConfig({tenantId: this.tenantId})
       ]).then(res => {
         this.tableData = res[0].result.dataList
         this.tableData.forEach(table => {
@@ -127,7 +116,7 @@ export default {
             }
           })
         })
-          this.pageInfo.total = +data.result.count
+        this.pageInfo.total = +data.result.count
       })
     },
     handleSizeChange(val) {
@@ -154,18 +143,21 @@ export default {
 .his_checkbox {
   display: flex;
 }
+
 .taskNO {
   font-size: 24px;
   color: #000;
   font-weight: 400;
   font-style: normal;
 }
+
 .taskTit {
   font-size: 14px;
   color: #000;
   font-weight: 400;
   font-style: normal;
 }
+
 .home-table-main {
   padding: 10px;
   border: 1px solid #666666;
