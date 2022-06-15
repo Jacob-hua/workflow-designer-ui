@@ -200,13 +200,6 @@
   .title-item-main {
     display: inline-block;
   }
-  /deep/ .dialogVisible2 .el-input__inner {
-    width: 180px;
-    height: 43px;
-    line-height: 43px;
-    padding: 0px 10px;
-    background-color: #f2f2f2;
-  }
   .marginLeft40 {
     margin-left: 70px;
   }
