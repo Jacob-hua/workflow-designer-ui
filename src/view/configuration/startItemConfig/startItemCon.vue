@@ -161,6 +161,7 @@ export default {
       tableFlag: false,
       tableData: [],
       inputValue: '',
+      businessConfigId: '',
       tags: [],
       color: ['', 'success', 'info', 'warning', 'danger'],
       dialogVisible: false,
@@ -224,7 +225,7 @@ export default {
     saveStart() {
       this.formatData(this.tableData)
       startConfig({
-        businessConfigId:  this.tableData[0].businessConfigId,
+        businessConfigId:  this.businessConfigId,
         list:  this.tableData
       }).then(res => {
         this.$message({
@@ -236,6 +237,7 @@ export default {
     },
     handleNodeClick(data) {
       this.currentId = data.id
+      this.businessConfigId = data.businessConfigId
       selectProcessStartConfigList(data.id, +this.tenantId).then(res => {
         res.result.forEach(item => {
           item.disabled = true

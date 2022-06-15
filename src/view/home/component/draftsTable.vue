@@ -97,13 +97,6 @@ export default {
         page: 1,
         limit: 10,
         total: 100,
-        ascription: '',
-        business: '',
-        createBy: '',
-        systemType: '',
-        tenantId: '',
-        startTime: '',
-        endTime: '',
         order: 'desc',
       },
       tableData: [],
@@ -120,7 +113,7 @@ export default {
         createBy: this.userInfo.account,
         startTime: this.valueDate[0],
         endTime: this.valueDate[1],
-        business: this.business.at(-1),
+        business: this.business,
         ascription: this.ascription,
       }).then((res) => {
         this.tableData = res.result.dataList

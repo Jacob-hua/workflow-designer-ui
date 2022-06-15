@@ -92,6 +92,10 @@
           default:
             break;
         }
+        if(this.postData.id) {
+          formData.append('id', this.postData.id)
+          formData.append('sourceId', this.postData.sourceId)
+        }
         formData.append('name', this.postData.name)
         formData.append('docName', this.postData.name +'.json')
         formData.append('docType', 'json')

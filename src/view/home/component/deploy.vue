@@ -9,7 +9,7 @@
         </el-form-item>
         <el-form-item label="流程类型" prop="business">
           <el-col :span="24">
-            <el-cascader v-model="firstData.business" clearable :style="{width: '100%'}" :key="projectCode" :options="rootOrganizationChildren(firstData.ascription)"
+            <el-cascader v-model="firstData.business" clearable :style="{width: '100%'}" :options="rootOrganizationChildren(firstData.ascription)"
               :props='cascaderProps' :disabled="true"></el-cascader>
           </el-col>
         </el-form-item>
@@ -191,7 +191,7 @@
           return item.value === this.firstData.business
         })
         if (systemOption.length > 0) {
-          this.options = systemOption[0].children
+          this.options = systemOption[0].children || []
         }
       },
       addWorkFlow() {
@@ -262,10 +262,17 @@
           formData.append('operatorId', '1')
           formData.append('operatorName', this.userInfo.account)
           formData.append('processResource', file1)
-          formData.append(
-            'systemType',
-            this.$refs.ProcessInformation.postData.systemType
-          )
+          if (this.$refs.ProcessInformation.postData.systemType) {
+            formData.append(
+              'systemType',
+              this.$refs.ProcessInformation.postData.systemType
+            )
+          } else{
+            formData.append(
+              'systemType',
+              this.$refs.ProcessInformation.postData.business
+            )
+          }
           formData.append('updateBy', this.userInfo.account)
           // formData.append('processResource', '')
           formData.append('tenantId', this.tenantId)
@@ -400,7 +407,6 @@
           formData.append('operatorId', '1')
           formData.append('operatorName', 'admin')
           formData.append('processFile', file1)
-          
           if (this.$refs.ProcessInformation.postData.systemType) {
             formData.append(
               'systemType',

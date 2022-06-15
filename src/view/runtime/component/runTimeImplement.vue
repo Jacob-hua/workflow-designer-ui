@@ -192,7 +192,7 @@
           document: ''
         },
         btnListKey: {
-          "代办": "Agency",
+          "待办": "Agency",
           "传阅": "Circulate",
           "加减签": "Signature",
           "挂起": "Hang",
@@ -324,7 +324,8 @@
         this.$emit('goSee', this.$refs.ProcessInformation.postData)
       },
       selectOneSet(value) {
-        this.btnList = JSON.parse(value?.businessObject?.$attrs['camunda:btnList'] || '[]')
+        console.log(value?.businessObject?.$attrs['camunda:actions'].split(','))
+        this.btnList = value?.businessObject?.$attrs['camunda:actions'].split(',')
         if (this.btnList.length > 0) {
           if (!this.dataList.Hang) {
             this.changeFunction('Hang')
@@ -362,7 +363,7 @@
       },
       
       implement() {
-        let formData = []
+        let formData = {}
         let data = {}
         let errors = {}
         if (this.formShow) {
