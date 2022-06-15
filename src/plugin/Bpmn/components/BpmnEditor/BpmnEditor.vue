@@ -48,7 +48,6 @@ export default {
     linterToggle: {
       immediate: true,
       handler(value) {
-        console.log(this.$iBpmn, value);
         this.$iBpmn.linterToggle(value)
       },
     },

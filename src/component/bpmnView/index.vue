@@ -4,6 +4,32 @@
          v-if="valueType === 'project'">
       <div class="title-item">
         <span class="title-item-label">
+          项目
+        </span>
+        <div class="title-item-main">
+          <el-select v-model="postData.ascription"
+                     disabled>
+            <el-option v-for="{id, label, value} in rootOrganizations"
+                       :key="id"
+                       :label="label"
+                       :value="value"></el-option>
+          </el-select>
+        </div>
+      </div>
+      <div class="title-item">
+        <span class="title-item-label">
+          业务类型
+        </span>
+        <div class="title-item-main">
+          <el-cascader v-model="postData.business"
+                       disabled
+                       :key="projectCode"
+                       :options="rootOrganizationChildren(projectCode)"
+                       :props='cascaderProps'></el-cascader>
+        </div>
+      </div>
+      <div class="title-item">
+        <span class="title-item-label">
           流程编码
         </span>
         <div class="title-item-main">
@@ -13,7 +39,7 @@
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40">
+        <span class="title-item-label">
           流程名称
         </span>
         <el-tooltip class="item"
@@ -28,33 +54,11 @@
         </el-tooltip>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40">
+        <span class="title-item-label">
           创建时间
         </span>
         <div class="title-item-main">
           <el-input v-model="postData.createTime"
-                    placeholder=""
-                    :disabled="true"></el-input>
-        </div>
-      </div>
-      <div v-if="showFlag"
-           class="title-item">
-        <span class="title-item-label">
-          应用项目
-        </span>
-        <div class="title-item-main">
-          <el-input v-model="postData.ascription"
-                    placeholder=""
-                    :disabled="true"></el-input>
-        </div>
-      </div>
-      <div v-if="showFlag"
-           class="title-item">
-        <span class="title-item-label marginLeft40">
-          流程类型
-        </span>
-        <div class="title-item-main">
-          <el-input v-model="postData.business"
                     placeholder=""
                     :disabled="true"></el-input>
         </div>
@@ -83,21 +87,21 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   props: {
-    valueType: { type: String, default: 'project' },
+    valueType: {
+      type: String,
+      default: 'project',
+    },
   },
   data() {
     return {
-      postData: {
-        numberCode: '',
-        deployName: '',
-        createTime: '',
-        business: '',
-        ascription: '',
-        systemType: '',
-      },
+      postData: {},
     }
+  },
+  computed: {
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
 }
 </script>
@@ -157,10 +161,6 @@ export default {
   line-height: 43px;
   padding: 0px 10px;
   background-color: #f2f2f2;
-}
-
-.marginLeft40 {
-  margin-left: 70px;
 }
 
 .bpmnView-process {
