@@ -13,7 +13,7 @@
         <el-cascader v-model="projectValue"
                      clearable
                      :key="projectCode"
-                     :options="rootOrganizationChildren(projectCode)"
+                     :options="rootOrganizationChildrenAndAll(projectCode)"
                      :props='cascaderProps'></el-cascader>
       </div>
       <div class="datePick">
@@ -181,7 +181,10 @@ export default {
   computed: {
     ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
     ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
+    ...mapGetters('config', [
+      'rootOrganizations',
+      'rootOrganizationChildrenAndAll',
+    ]),
   },
   watch: {
     projectCode(value) {

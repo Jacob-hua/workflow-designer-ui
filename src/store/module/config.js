@@ -10,6 +10,9 @@ const getters = {
     return state.organization;
   },
   rootOrganizationChildren: (state) => (value) => {
+    return state.organization.find(({ value: v }) => v === value)?.children ?? [];
+  },
+  rootOrganizationChildrenAndAll: (state) => (value) => {
     const children = state.organization.find(({ value: v }) => v === value)?.children ?? [];
     return [{ value: "", label: "全部业务" }, ...children];
   },
