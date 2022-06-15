@@ -1,19 +1,29 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-      <el-select style="width: 300px; margin-right: 20px"   @change="projectChange" v-model="projectCode">
-        <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
+<!--      <el-select style="width: 300px; margin-right: 20px"   @change="projectChange" v-model="projectCode">-->
+<!--        <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>-->
+<!--      </el-select>-->
+      <el-select style="width:  229px" v-model="projectCode">
+        <el-option v-for="{id, label, value} in rootOrganizations"
+                   :key="id"
+                   :label="label"
+                   :value="value"></el-option>
       </el-select>
       <div class="PublicForm-title">
       </div>
       <div class="datePick">
-        <el-cascader
-            style="width: 350px"
-            v-model="projectValue"
-            :options="systemOption"
-            :props = 'sysProps'
-            clearable
-            @change="handleChange"></el-cascader>
+<!--        <el-cascader-->
+<!--            style="width: 350px"-->
+<!--            v-model="projectValue"-->
+<!--            :options="systemOption"-->
+<!--            :props = 'sysProps'-->
+<!--            clearable-->
+<!--            @change="handleChange"></el-cascader>-->
+        <el-cascader v-model="projectValue"
+                     :key="projectCode"
+                     :options="rootOrganizationChildrenAndAll(projectCode)"
+                     :props='cascaderProps'></el-cascader>
         <span class="datePickTitle">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
           start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
@@ -106,9 +116,7 @@
   import detailsDiologForm from './details.vue'
   import application from './projectFormComponent/application.vue'
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
-  import {getProjectList} from "@/api/globalConfig";
-
-  import { mapState } from 'vuex'
+  import {mapActions, mapGetters, mapMutations, mapState} from 'vuex'
   export default {
     data() {
       return {
@@ -143,9 +151,19 @@
       }
     },
     computed:{
-      ...mapState('account', ['tenantId', 'userInfo']),
+      ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
+      ...mapState('uiConfig', ['cascaderProps']),
+      ...mapGetters('config', [
+        'rootOrganizations',
+        'rootOrganizationChildrenAndAll',
+      ]),
     },
     methods: {
+      ...mapActions('config', ['dispatchRefreshOrganization']),
+      ...mapMutations('account', ['updateCurrentOrganization']),
+      async init() {
+        await this.refreshWorkFlowRecord()
+      },
       reset() {
          this.input = ''
         this.getManyData()
@@ -171,25 +189,6 @@
         this.deleteEmptyChildren(this.systemOption)
         this.projectValue = this.systemOption[0]?.code  ??  ''
         this.$refs.projectFormDiolog.postData.business = this.projectValue
-      },
-      async getProjectList(){
-        let _this = this
-        let res = await  getProjectList({
-          count: -1,
-          projectCode: '',
-          tenantId: this.tenantId,
-          type: ''
-        })
-        _this.projectOption = res?.result ?? []
-        _this.projectCode = _this.projectOption[0].code
-        _this.ascriptionName = _this.projectOption[0].name
-        _this.systemOption = _this.projectOption[0].children
-        _this.deleteEmptyChildren(_this.systemOption)
-        _this.projectValue =  _this.systemOption[0].children[0].code
-        _this.$nextTick(() => {
-          _this.$refs.projectFormDiolog.options = _this.systemOption
-          _this.$refs.projectFormDiolog.postData.business = _this.projectValue
-        })
       },
       application() {
         this.dialogVisible = true
@@ -331,8 +330,9 @@
         this.addForm2(item)
       }
     },
-    async mounted() {
-      await this.getProjectList()
+     mounted() {
+      this.projectCode = this.currentOrganization
+      this.init()
       this.getDraftData()
       this.getEnableData()
     },

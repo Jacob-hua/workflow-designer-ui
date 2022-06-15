@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import {mapActions} from  'vuex'
   export default {
     data() {
       return {
@@ -20,7 +21,9 @@
         roleGo: ['login', 'noPermission']
       }
     },
-    methods: {},
+    methods: {
+      ...mapActions('config', ['dispatchRefreshOrganization']),
+    },
     // watch: {
     //   $route(to, from) {
     //     let routerName = to.name
@@ -39,8 +42,9 @@
     //     }
     //   }
     // },
-    mounted() {
 
+    mounted() {
+      this.dispatchRefreshOrganization()
     }
     
   };
