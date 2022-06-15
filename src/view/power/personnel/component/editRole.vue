@@ -159,7 +159,7 @@
             })
             postArr.push({
               code: projectCode[0].code,
-              name: projectCode[0].name,
+              name: this.detailData.name,
               type: projectCode[0].type,
               projectCode: projectCode[0].projectCode,
               tenantId: this.tenantId,

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="home-table-main">
-      <el-table :data="formListFirst"
+      <el-table :data="listData"
                 style="width: 100%">
         <el-table-column type="index"
                          label="序号"
@@ -60,44 +60,53 @@
     <div class="home-table-page">
       <el-pagination @size-change="onSizeChange"
                      @current-change="onCurrentChange"
-                     :current-page="getData.page"
-                     :page-size="getData.limit"
+                     :current-page="pageInfo.page"
+                     :page-size="pageInfo.limit"
                      layout="prev, pager, next, jumper"
-                     :total="getData.total">
+                     :total="pageInfo.total">
       </el-pagination>
     </div>
   </div>
 </template>
 
 <script>
-import { deleteWorkflow } from '@/api/managerWorkflow'
+import { workFlowRecord, deleteWorkflow } from '@/api/managerWorkflow'
+import { mapState } from 'vuex'
 
 export default {
   props: {
-    formListFirst: {
-      type: Array,
-      default: () => [],
-    },
-    valueDate: {
-      default: () => [],
-    },
     business: {
       type: String,
       default: '',
     },
+    searchForm: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
-      getData: {
+      pageInfo: {
         page: 1,
         limit: 10,
         total: 1,
         business: '',
-        startTime: '',
-        endTime: '',
       },
-      tableData: [],
+      listData: [],
     }
+  },
+  computed: {
+    ...mapState('account', ['tenantId', 'userInfo']),
+  },
+  watch: {
+    searchForm: {
+      immediate: true,
+      handler(value) {
+        if (Object.keys(value).length) {
+          this.findWorkFlowRecord()
+        }
+      },
+    },
   },
   methods: {
     lookBpmnShow(row) {
@@ -115,16 +124,45 @@ export default {
           this.$message.error(errorInfo.errorMsg)
           return
         }
-
+        this.updatePageNum()
+        await this.findWorkFlowRecord()
         this.$message.success('删除成功!')
         this.$emit('deleteRow', row)
       } catch (error) {}
     },
     onSizeChange(val) {
-      this.$emit('pageSizeChange', val)
+      this.pageInfo.limit = val
+      this.findWorkFlowRecord()
     },
     onCurrentChange(val) {
-      this.$emit('pageChange', val)
+      this.pageInfo.page = val
+      this.findWorkFlowRecord()
+    },
+    updatePageNum() {
+      const totalPage = Math.ceil((this.pageInfo.total - 1) / this.pageInfo.limit)
+      this.pageInfo.page =
+        this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page
+      this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page
+    },
+    // 查询项目流程
+    async findWorkFlowRecord() {
+      try {
+        const { errorInfo, result } = await workFlowRecord({
+          ...this.searchForm,
+          tenantId: this.tenantId,
+          status: 'enabled,disabled',
+          createBy: this.userInfo.account,
+          page: this.pageInfo.page,
+          limit: this.pageInfo.limit,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+
+        this.pageInfo.total = result.total
+        this.listData = result.list
+      } catch (error) {}
     },
   },
 }

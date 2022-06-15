@@ -23,9 +23,8 @@
         <div class="title-item-main">
           <el-cascader v-model="postData.business"
                        disabled
-                       :key="projectCode"
-                       :options="rootOrganizationChildren(projectCode)"
-                       :props='cascaderProps'></el-cascader>
+                       :key="postData.ascription"
+                       :options="rootOrganizationChildren(postData.ascription)"></el-cascader>
         </div>
       </div>
       <div class="title-item">

@@ -10,14 +10,14 @@
     </div>
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
-        <el-cascader v-model="projectValue"
+        <el-cascader v-model="searchForm.business"
                      :key="projectCode"
                      :options="rootOrganizationChildrenAndAll(projectCode)"
                      :props='cascaderProps'></el-cascader>
       </div>
       <div class="datePick">
         <span class="datePickTitle">编辑时间</span>
-        <el-date-picker v-model="valueDate"
+        <el-date-picker v-model="searchForm.valueDate"
                         type="daterange"
                         align="right"
                         unlink-panels
@@ -29,7 +29,7 @@
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
-        <el-input v-model="input"
+        <el-input v-model="searchForm.name"
                   placeholder="请输入工作流名称"></el-input>
       </div>
       <div class="PublicForm-title-input">
@@ -41,13 +41,13 @@
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
-                   @click="quoteBpmnShow()"
-                   v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">关联工作流</el-button>
+                   @click="addProjectShow"
+                   v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
-                   @click="addProjectShow"
-                   v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
+                   @click="quoteBpmnShow()"
+                   v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">关联工作流</el-button>
       </div>
     </div>
     <div class="home-main">
@@ -62,28 +62,20 @@
       <div class="home-table">
         <projectTable v-if="activeName === 'enabled,disabled'"
                       ref="project"
-                      :formListFirst="formListFirst"
-                      :valueDate="valueDate"
                       :business="projectValue"
+                      :searchForm="searchFormData"
                       @lookBpmnShow="lookBpmnShow"
-                      @deleteRow="onProjectDeleteRow"
-                      @pageSizeChange="onProjectTableSizeChange"
-                      @pageChange="onProjectTablePageChange"></projectTable>
+                      @deleteRow="onProjectDeleteRow"></projectTable>
         <draftTable v-if="activeName === 'drafted'"
                     ref="draft"
-                    :formListSecond="formListSecond"
-                    :valueDate="valueDate"
                     :business="projectValue"
-                    @totalChange="totalChange"
+                    :searchForm="searchFormData"
                     @draftTableEdit="draftTableEdit"
-                    @deleteRow="onDraftDeleteRow"
-                    @pageSizeChange="onDraftTableSizeChange"
-                    @pageChange="onDraftTablePageChange"></draftTable>
+                    @deleteRow="onDraftDeleteRow"></draftTable>
       </div>
     </div>
     <addProject ref="addpro"
                 :dialogVisible="addProjectVisible"
-                :projectOption="projectOption"
                 @close="onAddProjectClose"
                 @submit="onAddProjectSubmit"></addProject>
     <addBpmn v-if="addBpmnVisible"
@@ -123,11 +115,8 @@ import addProject from './addProject.vue'
 import addBpmn from './addBpmn.vue'
 import quoteBpmn from './quoteBpmn.vue'
 import lookBpmn from './lookBpmn.vue'
-import {
-  workFlowRecord,
-  designProcessCountStatistics,
-} from '@/api/managerWorkflow'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { designProcessCountStatistics } from '@/api/managerWorkflow'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
 
 export default {
@@ -142,34 +131,29 @@ export default {
   data() {
     const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
+      searchForm: {
+        ascription: '',
+        business: '',
+        valueDate: [start, end],
+        name: '',
+      },
+      searchFormData: {},
       draftProcessCount: 0,
       processCount: 0,
       isEdit: true,
       dep: '',
       rowData: {},
       lookData: null,
-      secondtTotal: 0,
-      firstTotal: 0,
       projectValue: '',
-      projectOption: [],
       formData: {},
-      getData: {
-        page: 1,
-        limit: 10,
-        total: 1,
-      },
       currentRowData: {},
       addProjectVisible: false,
       addBpmnVisible: false,
       quoteBpmnVisible: false,
       lookBpmnVisible: false,
-      dataType: 'enabled',
-      projectCode: '',
       valueDate: [start, end],
       input: '',
       activeName: 'enabled,disabled',
-      formListFirst: [],
-      formListSecond: [],
       dialogVisible: false,
       xmlString: '',
       flag: false,
@@ -184,6 +168,9 @@ export default {
       'rootOrganizations',
       'rootOrganizationChildrenAndAll',
     ]),
+    projectCode() {
+      return this.searchForm.ascription
+    },
   },
   watch: {
     projectCode(value) {
@@ -195,38 +182,30 @@ export default {
     currentOrganization: {
       immediate: true,
       handler(value) {
-        this.projectCode = value
+        this.searchForm.ascription = value
       },
     },
   },
   mounted() {
-    this.init()
+    this.refreshWorkFlowRecord()
   },
   methods: {
-    ...mapActions('config', ['dispatchRefreshOrganization']),
     ...mapMutations('account', ['updateCurrentOrganization']),
-    async init() {
-      await this.dispatchRefreshOrganization()
-      await this.refreshWorkFlowRecord()
-    },
-    totalChange(list) {
-      this.formListSecond = list
-    },
     addProjectShow(dep = '新建工作流', row) {
       this.toData = row
-      this.$nextTick(() => {
-        this.currentRowData = row
-      })
-
+      this.currentRowData = row
       this.$refs.addpro.title = dep
       this.addProjectVisible = true
       this.$refs.addpro.postData = row || {}
     },
     onReset() {
       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
-      this.input = ''
-      this.valueDate = [start, end]
-      this.projectValue = ''
+      this.searchForm = {
+        ...this.searchForm,
+        business: '',
+        valueDate: [start, end],
+        name: '',
+      }
       this.refreshWorkFlowRecord()
     },
     onAddProjectClose() {
@@ -286,76 +265,28 @@ export default {
       this.flag = true
     },
     changeActiveName(value) {
-      this.getData.page = 1
       this.activeName = value
       this.refreshWorkFlowRecord()
     },
     onProjectDeleteRow() {
-      this.refreshWorkFlowRecord()
-    },
-    onProjectTableSizeChange(pageSize) {
-      this.getData.limit = pageSize
-      this.refreshWorkFlowRecord()
-    },
-    onProjectTablePageChange(page) {
-      this.getData.page = page
-      this.refreshWorkFlowRecord()
+      this.fetchDesignProcessCountStatistics()
     },
     onDraftDeleteRow() {
-      this.refreshWorkFlowRecord()
-    },
-    onDraftTableSizeChange(pageSize) {
-      this.getData.limit = pageSize
-      this.refreshWorkFlowRecord()
-    },
-    onDraftTablePageChange(page) {
-      this.getData.page = page
-      this.refreshWorkFlowRecord()
+      this.fetchDesignProcessCountStatistics()
     },
     async refreshWorkFlowRecord() {
-      await this.findWorkFlowRecord('enabled,disabled')
-      await this.findWorkFlowRecord('drafted')
       await this.fetchDesignProcessCountStatistics()
-    },
-    // 查询项目流程
-    async findWorkFlowRecord(status) {
-      try {
-        const { errorInfo, result } = await workFlowRecord({
-          tenantId: this.tenantId,
-          status,
-          ascription: this.projectCode,
-          business: this.projectValue,
-          createBy: this.userInfo.account,
-          name: this.input,
-          startTime: this.valueDate[0],
-          endTime: this.valueDate[1],
-          page: this.getData.page,
-          limit: this.getData.limit,
-        })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
-
-        if (status === 'drafted') {
-          this.firstTotal = result.total
-          this.$refs.draft.getData.total = result.total
-          this.formListSecond = result.list
-        } else {
-          this.secondtTotal = result.total
-          this.$refs.project.getData.total = result.total
-          this.formListFirst = result.list
-        }
-      } catch (error) {}
+      this.searchFormData = {
+        ...this.searchForm,
+        startTime: this.searchForm.valueDate[0],
+        endTime: this.searchForm.valueDate[1],
+      }
     },
     async fetchDesignProcessCountStatistics() {
       try {
         const { errorInfo, result } = await designProcessCountStatistics({
+          ...this.searchForm,
           tenantId: this.tenantId,
-          ascription: this.projectCode,
-          business: this.projectValue,
-          startTime: this.valueDate[0],
-          endTime: this.valueDate[1],
           createBy: this.userInfo.account,
         })
         if (errorInfo.errorCode) {
