@@ -13,12 +13,9 @@
                          width="180"
                          align="center">
         </el-table-column>
-        <el-table-column prop="version"
+        <el-table-column prop="energyTypeName"
                          label="能源系统"
                          align="center">
-          <template slot-scope="scope">
-            <span> {{ scope.row.businessMap && scope.row.businessMap.business }}</span>
-          </template>
         </el-table-column>
         <el-table-column prop="docName"
                          label="执行厂站"
@@ -69,6 +66,7 @@
 import { historyTaskList } from '@/api/historyWorkflow'
 import CONSTANT from '@/constant'
 import { mapState } from 'vuex'
+import {getAllBusinessConfig} from "@/api/globalConfig";
 
 export default {
   props: {},
@@ -98,8 +96,20 @@ export default {
     },
   },
   methods: {
+    getAllBusinessConfig() {
+      getAllBusinessConfig({tenantId: this.tenantId}).then(res => {
+        this.tableData.forEach(table => {
+          res.result.forEach(item => {
+            if (table.businessMap.business === item.code) {
+              table.energyTypeName = item.name
+            }
+          })
+        })
+        console.log(this.tableData, 7897465454654)
+      })
+    },
     async getHistoryTaskList(pageInfo) {
-      let data = await historyTaskList({
+      Promise.all([ await historyTaskList({
         assignee: this.userInfo.account, // 执行人
         candidate: true, // 是否包含候选
         endTime: `${this.dateRang[1]} 23:59:59`, // 结束时间
@@ -107,11 +117,19 @@ export default {
         order: 'desc', // 排序方式
         startTime: `${this.dateRang[0]} 00:00:00`, // 起始时间
         tenantId: this.tenantId, // 租户id
+      }),
+       await  getAllBusinessConfig({tenantId: this.tenantId})
+      ]).then(res => {
+        this.tableData = res[0].result.dataList
+        this.tableData.forEach(table => {
+          res[1].result.forEach(item => {
+            if (table.businessMap.business === item.code) {
+              table.energyTypeName = item.name
+            }
+          })
+        })
+          this.pageInfo.total = +data.result.count
       })
-      if (data.result) {
-        this.tableData = data.result.dataList
-        this.pageInfo.total = +data.result.count
-      }
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
