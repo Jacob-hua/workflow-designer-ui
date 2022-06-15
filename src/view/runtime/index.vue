@@ -194,7 +194,7 @@
     },
     async mounted() {
       await this.dispatchRefreshOrganization()
-      this.getData['projectCode'] = this.findRootOrganizationByIndex(0).value
+       this.getData['projectCode'] = this.findRootOrganizationByIndex(0).value
       await this.fetchNewTasks()
       await this.fetchAmount()
       await this.fetchDataNumber()
