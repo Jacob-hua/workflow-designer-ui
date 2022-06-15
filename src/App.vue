@@ -4,8 +4,6 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
-
 export default {
   data() {
     return {
@@ -20,12 +18,6 @@ export default {
       },
       roleGo: ['login', 'noPermission'],
     }
-  },
-  mounted() {
-    this.dispatchRefreshOrganization()
-  },
-  methods: {
-    ...mapActions('config', ['dispatchRefreshOrganization']),
   },
 }
 </script>
