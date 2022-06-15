@@ -23,3 +23,11 @@ export function dateRangeFormat(date, format = "YYYY-MM-DD") {
 export function currentDateRangeFormat(format = "YYYY-MM-DD") {
   return dateRangeFormat(new Date(), format);
 }
+
+export function oneMonthAgo(date, format = "YYYY-MM-DD") {
+  return moment(date).subtract(1, "month").format(format);
+}
+
+export function currentOneMonthAgo(format = "YYYY-MM-DD") {
+  return { start: oneMonthAgo(new Date(), format), end: moment(new Date()).format(format) };
+}

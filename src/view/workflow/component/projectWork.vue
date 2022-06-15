@@ -17,7 +17,7 @@
                      :props='cascaderProps'></el-cascader>
       </div>
       <div class="datePick">
-        <span class="datePickTitle">创建时间</span>
+        <span class="datePickTitle">编辑时间</span>
         <el-date-picker v-model="valueDate"
                         type="daterange"
                         align="right"
@@ -100,16 +100,16 @@
                @close="quoteBpmnHidden()"
                @lookBpmnShow="lookBpmnShow"
                @addProjectShow="addProjectShow"></quoteBpmn>
-    <lookBpmn :showFlag="showFlag"
+    <lookBpmn v-if="lookBpmnVisible"
+              :showFlag="showFlag"
               :business="projectValue"
               :isEdit="isEdit"
               :rowData="rowData"
               :dep="dep"
-              v-if="lookBpmnVisible"
               ref="bpmn"
               :dialogVisible="lookBpmnVisible"
-              @close="lookBpmnHidden()"
-              @edit="lookBpmnEdit"
+              @close="onLookBpmnClose"
+              @edit="onLookBpmnEdit"
               @quote="addProjectShow()"></lookBpmn>
   </div>
 </template>
@@ -126,6 +126,7 @@ import {
   designProcessCountStatistics,
 } from '@/api/managerWorkflow'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { currentOneMonthAgo } from '@/util/date'
 
 export default {
   components: {
@@ -137,6 +138,7 @@ export default {
     lookBpmn,
   },
   data() {
+    const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
       draftProcessCount: 0,
       processCount: 0,
@@ -161,7 +163,7 @@ export default {
       lookBpmnVisible: false,
       dataType: 'enabled',
       projectCode: '',
-      valueDate: [],
+      valueDate: [start, end],
       input: '',
       activeName: 'enabled,disabled',
       formListFirst: [],
@@ -193,13 +195,15 @@ export default {
     },
   },
   mounted() {
-    this.fetchDesignProcessCountStatistics()
-    this.findWorkFlowRecord(this.activeName)
-    this.dispatchRefreshOrganization()
+    this.init()
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
     ...mapMutations('account', ['updateCurrentOrganization']),
+    async init() {
+      await this.dispatchRefreshOrganization()
+      await this.refreshWorkFlowRecord()
+    },
     totalChange(list) {
       this.formListSecond = list
     },
@@ -229,10 +233,10 @@ export default {
     onAddBpmnClose() {
       this.addBpmnVisible = false
     },
-    onAddBpmnSubmit(value) {
+    onAddBpmnSubmit() {
       this.flag = false
       this.addBpmnVisible = false
-      this.refreshWorkFlowRecord(value)
+      this.refreshWorkFlowRecord()
     },
     quoteBpmnShow() {
       this.quoteBpmnVisible = true
@@ -247,16 +251,17 @@ export default {
         this.showFlag = false
       }
       this.lookBpmnVisible = true
+      this.currentRowData = row
       this.$nextTick(() => {
-        this.$refs.bpmn.currentRowData = row
         this.$refs.bpmn.$refs.bpmnView.postData = row
         this.$refs.bpmn.$refs.bpmnView.showFlag = false
       })
     },
-    lookBpmnHidden() {
+    onLookBpmnClose() {
       this.lookBpmnVisible = false
+      this.currentRowData = {}
     },
-    lookBpmnEdit(row) {
+    onLookBpmnEdit(row) {
       this.lookBpmnVisible = false
       this.xmlString = row.content
       this.currentRowData = row
@@ -273,65 +278,34 @@ export default {
       this.activeName = value
       this.findWorkFlowRecord(value)
     },
-    // 查询草稿箱
-    getDraftData() {
-      postFormDesignRecordDraftInfo({
-        tenantId: this.tenantId,
-        status: 'drafted',
-        ascription: this.projectCode,
-        business: this.projectValue,
-        createBy: this.userInfo.account,
-        numberCode: '',
-        name: this.input,
-        startTime: this.valueDate[0],
-        endTime: this.valueDate[1],
-      }).then((res) => {
-        this.formListSecond = res.result
-      })
-    },
-    // 查询可部署流程
-    getEnableData() {
-      postFormDesignBasicFormRecord({
-        tenantId: this.tenantId,
-        status: 'enabled',
-        ascription: this.projectCode,
-        business: this.projectValue,
-        createBy: this.name,
-        numberCode: '',
-        name: this.input,
-        startTime: this.valueDate[0],
-        endTime: this.valueDate[1],
-      }).then((res) => {
-        this.formListFirst = res.result
-      })
-    },
     getManyData() {
       this.findWorkFlowRecord(this.activeName)
     },
     onProjectDeleteRow() {
-      this.refreshWorkFlowRecord('enabled,disabled')
+      this.refreshWorkFlowRecord()
     },
     onProjectTableSizeChange(pageSize) {
       this.getData.limit = pageSize
-      this.refreshWorkFlowRecord('enabled,disabled')
+      this.refreshWorkFlowRecord()
     },
     onProjectTablePageChange(page) {
       this.getData.page = page
-      this.refreshWorkFlowRecord('enabled,disabled')
+      this.refreshWorkFlowRecord()
     },
     onDraftDeleteRow() {
-      this.refreshWorkFlowRecord('drafted')
+      this.refreshWorkFlowRecord()
     },
     onDraftTableSizeChange(pageSize) {
       this.getData.limit = pageSize
-      this.refreshWorkFlowRecord('drafted')
+      this.refreshWorkFlowRecord()
     },
     onDraftTablePageChange(page) {
       this.getData.page = page
-      this.refreshWorkFlowRecord('drafted')
+      this.refreshWorkFlowRecord()
     },
-    async refreshWorkFlowRecord(value) {
-      await this.findWorkFlowRecord(value)
+    async refreshWorkFlowRecord() {
+      await this.findWorkFlowRecord('enabled,disabled')
+      await this.findWorkFlowRecord('drafted')
       await this.fetchDesignProcessCountStatistics()
     },
     // 查询项目流程

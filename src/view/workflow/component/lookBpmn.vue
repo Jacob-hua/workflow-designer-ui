@@ -59,11 +59,6 @@ export default {
     },
     showFlag: Boolean,
   },
-  data() {
-    return {
-      currentRowData: {},
-    }
-  },
   computed: {
     ...mapState('account', ['userInfo', 'currentOrganization']),
     statusButtonLabel() {
@@ -77,24 +72,24 @@ export default {
     },
     onDeactivate() {
       const file1 = new File(
-        [this.currentRowData.content],
-        this.currentRowData.name + '.bpmn',
+        [this.rowData.content],
+        this.rowData.name + '.bpmn',
         {
           type: 'bpmn20-xml',
         }
       )
       let formData = new FormData()
-      formData.set('id', this.currentRowData.id)
-      formData.set('name', this.currentRowData.name)
-      formData.set('docName', this.currentRowData.name + '.bpmn')
-      if (this.currentRowData.ascription) {
-        formData.set('ascription', this.currentRowData.ascription)
+      formData.set('id', this.rowData.id)
+      formData.set('name', this.rowData.name)
+      formData.set('docName', this.rowData.name + '.bpmn')
+      if (this.rowData.ascription) {
+        formData.set('ascription', this.rowData.ascription)
       } else {
         formData.set('ascription', this.currentOrganization)
       }
-      formData.set('code', this.currentRowData.code)
-      formData.set('business', this.currentRowData.business)
-      if (this.currentRowData.status === 'disabled') {
+      formData.set('code', this.rowData.code)
+      formData.set('business', this.rowData.business)
+      if (this.rowData.status === 'disabled') {
         formData.set('status', 'enabled')
       } else {
         formData.set('status', 'disabled')
@@ -105,7 +100,7 @@ export default {
       formData.set('file', file1)
       workFlowSaveDraft(formData).then(() => {
         this.$message.success(
-          this.currentRowData.status === 'disabled' ? '启用成功' : '停用成功'
+          this.rowData.status === 'disabled' ? '启用成功' : '停用成功'
         )
         this.$emit('close')
         this.$parent.findWorkFlowRecord('disabled,enabled')
