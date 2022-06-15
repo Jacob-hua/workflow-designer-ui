@@ -77,12 +77,16 @@
     postMapping,
     userLogin
   } from '@/api/unit/api.js'
+  import { mapState } from 'vuex'
   export default {
     props: {
       dialogVisible: {
         type: Boolean,
         default: false
       }
+    },
+    computed:{
+      ...mapState('account', ['tenantId', 'userInfo']),
     },
     data() {
       return {
@@ -158,7 +162,7 @@
               name: projectCode[0].name,
               type: projectCode[0].type,
               projectCode: projectCode[0].projectCode,
-              tenantId: this.$store.state.tenantId,
+              tenantId: this.tenantId,
               permission: permission
             })
           }

@@ -72,6 +72,7 @@
     postPersonUser,
     postMapping
   } from '@/api/unit/api.js'
+  import { mapState } from 'vuex'
   export default {
     props: {
       dialogVisible: {
@@ -98,6 +99,9 @@
         array1: [],
         type: 'see'
       }
+    },
+    computed:{
+      ...mapState('account', ['tenantId', 'userInfo']),
     },
     methods: {
       award() {
@@ -127,7 +131,7 @@
           name: this.currentNodeName,
           type: 'group',
           projectCode: this.groupId.split(':')[0],
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           permission: permission
         })
         postMapping(postArr).then((res) => {
@@ -147,7 +151,7 @@
       getListData() {
         postPersonUser({
           groupId: this.groupId,
-          tenantId: this.$store.state.tenantId,
+          tenantId: this.tenantId,
           page: 0,
           limit: 0
         }).then((res) => {

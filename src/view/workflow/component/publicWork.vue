@@ -16,25 +16,28 @@
       </div>
       <div class="PublicForm-title-input">
         <el-input v-model="input"
-                  placeholder="请输入内容"></el-input>
+                  placeholder="请输入工作流名称"></el-input>
       </div>
       <div class="PublicForm-title-input">
         <el-button type="primary"
-                   @click="getManyData()">查询</el-button>
+                   @click="refreshWorkFlowRecord">查询</el-button>
+      </div>
+      <div class="PublicForm-title-input">
+        <el-button @click="onReset">重置</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
-                   @click="addBpmnShow()">新建工作流</el-button>
+                   @click="onAddBpmnShow">新建工作流</el-button>
       </div>
     </div>
     <div class="home-main">
       <div class="home-main-tab">
         <span class="home-main-tab-item"
               :class="activeName === 'enabled,disabled' ? 'active' : ''"
-              @click="changeActiveName('enabled,disabled')">工作流（{{ processCount }}）</span>
+              @click="onChangeActiveName('enabled,disabled')">工作流（{{ processCount }}）</span>
         <span class="home-main-tab-item"
               :class="activeName === 'drafted' ? 'active' : ''"
-              @click="changeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
+              @click="onChangeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
       </div>
       <div class="home-table">
         <projectTable v-if="activeName === 'enabled,disabled'"
@@ -145,10 +148,16 @@ export default {
     totalChange(list) {
       this.formListSecond = list
     },
-    addBpmnShow() {
+    onAddBpmnShow() {
       this.xmlString = ''
       this.addBpmnVisible = true
       this.flag = true
+    },
+    onReset() {
+      const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
+      this.input = ''
+      this.valueDate = [start, end]
+      this.refreshWorkFlowRecord()
     },
     onAddBpmnClose() {
       this.addBpmnVisible = false
@@ -181,12 +190,9 @@ export default {
       this.currentRowData = row
       this.addBpmnVisible = true
     },
-    changeActiveName(value) {
+    onChangeActiveName(value) {
       this.activeName = value
-      this.findWorkFlowRecord(value)
-    },
-    getManyData() {
-      this.findWorkFlowRecord(this.activeName)
+      this.refreshWorkFlowRecord()
     },
     onProjectDeleteRow() {
       this.refreshWorkFlowRecord()

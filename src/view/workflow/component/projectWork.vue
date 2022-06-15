@@ -11,9 +11,8 @@
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
         <el-cascader v-model="projectValue"
-                     clearable
                      :key="projectCode"
-                     :options="rootOrganizationChildren(projectCode)"
+                     :options="rootOrganizationChildrenAndAll(projectCode)"
                      :props='cascaderProps'></el-cascader>
       </div>
       <div class="datePick">
@@ -31,20 +30,23 @@
       </div>
       <div class="PublicForm-title-input">
         <el-input v-model="input"
-                  placeholder="请输入内容"></el-input>
+                  placeholder="请输入工作流名称"></el-input>
       </div>
       <div class="PublicForm-title-input">
         <el-button type="primary"
-                   @click="getManyData()">查询</el-button>
+                   @click="refreshWorkFlowRecord">查询</el-button>
+      </div>
+      <div class="PublicForm-title-input">
+        <el-button @click="onReset">重置</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
                    @click="quoteBpmnShow()"
-                   v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">引用工作流</el-button>
+                   v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">关联工作流</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
-                   @click="addProjectShow()"
+                   @click="addProjectShow"
                    v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
       </div>
     </div>
@@ -110,7 +112,7 @@
               :dialogVisible="lookBpmnVisible"
               @close="onLookBpmnClose"
               @edit="onLookBpmnEdit"
-              @quote="addProjectShow()"></lookBpmn>
+              @quote="addProjectShow"></lookBpmn>
   </div>
 </template>
 
@@ -178,7 +180,10 @@ export default {
   computed: {
     ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
     ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
+    ...mapGetters('config', [
+      'rootOrganizations',
+      'rootOrganizationChildrenAndAll',
+    ]),
   },
   watch: {
     projectCode(value) {
@@ -216,6 +221,13 @@ export default {
       this.$refs.addpro.title = dep
       this.addProjectVisible = true
       this.$refs.addpro.postData = row || {}
+    },
+    onReset() {
+      const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
+      this.input = ''
+      this.valueDate = [start, end]
+      this.projectValue = ''
+      this.refreshWorkFlowRecord()
     },
     onAddProjectClose() {
       this.addProjectVisible = false
@@ -276,10 +288,7 @@ export default {
     changeActiveName(value) {
       this.getData.page = 1
       this.activeName = value
-      this.findWorkFlowRecord(value)
-    },
-    getManyData() {
-      this.findWorkFlowRecord(this.activeName)
+      this.refreshWorkFlowRecord()
     },
     onProjectDeleteRow() {
       this.refreshWorkFlowRecord()

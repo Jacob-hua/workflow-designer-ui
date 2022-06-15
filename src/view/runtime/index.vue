@@ -225,7 +225,7 @@ export default {
         limit: 10,
         total: 1,
         projectCode: '',
-        businessCode: 'undefined'
+        businessCode: ''
       },
     }
   },
@@ -240,7 +240,7 @@ export default {
   },
   async mounted() {
     await this.dispatchRefreshOrganization()
-    this.getData['projectData'] = this.findRootOrganizationByIndex(0).value
+    this.getData['projectCode'] = this.findRootOrganizationByIndex(0).value
     await this.fetchNewTasks()
     await this.fetchAmount()
     await this.fetchDataNumber()

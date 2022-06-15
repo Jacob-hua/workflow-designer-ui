@@ -6,7 +6,7 @@
       <el-form-item label="处理用户">
         <el-row>
           <el-col :span="18">
-            <el-input v-if="customAssignee"
+            <el-input v-if="userTaskForm.customAssignee"
                       v-model="userTaskForm.assignee" />
             <el-cascader v-else
                          v-model="userTaskForm.assignee"
@@ -17,14 +17,14 @@
             </el-cascader>
           </el-col>
           <el-col :span="6">
-            <el-checkbox v-model="customAssignee">自定义</el-checkbox>
+            <el-checkbox v-model="userTaskForm.customAssignee">自定义</el-checkbox>
           </el-col>
         </el-row>
       </el-form-item>
       <el-form-item label="候选用户">
         <el-row>
           <el-col :span="18">
-            <el-input v-if="customCandidate"
+            <el-input v-if="userTaskForm.customCandidate"
                       v-model="userTaskForm.candidateUsers" />
             <el-cascader v-else
                          v-model="userTaskForm.candidateUsers"
@@ -35,14 +35,14 @@
             </el-cascader>
           </el-col>
           <el-col :span="6">
-            <el-checkbox v-model="customCandidate">自定义</el-checkbox>
+            <el-checkbox v-model="userTaskForm.customCandidate">自定义</el-checkbox>
           </el-col>
         </el-row>
       </el-form-item>
       <el-form-item label="候选分组">
         <el-row>
           <el-col :span="18">
-            <el-input v-if="customCandidateGroup"
+            <el-input v-if="userTaskForm.customCandidateGroup"
                       v-model="userTaskForm.candidateGroups" />
             <el-cascader v-else
                          v-model="userTaskForm.candidateGroups"
@@ -53,7 +53,7 @@
             </el-cascader>
           </el-col>
           <el-col :span="6">
-            <el-checkbox v-model="customCandidateGroup">自定义</el-checkbox>
+            <el-checkbox v-model="userTaskForm.customCandidateGroup">自定义</el-checkbox>
           </el-col>
         </el-row>
       </el-form-item>
@@ -63,16 +63,17 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { deepCopy, deepEquals } from '../../../utils/object'
+import {
+  deepCopy,
+  deepEquals,
+  emptyPropertiesObject,
+} from '../../../utils/object'
 
 export default {
   name: 'ElementUserTaskForm',
   props: {},
   data() {
     return {
-      customAssignee: false,
-      customCandidate: false,
-      customCandidateGroup: false,
       userTaskForm: {},
       userCascaderProps: {
         emitPath: false,
@@ -101,7 +102,7 @@ export default {
       deep: true,
       immediate: true,
       handler(value) {
-        if (deepEquals(value, this.userTask)) {
+        if (emptyPropertiesObject(value) || deepEquals(value, this.userTask)) {
           return
         }
         this.updateUserTask({ newUserTask: deepCopy(value) })
@@ -113,7 +114,7 @@ export default {
   },
   methods: {
     ...mapMutations('bpmn/panel', ['updateUserTask']),
-    ...mapActions('bpmn/config', ['dispatchRequestUser']),
+    ...mapActions('bpmn/config', ['dispatchRequestUser', 'userGroupLabel']),
   },
 }
 </script>
