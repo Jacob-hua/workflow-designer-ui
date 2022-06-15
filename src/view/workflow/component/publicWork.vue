@@ -192,6 +192,7 @@ export default {
     },
     onChangeActiveName(value) {
       this.activeName = value
+      this.getData.page = 1
       this.refreshWorkFlowRecord()
     },
     onProjectDeleteRow() {
