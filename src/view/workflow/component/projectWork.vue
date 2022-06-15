@@ -34,7 +34,7 @@
       </div>
       <div class="PublicForm-title-input">
         <el-button type="primary"
-                   @click="getManyData()">查询</el-button>
+                   @click="refreshWorkFlowRecord">查询</el-button>
       </div>
       <div class="PublicForm-title-input">
         <el-button @click="onReset">重置</el-button>
@@ -46,7 +46,7 @@
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
-                   @click="addProjectShow()"
+                   @click="addProjectShow"
                    v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
       </div>
     </div>
@@ -112,7 +112,7 @@
               :dialogVisible="lookBpmnVisible"
               @close="onLookBpmnClose"
               @edit="onLookBpmnEdit"
-              @quote="addProjectShow()"></lookBpmn>
+              @quote="addProjectShow"></lookBpmn>
   </div>
 </template>
 
@@ -226,6 +226,8 @@ export default {
       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
       this.input = ''
       this.valueDate = [start, end]
+      this.projectValue = ''
+      this.refreshWorkFlowRecord()
     },
     onAddProjectClose() {
       this.addProjectVisible = false
@@ -286,9 +288,6 @@ export default {
     changeActiveName(value) {
       this.getData.page = 1
       this.activeName = value
-      this.refreshWorkFlowRecord()
-    },
-    getManyData() {
       this.refreshWorkFlowRecord()
     },
     onProjectDeleteRow() {
