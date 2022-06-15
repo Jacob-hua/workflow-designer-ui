@@ -203,10 +203,8 @@ export default {
     this.init()
   },
   methods: {
-    ...mapActions('config', ['dispatchRefreshOrganization']),
     ...mapMutations('account', ['updateCurrentOrganization']),
     async init() {
-      await this.dispatchRefreshOrganization()
       await this.refreshWorkFlowRecord()
     },
     totalChange(list) {
