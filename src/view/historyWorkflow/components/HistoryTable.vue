@@ -105,7 +105,6 @@ export default {
             }
           })
         })
-        console.log(this.tableData, 7897465454654)
       })
     },
     async getHistoryTaskList(pageInfo) {
