@@ -218,9 +218,6 @@ export default {
     isInput(type) {
       return type === FormTypeEnum.FORM_TYPE_INPUT
     },
-    getOptionsByProp(prop) {
-      return this.options[prop] ?? []
-    },
     onCloseModal() {
       this.startConfigList = []
       this.$refs['startForm'] && this.$refs['startForm'].resetFields()
