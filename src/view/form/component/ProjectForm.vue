@@ -117,6 +117,7 @@
   import application from './projectFormComponent/application.vue'
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
   import {mapActions, mapGetters, mapMutations, mapState} from 'vuex'
+  import {getProjectList} from "@/api/globalConfig";
   export default {
     data() {
       return {
@@ -176,15 +177,17 @@
       ...mapActions('config', ['dispatchRefreshOrganization']),
       ...mapMutations('account', ['updateCurrentOrganization']),
      async init() {
-         await this.dispatchRefreshOrganization()
-         await  this.getDraftData()
+          await this.dispatchRefreshOrganization()
+          await  this.getDraftData()
           await  this.getEnableData()
+         await this.getProjectList()
       },
       reset() {
          this.input = ''
           this.projectValue = ''
           this.getManyData()
       },
+
       deleteEmptyChildren(arr) {
         for (let i = 0; i < arr.length; i++) {
           const arrElement = arr[i];
@@ -196,8 +199,29 @@
             this.deleteEmptyChildren(arrElement.children)
           }
         }
-
       },
+     async getProjectList() {
+        let _this = this
+         getProjectList({
+          count: -1,
+          projectCode: '',
+          tenantId: this.tenantId,
+          type: ''
+        }).then(res=> {
+          debugger
+          _this.projectOption = res?.result ?? []
+          _this.projectCode = _this.projectOption[0].code
+          _this.ascriptionName = _this.projectOption[0].name
+          _this.systemOption = _this.projectOption[0].children
+          _this.deleteEmptyChildren(_this.systemOption)
+          _this.projectValue =  _this.systemOption[0].children[0].code
+          _this.$nextTick(() => {
+            _this.$refs.projectFormDiolog.options = _this.systemOption
+            _this.$refs.projectFormDiolog.postData.business = _this.projectValue
+          })
+        })
+      },
+
       handleChange() {
         this.getManyData()
       },
@@ -347,8 +371,9 @@
         this.addForm2(item)
       }
     },
-    mounted() {
-      this.init()
+     mounted() {
+       this.init()
+
     },
     components:{
       projectFormDiolog,
