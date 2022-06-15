@@ -57,9 +57,7 @@ function generateExecuteApiData({
 }) {
   const variablesHandler = {
     [ApiEnum.API_TYPE_GET]: () => {
-      return (
-        String.prototype.match.call(parameter, /(?<=\$\{)(.+?)(?=\})/g) ?? []
-      )
+      return String.prototype.match.call(parameter, /(?<=\$\{)(.+?)(?=\})/g)
     },
     [ApiEnum.API_TYPE_POST]: () => {
       return body
@@ -67,6 +65,9 @@ function generateExecuteApiData({
   }
   const paramHandlers = {
     [ApiEnum.API_TYPE_GET]: (payload) => {
+      if (!variablesHandler[ApiEnum.API_TYPE_GET]()) {
+        return parameter
+      }
       return Object.keys(payload).reduce((parameter, key) => {
         const value = payload[key]
         return parameter.replace(`\$\{${key}\}`, value)
@@ -168,6 +169,13 @@ export default {
               }
 
               result['executeFunc'] = executeFunc
+            } else {
+              executeApi({
+                ...executeApiData,
+                data: executeApiData.paramHandler(),
+              }).then((res) => {
+                this.$set(this.options, code, res.result)
+              })
             }
             return result
           }
