@@ -120,7 +120,6 @@ export default {
         tenantId: this.tenantId
       }).then((res)=> {
         res.result.forEach(api => {
-          debugger
           api.configParams = []
           if (api.method ===ApiEnum.API_TYPE_POST) {
             let body = JSON.parse(api.body)
