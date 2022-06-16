@@ -105,6 +105,7 @@ import addBpmn from './addBpmn.vue'
 import quoteBpmn from './quoteBpmn.vue'
 import lookBpmn from './lookBpmn.vue'
 import { designProcessCountStatistics } from '@/api/managerWorkflow'
+import { getGlobalUUID } from '@/api/globalConfig'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
 
@@ -168,12 +169,27 @@ export default {
   methods: {
     ...mapMutations('account', ['updateCurrentOrganization']),
     ...mapActions('config', ['dispatchRefreshOrganization']),
-    onAddProject() {
+    async onAddProject() {
+      const { errorInfo, result: uuid } = await getGlobalUUID()
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
       this.addProjectVisible = true
+      this.projectData = {
+        code: `process_${uuid}`
+      }
     },
-    onQuoteBpmn(_, row) {
-      this.setProjectData(row)
-      this.addProjectVisible = true
+    async onQuoteBpmn(_, row) {
+      try {
+        const { errorInfo, result: uuid } = await getGlobalUUID()
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.setProjectData({ ...row, code: `process_${uuid}`, docName: `${uuid}.bpmn` })
+        this.addProjectVisible = true
+      } catch (error) {}
     },
     onReset() {
       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')

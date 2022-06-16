@@ -117,6 +117,7 @@ const state = {
   multiInstanceActionButtons: ["待办", "传阅", "挂起", "加减签", "驳回", "终止"],
   requestUserGroupFunc: () => {},
   requestUserFunc: () => {},
+  generateIdFunc: () => {},
 };
 
 const getters = {
@@ -165,6 +166,9 @@ const mutations = {
   updateRequestUserGroupFunc(state, { newFunc = () => {} }) {
     state.requestUserGroupFunc = newFunc;
   },
+  updateGenerateIdFunc(state, { newFunc = () => {} }) {
+    state.generateIdFunc = newFunc;
+  },
 };
 
 const actions = {
@@ -177,6 +181,10 @@ const actions = {
     const res = await Promise.resolve(requestUserGroupFunc(payload));
     commit("updateUserGroupOptions", { newUserGroupOptions: res });
     return res;
+  },
+  async dispatchGenerateId({ state: { generateIdFunc } }, payload) {
+    const res = await Promise.resolve(generateIdFunc(payload));
+    return res ?? new Date().getTime().toString();
   },
 };
 

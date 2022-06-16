@@ -90,7 +90,7 @@ export default {
       try {
         const { errorInfo, result } = await workFlowRecord({
           tenantId: this.tenantId,
-          status: 'enabled,disabled',
+          status: 'enabled',
           ascription: 'public',
           business: this.business,
           createBy: this.userInfo.name,

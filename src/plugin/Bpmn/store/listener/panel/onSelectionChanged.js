@@ -159,7 +159,7 @@ function multiInstance2State(iBpmn = new IBpmn()) {
   return multiInstance;
 }
 
-function selectionChangedListener(_, commit, iBpmn = new IBpmn()) {
+function onSelectionChangedListener(_, commit, iBpmn = new IBpmn()) {
   if (!iBpmn.getSelectedShape()) {
     commit("initState");
     commit("refreshState", {
@@ -197,4 +197,4 @@ function selectionChangedListener(_, commit, iBpmn = new IBpmn()) {
   });
 }
 
-export default selectionChangedListener;
+export default onSelectionChangedListener;

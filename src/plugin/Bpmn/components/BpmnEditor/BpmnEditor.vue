@@ -27,9 +27,22 @@ export default {
     },
     name: {
       type: String,
+      default: () => new Date().getTime().toString(),
+    },
+    id: {
+      type: String,
+      default: () => new Date().getTime().toString(),
     },
     xml: {
       type: String,
+    },
+  },
+  computed: {
+    newBaseInfo() {
+      return {
+        name: this.name,
+        id: this.id,
+      }
     },
   },
   watch: {
@@ -42,7 +55,14 @@ export default {
         if (!value || !String.prototype.trim.call(value)) {
           return
         }
-        this.$iBpmn.loadDiagram(value)
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中...',
+          spinner: 'el-icon-loading',
+        })
+        this.$iBpmn.loadDiagram(value, this.newBaseInfo).then(() => {
+          loading.close()
+        })
       },
     },
     linterToggle: {
@@ -60,7 +80,7 @@ export default {
       this.$iBpmn.attachTo(this.$refs.containers)
       this.$iBpmn.paletteVisible(this.pelatteVisible)
       if (!this.xml) {
-        this.$iBpmn.createEmptyDiagram(this.name)
+        this.$iBpmn.createEmptyDiagram(this.name, this.newBaseInfo)
       }
     },
   },

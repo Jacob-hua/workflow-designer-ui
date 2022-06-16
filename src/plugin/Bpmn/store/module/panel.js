@@ -190,6 +190,7 @@ const eventsListener = {
   "selection.changed": panelListener.onSelectionChanged,
   "shape.changed": panelListener.onShapeChanged,
   "shape.move.move": panelListener.onShapeMove,
+  "rootShape.changed": panelListener.onRootShapeChanged,
 };
 
 const actions = {};

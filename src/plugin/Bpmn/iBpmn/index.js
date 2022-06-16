@@ -187,6 +187,12 @@ class IBpmn {
     this.updateShapeProperties(this.getSelectedShape(), payload);
   }
 
+  updateRootShapeProperties(payload = {}) {
+    const root = this.elementRegistryFind((elem) => elem.type === "bpmn:Process");
+    this.updateShapeProperties(root, payload);
+    this.fire('rootShape.changed', { element: root });
+  }
+
   updateShapeProperties(shape, payload = {}) {
     this.modelingUpdateProperties(shape, payload);
   }
@@ -227,15 +233,18 @@ class IBpmn {
     throw new Error(`This canvas has ${Object.keys(valid).length} errors`);
   }
 
-  async createEmptyDiagram(name = new Date().getTime()) {
-    this.loadDiagram(defaultEmpty(`process_${new Date().getTime()}`, name, this.type));
+  async createEmptyDiagram(name = new Date().getTime(), properties) {
+    this.loadDiagram(defaultEmpty(`process_${new Date().getTime()}`, name, this.type), properties);
   }
 
-  async loadDiagram(xml) {
+  async loadDiagram(xml, properties) {
     try {
       const { warnings } = await this.#modeler.importXML(xml);
       if (warnings && warnings.length) {
         warnings.forEach(console.warn);
+      }
+      if (properties) {
+        this.updateRootShapeProperties(properties);
       }
     } catch (e) {
       console.error(`[Process Designer Warn]: ${e?.message || e}`);

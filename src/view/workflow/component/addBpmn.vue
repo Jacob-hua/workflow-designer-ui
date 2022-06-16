@@ -4,8 +4,7 @@
              width="90%"
              @close="onClose">
     <div class="visible-main">
-      <bpmnJsELe :xmlString="projectData.content"
-                 :name="projectData.name"
+      <bpmnJsELe :projectData="projectData"
                  v-if="visible"></bpmnJsELe>
     </div>
     <span slot="footer"

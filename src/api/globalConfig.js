@@ -89,4 +89,4 @@ export const selectProcessStartConfigByCode = (params) =>
   post(`/config/startConfig/selectProcessStartConfigByCode`, params);
 
 // 获取全局唯一id
-export const getGlobalUuid = () => get(`/config/global/uuid`);
+export const getGlobalUUID = () => get(`/config/global/uuid`);
