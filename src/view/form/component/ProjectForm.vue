@@ -330,17 +330,18 @@
         })
       },
       detailsDiolog(item) {
-        this.$refs.detailsDiolog.dialogVisible2 = true
-        postFormDesignRecordFormDesignRecordInfo({
-          id: item.id,
-          status: this.activeName,
-          tenantId: this.tenantId,
-          ascription: this.projectCode,
-          business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
-          createBy: this.userInfo.account
-        }).then((res) => {
-          this.$refs.detailsDiolog.previewVisible = true
-          // this.$nextTick(() => {
+        let _this = this
+          this.$refs.detailsDiolog.dialogVisible2 = true
+          postFormDesignRecordFormDesignRecordInfo({
+            id: item.id,
+            status: this.activeName,
+            tenantId: this.tenantId,
+            ascription: this.projectCode,
+            business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
+            createBy: this.userInfo.account
+          }).then((res) => {
+            this.$refs.detailsDiolog.previewVisible = true
+            // this.$nextTick(() => {
             this.formData = res.result
             let arr = []
             res.result.versions.forEach((item,index) => {
@@ -349,11 +350,11 @@
                 label: item
               })
             })
-            this.$refs.detailsDiolog.options = arr
-            this.$refs.detailsDiolog.value = res.result.childIds[0]
-            // this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
-            // this.$refs.detailsDiolog.$refs.formbpmn.init()
+            _this.$refs.detailsDiolog.options = arr
+            _this.$refs.detailsDiolog.value = res.result.childIds[0]
+            _this.$refs.detailsDiolog.getAllBusinessConfig(res.result)
           })
+
         // })
       },
       editForm(item) {
