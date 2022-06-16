@@ -94,7 +94,7 @@
       </div>
     </div>
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType" :projectOption="projectOption" :systemOption="systemOption" :sysProps="sysProps"></projectFormDiolog>
-    <detailsDiologForm ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
+    <detailsDiologForm v-if="detailFlag" ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
     <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode" :projectValue="projectValue" @close="close()"></application>
   </div>
 </template>
@@ -118,6 +118,7 @@
           checkStrictly: true,
           emitPath: false,
         },
+        detailFlag: false,
         systemOption: [],
         formData: {},
         projectValue: '',
@@ -330,17 +331,18 @@
         })
       },
       detailsDiolog(item) {
-        this.$refs.detailsDiolog.dialogVisible2 = true
-        postFormDesignRecordFormDesignRecordInfo({
-          id: item.id,
-          status: this.activeName,
-          tenantId: this.tenantId,
-          ascription: this.projectCode,
-          business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
-          createBy: this.userInfo.account
-        }).then((res) => {
-          this.$refs.detailsDiolog.previewVisible = true
-          // this.$nextTick(() => {
+        this.detailFlag = true
+          this.$refs.detailsDiolog.dialogVisible2 = true
+          postFormDesignRecordFormDesignRecordInfo({
+            id: item.id,
+            status: this.activeName,
+            tenantId: this.tenantId,
+            ascription: this.projectCode,
+            business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
+            createBy: this.userInfo.account
+          }).then((res) => {
+            this.$refs.detailsDiolog.previewVisible = true
+            // this.$nextTick(() => {
             this.formData = res.result
             let arr = []
             res.result.versions.forEach((item,index) => {
@@ -351,9 +353,11 @@
             })
             this.$refs.detailsDiolog.options = arr
             this.$refs.detailsDiolog.value = res.result.childIds[0]
+            this.$refs.detailsDiolog.getAllBusinessConfig(res.result)
             // this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
             // this.$refs.detailsDiolog.$refs.formbpmn.init()
           })
+
         // })
       },
       editForm(item) {

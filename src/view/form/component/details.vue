@@ -8,8 +8,8 @@
         <div class="detail-title">
           <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>{{ formDatas.numberCode }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>{{ formDatas.name }}</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">项目名称:</span> <span>{{ formDatas.name }}</span> </div>
-          <div class="detail-title-item"> <span class="detail-title-item-label">业务类型:</span> <span>{{ formDatas.name }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">项目名称:</span> <span>{{ ascriptionName }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">业务类型:</span> <span>{{ businessName }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>{{ formDatas.createBy }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>{{ formDatas.createTime }}</span> </div>
           <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formDatas.count }}</span> </div>
@@ -80,6 +80,7 @@
   import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
   import Preview from "@/plugin/FormDesign/component/preview";
   import { mapState } from 'vuex'
+  import {getAllBusinessConfig} from "@/api/globalConfig";
   export default {
     props:{
       quote: {
@@ -142,6 +143,8 @@
     },
     data() {
       return {
+        ascriptionName: '',
+        businessName: '',
         itemList: [],
         previewVisible:false,
         dialogVisible2: false,
@@ -162,44 +165,9 @@
           name: ''
         },
         input: '',
-        options1: [
-         {
-          value: 'beiqijia',
-          label: '北七家人才基地'
-         },
-         {
-          value: 'laiwu',
-          label: '莱芜供热项目'
-         },
-         {
-          value: 'xilaideng',
-          label: '海口喜来登酒店'
-         },
-        ],
-        options2: [
-          {
-            value: '',
-            label: '全部业务'
-          }
-        ],
-        options3: [
-          {
-            value: 'energy-1',
-            label: '配电'
-          },
-          {
-            value: 'energy-2',
-            label: '空压'
-          },
-          {
-            value: 'energy-3',
-            label: '供暖'
-          },
-          {
-            value: 'energy-4',
-            label: '空调'
-          }
-        ]
+        options1: [],
+        options2: [],
+        options3: []
       }
     },
     components:{
@@ -207,7 +175,21 @@
       formBpmnEdit,
       preview
     },
+    // mounted() {
+    //   this.getAllBusinessConfig()
+    // },
     methods:{
+      getAllBusinessConfig(data) {
+        let _this = this
+        getAllBusinessConfig({tenantId: _this.tenantId}).then(res=> {
+          let result = res.result?? []
+          debugger
+          this.ascriptionName =  result.find(({ code}) => { data.ascription === code }).name
+          this.businessName = result.find(({ code}) => { data.business === code }).name
+        })
+      },
+
+
       deleteRow() {
         this.$confirm('表单删除不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
