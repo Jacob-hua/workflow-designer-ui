@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="应用"
+    <el-dialog title="关联"
                :visible="dialogVisible"
                width="70%"
                :before-close="handleClose">
@@ -25,7 +25,7 @@
               <div class="processList-item-button">
                 <el-button type="primary"
                            plain
-                           @click="open(item)">应用</el-button>
+                           @click="open(item)">关联</el-button>
               </div>
             </div>
           </div>
@@ -80,6 +80,7 @@ import {
 } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 import {getProjectList} from "@/api/globalConfig";
+import router from "@/router";
 
 export default {
   props: {
@@ -142,10 +143,12 @@ export default {
         count: -1,
         projectCode: '',
         tenantId: this.tenantId,
-        type: ''
+        type: '',
+        menuRoute: router.currentRoute.name,
+        account: JSON.parse(sessionStorage.getItem('loginData')).account
       }).then(res=> {
+        this.deleteEmptyChildren(res.result)
         this.projectOption = res?.result ?? []
-
         this.systemOption = _this.projectOption[0]?.children
         this.postData.ascription = this.projectOption[0]?.code
       })
@@ -173,35 +176,26 @@ export default {
     },
     onSure() {
       let _this = this
-      this.$confirm('应用的公共表单会加入到项目表单中,是否继续', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      const id = 'form_' + Date.parse(new Date())
+      var file1 = new File([_this.currentData.content], 'test.form', {
+        type: 'text/xml',
       })
-        .then(() => {
-
-          const id = 'form_' + Date.parse(new Date())
-          var file1 = new File([_this.currentData.content], 'test.form', {
-            type: 'text/xml',
-          })
-          let formData = new FormData()
-          formData.append('name', this.postData.name)
-          formData.append('docName', this.postData.name + '.form')
-          formData.append('docType', 'json')
-          formData.append('ascription', this.postData.ascription)
-          formData.append('code', id)
-          formData.append('business', this.postData.business)
-          formData.append('status', 'enabled')
-          formData.append('createBy', this.userInfo.account)
-          formData.append('createName', this.userInfo.name)
-          formData.append('tenantId', this.tenantId)
-          formData.append('file', file1)
-          postFormDesignServiceRealiseProcessData(formData).then((res) => {
-            this.$message.success('应用至项目表单成功')
-            this.dialogVisibleModal = false
-          })
-        })
-        .catch(() => {
-        })
+      let formData = new FormData()
+      formData.append('name', this.postData.name)
+      formData.append('docName', this.postData.name + '.form')
+      formData.append('docType', 'json')
+      formData.append('ascription', this.postData.ascription)
+      formData.append('code', id)
+      formData.append('business', this.postData.business)
+      formData.append('status', 'enabled')
+      formData.append('createBy', this.userInfo.account)
+      formData.append('createName', this.userInfo.name)
+      formData.append('tenantId', this.tenantId)
+      formData.append('file', file1)
+      postFormDesignServiceRealiseProcessData(formData).then((res) => {
+        this.$message.success('应用至项目表单成功')
+        this.dialogVisibleModal = false
+      })
     },
     open(item) {
       this.currentData = item
