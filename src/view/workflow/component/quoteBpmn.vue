@@ -108,6 +108,7 @@ export default {
       } catch (error) {}
     },
     close() {
+      console.log('ddddd');
       this.$emit('close')
     },
     lookBpmnShow(tit, _, row) {
@@ -116,7 +117,7 @@ export default {
     addProjectShow(title, _, row) {
       const newData = {...row}
       delete newData.id
-      this.$emit('addProjectShow', title, newData)
+      this.$emit('addProject', title, newData)
     },
     handleSizeChange(val) {
       this.getData.limit = val

@@ -10,16 +10,15 @@ import { get, post, deletefn, put } from "./unit/request";
 //       }
 //     }
 
-
 // 获取 节点字典
 
 export const getAllBusinessConfig = (params) => get(`/config/businessConfig/getAllBusinessConfig`, params);
 // 清除缓存的数据
-export const clearRedisBusinessConfigCode = (params) => get(`/config/businessConfig/clearRedisBusinessConfigCode`, params);
+export const clearRedisBusinessConfigCode = (params) =>
+  get(`/config/businessConfig/clearRedisBusinessConfigCode`, params);
 
 // 校验业务code
 export const checkCode = (params) => get(`/config/businessConfig/checkBusinessConfigCode`, params);
-
 
 // 获取项目列表及子业务级联
 
@@ -77,7 +76,6 @@ export const deleteBusinessConfig = (id) => deletefn(`/config/businessConfig/del
 // export const UpdatebusinessConfig = (params) => put(`/config/businessConfig`, params);
 // export const UpdatebusinessConfig = (params) => put(`/config/businessConfig/businessConfigWithTree/create`, params);
 
-
 export const startConfig = (params) => put("/config/startConfig/update", params);
 
 export const getThirdInterfaceList = (params) => get(`/config/global/getThirdInterfaceList`, params);
@@ -89,3 +87,6 @@ export const checkApiType = (params) => post(`/config/global/checkApiType`, para
 
 export const selectProcessStartConfigByCode = (params) =>
   post(`/config/startConfig/selectProcessStartConfigByCode`, params);
+
+// 获取全局唯一id
+export const getGlobalUuid = () => get(`/config/global/uuid`);
