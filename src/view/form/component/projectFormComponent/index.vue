@@ -4,7 +4,7 @@
       <div>
         <div class="from-item">
           <span>应用项目</span>
-          <el-select v-model="postData.ascription">
+          <el-select disabled="true" v-model="postData.ascription">
             <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
           </el-select>
         </div>
@@ -390,7 +390,6 @@ export default {
   height: 43px;
   line-height: 43px;
   padding: 0px 10px;
-  background-color: #f2f2f2;
 }
 
 /deep/ .dialogVisible2 .form-title .el-input__inner {
@@ -398,7 +397,6 @@ export default {
   height: 43px;
   line-height: 43px;
   padding: 0px 10px;
-  background-color: #f2f2f2;
 }
 
 .marginLeft40 {

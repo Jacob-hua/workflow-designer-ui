@@ -74,10 +74,7 @@
           <div class="listItem" v-for="(item, index) in formList" :key="index">
             <span class="listItem-title" :title="item.name">{{ item.name }}</span>
             <div class="listItem-V1">
-              <el-select v-model="item.version " placeholder="请选择" :disabled="true">
-                <el-option v-for="item in optionsV" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
+              <el-input v-model="item.version"></el-input>
             </div>
             <div class="listItem-button">
               <el-popover placement="right" width="400" trigger="click">
@@ -163,8 +160,8 @@
         options: [],
         valueV: '1.0',
         optionsV: [{
-          value: '1.0',
-          label: 'V1.0',
+            value: '1.0',
+            label: 'V1.0',
         }, ],
       }
     },
