@@ -12,7 +12,7 @@
                    @open="handleOpen"
                    @close="handleClose"
                    v-if="!status">
-            <el-menu-item :index="menuListMapping[item.menuRoute]"
+            <el-menu-item :index="item.menuRoute"
                           v-for="(item, index) in menuList"
                           :key="index">
               <i class="el-icon-location"></i>

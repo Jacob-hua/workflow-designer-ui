@@ -72,8 +72,8 @@
               <span>{{ $getMappingName(scope.row.energyType) }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="执行厂站" align="center">
-          </el-table-column>
+          <!-- <el-table-column prop="name" label="执行厂站" align="center">
+          </el-table-column> -->
           <el-table-column prop="starter" label="发起人" align="center">
           </el-table-column>
           <el-table-column prop="startTime" label="发起时间" align="center">
@@ -193,7 +193,7 @@
     },
     async mounted() {
       await this.dispatchRefreshOrganization()
-       this.getData['projectCode'] = this.findRootOrganizationByIndex(0).value
+      this.getData['projectCode'] = this.findRootOrganizationByIndex(0).value
       await this.fetchNewTasks()
       await this.fetchAmount()
       await this.fetchDataNumber()
@@ -212,8 +212,8 @@
             result
           } = await getNewTaskList({
             ...this.getData,
-            startTime: this.timeRange[0] + ' 00:00:00',
-            endTime: this.timeRange[1] + ' 23:59:59',
+            startTime: this.timeRange[0],
+            endTime: this.timeRange[1],
             tenantId: this.tenantId,
             assignee: this.userInfo.account,
           })
@@ -251,8 +251,8 @@
           } = await postTaskCountStatistics({
             assignee: this.userInfo.account,
             business: this.getData.businessCode,
-            startTime: this.timeRange[0] + ' 00:00:00',
-            endTime: this.timeRange[1] + ' 23:59:59',
+            startTime: this.timeRange[0],
+            endTime: this.timeRange[1],
             projectCode: this.getData.projectCode,
             tenantId: this.tenantId,
           })
@@ -356,8 +356,8 @@
           ascription: this.getData.projectCode,
           assignee: this.userInfo.account,
           business: this.getData.businessCode,
-          startTime: this.timeRange[0] + ' 00:00:00',
-          endTime: this.timeRange[1] + ' 23:59:59',
+          startTime: this.timeRange[0],
+          endTime: this.timeRange[1],
           tenantId: this.tenantId,
         }).then((res) => {
           if (res) {

@@ -67,7 +67,9 @@
           count: -1,
           projectCode: '',
           tenantId: this.tenantId,
-          type: ''
+          type: '',
+          menuRoute: this.$route.name,
+          account: JSON.parse(sessionStorage.getItem('loginData')).account
         })
           this.projectOption = res?.result ?? []
           this.business = this.projectOption[0]?.code

@@ -1,4 +1,4 @@
-# fabrictest
+# workflow platform
 
 ## Project setup
 ```
