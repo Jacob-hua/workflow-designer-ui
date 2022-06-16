@@ -47,12 +47,11 @@ export default {
   },
   computed: {
     ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
-    ...mapState('bpmn/panel', ['baseInfo']),
     title() {
       return this.projectData.id ? '编辑流程' : '新建流程'
     },
     processFormData() {
-      const { name: processName, id: processId } = this.baseInfo
+      const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
       let processFormData = new FormData()
       if (this.projectData.id) {
         processFormData.set('id', this.projectData.id)
