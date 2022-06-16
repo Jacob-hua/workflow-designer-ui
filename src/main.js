@@ -4,7 +4,9 @@ import App from "./App.vue";
 import router from "./router";
 import stores from "./store";
 import axios from "axios";
+import { getMappingName } from '@/util/date.js'
 Vue.prototype.$axios = axios;
+Vue.prototype.$getMappingName = getMappingName;
 
 import "bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css";
 

@@ -31,7 +31,7 @@
           应用项目
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.business" placeholder="" :disabled="true"></el-input>
+          <el-input :value="$getMappingName(postData.ascription)" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
@@ -39,7 +39,7 @@
           流程类型
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
+          <el-input :value="$getMappingName(postData.business)" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item" v-if="seeType === 'runTime'">
@@ -50,15 +50,12 @@
           <el-input v-model="postData.version" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
-      <div class="title-item" v-if="type !== 'details1'" v-show="postData.systemType">
+      <div class="title-item" v-if="type !== 'details1'" v-show="postData.systemType !== postData.business">
         <span class="title-item-label marginLeft40">
-          能源系统
+          部署类型
         </span>
         <div class="title-item-main">
-          <el-select v-model="postData.systemType" placeholder="请选择" :disabled="true">
-            <el-option v-for="item in optionSystem" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
+          <el-input :value="$getMappingName(postData.systemType)" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
     </div>

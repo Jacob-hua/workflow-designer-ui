@@ -67,7 +67,10 @@
           </el-table-column>
           <el-table-column prop="processName" label="名称" align="center" show-overflow-tooltip="">
           </el-table-column>
-          <el-table-column prop="energyType" label="能源系统" align="center">
+          <el-table-column prop="energyType" label="部署类型" align="center">
+            <template slot-scope="scope">
+              <span>{{ $getMappingName(scope.row.energyType) }}</span>
+            </template>
           </el-table-column>
           <el-table-column prop="name" label="执行厂站" align="center">
           </el-table-column>
