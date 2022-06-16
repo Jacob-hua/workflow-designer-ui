@@ -87,8 +87,8 @@
                :business="projectValue"
                :visible="quoteBpmnVisible"
                @close="onQuoteBpmnClose"
-               @lookBpmnShow="onLookBpmnShow"
-               @addProject="onQuoteAddProject"></quoteBpmn>
+               @lookBpmn="onLookBpmnShow"
+               @quoteBpmn="onQuoteBpmn"></quoteBpmn>
     <lookBpmn v-if="lookBpmnVisible"
               :projectData="projectData"
               :visible="lookBpmnVisible"
@@ -171,8 +171,8 @@ export default {
     onAddProject() {
       this.addProjectVisible = true
     },
-    onQuoteAddProject(_, row) {
-      this.projectData = { ...row }
+    onQuoteBpmn(_, row) {
+      this.setProjectData(row)
       this.addProjectVisible = true
     },
     onReset() {
@@ -190,16 +190,16 @@ export default {
     },
     onAddProjectSubmit(value) {
       this.addProjectVisible = false
-      this.projectData = { ...value }
+      this.setProjectData(value)
       this.addBpmnVisible = true
     },
     onAddBpmnClose() {
       this.addBpmnVisible = false
-      this.projectData = {}
+      this.resetProjectData()
     },
     onAddBpmnSubmit() {
       this.addBpmnVisible = false
-      this.projectData = {}
+      this.resetProjectData()
       this.refreshWorkFlowRecord()
     },
     onQuoteBpmnShow() {
@@ -207,24 +207,24 @@ export default {
     },
     onQuoteBpmnClose() {
       this.quoteBpmnVisible = false
-      this.projectObject = {}
+      this.resetProjectData()
     },
     onLookBpmnShow(row, tit) {
-      this.projectData = { ...row }
+      this.setProjectData(row)
       this.lookBpmnVisible = true
     },
     onLookBpmnClose() {
       this.lookBpmnVisible = false
-      this.projectData = {}
+      this.resetProjectData()
       this.refreshWorkFlowRecord()
     },
     onLookBpmnEdit(row) {
       this.lookBpmnVisible = false
-      this.projectData = { ...row }
+      this.setProjectData(row)
       this.addBpmnVisible = true
     },
     onDraftTableEdit(row) {
-      this.projectData = { ...row }
+      this.setProjectData(row)
       this.addBpmnVisible = true
     },
     onChangeActiveName(value) {
@@ -236,6 +236,12 @@ export default {
     },
     onDraftDeleteRow() {
       this.fetchDesignProcessCountStatistics()
+    },
+    resetProjectData() {
+      this.projectData = {}
+    },
+    setProjectData(data) {
+      this.projectData = { ...this.projectData, ...data }
     },
     async refreshWorkFlowRecord() {
       await this.fetchDesignProcessCountStatistics()

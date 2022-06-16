@@ -112,7 +112,7 @@ export default {
   methods: {
     onAddBpmnShow() {
       this.addBpmnVisible = true
-      this.projectData = {}
+      this.resetProjectData()
     },
     onReset() {
       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
@@ -125,29 +125,29 @@ export default {
     },
     onAddBpmnClose() {
       this.addBpmnVisible = false
-      this.projectData = {}
+      this.resetProjectData()
     },
     onAddBpmnSubmit() {
       this.addBpmnVisible = false
-      this.projectData = {}
+      this.resetProjectData()
       this.refreshWorkFlowRecord()
     },
     onLookBpmnShow(row, tit) {
-      this.projectData = { ...row }
+      this.setProjectData(row)
       this.lookBpmnVisible = true
     },
     onLookBpmnClose() {
       this.lookBpmnVisible = false
-      this.projectData = {}
+      this.resetProjectData()
       this.refreshWorkFlowRecord()
     },
     onLookBpmnEdit(row) {
       this.lookBpmnVisible = false
-      this.projectData = { ...row }
+      this.setProjectData(row)
       this.addBpmnVisible = true
     },
     onDraftTableEdit(row) {
-      this.projectData = { ...row }
+      this.setProjectData(row)
       this.addBpmnVisible = true
     },
     onChangeActiveName(value) {
@@ -159,6 +159,12 @@ export default {
     },
     onDraftDeleteRow() {
       this.fetchDesignProcessCountStatistics()
+    },
+    resetProjectData() {
+      this.projectData = {}
+    },
+    setProjectData(data) {
+      this.projectData = { ...this.projectData, ...data }
     },
     async refreshWorkFlowRecord() {
       await this.fetchDesignProcessCountStatistics()
