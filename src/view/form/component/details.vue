@@ -15,7 +15,6 @@
          <div class="detail-title-item-button">
            <el-button type="primary" @click="editForm()" v-role="{ id: 'FromEdit', type: 'button', business: business }">编辑</el-button>
            <el-button type="primary" @click="deleteRow()" v-if="quote == 'delete'" v-role="{ id: 'FromDelete', type: 'button', business: business }">删除</el-button>
-           <el-button type="primary" @click="quot()" v-if="quote == 'quote' && status !== 'drafted' " v-role="{ id: 'FromUse', type: 'button', business: business }">关联</el-button>
          </div>
           
         </div>
@@ -221,10 +220,6 @@
             this.$emit('deleteSuccsee')
           })
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
         });
       },
       upDataV() {
@@ -267,9 +262,6 @@
           this.dialogVisible1 = false
           this.dialogVisible2 = false
         })
-      },
-      quot() {
-        // this.dialogVisible1 = true
       }
     }
   }
