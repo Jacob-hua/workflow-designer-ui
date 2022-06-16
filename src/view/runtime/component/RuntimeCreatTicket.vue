@@ -7,7 +7,7 @@
       <div v-else>
         <el-form :model="startForm"
                  ref="startForm">
-          <el-form-item v-for="({id, label, prop, type, required, placeholder, options}) in startFormFields"
+          <el-form-item v-for="({id, label, prop, type, required, placeholder}) in startFormFields"
                         :key="id"
                         :label="label"
                         :prop="prop"
@@ -17,7 +17,7 @@
                       :placeholder="placeholder"></el-input>
             <el-select v-else
                        v-model="startForm[prop]">
-              <el-option v-for="({value, label}) in options"
+              <el-option v-for="({value, label}) in options[prop]"
                          :key="value"
                          :value="value"
                          :label="label"></el-option>
@@ -41,9 +41,50 @@
 
 <script>
 import { mapState } from 'vuex'
-import { selectProcessStartConfigByCode } from '../../../api/globalConfig'
+import {
+  selectProcessStartConfigByCode,
+  executeApi,
+} from '../../../api/globalConfig'
 import { getStartProcess } from '../../../api/unit/api.js'
-import { FormTypeEnum } from '../../../enum'
+import { FormTypeEnum, ApiEnum } from '../../../enum'
+
+function generateExecuteApiData({
+  apiMark,
+  sourceMark,
+  method,
+  parameter,
+  body,
+}) {
+  const variablesHandler = {
+    [ApiEnum.API_TYPE_GET]: () => {
+      return String.prototype.match.call(parameter, /(?<=\$\{)(.+?)(?=\})/g)
+    },
+    [ApiEnum.API_TYPE_POST]: () => {
+      return body
+    },
+  }
+  const paramHandlers = {
+    [ApiEnum.API_TYPE_GET]: (payload) => {
+      if (!variablesHandler[ApiEnum.API_TYPE_GET]()) {
+        return parameter
+      }
+      return Object.keys(payload).reduce((parameter, key) => {
+        const value = payload[key]
+        return parameter.replace(`\$\{${key}\}`, value)
+      }, parameter)
+    },
+    [ApiEnum.API_TYPE_POST]: (payload) => {
+      return payload
+    },
+  }
+  const result = {
+    apiMark,
+    sourceMark,
+    variables: variablesHandler[method](),
+    paramHandler: paramHandlers[method],
+  }
+  return result
+}
 
 export default {
   name: 'RuntimeCreatTicket',
@@ -67,6 +108,7 @@ export default {
       startForm: {},
       isSubmiting: false,
       isLoading: false,
+      options: {},
     }
   },
   computed: {
@@ -79,7 +121,7 @@ export default {
         .filter(({ jwpProcessStartConfigEntity: { isSetting } }) => isSetting)
         .map(
           ({
-            jwpGlobalConfigEntity = [],
+            jwpGlobalConfigEntity,
             jwpProcessStartConfigEntity: {
               id,
               name,
@@ -88,17 +130,55 @@ export default {
               isRequired,
               value,
             },
-          }) => ({
-            id,
-            label: name,
-            prop: code,
-            type: startType,
-            required: Boolean(isRequired),
-            apiId: value,
-            placeholder: '请输入' + name,
-            options: jwpGlobalConfigEntity,
-            value: '',
-          })
+          }) => {
+            const result = {
+              id,
+              label: name,
+              prop: code,
+              type: startType,
+              required: Boolean(isRequired),
+              apiId: value,
+              placeholder: '请输入' + name,
+              value: '',
+            }
+            if (!jwpGlobalConfigEntity) {
+              return result
+            }
+            this.$set(this.options, code, undefined)
+            const executeApiData = generateExecuteApiData(jwpGlobalConfigEntity)
+            if (executeApiData.variables) {
+              result['watchs'] = executeApiData.variables
+
+              const executeFunc = (...args) => {
+                if (args.length >= executeApiData.variables.length) {
+                  return ((payload = []) => {
+                    const data = payload.reduce(
+                      (args, { key, value }) => ({ ...args, [key]: value }),
+                      {}
+                    )
+                    executeApi({
+                      ...executeApiData,
+                      data: executeApiData.paramHandler(data),
+                    }).then((res) => {
+                      this.$set(this.options, code, res.result)
+                    })
+                  })(args)
+                } else {
+                  return curryExecuteFunction.bind(this, ...args)
+                }
+              }
+
+              result['executeFunc'] = executeFunc
+            } else {
+              executeApi({
+                ...executeApiData,
+                data: executeApiData.paramHandler(),
+              }).then((res) => {
+                this.$set(this.options, code, res.result)
+              })
+            }
+            return result
+          }
         )
       return formFields
     },
@@ -106,14 +186,30 @@ export default {
   watch: {
     process: {
       immediate: true,
-      handler(process) {
+      async handler(process) {
         if (!process.business) {
           return
         }
         this.isLoading = true
-        this.fetchProcessStartConfigList(process.business).then((res) => {
-          this.isLoading = false
-          this.startConfigList = res
+        this.startConfigList = await this.fetchProcessStartConfigList(
+          process.business
+        )
+        this.isLoading = false
+      },
+    },
+    startForm: {
+      deep: true,
+      handler(startForm) {
+        const needExecutes =
+          this.startFormFields?.filter(
+            ({ watchs, executeFunc }) => watchs && executeFunc
+          ) ?? []
+        Object.keys(startForm).forEach((key) => {
+          needExecutes.forEach(({ watchs, executeFunc }) => {
+            if (watchs.includes(key)) {
+              executeFunc({ key, value: startForm[key] })
+            }
+          })
         })
       },
     },
@@ -159,7 +255,6 @@ export default {
       this.onCloseModal()
     },
     async fetchProcessStartConfigList(businessConfigCode) {
-      console.log(this.tenantId)
       try {
         const { errorInfo, result } = await selectProcessStartConfigByCode({
           businessConfigCode,

@@ -7,13 +7,13 @@
         </el-select>
       </div>
       <div class="businessSelect marginRight20">
-        <el-cascader v-model="getData.businessCode" :key="getData.projectCode" :options="rootOrganizationChildren(getData.projectCode)"
+        <el-cascader v-model="getData.businessCode" :key="getData.projectCode" :options="rootOrganizationChildrenAndAll(getData.projectCode)"
           :props='cascaderProps' @change="getAllApi()"></el-cascader>
       </div>
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker v-model="timeRange" type="daterange" align="right" unlink-panels range-separator="——"
-          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false" @change="getAllApi()">
+          start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" :clearable="false" @change="getAllApi()">
         </el-date-picker>
       </div>
     </div>
@@ -67,7 +67,10 @@
           </el-table-column>
           <el-table-column prop="processName" label="名称" align="center" show-overflow-tooltip="">
           </el-table-column>
-          <el-table-column prop="energyType" label="能源系统" align="center">
+          <el-table-column prop="energyType" label="部署类型" align="center">
+            <template slot-scope="scope">
+              <span>{{ $getMappingName(scope.row.energyType) }}</span>
+            </template>
           </el-table-column>
           <el-table-column prop="name" label="执行厂站" align="center">
           </el-table-column>
@@ -114,21 +117,17 @@
   import runTimeImplement from './component/runTimeImplement.vue'
   import lookover from './component/lookover.vue'
   import {
-    format
-  } from '@/assets/js/unit.js'
-  import {
     getTaskCountStatistic,
     getNewTaskList,
     postTaskCountStatistics,
   } from '@/api/unit/api.js'
   import {
-    currentMonthRangeFormat
-  } from '@/util/date.js'
-  import {
     mapActions,
     mapGetters,
     mapState
   } from 'vuex'
+
+  import { currentOneMonthAgo } from '@/util/date'
 
   export default {
     name: 'Runtime',
@@ -141,7 +140,7 @@
       const {
         start,
         end
-      } = currentMonthRangeFormat('YYYY-MM-DD HH:mm:ss')
+      } = currentOneMonthAgo('YYYY-MM-DD HH:mm:ss')
       return {
         numberList: {
           executionCount: 0,
@@ -153,7 +152,7 @@
           notice: 0,
           self: 0,
         },
-        timeRange: [format(new Date(), 'yyyy-MM-1'), format(new Date(), 'yyyy-MM-dd')],
+        timeRange: [start, end],
         runtimeAddVisible: false,
         runtimeImplementVisible: false,
         tableData: [],
@@ -188,7 +187,7 @@
       ...mapState('uiConfig', ['cascaderProps']),
       ...mapGetters('config', [
         'rootOrganizations',
-        'rootOrganizationChildren',
+        'rootOrganizationChildrenAndAll',
         'findRootOrganizationByIndex',
       ]),
     },
@@ -385,22 +384,12 @@
     display: flex;
   }
 
-  .runtime-filter /deep/ .el-select .el-input__inner {
+  .runtime-filter ::v-deep .el-select .el-input__inner {
     border: 1px solid #000;
-    height: 50px;
-    line-height: 50px;
-    width: 320px;
-    font-size: 16px;
-    color: #000000;
   }
 
-  .runtime-filter /deep/ .el-cascader .el-input__inner {
+  .runtime-filter ::v-deep .el-cascader .el-input__inner {
     border: 1px solid #000;
-    height: 50px;
-    line-height: 50px;
-    width: 320px;
-    font-size: 16px;
-    color: #000000;
   }
 
   .marginRight20 {
@@ -417,12 +406,8 @@
     margin-right: 20px;
   }
 
-  .datePick /deep/ .el-date-editor {
-    height: 50px;
+  .datePick ::v-deep .el-date-editor {
     border: 1px solid #000000;
-    width: 500px;
-    color: #000000;
-    font-size: 20px;
   }
 
   .runtime-home {

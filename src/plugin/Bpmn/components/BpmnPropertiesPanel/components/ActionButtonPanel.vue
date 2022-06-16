@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-checkbox-group v-model="btnList">
-      <el-checkbox v-for="(label, index) in actionButtons"
+      <el-checkbox v-for="(label, index) in actionButtons(multiInstance)"
                    :key="index"
                    :label="label"></el-checkbox>
     </el-checkbox-group>
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { deepEquals } from '../../../utils/object'
 
 export default {
@@ -20,8 +20,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn/config', ['actionButtons']),
-    ...mapState('bpmn/panel', ['actions']),
+    ...mapState('bpmn/panel', ['actions', 'multiInstance']),
+    ...mapGetters('bpmn/config', ['actionButtons']),
   },
   watch: {
     actions(value) {

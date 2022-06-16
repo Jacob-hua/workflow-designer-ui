@@ -14,7 +14,7 @@
                          align="center">
         </el-table-column>
         <el-table-column prop="energyTypeName"
-                         label="能源系统"
+                         label="部署类型"
                          align="center">
         </el-table-column>
         <el-table-column prop="docName"

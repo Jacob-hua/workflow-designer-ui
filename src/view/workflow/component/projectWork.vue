@@ -1,7 +1,7 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-      <el-select v-model="projectCode">
+      <el-select v-model="searchForm.ascription">
         <el-option v-for="{id, label, value} in rootOrganizations"
                    :key="id"
                    :label="label"
@@ -11,8 +11,8 @@
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
         <el-cascader v-model="searchForm.business"
-                     :key="projectCode"
-                     :options="rootOrganizationChildrenAndAll(projectCode)"
+                     :key="searchForm.ascription"
+                     :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
                      :props='cascaderProps'></el-cascader>
       </div>
       <div class="datePick">
@@ -37,7 +37,8 @@
                    @click="refreshWorkFlowRecord">查询</el-button>
       </div>
       <div class="PublicForm-title-input">
-        <el-button @click="onReset">重置</el-button>
+        <el-button  type="primary" 
+                   @click="onReset">重置</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
@@ -88,7 +89,7 @@
              @submit="onAddBpmnSubmit"></addBpmn>
     <quoteBpmn v-if="quoteBpmnVisible"
                :valueDate="valueDate"
-               :ascription="projectCode"
+               :ascription="searchForm.ascription"
                :business="projectValue"
                :dialogVisible="quoteBpmnVisible"
                @close="quoteBpmnHidden()"
@@ -116,7 +117,7 @@ import addBpmn from './addBpmn.vue'
 import quoteBpmn from './quoteBpmn.vue'
 import lookBpmn from './lookBpmn.vue'
 import { designProcessCountStatistics } from '@/api/managerWorkflow'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
 
 export default {
@@ -168,12 +169,9 @@ export default {
       'rootOrganizations',
       'rootOrganizationChildrenAndAll',
     ]),
-    projectCode() {
-      return this.searchForm.ascription
-    },
   },
   watch: {
-    projectCode(value) {
+    'searchForm.ascription'(value) {
       if (value === this.currentOrganization) {
         return
       }
@@ -187,10 +185,12 @@ export default {
     },
   },
   mounted() {
+    this.dispatchRefreshOrganization()
     this.refreshWorkFlowRecord()
   },
   methods: {
     ...mapMutations('account', ['updateCurrentOrganization']),
+    ...mapActions('config', ['dispatchRefreshOrganization']),
     addProjectShow(dep = '新建工作流', row) {
       this.toData = row
       this.currentRowData = row
