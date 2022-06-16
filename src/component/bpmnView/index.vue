@@ -7,7 +7,7 @@
           项目
         </span>
         <div class="title-item-main">
-          <el-select v-model="postData.ascription"
+          <el-select v-model="projectData.ascription"
                      disabled>
             <el-option v-for="{id, label, value} in rootOrganizations"
                        :key="id"
@@ -21,10 +21,10 @@
           业务类型
         </span>
         <div class="title-item-main">
-          <el-cascader v-model="postData.business"
+          <el-cascader v-model="projectData.business"
                        disabled
-                       :key="postData.ascription"
-                       :options="rootOrganizationChildren(postData.ascription)"></el-cascader>
+                       :key="projectData.ascription"
+                       :options="rootOrganizationChildren(projectData.ascription)"></el-cascader>
         </div>
       </div>
       <div class="title-item">
@@ -32,7 +32,7 @@
           流程编码
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.numberCode"
+          <el-input v-model="projectData.numberCode"
                     placeholder=""
                     :disabled="true"></el-input>
         </div>
@@ -43,10 +43,10 @@
         </span>
         <el-tooltip class="item"
                     effect="dark"
-                    :content="postData.name"
+                    :content="projectData.name"
                     placement="top-start">
           <div class="title-item-main">
-            <el-input v-model="postData.name"
+            <el-input v-model="projectData.name"
                       placeholder=""
                       :disabled="true"></el-input>
           </div>
@@ -57,7 +57,7 @@
           创建时间
         </span>
         <div class="title-item-main">
-          <el-input v-model="postData.createTime"
+          <el-input v-model="projectData.createTime"
                     placeholder=""
                     :disabled="true"></el-input>
         </div>
@@ -66,9 +66,9 @@
     <div class="bpmnView-title"
          v-if="valueType === 'public'">
       <div class="bpmnView-title-public">
-        <span class="bpmnView-title-public-label">流程编码:</span><span class="bpmnView-title-public-value">{{postData.numberCode}}</span>
-        <span class="bpmnView-title-public-label">流程名称:</span><span class="bpmnView-title-public-value">{{postData.name}}</span>
-        <span class="bpmnView-title-public-label">创建时间:</span><span class="bpmnView-title-public-value">{{postData.createTime}}</span>
+        <span class="bpmnView-title-public-label">流程编码:</span><span class="bpmnView-title-public-value">{{projectData.numberCode}}</span>
+        <span class="bpmnView-title-public-label">流程名称:</span><span class="bpmnView-title-public-value">{{projectData.name}}</span>
+        <span class="bpmnView-title-public-label">创建时间:</span><span class="bpmnView-title-public-value">{{projectData.createTime}}</span>
       </div>
       <div class="bpmnView-title-button">
         <el-button type="primary"
@@ -80,7 +80,7 @@
       <bpmn-editor :pelatteVisible="false"
                    :headerVisible="false"
                    :linterToggle="false"
-                   :xml="postData.content" />
+                   :xml="projectData.content" />
     </div>
   </div>
 </template>
@@ -93,11 +93,10 @@ export default {
       type: String,
       default: 'project',
     },
-  },
-  data() {
-    return {
-      postData: {},
-    }
+    projectData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   computed: {
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),

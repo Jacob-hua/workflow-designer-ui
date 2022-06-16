@@ -7,6 +7,7 @@
     <div class="dialogVisible-main">
       <bpmnView ref="bpmnView"
                 :valueType="valueType"
+                :projectData="projectData"
                 @edit="onEdit"></bpmnView>
     </div>
     <span v-if="valueType === 'project'"

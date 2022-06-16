@@ -62,21 +62,18 @@
       </div>
       <div class="home-table">
         <projectTable v-if="activeName === 'enabled,disabled'"
-                      ref="project"
                       :business="projectValue"
                       :searchForm="searchFormData"
                       @lookBpmnShow="onLookBpmnShow"
                       @deleteRow="onProjectDeleteRow"></projectTable>
         <draftTable v-if="activeName === 'drafted'"
-                    ref="draft"
                     :business="projectValue"
                     :searchForm="searchFormData"
                     @draftTableEdit="onDraftTableEdit"
                     @deleteRow="onDraftDeleteRow"></draftTable>
       </div>
     </div>
-    <addProject ref="addpro"
-                :visible="addProjectVisible"
+    <addProject :visible="addProjectVisible"
                 @close="onAddProjectClose"
                 @submit="onAddProjectSubmit"></addProject>
     <addBpmn v-if="addBpmnVisible"
@@ -85,7 +82,7 @@
              @close="onAddBpmnClose"
              @submit="onAddBpmnSubmit"></addBpmn>
     <quoteBpmn v-if="quoteBpmnVisible"
-               :valueDate="valueDate"
+               :valueDate="searchForm.valueDate"
                :ascription="searchForm.ascription"
                :business="projectValue"
                :dialogVisible="quoteBpmnVisible"
@@ -93,10 +90,7 @@
                @lookBpmnShow="onLookBpmnShow"
                @addProject="onQuoteAddProject"></quoteBpmn>
     <lookBpmn v-if="lookBpmnVisible"
-              :showFlag="showFlag"
               :projectData="projectData"
-              :dep="dep"
-              ref="bpmn"
               :dialogVisible="lookBpmnVisible"
               @close="onLookBpmnClose"
               @edit="onLookBpmnEdit"></lookBpmn>
@@ -135,7 +129,6 @@ export default {
       searchFormData: {},
       draftProcessCount: 0,
       processCount: 0,
-      dep: '',
       lookData: null,
       projectValue: '',
       projectData: {},
@@ -143,12 +136,7 @@ export default {
       addBpmnVisible: false,
       quoteBpmnVisible: false,
       lookBpmnVisible: false,
-      valueDate: [start, end],
-      input: '',
       activeName: 'enabled,disabled',
-      dialogVisible: false,
-      toData: null,
-      showFlag: true,
     }
   },
   computed: {
@@ -223,14 +211,7 @@ export default {
     },
     onLookBpmnShow(row, tit) {
       this.projectData = { ...row }
-      if (tit === '引用') {
-        this.showFlag = false
-      }
       this.lookBpmnVisible = true
-      this.$nextTick(() => {
-        this.$refs.bpmn.$refs.bpmnView.postData = row
-        this.$refs.bpmn.$refs.bpmnView.showFlag = false
-      })
     },
     onLookBpmnClose() {
       this.lookBpmnVisible = false

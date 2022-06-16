@@ -42,13 +42,11 @@
       </div>
       <div class="home-table">
         <projectTable v-if="activeName === 'enabled,disabled'"
-                      ref="project"
                       :business="projectValue"
                       :searchForm="searchFormData"
                       @lookBpmnShow="onLookBpmnShow"
                       @deleteRow="onProjectDeleteRow"></projectTable>
         <draftTable v-if="activeName === 'drafted'"
-                    ref="draft"
                     :business="projectValue"
                     :searchForm="searchFormData"
                     @draftTableEdit="onDraftTableEdit"
@@ -61,7 +59,6 @@
              @close="onAddBpmnClose"
              @submit="onAddBpmnSubmit"></addBpmn>
     <lookBpmn v-if="lookBpmnVisible"
-              ref="bpmn"
               valueType="public"
               :projectData="projectData"
               :dialogVisible="lookBpmnVisible"
@@ -139,9 +136,6 @@ export default {
     onLookBpmnShow(row, tit) {
       this.projectData = { ...row }
       this.lookBpmnVisible = true
-      this.$nextTick(() => {
-        this.$refs.bpmn.$refs.bpmnView.postData = row
-      })
     },
     onLookBpmnClose() {
       this.lookBpmnVisible = false
