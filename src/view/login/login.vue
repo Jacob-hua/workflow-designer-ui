@@ -26,7 +26,7 @@ import { userLogin } from '@/constant/index.js'
         </div>
 
         <input type="button"
-               value="submit"
+               value="登录"
                @click="login()">
       </form>
     </div>
