@@ -115,9 +115,9 @@ function userTaskParameter2State(iBpmn = new IBpmn()) {
   const shapeInfo = iBpmn.getSelectedShapeInfo();
   userTask.assignee = shapeInfo["assignee"];
   userTask.customAssignee = !!shapeInfo["assignee"];
-  userTask.candidateUsers = shapeInfo["candidateUsers"];
+  userTask.candidateUsers = Array.isArray(shapeInfo["candidateUsers"]) ? shapeInfo["candidateUsers"].join(",") : shapeInfo["candidateUsers"];
   userTask.customCandidate = !!shapeInfo["candidateUsers"];
-  userTask.candidateGroups = shapeInfo["candidateGroups"];
+  userTask.candidateGroups = Array.isArray(shapeInfo["candidateGroups"]) ? shapeInfo["candidateGroups"].join(",") : shapeInfo["candidateGroups"];
   userTask.customCandidateGroup = !!shapeInfo["candidateGroups"];
   return userTask;
 }
