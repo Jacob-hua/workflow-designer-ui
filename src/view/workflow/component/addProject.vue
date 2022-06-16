@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="新建工作流"
-             :visible="dialogVisible"
+             :visible="visible"
              @close="onClose"
              width="35%"
              custom-class="addProject">
@@ -54,7 +54,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: {
-    dialogVisible: {
+    visible: {
       type: Boolean,
       default: true,
     },

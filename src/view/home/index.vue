@@ -179,7 +179,7 @@ export default {
       // this.value2 = this.systemOption[0].code
     },
     goBpmn() {
-      this.$router.push('/home/bpmn')
+      this.$router.push('/home/Workflow')
     },
     totalChange(value, key) {
       this[key] = value

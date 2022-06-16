@@ -17,12 +17,12 @@ export const designProcessCountStatistics = (params) =>
 
 // 工作流 草稿 新增
 
-export const workFlowSave = (params) =>
+export const createWorkFlow = (params) =>
     post('/design/processDesignService/create', params);
 
 // 工作流 草稿 新增
 
-export const workFlowSaveDraft = (params) =>
+export const updateWorkFlow = (params) =>
     put('/design/processDesignService/update', params);
 
 // 发布工作流

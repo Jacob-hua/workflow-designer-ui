@@ -17,7 +17,7 @@
                          label="流程文件"
                          align="center">
           <template slot-scope="scope">
-            <span class="fileStyle">{{ scope.row.name + '.bpmn' }}</span>
+            <span class="fileStyle">{{ scope.row.docName }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="createBy"
@@ -28,12 +28,12 @@
                          label="编辑时间"
                          align="center">
         </el-table-column>
-        <el-table-column prop="count"
+        <el-table-column prop="displayStatus"
                          label="状态"
                          align="center">
           <template slot-scope="scope">
             <span class="status"
-                  :class="scope.row.status === 'enabled' ? '' : 'statusFalse'">{{ scope.row.status === 'enabled' ? '可部署' : '不可部署' }}</span>
+                  :class="scope.row.status === 'enabled' ? '' : 'statusFalse'">{{ scope.row.displayStatus }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作"
@@ -161,7 +161,14 @@ export default {
         }
 
         this.pageInfo.total = result.total
-        this.listData = result.list
+        this.listData = result.list?.map((project) => {
+          if (project.ascription === 'public') {
+            project.displayStatus = project.status === 'enabled' ? '可关联' : '不可关联'
+          } else {
+            project.displayStatus = project.status === 'enabled' ? '可部署' : '不可部署'
+          }
+          return project;
+        })
       } catch (error) {}
     },
   },

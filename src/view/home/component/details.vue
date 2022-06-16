@@ -76,7 +76,6 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer" v-if="seeType === 'delete'">
-        <!-- <el-button @click="dialogVisible2 = false">回收</el-button> -->
         <el-button @click="deleteDeployment()" v-role="{ id: 'HomeDelete', type: 'button', business: business }">删除</el-button>
       </span>
     </el-dialog>

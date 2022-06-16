@@ -42,12 +42,12 @@
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
-                   @click="addProjectShow"
+                   @click="onAddProject"
                    v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
-                   @click="quoteBpmnShow()"
+                   @click="onQuoteBpmnShow"
                    v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">关联工作流</el-button>
       </div>
     </div>
@@ -55,57 +55,45 @@
       <div class="home-main-tab">
         <span class="home-main-tab-item"
               :class="activeName === 'enabled,disabled' ? 'active' : ''"
-              @click="changeActiveName('enabled,disabled')">工作流({{ processCount }})</span>
+              @click="onChangeActiveName('enabled,disabled')">工作流({{ processCount }})</span>
         <span class="home-main-tab-item"
               :class="activeName === 'drafted' ? 'active' : ''"
-              @click="changeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
+              @click="onChangeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
       </div>
       <div class="home-table">
         <projectTable v-if="activeName === 'enabled,disabled'"
-                      ref="project"
                       :business="projectValue"
                       :searchForm="searchFormData"
-                      @lookBpmnShow="lookBpmnShow"
+                      @lookBpmnShow="onLookBpmnShow"
                       @deleteRow="onProjectDeleteRow"></projectTable>
         <draftTable v-if="activeName === 'drafted'"
-                    ref="draft"
                     :business="projectValue"
                     :searchForm="searchFormData"
-                    @draftTableEdit="draftTableEdit"
+                    @draftTableEdit="onDraftTableEdit"
                     @deleteRow="onDraftDeleteRow"></draftTable>
       </div>
     </div>
-    <addProject ref="addpro"
-                :dialogVisible="addProjectVisible"
+    <addProject :visible="addProjectVisible"
                 @close="onAddProjectClose"
                 @submit="onAddProjectSubmit"></addProject>
     <addBpmn v-if="addBpmnVisible"
-             :formData="formData"
-             :flag="flag"
-             :currentRowData="currentRowData"
-             :dialogVisible="addBpmnVisible"
-             :xmlString="xmlString"
+             :visible="addBpmnVisible"
+             :projectData="projectData"
              @close="onAddBpmnClose"
              @submit="onAddBpmnSubmit"></addBpmn>
     <quoteBpmn v-if="quoteBpmnVisible"
-               :valueDate="valueDate"
+               :valueDate="searchForm.valueDate"
                :ascription="searchForm.ascription"
                :business="projectValue"
-               :dialogVisible="quoteBpmnVisible"
-               @close="quoteBpmnHidden()"
-               @lookBpmnShow="lookBpmnShow"
-               @addProjectShow="addProjectShow"></quoteBpmn>
+               :visible="quoteBpmnVisible"
+               @close="onQuoteBpmnClose"
+               @lookBpmn="onLookBpmnShow"
+               @quoteBpmn="onQuoteBpmn"></quoteBpmn>
     <lookBpmn v-if="lookBpmnVisible"
-              :showFlag="showFlag"
-              :business="projectValue"
-              :isEdit="isEdit"
-              :rowData="rowData"
-              :dep="dep"
-              ref="bpmn"
-              :dialogVisible="lookBpmnVisible"
+              :projectData="projectData"
+              :visible="lookBpmnVisible"
               @close="onLookBpmnClose"
-              @edit="onLookBpmnEdit"
-              @quote="addProjectShow"></lookBpmn>
+              @edit="onLookBpmnEdit"></lookBpmn>
   </div>
 </template>
 
@@ -117,6 +105,7 @@ import addBpmn from './addBpmn.vue'
 import quoteBpmn from './quoteBpmn.vue'
 import lookBpmn from './lookBpmn.vue'
 import { designProcessCountStatistics } from '@/api/managerWorkflow'
+import { getGlobalUUID } from '@/api/globalConfig'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
 
@@ -141,25 +130,14 @@ export default {
       searchFormData: {},
       draftProcessCount: 0,
       processCount: 0,
-      isEdit: true,
-      dep: '',
-      rowData: {},
       lookData: null,
       projectValue: '',
-      formData: {},
-      currentRowData: {},
+      projectData: {},
       addProjectVisible: false,
       addBpmnVisible: false,
       quoteBpmnVisible: false,
       lookBpmnVisible: false,
-      valueDate: [start, end],
-      input: '',
       activeName: 'enabled,disabled',
-      dialogVisible: false,
-      xmlString: '',
-      flag: false,
-      toData: null,
-      showFlag: true,
     }
   },
   computed: {
@@ -184,19 +162,34 @@ export default {
       },
     },
   },
-  mounted() {
-    this.dispatchRefreshOrganization()
-    this.refreshWorkFlowRecord()
+  async mounted() {
+    await this.dispatchRefreshOrganization()
+    await this.refreshWorkFlowRecord()
   },
   methods: {
     ...mapMutations('account', ['updateCurrentOrganization']),
     ...mapActions('config', ['dispatchRefreshOrganization']),
-    addProjectShow(dep = '新建工作流', row) {
-      this.toData = row
-      this.currentRowData = row
-      this.$refs.addpro.title = dep
+    async onAddProject() {
+      const { errorInfo, result: uuid } = await getGlobalUUID()
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
       this.addProjectVisible = true
-      this.$refs.addpro.postData = row || {}
+      this.projectData = {
+        code: `process_${uuid}`
+      }
+    },
+    async onQuoteBpmn(_, row) {
+      try {
+        const { errorInfo, result: uuid } = await getGlobalUUID()
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.setProjectData({ ...row, code: `process_${uuid}`, docName: `${uuid}.bpmn` })
+        this.addProjectVisible = true
+      } catch (error) {}
     },
     onReset() {
       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
@@ -212,59 +205,45 @@ export default {
       this.addProjectVisible = false
     },
     onAddProjectSubmit(value) {
-      this.formData = value
-      Object.keys(value).length ? (this.flag = true) : (this.flag = false)
       this.addProjectVisible = false
-      this.addBpmnShow()
-    },
-    addBpmnShow() {
-      this.xmlString = this.toData?.content || ''
+      this.setProjectData(value)
       this.addBpmnVisible = true
     },
     onAddBpmnClose() {
       this.addBpmnVisible = false
+      this.resetProjectData()
     },
     onAddBpmnSubmit() {
-      this.flag = false
       this.addBpmnVisible = false
+      this.resetProjectData()
       this.refreshWorkFlowRecord()
     },
-    quoteBpmnShow() {
+    onQuoteBpmnShow() {
       this.quoteBpmnVisible = true
     },
-    quoteBpmnHidden() {
+    onQuoteBpmnClose() {
       this.quoteBpmnVisible = false
+      this.resetProjectData()
     },
-    lookBpmnShow(row, tit) {
-      tit === 'gongzuoliu' ? (this.isEdit = true) : (this.isEdit = false)
-      this.rowData = row
-      if (tit === '引用') {
-        this.showFlag = false
-      }
+    onLookBpmnShow(row, tit) {
+      this.setProjectData(row)
       this.lookBpmnVisible = true
-      this.currentRowData = row
-      this.$nextTick(() => {
-        this.$refs.bpmn.$refs.bpmnView.postData = row
-        this.$refs.bpmn.$refs.bpmnView.showFlag = false
-      })
     },
     onLookBpmnClose() {
       this.lookBpmnVisible = false
-      this.currentRowData = {}
+      this.resetProjectData()
+      this.refreshWorkFlowRecord()
     },
     onLookBpmnEdit(row) {
       this.lookBpmnVisible = false
-      this.xmlString = row.content
-      this.currentRowData = row
+      this.setProjectData(row)
       this.addBpmnVisible = true
     },
-    draftTableEdit(row) {
-      this.xmlString = row.content
-      this.currentRowData = row
+    onDraftTableEdit(row) {
+      this.setProjectData(row)
       this.addBpmnVisible = true
-      this.flag = true
     },
-    changeActiveName(value) {
+    onChangeActiveName(value) {
       this.activeName = value
       this.refreshWorkFlowRecord()
     },
@@ -273,6 +252,12 @@ export default {
     },
     onDraftDeleteRow() {
       this.fetchDesignProcessCountStatistics()
+    },
+    resetProjectData() {
+      this.projectData = {}
+    },
+    setProjectData(data) {
+      this.projectData = { ...this.projectData, ...data }
     },
     async refreshWorkFlowRecord() {
       await this.fetchDesignProcessCountStatistics()

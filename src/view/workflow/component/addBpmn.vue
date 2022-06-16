@@ -1,13 +1,11 @@
 <template>
-  <el-dialog title="新建流程"
-             :visible="dialogVisible"
+  <el-dialog :title="title"
+             :visible="visible"
              width="90%"
-             custom-class="dialogVisible"
              @close="onClose">
-    <div class="dialogVisible-main">
-      <bpmnJsELe :xmlString="xmlString"
-                 :name="formData.name"
-                 v-if="dialogVisible"></bpmnJsELe>
+    <div class="visible-main">
+      <bpmnJsELe :projectData="projectData"
+                 v-if="visible"></bpmnJsELe>
     </div>
     <span slot="footer"
           class="dialog-footer">
@@ -21,8 +19,8 @@
 
 <script>
 import {
-  workFlowSaveDraft,
-  workFlowSave,
+  updateWorkFlow,
+  createWorkFlow,
   publishWorkflow,
 } from '@/api/managerWorkflow'
 import bpmnJsELe from '@/view/bpmnJsELe/index.vue'
@@ -33,15 +31,11 @@ export default {
     bpmnJsELe,
   },
   props: {
-    flag: {
-      type: Boolean,
-      default: false,
-    },
-    formData: {
+    projectData: {
       type: Object,
       default: () => ({}),
     },
-    dialogVisible: {
+    visible: {
       type: Boolean,
       default: false,
     },
@@ -49,34 +43,17 @@ export default {
       type: String,
       default: '',
     },
-    currentRowData: {
-      type: Object,
-      default: () => ({
-        name: '',
-        id: '',
-      }),
-    },
-    xmlString: {
-      type: String,
-      default: '',
-    },
-  },
-  data() {
-    return {
-      modeler: null,
-      postData: {
-        name: '',
-      },
-    }
   },
   computed: {
     ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
+    title() {
+      return this.projectData.id ? '编辑流程' : '新建流程'
+    },
     processFormData() {
-      const { name: processName, id: processId } =
-        this.$iBpmn.getRootShapeInfo()
+      const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
       let processFormData = new FormData()
-      if (this.currentRowData?.id) {
-        processFormData.set('id', this.currentRowData.id)
+      if (this.projectData.id) {
+        processFormData.set('id', this.projectData.id)
       }
       processFormData.set('name', processName)
       processFormData.set('docName', processName + '.bpmn')
@@ -84,7 +61,7 @@ export default {
         processFormData.set('ascription', 'public')
       } else {
         processFormData.set('ascription', this.currentOrganization)
-        processFormData.set('business', this.formData.business)
+        processFormData.set('business', this.projectData.business)
       }
       processFormData.set('code', processId)
       processFormData.set('createBy', this.userInfo.account)
@@ -113,11 +90,11 @@ export default {
         )
         this.processFormData.set('status', 'enabled')
         let promise
-        // 已发布的 走修改的流程
-        if (this.currentRowData.id) {
-          this.processFormData.set('id', this.currentRowData.id)
-          promise = workFlowSaveDraft(this.processFormData)
+        // 如果projectData存在id，则走修改的流程
+        if (this.projectData.id) {
+          promise = updateWorkFlow(this.processFormData)
         } else {
+        // 如果projectData不存在id，则走发布的流程（）
           promise = publishWorkflow(this.processFormData)
         }
         const { errorInfo } = await Promise.resolve(promise)
@@ -155,10 +132,11 @@ export default {
         )
         this.processFormData.set('status', 'drafted')
         let promise
-        if (this.flag) {
-          promise = workFlowSave(this.processFormData)
+        // 如果projectData存在id，则走修改的流程
+        if (this.projectData.id) {
+          promise = updateWorkFlow(this.processFormData)
         } else {
-          promise = workFlowSaveDraft(this.processFormData)
+          promise = createWorkFlow(this.processFormData)
         }
         const { errorInfo } = await Promise.resolve(promise)
         if (errorInfo.errorCode) {
@@ -175,7 +153,7 @@ export default {
 </script>
 
 <style scoped>
-.dialogVisible-main {
+.visible-main {
   height: 80vh;
 }
 </style>

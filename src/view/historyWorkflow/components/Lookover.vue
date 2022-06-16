@@ -15,7 +15,7 @@
                      <preview :itemList="formListFun(item.formVariable)"  :formConf="configFun(item.formVariable)"></preview>
                   </div>
                   <div v-if="item.formVariable && JSON.parse(item.formVariable).components">
-                    <div v-for="(item, index) in JSON.parse(item.formVariable).components">
+                    <div v-for="(item, index) in JSON.parse(item.formVariable).components" :key="index">
                       <span>{{ item.label }}</span>
                       <span style="margin-left: 20px;">{{ item.value }}</span>
                     </div>
@@ -23,7 +23,7 @@
                   <div v-if="item.status === 'completed'">
                     <i class="el-icon-check" :class="item.time === '-' ? 'error' : 'success'"></i>
                     <span class="word1">{{ item.assignee }}  <span>(执行)</span></span>
-                    <span class="dataYear">{{ item.time }}</span>
+                    <span class="dataYear">{{ item.endTime }}</span>
                   </div>
                   <div v-if="item.status === 'deleted'">
                     <div>

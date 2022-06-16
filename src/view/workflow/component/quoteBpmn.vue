@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="引用工作流"
-             :visible="dialogVisible"
+             :visible="visible"
              width="70%"
              custom-class="dialogVisible"
              @close="close">
@@ -28,9 +28,9 @@
                          align="center">
           <template slot-scope="{ $index, row }">
             <el-button size="mini"
-                       @click="lookBpmnShow('引用', $index, row)">查看</el-button>
+                       @click="onLookBpmn('引用', $index, row)">查看</el-button>
             <el-button size="mini"
-                       @click="addProjectShow('引用工作流', $index, row)">引用</el-button>
+                       @click="onQuoteBpmn('引用工作流', $index, row)">引用</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -53,7 +53,7 @@ import { mapState } from 'vuex'
 
 export default {
   props: {
-    dialogVisible: {
+    visible: {
       type: Boolean,
       default: false,
     },
@@ -90,7 +90,7 @@ export default {
       try {
         const { errorInfo, result } = await workFlowRecord({
           tenantId: this.tenantId,
-          status: 'enabled,disabled',
+          status: 'enabled',
           ascription: 'public',
           business: this.business,
           createBy: this.userInfo.name,
@@ -110,13 +110,13 @@ export default {
     close() {
       this.$emit('close')
     },
-    lookBpmnShow(tit, _, row) {
-      this.$emit('lookBpmnShow', row, tit)
+    onLookBpmn(tit, _, row) {
+      this.$emit('lookBpmn', row, tit)
     },
-    addProjectShow(title, _, row) {
+    onQuoteBpmn(title, _, row) {
       const newData = {...row}
       delete newData.id
-      this.$emit('addProjectShow', title, newData)
+      this.$emit('quoteBpmn', title, newData)
     },
     handleSizeChange(val) {
       this.getData.limit = val

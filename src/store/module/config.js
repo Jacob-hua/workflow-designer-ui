@@ -30,7 +30,6 @@ const mutations = {
 
 const actions = {
   async dispatchRefreshOrganization({ commit, rootState }) {
-    console.log(router.currentRoute.name)
     const { errorInfo, result } = await getProjectList({
       count: -1,
       projectCode: "",

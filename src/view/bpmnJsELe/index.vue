@@ -1,7 +1,8 @@
 <template>
   <div class="bpmnEle">
-    <bpmn-editor :name="name"
-                 :xml="xmlString" />
+    <bpmn-editor :id="projectData.code"
+                 :name="projectData.name"
+                 :xml="projectData.content" />
     <bpmn-properties-panel />
   </div>
 </template>
@@ -9,6 +10,7 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
 import { getSystemGroupTree, postPersonUser } from '../../api/unit/api'
+import { getGlobalUUID } from '../../api/globalConfig'
 
 function groupTree2CascaderData(data) {
   if (Array.isArray(data)) {
@@ -37,13 +39,9 @@ function users2CascaderData(data) {
 export default {
   name: 'bpmnEle',
   props: {
-    xmlString: {
-      type: String,
-      default: '',
-    },
-    name: {
-      type: String,
-      default: () => new Date().getTime().toString(),
+    projectData: {
+      type: Object,
+      default: () => ({}),
     },
   },
   computed: {
@@ -54,6 +52,8 @@ export default {
     this.updateRequestUserGroupFunc({ newFunc: this.fetchUserGroup })
     // 定义请求用户的方法
     this.updateRequestUserFunc({ newFunc: this.fetchUser })
+    // 定义ID生成器方法
+    this.updateGenerateIdFunc({ newFunc: this.fetUUID })
     // 触发请求用户组，也就是会在action中调用this.fetchUserGroup，
     // 并将数据同步到state
     this.dispatchRequestUserGroup({
@@ -66,6 +66,7 @@ export default {
     ...mapMutations('bpmn/config', [
       'updateRequestUserGroupFunc',
       'updateRequestUserFunc',
+      'updateGenerateIdFunc',
     ]),
     async fetchUserGroup(params) {
       try {
@@ -96,6 +97,17 @@ export default {
         return []
       }
     },
+    async fetUUID() {
+      try {
+        const { errorInfo, result } = await getGlobalUUID()
+        if (errorInfo.errorCode) {
+          return
+        }
+        return result
+      } catch (error) {
+        return
+      }
+    }
   },
 }
 </script>

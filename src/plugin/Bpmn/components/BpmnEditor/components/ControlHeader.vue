@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { readFile, selectFile, downloadFile } from '../../../utils/file'
 import { curryFunction } from '../../../utils/function'
 
@@ -113,11 +113,13 @@ export default {
     ...mapState('bpmn/editor', ['undoable', 'redoable']),
   },
   methods: {
+    ...mapActions('bpmn/config', ['dispatchGenerateId']),
     async openFile() {
       try {
+        const newId = await this.dispatchGenerateId()
         const files = await selectFile(['.xml', '.bpmn'])
         const content = await readFile((reader) => reader.readAsText(files[0]))
-        this.$iBpmn.loadDiagram(content)
+        this.$iBpmn.loadDiagram(content, { id: `process_${newId}` })
       } catch (error) {
         this.$message.error('文件打开失败')
       }
