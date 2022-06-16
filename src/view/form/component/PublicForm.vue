@@ -214,8 +214,7 @@
             })
             this.$refs.detailsDiolog.options = arr
             this.$refs.detailsDiolog.value = res.result.childIds[0]
-            // this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
-            // this.$refs.detailsDiolog.$refs.formbpmn.init()
+            this.$refs.detailsDiolog.getAllBusinessConfig(res.result)
           })
         })
       },
@@ -256,7 +255,6 @@
   .PublicForm-title-button {
     display: inline-block;
     margin-left: 40px;
-    float: right;
   }
   .home-main {
     margin-top: 40px;
