@@ -324,8 +324,8 @@
         this.$emit('goSee', this.$refs.ProcessInformation.postData)
       },
       selectOneSet(value) {
-        console.log(value?.businessObject?.$attrs['camunda:actions'].split(','))
-        this.btnList = value?.businessObject?.$attrs['camunda:actions'].split(',')
+        // console.log( value?.businessObject?.$attrs['camunda:actions'].split(','))
+        this.btnList = (value?.businessObject?.$attrs['camunda:actions'] && value?.businessObject?.$attrs['camunda:actions'].split(',')) || []
         if (this.btnList.length > 0) {
           if (!this.dataList.Hang) {
             this.changeFunction('Hang')
