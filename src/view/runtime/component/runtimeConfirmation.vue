@@ -126,6 +126,12 @@
         this.selectValue = selectValue
       },
       handleReject() {
+        
+        if (!this.selectValue) {
+          this.$message.error('请选择被驳回的节点')
+          return
+        }
+        
         putRejectTask({
           message: this.textarea,
           processInstanceId: this.processInstanceId,
@@ -137,10 +143,6 @@
           currentTaskKey: this.processInstanceDetail.taskKey,
           createBy: this.userInfo.account
         }).then((res) => {
-          // this.$parent.dataList.reject.rejectBollen = false
-          // this.$parent.dataList.reject.data = '2022-04-15 11:11:11'
-          // this.$parent.dataList.reject.name = 'admin'
-          // this.$parent.dataList.reject.rejectResult = this.selectData.businessObject.name
           this.dialogVisible2 = false
           this.$parent.$emit('taskSuccess')
         })

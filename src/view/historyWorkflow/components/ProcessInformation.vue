@@ -43,7 +43,7 @@
       </div>
       <div class="title-item">
         <span class="title-item-label marginLeft40">
-          能源系统
+          部署类型
         </span>
         <div class="title-item-main">
           <el-input v-model="postData.energyType" placeholder="" :disabled="true"></el-input>

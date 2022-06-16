@@ -4,7 +4,7 @@
       <el-form label-position="right" label-width="80px" ref="formData" :model="firstData">
         <el-form-item label="应用项目" prop="ascription">
           <el-col :span="24">
-            <el-input v-model="firstData.ascription" placeholder="请输入应用项目" :disabled="true"></el-input>
+            <el-input :value="$getMappingName(firstData.ascription)" placeholder="请输入应用项目" :disabled="true"></el-input>
           </el-col>
         </el-form-item>
         <el-form-item label="流程类型" prop="business">
@@ -13,9 +13,9 @@
               :props='cascaderProps' :disabled="true"></el-cascader>
           </el-col>
         </el-form-item>
-        <el-form-item label="能源系统" prop="name" v-if="options.length > 0">
+        <el-form-item label="部署类型" prop="name" v-if="options.length > 0">
           <el-col :span="24">
-            <el-select v-model="firstData.systemType" placeholder="请选择能源系统">
+            <el-select v-model="firstData.systemType" placeholder="请选择部署类型">
               <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>

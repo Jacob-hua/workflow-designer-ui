@@ -6,7 +6,7 @@
       </div>
       <div v-if="dialogVisible1" class="details-footer-height">
         <div class="details-header">
-          <span>能源系统</span>
+          <span>部署类型</span>
           <span class="inputSelect">
             <el-cascader style="margin-right: 10px;"
                          v-model="postData.business"

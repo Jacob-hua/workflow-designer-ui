@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="终止" :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
+  <el-dialog title="查看流程信息" :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
     <div>
       <ProcessInformation ref="ProcessInformation" :processTaskList="listData" v-if="dialogVisible" seeType="runTime"></ProcessInformation>
     </div>

@@ -37,6 +37,7 @@ import { userLogin } from '@/constant/index.js'
 <script>
 import CONSTANT from '@/constant'
 import { userLogin } from '@/api/unit/api.js'
+import { getAllBusinessConfig } from '@/api/globalConfig.js'
 import { mapMutations } from 'vuex'
 import { mapState } from 'vuex'
 
@@ -49,6 +50,9 @@ export default {
       showHtml: false,
     }
   },
+  computed: {
+    ...mapState('account', ['tenantId']),
+  },
   created() {
     if (this.$route.query.account) {
       this.username = this.$route.query.account
@@ -57,6 +61,7 @@ export default {
       this.login()
     } else {
       sessionStorage.clear()
+      sessionStorage.setItem('mapping', '[]' )
       this.showHtml = true
     }
   },
@@ -68,11 +73,7 @@ export default {
         password: this.password,
       }).then((res) => {
         sessionStorage.setItem('loginData', JSON.stringify(res.result))
-        this.updateUserInfo({
-          userInfo: {
-            name: res.result.account,
-          },
-        })
+        this.getMapping()
         if (this.$route.query.account) {
           this.$router.push('/home/runTime')
         } else {
@@ -80,6 +81,15 @@ export default {
         }
       })
     },
+    getMapping() {
+      getAllBusinessConfig({
+        tenantId: this.tenantId
+      }).then((res) => {
+        if (res) {
+          sessionStorage.setItem('mapping', JSON.stringify(res.result || '[]'))
+        }
+      })
+    }
   },
 }
 </script>

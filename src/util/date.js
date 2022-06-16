@@ -34,3 +34,13 @@ export function oneMonthAgo(date, format = "YYYY-MM-DD", startOfDay = true) {
 export function currentOneMonthAgo(format = "YYYY-MM-DD", startOfDay = true) {
   return { start: oneMonthAgo(new Date(), format, startOfDay), end: moment(new Date()).endOf("day").format(format) };
 }
+
+// @code 项目及业务对应code
+
+export function getMappingName(code){
+	   let mapping = JSON.parse(sessionStorage.getItem('mapping'))
+     let eleMapping = mapping.filter((item) => {
+       return item.code === code
+     })
+     return eleMapping[0]?.name || '---'
+ }
