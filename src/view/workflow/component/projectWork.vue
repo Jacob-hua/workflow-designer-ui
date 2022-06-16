@@ -55,10 +55,10 @@
       <div class="home-main-tab">
         <span class="home-main-tab-item"
               :class="activeName === 'enabled,disabled' ? 'active' : ''"
-              @click="changeActiveName('enabled,disabled')">工作流({{ processCount }})</span>
+              @click="onChangeActiveName('enabled,disabled')">工作流({{ processCount }})</span>
         <span class="home-main-tab-item"
               :class="activeName === 'drafted' ? 'active' : ''"
-              @click="changeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
+              @click="onChangeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
       </div>
       <div class="home-table">
         <projectTable v-if="activeName === 'enabled,disabled'"
@@ -203,9 +203,6 @@ export default {
     onAddProjectSubmit(value) {
       this.addProjectVisible = false
       this.projectData = { ...value }
-      this.addBpmnShow()
-    },
-    addBpmnShow() {
       this.addBpmnVisible = true
     },
     onAddBpmnClose() {
@@ -249,7 +246,7 @@ export default {
       this.projectData = { ...row }
       this.addBpmnVisible = true
     },
-    changeActiveName(value) {
+    onChangeActiveName(value) {
       this.activeName = value
       this.refreshWorkFlowRecord()
     },

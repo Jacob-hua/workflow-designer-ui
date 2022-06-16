@@ -45,27 +45,25 @@
                       ref="project"
                       :business="projectValue"
                       :searchForm="searchFormData"
-                      @lookBpmnShow="lookBpmnShow"
+                      @lookBpmnShow="onLookBpmnShow"
                       @deleteRow="onProjectDeleteRow"></projectTable>
         <draftTable v-if="activeName === 'drafted'"
                     ref="draft"
                     :business="projectValue"
                     :searchForm="searchFormData"
-                    @draftTableEdit="draftTableEdit"
+                    @draftTableEdit="onDraftTableEdit"
                     @deleteRow="onDraftDeleteRow"></draftTable>
       </div>
     </div>
-    <addBpmn :currentRowData="currentRowData"
-             :flag="flag"
-             publick="publick"
-             :dialogVisible="addBpmnVisible"
-             :xmlString="xmlString"
+    <addBpmn publick="publick"
+             :visible="addBpmnVisible"
+             :projectData="projectData"
              @close="onAddBpmnClose"
              @submit="onAddBpmnSubmit"></addBpmn>
     <lookBpmn v-if="lookBpmnVisible"
               ref="bpmn"
               valueType="public"
-              :rowData="rowData"
+              :projectData="projectData"
               :dialogVisible="lookBpmnVisible"
               @close="onLookBpmnClose"
               @edit="onLookBpmnEdit"></lookBpmn>
@@ -99,19 +97,14 @@ export default {
         name: '',
       },
       searchFormData: {},
-      flag: true,
-      rowData: {},
       projectValue: '',
-      currentRowData: {},
-      dataType: 'enabled',
-      input: '',
+      projectData: {},
       activeName: 'enabled,disabled',
-      dialogVisible: false,
       addBpmnVisible: false,
       lookBpmnVisible: false,
+      dialogVisible: false,
       draftProcessCount: 0,
       processCount: 0,
-      xmlString: '',
     }
   },
   computed: {
@@ -122,9 +115,8 @@ export default {
   },
   methods: {
     onAddBpmnShow() {
-      this.xmlString = ''
       this.addBpmnVisible = true
-      this.flag = true
+      this.projectData = {}
     },
     onReset() {
       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
@@ -137,33 +129,32 @@ export default {
     },
     onAddBpmnClose() {
       this.addBpmnVisible = false
+      this.projectData = {}
     },
     onAddBpmnSubmit() {
       this.addBpmnVisible = false
+      this.projectData = {}
       this.refreshWorkFlowRecord()
     },
-    lookBpmnShow(row, tit) {
-      tit === 'gongzuoliu' ? (this.isEdit = true) : (this.isEdit = false)
-      this.rowData = row
+    onLookBpmnShow(row, tit) {
+      this.projectData = { ...row }
       this.lookBpmnVisible = true
-      this.currentRowData = row
       this.$nextTick(() => {
         this.$refs.bpmn.$refs.bpmnView.postData = row
       })
     },
     onLookBpmnClose() {
       this.lookBpmnVisible = false
-      this.currentRowData = {}
+      this.projectData = {}
+      this.refreshWorkFlowRecord()
     },
     onLookBpmnEdit(row) {
       this.lookBpmnVisible = false
-      this.xmlString = row.content
+      this.projectData = { ...row }
       this.addBpmnVisible = true
-      this.flag = false
     },
-    draftTableEdit(row) {
-      this.xmlString = row.content
-      this.currentRowData = row
+    onDraftTableEdit(row) {
+      this.projectData = { ...row }
       this.addBpmnVisible = true
     },
     onChangeActiveName(value) {
