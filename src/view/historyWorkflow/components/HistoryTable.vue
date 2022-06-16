@@ -17,9 +17,9 @@
                          label="部署类型"
                          align="center">
         </el-table-column>
-        <el-table-column prop="docName"
+        <!-- <el-table-column prop="docName"
                          label="执行厂站"
-                         align="center">
+                         align="center"> -->
         </el-table-column>
         <el-table-column prop="startUser"
                          label="发起人"

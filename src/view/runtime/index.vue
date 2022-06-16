@@ -72,8 +72,8 @@
               <span>{{ $getMappingName(scope.row.energyType) }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="执行厂站" align="center">
-          </el-table-column>
+          <!-- <el-table-column prop="name" label="执行厂站" align="center">
+          </el-table-column> -->
           <el-table-column prop="starter" label="发起人" align="center">
           </el-table-column>
           <el-table-column prop="startTime" label="发起时间" align="center">
@@ -193,7 +193,7 @@
     },
     async mounted() {
       await this.dispatchRefreshOrganization()
-       this.getData['projectCode'] = this.findRootOrganizationByIndex(0).value
+      this.getData['projectCode'] = this.findRootOrganizationByIndex(0).value
       await this.fetchNewTasks()
       await this.fetchAmount()
       await this.fetchDataNumber()
