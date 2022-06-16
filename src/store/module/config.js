@@ -1,5 +1,6 @@
 import { Message } from "element-ui";
 import { getProjectList } from "../../api/globalConfig";
+import router from "@/router";
 
 const state = {
   organization: [],
@@ -29,11 +30,14 @@ const mutations = {
 
 const actions = {
   async dispatchRefreshOrganization({ commit, rootState }) {
+    console.log(router.currentRoute.name)
     const { errorInfo, result } = await getProjectList({
       count: -1,
       projectCode: "",
       tenantId: rootState.account.tenantId,
       type: "",
+      menuRoute: router.currentRoute.name,
+      account: JSON.parse(sessionStorage.getItem('loginData')).account
     });
     if (errorInfo.errorCode) {
       Message.error(errorInfo.errorMessage);

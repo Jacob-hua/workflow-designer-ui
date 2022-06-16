@@ -4,10 +4,7 @@
       <div class="projectSelect">
         <el-select @change="projectChange"
                    v-model="value1">
-          <el-option v-for="item in projectOption"
-                     :key="item.id"
-                     :label="item.name"
-                     :value="item.code"></el-option>
+          <el-option v-for="{id, label, value} in rootOrganizations" :key="id" :label="label" :value="value"></el-option>
         </el-select>
       </div>
       <div class="businessSelect">
@@ -102,7 +99,7 @@ import WorkflowTable from './component/WorkflowTable.vue'
 import draftsTable from './component/draftsTable.vue'
 import { getDeployCount, getTaskCountStatistic } from '@/api/unit/api.js'
 import { getProjectList } from '@/api/globalConfig'
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import {currentOneMonthAgo} from '@/util/date'
 
 export default {
@@ -136,13 +133,16 @@ export default {
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
     ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll', 'findRootOrganizationByIndex']),
   },
   async created() {
-    await this.getProjectList()
+    await this.dispatchRefreshOrganization()
+    this.value1 = this.findRootOrganizationByIndex(0).value
+    // await this.getProjectList()
     this.getManyData()
   },
   methods: {
+    ...mapActions('config', ['dispatchRefreshOrganization']),
     handleChange() {
       this.getManyData()
     },

@@ -20,11 +20,12 @@ const routes = [
     path: "/home",
     name: "index",
     component: layout,
-    redirect: "/home/bpmn",
+    redirect: "/home/Workflow",
     children: [
       {
-        path: "/home/bpmn",
-        name: "bpmn",
+        path: "/home/Workflow",
+        // name: "bpmn",
+        name: "Workflow",
         component: () => import("@/view/workflow/index"),
         meta: {
           title: "bpmn",
@@ -32,8 +33,9 @@ const routes = [
         },
       },
       {
-        path: "/home/form",
-        name: "form",
+        path: "/home/Form",
+        // name: "form",
+        name: "Form",
         component: () => import("@/view/form/index"),
         meta: {
           title: "bpmn",
@@ -41,8 +43,9 @@ const routes = [
         },
       },
       {
-        path: "/home/home",
-        name: "home",
+        path: "/home/Home",
+        // name: "home",
+        name: "Home",
         component: () => import("@/view/home/index"),
         meta: {
           title: "bpmn",
@@ -50,8 +53,9 @@ const routes = [
         },
       },
       {
-        path: "/home/history",
-        name: "history",
+        path: "/home/History",
+        // name: "history",
+        name: "History",
         component: () => import("@/view/historyWorkflow/HistoryWorkflow"),
         meta: {
           title: "history",
@@ -59,8 +63,9 @@ const routes = [
         },
       },
       {
-        path: "/home/runTime",
-        name: "runTime",
+        path: "/home/RunTime",
+        // name: "runTime",
+        name: "RunTime",
         component: () => import("@/view/runtime/index"),
         hidden: true,
       },
@@ -71,14 +76,16 @@ const routes = [
         hidden: true,
       },
       {
-        path: "/home/all",
-        name: "all",
+        path: "/home/Configuration",
+        // name: "all",
+        name: "Configuration",
         component: () => import("@/view/configuration"),
         hidden: true,
       },
       {
-        path: "/home/power",
-        name: "power",
+        path: "/home/Power",
+        // name: "power",
+        name: "Power",
         component: () => import("@/view/power"),
         hidden: true,
       },
