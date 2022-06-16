@@ -2,9 +2,6 @@
   <div>
     <el-dialog title="表单详情" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
-        <div>
-          表单模板
-        </div>
         <div class="detail-title">
           <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>{{ formDatas.numberCode }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>{{ formDatas.name }}</span> </div>
