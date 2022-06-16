@@ -65,8 +65,7 @@ export default {
 }
 
 ::v-deep .el-select {
-  width: 340px;
-  height: 50px;
+  width: auto;
   margin-right: 18px;
 }
 

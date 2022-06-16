@@ -1,7 +1,7 @@
 <template>
   <div class="PublicForm">
     <div class="projectHeader">
-      <el-select style="width:  229px" v-model="projectCode">
+      <el-select style="width: 220px" v-model="projectCode">
         <el-option v-for="{id, label, value} in rootOrganizations"
                    :key="id"
                    :label="label"

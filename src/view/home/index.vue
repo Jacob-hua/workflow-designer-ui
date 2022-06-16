@@ -13,7 +13,7 @@
       <div class="businessSelect">
         <el-cascader style="margin-right: 10px;"
                      v-model="value2"
-                     :options="rootOrganizationChildren(value1)"
+                     :options="rootOrganizationChildrenAndAll(value1)"
                      :props='cascaderProps'
                      clearable
                      @change="handleChange"></el-cascader>
@@ -27,7 +27,8 @@
                         range-separator="——"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        :default-time="['00:00:00', '23:59:59']"
                         :clearable="false"
                         @change="getManyData()">
         </el-date-picker>
@@ -99,10 +100,10 @@
 <script>
 import WorkflowTable from './component/WorkflowTable.vue'
 import draftsTable from './component/draftsTable.vue'
-import { format } from '@/assets/js/unit.js'
 import { getDeployCount, getTaskCountStatistic } from '@/api/unit/api.js'
 import { getProjectList } from '@/api/globalConfig'
 import { mapState, mapGetters } from 'vuex'
+import {currentOneMonthAgo} from '@/util/date'
 
 export default {
   components: {
@@ -110,6 +111,7 @@ export default {
     draftsTable,
   },
   data() {
+    const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
       sysProps: {
         label: 'name',
@@ -117,10 +119,7 @@ export default {
       },
       projectOption: [],
       systemOption: [],
-      valueDate: [
-        format(new Date(), 'yyyy-MM-1') + ' 00:00:00',
-        format(new Date(), 'yyyy-MM-dd') + ' 23:59:59',
-      ],
+      valueDate: [start,end],
       numberList: {
         executionCompleteCount: 0,
         executionInProcessCount: 0,
@@ -137,7 +136,7 @@ export default {
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
     ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
   },
   async created() {
     await this.getProjectList()
@@ -242,19 +241,9 @@ export default {
 
 .home-filter ::v-deep .el-select .el-input__inner {
   border: 1px solid #000;
-  height: 50px;
-  line-height: 50px;
-  width: 320px;
-  font-size: 16px;
-  color: #000000;
 }
 .home-filter ::v-deep .el-cascader .el-input__inner {
   border: 1px solid #000;
-  height: 50px;
-  line-height: 50px;
-  width: 320px;
-  font-size: 16px;
-  color: #000000;
 }
 
 .home-header {
@@ -333,9 +322,7 @@ export default {
 }
 
 ::v-deep .el-date-editor {
-  height: 50px;
   border: 1px solid #000000;
-  width: 500px;
   color: #000000;
   font-size: 20px;
 }
