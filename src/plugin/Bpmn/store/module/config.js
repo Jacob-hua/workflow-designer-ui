@@ -113,7 +113,8 @@ const state = {
       value: "SequentialMultiInstance",
     },
   ],
-  actionButtons: ["待办", "传阅", "挂起", "加减签", "驳回", "终止"],
+  userTaskActionButtons: ["待办", "传阅", "挂起", "驳回", "终止"],
+  multiInstanceActionButtons: ["待办", "传阅", "挂起", "加减签", "驳回", "终止"],
   requestUserGroupFunc: () => {},
   requestUserFunc: () => {},
 };
@@ -142,6 +143,11 @@ const getters = {
   findUserGroupChildren(state) {
     return ({ value }) => {
       return state.userGroupOptions.find((option) => option.value === value)?.children;
+    };
+  },
+  actionButtons(state) {
+    return ({ loopCharacteristics }) => {
+      return loopCharacteristics ? state.multiInstanceActionButtons : state.userTaskActionButtons;
     };
   },
 };
