@@ -94,7 +94,7 @@
       </div>
     </div>
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType" :projectOption="projectOption" :systemOption="systemOption" :sysProps="sysProps"></projectFormDiolog>
-    <detailsDiologForm v-if="detailFlag" ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
+    <detailsDiologForm ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete" :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
     <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode" :projectValue="projectValue" @close="close()"></application>
   </div>
 </template>
@@ -118,7 +118,6 @@
           checkStrictly: true,
           emitPath: false,
         },
-        detailFlag: false,
         systemOption: [],
         formData: {},
         projectValue: '',
@@ -331,7 +330,7 @@
         })
       },
       detailsDiolog(item) {
-        this.detailFlag = true
+        let _this = this
           this.$refs.detailsDiolog.dialogVisible2 = true
           postFormDesignRecordFormDesignRecordInfo({
             id: item.id,
@@ -351,11 +350,9 @@
                 label: item
               })
             })
-            this.$refs.detailsDiolog.options = arr
-            this.$refs.detailsDiolog.value = res.result.childIds[0]
-            this.$refs.detailsDiolog.getAllBusinessConfig(res.result)
-            // this.$refs.detailsDiolog.$refs.formbpmn.schema = JSON.parse(res.result.content)
-            // this.$refs.detailsDiolog.$refs.formbpmn.init()
+            _this.$refs.detailsDiolog.options = arr
+            _this.$refs.detailsDiolog.value = res.result.childIds[0]
+            _this.$refs.detailsDiolog.getAllBusinessConfig(res.result)
           })
 
         // })

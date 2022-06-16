@@ -175,20 +175,20 @@
       formBpmnEdit,
       preview
     },
-    // mounted() {
-    //   this.getAllBusinessConfig()
-    // },
     methods:{
       getAllBusinessConfig(data) {
-        let _this = this
-        getAllBusinessConfig({tenantId: _this.tenantId}).then(res=> {
+        getAllBusinessConfig({tenantId: data.tenantId}).then(res=> {
           let result = res.result?? []
-          debugger
-          this.ascriptionName =  result.find(({ code}) => { data.ascription === code }).name
-          this.businessName = result.find(({ code}) => { data.business === code }).name
+          result.forEach(item => {
+            if (item.code === data.ascription) {
+              this.ascriptionName = item.name
+            }
+            if (item.code === data.business) {
+              this.businessName = item.name
+            }
+          })
         })
       },
-
 
       deleteRow() {
         this.$confirm('表单删除不可恢复, 请确认是否继续?', '提示', {
