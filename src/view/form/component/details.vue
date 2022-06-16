@@ -8,6 +8,8 @@
         <div class="detail-title">
           <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>{{ formDatas.numberCode }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">表单名称:</span> <span>{{ formDatas.name }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">项目名称:</span> <span>{{ formDatas.name }}</span> </div>
+          <div class="detail-title-item"> <span class="detail-title-item-label">业务类型:</span> <span>{{ formDatas.name }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>{{ formDatas.createBy }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>{{ formDatas.createTime }}</span> </div>
           <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formDatas.count }}</span> </div>

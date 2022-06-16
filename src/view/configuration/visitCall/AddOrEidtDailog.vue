@@ -245,8 +245,7 @@ export default {
 
     excuteParse(api) {
       if (api.method === ApiEnum.API_TYPE_POST) {
-        console.log(api.configParams)
-        let body = JSON.parse(api.body)
+        let body = JSON.parse(api.body) ?? {}
         api.configParams.forEach((config, index) => {
           body[config.key] = config.value
         })

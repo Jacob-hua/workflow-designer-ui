@@ -120,15 +120,16 @@ export default {
         tenantId: this.tenantId
       }).then((res)=> {
         res.result.forEach(api => {
+          debugger
           api.configParams = []
           if (api.method ===ApiEnum.API_TYPE_POST) {
-            let obj= {key: '', value: ''}
             let body = JSON.parse(api.body)
-            Object.keys(body).forEach(keys => {
-              obj.key = keys
-              obj.value = body[keys]
+            for (const element in body) {
+              let obj= {key: '', value: ''}
+              obj.key = element
+              obj.value = body[element]
               api.configParams.push(obj)
-            })
+            }
           } else {
             //?scope=103&&format=json&&appid=379020&&bk_key=关键字&&bk_length=600
             let obj= {key: '', value: ''}
