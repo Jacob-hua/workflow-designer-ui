@@ -109,6 +109,7 @@
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
   import {mapActions, mapGetters, mapMutations, mapState} from 'vuex'
   import {getProjectList} from "@/api/globalConfig";
+  import router from "@/router";
   export default {
     data() {
       return {
@@ -194,13 +195,14 @@
      async getProjectList() {
         let _this = this
          getProjectList({
-          count: -1,
-          projectCode: '',
-          tenantId: this.tenantId,
-          type: ''
+            count: -1,
+            projectCode: '',
+            tenantId: this.tenantId,
+            type: '',
+           menuRoute: router.currentRoute.name,
+           account: JSON.parse(sessionStorage.getItem('loginData')).account
         }).then(res=> {
           _this.projectOption = res?.result ?? []
-
           _this.ascriptionName = _this.projectOption[0].name
           _this.systemOption = _this.projectOption[0].children
           _this.deleteEmptyChildren(_this.systemOption)
