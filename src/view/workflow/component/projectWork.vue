@@ -161,9 +161,9 @@ export default {
       },
     },
   },
-  mounted() {
-    this.dispatchRefreshOrganization()
-    this.refreshWorkFlowRecord()
+  async mounted() {
+    await this.dispatchRefreshOrganization()
+    await this.refreshWorkFlowRecord()
   },
   methods: {
     ...mapMutations('account', ['updateCurrentOrganization']),
