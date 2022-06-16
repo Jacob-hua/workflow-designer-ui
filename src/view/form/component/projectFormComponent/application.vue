@@ -29,6 +29,35 @@
               </div>
             </div>
           </div>
+          <el-dialog title="表单" :visible.sync="dialogVisibleModal" width="35%" custom-class="dialogVisible1" append-to-body>
+            <div class="container">
+              <div class="from-item">
+                <span>应用项目</span>
+                <el-select v-model="postData.ascription">
+                  <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
+                </el-select>
+              </div>
+              <div class="from-item">
+                <span style="width: 79px">流程类型</span>
+                <el-cascader
+                    ref="cascader"
+                    v-model="postData.business"
+                    :options="systemOption"
+                    :props='sysProps'
+                    clearable
+                    @change="onOptionClick"
+                ></el-cascader>
+              </div>
+              <div class="from-item">
+                <span>表单名称</span>
+                <el-input v-model="postData.name" placeholder="请输入表单名称"></el-input>
+              </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+        <el-button @click="onSure()" type="primary">确定</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
+      </span>
+          </el-dialog>
           <div class="process-page">
             <el-pagination @size-change="handleSizeChange"
                            @current-change="handleCurrentChange"
@@ -50,6 +79,7 @@ import {
   postFormDesignServiceRealiseProcessData,
 } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
+import {getProjectList} from "@/api/globalConfig";
 
 export default {
   props: {
@@ -67,6 +97,20 @@ export default {
   },
   data() {
     return {
+      sysProps:{
+        label: 'name',
+        value: 'code',
+        checkStrictly: true,
+        emitPath: false,
+      },
+      dialogVisibleModal: false,
+      projectOption: [],
+      systemOption: [],
+      postData: {
+        ascription: '',
+        business: '',
+        name: ''
+      },
       input: '',
       getData: {
         page: 1,
@@ -80,6 +124,32 @@ export default {
     ...mapState('account', ['userInfo','tenantId'])
   },
   methods: {
+    deleteEmptyChildren(arr) {
+      for (let i = 0; i < arr.length; i++) {
+        const arrElement = arr[i];
+        if (!arrElement.children.length) {
+          delete arrElement.children
+          continue
+        }
+        if (arrElement.children) {
+          this.deleteEmptyChildren(arrElement.children)
+        }
+      }
+    },
+     getProjectList() {
+      let _this = this
+      getProjectList({
+        count: -1,
+        projectCode: '',
+        tenantId: this.tenantId,
+        type: ''
+      }).then(res=> {
+        this.projectOption = res?.result ?? []
+
+        this.systemOption = _this.projectOption[0]?.children
+        this.postData.ascription = this.projectOption[0]?.code
+      })
+    },
     handleClose() {
       this.$emit('close')
     },
@@ -89,6 +159,7 @@ export default {
       designFormDesignServiceAll({
         status: 'enabled',
         tenantId: this.tenantId,
+        currentData: {},
         ascription: 'public',
         business: '',
         createBy: '',
@@ -100,24 +171,25 @@ export default {
         this.formList = res.result
       })
     },
-    open(item) {
-
+    onSure() {
+      let _this = this
       this.$confirm('应用的公共表单会加入到项目表单中,是否继续', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
       })
         .then(() => {
+
           const id = 'form_' + Date.parse(new Date())
-          var file1 = new File([item.content], 'test.form', {
+          var file1 = new File([_this.currentData.content], 'test.form', {
             type: 'text/xml',
           })
           let formData = new FormData()
-          formData.append('name', item.name)
-          formData.append('docName', item.name + '.form')
+          formData.append('name', this.postData.name)
+          formData.append('docName', this.postData.name + '.form')
           formData.append('docType', 'json')
-          formData.append('ascription', this.projectCode)
+          formData.append('ascription', this.postData.ascription)
           formData.append('code', id)
-          formData.append('business', this.projectValue)
+          formData.append('business', this.postData.business)
           formData.append('status', 'enabled')
           formData.append('createBy', this.userInfo.account)
           formData.append('createName', this.userInfo.name)
@@ -125,14 +197,15 @@ export default {
           formData.append('file', file1)
           postFormDesignServiceRealiseProcessData(formData).then((res) => {
             this.$message.success('应用至项目表单成功')
+            this.dialogVisibleModal = false
           })
         })
         .catch(() => {
-          // this.$message({
-          //   type: 'info',
-          //   message: '取消创建'
-          // });
         })
+    },
+    open(item) {
+      this.currentData = item
+      this.dialogVisibleModal = true
     },
     changEnergy(value) {
       this.getData.systemType = value
@@ -142,6 +215,7 @@ export default {
     },
   },
   mounted() {
+    this.getProjectList()
     this.getFormList()
   },
 }
@@ -151,7 +225,9 @@ export default {
 .diologMain {
   display: flex;
 }
-
+.container {
+  padding-left: 80px;
+}
 .diologMain-left {
   flex: 2;
   background-color: #f3f3f3;
@@ -166,9 +242,18 @@ export default {
   height: 695px;
   padding: 0px 20px;
 }
-
-.diologMain-left /deep/ .el-input {
-  width: 220px;
+>>> .el-select {
+  width: 300px;
+}
+>>> .el-input {
+  width: 300px;
+}
+>>> .from-item {
+  margin-left: 15px;
+  margin-top: 20px;
+}
+>>> .el-input__inner {
+  margin-left: 10px;
 }
 
 .diologMain-left /deep/ .el-input .el-input__inner {
