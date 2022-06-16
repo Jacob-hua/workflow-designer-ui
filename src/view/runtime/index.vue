@@ -212,8 +212,8 @@
             result
           } = await getNewTaskList({
             ...this.getData,
-            startTime: this.timeRange[0] + ' 00:00:00',
-            endTime: this.timeRange[1] + ' 23:59:59',
+            startTime: this.timeRange[0],
+            endTime: this.timeRange[1],
             tenantId: this.tenantId,
             assignee: this.userInfo.account,
           })
@@ -251,8 +251,8 @@
           } = await postTaskCountStatistics({
             assignee: this.userInfo.account,
             business: this.getData.businessCode,
-            startTime: this.timeRange[0] + ' 00:00:00',
-            endTime: this.timeRange[1] + ' 23:59:59',
+            startTime: this.timeRange[0],
+            endTime: this.timeRange[1],
             projectCode: this.getData.projectCode,
             tenantId: this.tenantId,
           })
@@ -356,8 +356,8 @@
           ascription: this.getData.projectCode,
           assignee: this.userInfo.account,
           business: this.getData.businessCode,
-          startTime: this.timeRange[0] + ' 00:00:00',
-          endTime: this.timeRange[1] + ' 23:59:59',
+          startTime: this.timeRange[0],
+          endTime: this.timeRange[1],
           tenantId: this.tenantId,
         }).then((res) => {
           if (res) {
