@@ -160,8 +160,8 @@
         options: [],
         valueV: '1.0',
         optionsV: [{
-          value: '1.0',
-          label: 'V1.0',
+            value: '1.0',
+            label: 'V1.0',
         }, ],
       }
     },
