@@ -29,7 +29,7 @@
             <el-cascader v-else
                          v-model="userTaskForm.candidateUsers"
                          :options="userGroupOptions"
-                         :props="userCascaderProps"
+                         :props="candidateUsersCascaderProps"
                          :show-all-levels="false"
                          clearable>
             </el-cascader>
@@ -48,7 +48,7 @@
                          v-model="userTaskForm.candidateGroups"
                          :options="userGroupOptions"
                          :show-all-levels="false"
-                         :props="{emitPath: false}"
+                         :props="candidateCascaderProps"
                          clearable>
             </el-cascader>
           </el-col>
@@ -71,7 +71,6 @@ import {
 
 export default {
   name: 'ElementUserTaskForm',
-  props: {},
   data() {
     return {
       userTaskForm: {},
@@ -79,14 +78,21 @@ export default {
         emitPath: false,
         lazy: true,
         lazyLoad: (node, resolve) => {
-          // 如果原来的结构中有子节点，则直接返回
-          if (this.findUserGroupChildren(node)) {
-            resolve()
-            return
-          }
-          this.dispatchRequestUser(node.value).then(resolve)
+          this.cascaderLazyLoad(node, resolve)
         },
       },
+      candidateUsersCascaderProps: {
+        emitPath: false,
+        multiple: true,
+        lazy: true,
+        lazyLoad: (node, resolve) => {
+          this.cascaderLazyLoad(node, resolve)
+        },
+      },
+      candidateCascaderProps: {
+        emitPath: false,
+        multiple: true,
+      }
     }
   },
   computed: {
@@ -115,6 +121,14 @@ export default {
   methods: {
     ...mapMutations('bpmn/panel', ['updateUserTask']),
     ...mapActions('bpmn/config', ['dispatchRequestUser', 'userGroupLabel']),
+    cascaderLazyLoad(node, resolve) {
+      // 如果原来的结构中有子节点，则直接返回
+      if (this.findUserGroupChildren(node)) {
+        resolve()
+        return
+      }
+      this.dispatchRequestUser(node.value).then(resolve)
+    },
   },
 }
 </script>
