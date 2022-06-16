@@ -61,7 +61,7 @@
     <lookBpmn v-if="lookBpmnVisible"
               valueType="public"
               :projectData="projectData"
-              :dialogVisible="lookBpmnVisible"
+              :visible="lookBpmnVisible"
               @close="onLookBpmnClose"
               @edit="onLookBpmnEdit"></lookBpmn>
   </div>
@@ -99,7 +99,6 @@ export default {
       activeName: 'enabled,disabled',
       addBpmnVisible: false,
       lookBpmnVisible: false,
-      dialogVisible: false,
       draftProcessCount: 0,
       processCount: 0,
     }

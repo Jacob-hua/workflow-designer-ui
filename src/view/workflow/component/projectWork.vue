@@ -85,13 +85,13 @@
                :valueDate="searchForm.valueDate"
                :ascription="searchForm.ascription"
                :business="projectValue"
-               :dialogVisible="quoteBpmnVisible"
+               :visible="quoteBpmnVisible"
                @close="onQuoteBpmnClose"
                @lookBpmnShow="onLookBpmnShow"
                @addProject="onQuoteAddProject"></quoteBpmn>
     <lookBpmn v-if="lookBpmnVisible"
               :projectData="projectData"
-              :dialogVisible="lookBpmnVisible"
+              :visible="lookBpmnVisible"
               @close="onLookBpmnClose"
               @edit="onLookBpmnEdit"></lookBpmn>
   </div>

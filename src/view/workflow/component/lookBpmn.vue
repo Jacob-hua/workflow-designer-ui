@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="查看"
-             :visible="dialogVisible"
+             :visible="visible"
              width="70%"
              custom-class="dialogVisible"
              @close="close">
@@ -37,7 +37,7 @@ export default {
       type: Object,
       default: {},
     },
-    dialogVisible: {
+    visible: {
       type: Boolean,
       default: false,
     },

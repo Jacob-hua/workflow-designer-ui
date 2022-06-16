@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="引用工作流"
-             :visible="dialogVisible"
+             :visible="visible"
              width="70%"
              custom-class="dialogVisible"
              @close="close">
@@ -53,7 +53,7 @@ import { mapState } from 'vuex'
 
 export default {
   props: {
-    dialogVisible: {
+    visible: {
       type: Boolean,
       default: false,
     },
@@ -108,7 +108,6 @@ export default {
       } catch (error) {}
     },
     close() {
-      console.log('ddddd');
       this.$emit('close')
     },
     lookBpmnShow(tit, _, row) {
