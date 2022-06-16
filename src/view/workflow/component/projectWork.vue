@@ -37,7 +37,8 @@
                    @click="refreshWorkFlowRecord">查询</el-button>
       </div>
       <div class="PublicForm-title-input">
-        <el-button @click="onReset">重置</el-button>
+        <el-button  type="primary" 
+                   @click="onReset">重置</el-button>
       </div>
       <div class="PublicForm-title-button">
         <el-button type="primary"
