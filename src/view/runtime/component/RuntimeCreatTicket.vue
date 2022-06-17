@@ -1,37 +1,26 @@
 <template>
   <div>
-    <el-dialog :title="title"
-               :visible="visible"
-               @close="onCloseModal">
+    <el-dialog :title="title" :visible="visible" @close="onCloseModal">
       <el-skeleton v-if="isLoading" />
       <div v-else>
-        <el-form :model="startForm"
-                 ref="startForm">
-          <el-form-item v-for="({id, label, prop, type, required, placeholder}) in startFormFields"
-                        :key="id"
-                        :label="label"
-                        :prop="prop"
-                        :rules="{required, message: '请输入' + label, trigger: 'blur'}">
-            <el-input v-if="isInput(type)"
-                      v-model="startForm[prop]"
-                      :placeholder="placeholder"></el-input>
-            <el-select v-else
-                       v-model="startForm[prop]">
-              <el-option v-for="({value, label}) in options[prop]"
-                         :key="value"
-                         :value="value"
-                         :label="label"></el-option>
+        <el-form :model="startForm" ref="startForm">
+          <el-form-item
+            v-for="{ id, label, prop, type, required, placeholder } in startFormFields"
+            :key="id"
+            :label="label"
+            :prop="prop"
+            :rules="{ required, message: '请输入' + label, trigger: 'blur' }"
+          >
+            <el-input v-if="isInput(type)" v-model="startForm[prop]" :placeholder="placeholder"></el-input>
+            <el-select v-else v-model="startForm[prop]" :placeholder="placeholder">
+              <el-option v-for="{ value, label } in options[prop]" :key="value" :value="value" :label="label">
+              </el-option>
             </el-select>
           </el-form-item>
         </el-form>
-        <div v-if="isEmptyConfig"
-             class="dialog-message">
-          创建的执行会进入执行列表并开始执行流程,是否继续？
-        </div>
+        <div v-if="isEmptyConfig" class="dialog-message">创建的执行会进入执行列表并开始执行流程,是否继续？</div>
         <div slot="footer">
-          <el-button type="primary"
-                     :loading="isSubmiting"
-                     @click="onSubmit">立即创建</el-button>
+          <el-button type="primary" :loading="isSubmiting" @click="onSubmit">立即创建</el-button>
           <el-button @click="onCancel">取消</el-button>
         </div>
       </div>
@@ -41,49 +30,75 @@
 
 <script>
 import { mapState } from 'vuex'
-import {
-  selectProcessStartConfigByCode,
-  executeApi,
-} from '../../../api/globalConfig'
+import { selectProcessStartConfigByCode, executeApi } from '../../../api/globalConfig'
 import { getStartProcess } from '../../../api/unit/api.js'
 import { FormTypeEnum, ApiEnum } from '../../../enum'
 
-function generateExecuteApiData({
-  apiMark,
-  sourceMark,
-  method,
-  parameter,
-  body,
-}) {
-  const variablesHandler = {
-    [ApiEnum.API_TYPE_GET]: () => {
-      return String.prototype.match.call(parameter, /(?<=\$\{)(.+?)(?=\})/g)
-    },
-    [ApiEnum.API_TYPE_POST]: () => {
-      return body
-    },
+function variableFactory({ method, parameter, body }) {
+  const variablesHandlers = {
+    [ApiEnum.API_TYPE_GET]: extractVariables(parameter),
+    [ApiEnum.API_TYPE_POST]: extractVariables(body),
   }
-  const paramHandlers = {
+  return variablesHandlers[method]
+
+  function extractVariables(str) {
+    return String.prototype.match.call(str, /(?<=\$\{)(.+?)(?=\})/g)
+  }
+}
+
+function parameterHandlerFactory({ method, parameter, body }) {
+  const parameterHandlers = {
     [ApiEnum.API_TYPE_GET]: (payload) => {
-      if (!variablesHandler[ApiEnum.API_TYPE_GET]()) {
+      if (!variableFactory({ method, parameter, body })) {
         return parameter
       }
-      return Object.keys(payload).reduce((parameter, key) => {
-        const value = payload[key]
-        return parameter.replace(`\$\{${key}\}`, value)
-      }, parameter)
+      return variableAssignment(parameter, payload)
     },
     [ApiEnum.API_TYPE_POST]: (payload) => {
-      return payload
+      if (!variableFactory({ method, parameter, body })) {
+        return JSON.parse(body)
+      }
+      return JSON.parse(variableAssignment(body, payload))
     },
   }
-  const result = {
-    apiMark,
-    sourceMark,
-    variables: variablesHandler[method](),
-    paramHandler: paramHandlers[method],
+  return parameterHandlers[method]
+
+  function variableAssignment(str, payload) {
+    return Object.keys(payload).reduce((parameter, key) => {
+      return parameter.replace(`\$\{${key}\}`, payload[key])
+    }, str)
   }
-  return result
+}
+
+function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
+  const newFieldInfo = { ...fieldInfo }
+  if (!newFieldInfo.requestConfig) {
+    return newFieldInfo
+  }
+
+  const variables = variableFactory(newFieldInfo.requestConfig)
+  const parameterHandler = parameterHandlerFactory(newFieldInfo.requestConfig)
+
+  if (!variables) {
+    executeFunc(parameterHandler(), newFieldInfo)
+    return newFieldInfo
+  }
+
+  const oldVariables = variables.reduce((oldVariables, variable) => ({ ...oldVariables, [variable]: '' }), {})
+
+  newFieldInfo.executeFunc = (data) => {
+    const isDiffed = Object.keys(data)
+      .filter((key) => variables.includes(key))
+      .reduce((isDiffed, key) => {
+        isDiffed = isDiffed || oldVariables[key] !== data[key]
+        oldVariables[key] = data[key]
+        return isDiffed
+      }, false)
+    if (isDiffed) {
+      executeFunc(parameterHandler(oldVariables), newFieldInfo)
+    }
+  }
+  return newFieldInfo
 }
 
 export default {
@@ -118,68 +133,42 @@ export default {
     },
     startFormFields() {
       const formFields = this.startConfigList
+        // 第一步筛选出可以展示的配置项
         .filter(({ jwpProcessStartConfigEntity: { isSetting } }) => isSetting)
-        .map(
-          ({
-            jwpGlobalConfigEntity,
-            jwpProcessStartConfigEntity: {
-              id,
-              name,
-              code,
-              startType,
-              isRequired,
-              value,
-            },
-          }) => {
-            const result = {
-              id,
-              label: name,
-              prop: code,
-              type: startType,
-              required: Boolean(isRequired),
-              apiId: value,
-              placeholder: '请输入' + name,
-              value: '',
-            }
-            if (!jwpGlobalConfigEntity) {
-              return result
-            }
-            this.$set(this.options, code, undefined)
-            const executeApiData = generateExecuteApiData(jwpGlobalConfigEntity)
-            if (executeApiData.variables) {
-              result['watchs'] = executeApiData.variables
-
-              const executeFunc = (...args) => {
-                if (args.length >= executeApiData.variables.length) {
-                  return ((payload = []) => {
-                    const data = payload.reduce(
-                      (args, { key, value }) => ({ ...args, [key]: value }),
-                      {}
-                    )
-                    executeApi({
-                      ...executeApiData,
-                      data: executeApiData.paramHandler(data),
-                    }).then((res) => {
-                      this.$set(this.options, code, res.result)
-                    })
-                  })(args)
-                } else {
-                  return curryExecuteFunction.bind(this, ...args)
-                }
-              }
-
-              result['executeFunc'] = executeFunc
-            } else {
-              executeApi({
-                ...executeApiData,
-                data: executeApiData.paramHandler(),
-              }).then((res) => {
-                this.$set(this.options, code, res.result)
-              })
-            }
-            return result
+        // 第二布处理配置项为表单项
+        .map(({ jwpProcessStartConfigEntity, jwpGlobalConfigEntity }) => {
+          const { id, name, code, startType, isRequired, value } = jwpProcessStartConfigEntity
+          const placeholderPrefixs = {
+            [FormTypeEnum.FORM_TYPE_INPUT]: '请输入',
+            [FormTypeEnum.FORM_TYPE_SELECT]: '请选择',
           }
-        )
+          const placeholder = placeholderPrefixs[startType] + name
+          const fieldInfo = {
+            id,
+            label: name,
+            prop: code,
+            type: startType,
+            required: !!isRequired,
+            apiId: value,
+            placeholder,
+            value: '',
+            requestConfig: jwpGlobalConfigEntity,
+          }
+          this.$set(this.options, fieldInfo.prop, [])
+          return fieldInfo
+        })
+        // 第三步给表单项混入执行函数，执行函数支持一个Hook，用于在当前字段依赖的字段发生变化时，执行相关操作
+        .map((fieldInfo) => {
+          return mixinExecuteFunction(fieldInfo, (data, { requestConfig, prop }) => {
+            executeApi({
+              apiMark: requestConfig.apiMark,
+              sourceMark: requestConfig.sourceMark,
+              data,
+            }).then(({ result: options }) => {
+              this.$set(this.options, prop, options)
+            })
+          })
+        })
       return formFields
     },
   },
@@ -191,25 +180,23 @@ export default {
           return
         }
         this.isLoading = true
-        this.startConfigList = await this.fetchProcessStartConfigList(
-          process.business
-        )
+        this.startConfigList = await this.fetchProcessStartConfigList(process.business)
         this.isLoading = false
       },
     },
+    startFormFields(startFormFields) {
+      this.startForm = startFormFields.reduce((startForm, field) => {
+        startForm[field.prop] = field.value
+        return startForm
+      }, {})
+    },
     startForm: {
+      immediate: true,
       deep: true,
       handler(startForm) {
-        const needExecutes =
-          this.startFormFields?.filter(
-            ({ watchs, executeFunc }) => watchs && executeFunc
-          ) ?? []
-        Object.keys(startForm).forEach((key) => {
-          needExecutes.forEach(({ watchs, executeFunc }) => {
-            if (watchs.includes(key)) {
-              executeFunc({ key, value: startForm[key] })
-            }
-          })
+        const needExecutes = this.startFormFields?.filter(({ executeFunc }) => executeFunc) ?? []
+        needExecutes.forEach(({ executeFunc }) => {
+          executeFunc({ ...startForm })
         })
       },
     },
