@@ -150,19 +150,19 @@ export default {
 
         const oldVariables = variables.reduce((oldVariables, variable) => ({ ...oldVariables, [variable]: '' }), {})
 
-        const wrapperFunc = (data) => {
-          const isChanged = Object.keys(data)
-            .filter((variable) => variables.includes(variable))
-            .reduce((isChanged, variable) => {
-              isChanged = isChanged || oldVariables[variable] !== data[variable]
-              oldVariables[variable] = data[variable]
-              return isChanged
-            }, isChanged)
-          if (isChanged) {
+        const diffExecuteFunc = (data) => {
+          const isDiffed = Object.keys(data)
+            .filter((key) => variables.includes(key))
+            .reduce((isDiffed, key) => {
+              isDiffed = isDiffed || oldVariables[key] !== data[key]
+              oldVariables[key] = data[key]
+              return isDiffed
+            }, false)
+          if (isDiffed) {
             executeFunc(oldVariables)
           }
         }
-        result['executeFunc'] = wrapperFunc
+        result['executeFunc'] = diffExecuteFunc
         return result
       }
     },
