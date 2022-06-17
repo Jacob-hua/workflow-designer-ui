@@ -70,51 +70,23 @@ function parameterHandlerFactory({ method, parameter, body }) {
   }
 }
 
-function processStartEntity2Field({
-  jwpGlobalConfigEntity,
-  jwpProcessStartConfigEntity: { id, name, code, startType, isRequired, value },
-}) {
-  const placeholderPrefixs = {
-    [FormTypeEnum.FORM_TYPE_INPUT]: '请输入',
-    [FormTypeEnum.FORM_TYPE_SELECT]: '请选择',
+function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
+  const newFieldInfo = { ...fieldInfo }
+  if (!newFieldInfo.requestConfig) {
+    return newFieldInfo
   }
-  const placeholder = placeholderPrefixs[startType] + name
-  const result = {
-    id,
-    label: name,
-    prop: code,
-    type: startType,
-    required: !!isRequired,
-    apiId: value,
-    placeholder,
-    value: '',
-  }
-  if (!jwpGlobalConfigEntity) {
-    return result
-  }
-  this.$set(this.options, code, [])
 
-  const variables = variableFactory(jwpGlobalConfigEntity)
-  const parameterHandler = parameterHandlerFactory(jwpGlobalConfigEntity)
-
-  const executeFunc = (data) => {
-    executeApi({
-      apiMark: jwpGlobalConfigEntity.apiMark,
-      sourceMark: jwpGlobalConfigEntity.sourceMark,
-      data: parameterHandler(data),
-    }).then(({ result: options }) => {
-      this.$set(this.options, code, options)
-    })
-  }
+  const variables = variableFactory(newFieldInfo.requestConfig)
+  const parameterHandler = parameterHandlerFactory(newFieldInfo.requestConfig)
 
   if (!variables) {
-    executeFunc()
-    return result
+    executeFunc(parameterHandler(), newFieldInfo)
+    return newFieldInfo
   }
 
   const oldVariables = variables.reduce((oldVariables, variable) => ({ ...oldVariables, [variable]: '' }), {})
 
-  const diffExecuteFunc = (data) => {
+  newFieldInfo.executeFunc = (data) => {
     const isDiffed = Object.keys(data)
       .filter((key) => variables.includes(key))
       .reduce((isDiffed, key) => {
@@ -123,11 +95,10 @@ function processStartEntity2Field({
         return isDiffed
       }, false)
     if (isDiffed) {
-      executeFunc(oldVariables)
+      executeFunc(parameterHandler(oldVariables), newFieldInfo)
     }
   }
-  result['executeFunc'] = diffExecuteFunc
-  return result
+  return newFieldInfo
 }
 
 export default {
@@ -162,8 +133,42 @@ export default {
     },
     startFormFields() {
       const formFields = this.startConfigList
+        // 第一步筛选出可以展示的配置项
         .filter(({ jwpProcessStartConfigEntity: { isSetting } }) => isSetting)
-        .map(processStartEntity2Field.bind(this))
+        // 第二布处理配置项为表单项
+        .map(({ jwpProcessStartConfigEntity, jwpGlobalConfigEntity }) => {
+          const { id, name, code, startType, isRequired, value } = jwpProcessStartConfigEntity
+          const placeholderPrefixs = {
+            [FormTypeEnum.FORM_TYPE_INPUT]: '请输入',
+            [FormTypeEnum.FORM_TYPE_SELECT]: '请选择',
+          }
+          const placeholder = placeholderPrefixs[startType] + name
+          const fieldInfo = {
+            id,
+            label: name,
+            prop: code,
+            type: startType,
+            required: !!isRequired,
+            apiId: value,
+            placeholder,
+            value: '',
+            requestConfig: jwpGlobalConfigEntity,
+          }
+          this.$set(this.options, fieldInfo.prop, [])
+          return fieldInfo
+        })
+        // 第三步给表单项混入执行函数，执行函数支持一个Hook，用于在当前字段依赖的字段发生变化时，执行相关操作
+        .map((fieldInfo) => {
+          return mixinExecuteFunction(fieldInfo, (data, { requestConfig, prop }) => {
+            executeApi({
+              apiMark: requestConfig.apiMark,
+              sourceMark: requestConfig.sourceMark,
+              data,
+            }).then(({ result: options }) => {
+              this.$set(this.options, prop, options)
+            })
+          })
+        })
       return formFields
     },
   },
