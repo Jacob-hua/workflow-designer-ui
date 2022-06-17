@@ -50,10 +50,10 @@
     <div class="runtime-check">
       <el-radio-group v-model="getData.taskFilter" @change="changeGroup()">
         <el-radio label="all">
-          我的任务（{{ amount.all }}）
+          全部任务（{{ amount.all }}）
         </el-radio>
         <el-radio label="self">
-          待处理（{{ amount.self }}）
+          我的任务（{{ amount.self }}）
         </el-radio>
         <el-radio label="notice">
           告知（{{ amount.notice }}）
