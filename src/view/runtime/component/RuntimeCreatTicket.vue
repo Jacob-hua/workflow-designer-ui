@@ -34,36 +34,34 @@ import { selectProcessStartConfigByCode, executeApi } from '../../../api/globalC
 import { getStartProcess } from '../../../api/unit/api.js'
 import { FormTypeEnum, ApiEnum } from '../../../enum'
 
-function generateExecuteApiData({ apiMark, sourceMark, method, parameter, body }) {
-  const variablesHandler = {
+function variableFactory({ method, parameter, body }) {
+  const variablesHandlers = {
     [ApiEnum.API_TYPE_GET]: extractVariables(parameter),
     [ApiEnum.API_TYPE_POST]: extractVariables(body),
   }
+  return variablesHandlers[method]
+
+  function extractVariables(str) {
+    return String.prototype.match.call(str, /(?<=\$\{)(.+?)(?=\})/g)
+  }
+}
+
+function parameterHandlerFactory({ method, parameter, body }) {
   const parameterHandlers = {
     [ApiEnum.API_TYPE_GET]: (payload) => {
-      if (!variablesHandler[ApiEnum.API_TYPE_GET]) {
+      if (!variableFactory({ method, parameter, body })) {
         return parameter
       }
       return variableAssignment(parameter, payload)
     },
     [ApiEnum.API_TYPE_POST]: (payload) => {
-      if (!variablesHandler[ApiEnum.API_TYPE_POST]) {
+      if (!variableFactory({ method, parameter, body })) {
         return JSON.parse(body)
       }
       return JSON.parse(variableAssignment(body, payload))
     },
   }
-  const result = {
-    apiMark,
-    sourceMark,
-    variables: variablesHandler[method],
-    parameterHandler: parameterHandlers[method],
-  }
-  return result
-
-  function extractVariables(str) {
-    return String.prototype.match.call(str, /(?<=\$\{)(.+?)(?=\})/g)
-  }
+  return parameterHandlers[method]
 
   function variableAssignment(str, payload) {
     return Object.keys(payload).reduce((parameter, key) => {
@@ -105,70 +103,68 @@ export default {
     startFormFields() {
       const formFields = this.startConfigList
         .filter(({ jwpProcessStartConfigEntity: { isSetting } }) => isSetting)
-        .map(
-          ({
-            jwpGlobalConfigEntity,
-            jwpProcessStartConfigEntity: { id, name, code, startType, isRequired, value },
-          }) => {
-            const placeholderPrefixs = {
-              [FormTypeEnum.FORM_TYPE_INPUT]: '请输入',
-              [FormTypeEnum.FORM_TYPE_SELECT]: '请选择',
-            }
-            const placeholder = placeholderPrefixs[startType] + name
-            const result = {
-              id,
-              label: name,
-              prop: code,
-              type: startType,
-              required: !!isRequired,
-              apiId: value,
-              placeholder,
-              value: '',
-            }
-            if (!jwpGlobalConfigEntity) {
-              return result
-            }
-            this.$set(this.options, code, [])
-            const executeApiData = generateExecuteApiData(jwpGlobalConfigEntity)
-
-            const executeFunc = (data) => {
-              executeApi({
-                ...executeApiData,
-                data: executeApiData.parameterHandler(data),
-              }).then(({ result: options }) => {
-                this.$set(this.options, code, options)
-              })
-            }
-
-            if (!executeApiData.variables) {
-              executeFunc()
-              return result
-            }
-
-            const oldVariables = executeApiData.variables.reduce(
-              (oldVariables, variable) => ({ ...oldVariables, [variable]: '' }),
-              {}
-            )
-
-            const wrapperFunc = (data) => {
-              const isChanged = Object.keys(data)
-                .filter((variable) => executeApiData.variables.includes(variable))
-                .reduce((isChanged, variable) => {
-                  isChanged = isChanged || oldVariables[variable] !== data[variable]
-                  oldVariables[variable] = data[variable]
-                  return isChanged
-                }, isChanged)
-              if (isChanged) {
-                executeFunc(oldVariables)
-              }
-            }
-
-            result['watchs'] = executeApiData.variables
-            result['executeFunc'] = wrapperFunc
-            return result
-          }
-        )
+        .map(processStartEntity2Field.bind(this))
       return formFields
+
+      function processStartEntity2Field({
+        jwpGlobalConfigEntity,
+        jwpProcessStartConfigEntity: { id, name, code, startType, isRequired, value },
+      }) {
+        const placeholderPrefixs = {
+          [FormTypeEnum.FORM_TYPE_INPUT]: '请输入',
+          [FormTypeEnum.FORM_TYPE_SELECT]: '请选择',
+        }
+        const placeholder = placeholderPrefixs[startType] + name
+        const result = {
+          id,
+          label: name,
+          prop: code,
+          type: startType,
+          required: !!isRequired,
+          apiId: value,
+          placeholder,
+          value: '',
+        }
+        if (!jwpGlobalConfigEntity) {
+          return result
+        }
+        this.$set(this.options, code, [])
+
+        const variables = variableFactory(jwpGlobalConfigEntity)
+        const parameterHandler = parameterHandlerFactory(jwpGlobalConfigEntity)
+
+        const executeFunc = (data) => {
+          executeApi({
+            apiMark: jwpGlobalConfigEntity.apiMark,
+            sourceMark: jwpGlobalConfigEntity.sourceMark,
+            data: parameterHandler(data),
+          }).then(({ result: options }) => {
+            this.$set(this.options, code, options)
+          })
+        }
+
+        if (!variables) {
+          executeFunc()
+          return result
+        }
+
+        const oldVariables = variables.reduce((oldVariables, variable) => ({ ...oldVariables, [variable]: '' }), {})
+
+        const wrapperFunc = (data) => {
+          const isChanged = Object.keys(data)
+            .filter((variable) => variables.includes(variable))
+            .reduce((isChanged, variable) => {
+              isChanged = isChanged || oldVariables[variable] !== data[variable]
+              oldVariables[variable] = data[variable]
+              return isChanged
+            }, isChanged)
+          if (isChanged) {
+            executeFunc(oldVariables)
+          }
+        }
+        result['executeFunc'] = wrapperFunc
+        return result
+      }
     },
   },
   watch: {
@@ -193,7 +189,7 @@ export default {
       immediate: true,
       deep: true,
       handler(startForm) {
-        const needExecutes = this.startFormFields?.filter(({ watchs, executeFunc }) => watchs && executeFunc) ?? []
+        const needExecutes = this.startFormFields?.filter(({ executeFunc }) => executeFunc) ?? []
         needExecutes.forEach(({ executeFunc }) => {
           executeFunc({ ...startForm })
         })
