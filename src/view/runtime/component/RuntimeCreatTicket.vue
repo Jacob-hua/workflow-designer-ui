@@ -70,6 +70,66 @@ function parameterHandlerFactory({ method, parameter, body }) {
   }
 }
 
+function processStartEntity2Field({
+  jwpGlobalConfigEntity,
+  jwpProcessStartConfigEntity: { id, name, code, startType, isRequired, value },
+}) {
+  const placeholderPrefixs = {
+    [FormTypeEnum.FORM_TYPE_INPUT]: '请输入',
+    [FormTypeEnum.FORM_TYPE_SELECT]: '请选择',
+  }
+  const placeholder = placeholderPrefixs[startType] + name
+  const result = {
+    id,
+    label: name,
+    prop: code,
+    type: startType,
+    required: !!isRequired,
+    apiId: value,
+    placeholder,
+    value: '',
+  }
+  if (!jwpGlobalConfigEntity) {
+    return result
+  }
+  this.$set(this.options, code, [])
+
+  const variables = variableFactory(jwpGlobalConfigEntity)
+  const parameterHandler = parameterHandlerFactory(jwpGlobalConfigEntity)
+
+  const executeFunc = (data) => {
+    executeApi({
+      apiMark: jwpGlobalConfigEntity.apiMark,
+      sourceMark: jwpGlobalConfigEntity.sourceMark,
+      data: parameterHandler(data),
+    }).then(({ result: options }) => {
+      this.$set(this.options, code, options)
+    })
+  }
+
+  if (!variables) {
+    executeFunc()
+    return result
+  }
+
+  const oldVariables = variables.reduce((oldVariables, variable) => ({ ...oldVariables, [variable]: '' }), {})
+
+  const diffExecuteFunc = (data) => {
+    const isDiffed = Object.keys(data)
+      .filter((key) => variables.includes(key))
+      .reduce((isDiffed, key) => {
+        isDiffed = isDiffed || oldVariables[key] !== data[key]
+        oldVariables[key] = data[key]
+        return isDiffed
+      }, false)
+    if (isDiffed) {
+      executeFunc(oldVariables)
+    }
+  }
+  result['executeFunc'] = diffExecuteFunc
+  return result
+}
+
 export default {
   name: 'RuntimeCreatTicket',
   props: {
@@ -105,66 +165,6 @@ export default {
         .filter(({ jwpProcessStartConfigEntity: { isSetting } }) => isSetting)
         .map(processStartEntity2Field.bind(this))
       return formFields
-
-      function processStartEntity2Field({
-        jwpGlobalConfigEntity,
-        jwpProcessStartConfigEntity: { id, name, code, startType, isRequired, value },
-      }) {
-        const placeholderPrefixs = {
-          [FormTypeEnum.FORM_TYPE_INPUT]: '请输入',
-          [FormTypeEnum.FORM_TYPE_SELECT]: '请选择',
-        }
-        const placeholder = placeholderPrefixs[startType] + name
-        const result = {
-          id,
-          label: name,
-          prop: code,
-          type: startType,
-          required: !!isRequired,
-          apiId: value,
-          placeholder,
-          value: '',
-        }
-        if (!jwpGlobalConfigEntity) {
-          return result
-        }
-        this.$set(this.options, code, [])
-
-        const variables = variableFactory(jwpGlobalConfigEntity)
-        const parameterHandler = parameterHandlerFactory(jwpGlobalConfigEntity)
-
-        const executeFunc = (data) => {
-          executeApi({
-            apiMark: jwpGlobalConfigEntity.apiMark,
-            sourceMark: jwpGlobalConfigEntity.sourceMark,
-            data: parameterHandler(data),
-          }).then(({ result: options }) => {
-            this.$set(this.options, code, options)
-          })
-        }
-
-        if (!variables) {
-          executeFunc()
-          return result
-        }
-
-        const oldVariables = variables.reduce((oldVariables, variable) => ({ ...oldVariables, [variable]: '' }), {})
-
-        const diffExecuteFunc = (data) => {
-          const isDiffed = Object.keys(data)
-            .filter((key) => variables.includes(key))
-            .reduce((isDiffed, key) => {
-              isDiffed = isDiffed || oldVariables[key] !== data[key]
-              oldVariables[key] = data[key]
-              return isDiffed
-            }, false)
-          if (isDiffed) {
-            executeFunc(oldVariables)
-          }
-        }
-        result['executeFunc'] = diffExecuteFunc
-        return result
-      }
     },
   },
   watch: {
