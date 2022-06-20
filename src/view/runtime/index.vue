@@ -77,7 +77,7 @@
     </div>
     <div class="runtime-table">
       <div class="home-table-main">
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="newTasks">
           <el-table-column type="index" label="序号" align="center"> </el-table-column>
           <el-table-column prop="processName" label="名称" align="center" show-overflow-tooltip=""> </el-table-column>
           <el-table-column prop="energyType" label="部署类型" align="center">
@@ -185,7 +185,7 @@ export default {
       timeRange: [start, end],
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
-      tableData: [],
+      newTasks: [],
       statusObj: {
         completed: '通过',
         run: '执行',
@@ -251,8 +251,8 @@ export default {
           this.$message.error(errorInfo.errorMessage)
           return
         }
-        this.tableData = result.dataList
-        this.tableData.forEach((item) => {
+        this.newTasks = result.dataList
+        this.newTasks.forEach((item) => {
           if (item.taskAssignee.split(',').indexOf(this.userInfo.account) !== -1) {
             item.newTaskId = item.taskId.split(',')[item.taskAssignee.split(',').indexOf(this.userInfo.account)]
           } else {
@@ -265,7 +265,7 @@ export default {
         })
         this.getData.total = +result.count
       } catch (error) {
-        this.tableData = []
+        this.newTasks = []
       }
     },
     async fetchAmount() {
