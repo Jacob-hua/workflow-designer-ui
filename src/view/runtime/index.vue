@@ -138,7 +138,7 @@
     <runtime-add
       :dialogVisible="runtimeAddVisible"
       :projectCode="getData.projectCode"
-      @close="closeDialogAdd"
+      @close="onRuntimeAddClose"
       @succseeAdd="onAddSuccess"
     ></runtime-add>
     <runTimeImplement
@@ -348,7 +348,7 @@ export default {
       }
       this.runtimeAddVisible = true
     },
-    closeDialogAdd() {
+    onRuntimeAddClose() {
       this.runtimeAddVisible = false
     },
     taskSuccess() {
