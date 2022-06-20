@@ -23,7 +23,7 @@
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker
-          v-model="timeRange"
+          v-model="timeValues"
           type="daterange"
           align="right"
           unlink-panels
@@ -182,7 +182,7 @@ export default {
         notice: 0,
         self: 0,
       },
-      timeRange: [start, end],
+      timeValues: [start, end],
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
       newTasks: [],
@@ -248,8 +248,8 @@ export default {
         const { errorInfo, result } = await getNewTaskList({
           ...this.getData,
           taskFilter: this.getData.taskType,
-          startTime: this.timeRange[0],
-          endTime: this.timeRange[1],
+          startTime: this.timeValues[0],
+          endTime: this.timeValues[1],
           tenantId: this.tenantId,
           assignee: this.userInfo.account,
         })
@@ -279,8 +279,8 @@ export default {
         const { errorInfo, result } = await postTaskCountStatistics({
           assignee: this.userInfo.account,
           business: this.getData.businessCode,
-          startTime: this.timeRange[0],
-          endTime: this.timeRange[1],
+          startTime: this.timeValues[0],
+          endTime: this.timeValues[1],
           projectCode: this.getData.projectCode,
           tenantId: this.tenantId,
         })
@@ -365,8 +365,8 @@ export default {
         ascription: this.getData.projectCode,
         assignee: this.userInfo.account,
         business: this.getData.businessCode,
-        startTime: this.timeRange[0],
-        endTime: this.timeRange[1],
+        startTime: this.timeValues[0],
+        endTime: this.timeValues[1],
         tenantId: this.tenantId,
       }).then((res) => {
         if (res) {
