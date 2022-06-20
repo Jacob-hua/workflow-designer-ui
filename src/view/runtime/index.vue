@@ -42,19 +42,19 @@
       <div class="runtime-home-title">
         <div class="data">
           <div class="title">
-            <b class="value">{{ numberList.executionTotalProcessCount }}</b>
+            <b class="value">{{ workflowCounts.executionTotalProcessCount }}</b>
           </div>
           <div class="titLabel">执行工作流总数</div>
         </div>
         <div class="data">
           <div class="title">
-            <b class="value">{{ numberList.executionInProcessCount }}</b>
+            <b class="value">{{ workflowCounts.executionInProcessCount }}</b>
           </div>
           <div class="titLabel">执行中</div>
         </div>
         <div class="data">
           <div class="title">
-            <b class="value">{{ numberList.executionCompleteCount }}</b>
+            <b class="value">{{ workflowCounts.executionCompleteCount }}</b>
           </div>
           <div class="titLabel">已完成数量</div>
         </div>
@@ -172,7 +172,7 @@ export default {
   data() {
     const { start, end } = currentOneMonthAgo('YYYY-MM-DD HH:mm:ss')
     return {
-      numberList: {
+      workflowCounts: {
         executionCount: 0,
         completeCount: 0,
         executionInCount: 0,
@@ -370,9 +370,9 @@ export default {
         tenantId: this.tenantId,
       }).then((res) => {
         if (res) {
-          this.numberList = res.result
+          this.workflowCounts = res.result
         } else {
-          this.numberList = {
+          this.workflowCounts = {
             executionCompleteCount: 0,
             executionInProcessCount: 0,
             executionTotalProcessCount: 0,
