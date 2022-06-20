@@ -112,7 +112,7 @@
                 执行
               </el-button>
               <el-button
-                @click.native.prevent="detailsDiolog(scope.row)"
+                @click.native.prevent="onDetail(scope.row)"
                 type="text"
                 size="small"
                 v-role="{ id: 'RunTimeLook', type: 'button', business: getData.projectCode }"
@@ -239,6 +239,9 @@ export default {
     },
     onExecute(row) {
       this.deployDiolog(row)
+    },
+    onDetail(row) {
+      this.detailsDiolog(row)
     },
     async fetchNewTasks() {
       try {
