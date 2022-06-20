@@ -69,7 +69,7 @@
       </div>
     </div>
     <div class="runtime-check">
-      <el-radio-group v-model="getData.taskFilter" @change="changeGroup()">
+      <el-radio-group v-model="getData.taskType" @change="changeGroup()">
         <el-radio label="all"> 全部任务（{{ amount.all }}） </el-radio>
         <el-radio label="self"> 我的任务（{{ amount.self }}） </el-radio>
         <el-radio label="notice"> 告知（{{ amount.notice }}） </el-radio>
@@ -203,7 +203,7 @@ export default {
       },
       getData: {
         order: 'desc',
-        taskFilter: 'all',
+        taskType: 'all',
         page: 1,
         limit: 10,
         total: 1,
@@ -241,6 +241,7 @@ export default {
       try {
         const { errorInfo, result } = await getNewTaskList({
           ...this.getData,
+          taskFilter: this.getData.taskType,
           startTime: this.timeRange[0],
           endTime: this.timeRange[1],
           tenantId: this.tenantId,
