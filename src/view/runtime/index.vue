@@ -143,10 +143,10 @@
     ></runtime-add>
     <runTimeImplement
       :dialogVisible="runtimeImplementVisible"
-      @close="closeDialogImplement"
-      @goSee="detailsDiolog"
+      @close="onRuntimeImplementClose"
+      @goSee="onDetail"
       ref="runTimeImplement"
-      @taskSuccess="taskSuccess()"
+      @taskSuccess="onTaskSuccess"
       :business="getData.projectCode"
     ></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
@@ -322,7 +322,7 @@ export default {
         }
       })
     },
-    closeDialogImplement() {
+    onRuntimeImplementClose() {
       this.runtimeImplementVisible = false
     },
     onAddSuccess() {
@@ -351,7 +351,7 @@ export default {
     onRuntimeAddClose() {
       this.runtimeAddVisible = false
     },
-    taskSuccess() {
+    onTaskSuccess() {
       this.runtimeImplementVisible = false
       this.fetchNewTasks()
     },
