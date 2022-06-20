@@ -104,7 +104,7 @@
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button
-                @click.native.prevent="deployDiolog(scope.row)"
+                @click.native.prevent="onExecute(scope.row)"
                 type="text"
                 size="small"
                 v-if="showDeployDiologButton(scope.row)"
@@ -236,6 +236,9 @@ export default {
       this.getData.page = 1
       this.getData.limit = 10
       this.fetchNewTasks()
+    },
+    onExecute(row) {
+      this.deployDiolog(row)
     },
     async fetchNewTasks() {
       try {
