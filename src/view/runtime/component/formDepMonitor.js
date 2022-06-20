@@ -70,11 +70,6 @@ export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
 function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFields' }) {
   const { formData, formFields } = props
   return {
-    data() {
-      return {
-        options: {},
-      }
-    },
     watch: {
       [formData]: {
         immediate: true,
