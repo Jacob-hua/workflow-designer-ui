@@ -33,7 +33,7 @@
           value-format="yyyy-MM-dd HH:mm:ss"
           :default-time="['00:00:00', '23:59:59']"
           :clearable="false"
-          @change="getAllApi()"
+          @change="onTimeRangeChange"
         >
         </el-date-picker>
       </div>
@@ -227,6 +227,9 @@ export default {
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
     onBusinessChange() {
+      this.getAllApi()
+    },
+    onTimeRangeChange() {
       this.getAllApi()
     },
     changeGroup() {
