@@ -1,4 +1,4 @@
-import { FormTypeEnum, ApiEnum } from '../../../enum'
+import { ApiEnum } from '../../../enum'
 
 export function variableFactory({ method, parameter, body }) {
   const variablesHandlers = {
