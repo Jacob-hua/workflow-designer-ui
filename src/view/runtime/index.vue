@@ -70,9 +70,9 @@
     </div>
     <div class="runtime-check">
       <el-radio-group v-model="getData.taskType" @change="onTaskTypeChange">
-        <el-radio label="all"> 全部任务（{{ amount.all }}） </el-radio>
-        <el-radio label="self"> 我的任务（{{ amount.self }}） </el-radio>
-        <el-radio label="notice"> 告知（{{ amount.notice }}） </el-radio>
+        <el-radio label="all"> 全部任务（{{ taskTypeCounts.all }}） </el-radio>
+        <el-radio label="self"> 我的任务（{{ taskTypeCounts.self }}） </el-radio>
+        <el-radio label="notice"> 告知（{{ taskTypeCounts.notice }}） </el-radio>
       </el-radio-group>
     </div>
     <div class="runtime-table">
@@ -177,7 +177,7 @@ export default {
         completeCount: 0,
         executionInCount: 0,
       },
-      amount: {
+      taskTypeCounts: {
         all: 0,
         notice: 0,
         self: 0,
@@ -288,7 +288,7 @@ export default {
           this.$message.error(errorInfo.errorMessage)
           return
         }
-        this.amount = result
+        this.taskTypeCounts = result
       } catch (error) {}
     },
     showDeployDiologButton(row) {
