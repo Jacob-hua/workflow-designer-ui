@@ -32,74 +32,8 @@
 import { mapState } from 'vuex'
 import { selectProcessStartConfigByCode, executeApi } from '../../../api/globalConfig'
 import { getStartProcess } from '../../../api/unit/api.js'
-import { FormTypeEnum, ApiEnum } from '../../../enum'
-
-function variableFactory({ method, parameter, body }) {
-  const variablesHandlers = {
-    [ApiEnum.API_TYPE_GET]: extractVariables(parameter),
-    [ApiEnum.API_TYPE_POST]: extractVariables(body),
-  }
-  return variablesHandlers[method]
-
-  function extractVariables(str) {
-    return String.prototype.match.call(str, /(?<=\$\{)(.+?)(?=\})/g)
-  }
-}
-
-function parameterHandlerFactory({ method, parameter, body }) {
-  const parameterHandlers = {
-    [ApiEnum.API_TYPE_GET]: (payload) => {
-      if (!variableFactory({ method, parameter, body })) {
-        return parameter
-      }
-      return variableAssignment(parameter, payload)
-    },
-    [ApiEnum.API_TYPE_POST]: (payload) => {
-      if (!variableFactory({ method, parameter, body })) {
-        return JSON.parse(body)
-      }
-      return JSON.parse(variableAssignment(body, payload))
-    },
-  }
-  return parameterHandlers[method]
-
-  function variableAssignment(str, payload) {
-    return Object.keys(payload).reduce((parameter, key) => {
-      return parameter.replace(`\$\{${key}\}`, payload[key])
-    }, str)
-  }
-}
-
-function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
-  const newFieldInfo = { ...fieldInfo }
-  if (!newFieldInfo.requestConfig) {
-    return newFieldInfo
-  }
-
-  const variables = variableFactory(newFieldInfo.requestConfig)
-  const parameterHandler = parameterHandlerFactory(newFieldInfo.requestConfig)
-
-  if (!variables) {
-    executeFunc(parameterHandler(), newFieldInfo)
-    return newFieldInfo
-  }
-
-  const oldVariables = variables.reduce((oldVariables, variable) => ({ ...oldVariables, [variable]: '' }), {})
-
-  newFieldInfo.executeFunc = (data) => {
-    const isDiffed = Object.keys(data)
-      .filter((key) => variables.includes(key))
-      .reduce((isDiffed, key) => {
-        isDiffed = isDiffed || oldVariables[key] !== data[key]
-        oldVariables[key] = data[key]
-        return isDiffed
-      }, false)
-    if (isDiffed) {
-      executeFunc(parameterHandler(oldVariables), newFieldInfo)
-    }
-  }
-  return newFieldInfo
-}
+import { FormTypeEnum } from '../../../enum'
+import formDepMonitorMixin, { mixinExecuteFunction } from '../../../mixin/formDepMonitor.js'
 
 export default {
   name: 'RuntimeCreatTicket',
@@ -126,6 +60,12 @@ export default {
       options: {},
     }
   },
+  mixins: [
+    formDepMonitorMixin({
+      formData: 'startForm',
+      formFields: 'startFormFields',
+    }),
+  ],
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
     isEmptyConfig() {
@@ -189,16 +129,6 @@ export default {
         startForm[field.prop] = field.value
         return startForm
       }, {})
-    },
-    startForm: {
-      immediate: true,
-      deep: true,
-      handler(startForm) {
-        const needExecutes = this.startFormFields?.filter(({ executeFunc }) => executeFunc) ?? []
-        needExecutes.forEach(({ executeFunc }) => {
-          executeFunc({ ...startForm })
-        })
-      },
     },
   },
   methods: {
