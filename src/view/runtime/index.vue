@@ -60,7 +60,7 @@
         </div>
       </div>
       <div class="runtime-home-button" v-role="{ id: 'RunTimeAdd', type: 'button', business: getData.projectCode }">
-        <div class="button1" :class="getData.projectCode ? '' : 'disableStyle'" @click="goAdd()">
+        <div class="button1" :class="getData.projectCode ? '' : 'disableStyle'" @click="onAddTicket">
           <div class="title">
             <i class="el-icon-circle-plus"></i>
           </div>
@@ -335,7 +335,7 @@ export default {
         this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
       })
     },
-    goAdd() {
+    onAddTicket() {
       if (!this.getData.projectCode) {
         this.$message.error('请选择项目')
         return
