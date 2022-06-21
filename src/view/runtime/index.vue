@@ -2,7 +2,7 @@
   <div class="runtime">
     <div class="runtime-filter">
       <div class="projectSelect marginRight20">
-        <el-select v-model="getData.projectCode">
+        <el-select v-model="searchForm.ascription">
           <el-option
             v-for="{ id, label, value } in rootOrganizations"
             :key="id"
@@ -13,9 +13,9 @@
       </div>
       <div class="businessSelect marginRight20">
         <el-cascader
-          v-model="getData.businessCode"
-          :key="getData.projectCode"
-          :options="rootOrganizationChildrenAndAll(getData.projectCode)"
+          v-model="searchForm.business"
+          :key="searchForm.ascription"
+          :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
           :props="cascaderProps"
           @change="onBusinessChange"
         ></el-cascader>
@@ -23,7 +23,7 @@
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker
-          v-model="timeValues"
+          v-model="searchForm.valueDate"
           type="daterange"
           align="right"
           unlink-panels
@@ -59,8 +59,8 @@
           <div class="titLabel">已完成数量</div>
         </div>
       </div>
-      <div class="runtime-home-button" v-role="{ id: 'RunTimeAdd', type: 'button', business: getData.projectCode }">
-        <div class="button1" :class="getData.projectCode ? '' : 'disableStyle'" @click="onAddTicket">
+      <div class="runtime-home-button" v-role="{ id: 'RunTimeAdd', type: 'button', business: searchForm.ascription }">
+        <div class="button1" :class="searchForm.ascription ? '' : 'disableStyle'" @click="onAddTicket">
           <div class="title">
             <i class="el-icon-circle-plus"></i>
           </div>
@@ -69,7 +69,7 @@
       </div>
     </div>
     <div class="runtime-check">
-      <el-radio-group v-model="getData.taskType" @change="onTaskTypeChange">
+      <el-radio-group v-model="searchForm.taskType" @change="onTaskTypeChange">
         <el-radio label="all"> 全部任务（{{ taskTypeCounts.all }}） </el-radio>
         <el-radio label="self"> 我的任务（{{ taskTypeCounts.self }}） </el-radio>
         <el-radio label="notice"> 告知（{{ taskTypeCounts.notice }}） </el-radio>
@@ -87,7 +87,7 @@
             <template slot-scope="{ row }">
               <el-steps :active="row.displayTrackList.length" align-center process-status="success">
                 <el-step
-                  v-for="({title, className, taskName}, index) in row.displayTrackList"
+                  v-for="({ title, className, taskName }, index) in row.displayTrackList"
                   icon="el-icon-edit"
                   :key="index"
                   :title="taskName"
@@ -111,7 +111,7 @@
                 @click.native.prevent="onDetail(scope.row)"
                 type="text"
                 size="small"
-                v-role="{ id: 'RunTimeLook', type: 'button', business: getData.projectCode }"
+                v-role="{ id: 'RunTimeLook', type: 'button', business: searchForm.ascription }"
               >
                 查看
               </el-button>
@@ -121,19 +121,19 @@
       </div>
       <div class="home-table-page">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page.sync="getData.page"
-          :page-size.sync="getData.limit"
+          :current-page.sync="pageInfo.page"
+          :page-size.sync="pageInfo.limit"
+          :total="pageInfo.total"
+          @current-change="onPageChange"
+          @size-change="onPageSizeChange"
           layout="prev, pager, next, jumper"
-          :total="getData.total"
         >
         </el-pagination>
       </div>
     </div>
     <runtime-add
       :dialogVisible="runtimeAddVisible"
-      :projectCode="getData.projectCode"
+      :projectCode="searchForm.ascription"
       @close="onRuntimeAddClose"
       @succseeAdd="onAddSuccess"
     ></runtime-add>
@@ -143,7 +143,7 @@
       @goSee="onDetail"
       ref="runTimeImplement"
       @taskSuccess="onTaskSuccess"
-      :business="getData.projectCode"
+      :business="searchForm.business"
     ></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
@@ -181,6 +181,18 @@ export default {
       timeValues: [start, end],
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
+      searchForm: {
+        ascription: '',
+        business: '',
+        valueDate: [start, end],
+        taskType: 'all',
+        order: 'desc',
+      },
+      pageInfo: {
+        page: 1,
+        limit: 10,
+        total: 0,
+      },
       newTasks: [],
       taskStatusConfig: {
         run: {
@@ -204,15 +216,6 @@ export default {
           className: 'tableStepDeleted',
         },
       },
-      getData: {
-        order: 'desc',
-        taskType: 'all',
-        page: 1,
-        limit: 10,
-        total: 1,
-        projectCode: '',
-        businessCode: '',
-      },
     }
   },
   computed: {
@@ -222,7 +225,7 @@ export default {
   },
   async mounted() {
     await this.dispatchRefreshOrganization()
-    this.getData['projectCode'] = this.currentOrganization
+    this.searchForm.ascription = this.currentOrganization
     await this.fetchNewTasks()
     await this.fetchAmount()
     await this.fetchDataNumber()
@@ -236,8 +239,11 @@ export default {
       this.getAllApi()
     },
     onTaskTypeChange() {
-      this.getData.page = 1
-      this.getData.limit = 10
+      this.pageInfo = {
+        page: 1,
+        limit: 10,
+        total: 0,
+      }
       this.fetchNewTasks()
     },
     onExecute(row) {
@@ -249,10 +255,11 @@ export default {
     async fetchNewTasks() {
       try {
         const { errorInfo, result } = await getNewTaskList({
-          ...this.getData,
-          taskFilter: this.getData.taskType,
-          startTime: this.timeValues[0],
-          endTime: this.timeValues[1],
+          ...this.searchForm,
+          ...this.pageInfo,
+          taskFilter: this.searchForm.taskType,
+          startTime: this.searchForm.valueDate[0],
+          endTime: this.searchForm.valueDate[1],
           tenantId: this.tenantId,
           assignee: this.userInfo.account,
         })
@@ -264,7 +271,7 @@ export default {
         this.newTasks = dataList
           .map((task) => handleNewTaskId(task, this.userInfo.account))
           .map((task) => handleDisplay.call(this, task))
-        this.getData.total = +count
+        this.pageInfo.total = +count
       } catch (error) {
         this.newTasks = []
       }
@@ -308,10 +315,10 @@ export default {
       try {
         const { errorInfo, result } = await postTaskCountStatistics({
           assignee: this.userInfo.account,
-          business: this.getData.businessCode,
+          business: this.searchForm.business,
           startTime: this.timeValues[0],
           endTime: this.timeValues[1],
-          projectCode: this.getData.projectCode,
+          projectCode: this.searchForm.ascription,
           tenantId: this.tenantId,
         })
         if (errorInfo.errorCode) {
@@ -330,10 +337,10 @@ export default {
       })
       return rolePeopleList.concat(row.taskAssignee.split(',')).indexOf(this.userInfo.account) !== -1
     },
-    handleSizeChange() {
+    onPageSizeChange() {
       this.fetchNewTasks()
     },
-    handleCurrentChange() {
+    onPageChange() {
       this.fetchNewTasks()
     },
     deployDiolog(row) {
@@ -372,7 +379,7 @@ export default {
       })
     },
     onAddTicket() {
-      if (!this.getData.projectCode) {
+      if (!this.searchForm.ascription) {
         this.$message.error('请选择项目')
         return
       }
@@ -392,9 +399,9 @@ export default {
     },
     async fetchDataNumber() {
       getTaskCountStatistic({
-        ascription: this.getData.projectCode,
+        ascription: this.searchForm.ascription,
         assignee: this.userInfo.account,
-        business: this.getData.businessCode,
+        business: this.searchForm.business,
         startTime: this.timeValues[0],
         endTime: this.timeValues[1],
         tenantId: this.tenantId,

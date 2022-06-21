@@ -52,8 +52,8 @@
       </el-table>
     </div>
     <div class="home-table-page">
-      <el-pagination @size-change="onSizeChange"
-                     @current-change="onCurrentChange"
+      <el-pagination @size-change="onPageSizeChange"
+                     @current-change="onPageChange"
                      :current-page="pageInfo.page"
                      :page-size="pageInfo.limit"
                      layout="prev, pager, next, jumper"
@@ -102,11 +102,11 @@ export default {
     },
   },
   methods: {
-    onSizeChange(val) {
+    onPageSizeChange(val) {
       this.pageInfo.limit = val
       this.findWorkFlowRecord()
     },
-    onCurrentChange(val) {
+    onPageChange(val) {
       this.pageInfo.page = val
       this.findWorkFlowRecord()
     },
