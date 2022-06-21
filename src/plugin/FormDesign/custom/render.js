@@ -17,7 +17,7 @@ export default {
     }
 
     //远程获取数据
-    this.getRemoteData();
+    // this.getRemoteData();
     const confClone = jsonClone(this.conf);
     const children = childrenItem(h,confClone);
     Object.keys(confClone).forEach(key => {
