@@ -228,12 +228,12 @@ export default {
         document: '',
       },
       btnListKey: {
-        待办: 'Agency',
-        传阅: 'Circulate',
-        加减签: 'Signature',
-        挂起: 'Hang',
-        驳回: 'Reject',
-        终止: 'Termination',
+        Agency: 'Agency',
+        Circulate: 'Circulate',
+        Signature: 'Signature',
+        Hang: 'Hang',
+        Reject: 'Reject',
+        Termination: 'Termination',
       },
       btnList: [],
       dataList: {
