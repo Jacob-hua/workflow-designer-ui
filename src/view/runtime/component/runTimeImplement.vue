@@ -431,11 +431,11 @@
           processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId
         }).then((res) => {
           let nodeInfoBoole = res.result.some((item) => {
-            if (item.assignee || item.candidateGroup || item.candidateUser) {
+            if (item.assignee === null && item.candidateGroup === null && item.candidateUser === null) {
               return true
             }
           })
-          if (nodeInfoBoole) {
+          if (!nodeInfoBoole) {
             postCompleteTask({
               assignee: this.userInfo.account,
               commentList: [],
