@@ -98,17 +98,12 @@
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
-            <template slot-scope="scope">
-              <el-button
-                @click.native.prevent="onExecute(scope.row)"
-                type="text"
-                size="small"
-                v-if="showDeployDiologButton(scope.row)"
-              >
+            <template slot-scope="{ row }">
+              <el-button v-if="row.canExecute" @click.native.prevent="onExecute(row)" type="text" size="small">
                 执行
               </el-button>
               <el-button
-                @click.native.prevent="onDetail(scope.row)"
+                @click.native.prevent="onDetail(row)"
                 type="text"
                 size="small"
                 v-role="{ id: 'RunTimeLook', type: 'button', business: searchForm.ascription }"
@@ -251,15 +246,6 @@ export default {
     onDetail(row) {
       this.detailsDiolog(row)
     },
-    showDeployDiologButton(row) {
-      let rolePeopleList = []
-      row.trackList[row.trackList.length - 1].candidateUsers.forEach((item) => {
-        item.candidateUsers.forEach((item1) => {
-          rolePeopleList.push(item1)
-        })
-      })
-      return rolePeopleList.concat(row.taskAssignee.split(',')).indexOf(this.userInfo.account) !== -1
-    },
     onPageSizeChange() {
       this.fetchNewTasks()
     },
@@ -363,11 +349,21 @@ export default {
 
       function handleDisplay(task) {
         const newTask = { ...task }
+
         newTask.displayTrackList = newTask.trackList.map(({ taskName, status }) => ({
           taskName,
           ...(this.taskStatusConfig[status] ?? { title: '多人执行', className: '' }),
         }))
+
         newTask.displayEnergyType = this.$getMappingName(newTask.energyType)
+
+        // 按照约定，trackList中最后一个节点是最新节点
+        const candidateUsers = newTask.trackList[newTask.trackList.length - 1]?.candidateUsers
+        const canExecuteUsers = candidateUsers?.reduce(
+          (canExecuteUsers, { candidateUsers, assignee }) => [...canExecuteUsers, ...candidateUsers, assignee],
+          []
+        )
+        newTask.canExecute = canExecuteUsers.includes(this.userInfo.account)
         return newTask
       }
 
@@ -384,7 +380,7 @@ export default {
           return newTask
         }
         // 按照约定，trackList中最后一个节点是最新节点
-        const candidateUsers = newTask.trackList[-1]?.candidateUsers
+        const candidateUsers = newTask.trackList[newTask.trackList.length - 1]?.candidateUsers
         if (!Array.isArray(candidateUsers)) {
           return newTask
         }
