@@ -114,7 +114,7 @@
     },
     methods: {
       dialogValue(value) {
-        return this.messageDiolog[this.$parent.functionCheck][value]
+        // return this.messageDiolog[this.$parent.functionCheck][value]
       },
       handleClose() {
         this.dialogVisible = false

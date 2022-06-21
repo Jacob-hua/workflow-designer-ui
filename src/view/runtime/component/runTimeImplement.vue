@@ -8,7 +8,7 @@
             ref="ProcessInformation"
             :processTaskList="processTaskList"
             :processInfo="workflow"
-            @selectOneSet="selectOneSet"
+            @executeShape="selectOneSet"
             seeType="runTime"
           ></ProcessInformation>
           <div class="function-list" v-if="bpmnType === 'bpmn:UserTask' && btnList.length > 0">
@@ -362,10 +362,7 @@ export default {
       this.$emit('goSee', this.$refs.ProcessInformation.postData)
     },
     selectOneSet(value) {
-      this.btnList =
-        (value?.businessObject?.$attrs['camunda:actions'] &&
-          value?.businessObject?.$attrs['camunda:actions'].split(',')) ||
-        []
+      this.btnList = this.$iBpmn.getShapeInfoByType(value, 'actions')?.split(',') || []
       if (this.btnList.length > 0) {
         if (!this.dataList.Hang) {
           this.changeFunction('Hang')

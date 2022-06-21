@@ -84,6 +84,7 @@ export default {
           }
           this.$iBpmn.canvasAddMarker(element, 'svgIncomplete')
         })
+      this.$emit('executeShape', this.$iBpmn.elementRegistryFind(({id}) => id === this.processInfo.taskKey))
     },
   },
 }
