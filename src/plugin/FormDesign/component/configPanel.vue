@@ -7,7 +7,7 @@
       <el-scrollbar class="right-scrollbar">
         <el-form size="small" label-width="100px" >
           <div v-for="(item,index) in cmps" :key="index">
-            <component v-if="item.name === activeItem.compType" :getFormId="getFormId" :props="activeItem" :is="item.content"></component>
+            <component v-show="item.name === activeItem.compType" :itemList="itemList" :getFormId="getFormId" :props="activeItem" :is="item.content"></component>
           </div>
         </el-form>
       </el-scrollbar>

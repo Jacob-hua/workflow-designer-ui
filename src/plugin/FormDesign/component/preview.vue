@@ -72,6 +72,14 @@ export default {
       currentIndex:-1
     }
   },
+  // watch: {
+  //   form: {
+  //     immediate: true,
+  //     handler(value) {
+  //       console.log(value)
+  //     },
+  //   },
+  // },
   methods:{
     handlerValChange(key,origin){
       this.$set(this.form,key,origin);

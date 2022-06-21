@@ -88,8 +88,19 @@
     </div>
     </div>
     <div v-show='props.dataType ==="dynamic"'>
-      <el-form-item label="地址">
-        <el-input v-model="props.action"></el-input>
+      <el-form-item label="第三方API">
+        <el-select v-model="interFace"
+                   clearable>
+          <el-option  v-for="({name, id, source, sourceMark}, index) in interFaceOption"
+                      @click.native="onClickOption(id,source, sourceMark)"
+                     :key="index"
+                     :label="name"
+                     :value="id" />
+        </el-select>
+<!--        <el-input v-model="props.action"></el-input>-->
+      </el-form-item>
+      <el-form-item label="关联">
+        <el-input v-model="props.relation" placeholder="关联逗号分开"></el-input>
       </el-form-item>
     </div>
   </div>
@@ -98,22 +109,88 @@
 import {changeId} from '../mixin'
 import draggable from "vuedraggable";
 import { isNumberStr } from '../../utils/index'
+import {apiDetail} from "@/api/globalConfig";
+import {mapState, mapActions, mapMutations} from "vuex";
+
+
 export default {
   name:"inputConfig",
-  props:['props','getFormId'],
+  props:['props','getFormId', 'itemList'],
   components:{
     draggable
   },
   mixins:[changeId],
   data(){
     return {
-      tempOptions:[]
+      relation: '',
+      interFace: '',
+      tempOptions:[],
+      currentDetail: {},
+    }
+  },
+  computed: {
+    ...mapState('account', ['tenantId', 'currentOrganization']),
+    ...mapState('form',['interFaceOption', 'dynamicOption'])
+  },
+  mounted() {
+  },
+  watch: {
+    itemList: {
+      immediate: false,
+      deep: true,
+      handler(value) {
+        console.log(value)
+        debugger
+        let relationMap = new Map()
+        let select = value.find(val => val.compType === 'select')
+        let relationArr = select.relation.split(',')
+        if (select.relation) {
+         let input = value.find(val =>{
+           relationArr.forEach(relation => {
+             if (relation === val.id) {
+               relationMap.set(relation,val.value)
+             }
+             return val
+           })
+           })
+          this.executeFunction({api:this.currentDetail,relationMap: relationMap})
+        }
+      },
+    },
+    dynamicOption: {
+      immediate: true,
+      handler(value) {
+        this.props.options = value
+      },
+    },
+    "props.relation": {
+      immediate: true,
+      handler(relation) {
+        if (relation) {
+          this.executeFunction(this.currentDetail, relation, '')
+        }
+      },
     }
   },
   methods:{
+    ...mapActions('form',['refreshApiList', 'executeFunction']),
+    ...mapMutations('form',['addThirdPartyApi']),
+    onClickOption(id,source, sourceMark) {
+      let _this = this
+      apiDetail({
+        source: source,
+        sourceMark: sourceMark,
+        tenantId: this.tenantId
+      }).then((res)=> {
+        this.currentDetail = res.result.filter(item => item.id === id)[0]
+        _this.executeFunction({api: this.currentDetail, relation: this.props.relation, value: ''}  )
+        this.addThirdPartyApi( { id: this.currentDetail.id } )
+      })
+    },
     handlerChangeLabel(val){
       this.props.labelWidth = val?'80':'1'
     },
+
     setValue(val) {
       if (Array.isArray(val)) {
         return val.join(',')
@@ -165,10 +242,9 @@ export default {
       }else{
         this.tempOptions = this.props.options;
         this.props.options = [];
+        this.refreshApiList()
       }
     }
-  },
-  mounted(){
   }
 }
 </script>
