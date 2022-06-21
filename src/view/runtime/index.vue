@@ -40,23 +40,11 @@
     </div>
     <div class="runtime-home">
       <div class="runtime-home-title">
-        <div class="data">
+        <div class="data" v-for="({ label, value }, index) in workflowStatistics" :key="index">
           <div class="title">
-            <b class="value">{{ workflowCounts.executionTotalProcessCount }}</b>
+            <b class="value">{{ value }}</b>
           </div>
-          <div class="titLabel">执行工作流总数</div>
-        </div>
-        <div class="data">
-          <div class="title">
-            <b class="value">{{ workflowCounts.executionInProcessCount }}</b>
-          </div>
-          <div class="titLabel">执行中</div>
-        </div>
-        <div class="data">
-          <div class="title">
-            <b class="value">{{ workflowCounts.executionCompleteCount }}</b>
-          </div>
-          <div class="titLabel">已完成数量</div>
+          <div class="titLabel">{{ label }}</div>
         </div>
       </div>
       <div class="runtime-home-button" v-role="{ id: 'RunTimeAdd', type: 'button', business: searchForm.ascription }">
@@ -70,9 +58,9 @@
     </div>
     <div class="runtime-check">
       <el-radio-group v-model="searchForm.taskType" @change="onTaskTypeChange">
-        <el-radio label="all"> 全部任务（{{ taskTypeCounts.all }}） </el-radio>
-        <el-radio label="self"> 我的任务（{{ taskTypeCounts.self }}） </el-radio>
-        <el-radio label="notice"> 告知（{{ taskTypeCounts.notice }}） </el-radio>
+        <el-radio v-for="({ label, display }, index) in taskTypeRadios" :key="index" :label="label">
+          {{ display }}
+        </el-radio>
       </el-radio-group>
     </div>
     <div class="runtime-table">
@@ -179,9 +167,9 @@ export default {
       },
       newTasks: [],
       workflowCounts: {
-        executionCount: 0,
-        completeCount: 0,
-        executionInCount: 0,
+        executionTotalProcessCount: 0,
+        executionInProcessCount: 0,
+        executionCompleteCount: 0,
       },
       taskTypeCounts: {
         all: 0,
@@ -216,6 +204,38 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
     ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
+    workflowStatistics() {
+      return [
+        {
+          label: '执行工作流总数',
+          value: this.workflowCounts.executionTotalProcessCount,
+        },
+        {
+          label: '执行中',
+          value: this.workflowCounts.executionInProcessCount,
+        },
+        {
+          label: '已完成数量',
+          value: this.workflowCounts.executionCompleteCount,
+        },
+      ]
+    },
+    taskTypeRadios() {
+      return [
+        {
+          label: 'all',
+          display: `全部任务（${this.taskTypeCounts['all'] ?? 0}）`,
+        },
+        {
+          label: 'self',
+          display: `我的任务（${this.taskTypeCounts['self'] ?? 0}）`,
+        },
+        {
+          label: 'notice',
+          display: `告知（${this.taskTypeCounts['notice'] ?? 0}）`,
+        },
+      ]
+    },
   },
   async mounted() {
     await this.dispatchRefreshOrganization()
