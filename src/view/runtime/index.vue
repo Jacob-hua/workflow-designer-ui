@@ -168,17 +168,6 @@ export default {
   data() {
     const { start, end } = currentOneMonthAgo('YYYY-MM-DD HH:mm:ss')
     return {
-      workflowCounts: {
-        executionCount: 0,
-        completeCount: 0,
-        executionInCount: 0,
-      },
-      taskTypeCounts: {
-        all: 0,
-        notice: 0,
-        self: 0,
-      },
-      timeValues: [start, end],
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
       searchForm: {
@@ -194,6 +183,16 @@ export default {
         total: 0,
       },
       newTasks: [],
+      workflowCounts: {
+        executionCount: 0,
+        completeCount: 0,
+        executionInCount: 0,
+      },
+      taskTypeCounts: {
+        all: 0,
+        notice: 0,
+        self: 0,
+      },
       taskStatusConfig: {
         run: {
           title: '执行',
@@ -316,8 +315,8 @@ export default {
         const { errorInfo, result } = await postTaskCountStatistics({
           assignee: this.userInfo.account,
           business: this.searchForm.business,
-          startTime: this.timeValues[0],
-          endTime: this.timeValues[1],
+          startTime: this.searchForm.valueDate[0],
+          endTime: this.searchForm.valueDate[1],
           projectCode: this.searchForm.ascription,
           tenantId: this.tenantId,
         })
@@ -392,18 +391,16 @@ export default {
       this.runtimeImplementVisible = false
       this.fetchNewTasks()
     },
-    getAllApi() {
-      this.fetchDataNumber()
-      this.fetchNewTasks()
-      this.fetchAmount()
+    async getAllApi() {
+      await Promise.all([this.fetchDataNumber(), this.fetchNewTasks(), this.fetchAmount()])
     },
     async fetchDataNumber() {
       getTaskCountStatistic({
         ascription: this.searchForm.ascription,
         assignee: this.userInfo.account,
         business: this.searchForm.business,
-        startTime: this.timeValues[0],
-        endTime: this.timeValues[1],
+        startTime: this.searchForm.valueDate[0],
+        endTime: this.searchForm.valueDate[1],
         tenantId: this.tenantId,
       }).then((res) => {
         if (res) {
