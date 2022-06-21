@@ -2,12 +2,12 @@
   <div class="runtime">
     <div class="runtime-filter">
       <div class="projectSelect marginRight20">
-        <el-select v-model="getData.projectCode">
+        <el-select v-model="getData.projectCode" @change="changeProjectCode">
           <el-option v-for="{id, label, value} in rootOrganizations" :key="id" :label="label" :value="value"></el-option>
         </el-select>
       </div>
       <div class="businessSelect marginRight20">
-        <el-cascader v-model="getData.businessCode" :key="getData.projectCode" :options="rootOrganizationChildrenAndAll(getData.projectCode)"
+        <el-cascader v-model="getData.businessCode" :options="rootOrganizationChildrenAndAll(getData.projectCode)"
           :props='cascaderProps' @change="getAllApi()"></el-cascader>
       </div>
       <div class="datePick">
@@ -281,6 +281,10 @@
       },
       handleCurrentChange() {
         this.fetchNewTasks()
+      },
+      changeProjectCode() {
+        this.getData.businessCode = ''
+        this.getAllApi()
       },
       deployDiolog(row) {
         this.runtimeImplementVisible = true

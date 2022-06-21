@@ -16,7 +16,7 @@
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
                   <div v-for="(item, index) in dataList.Agency">
-                    <span> {{ item.assignee }}: </span>
+                    <span v-show="item.assignee"> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1
                     , index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
                     <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
@@ -35,7 +35,7 @@
                 <div class="peopleList-title">指定传阅人员:</div>
                 <div class="peopleList">
                   <div v-for="(item, index) in dataList.Circulate">
-                    <span> {{ item.assignee }}: </span>
+                    <span v-show="item.assignee"> {{ item.assignee }}: </span>
                     <div class="peopleList-item" v-for="(item1, index1) in item.circulations[0].unitList" v-if="item.circulations[0].unitList.length > 0">{{ item1 }}</div>
                     <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span>
                       <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === userInfo.account">点击添加</span>
@@ -292,6 +292,7 @@
               userId: item1
             })
           })
+          this.$refs.runtimePeople.multipleSelection = []
           switch (value) {
             case 'Agency':
               this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
