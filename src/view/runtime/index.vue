@@ -251,6 +251,92 @@ export default {
     onDetail(row) {
       this.detailsDiolog(row)
     },
+    showDeployDiologButton(row) {
+      let rolePeopleList = []
+      row.trackList[row.trackList.length - 1].candidateUsers.forEach((item) => {
+        item.candidateUsers.forEach((item1) => {
+          rolePeopleList.push(item1)
+        })
+      })
+      return rolePeopleList.concat(row.taskAssignee.split(',')).indexOf(this.userInfo.account) !== -1
+    },
+    onPageSizeChange() {
+      this.fetchNewTasks()
+    },
+    onPageChange() {
+      this.fetchNewTasks()
+    },
+    deployDiolog(row) {
+      this.runtimeImplementVisible = true
+      this.$nextTick(() => {
+        this.$refs.runTimeImplement.getNachList(row.trackList)
+        this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+        this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
+        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
+        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
+        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
+        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
+        this.$refs.runTimeImplement.dataList.Hang = row.taskStatus.split(',').indexOf('hang') == '-1'
+        if (!this.$refs.runTimeImplement.dataList.Hang) {
+          this.$refs.runTimeImplement.functionCheck = 'Hang'
+        }
+      })
+    },
+    onRuntimeImplementClose() {
+      this.runtimeImplementVisible = false
+    },
+    onAddSuccess() {
+      this.runtimeAddVisible = false
+      this.fetchNewTasks()
+    },
+    detailsDiolog(row) {
+      this.$refs.lookover.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.lookover.$refs.ProcessInformation.postData = row
+        this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
+        this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
+        this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
+        this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.energyType
+        this.$refs.lookover.getListData(row.trackList)
+        this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
+      })
+    },
+    onAddTicket() {
+      this.runtimeAddVisible = true
+    },
+    onRuntimeAddClose() {
+      this.runtimeAddVisible = false
+    },
+    onTaskSuccess() {
+      this.runtimeImplementVisible = false
+      this.fetchNewTasks()
+    },
+    async getAllApi() {
+      await Promise.all([this.fetchDataNumber(), this.fetchNewTasks(), this.fetchAmount()])
+    },
+    async fetchDataNumber() {
+      try {
+        const { errorInfo, result } = await getTaskCountStatistic({
+          ascription: this.searchForm.ascription,
+          assignee: this.userInfo.account,
+          business: this.searchForm.business,
+          startTime: this.searchForm.valueDate[0],
+          endTime: this.searchForm.valueDate[1],
+          tenantId: this.tenantId,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.workflowCounts = result
+      } catch (error) {
+        this.workflowCounts = {
+          executionCount: 0,
+          completeCount: 0,
+          executionInCount: 0,
+        }
+      }
+    },
     async fetchNewTasks() {
       try {
         const { errorInfo, result } = await getNewTaskList({
@@ -326,93 +412,6 @@ export default {
         }
         this.taskTypeCounts = result
       } catch (error) {}
-    },
-    showDeployDiologButton(row) {
-      let rolePeopleList = []
-      row.trackList[row.trackList.length - 1].candidateUsers.forEach((item) => {
-        item.candidateUsers.forEach((item1) => {
-          rolePeopleList.push(item1)
-        })
-      })
-      return rolePeopleList.concat(row.taskAssignee.split(',')).indexOf(this.userInfo.account) !== -1
-    },
-    onPageSizeChange() {
-      this.fetchNewTasks()
-    },
-    onPageChange() {
-      this.fetchNewTasks()
-    },
-    deployDiolog(row) {
-      this.runtimeImplementVisible = true
-      this.$nextTick(() => {
-        this.$refs.runTimeImplement.getNachList(row.trackList)
-        this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
-        this.$refs.runTimeImplement.dataList.Hang = row.taskStatus.split(',').indexOf('hang') == '-1'
-        if (!this.$refs.runTimeImplement.dataList.Hang) {
-          this.$refs.runTimeImplement.functionCheck = 'Hang'
-        }
-      })
-    },
-    onRuntimeImplementClose() {
-      this.runtimeImplementVisible = false
-    },
-    onAddSuccess() {
-      this.runtimeAddVisible = false
-      this.fetchNewTasks()
-    },
-    detailsDiolog(row) {
-      this.$refs.lookover.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.lookover.$refs.ProcessInformation.postData = row
-        this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
-        this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
-        this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
-        this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.energyType
-        this.$refs.lookover.getListData(row.trackList)
-        this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-      })
-    },
-    onAddTicket() {
-      if (!this.searchForm.ascription) {
-        this.$message.error('请选择项目')
-        return
-      }
-      this.runtimeAddVisible = true
-    },
-    onRuntimeAddClose() {
-      this.runtimeAddVisible = false
-    },
-    onTaskSuccess() {
-      this.runtimeImplementVisible = false
-      this.fetchNewTasks()
-    },
-    async getAllApi() {
-      await Promise.all([this.fetchDataNumber(), this.fetchNewTasks(), this.fetchAmount()])
-    },
-    async fetchDataNumber() {
-      getTaskCountStatistic({
-        ascription: this.searchForm.ascription,
-        assignee: this.userInfo.account,
-        business: this.searchForm.business,
-        startTime: this.searchForm.valueDate[0],
-        endTime: this.searchForm.valueDate[1],
-        tenantId: this.tenantId,
-      }).then((res) => {
-        if (res) {
-          this.workflowCounts = res.result
-        } else {
-          this.workflowCounts = {
-            executionCompleteCount: 0,
-            executionInProcessCount: 0,
-            executionTotalProcessCount: 0,
-          }
-        }
-      })
     },
   },
 }
