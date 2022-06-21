@@ -80,23 +80,19 @@
         <el-table :data="newTasks">
           <el-table-column type="index" label="序号" align="center"> </el-table-column>
           <el-table-column prop="processName" label="名称" align="center" show-overflow-tooltip="" />
-          <el-table-column prop="energyType" label="部署类型" align="center">
-            <template slot-scope="scope">
-              <span>{{ $getMappingName(scope.row.energyType) }}</span>
-            </template>
-          </el-table-column>
+          <el-table-column prop="displayEnergyType" label="部署类型" align="center" />
           <el-table-column prop="starter" label="发起人" align="center" />
           <el-table-column prop="startTime" label="发起时间" align="center" />
           <el-table-column label="执行进程" align="center" min-width="250">
-            <template slot-scope="scope">
-              <el-steps :active="scope.row.trackList.length" align-center process-status="success">
+            <template slot-scope="{ row }">
+              <el-steps :active="row.displayTrackList.length" align-center process-status="success">
                 <el-step
-                  :title="item.taskName"
-                  :description="statusObj[item.status]"
+                  v-for="({title, className, taskName}, index) in row.displayTrackList"
                   icon="el-icon-edit"
-                  :class="statusClassObj[item.status]"
-                  v-for="(item, index) in scope.row.trackList"
                   :key="index"
+                  :title="taskName"
+                  :description="title"
+                  :class="className"
                 ></el-step>
               </el-steps>
             </template>
@@ -186,20 +182,27 @@ export default {
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
       newTasks: [],
-      statusObj: {
-        completed: '通过',
-        run: '执行',
-        deleted: '删除',
-        hang: '挂起',
-        '-': '执行',
-        rejected: '驳回',
-      },
-      statusClassObj: {
-        completed: '',
-        '-': 'tableStepOnly',
-        deleted: 'tableStepDeleted',
-        hang: 'tableStepHang',
-        rejected: 'tableStepDeleted',
+      taskStatusConfig: {
+        run: {
+          title: '执行',
+          className: '',
+        },
+        completed: {
+          title: '通过',
+          className: '',
+        },
+        hang: {
+          title: '挂起',
+          className: 'tableStepHang',
+        },
+        rejected: {
+          title: '驳回',
+          className: 'tableStepDeleted',
+        },
+        deleted: {
+          title: '删除',
+          className: 'tableStepDeleted',
+        },
       },
       getData: {
         order: 'desc',
@@ -254,24 +257,51 @@ export default {
           assignee: this.userInfo.account,
         })
         if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMessage)
+          this.$message.error(errorInfo.errorMsg)
           return
         }
-        this.newTasks = result.dataList
-        this.newTasks.forEach((item) => {
-          if (item.taskAssignee.split(',').indexOf(this.userInfo.account) !== -1) {
-            item.newTaskId = item.taskId.split(',')[item.taskAssignee.split(',').indexOf(this.userInfo.account)]
-          } else {
-            item.trackList[item.trackList.length - 1].candidateUsers.forEach((item1) => {
-              if (item1.candidateUsers.indexOf(this.userInfo.account) !== -1) {
-                item.newTaskId = item1.taskId
-              }
-            })
-          }
-        })
-        this.getData.total = +result.count
+        const { dataList = [], count } = result
+        this.newTasks = dataList
+          .map((task) => handleNewTaskId(task, this.userInfo.account))
+          .map((task) => handleDisplay.call(this, task))
+        this.getData.total = +count
       } catch (error) {
         this.newTasks = []
+      }
+
+      function handleDisplay(task) {
+        const newTask = { ...task }
+        newTask.displayTrackList = newTask.trackList.map(({ taskName, status }) => ({
+          taskName,
+          ...(this.taskStatusConfig[status] ?? { title: '多人执行', className: '' }),
+        }))
+        newTask.displayEnergyType = this.$getMappingName(newTask.energyType)
+        return newTask
+      }
+
+      function handleNewTaskId(task, account) {
+        const newTask = { ...task }
+        if (
+          newTask.taskAssignee.split(',').includes(account) &&
+          newTask.taskId.split(',').length === newTask.taskAssignee.split(',').length
+        ) {
+          newTask.newTaskId = newTask.taskId.split(',')[newTask.taskAssignee.split(',').indexOf(account)]
+          return newTask
+        }
+        if (!Array.isArray(newTask.trackList)) {
+          return newTask
+        }
+        // 按照约定，trackList中最后一个节点是最新节点
+        const candidateUsers = newTask.trackList[-1]?.candidateUsers
+        if (!Array.isArray(candidateUsers)) {
+          return newTask
+        }
+        const newTaskId = candidateUsers.find(({ candidateUsers = [] }) => candidateUsers.includes(account))?.taskId
+        if (!newTaskId) {
+          return newTask
+        }
+        newTask.newTaskId = newTaskId
+        return newTask
       }
     },
     async fetchAmount() {
