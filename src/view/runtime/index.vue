@@ -121,12 +121,12 @@
       @succseeAdd="onAddSuccess"
     ></runtime-add>
     <runTimeImplement
-      :dialogVisible="runtimeImplementVisible"
+      ref="runTimeImplement"
+      :visible="runtimeImplementVisible"
+      :workflow="workflow"
       @close="onRuntimeImplementClose"
       @goSee="onDetail"
-      ref="runTimeImplement"
       @taskSuccess="onTaskSuccess"
-      :business="searchForm.business"
     ></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
@@ -153,6 +153,7 @@ export default {
     return {
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
+      newTasks: [],
       searchForm: {
         ascription: '',
         business: '',
@@ -165,7 +166,7 @@ export default {
         limit: 10,
         total: 0,
       },
-      newTasks: [],
+      workflow: {},
       workflowCounts: {
         executionTotalProcessCount: 0,
         executionInProcessCount: 0,
@@ -261,9 +262,11 @@ export default {
       this.fetchNewTasks()
     },
     onExecute(row) {
-      this.deployDiolog(row)
+      this.workflow = { ...row }
+      this.runtimeImplementVisible = true
     },
     onDetail(row) {
+      this.workflow = { ...row }
       this.detailsDiolog(row)
     },
     onPageSizeChange() {
@@ -276,12 +279,6 @@ export default {
       this.runtimeImplementVisible = true
       this.$nextTick(() => {
         this.$refs.runTimeImplement.getNachList(row.trackList)
-        this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
         this.$refs.runTimeImplement.dataList.Hang = row.taskStatus.split(',').indexOf('hang') == '-1'
         if (!this.$refs.runTimeImplement.dataList.Hang) {
           this.$refs.runTimeImplement.functionCheck = 'Hang'
