@@ -52,5 +52,7 @@ export let select = {
   value: '',
   rules:[],
   // 验证错误提示信息
-  ruleError: '该字段不能为空'
+  ruleError: '该字段不能为空',
+  // 当前表单所依赖的字段
+  relation: '',
 }

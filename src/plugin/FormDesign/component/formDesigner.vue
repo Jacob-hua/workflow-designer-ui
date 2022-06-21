@@ -150,7 +150,8 @@ export default {
         this.activeData = tempActiveData;
         this.$refs.designer.activeItem = this.activeData;
         if(obj.to.className.indexOf('row-drag')<0){
-          this.designList.splice(obj.newIndex,0,this.activeData);
+
+          this.designList.splice(obj.newIndex,0,this.activeData)
         }
       }else{
         this.$refs.designer.activeItem = {};
@@ -175,7 +176,6 @@ export default {
       formData.config = config;
       console.log(formData);
       return JSON.stringify(formData);
-        //this.$emit('input',JSON.stringify(formData));
     },
     dynamicTableExist(){
       return function(element){
@@ -187,6 +187,7 @@ export default {
   },
   watch:{
     value(newVal){
+      debugger
       if(newVal !==''){
         const formData = JSON.parse(newVal);
         this.designList= formData.list;
