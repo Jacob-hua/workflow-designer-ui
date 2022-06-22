@@ -77,7 +77,7 @@ export const deleteBusinessConfig = (id) => deletefn(`/config/businessConfig/del
 // export const UpdatebusinessConfig = (params) => put(`/config/businessConfig/businessConfigWithTree/create`, params);
 
 export const startConfig = (params) => put("/config/startConfig/update", params);
-
+// 回去第三方杰奎
 export const getThirdInterfaceList = (params) => get(`/config/global/getThirdInterfaceList`, params);
 //根据业务节点获取配置
 export const selectProcessStartConfigList = (id, tenantId) =>

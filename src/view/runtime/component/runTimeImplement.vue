@@ -27,14 +27,12 @@
               <div v-if="dataList.Agency.length > 0">
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
-                  <div v-for="(item, index) in dataList.Agency" :key="index">
-                    <span> {{ item.assignee }}: </span>
-                    <div
-                      class="peopleList-item"
-                      v-for="(item1, index1) in item.candidateUsers"
-                      v-if="item.candidateUsers.length > 0"
-                    >
-                      {{ item1 }}
+                  <div v-for="(item, index) in dataList.Agency">
+                    <span v-show="item.assignee"> {{ item.assignee }}: </span>
+                    <div class="peopleList-item" v-for="(item1
+                    , index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
+                    <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
+                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === userInfo.account && item.candidateUsers.length == 0">点击添加</span>
                     </div>
                     <div v-if="item.candidateUsers.length == 0" style="display: inline-block">
                       <span>暂无代办</span>
@@ -61,14 +59,11 @@
               <div v-if="dataList.Circulate.length > 0">
                 <div class="peopleList-title">指定传阅人员:</div>
                 <div class="peopleList">
-                  <div v-for="(item, index) in dataList.Circulate" :key="index">
-                    <span> {{ item.assignee }}: </span>
-                    <div
-                      class="peopleList-item"
-                      v-for="(item1, index1) in item.circulations[0].unitList"
-                      v-if="item.circulations[0].unitList.length > 0"
-                    >
-                      {{ item1 }}
+                  <div v-for="(item, index) in dataList.Circulate">
+                    <span v-show="item.assignee"> {{ item.assignee }}: </span>
+                    <div class="peopleList-item" v-for="(item1, index1) in item.circulations[0].unitList" v-if="item.circulations[0].unitList.length > 0">{{ item1 }}</div>
+                    <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span>
+                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === userInfo.account">点击添加</span>
                     </div>
                     <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block">
                       <span>暂无传阅</span>

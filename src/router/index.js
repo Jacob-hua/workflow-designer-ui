@@ -20,7 +20,7 @@ const routes = [
     path: "/home",
     name: "index",
     component: layout,
-    redirect: "/home/Workflow",
+    // redirect: "/home/Workflow",
     children: [
       {
         path: "/home/Workflow",
@@ -116,50 +116,50 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  try {
-    if (to.name === "login") {
-      next();
-      return;
-    }
+// router.beforeEach((to, from, next) => {
+//   try {
+//     if (to.name === "login") {
+//       next();
+//       return;
+//     }
 
-    if (to.name === "noPermission") {
-      next();
-      return;
-    }
+//     if (to.name === "noPermission") {
+//       next();
+//       return;
+//     }
 
-    let routerMapping = {
-      bpmn: "Workflow",
-      form: "Form",
-      home: "Home",
-      runTime: "RunTime",
-      history: "History",
-      all: "Configuration",
-      power: "Power",
-    };
-    let routerName = to.name;
+//     let routerMapping = {
+//       bpmn: "Workflow",
+//       form: "Form",
+//       home: "Home",
+//       runTime: "RunTime",
+//       history: "History",
+//       all: "Configuration",
+//       power: "Power",
+//     };
+//     let routerName = to.name;
 
-    let { permissions } = JSON.parse(sessionStorage.getItem("loginData"));
+//     let { permissions } = JSON.parse(sessionStorage.getItem("loginData"));
 
-    let proJectRole =
-      permissions.filter((item) => {
-        // TODO: 此处应该判断项目角色
-        // return item.projectCode === this.business
-        return item.projectCode === "XM_aff0659724a54c119ac857d4e560b47b";
-      })[0]?.permissionSet || [];
-    let findEle = proJectRole.findIndex((item) => {
-      return item.frontRoute === routerMapping[routerName];
-    });
-    if (findEle === -1) {
-      // TODO: 在没有权限的时候应该抛出响应的无权限提示
-      // next('/home/noPermission')
-      next();
-    } else {
-      next();
-    }
-  } catch (error) {
-    next("/login");
-  }
-});
+//     let proJectRole =
+//       permissions.filter((item) => {
+//         // TODO: 此处应该判断项目角色
+//         // return item.projectCode === this.business
+//         return item.projectCode === "XM_aff0659724a54c119ac857d4e560b47b";
+//       })[0]?.permissionSet || [];
+//     let findEle = proJectRole.findIndex((item) => {
+//       return item.frontRoute === routerMapping[routerName];
+//     });
+//     if (findEle === -1) {
+//       // TODO: 在没有权限的时候应该抛出响应的无权限提示
+//       // next('/home/noPermission')
+//       next();
+//     } else {
+//       next();
+//     }
+//   } catch (error) {
+//     next("/login");
+//   }
+// });
 
 export default router;
