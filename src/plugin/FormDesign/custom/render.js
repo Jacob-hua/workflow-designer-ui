@@ -15,7 +15,7 @@ export default {
       on: {},
       style: {}
     }
-
+        debugger
     //远程获取数据
     // this.getRemoteData();
     const confClone = jsonClone(this.conf);
