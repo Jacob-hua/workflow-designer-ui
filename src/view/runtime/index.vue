@@ -40,23 +40,11 @@
     </div>
     <div class="runtime-home">
       <div class="runtime-home-title">
-        <div class="data">
+        <div class="data" v-for="({ label, value }, index) in workflowStatistics" :key="index">
           <div class="title">
-            <b class="value">{{ workflowCounts.executionTotalProcessCount }}</b>
+            <b class="value">{{ value }}</b>
           </div>
-          <div class="titLabel">执行工作流总数</div>
-        </div>
-        <div class="data">
-          <div class="title">
-            <b class="value">{{ workflowCounts.executionInProcessCount }}</b>
-          </div>
-          <div class="titLabel">执行中</div>
-        </div>
-        <div class="data">
-          <div class="title">
-            <b class="value">{{ workflowCounts.executionCompleteCount }}</b>
-          </div>
-          <div class="titLabel">已完成数量</div>
+          <div class="titLabel">{{ label }}</div>
         </div>
       </div>
       <div class="runtime-home-button" v-role="{ id: 'RunTimeAdd', type: 'button', business: searchForm.ascription }">
@@ -70,9 +58,9 @@
     </div>
     <div class="runtime-check">
       <el-radio-group v-model="searchForm.taskType" @change="onTaskTypeChange">
-        <el-radio label="all"> 全部任务（{{ taskTypeCounts.all }}） </el-radio>
-        <el-radio label="self"> 我的任务（{{ taskTypeCounts.self }}） </el-radio>
-        <el-radio label="notice"> 告知（{{ taskTypeCounts.notice }}） </el-radio>
+        <el-radio v-for="({ label, display }, index) in taskTypeRadios" :key="index" :label="label">
+          {{ display }}
+        </el-radio>
       </el-radio-group>
     </div>
     <div class="runtime-table">
@@ -98,17 +86,12 @@
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
-            <template slot-scope="scope">
-              <el-button
-                @click.native.prevent="onExecute(scope.row)"
-                type="text"
-                size="small"
-                v-if="showDeployDiologButton(scope.row)"
-              >
+            <template slot-scope="{ row }">
+              <el-button v-if="row.canExecute" @click.native.prevent="onExecute(row)" type="text" size="small">
                 执行
               </el-button>
               <el-button
-                @click.native.prevent="onDetail(scope.row)"
+                @click.native.prevent="onDetail(row)"
                 type="text"
                 size="small"
                 v-role="{ id: 'RunTimeLook', type: 'button', business: searchForm.ascription }"
@@ -138,12 +121,12 @@
       @succseeAdd="onAddSuccess"
     ></runtime-add>
     <runTimeImplement
-      :dialogVisible="runtimeImplementVisible"
+      ref="runTimeImplement"
+      :visible="runtimeImplementVisible"
+      :workflow="workflow"
       @close="onRuntimeImplementClose"
       @goSee="onDetail"
-      ref="runTimeImplement"
       @taskSuccess="onTaskSuccess"
-      :business="searchForm.business"
     ></runTimeImplement>
     <lookover ref="lookover" @goReject="deployDiolog"></lookover>
   </div>
@@ -170,6 +153,7 @@ export default {
     return {
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
+      newTasks: [],
       searchForm: {
         ascription: '',
         business: '',
@@ -182,11 +166,11 @@ export default {
         limit: 10,
         total: 0,
       },
-      newTasks: [],
+      workflow: {},
       workflowCounts: {
-        executionCount: 0,
-        completeCount: 0,
-        executionInCount: 0,
+        executionTotalProcessCount: 0,
+        executionInProcessCount: 0,
+        executionCompleteCount: 0,
       },
       taskTypeCounts: {
         all: 0,
@@ -221,6 +205,38 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
     ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
+    workflowStatistics() {
+      return [
+        {
+          label: '执行工作流总数',
+          value: this.workflowCounts.executionTotalProcessCount,
+        },
+        {
+          label: '执行中',
+          value: this.workflowCounts.executionInProcessCount,
+        },
+        {
+          label: '已完成数量',
+          value: this.workflowCounts.executionCompleteCount,
+        },
+      ]
+    },
+    taskTypeRadios() {
+      return [
+        {
+          label: 'all',
+          display: `全部任务（${this.taskTypeCounts['all'] ?? 0}）`,
+        },
+        {
+          label: 'self',
+          display: `我的任务（${this.taskTypeCounts['self'] ?? 0}）`,
+        },
+        {
+          label: 'notice',
+          display: `告知（${this.taskTypeCounts['notice'] ?? 0}）`,
+        },
+      ]
+    },
   },
   async mounted() {
     await this.dispatchRefreshOrganization()
@@ -246,19 +262,12 @@ export default {
       this.fetchNewTasks()
     },
     onExecute(row) {
-      this.deployDiolog(row)
+      this.workflow = { ...row }
+      this.runtimeImplementVisible = true
     },
     onDetail(row) {
+      this.workflow = { ...row }
       this.detailsDiolog(row)
-    },
-    showDeployDiologButton(row) {
-      let rolePeopleList = []
-      row.trackList[row.trackList.length - 1].candidateUsers.forEach((item) => {
-        item.candidateUsers.forEach((item1) => {
-          rolePeopleList.push(item1)
-        })
-      })
-      return rolePeopleList.concat(row.taskAssignee.split(',')).indexOf(this.userInfo.account) !== -1
     },
     onPageSizeChange() {
       this.fetchNewTasks()
@@ -270,12 +279,6 @@ export default {
       this.runtimeImplementVisible = true
       this.$nextTick(() => {
         this.$refs.runTimeImplement.getNachList(row.trackList)
-        this.$refs.runTimeImplement.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData = row
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.deployName = row.processName
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.version = row.starter
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.createTime = row.startTime
-        this.$refs.runTimeImplement.$refs.ProcessInformation.postData.systemType = row.energyType
         this.$refs.runTimeImplement.dataList.Hang = row.taskStatus.split(',').indexOf('hang') == '-1'
         if (!this.$refs.runTimeImplement.dataList.Hang) {
           this.$refs.runTimeImplement.functionCheck = 'Hang'
@@ -363,11 +366,21 @@ export default {
 
       function handleDisplay(task) {
         const newTask = { ...task }
+
         newTask.displayTrackList = newTask.trackList.map(({ taskName, status }) => ({
           taskName,
           ...(this.taskStatusConfig[status] ?? { title: '多人执行', className: '' }),
         }))
+
         newTask.displayEnergyType = this.$getMappingName(newTask.energyType)
+
+        // 按照约定，trackList中最后一个节点是最新节点
+        const candidateUsers = newTask.trackList[newTask.trackList.length - 1]?.candidateUsers
+        const canExecuteUsers = candidateUsers?.reduce(
+          (canExecuteUsers, { candidateUsers, assignee }) => [...canExecuteUsers, ...candidateUsers, assignee],
+          []
+        )
+        newTask.canExecute = canExecuteUsers.includes(this.userInfo.account)
         return newTask
       }
 
@@ -384,7 +397,7 @@ export default {
           return newTask
         }
         // 按照约定，trackList中最后一个节点是最新节点
-        const candidateUsers = newTask.trackList[-1]?.candidateUsers
+        const candidateUsers = newTask.trackList[newTask.trackList.length - 1]?.candidateUsers
         if (!Array.isArray(candidateUsers)) {
           return newTask
         }

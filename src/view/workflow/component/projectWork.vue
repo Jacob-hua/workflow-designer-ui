@@ -105,7 +105,6 @@ import addBpmn from './addBpmn.vue'
 import quoteBpmn from './quoteBpmn.vue'
 import lookBpmn from './lookBpmn.vue'
 import { designProcessCountStatistics } from '@/api/managerWorkflow'
-import { getGlobalUUID } from '@/api/globalConfig'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
 
@@ -170,11 +169,7 @@ export default {
     ...mapMutations('account', ['updateCurrentOrganization']),
     ...mapActions('config', ['dispatchRefreshOrganization']),
     async onAddProject() {
-      const { errorInfo, result: uuid } = await getGlobalUUID()
-      if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
-      }
+      const uuid = await this.$generateUUID()
       this.addProjectVisible = true
       this.projectData = {
         code: `process_${uuid}`
@@ -182,11 +177,7 @@ export default {
     },
     async onQuoteBpmn(_, row) {
       try {
-        const { errorInfo, result: uuid } = await getGlobalUUID()
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
+        const uuid = await this.$generateUUID()
         this.setProjectData({ ...row, code: `process_${uuid}`, docName: `${uuid}.bpmn` })
         this.addProjectVisible = true
       } catch (error) {}
@@ -225,7 +216,7 @@ export default {
       this.quoteBpmnVisible = false
       this.resetProjectData()
     },
-    onLookBpmnShow(row, tit) {
+    onLookBpmnShow(row) {
       this.setProjectData(row)
       this.lookBpmnVisible = true
     },

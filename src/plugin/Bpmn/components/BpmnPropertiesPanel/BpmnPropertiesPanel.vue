@@ -1,10 +1,9 @@
 <template>
   <div class="wrapper">
-    <el-collapse accordion>
-      <el-collapse-item v-for="({title, component}, index) in panels"
-                        :key="index">
+    <el-collapse v-model="activeName" accordion>
+      <el-collapse-item v-for="({ title, component }, index) in panels" :key="index" :name="title">
         <template slot="title">
-          {{title}}
+          {{ title }}
         </template>
         <component :is="component" />
       </el-collapse-item>
@@ -35,6 +34,7 @@ export default {
   },
   data() {
     return {
+      activeName: '基础信息',
       baseInfoPanelInfo: {
         title: '基础信息',
         component: BaseInfoPanel,
@@ -65,16 +65,8 @@ export default {
     ...mapState('bpmn/panel', ['shapeType']),
     panels() {
       const elementPanels = {
-        StartEvent: [
-          this.baseInfoPanelInfo,
-          this.executeListenerPanelInfo,
-          this.inputOutputPanelInfo,
-        ],
-        EndEvent: [
-          this.baseInfoPanelInfo,
-          this.executeListenerPanelInfo,
-          this.inputOutputPanelInfo,
-        ],
+        StartEvent: [this.baseInfoPanelInfo, this.executeListenerPanelInfo, this.inputOutputPanelInfo],
+        EndEvent: [this.baseInfoPanelInfo, this.executeListenerPanelInfo, this.inputOutputPanelInfo],
         UserTask: [
           this.baseInfoPanelInfo,
           this.executeListenerPanelInfo,
@@ -83,10 +75,7 @@ export default {
           this.multiInstancePanelInfo,
           this.actionButtonPanelInfo,
         ],
-        ExclusiveGateway: [
-          this.baseInfoPanelInfo,
-          this.executeListenerPanelInfo,
-        ],
+        ExclusiveGateway: [this.baseInfoPanelInfo, this.executeListenerPanelInfo],
       }
       return elementPanels[this.shapeType.type] ?? [this.baseInfoPanelInfo]
     },
