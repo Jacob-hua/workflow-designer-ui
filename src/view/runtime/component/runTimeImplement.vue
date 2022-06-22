@@ -140,11 +140,6 @@
         <div class="Implement-right">
           <div style="margin-top: 20px; margin-bottom: 10px">表单内容</div>
           <div class="Implement-right-form">
-            <formRuntime
-              :formContant="formContant.content"
-              v-if="formShow && (formContant.docType === '.form' || formContant.docType === null)"
-              ref="formRuntime"
-            ></formRuntime>
             <preview
               :itemList="formListFun(formContant)"
               :formConf="configFun(formContant)"
@@ -183,7 +178,6 @@
 import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
 import runtimePeople from './runtimePeople.vue'
 import runtimeConfirmation from './runtimeConfirmation.vue'
-import formRuntime from './formRuntime.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
@@ -208,12 +202,6 @@ export default {
       peopleListDefatil: [],
       taskId: '',
       roleBoolean: true,
-      bpmnData: {
-        name: '',
-        grounp: '',
-        assignee: '',
-        document: '',
-      },
       btnListKey: {
         Agency: 'Agency',
         Circulate: 'Circulate',
@@ -334,14 +322,16 @@ export default {
     onExecuteShape(value) {
       const actions = this.$iBpmn.getShapeInfoByType(value, 'actions').split(',') ?? []
       if (this.dataList.Hang) {
-        // TODO: Hang = true 是非挂起状态
+        // TODO: Hang = true 是非挂起状态   
         this.btnList = actions
       } else {
         this.btnList = ['Hang']
       }
-      // this.bpmnTypeloopChara =
-      //   value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
-      // this.selection(value)
+      this.bpmnTypeloopChara =
+        value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
+      if (value) {
+        this.getFormData(value.businessObject.formKey)
+      }
     },
 
     formListFun(item) {
@@ -355,35 +345,10 @@ export default {
     onExecute() {
       let formData = {}
       let data = {}
-      let errors = {}
       if (this.formShow) {
         switch (this.formContant.docType) {
-          case '.form':
-            data = this.$refs.formRuntime.formEditor.submit().data
-            errors = this.$refs.formRuntime.formEditor.submit().errors
-
-            formData = JSON.parse(this.formContant.content)
-            break
-          case null:
-            data = this.$refs.formRuntime.formEditor.submit().data
-            errors = this.$refs.formRuntime.formEditor.submit().errors
-
-            formData = JSON.parse(this.formContant.content)
-            console.log(formData)
-            formData.components.forEach((item) => {
-              switch (item.type) {
-                case 'radio':
-                  item.value = item.values.filter((values) => {
-                    return values.value == data[item.key]
-                  })[0].label
-                  break
-                default:
-                  item.value = data[item.key]
-                  break
-              }
-            })
-            break
           case 'json':
+            // TODO: 再preview层提供一个submit方法和reset方法
             this.$refs.preview.$refs[this.$refs.preview.formConf.formModel].validate((valid) => {
               if (valid) {
                 data = this.$refs.preview.form
@@ -392,7 +357,7 @@ export default {
                   item.value = data[item.id]
                 })
               } else {
-                errors.boolean = true
+                 this.$message.error('有必填项未填写')
               }
             })
             break
@@ -400,19 +365,15 @@ export default {
             break
         }
       }
-      if (Object.keys(errors).length > 0) {
-        this.$message.error('有必填项未填写')
-        return
-      }
       getProcessNodeInfo({
         processInstanceId: this.workflow.processInstanceId,
       }).then((res) => {
         let nodeInfoBoole = res.result.some((item) => {
-          if (item.assignee || item.candidateGroup || item.candidateUser) {
+          if (item.assignee === null && item.candidateGroup === null && item.candidateUser === null) {
             return true
           }
         })
-        if (nodeInfoBoole) {
+        if (!nodeInfoBoole) {
           postCompleteTask({
             assignee: this.userInfo.account,
             commentList: [],
@@ -433,15 +394,6 @@ export default {
         }
       })
     },
-    selection(element) {
-      if (element) {
-        this.bpmnData.name = element.businessObject.name
-        this.bpmnData.grounp = element.businessObject.$attrs['camunda:' + 'candidateGroups']
-        this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
-        this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
-        this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
-      }
-    },
     getFormData(formKey) {
       if (formKey) {
         let docName = formKey.split(':')[2]
@@ -449,7 +401,7 @@ export default {
           status: 'enabled',
           tenantId: this.tenantId,
           ascription: this.workflow.ascription,
-          business: '',
+          business: this.workflow.business,
           createBy: '',
           numberCode: '',
           name: '',
@@ -468,7 +420,6 @@ export default {
     ProcessInformation,
     runtimePeople,
     runtimeConfirmation,
-    formRuntime,
     preview,
   },
 }
