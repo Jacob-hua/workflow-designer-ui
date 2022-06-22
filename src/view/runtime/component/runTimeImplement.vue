@@ -81,8 +81,8 @@
                 <div style="margin-top: 15px">
                   <div class="peopleList-title">加签:</div>
                   <div class="peopleList">
-                    <div class="peopleList-item" v-for="(item, index) in dataList.Signature" :key="index">
-                      {{ item.userId }}
+                    <div class="peopleList-item" v-for="({ userId }, index) in dataList.Signature" :key="index">
+                      {{ userId }}
                     </div>
                   </div>
                   <span class="editButton" @click="editDataList('Signature')">编辑</span>
@@ -270,6 +270,7 @@ export default {
       this.dataList.Circulate = trackList[trackList.length - 1].circulationList
       this.dataList.Agency = trackList[trackList.length - 1].candidateUsers
       const assignees = trackList[trackList.length - 1].assignee.split(',') ?? []
+      // TODO: userId 改为 account 更合适
       this.dataList.Signature = assignees.reduce((Signature, { item }) => [...Signature, { userId: item }], [])
     },
     onSelectAction(value) {
