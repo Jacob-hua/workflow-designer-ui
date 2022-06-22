@@ -86,15 +86,12 @@ export default {
       return item.projectList.length > 0
     })
     if (this.menuList.length > 0) {
-      
-      this.$router.push({name: this.menuList[0].menuRoute})
-      
-      // let findRole = this.menuList.filter((item) => {
-      //   return item.menuRoute === this.$route.name
-      // })
-      // if (findRole === -1) {
-      //   this.$router.push({name: this.menuList[0].menuRoute})
-      // }
+      let findRole = this.menuList.filter((item) => {
+        return item.menuRoute === this.$route.name
+      })
+      if (findRole.length === 0) {
+        this.$router.push({name: this.menuList[0].menuRoute})
+      }
     } else {
       this.$router.push('/')
       this.$message.error('该账号无任何菜单访问权限')
