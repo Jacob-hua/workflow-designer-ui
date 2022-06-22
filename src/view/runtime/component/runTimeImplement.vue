@@ -6,7 +6,6 @@
           <ProcessInformation
             v-if="visible"
             ref="ProcessInformation"
-            :processTaskList="processTaskList"
             :processInfo="workflow"
             @executeShape="onExecuteShape"
             seeType="runTime"
@@ -16,136 +15,135 @@
               class="function-item"
               v-for="(item, index) in btnList"
               :key="index"
-              @click="changeFunction(btnListKey[item])"
+              @click="onSelectAction(btnListKey[item])"
               :class="functionCheck === btnListKey[item] ? 'function-check' : ''"
-              >{{ item }}</span
             >
+              {{ item }}
+            </span>
           </div>
           <div class="function-main" :class="btnList.length === 0 ? 'noData' : ''">
-            <div v-if="functionCheck === 'Agency' && roleBoolean">
-              <div v-if="dataList.Agency.length > 0">
+            <div v-if="!roleBoolean" class="heightFunction">无权限</div>
+            <div v-else-if="btnList.length === 0" class="heightFunction">无信息</div>
+            <div v-else>
+              <div v-if="functionCheck === 'Agency'">
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
-                  <div v-for="(item, index) in dataList.Agency" :key="index">
-                    <span v-show="item.assignee"> {{ item.assignee }}: </span>
-                    <div v-if="item.candidateUsers.length > 0">
-                      <div class="peopleList-item" v-for="(item1, index1) in item.candidateUsers" :key="index1">
-                        {{ item1 }}
-                      </div>
+                  <div v-for="({ assignee, candidateUsers = [], taskId }, index) in dataList.Agency" :key="index">
+                    <span v-show="assignee"> {{ assignee }}: </span>
+                    <div class="peopleList-item" v-for="userName in candidateUsers" :key="userName">
+                      {{ userName }}
                     </div>
-                    <div v-if="item.candidateUsers.length == 0" style="display: inline-block">
+                    <span
+                      v-if="assignee === userInfo.account && candidateUsers.length > 0"
+                      class="addCirculate"
+                      @click="changePeopleList(taskId, 'edit', 'Agency', candidateUsers)"
+                    >
+                      编辑
+                    </span>
+                    <div v-else-if="candidateUsers.length === 0" style="display: inline-block">
                       <span>暂无代办</span>
                       <span
                         class="addCirculate"
-                        @click="changePeopleList(item.taskId)"
-                        v-if="item.assignee === userInfo.account && item.candidateUsers.length == 0"
-                        >点击添加</span
+                        @click="changePeopleList(taskId)"
+                        v-if="assignee === userInfo.account && candidateUsers.length == 0"
                       >
-                    </div>
-                    <div v-if="item.candidateUsers.length > 0" style="display: inline-block">
-                      <span
-                        class="addCirculate"
-                        @click="changePeopleList(item.taskId, 'edit', 'Agency', item.candidateUsers)"
-                        v-if="item.assignee === userInfo.account && item.candidateUsers.length > 0"
-                        >编辑</span
-                      >
+                        点击添加
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div v-if="functionCheck === 'Circulate' && roleBoolean">
-              <div v-if="dataList.Circulate.length > 0">
-                <div class="peopleList-title">指定传阅人员:</div>
-                <div class="peopleList">
-                  <div v-for="(item, index) in dataList.Circulate" :key="index">
-                    <span v-show="item.assignee"> {{ item.assignee }}: </span>
-                    <div v-if="item.circulations[0].unitList.length > 0">
-                      <div
-                        class="peopleList-item"
-                        v-for="(item1, index1) in item.circulations[0].unitList"
-                        :key="index1"
-                      >
-                        {{ item1 }}
+              <div v-if="functionCheck === 'Circulate'">
+                <div v-if="dataList.Circulate.length > 0">
+                  <div class="peopleList-title">指定传阅人员:</div>
+                  <div class="peopleList">
+                    <div v-for="(item, index) in dataList.Circulate" :key="index">
+                      <span v-show="item.assignee"> {{ item.assignee }}: </span>
+                      <div v-if="item.circulations[0].unitList.length > 0">
+                        <div
+                          class="peopleList-item"
+                          v-for="(item1, index1) in item.circulations[0].unitList"
+                          :key="index1"
+                        >
+                          {{ item1 }}
+                        </div>
+                      </div>
+                      <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block">
+                        <span>暂无传阅</span>
+                        <span
+                          class="addCirculate"
+                          @click="changePeopleList(item.taskId)"
+                          v-if="item.assignee === userInfo.account"
+                          >点击添加</span
+                        >
+                      </div>
+                      <div v-if="item.circulations[0].unitList.length > 0" style="display: inline-block">
+                        <span
+                          class="addCirculate"
+                          @click="changePeopleList(item.taskId, 'edit', 'Circulate', item.circulations[0].unitList)"
+                          v-if="item.assignee === userInfo.account"
+                          >编辑</span
+                        >
                       </div>
                     </div>
-                    <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block">
-                      <span>暂无传阅</span>
-                      <span
-                        class="addCirculate"
-                        @click="changePeopleList(item.taskId)"
-                        v-if="item.assignee === userInfo.account"
-                        >点击添加</span
-                      >
-                    </div>
-                    <div v-if="item.circulations[0].unitList.length > 0" style="display: inline-block">
-                      <span
-                        class="addCirculate"
-                        @click="changePeopleList(item.taskId, 'edit', 'Circulate', item.circulations[0].unitList)"
-                        v-if="item.assignee === userInfo.account"
-                        >编辑</span
-                      >
-                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div v-if="functionCheck === 'Signature' && roleBoolean">
-              <div style="margin-top: 15px">
-                <div class="peopleList-title">加签:</div>
-                <div class="peopleList">
-                  <div class="peopleList-item" v-for="(item, index) in dataList.Signature" :key="index">
-                    {{ item.userId }}
+              <div v-if="functionCheck === 'Signature'">
+                <div style="margin-top: 15px">
+                  <div class="peopleList-title">加签:</div>
+                  <div class="peopleList">
+                    <div class="peopleList-item" v-for="(item, index) in dataList.Signature" :key="index">
+                      {{ item.userId }}
+                    </div>
+                  </div>
+                  <span class="editButton" @click="editDataList('Signature')">编辑</span>
+                </div>
+              </div>
+              <div v-if="functionCheck === 'Hang'">
+                <div v-if="dataList.Hang" class="HangStyle">
+                  <span style="color: #0066cc">当前流程正常运行，如需将流程挂起，请进行认证操作</span>
+                  <div class="confirm" @click="confirmation()">挂起确认</div>
+                </div>
+                <div v-if="!dataList.Hang" class="HangStyle">
+                  <span style="color: #0066cc">当前流程已被挂起，如需将继续执行流程，请进行认证操作</span>
+                  <div class="confirm" @click="confirmation()">重新激活</div>
+                </div>
+              </div>
+              <div v-if="functionCheck === 'Reject'">
+                <div v-if="dataList.Reject.rejectBollen" class="HangStyle">
+                  <span style="color: #0066cc">当前流程正常运行，如需将流程驳回，请进行认证操作</span>
+                  <div class="confirm" @click="confirmation()">驳回验证</div>
+                </div>
+                <div v-if="!dataList.Reject.rejectBollen">
+                  <div class="rejectData">
+                    <span>{{ dataList.Reject.data }}</span>
+                  </div>
+                  <div class="rejectName">
+                    <span>{{ dataList.Reject.userId }}</span>
+                  </div>
+                  <div>
+                    <span class="rejectWord">驳回至</span>
+                    <span class="rejectResult">{{ dataList.Reject.rejectResult }}</span>
                   </div>
                 </div>
-                <span class="editButton" @click="editDataList('Signature')">编辑</span>
               </div>
-            </div>
-            <div v-if="functionCheck === 'Hang' && roleBoolean">
-              <div v-if="dataList.Hang" class="HangStyle">
-                <span style="color: #0066cc">当前流程正常运行，如需将流程挂起，请进行认证操作</span>
-                <div class="confirm" @click="confirmation()">挂起确认</div>
-              </div>
-              <div v-if="!dataList.Hang" class="HangStyle">
-                <span style="color: #0066cc">当前流程已被挂起，如需将继续执行流程，请进行认证操作</span>
-                <div class="confirm" @click="confirmation()">重新激活</div>
-              </div>
-            </div>
-            <div v-if="functionCheck === 'Reject' && roleBoolean">
-              <div v-if="dataList.Reject.rejectBollen" class="HangStyle">
-                <span style="color: #0066cc">当前流程正常运行，如需将流程驳回，请进行认证操作</span>
-                <div class="confirm" @click="confirmation()">驳回验证</div>
-              </div>
-              <div v-if="!dataList.Reject.rejectBollen">
-                <div class="rejectData">
-                  <span>{{ dataList.Reject.data }}</span>
+              <div v-if="functionCheck === 'Termination'">
+                <div v-if="dataList.Termination.terminationBollon" class="HangStyle">
+                  <span style="color: #0066cc">当前流程正常运行，如需将流程终止，请进行认证操作</span>
+                  <div class="confirm" @click="confirmation()">终止确认</div>
                 </div>
-                <div class="rejectName">
-                  <span>{{ dataList.Reject.userId }}</span>
-                </div>
-                <div>
-                  <span class="rejectWord">驳回至</span>
-                  <span class="rejectResult">{{ dataList.Reject.rejectResult }}</span>
+                <div v-if="!dataList.Termination.terminationBollon">
+                  <div class="rejectData">
+                    <span>{{ dataList.Termination.data }}</span>
+                  </div>
+                  <div class="rejectName">
+                    <span>{{ dataList.Termination.name }}</span>
+                  </div>
+                  <div class="rejectWord">流程终止</div>
                 </div>
               </div>
             </div>
-            <div v-if="functionCheck === 'Termination' && roleBoolean">
-              <div v-if="dataList.Termination.terminationBollon" class="HangStyle">
-                <span style="color: #0066cc">当前流程正常运行，如需将流程终止，请进行认证操作</span>
-                <div class="confirm" @click="confirmation()">终止确认</div>
-              </div>
-              <div v-if="!dataList.Termination.terminationBollon">
-                <div class="rejectData">
-                  <span>{{ dataList.Termination.data }}</span>
-                </div>
-                <div class="rejectName">
-                  <span>{{ dataList.Termination.name }}</span>
-                </div>
-                <div class="rejectWord">流程终止</div>
-              </div>
-            </div>
-            <div v-if="btnList.length === 0" class="heightFunction">无信息</div>
-            <div v-if="!roleBoolean" class="heightFunction">无权限</div>
           </div>
         </div>
         <div class="Implement-right">
@@ -212,7 +210,6 @@ export default {
   },
   data() {
     return {
-      processTaskList: [],
       functionCheck: '',
       bpmnTypeloopChara: '',
       formContant: '',
@@ -265,7 +262,7 @@ export default {
         if (!workflow) {
           return
         }
-        this.getNachList(workflow.trackList)
+        this.updateDataList(workflow.trackList)
         this.dataList.Hang = workflow.taskStatus.split(',').indexOf('hang') == '-1'
         if (!this.dataList.Hang) {
           this.functionCheck = 'Hang'
@@ -281,22 +278,13 @@ export default {
     onCancel() {
       this.$emit('close')
     },
-    getNachList(result) {
-      this.dataList.Circulate = []
-      this.dataList.Signature = []
-      this.dataList.Agency = []
-      this.processTaskList = result
-      this.dataList.Circulate = result[result.length - 1].circulationList
-      if (result[result.length - 1].assignee) {
-        result[result.length - 1].assignee.split(',').forEach((item) => {
-          this.dataList.Signature.push({
-            userId: item,
-          })
-        })
-      }
-      this.dataList.Agency = result[result.length - 1].candidateUsers
+    updateDataList(trackList) {
+      this.dataList.Circulate = trackList[trackList.length - 1].circulationList
+      this.dataList.Agency = trackList[trackList.length - 1].candidateUsers
+      const assignees = trackList[trackList.length - 1].assignee.split(',') ?? []
+      this.dataList.Signature = assignees.reduce((Signature, { item }) => [...Signature, { userId: item }], [])
     },
-    changeFunction(value) {
+    onSelectAction(value) {
       this.functionCheck = value
       let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
       let proJectRole =
