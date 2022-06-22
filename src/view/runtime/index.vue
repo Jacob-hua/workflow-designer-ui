@@ -121,14 +121,13 @@
       @succseeAdd="onAddSuccess"
     ></runtime-add>
     <runTimeImplement
-      ref="runTimeImplement"
       :visible="runtimeImplementVisible"
       :workflow="workflow"
       @close="onRuntimeImplementClose"
       @goSee="onDetail"
       @taskSuccess="onTaskSuccess"
     ></runTimeImplement>
-    <lookover ref="lookover" @goReject="deployDiolog"></lookover>
+    <lookover ref="lookover"></lookover>
   </div>
 </template>
 
@@ -274,16 +273,6 @@ export default {
     },
     onPageChange() {
       this.fetchNewTasks()
-    },
-    deployDiolog(row) {
-      this.runtimeImplementVisible = true
-      this.$nextTick(() => {
-        this.$refs.runTimeImplement.getNachList(row.trackList)
-        this.$refs.runTimeImplement.dataList.Hang = row.taskStatus.split(',').indexOf('hang') == '-1'
-        if (!this.$refs.runTimeImplement.dataList.Hang) {
-          this.$refs.runTimeImplement.functionCheck = 'Hang'
-        }
-      })
     },
     onRuntimeImplementClose() {
       this.runtimeImplementVisible = false

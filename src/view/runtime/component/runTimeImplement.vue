@@ -8,15 +8,14 @@
             ref="ProcessInformation"
             :processTaskList="processTaskList"
             :processInfo="workflow"
-            @executeShape="selectOneSet"
+            @executeShape="onExecuteShape"
             seeType="runTime"
           ></ProcessInformation>
-          <div class="function-list" v-if="bpmnType === 'bpmn:UserTask' && btnList.length > 0">
+          <div class="function-list" v-if="btnList.length > 0">
             <span
               class="function-item"
               v-for="(item, index) in btnList"
               :key="index"
-              v-if="functionItemShow(item)"
               @click="changeFunction(btnListKey[item])"
               :class="functionCheck === btnListKey[item] ? 'function-check' : ''"
               >{{ item }}</span
@@ -27,12 +26,12 @@
               <div v-if="dataList.Agency.length > 0">
                 <div class="peopleList-title">指定代办人员:</div>
                 <div class="peopleList">
-                  <div v-for="(item, index) in dataList.Agency">
+                  <div v-for="(item, index) in dataList.Agency" :key="index">
                     <span v-show="item.assignee"> {{ item.assignee }}: </span>
-                    <div class="peopleList-item" v-for="(item1
-                    , index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
-                    <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
-                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === userInfo.account && item.candidateUsers.length == 0">点击添加</span>
+                    <div v-if="item.candidateUsers.length > 0">
+                      <div class="peopleList-item" v-for="(item1, index1) in item.candidateUsers" :key="index1">
+                        {{ item1 }}
+                      </div>
                     </div>
                     <div v-if="item.candidateUsers.length == 0" style="display: inline-block">
                       <span>暂无代办</span>
@@ -59,11 +58,16 @@
               <div v-if="dataList.Circulate.length > 0">
                 <div class="peopleList-title">指定传阅人员:</div>
                 <div class="peopleList">
-                  <div v-for="(item, index) in dataList.Circulate">
+                  <div v-for="(item, index) in dataList.Circulate" :key="index">
                     <span v-show="item.assignee"> {{ item.assignee }}: </span>
-                    <div class="peopleList-item" v-for="(item1, index1) in item.circulations[0].unitList" v-if="item.circulations[0].unitList.length > 0">{{ item1 }}</div>
-                    <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span>
-                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === userInfo.account">点击添加</span>
+                    <div v-if="item.circulations[0].unitList.length > 0">
+                      <div
+                        class="peopleList-item"
+                        v-for="(item1, index1) in item.circulations[0].unitList"
+                        :key="index1"
+                      >
+                        {{ item1 }}
+                      </div>
                     </div>
                     <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block">
                       <span>暂无传阅</span>
@@ -176,6 +180,7 @@
     <runtimeConfirmation
       v-if="$refs.ProcessInformation"
       ref="runtimeConfirmation"
+      :workflow="workflow"
       :processInstanceDetail="$refs.ProcessInformation.processInfo"
       :processInstanceId="$refs.ProcessInformation.processInfo.processInstanceId"
       :BpmnContant="$refs.ProcessInformation.processInfo.content"
@@ -209,7 +214,6 @@ export default {
     return {
       processTaskList: [],
       functionCheck: '',
-      bpmnType: '',
       bpmnTypeloopChara: '',
       formContant: '',
       formShow: false,
@@ -228,7 +232,7 @@ export default {
         Signature: 'Signature',
         Hang: 'Hang',
         Reject: 'Reject',
-        Termination: 'Termination',
+        Terminate: 'Termination',
       },
       btnList: [],
       dataList: {
@@ -253,6 +257,22 @@ export default {
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
   },
+  watch: {
+    workflow: {
+      immediate: true,
+      deep: true,
+      handler(workflow) {
+        if (!workflow) {
+          return
+        }
+        this.getNachList(workflow.trackList)
+        this.dataList.Hang = workflow.taskStatus.split(',').indexOf('hang') == '-1'
+        if (!this.dataList.Hang) {
+          this.functionCheck = 'Hang'
+        }
+      },
+    },
+  },
   methods: {
     onDialogClose() {
       this.formShow = false
@@ -276,37 +296,12 @@ export default {
       }
       this.dataList.Agency = result[result.length - 1].candidateUsers
     },
-    functionItemShow(item) {
-      let value = this.btnListKey[item]
-      switch (value) {
-        case 'Agency':
-          return !!this.dataList.Hang
-          break
-        case 'Circulate':
-          return !!this.dataList.Hang
-          break
-        case 'Signature':
-          return !!(this.dataList.Hang && this.bpmnTypeloopChara === 'bpmn:MultiInstanceLoopCharacteristics')
-          break
-        case 'Hang':
-          return true
-          break
-        case 'Reject':
-          return !!this.dataList.Hang
-          break
-        case 'Termination':
-          return !!this.dataList.Hang
-          break
-        default:
-          break
-      }
-    },
     changeFunction(value) {
       this.functionCheck = value
       let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
       let proJectRole =
         permissions.filter((item) => {
-          return item.projectCode === this.workflow.business
+          return item.projectCode === this.workflow.ascription
         })[0]?.permissionSet || []
       let findEle = proJectRole.findIndex((item) => {
         return item.frontRoute === 'RunTime' + value
@@ -356,21 +351,17 @@ export default {
     goSee() {
       this.$emit('goSee', this.$refs.ProcessInformation.postData)
     },
-    selectOneSet(value) {
-      this.btnList = this.$iBpmn.getShapeInfoByType(value, 'actions')?.split(',') || []
-      if (this.btnList.length > 0) {
-        if (!this.dataList.Hang) {
-          this.changeFunction('Hang')
-        } else {
-          this.changeFunction(this.btnListKey[this.btnList[0]])
-        }
+    onExecuteShape(value) {
+      const actions = this.$iBpmn.getShapeInfoByType(value, 'actions').split(',') ?? []
+      if (this.dataList.Hang) {
+        // TODO: Hang = true 是非挂起状态
+        this.btnList = actions
       } else {
-        this.changeFunction('')
+        this.btnList = ['Hang']
       }
-      this.bpmnType = value.type
-      this.bpmnTypeloopChara =
-        value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
-      this.selection(value)
+      // this.bpmnTypeloopChara =
+      //   value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
+      // this.selection(value)
     },
 
     formListFun(item) {
@@ -434,7 +425,7 @@ export default {
         return
       }
       getProcessNodeInfo({
-        processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
+        processInstanceId: this.workflow.processInstanceId,
       }).then((res) => {
         let nodeInfoBoole = res.result.some((item) => {
           if (item.assignee || item.candidateGroup || item.candidateUser) {
@@ -446,11 +437,11 @@ export default {
             assignee: this.userInfo.account,
             commentList: [],
             formData: formData,
-            processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
-            processKey: this.$refs.ProcessInformation.postData.deployKey,
-            taskId: this.$refs.ProcessInformation.postData.newTaskId,
-            taskKey: this.$refs.ProcessInformation.postData.taskKey,
-            taskName: this.$refs.ProcessInformation.postData.taskName,
+            processInstanceId: this.workflow.processInstanceId,
+            processKey: this.workflow.deployKey,
+            taskId: this.workflow.newTaskId,
+            taskKey: this.workflow.taskKey,
+            taskName: this.workflow.taskName,
             variable: data,
           }).then((res) => {
             this.formShow = false
@@ -462,7 +453,6 @@ export default {
         }
       })
     },
-
     selection(element) {
       if (element) {
         this.bpmnData.name = element.businessObject.name
@@ -470,18 +460,15 @@ export default {
         this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
         this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
         this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
-      } else {
-        this.initData()
       }
     },
-
     getFormData(formKey) {
       if (formKey) {
         let docName = formKey.split(':')[2]
         designFormDesignServiceAll({
           status: 'enabled',
           tenantId: this.tenantId,
-          ascription: this.$refs.ProcessInformation.postData.ascription,
+          ascription: this.workflow.ascription,
           business: '',
           createBy: '',
           numberCode: '',
