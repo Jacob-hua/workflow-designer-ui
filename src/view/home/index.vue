@@ -179,7 +179,19 @@ export default {
       // this.value2 = this.systemOption[0].code
     },
     goBpmn() {
-      this.$router.push('/home/Workflow')
+      let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'))
+      
+      this.menuList = menuProjectList.filter((item) => {
+        return item.projectList.length > 0
+      })
+      let isWorkflowRole = this.menuList.findIndex((item) => {
+        return item.menuRoute === 'Workflow'
+      })
+      if (isWorkflowRole === -1) {
+        this.$message.error('无权限')
+      } else{
+        this.$router.push('/home/Workflow')
+      }
     },
     totalChange(value, key) {
       this[key] = value
