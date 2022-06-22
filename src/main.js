@@ -5,8 +5,10 @@ import router from "./router";
 import stores from "./store";
 import axios from "axios";
 import { getMappingName } from '@/util/date.js'
+import { generateUUID } from '@/util/uuid.js'
 Vue.prototype.$axios = axios;
 Vue.prototype.$getMappingName = getMappingName;
+Vue.prototype.$generateUUID = generateUUID;
 
 import "bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css";
 

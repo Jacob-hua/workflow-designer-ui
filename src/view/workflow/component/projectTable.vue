@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     lookBpmnShow(row) {
-      this.$emit('lookBpmnShow', row, 'gongzuoliu')
+      this.$emit('lookBpmnShow', row)
     },
     async onDeleteRow(row) {
       try {
