@@ -54,37 +54,25 @@
                 </div>
               </div>
               <div v-if="functionCheck === 'Circulate'">
-                <div v-if="dataList.Circulate.length > 0">
-                  <div class="peopleList-title">指定传阅人员:</div>
-                  <div class="peopleList">
-                    <div v-for="(item, index) in dataList.Circulate" :key="index">
-                      <span v-show="item.assignee"> {{ item.assignee }}: </span>
-                      <div v-if="item.circulations[0].unitList.length > 0">
-                        <div
-                          class="peopleList-item"
-                          v-for="(item1, index1) in item.circulations[0].unitList"
-                          :key="index1"
-                        >
-                          {{ item1 }}
-                        </div>
-                      </div>
-                      <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block">
-                        <span>暂无传阅</span>
-                        <span
-                          class="addCirculate"
-                          @click="changePeopleList(item.taskId)"
-                          v-if="item.assignee === userInfo.account"
-                          >点击添加</span
-                        >
-                      </div>
-                      <div v-if="item.circulations[0].unitList.length > 0" style="display: inline-block">
-                        <span
-                          class="addCirculate"
-                          @click="changePeopleList(item.taskId, 'edit', 'Circulate', item.circulations[0].unitList)"
-                          v-if="item.assignee === userInfo.account"
-                          >编辑</span
-                        >
-                      </div>
+                <div class="peopleList-title">指定传阅人员:</div>
+                <div class="peopleList">
+                  <div v-for="({ assignee, circulations, taskId }, index) in dataList.Circulate" :key="index">
+                    <span v-show="assignee"> {{ assignee }}: </span>
+                    <div class="peopleList-item" v-for="userName in circulations[0].unitList" :key="userName">
+                      {{ userName }}
+                    </div>
+                    <span
+                      class="addCirculate"
+                      @click="changePeopleList(taskId, 'edit', 'Circulate', circulations[0].unitList)"
+                      v-if="assignee === userInfo.account && circulations[0].unitList.length > 0"
+                    >
+                      编辑
+                    </span>
+                    <div v-else-if="circulations[0].unitList.length == 0" style="display: inline-block">
+                      <span>暂无传阅</span>
+                      <span class="addCirculate" @click="changePeopleList(taskId)" v-if="assignee === userInfo.account">
+                        点击添加
+                      </span>
                     </div>
                   </div>
                 </div>
