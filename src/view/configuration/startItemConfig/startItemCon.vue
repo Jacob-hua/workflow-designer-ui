@@ -237,7 +237,7 @@ export default {
     },
     handleNodeClick(data) {
       this.currentId = data.id
-      this.businessConfigId = data.businessConfigId
+      this.businessConfigId = data.id
       selectProcessStartConfigList(data.id, +this.tenantId).then(res => {
         res.result.forEach(item => {
           item.disabled = true

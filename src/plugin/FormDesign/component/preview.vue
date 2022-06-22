@@ -56,6 +56,8 @@ import previewRowItem from "./previewRowItem";
 import fancyDynamicTable from "../dynamic/fancyDynamicTable";
 import fancyDynamicTableItem from "../dynamic/fancyDynamicTableItem";
 import {datas,addRow,batchDeleteRow,deleteRow} from "../custom/formDraw";
+import formDepMonitorMixin, {mixinExecuteFunction} from "@/mixin/formDepMonitor";
+import {executeApi} from "@/api/globalConfig";
 export default {
   name:'preview',
   props:['itemList','formConf'],
@@ -72,14 +74,12 @@ export default {
       currentIndex:-1
     }
   },
-  // watch: {
-  //   form: {
-  //     immediate: true,
-  //     handler(value) {
-  //       console.log(value)
-  //     },
-  //   },
-  // },
+  // mixins: [
+  //   formDepMonitorMixin({
+  //     formData: 'form',
+  //     formFields: 'itemList',
+  //   }),
+  // ],
   methods:{
     handlerValChange(key,origin){
       this.$set(this.form,key,origin);
@@ -104,6 +104,20 @@ export default {
     this.handlerInitDatas();//初始化表单
   },
   mounted() {
+
+    // this.itemList = this.itemList.map((fieldInfo) => {
+    //   return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
+    //     executeApi({
+    //       apiMark: fieldInfo.requestConfig.apiMark,
+    //       sourceMark: fieldInfo.requestConfig.sourceMark,
+    //       data,
+    //     }).then(({ result: options }) => {
+    //       console.log(this.itemList.find( (item) =>item._id === fieldInfo._id))
+    //       this.itemList.find( (item) =>item._id === fieldInfo._id).options = options
+    //       this.$set(this.itemList.find( (item) =>item._id === fieldInfo._id),'options', options )
+    //     })
+    //   })
+    // })
     this.$nextTick(()=> {
     })
   },

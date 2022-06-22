@@ -36,7 +36,6 @@ const mutations = {
 // "?sysInsCode=PD_aafb0426e22949a1a7cdf1b46fa8b4cb&virtual=nonvirtual"
 
 const process_variation = ( variation = '', relationMap = new Map() ) => {
-    debugger
     let parameters = ''
     if (!variation.includes(`$\{`)) {
        return variation
@@ -73,7 +72,7 @@ const actions = {
     },
 
     executeFunction({ commit, rootState }, {api, relationMap }) {
-        debugger
+
         const parameterMap = {
 
             [ApiEnum.API_TYPE_POST]: postTransformationParams,
@@ -83,7 +82,7 @@ const actions = {
         executeApi({
             apiMark: api?.apiMark,
             sourceMark: api?.sourceMark,
-            data: parameterMap[api?.method](api, relationMap),
+            data: parameterMap[api?.method]?.(api, relationMap),
         }).then(({ result: options }) => {
             commit('updateDynamicOption', { dynamicOption: options ?? [] })
         })
