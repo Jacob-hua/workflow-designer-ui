@@ -123,7 +123,8 @@
                   <span style="color: #0066cc">当前流程正常运行，如需将流程终止，请进行认证操作</span>
                   <div class="confirm" @click="confirmation()">终止确认</div>
                 </div>
-                <div v-if="!dataList.Termination.terminationBollon">
+                <div v-else>
+                  <!-- TODO: 显示终止信息的反馈 -->
                   <div class="rejectData">
                     <span>{{ dataList.Termination.data }}</span>
                   </div>
