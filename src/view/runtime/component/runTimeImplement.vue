@@ -104,12 +104,13 @@
                   <span style="color: #0066cc">当前流程正常运行，如需将流程驳回，请进行认证操作</span>
                   <div class="confirm" @click="confirmation()">驳回验证</div>
                 </div>
-                <div v-if="!dataList.Reject.rejectBollen">
+                <div v-else>
+                  <!-- TODO: 此处应该是驳回信息的反馈显示 -->
                   <div class="rejectData">
                     <span>{{ dataList.Reject.data }}</span>
                   </div>
                   <div class="rejectName">
-                    <span>{{ dataList.Reject.userId }}</span>
+                    <span>{{ dataList.Reject.name }}</span>
                   </div>
                   <div>
                     <span class="rejectWord">驳回至</span>
@@ -227,10 +228,10 @@ export default {
         Signature: [],
         Hang: true,
         Reject: {
-          rejectBollen: true,
-          data: '',
-          name: '',
-          rejectResult: '',
+          rejectBollen: false,
+          data: '123',
+          name: '456',
+          rejectResult: '890',
         },
         Termination: {
           terminationBollon: true,
