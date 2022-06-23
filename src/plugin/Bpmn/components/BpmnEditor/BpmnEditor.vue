@@ -1,8 +1,7 @@
 <template>
   <div class="wrapper">
     <control-header v-if="headerVisible" />
-    <div class="containers"
-         ref="containers"></div>
+    <div class="containers" ref="containers"></div>
   </div>
 </template>
 
@@ -31,10 +30,14 @@ export default {
     },
     id: {
       type: String,
-      default: () => new Date().getTime().toString(),
+      default: () => `process_${new Date().getTime().toString()}`,
     },
     xml: {
       type: String,
+    },
+    selectedChanged: {
+      type: Function,
+      default: () => () => {},
     },
   },
   computed: {
@@ -85,6 +88,9 @@ export default {
           this.$emit('loaded')
         })
       }
+      this.$iBpmn.on('selection.changed', () => {
+        this.selectedChanged(this.$iBpmn.getSelectedShape())
+      })
     },
   },
 }

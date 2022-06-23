@@ -258,6 +258,7 @@ class IBpmn {
       if (properties) {
         this.updateRootShapeProperties(properties);
       }
+      this.canvasZoom('fit-viewport', 'auto')
     } catch (e) {
       console.error(`[Process Designer Warn]: ${e?.message || e}`);
     }

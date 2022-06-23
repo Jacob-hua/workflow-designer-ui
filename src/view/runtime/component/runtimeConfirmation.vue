@@ -158,21 +158,6 @@ export default {
         this.$emit('validate', true)
         switch (this.$parent.functionCheck) {
           case 'Hang':
-            if (this.$parent.dataList.Hang) {
-              putHangInstance({
-                processInstanceId: this.workflow.processInstanceId,
-              }).then((res) => {
-                this.$message.success('挂起成功')
-                this.$parent.$emit('taskSuccess')
-              })
-            } else {
-              getActiveInstance({
-                processInstanceId: this.workflow.processInstanceId,
-              }).then((res) => {
-                this.$message.success('激活成功')
-                this.$parent.$emit('taskSuccess')
-              })
-            }
             break
           case 'Reject':
             this.dialogVisible2 = true

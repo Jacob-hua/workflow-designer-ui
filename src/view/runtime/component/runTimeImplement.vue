@@ -4,7 +4,7 @@
       <div class="Implement">
         <div class="Implement-left">
           <ProcessInformation
-            v-if="visible"
+            v-if="workflow.trackList"
             ref="ProcessInformation"
             :processInfo="workflow"
             @executeShape="onExecuteShape"
@@ -38,23 +38,7 @@
                 <runtime-implement-hang :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Reject'">
-                <div v-if="dataList.Reject.rejectBollen" class="HangStyle">
-                  <span style="color: #0066cc">当前流程正常运行，如需将流程驳回，请进行认证操作</span>
-                  <div class="confirm" @click="confirmation()">驳回验证</div>
-                </div>
-                <div v-else>
-                  <!-- TODO: 此处应该是驳回信息的反馈显示 -->
-                  <div class="rejectData">
-                    <span>{{ dataList.Reject.data }}</span>
-                  </div>
-                  <div class="rejectName">
-                    <span>{{ dataList.Reject.name }}</span>
-                  </div>
-                  <div>
-                    <span class="rejectWord">驳回至</span>
-                    <span class="rejectResult">{{ dataList.Reject.rejectResult }}</span>
-                  </div>
-                </div>
+                <runtime-implement-reject :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Termination'">
                 <div v-if="dataList.Termination.terminationBollon" class="HangStyle">
@@ -120,6 +104,7 @@ import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
 import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
 import RuntimeImplementSignature from './RuntimeImplementSignature.vue'
 import RuntimeImplementHang from './RuntimeImplementHang.vue'
+import RuntimeImplementReject from './RuntimeImplementReject.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
@@ -134,6 +119,7 @@ export default {
     RuntimeImplementCirculate,
     RuntimeImplementSignature,
     RuntimeImplementHang,
+    RuntimeImplementReject,
   },
   props: {
     visible: {
@@ -186,22 +172,6 @@ export default {
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
   },
-  watch: {
-    workflow: {
-      immediate: true,
-      deep: true,
-      handler(workflow) {
-        if (!workflow || !workflow.trackList) {
-          return
-        }
-        this.updateDataList(workflow.trackList)
-        this.dataList.Hang = workflow.taskStatus.split(',').indexOf('hang') == '-1'
-        if (!this.dataList.Hang) {
-          this.functionCheck = 'Hang'
-        }
-      },
-    },
-  },
   mounted() {
     this.fetchExecuteDetail()
   },
@@ -215,13 +185,6 @@ export default {
     },
     onCancel() {
       this.$emit('close')
-    },
-    updateDataList(trackList) {
-      this.dataList.Circulate = trackList[trackList.length - 1].circulationList
-      this.dataList.Agency = trackList[trackList.length - 1].candidateUsers
-      const assignees = trackList[trackList.length - 1].assignee.split(',') ?? []
-      // TODO: userId 改为 account 更合适
-      this.dataList.Signature = assignees.reduce((Signature, { item }) => [...Signature, { userId: item }], [])
     },
     onSelectAction(value) {
       this.functionCheck = value

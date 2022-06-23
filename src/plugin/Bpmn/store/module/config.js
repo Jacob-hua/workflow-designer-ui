@@ -115,7 +115,7 @@ const state = {
   ],
   userTaskActionButtons: [
     {
-      label: '待办',
+      label: '代办',
       value: 'Agency',
     },
     {
@@ -137,7 +137,7 @@ const state = {
   ],
   multiInstanceActionButtons: [
     {
-      label: '待办',
+      label: '代办',
       value: 'Agency',
     },
     {
