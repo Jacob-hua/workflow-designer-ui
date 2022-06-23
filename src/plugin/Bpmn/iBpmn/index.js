@@ -67,6 +67,12 @@ class IBpmn {
   }
 
   attachTo(element) {
+    /**
+     * TODO: 这里存在一个大的BUG，由于在vue中$iBpmn实例始终只有一个，那么attachTo之前被挂载到一个DOM之后，
+     * 再次调用attachTo会从原来挂载的DOM上摘掉svg元素，挂载到新的DOM节点上
+     * 对于vue中同时存在多个画布组件的场景这是一个致命的问题，即一个组件销毁时，另一个组件虽然没有被注销
+     * 但是组件上挂载的svg却被移除了
+     */
     this.#modeler.attachTo(element);
   }
 
