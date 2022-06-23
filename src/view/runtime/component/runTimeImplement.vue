@@ -38,23 +38,18 @@
                 <runtime-implement-hang :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Reject'">
-                <runtime-implement-reject :workflow="workflow" @completed="onAgencyCompleted" @rejectSuccess="onRejectSuccess" />
+                <runtime-implement-reject
+                  :workflow="workflow"
+                  @completed="onAgencyCompleted"
+                  @rejectSuccess="onRejectSuccess"
+                />
               </div>
               <div v-if="functionCheck === 'Termination'">
-                <div v-if="dataList.Termination.terminationBollon" class="HangStyle">
-                  <span style="color: #0066cc">当前流程正常运行，如需将流程终止，请进行认证操作</span>
-                  <div class="confirm" @click="confirmation()">终止确认</div>
-                </div>
-                <div v-else>
-                  <!-- TODO: 显示终止信息的反馈 -->
-                  <div class="rejectData">
-                    <span>{{ dataList.Termination.data }}</span>
-                  </div>
-                  <div class="rejectName">
-                    <span>{{ dataList.Termination.name }}</span>
-                  </div>
-                  <div class="rejectWord">流程终止</div>
-                </div>
+                <runtime-implement-termination
+                  :workflow="workflow"
+                  @completed="onAgencyCompleted"
+                  @terminateSuccess="onRejectSuccess"
+                />
               </div>
             </div>
           </div>
@@ -105,6 +100,7 @@ import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
 import RuntimeImplementSignature from './RuntimeImplementSignature.vue'
 import RuntimeImplementHang from './RuntimeImplementHang.vue'
 import RuntimeImplementReject from './RuntimeImplementReject.vue'
+import RuntimeImplementTermination from './RuntimeImplementTermination.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
@@ -120,6 +116,7 @@ export default {
     RuntimeImplementSignature,
     RuntimeImplementHang,
     RuntimeImplementReject,
+    RuntimeImplementTermination,
   },
   props: {
     visible: {

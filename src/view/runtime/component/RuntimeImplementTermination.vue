@@ -1,30 +1,69 @@
 <template>
   <div>
-    <div v-if="termination.terminationBollon" class="HangStyle">
+    <div class="HangStyle">
       <span style="color: #0066cc">当前流程正常运行，如需将流程终止，请进行认证操作</span>
       <div class="confirm" @click="onConfirmation">终止确认</div>
     </div>
+    <runtime-confirmation
+      :visible.sync="confirmationVisible"
+      @validate="onConfirmationValidate"
+    />
+    <runtime-terminate-confirmation
+      :visible.sync="terminateConfirmationVisible"
+      @submit="onTerminateConfirmationSubmit"
+    />
   </div>
 </template>
 
 <script>
+import RuntimeConfirmation from './runtimeConfirmation.vue'
+import RuntimeTerminateConfirmation from './RuntimeTerminateConfirmation.vue'
+import { putCancelInstance } from '@/api/unit/api.js'
+
 export default {
   name: 'RuntimeImplementTermination',
+  components: { RuntimeTerminateConfirmation, RuntimeConfirmation },
   props: {
     workflow: {
       type: Object,
       default: () => ({}),
     },
   },
-  computed: {
-    termination() {
-      return this.workflow.termination ?? {}
-    },
+  data() {
+    return {
+      terminateConfirmationVisible: false,
+      confirmationVisible: false,
+    }
   },
   methods: {
-    onConfirmation() {},
+    onConfirmation() {
+      this.confirmationVisible = true
+    },
+    onConfirmationValidate() {
+      this.terminateConfirmationVisible = true
+    },
+    onTerminateConfirmationSubmit({ terminateReason }) {
+      putCancelInstance({
+        cancelReason: terminateReason,
+        processInstanceId: this.workflow.processInstanceId,
+      }).then((res) => {
+        this.$message.success('终止成功')
+        this.$emit('terminateSuccess')
+      })
+    },
   },
 }
 </script>
 
-<style></style>
+<style scoped>
+.HangStyle {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.confirm {
+  cursor: pointer;
+  color: rgb(255, 76, 0);
+  margin-top: 20px;
+}
+</style>
