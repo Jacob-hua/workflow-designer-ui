@@ -51,6 +51,9 @@
                   @terminateSuccess="onRejectSuccess"
                 />
               </div>
+              <div v-if="functionCheck === 'NoExecutor'">
+                <runtime-implement-executor :workflow="workflow" @selectExecutor="onSelectExecutor" />
+              </div>
             </div>
           </div>
         </div>
@@ -82,6 +85,7 @@ import RuntimeImplementSignature from './RuntimeImplementSignature.vue'
 import RuntimeImplementHang from './RuntimeImplementHang.vue'
 import RuntimeImplementReject from './RuntimeImplementReject.vue'
 import RuntimeImplementTermination from './RuntimeImplementTermination.vue'
+import RuntimeImplementExecutor from './RuntimeImplementExecutor.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
@@ -96,6 +100,7 @@ export default {
     RuntimeImplementHang,
     RuntimeImplementReject,
     RuntimeImplementTermination,
+    RuntimeImplementExecutor,
   },
   props: {
     visible: {
@@ -139,8 +144,13 @@ export default {
           label: '终止',
           value: 'Terminate',
         },
+        NoExecutor: {
+          label: '指定后续执行人',
+          value: 'NoExecutor',
+        },
       },
       curExecuteShape: undefined,
+      noExecutor: false,
     }
   },
   computed: {
@@ -155,12 +165,20 @@ export default {
       if (!this.curExecuteShape) {
         return []
       }
+      const temps = []
+      if (this.noExecutor) {
+        temps.push(this.actionsConfig['NoExecutor'])
+      }
+      if (this.hang) {
+        temps.push(this.actionsConfig['Hang'])
+      }
       const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions').split(',') ?? []
-      return this.hang ? [this.actionsConfig['Hang']] : actions.map((action) => this.actionsConfig[action])
+      return actions.map((action) => this.actionsConfig[action]).concat(temps)
     },
   },
-  mounted() {
-    this.fetchExecuteDetail()
+  async mounted() {
+    await this.fetchExecuteDetail()
+    await this.fetchProcessNodeInfo()
   },
   methods: {
     onAgencyCompleted() {
@@ -176,6 +194,9 @@ export default {
     onCancel() {
       this.$emit('close')
     },
+    onSelectExecutor(value) {
+      this.$set(this.workflow, 'executors', value)
+    },
     onSelectAction(value) {
       this.functionCheck = value
       let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
@@ -186,7 +207,7 @@ export default {
       let findEle = proJectRole.findIndex((item) => {
         return item.frontRoute === 'RunTime' + value
       })
-      if (findEle === -1) {
+      if (findEle === -1 && value !== 'NoExecutor') {
         this.roleBoolean = false
       } else {
         this.roleBoolean = true
@@ -233,33 +254,25 @@ export default {
             break
         }
       }
-      getProcessNodeInfo({
+      if (this.noExecutor && !Array.isArray(this.workflow.executors) && this.workflow.executors.length === 0) {
+        this.$message.error('后续执行人为空！')
+        return
+      }
+      postCompleteTask({
+        assignee: this.userInfo.account,
+        nextAssignee: this.workflow.executors?.[0].userId,
+        commentList: [],
+        formData: formData,
         processInstanceId: this.workflow.processInstanceId,
+        processKey: this.workflow.processDeployKey,
+        taskId: this.workflow.newTaskId,
+        taskKey: this.workflow.taskKey,
+        taskName: this.workflow.processDeployName,
+        variable: data,
       }).then((res) => {
-        let nodeInfoBoole = res.result.some((item) => {
-          if (item.assignee === null && item.candidateGroup === null && item.candidateUser === null) {
-            return true
-          }
-        })
-        if (!nodeInfoBoole) {
-          postCompleteTask({
-            assignee: this.userInfo.account,
-            commentList: [],
-            formData: formData,
-            processInstanceId: this.workflow.processInstanceId,
-            processKey: this.workflow.processDeployKey,
-            taskId: this.workflow.newTaskId,
-            taskKey: this.workflow.taskKey,
-            taskName: this.workflow.processDeployName,
-            variable: data,
-          }).then((res) => {
-            this.formShow = false
-            this.$message.success('执行成功')
-            this.$emit('taskSuccess')
-          })
-        } else {
-          this.$message.error('下一步流程无执行人')
-        }
+        this.formShow = false
+        this.$message.success('执行成功')
+        this.$emit('taskSuccess')
       })
     },
     getFormData(formKey) {
@@ -281,6 +294,22 @@ export default {
       } else {
         this.formContant = ''
         this.formShow = false
+      }
+    },
+    async fetchProcessNodeInfo() {
+      const { errorInfo, result } = await getProcessNodeInfo({
+        processInstanceId: this.workflow.processInstanceId,
+      })
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      this.noExecutor = result.some(
+        ({ assignee, candidateGroup, candidateUser }) =>
+          assignee === null && candidateGroup === null && candidateUser === null
+      )
+      if (this.noExecutor) {
+        this.$message.warning('下一步无执行人')
       }
     },
     async fetchExecuteDetail() {

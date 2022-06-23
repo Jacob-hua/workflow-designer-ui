@@ -146,7 +146,7 @@ export default {
       this.multipleSelection = val
     },
     toggleRowSelection() {
-      console.log(this.detailSelection)
+      // TODO: 此处同步选中值到表格存在问题
       this.detailSelection.forEach((item) => {
         this.$refs.multipleTable.toggleRowSelection(item)
       })
@@ -206,7 +206,7 @@ export default {
         }
       })
 
-      this.$emit('submit', { dataList, deleteList })
+      this.$emit('submit', { dataList, deleteList, multipleSelection :this.multipleSelection })
     },
   },
 }
