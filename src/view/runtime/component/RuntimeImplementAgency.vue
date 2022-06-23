@@ -117,4 +117,11 @@ export default {
   border-radius: 5px;
   margin-left: 20px;
 }
+
+.addCirculate {
+  margin-left: 10px;
+  display: inline-block;
+  color: #5b5091;
+  cursor: pointer;
+}
 </style>

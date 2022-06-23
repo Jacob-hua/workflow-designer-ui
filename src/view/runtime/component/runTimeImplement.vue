@@ -32,27 +32,10 @@
                 <runtime-implement-circulate :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Signature'">
-                <!-- <div style="margin-top: 15px">
-                  <div class="peopleList-title">加签:</div>
-                  <div class="peopleList">
-                    <div class="peopleList-item" v-for="({ userId }, index) in dataList.Signature" :key="index">
-                      {{ userId }}
-                    </div>
-                  </div>
-                  <span class="editButton" @click="editDataList('Signature')">编辑</span>
-                </div> -->
                 <runtime-implement-signature :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Hang'">
-                <div v-if="dataList.Hang" class="HangStyle">
-                  <!-- TODO: 关于确认弹窗的逻辑需要重新修正 -->
-                  <span style="color: #0066cc">当前流程正常运行，如需将流程挂起，请进行认证操作</span>
-                  <div class="confirm" @click="confirmation()">挂起确认</div>
-                </div>
-                <div v-else class="HangStyle">
-                  <span style="color: #0066cc">当前流程已被挂起，如需将继续执行流程，请进行认证操作</span>
-                  <div class="confirm" @click="confirmation()">重新激活</div>
-                </div>
+                <runtime-implement-hang :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Reject'">
                 <div v-if="dataList.Reject.rejectBollen" class="HangStyle">
@@ -136,6 +119,7 @@ import runtimeConfirmation from './runtimeConfirmation.vue'
 import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
 import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
 import RuntimeImplementSignature from './RuntimeImplementSignature.vue'
+import RuntimeImplementHang from './RuntimeImplementHang.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
@@ -149,6 +133,7 @@ export default {
     RuntimeImplementAgency,
     RuntimeImplementCirculate,
     RuntimeImplementSignature,
+    RuntimeImplementHang,
   },
   props: {
     visible: {
