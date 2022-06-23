@@ -193,7 +193,6 @@
         this.$refs.PublicFormDiolog.dialogVisible2 = true
       },
       detailsDiolog(item) {
-
         postFormDesignRecordFormDesignRecordInfo({
           id: item.id,
           status: this.activeName,
