@@ -111,7 +111,6 @@ export default {
     return {
       workflow: {},
       functionCheck: '',
-      bpmnTypeloopChara: '',
       formContant: '',
       formShow: false,
       roleBoolean: true,
@@ -141,7 +140,7 @@ export default {
           value: 'Terminate',
         },
       },
-      actions: [],
+      curExecuteShape: undefined,
     }
   },
   computed: {
@@ -151,6 +150,13 @@ export default {
         return false
       }
       return this.workflow.curTrack.status.split(',').includes('hang')
+    },
+    actions() {
+      if (!this.curExecuteShape) {
+        return []
+      }
+      const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions').split(',') ?? []
+      return this.hang ? [this.actionsConfig['Hang']] : actions.map((action) => this.actionsConfig[action])
     },
   },
   mounted() {
@@ -190,10 +196,7 @@ export default {
       this.$emit('goSee', this.$refs.ProcessInformation.postData)
     },
     onExecuteShape(value) {
-      const actions = this.$iBpmn.getShapeInfoByType(value, 'actions').split(',') ?? []
-      this.actions = this.hang ? [this.actionsConfig['Hang']] : actions.map((action) => this.actionsConfig[action])
-      this.bpmnTypeloopChara =
-        value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
+      this.curExecuteShape = value
       if (value) {
         this.getFormData(value.businessObject.formKey)
       }
