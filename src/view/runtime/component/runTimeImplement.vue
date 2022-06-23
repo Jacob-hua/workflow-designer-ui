@@ -10,20 +10,20 @@
             @executeShape="onExecuteShape"
             seeType="runTime"
           ></ProcessInformation>
-          <div class="function-list" v-if="btnList.length > 0">
+          <div class="function-list" v-if="actions.length > 0">
             <span
               class="function-item"
-              v-for="(item, index) in btnList"
+              v-for="({ label, value }, index) in actions"
               :key="index"
-              @click="onSelectAction(btnListKey[item])"
-              :class="functionCheck === btnListKey[item] ? 'function-check' : ''"
+              @click="onSelectAction(value)"
+              :class="functionCheck === value ? 'function-check' : ''"
             >
-              {{ item }}
+              {{ label }}
             </span>
           </div>
-          <div class="function-main" :class="btnList.length === 0 ? 'noData' : ''">
+          <div class="function-main" :class="actions.length === 0 ? 'noData' : ''">
             <div v-if="!roleBoolean" class="heightFunction">无权限</div>
-            <div v-else-if="btnList.length === 0" class="heightFunction">无信息</div>
+            <div v-else-if="actions.length === 0" class="heightFunction">无信息</div>
             <div v-else>
               <div v-if="functionCheck === 'Agency'">
                 <runtime-implement-agency :workflow="workflow" @completed="onAgencyCompleted" />
@@ -44,7 +44,7 @@
                   @rejectSuccess="onRejectSuccess"
                 />
               </div>
-              <div v-if="functionCheck === 'Termination'">
+              <div v-if="functionCheck === 'Terminate'">
                 <runtime-implement-termination
                   :workflow="workflow"
                   @completed="onAgencyCompleted"
@@ -115,20 +115,41 @@ export default {
       formContant: '',
       formShow: false,
       roleBoolean: true,
-      btnListKey: {
-        Agency: 'Agency',
-        Circulate: 'Circulate',
-        Signature: 'Signature',
-        Hang: 'Hang',
-        Reject: 'Reject',
-        Terminate: 'Termination',
+      actionsConfig: {
+        Agency: {
+          label: '代办',
+          value: 'Agency',
+        },
+        Circulate: {
+          label: '传阅',
+          value: 'Circulate',
+        },
+        Signature: {
+          label: '加减签',
+          value: 'Signature',
+        },
+        Hang: {
+          label: '挂起',
+          value: 'Hang',
+        },
+        Reject: {
+          label: '驳回',
+          value: 'Reject',
+        },
+        Terminate: {
+          label: '终止',
+          value: 'Terminate',
+        },
       },
-      btnList: [],
+      actions: [],
     }
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
     hang() {
+      if (!this.workflow.curTrack) {
+        return false
+      }
       return this.workflow.curTrack.status.split(',').includes('hang')
     },
   },
@@ -170,7 +191,7 @@ export default {
     },
     onExecuteShape(value) {
       const actions = this.$iBpmn.getShapeInfoByType(value, 'actions').split(',') ?? []
-      this.btnList = this.hang ? ['Hang'] : actions
+      this.actions = this.hang ? [this.actionsConfig['Hang']] : actions.map((action) => this.actionsConfig[action])
       this.bpmnTypeloopChara =
         value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
       if (value) {
