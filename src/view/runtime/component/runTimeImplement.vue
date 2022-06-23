@@ -32,7 +32,7 @@
                 <runtime-implement-circulate :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Signature'">
-                <div style="margin-top: 15px">
+                <!-- <div style="margin-top: 15px">
                   <div class="peopleList-title">加签:</div>
                   <div class="peopleList">
                     <div class="peopleList-item" v-for="({ userId }, index) in dataList.Signature" :key="index">
@@ -40,7 +40,8 @@
                     </div>
                   </div>
                   <span class="editButton" @click="editDataList('Signature')">编辑</span>
-                </div>
+                </div> -->
+                <runtime-implement-signature :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Hang'">
                 <div v-if="dataList.Hang" class="HangStyle">
@@ -134,6 +135,7 @@ import runtimePeople from './runtimePeople.vue'
 import runtimeConfirmation from './runtimeConfirmation.vue'
 import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
 import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
+import RuntimeImplementSignature from './RuntimeImplementSignature.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
@@ -146,6 +148,7 @@ export default {
     preview,
     RuntimeImplementAgency,
     RuntimeImplementCirculate,
+    RuntimeImplementSignature,
   },
   props: {
     visible: {
@@ -350,10 +353,10 @@ export default {
             commentList: [],
             formData: formData,
             processInstanceId: this.workflow.processInstanceId,
-            processKey: this.workflow.deployKey,
+            processKey: this.workflow.processDeployKey,
             taskId: this.workflow.newTaskId,
             taskKey: this.workflow.taskKey,
-            taskName: this.workflow.taskName,
+            taskName: this.workflow.processDeployName,
             variable: data,
           }).then((res) => {
             this.formShow = false
@@ -396,8 +399,41 @@ export default {
           this.$message.error(errorInfo.errorMsg)
           return
         }
-        this.workflow = result
+        this.workflow = { ...result, newTaskId: this.calculateNewTaskId(result, this.userInfo.account) }
       } catch (error) {}
+    },
+    calculateNewTaskId(workflow, account) {
+      if (assigneesInclude(workflow, account)) {
+        return getTaskIdBy(workflow, account)
+      }
+      if (candidateUsersInclude(workflow, account)) {
+        return candidateUsersInclude(workflow, account).taskId
+      }
+
+      function getCurTrack(workflow) {
+        if (!Array.isArray(workflow.trackList)) {
+          return
+        }
+        return workflow.trackList.at(-1)
+      }
+
+      function assigneesInclude(workflow, account) {
+        if (!getCurTrack(workflow)) {
+          return
+        }
+        return getCurTrack(workflow).assignee.split(',').includes(account)
+      }
+
+      function getTaskIdBy(workflow, account) {
+        return getCurTrack(workflow).taskId.split(',')[getCurTrack(workflow).assignee.split(',').indexOf(account)]
+      }
+
+      function candidateUsersInclude(workflow, account) {
+        if (!getCurTrack(workflow)) {
+          return
+        }
+        return getCurTrack(workflow).candidateUsers?.find(({ candidateUsers = [] }) => candidateUsers.includes(account))
+      }
     },
   },
 }

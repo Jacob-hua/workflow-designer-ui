@@ -364,31 +364,6 @@ export default {
         newTask.canExecute = task.taskUserSet.includes(this.userInfo.account)
         return newTask
       }
-      // TODO: 此函数会在详情中使用
-      function handleNewTaskId(task, account) {
-        const newTask = { ...task }
-        if (
-          newTask.taskAssignee.split(',').includes(account) &&
-          newTask.taskId.split(',').length === newTask.taskAssignee.split(',').length
-        ) {
-          newTask.newTaskId = newTask.taskId.split(',')[newTask.taskAssignee.split(',').indexOf(account)]
-          return newTask
-        }
-        if (!Array.isArray(newTask.trackList)) {
-          return newTask
-        }
-        // 按照约定，trackList中最后一个节点是最新节点
-        const candidateUsers = newTask.trackList[newTask.trackList.length - 1]?.candidateUsers
-        if (!Array.isArray(candidateUsers)) {
-          return newTask
-        }
-        const newTaskId = candidateUsers.find(({ candidateUsers = [] }) => candidateUsers.includes(account))?.taskId
-        if (!newTaskId) {
-          return newTask
-        }
-        newTask.newTaskId = newTaskId
-        return newTask
-      }
     },
     async fetchAmount() {
       try {

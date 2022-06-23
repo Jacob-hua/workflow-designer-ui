@@ -88,8 +88,6 @@
 import {
   getPersonUser,
   getThreeSystemOrganize,
-  getModifyCandidate,
-  getCirculation,
   postModifyProcessUser,
 } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
