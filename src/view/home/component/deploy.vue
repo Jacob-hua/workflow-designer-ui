@@ -274,7 +274,7 @@
           // formData.append('processResource', '')
           formData.append('tenantId', this.tenantId)
           postDeployForOnline(formData).then((res) => {
-            this.$message.success('保存成功')
+            this.$message.success('部署成功')
             this.dialogVisible2 = false
             this.$emit('addWorkSuccess')
           })

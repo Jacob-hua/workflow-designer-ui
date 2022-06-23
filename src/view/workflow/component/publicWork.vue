@@ -3,67 +3,79 @@
     <div class="PublicForm-title">
       <div class="datePick">
         <span class="datePickTitle">编辑时间</span>
-        <el-date-picker v-model="searchForm.valueDate"
-                        type="daterange"
-                        align="right"
-                        unlink-panels
-                        range-separator="——"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        :default-time="['00:00:00', '23:59:59']">
+        <el-date-picker
+          v-model="searchForm.valueDate"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="——"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
+        >
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
-        <el-input v-model="searchForm.name"
-                  placeholder="请输入工作流名称"></el-input>
+        <el-input v-model="searchForm.name" placeholder="请输入工作流名称"></el-input>
       </div>
       <div class="PublicForm-title-input">
-        <el-button type="primary"
-                   @click="refreshWorkFlowRecord">查询</el-button>
+        <el-button type="primary" @click="refreshWorkFlowRecord">查询</el-button>
       </div>
       <div class="PublicForm-title-input">
-        <el-button type="primary" 
-                   @click="onReset">重置</el-button>
+        <el-button type="primary" @click="onReset">重置</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary"
-                   @click="onAddBpmnShow">新建工作流</el-button>
+        <el-button type="primary" @click="onAddBpmnShow">新建工作流</el-button>
       </div>
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item"
-              :class="activeName === 'enabled,disabled' ? 'active' : ''"
-              @click="onChangeActiveName('enabled,disabled')">工作流（{{ processCount }}）</span>
-        <span class="home-main-tab-item"
-              :class="activeName === 'drafted' ? 'active' : ''"
-              @click="onChangeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
+        <span
+          class="home-main-tab-item"
+          :class="activeName === 'enabled,disabled' ? 'active' : ''"
+          @click="onChangeActiveName('enabled,disabled')"
+          >工作流（{{ processCount }}）</span
+        >
+        <span
+          class="home-main-tab-item"
+          :class="activeName === 'drafted' ? 'active' : ''"
+          @click="onChangeActiveName('drafted')"
+          >草稿箱（{{ draftProcessCount }}）</span
+        >
       </div>
       <div class="home-table">
-        <projectTable v-if="activeName === 'enabled,disabled'"
-                      :business="projectValue"
-                      :searchForm="searchFormData"
-                      @lookBpmnShow="onLookBpmnShow"
-                      @deleteRow="onProjectDeleteRow"></projectTable>
-        <draftTable v-if="activeName === 'drafted'"
-                    :business="projectValue"
-                    :searchForm="searchFormData"
-                    @draftTableEdit="onDraftTableEdit"
-                    @deleteRow="onDraftDeleteRow"></draftTable>
+        <projectTable
+          v-if="activeName === 'enabled,disabled'"
+          :business="projectValue"
+          :searchForm="searchFormData"
+          @lookBpmnShow="onLookBpmnShow"
+          @deleteRow="onProjectDeleteRow"
+        ></projectTable>
+        <draftTable
+          v-if="activeName === 'drafted'"
+          :business="projectValue"
+          :searchForm="searchFormData"
+          @draftTableEdit="onDraftTableEdit"
+          @deleteRow="onDraftDeleteRow"
+        ></draftTable>
       </div>
     </div>
-    <addBpmn publick="publick"
-             :visible="addBpmnVisible"
-             :projectData="projectData"
-             @close="onAddBpmnClose"
-             @submit="onAddBpmnSubmit"></addBpmn>
-    <lookBpmn v-if="lookBpmnVisible"
-              valueType="public"
-              :projectData="projectData"
-              :visible="lookBpmnVisible"
-              @close="onLookBpmnClose"
-              @edit="onLookBpmnEdit"></lookBpmn>
+    <addBpmn
+      publick="publick"
+      :visible="addBpmnVisible"
+      :projectData="projectData"
+      @close="onAddBpmnClose"
+      @submit="onAddBpmnSubmit"
+    ></addBpmn>
+    <lookBpmn
+      v-if="lookBpmnVisible"
+      valueType="public"
+      :projectData="projectData"
+      :visible="lookBpmnVisible"
+      @close="onLookBpmnClose"
+      @edit="onLookBpmnEdit"
+    ></lookBpmn>
   </div>
 </template>
 
@@ -110,9 +122,14 @@ export default {
     this.refreshWorkFlowRecord()
   },
   methods: {
-    onAddBpmnShow() {
+    async onAddBpmnShow() {
+      const uuid = await this.$generateUUID()
       this.addBpmnVisible = true
       this.resetProjectData()
+      this.setProjectData({
+        code: `process_${uuid}`,
+        name: uuid,
+      })
     },
     onReset() {
       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
@@ -132,7 +149,7 @@ export default {
       this.resetProjectData()
       this.refreshWorkFlowRecord()
     },
-    onLookBpmnShow(row, tit) {
+    onLookBpmnShow(row) {
       this.setProjectData(row)
       this.lookBpmnVisible = true
     },

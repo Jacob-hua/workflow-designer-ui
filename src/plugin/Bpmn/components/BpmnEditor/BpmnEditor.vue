@@ -62,6 +62,7 @@ export default {
         })
         this.$iBpmn.loadDiagram(value, this.newBaseInfo).then(() => {
           loading.close()
+          this.$emit('loaded')
         })
       },
     },
@@ -80,7 +81,9 @@ export default {
       this.$iBpmn.attachTo(this.$refs.containers)
       this.$iBpmn.paletteVisible(this.pelatteVisible)
       if (!this.xml) {
-        this.$iBpmn.createEmptyDiagram(this.name, this.newBaseInfo)
+        this.$iBpmn.createEmptyDiagram(this.name, this.newBaseInfo).then(() => {
+          this.$emit('loaded')
+        })
       }
     },
   },

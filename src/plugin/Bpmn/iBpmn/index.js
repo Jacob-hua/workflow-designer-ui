@@ -118,14 +118,34 @@ class IBpmn {
   }
 
   getSelectedShapeInfoByType(type) {
-    const selectedShapeProperties = this.getSelectedShape()?.businessObject;
-    if (!selectedShapeProperties) {
-      return;
+    return this.getShapeInfoByType(this.getSelectedShape(), type);
+  }
+
+  getRootShapeInfo() {
+    const root = this.elementRegistryFind((elem) => elem.type === "bpmn:Process");
+    if (!root) {
+      return {};
     }
-    if (selectedShapeProperties.$type === type) {
-      return selectedShapeProperties;
+    return this.getShapeInfo(root);
+  }
+
+  getShapeInfoByDefaultLocalName(element, localName) {
+    return this.getShapeInfoByType(element, `${this.type}:${localName}`);
+  }
+
+  getShapeInfoByLocalName(element, localName) {
+    this.getShapeInfoByType(element, `bpmn:${localName}`);
+  }
+
+  getShapeInfoByType(element, type) {
+    const shapeProperties = this.getShapeInfo(element);
+    if (shapeProperties.$type === type) {
+      return shapeProperties;
     }
-    const extensionElements = selectedShapeProperties.extensionElements;
+    if (shapeProperties[type]) {
+      return shapeProperties[type];
+    }
+    const extensionElements = shapeProperties.extensionElements;
     if (!extensionElements) {
       return;
     }
@@ -136,14 +156,6 @@ class IBpmn {
       return extensionElements.values.filter(({ $type }) => $type === type);
     }
     return;
-  }
-
-  getRootShapeInfo() {
-    const root = this.elementRegistryFind((elem) => elem.type === "bpmn:Process");
-    if (!root) {
-      return {};
-    }
-    return this.getShapeInfo(root);
   }
 
   getShapeInfo(element) {

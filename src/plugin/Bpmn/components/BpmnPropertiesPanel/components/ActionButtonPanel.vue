@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-checkbox-group v-model="btnList">
-      <el-checkbox v-for="(label, index) in actionButtons(multiInstance)"
+      <el-checkbox v-for="({label, value}, index) in actionButtons(multiInstance)"
                    :key="index"
-                   :label="label"></el-checkbox>
+                   :label="value">{{label}}</el-checkbox>
     </el-checkbox-group>
   </div>
 </template>

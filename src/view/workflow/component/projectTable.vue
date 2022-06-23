@@ -59,7 +59,7 @@
     </div>
     <div class="home-table-page">
       <el-pagination @size-change="onSizeChange"
-                     @current-change="onCurrentChange"
+                     @current-change="onPageChange"
                      :current-page="pageInfo.page"
                      :page-size="pageInfo.limit"
                      layout="prev, pager, next, jumper"
@@ -89,8 +89,7 @@ export default {
       pageInfo: {
         page: 1,
         limit: 10,
-        total: 1,
-        business: '',
+        total: 0,
       },
       listData: [],
     }
@@ -110,7 +109,7 @@ export default {
   },
   methods: {
     lookBpmnShow(row) {
-      this.$emit('lookBpmnShow', row, 'gongzuoliu')
+      this.$emit('lookBpmnShow', row)
     },
     async onDeleteRow(row) {
       try {
@@ -134,7 +133,7 @@ export default {
       this.pageInfo.limit = val
       this.findWorkFlowRecord()
     },
-    onCurrentChange(val) {
+    onPageChange(val) {
       this.pageInfo.page = val
       this.findWorkFlowRecord()
     },

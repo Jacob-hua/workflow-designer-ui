@@ -46,13 +46,13 @@ export default {
       status: false,
       menuList: [],
       menuListMapping: {
-        Workflow: 'bpmn',
-        Form: 'form',
-        Home: 'home',
-        RunTime: 'runTime',
-        History: 'history',
-        Configuration: 'all',
-        Power: 'power',
+        Workflow: 'Workflow',
+        Form: 'Form',
+        Home: 'Home',
+        RunTime: 'RunTime',
+        History: 'History',
+        Configuration: 'Configuration',
+        Power: 'Power',
       },
       menuListNameMapping: {
         Workflow: '工作流管理',
@@ -89,8 +89,8 @@ export default {
       let findRole = this.menuList.filter((item) => {
         return item.menuRoute === this.$route.name
       })
-      if (findRole === -1) {
-        this.$router.push(this.menuListMapping[this.menuList[0].menuRoute])
+      if (findRole.length === 0) {
+        this.$router.push({name: this.menuList[0].menuRoute})
       }
     } else {
       this.$router.push('/')
