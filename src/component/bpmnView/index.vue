@@ -77,7 +77,7 @@
     </div>
     <div class="bpmnView-process">
       <span class="bpmn-Main-title">BPMN流程</span>
-      <bpmn-editor :pelatteVisible="false"
+      <bpmn-editor key="processInfomation" :pelatteVisible="false"
                    :headerVisible="false"
                    :linterToggle="false"
                    :xml="projectData.content" />
