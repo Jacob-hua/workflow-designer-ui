@@ -29,28 +29,7 @@
                 <runtime-implement-agency :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Circulate'">
-                <div class="peopleList-title">指定传阅人员:</div>
-                <div class="peopleList">
-                  <div v-for="({ assignee, circulations, taskId }, index) in dataList.Circulate" :key="index">
-                    <span v-show="assignee"> {{ assignee }}: </span>
-                    <div class="peopleList-item" v-for="userName in circulations[0].unitList" :key="userName">
-                      {{ userName }}
-                    </div>
-                    <span
-                      class="addCirculate"
-                      @click="changePeopleList(taskId, 'edit', 'Circulate', circulations[0].unitList)"
-                      v-if="assignee === userInfo.account && circulations[0].unitList.length > 0"
-                    >
-                      编辑
-                    </span>
-                    <div v-else-if="circulations[0].unitList.length == 0" style="display: inline-block">
-                      <span>暂无传阅</span>
-                      <span class="addCirculate" @click="changePeopleList(taskId)" v-if="assignee === userInfo.account">
-                        点击添加
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                <runtime-implement-circulate :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Signature'">
                 <div style="margin-top: 15px">
@@ -154,6 +133,7 @@ import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
 import runtimePeople from './runtimePeople.vue'
 import runtimeConfirmation from './runtimeConfirmation.vue'
 import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
+import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
@@ -165,6 +145,7 @@ export default {
     runtimeConfirmation,
     preview,
     RuntimeImplementAgency,
+    RuntimeImplementCirculate,
   },
   props: {
     visible: {
