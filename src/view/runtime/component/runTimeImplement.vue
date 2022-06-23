@@ -71,30 +71,11 @@
         <el-button type="primary" @click="onExecute" :disabled="!dataList.Hang">执 行</el-button>
       </span>
     </el-dialog>
-    <runtimePeople
-      ref="runtimePeople"
-      v-if="$refs.ProcessInformation"
-      :taskId="taskId"
-      :processInstanceId="$refs.ProcessInformation.processInfo.processInstanceId"
-      :taskKey="$refs.ProcessInformation.processInfo.taskKey"
-    ></runtimePeople>
-    <runtimeConfirmation
-      v-if="$refs.ProcessInformation"
-      ref="runtimeConfirmation"
-      :workflow="workflow"
-      :processInstanceDetail="$refs.ProcessInformation.processInfo"
-      :processInstanceId="$refs.ProcessInformation.processInfo.processInstanceId"
-      :BpmnContant="$refs.ProcessInformation.processInfo.content"
-      :taskId="$refs.ProcessInformation.processInfo.taskKey"
-      :taskKey="$refs.ProcessInformation.processInfo.taskId"
-    ></runtimeConfirmation>
   </div>
 </template>
 
 <script>
 import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
-import runtimePeople from './runtimePeople.vue'
-import runtimeConfirmation from './runtimeConfirmation.vue'
 import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
 import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
 import RuntimeImplementSignature from './RuntimeImplementSignature.vue'
@@ -108,8 +89,6 @@ import { mapState } from 'vuex'
 export default {
   components: {
     ProcessInformation,
-    runtimePeople,
-    runtimeConfirmation,
     preview,
     RuntimeImplementAgency,
     RuntimeImplementCirculate,
@@ -201,42 +180,6 @@ export default {
       } else {
         this.roleBoolean = true
       }
-    },
-    changePeopleList(taskId, type, value, item) {
-      if (type === 'edit') {
-        let a = []
-        item.forEach((item1) => {
-          a.push({
-            userId: item1,
-          })
-        })
-        switch (value) {
-          case 'Agency':
-            this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
-            break
-          case 'Circulate':
-            this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
-            break
-          default:
-            break
-        }
-      }
-      this.$refs.runtimePeople.dialogVisible = true
-      this.taskId = taskId
-      this.$nextTick(() => {
-        this.$refs.runtimePeople.toggleRowSelection()
-      })
-    },
-    editDataList(value) {
-      this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(this.dataList[value]))
-      this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(this.dataList[value]))
-      this.$refs.runtimePeople.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.runtimePeople.toggleRowSelection()
-      })
-    },
-    confirmation() {
-      this.$refs.runtimeConfirmation.dialogVisible = true
     },
     goSee() {
       this.$emit('goSee', this.$refs.ProcessInformation.postData)
