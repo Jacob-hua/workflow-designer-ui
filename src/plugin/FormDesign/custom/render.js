@@ -8,6 +8,7 @@ function vModel(self, dataObject) {
 }
 
 export default {
+
    render(h) {
     let dataObject = {
       attrs: {},
@@ -15,9 +16,10 @@ export default {
       on: {},
       style: {}
     }
-        debugger
+
     //远程获取数据
     // this.getRemoteData();
+
     const confClone = jsonClone(this.conf);
     const children = childrenItem(h,confClone);
     Object.keys(confClone).forEach(key => {

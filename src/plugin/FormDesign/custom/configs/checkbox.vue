@@ -101,8 +101,21 @@
     </div>
     </div>
     <div v-show='props.dataType ==="dynamic"'>
-      <el-form-item label="地址">
-        <el-input v-model="props.action"></el-input>
+      <el-form-item label="第三方API">
+        <el-select v-model="interFace"
+                   clearable>
+          <el-option  v-for="({ name, id, source, sourceMark }, index) in interFaceOption"
+                      @click.native="onClickOption(id,source, sourceMark)"
+                      :key="index"
+                      :label="name"
+                      :value="id" />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="variableOption.length" label="关联">
+        <div v-for="(variable,index) in variableArr" :key="index">
+          <div>{{variable}}</div>
+          <el-input v-model="variableOption[index][variable]" ></el-input>
+        </div>
       </el-form-item>
     </div>
   </div>
@@ -111,21 +124,66 @@
 import {changeId} from '../mixin'
 import draggable from "vuedraggable";
 import { isNumberStr } from '../../utils/index'
+import {mapActions, mapMutations, mapState} from "vuex";
+import {apiDetail} from "@/api/globalConfig";
+import {variableFactory} from "@/mixin/formDepMonitor";
 /**
  * input的配置项
  */
 let vm = {
   name:"checkboxConfig",
-  props:['props','getFormId'],
+  props:['props','getFormId', 'itemList'],
   components:{
     draggable
   },
   mixins:[changeId],
   data(){
     return {
+      currentDetail: {},
+      variableOption: [],
+      variableArr: [],
+      interFace: ''
     }
   },
+  computed: {
+    ...mapState('account', ['tenantId', 'currentOrganization']),
+    ...mapState('form',['interFaceOption', 'dynamicOption'])
+  },
   methods:{
+    ...mapActions('form',['refreshApiList', 'executeFunction']),
+    ...mapMutations('form',['addThirdPartyApi']),
+    onClickOption(id,source, sourceMark) {
+      let _this = this
+      apiDetail({
+        source: source,
+        sourceMark: sourceMark,
+        tenantId: this.tenantId
+      }).then((res)=> {
+        // 获取开闭所问题是不是
+        this.currentDetail = res.result.filter(item => item.id === id)[0]
+        this.variableArr = variableFactory(this.currentDetail)
+        this.addThirdPartyApi( { id: this.currentDetail.id } )
+        if (this.variableArr) {
+          this.variableOption = this.variableArr.map(variable =>(
+              {
+                [variable] : variable
+              }
+          ))
+        }
+
+        this.itemList.forEach(item => {
+          if (item.id ===  this.props.id) {
+            item.requestConfig = this.currentDetail
+            item.relationMapping = this.variableOption
+          }
+        })
+
+
+        // console.log(arr)
+        // _this.executeFunction({api: this.currentDetail, relation: this.props.relation, value: ''}  )
+        // this.addThirdPartyApi( { id: this.currentDetail.id } )
+      })
+    },
     handlerChangeLabel(val){
       this.props.labelWidth = val?'80':'1'
     },
@@ -186,6 +244,7 @@ let vm = {
       }else{
         this.tempOptions = this.props.options;
         this.props.options = [];
+        this.refreshApiList()
       }
     }
   },
