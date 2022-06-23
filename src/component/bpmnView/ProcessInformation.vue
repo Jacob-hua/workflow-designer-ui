@@ -4,13 +4,13 @@
       <div class="title-item">
         <span> 流程编码：</span>
         <span>
-          {{ processInfo.numberCode }}
+          {{ processInfo.processNumber }}
         </span>
       </div>
       <div class="title-item">
         <span> {{ seeType === 'runTime' ? '部署' : '流程' }}名称：</span>
         <span>
-          {{ processInfo.processName }}
+          {{ processInfo.processDeployName }}
         </span>
       </div>
       <div class="title-item">
@@ -43,7 +43,7 @@
         :pelatteVisible="false"
         :headerVisible="false"
         :linterToggle="false"
-        :xml="processInfo.content"
+        :xml="processInfo.processDeployResource"
         @loaded="onBpmnLoaded"
       />
     </div>

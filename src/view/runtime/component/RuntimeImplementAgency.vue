@@ -10,7 +10,7 @@
         <span
           v-if="assignee === userInfo.account && candidateUsers.length > 0"
           class="addCirculate"
-          @click="changePeopleList(taskId, 'edit', 'Agency', candidateUsers)"
+          @click="onEditAgency(taskId, candidateUsers)"
         >
           编辑
         </span>
@@ -18,7 +18,7 @@
           <span>暂无代办</span>
           <span
             class="addCirculate"
-            @click="changePeopleList(taskId)"
+            @click="onAddAgency(taskId)"
             v-if="assignee === userInfo.account && candidateUsers.length == 0"
           >
             点击添加
@@ -61,18 +61,21 @@ export default {
     },
   },
   methods: {
-    changePeopleList(taskId, type, value, item) {
+    onAddAgency(taskId) {
       this.editTaskId = taskId
-      if (type === 'edit') {
-        let a = []
-        item.forEach((item1) => {
-          a.push({
-            userId: item1,
-          })
-        })
-        this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
-      }
       this.$refs.runtimePeople.dialogVisible = true
+    },
+    onEditAgency(taskId, candidateUsers) {
+      this.editTaskId = taskId
+      this.$refs.runtimePeople.detailSelection = candidateUsers.map((userName) => {
+        return {
+          userId: userName,
+        }
+      })
+      this.$refs.runtimePeople.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.runtimePeople.toggleRowSelection()
+      })
     },
     async onRuntimePeopleSubmit({ dataList, deleteList }) {
       if (deleteList.length) {
@@ -90,16 +93,28 @@ export default {
           operateType: 'user:add',
           taskId: this.editTaskId,
         })
-        this.$message.success('代办成功')
-        this.$parent.$emit('taskSuccess')
-      } else {
-        this.$message.success('代办成功')
-        this.$parent.$emit('taskSuccess')
       }
+      this.$message.success('代办成功')
+      this.$emit('completed')
       this.$refs.runtimePeople.dialogVisible = false
     },
   },
 }
 </script>
 
-<style></style>
+<style scoped>
+.peopleList {
+  margin-top: 15px;
+}
+
+.peopleList-item {
+  display: inline-block;
+  width: 96px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  border: 1px solid #108cee;
+  border-radius: 5px;
+  margin-left: 20px;
+}
+</style>

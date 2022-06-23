@@ -123,7 +123,7 @@
     <runTimeImplement
       v-if="runtimeImplementVisible"
       :visible="runtimeImplementVisible"
-      :workflow="workflow"
+      :processInstanceId="workflow.processInstanceId"
       @close="onRuntimeImplementClose"
       @goSee="onDetail"
       @taskSuccess="onTaskSuccess"

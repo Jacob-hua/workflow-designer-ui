@@ -26,7 +26,7 @@
             <div v-else-if="btnList.length === 0" class="heightFunction">无信息</div>
             <div v-else>
               <div v-if="functionCheck === 'Agency'">
-                <runtime-implement-agency :workflow="workflow" />
+                <runtime-implement-agency :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Circulate'">
                 <div class="peopleList-title">指定传阅人员:</div>
@@ -171,13 +171,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    workflow: {
-      type: Object,
-      default: () => ({}),
+    processInstanceId: {
+      type: String,
+      required: true,
     },
   },
   data() {
     return {
+      workflow: {},
       functionCheck: '',
       bpmnTypeloopChara: '',
       formContant: '',
@@ -236,6 +237,9 @@ export default {
     this.fetchExecuteDetail()
   },
   methods: {
+    onAgencyCompleted() {
+      this.fetchExecuteDetail()
+    },
     onDialogClose() {
       this.formShow = false
       this.$emit('close')
@@ -402,15 +406,17 @@ export default {
       }
     },
     async fetchExecuteDetail() {
-      const { errorInfo, result } = await getExecuteDetail({
-        processInstanceId: this.workflow.processInstanceId,
-        assignee: this.userInfo.account,
-      })
-      if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
-      }
-      console.log(result)
+      try {
+        const { errorInfo, result } = await getExecuteDetail({
+          processInstanceId: this.processInstanceId,
+          assignee: this.userInfo.account,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.workflow = result
+      } catch (error) {}
     },
   },
 }
