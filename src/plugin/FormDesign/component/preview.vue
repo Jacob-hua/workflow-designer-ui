@@ -88,7 +88,7 @@ export default {
       this.currentIndex = index;
     },
     async resetField () {
-      this.$refs[this.formConf.formModel].resetField()
+       this.$refs[this.formConf.formModel].resetField()
     },
      async handlerSubmit(){
         try {
