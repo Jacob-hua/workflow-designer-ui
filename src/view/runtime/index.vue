@@ -121,6 +121,7 @@
       @succseeAdd="onAddSuccess"
     ></runtime-add>
     <runTimeImplement
+      v-if="runtimeImplementVisible"
       :visible="runtimeImplementVisible"
       :workflow="workflow"
       @close="onRuntimeImplementClose"

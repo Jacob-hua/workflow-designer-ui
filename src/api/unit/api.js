@@ -122,6 +122,9 @@ export const getApiTypeList = (params) =>
 
 // 执行时
 
+// 获取执行时工作流详情
+export const getExecuteDetail= (params) => get('/execute/executeDetail', params)
+
 // 可创建实例列表
 export const getProcessDefinitionList = (params) =>
   get('/execute/processDefinitionList', params);

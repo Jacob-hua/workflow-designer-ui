@@ -26,32 +26,7 @@
             <div v-else-if="btnList.length === 0" class="heightFunction">无信息</div>
             <div v-else>
               <div v-if="functionCheck === 'Agency'">
-                <div class="peopleList-title">指定代办人员:</div>
-                <div class="peopleList">
-                  <div v-for="({ assignee, candidateUsers = [], taskId }, index) in dataList.Agency" :key="index">
-                    <span v-show="assignee"> {{ assignee }}: </span>
-                    <div class="peopleList-item" v-for="userName in candidateUsers" :key="userName">
-                      {{ userName }}
-                    </div>
-                    <span
-                      v-if="assignee === userInfo.account && candidateUsers.length > 0"
-                      class="addCirculate"
-                      @click="changePeopleList(taskId, 'edit', 'Agency', candidateUsers)"
-                    >
-                      编辑
-                    </span>
-                    <div v-else-if="candidateUsers.length === 0" style="display: inline-block">
-                      <span>暂无代办</span>
-                      <span
-                        class="addCirculate"
-                        @click="changePeopleList(taskId)"
-                        v-if="assignee === userInfo.account && candidateUsers.length == 0"
-                      >
-                        点击添加
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                <runtime-implement-agency :workflow="workflow" />
               </div>
               <div v-if="functionCheck === 'Circulate'">
                 <div class="peopleList-title">指定传阅人员:</div>
@@ -90,7 +65,7 @@
               </div>
               <div v-if="functionCheck === 'Hang'">
                 <div v-if="dataList.Hang" class="HangStyle">
-                <!-- TODO: 关于确认弹窗的逻辑需要重新修正 -->
+                  <!-- TODO: 关于确认弹窗的逻辑需要重新修正 -->
                   <span style="color: #0066cc">当前流程正常运行，如需将流程挂起，请进行认证操作</span>
                   <div class="confirm" @click="confirmation()">挂起确认</div>
                 </div>
@@ -178,11 +153,19 @@
 import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
 import runtimePeople from './runtimePeople.vue'
 import runtimeConfirmation from './runtimeConfirmation.vue'
+import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
 import preview from '@/plugin/FormDesign/component/preview'
-import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo } from '@/api/unit/api.js'
+import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    ProcessInformation,
+    runtimePeople,
+    runtimeConfirmation,
+    preview,
+    RuntimeImplementAgency,
+  },
   props: {
     visible: {
       type: Boolean,
@@ -238,7 +221,7 @@ export default {
       immediate: true,
       deep: true,
       handler(workflow) {
-        if (!workflow) {
+        if (!workflow || !workflow.trackList) {
           return
         }
         this.updateDataList(workflow.trackList)
@@ -248,6 +231,9 @@ export default {
         }
       },
     },
+  },
+  mounted() {
+    this.fetchExecuteDetail()
   },
   methods: {
     onDialogClose() {
@@ -322,7 +308,7 @@ export default {
     onExecuteShape(value) {
       const actions = this.$iBpmn.getShapeInfoByType(value, 'actions').split(',') ?? []
       if (this.dataList.Hang) {
-        // TODO: Hang = true 是非挂起状态   
+        // TODO: Hang = true 是非挂起状态
         this.btnList = actions
       } else {
         this.btnList = ['Hang']
@@ -357,7 +343,7 @@ export default {
                   item.value = data[item.id]
                 })
               } else {
-                 this.$message.error('有必填项未填写')
+                this.$message.error('有必填项未填写')
               }
             })
             break
@@ -415,12 +401,17 @@ export default {
         this.formShow = false
       }
     },
-  },
-  components: {
-    ProcessInformation,
-    runtimePeople,
-    runtimeConfirmation,
-    preview,
+    async fetchExecuteDetail() {
+      const { errorInfo, result } = await getExecuteDetail({
+        processInstanceId: this.workflow.processInstanceId,
+        assignee: this.userInfo.account,
+      })
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      console.log(result)
+    },
   },
 }
 </script>
