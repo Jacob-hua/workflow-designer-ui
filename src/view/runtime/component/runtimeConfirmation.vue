@@ -1,6 +1,12 @@
 <template>
   <div>
-    <el-dialog :title="dialogValue('title')" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog
+      :title="dialogValue('title')"
+      :visible.sync="dialogVisible"
+      append-to-body
+      width="30%"
+      :before-close="handleClose"
+    >
       <div class="runtimeConfirmation">
         <div class="title">{{ dialogValue('message') }}</div>
         <el-form ref="form" :model="form" label-width="40px">
@@ -143,8 +149,13 @@ export default {
       })
     },
     handleOK() {
-      postVerifyUser(this.form).then((res) => {
+      postVerifyUser(this.form).then(({ errorInfo }) => {
+        if (errorInfo.errorCode) {
+          this.$emit('validate', false)
+          return
+        }
         this.dialogVisible = false
+        this.$emit('validate', true)
         switch (this.$parent.functionCheck) {
           case 'Hang':
             if (this.$parent.dataList.Hang) {

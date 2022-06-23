@@ -88,7 +88,6 @@
 import {
   getPersonUser,
   getThreeSystemOrganize,
-  postModifyProcessUser,
 } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 export default {
@@ -208,32 +207,6 @@ export default {
       })
 
       this.$emit('submit', { dataList, deleteList })
-
-      switch (this.$parent.functionCheck) {
-        case 'Agency':
-          break
-        case 'Circulate':
-          break
-        case 'Signature':
-          let dataListsignature = []
-          this.multipleSelection.forEach((item) => {
-            dataListsignature.push(item.userId)
-          })
-          let str2 = dataListsignature.join(',')
-          postModifyProcessUser({
-            processInstanceId: this.processInstanceId,
-            taskKey: this.taskKey,
-            userList: dataListsignature,
-          }).then(() => {
-            this.$message.success('加减签成功')
-            this.$parent.dataList[this.$parent.functionCheck] = this.multipleSelection
-            this.dialogVisible = false
-            this.$parent.$emit('taskSuccess')
-          })
-          break
-        default:
-          break
-      }
     },
   },
 }
