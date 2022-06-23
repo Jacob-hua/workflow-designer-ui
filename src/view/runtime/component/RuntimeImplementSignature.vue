@@ -26,10 +26,7 @@ export default {
   },
   computed: {
     signature() {
-      if (!Array.isArray(this.workflow.trackList)) {
-        return []
-      }
-      const assignees = this.workflow.trackList.at(-1).assignee.split(',') ?? []
+      const assignees = this.workflow.curTrack?.assignee.split(',') ?? []
       // TODO: userId 改为 account 更合适
       return assignees.reduce((signature, assignee) => [...signature, { userId: assignee }], [])
     },

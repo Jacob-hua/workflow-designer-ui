@@ -384,8 +384,15 @@ export default {
           this.$message.error(errorInfo.errorMsg)
           return
         }
+        result.curTrack = this.getCurTrack(result)
         this.workflow = { ...result, newTaskId: this.calculateNewTaskId(result, this.userInfo.account) }
       } catch (error) {}
+    },
+    getCurTrack(workflow) {
+      if (!Array.isArray(workflow.trackList)) {
+        return
+      }
+      return workflow.trackList.at(-1)
     },
     calculateNewTaskId(workflow, account) {
       if (assigneesInclude(workflow, account)) {
@@ -395,29 +402,22 @@ export default {
         return candidateUsersInclude(workflow, account).taskId
       }
 
-      function getCurTrack(workflow) {
-        if (!Array.isArray(workflow.trackList)) {
-          return
-        }
-        return workflow.trackList.at(-1)
-      }
-
       function assigneesInclude(workflow, account) {
-        if (!getCurTrack(workflow)) {
+        if (!workflow.curTrack) {
           return
         }
-        return getCurTrack(workflow).assignee.split(',').includes(account)
+        return workflow.curTrack.assignee.split(',').includes(account)
       }
 
       function getTaskIdBy(workflow, account) {
-        return getCurTrack(workflow).taskId.split(',')[getCurTrack(workflow).assignee.split(',').indexOf(account)]
+        return workflow.curTrack.taskId.split(',')[workflow.curTrack.assignee.split(',').indexOf(account)]
       }
 
       function candidateUsersInclude(workflow, account) {
-        if (!getCurTrack(workflow)) {
+        if (!workflow.curTrack) {
           return
         }
-        return getCurTrack(workflow).candidateUsers?.find(({ candidateUsers = [] }) => candidateUsers.includes(account))
+        return workflow.curTrack.candidateUsers?.find(({ candidateUsers = [] }) => candidateUsers.includes(account))
       }
     },
   },

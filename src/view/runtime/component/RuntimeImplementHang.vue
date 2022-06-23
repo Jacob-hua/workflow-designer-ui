@@ -23,6 +23,10 @@ export default {
   },
   computed: {
     hang() {
+      this.dataList.Hang = this.workflow.taskStatus.split(',').indexOf('hang') == '-1'
+      if (!this.dataList.Hang) {
+        this.functionCheck = 'Hang'
+      }
       return this.workflow.Hange
     },
   },

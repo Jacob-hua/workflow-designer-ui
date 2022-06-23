@@ -48,10 +48,7 @@ export default {
   computed: {
     ...mapState('account', ['userInfo']),
     circulate() {
-      if (!Array.isArray(this.workflow.trackList)) {
-        return []
-      }
-      return this.workflow.trackList.at(-1).circulationList
+      return this.workflow.curTrack?.circulationList ?? []
     },
   },
   methods: {
