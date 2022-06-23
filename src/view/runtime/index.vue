@@ -67,7 +67,7 @@
       <div class="home-table-main">
         <el-table :data="newTasks">
           <el-table-column type="index" label="序号" align="center"> </el-table-column>
-          <el-table-column prop="processName" label="名称" align="center" show-overflow-tooltip="" />
+          <el-table-column prop="processDeployName" label="名称" align="center" show-overflow-tooltip="" />
           <el-table-column prop="displayEnergyType" label="部署类型" align="center" />
           <el-table-column prop="starter" label="发起人" align="center" />
           <el-table-column prop="startTime" label="发起时间" align="center" />
@@ -136,7 +136,7 @@
 import RuntimeAdd from './component/RuntimeAdd.vue'
 import runTimeImplement from './component/runTimeImplement.vue'
 import lookover from './component/lookover.vue'
-import { getTaskCountStatistic, getNewTaskList, postTaskCountStatistics } from '@/api/unit/api.js'
+import { getTaskCountStatistic, postTaskCountStatistics, getExecuteList } from '@/api/unit/api.js'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 import { currentOneMonthAgo } from '@/util/date'
@@ -289,7 +289,7 @@ export default {
         this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
         this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
         this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
-        this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.energyType
+        this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.processDeployType
         this.$refs.lookover.getListData(row.trackList)
         this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
       })
@@ -332,7 +332,7 @@ export default {
     },
     async fetchNewTasks() {
       try {
-        const { errorInfo, result } = await getNewTaskList({
+        const { errorInfo, result } = await getExecuteList({
           ...this.searchForm,
           ...this.pageInfo,
           taskFilter: this.searchForm.taskType,
@@ -347,7 +347,6 @@ export default {
         }
         const { dataList = [], count } = result
         this.newTasks = dataList
-          .map((task) => handleNewTaskId(task, this.userInfo.account))
           .map((task) => handleDisplay.call(this, task))
         this.pageInfo.total = +count
       } catch (error) {
@@ -357,23 +356,15 @@ export default {
       function handleDisplay(task) {
         const newTask = { ...task }
 
-        newTask.displayTrackList = newTask.trackList.map(({ taskName, status }) => ({
+        newTask.displayTrackList = newTask.progressBarList.map(({ taskName, taskStatus }) => ({
           taskName,
-          ...(this.taskStatusConfig[status] ?? { title: '多人执行', className: '' }),
+          ...(this.taskStatusConfig[taskStatus] ?? { title: '多人执行', className: '' }),
         }))
-
-        newTask.displayEnergyType = this.$getMappingName(newTask.energyType)
-
-        // 按照约定，trackList中最后一个节点是最新节点
-        const candidateUsers = newTask.trackList[newTask.trackList.length - 1]?.candidateUsers
-        const canExecuteUsers = candidateUsers?.reduce(
-          (canExecuteUsers, { candidateUsers, assignee }) => [...canExecuteUsers, ...candidateUsers, assignee],
-          []
-        )
-        newTask.canExecute = canExecuteUsers.includes(this.userInfo.account)
+        newTask.displayEnergyType = this.$getMappingName(newTask.processDeployType)
+        newTask.canExecute = task.taskUserSet.includes(this.userInfo.account)
         return newTask
       }
-
+      // TODO: 此函数会在详情中使用
       function handleNewTaskId(task, account) {
         const newTask = { ...task }
         if (
