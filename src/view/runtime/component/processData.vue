@@ -16,7 +16,7 @@
         type: String,
         default: ''
       },
-      taskId: {
+      taskKey: {
         type: String,
         default: ''
       },
@@ -59,7 +59,7 @@
         }) => {
           if (newSelection[0]) {
             window.bpmnInstances.elementRegistry.forEach((item) => {
-             if (item.id !== this.taskId) {
+             if (item.id !== this.taskKey) {
                window.bpmnInstances.modeling.setColor(item, {
                  'fill': '#ffffff'
                })
@@ -72,7 +72,7 @@
             //   console.log(item.taskKey, newSelection[0].id)
             //   return item.taskKey === newSelection[0].id
             // })[0]
-            this.$emit('selection', newSelection[0], newSelection[0].id)
+            this.$emit('selection', newSelection[0].id)
           }
         });
         this.createNewDiagram(this.BpmnContant)
@@ -90,7 +90,7 @@
             warnings.forEach(warn => console.warn(warn));
           }
           let oneSet = window.bpmnInstances.elementRegistry.filter((element) => {
-            return element.id === this.taskId
+            return element.id === this.taskKey
           })
           window.bpmnInstances.modeling.setColor(oneSet[0], {
             'fill': '#cccccc',

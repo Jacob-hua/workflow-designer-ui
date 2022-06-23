@@ -15,6 +15,8 @@
 <script>
 import runtimeConfirmation from './runtimeConfirmation.vue'
 import RuntimeRejectConfirmation from './RuntimeRejectConfirmation.vue'
+import { putRejectTask } from '@/api/unit/api.js'
+import { mapState } from 'vuex'
 
 export default {
   name: 'RuntimeImplementReject',
@@ -33,10 +35,12 @@ export default {
       rejectConfirmationVisible: false,
     }
   },
+  computed: {
+    ...mapState('account', ['userInfo', 'tenantId']),
+  },
   methods: {
     onConfirmation() {
-      this.rejectConfirmationVisible = true
-      // this.$refs.runtimeConfirmation.dialogVisible = true
+      this.$refs.runtimeConfirmation.dialogVisible = true
     },
     onConfirmationValidate() {
       this.$refs.runtimeConfirmation.dialogVisible = false
@@ -45,8 +49,27 @@ export default {
     onRejectConfirmationCancel() {
       this.rejectConfirmationVisible = false
     },
-    onRejectConfirmationSubmit() {
-      this.rejectConfirmationVisible = false
+    onRejectConfirmationSubmit(rejectData) {
+      if (!rejectData.taskKey) {
+        this.$message.error('请选择被驳回的节点')
+        return
+      }
+
+      putRejectTask({
+        message: rejectData.rejectReason,
+        processInstanceId: this.workflow.processInstanceId,
+        taskKey: rejectData.taskKey,
+        userId: this.userInfo.account,
+        currentTaskId: this.workflow.newTaskId,
+        processKey: this.workflow.processDeployKey,
+        currentTaskName: this.workflow.processDeployName,
+        currentTaskKey: this.workflow.taskKey,
+        createBy: this.userInfo.account,
+      }).then((res) => {
+        this.rejectConfirmationVisible = false
+        this.$message.success('驳回成功！')
+        this.$emit('rejectSuccess')
+      })
     },
   },
 }

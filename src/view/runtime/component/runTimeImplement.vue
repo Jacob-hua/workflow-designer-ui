@@ -38,7 +38,7 @@
                 <runtime-implement-hang :workflow="workflow" @completed="onAgencyCompleted" />
               </div>
               <div v-if="functionCheck === 'Reject'">
-                <runtime-implement-reject :workflow="workflow" @completed="onAgencyCompleted" />
+                <runtime-implement-reject :workflow="workflow" @completed="onAgencyCompleted" @rejectSuccess="onRejectSuccess" />
               </div>
               <div v-if="functionCheck === 'Termination'">
                 <div v-if="dataList.Termination.terminationBollon" class="HangStyle">
@@ -178,6 +178,9 @@ export default {
   methods: {
     onAgencyCompleted() {
       this.fetchExecuteDetail()
+    },
+    onRejectSuccess() {
+      this.$emit('taskSuccess')
     },
     onDialogClose() {
       this.formShow = false

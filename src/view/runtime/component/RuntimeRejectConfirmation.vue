@@ -1,13 +1,13 @@
 <template>
   <el-dialog title="驳回" :visible="visible" width="70%" @close="onCancel" append-to-body>
-    <bpmn-editor
-      :key="workflow.processInstanceId"
-      :pelatteVisible="false"
-      :headerVisible="false"
-      :linterToggle="false"
-      :xml="workflow.processDeployResource"
-      :selectedChanged="onSelectedChanged"
-    />
+     <processData
+        ref="processData"
+        v-if="visible"
+        @selection="onSelectedChanged"
+        :BpmnContant="workflow.processDeployResource"
+        :taskKey="workflow.taskKey"
+        :processInstanceId="workflow.processInstanceId"
+      ></processData>
     <div>
       <div class="rejectWord">驳回原因（必填）</div>
       <div>
@@ -22,8 +22,13 @@
 </template>
 
 <script>
+import processData from './processData.vue'
+
 export default {
   name: 'RuntimeRejectConfirmation',
+  components: {
+    processData
+  },
   props: {
     visible: {
       type: Boolean,
@@ -45,16 +50,20 @@ export default {
       this.$emit('cancel')
     },
     onSubmit() {
-      this.$emit('sumit', {
+      this.$emit('submit', {
         rejectReason: this.rejectReason,
         taskKey: this.taskKey,
       })
     },
-    onSelectedChanged(shape) {
-      console.log(shape)
+    onSelectedChanged(taskKey) {
+      this.taskKey = taskKey
     },
   },
 }
 </script>
 
-<style></style>
+<style scoped>
+.rejectWord {
+  margin: 20px 0px;
+}
+</style>
