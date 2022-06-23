@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import processData from './processData.vue'
 import { postVerifyUser } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 
@@ -61,13 +60,10 @@ export default {
     },
     onSubmit() {
       postVerifyUser(this.form).then(({ errorInfo }) => {
-        this.$emit('validate', !!errorInfo.errorCode)
+        this.$emit('validate', !errorInfo.errorCode)
         this.$emit('update:visible', false)
       })
     },
-  },
-  components: {
-    processData,
   },
 }
 </script>

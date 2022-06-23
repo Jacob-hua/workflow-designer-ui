@@ -47,6 +47,7 @@ export default {
   },
   methods: {
     onCancel() {
+      this.$emit('update:visible', false)
       this.$emit('cancel')
     },
     onSubmit() {
@@ -54,6 +55,7 @@ export default {
         rejectReason: this.rejectReason,
         taskKey: this.taskKey,
       })
+      this.$emit('update:visible', false)
     },
     onSelectedChanged(taskKey) {
       this.taskKey = taskKey

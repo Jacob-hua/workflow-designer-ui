@@ -8,7 +8,7 @@
       <span style="color: #0066cc">当前流程正常运行，如需将流程挂起，请进行认证操作</span>
       <div class="confirm" @click="onConfirmation">挂起确认</div>
     </div>
-    <runtime-confirmation ref="runtimeConfirmation" @validate="onConfirmationValidate" />
+    <runtime-confirmation :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
   </div>
 </template>
 
@@ -27,6 +27,11 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return {
+      confirmationVisible: false,
+    }
+  },
   computed: {
     hang() {
       return this.workflow.curTrack.status.split(',').includes('hang')
@@ -34,7 +39,7 @@ export default {
   },
   methods: {
     onConfirmation() {
-      this.$refs.runtimeConfirmation.dialogVisible = true
+      this.confirmationVisible = true
     },
     onConfirmationValidate(validate) {
       if (!validate) {

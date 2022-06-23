@@ -2,11 +2,10 @@
   <div class="HangStyle">
     <span style="color: #0066cc">当前流程正常运行，如需将流程驳回，请进行认证操作</span>
     <div class="confirm" @click="onConfirmation">驳回验证</div>
-    <runtime-confirmation ref="runtimeConfirmation" @validate="onConfirmationValidate" />
+    <runtime-confirmation :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
     <runtime-reject-confirmation
-      :visible="rejectConfirmationVisible"
+      :visible.sync="rejectConfirmationVisible"
       :workflow="workflow"
-      @cancel="onRejectConfirmationCancel"
       @submit="onRejectConfirmationSubmit"
     />
   </div>
@@ -33,6 +32,7 @@ export default {
   data() {
     return {
       rejectConfirmationVisible: false,
+      confirmationVisible: false,
     }
   },
   computed: {
@@ -40,14 +40,10 @@ export default {
   },
   methods: {
     onConfirmation() {
-      this.$refs.runtimeConfirmation.dialogVisible = true
+      this.confirmationVisible = true
     },
     onConfirmationValidate() {
-      this.$refs.runtimeConfirmation.dialogVisible = false
       this.rejectConfirmationVisible = true
-    },
-    onRejectConfirmationCancel() {
-      this.rejectConfirmationVisible = false
     },
     onRejectConfirmationSubmit(rejectData) {
       if (!rejectData.taskKey) {
