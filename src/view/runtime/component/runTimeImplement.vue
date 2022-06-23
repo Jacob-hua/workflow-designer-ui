@@ -68,7 +68,7 @@
       </div>
       <span slot="footer" class="dialog-footer" style="text-align: center">
         <el-button @click="onCancel">取 消</el-button>
-        <el-button type="primary" @click="onExecute" :disabled="!dataList.Hang">执 行</el-button>
+        <el-button type="primary" @click="onExecute" :disabled="hang">执 行</el-button>
       </span>
     </el-dialog>
   </div>
@@ -114,8 +114,6 @@ export default {
       bpmnTypeloopChara: '',
       formContant: '',
       formShow: false,
-      peopleListDefatil: [],
-      taskId: '',
       roleBoolean: true,
       btnListKey: {
         Agency: 'Agency',
@@ -126,27 +124,13 @@ export default {
         Terminate: 'Termination',
       },
       btnList: [],
-      dataList: {
-        Agency: [],
-        Circulate: [],
-        Signature: [],
-        Hang: true,
-        Reject: {
-          rejectBollen: false,
-          data: '123',
-          name: '456',
-          rejectResult: '890',
-        },
-        Termination: {
-          terminationBollon: true,
-          data: '',
-          name: '',
-        },
-      },
     }
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
+    hang() {
+      return this.workflow.curTrack.status.split(',').includes('hang')
+    },
   },
   mounted() {
     this.fetchExecuteDetail()
@@ -186,12 +170,7 @@ export default {
     },
     onExecuteShape(value) {
       const actions = this.$iBpmn.getShapeInfoByType(value, 'actions').split(',') ?? []
-      if (this.dataList.Hang) {
-        // TODO: Hang = true 是非挂起状态
-        this.btnList = actions
-      } else {
-        this.btnList = ['Hang']
-      }
+      this.btnList = this.hang ? ['Hang'] : actions
       this.bpmnTypeloopChara =
         value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
       if (value) {
@@ -412,12 +391,6 @@ export default {
   border: 1px solid #108cee;
   border-radius: 5px;
   margin-left: 20px;
-}
-
-.peopleListDefatil {
-  margin-top: 15px;
-  display: flex;
-  color: #a599b1;
 }
 
 .peopleList-item-defail {
