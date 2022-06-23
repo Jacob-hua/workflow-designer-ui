@@ -149,12 +149,12 @@ export default {
         let relationArr = select.relation.split(',')
         if (select.relation) {
          let input = value.find(val =>{
-           relationArr.forEach(relation => {
-             if (relation === val.id) {
-               relationMap.set(relation,val.value)
-             }
-             return val
-           })
+             relationArr.forEach(relation => {
+               if (relation === val.id) {
+                 relationMap.set(relation,val.value)
+               }
+               return val
+             })
            })
           this.executeFunction({ api:this.currentDetail,relationMap: relationMap })
         }
@@ -188,19 +188,22 @@ export default {
         // 获取开闭所问题是不是
          this.currentDetail = res.result.filter(item => item.id === id)[0]
          this.variableArr = variableFactory(this.currentDetail)
+         this.addThirdPartyApi( { id: this.currentDetail.id } )
         if (this.variableArr) {
           this.variableOption = this.variableArr.map(variable =>(
               {
                 [variable] : variable
               }
           ))
+        }
+
           this.itemList.forEach(item => {
             if (item.id ===  this.props.id) {
               item.requestConfig = this.currentDetail
               item.relationMapping = this.variableOption
             }
           })
-        }
+
 
           // console.log(arr)
         // _this.executeFunction({api: this.currentDetail, relation: this.props.relation, value: ''}  )

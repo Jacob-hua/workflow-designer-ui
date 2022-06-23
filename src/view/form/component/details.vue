@@ -31,7 +31,7 @@
         </div>
         <div class="fromEdit">
 <!--          <formBpmnEdit v-if="dialogVisible2" ref="formbpmn" :key="formBpmnEditKey"></formBpmnEdit>-->
-          <preview :itemList="itemList"  :formConf="formConf" v-if="previewVisible"></preview>
+          <preview :itemList="itemList"  :formConf="formConf" v-if="dialogVisible2"></preview>
         </div>
       </div>
     </el-dialog>
@@ -105,6 +105,7 @@
         deep: true,
         immediate: true,
         handler(newValue, oldValue) {
+          debugger
           if (newValue.content) {
             let content = JSON.parse(newValue.content)
             let list = content.list

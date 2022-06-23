@@ -333,7 +333,7 @@
       },
       detailsDiolog(item) {
         let _this = this
-          this.$refs.detailsDiolog.dialogVisible2 = true
+
           postFormDesignRecordFormDesignRecordInfo({
             id: item.id,
             status: this.activeName,
@@ -342,9 +342,9 @@
             business: typeof this.projectValue === "string"? this.projectValue: this.projectValue.at(-1),
             createBy: this.userInfo.account
           }).then((res) => {
-            this.$refs.detailsDiolog.previewVisible = true
+            _this.$refs.detailsDiolog.dialogVisible2 = true
             // this.$nextTick(() => {
-            this.formData = res.result
+            _this.formData = res.result
             let arr = []
             res.result.versions.forEach((item,index) => {
               arr.push({

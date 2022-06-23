@@ -46,7 +46,7 @@ export let select = {
   //数据类型 static，dynamic
   dataType:'static',
   //默认渲染的数据
-  action:'https://www.fastmock.site/mock/51715c0157535b99010bde55f2df33c8/formDesigner/api/options',
+  action:'',
   //是否可以清空
   clearable:false,
   value: '',

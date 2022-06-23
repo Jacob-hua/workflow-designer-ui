@@ -73,8 +73,24 @@
       </el-radio-group>
     </el-form-item>
     <div v-show="props.dataType ==='dynamic'">
-      <el-form-item label="地址">
-        <el-input v-model="props.action"></el-input>
+<!--      <el-form-item label="地址">-->
+<!--        <el-input v-model="props.action"></el-input>-->
+<!--      </el-form-item>-->
+      <el-form-item label="第三方API">
+        <el-select v-model="interFace"
+                   clearable>
+          <el-option  v-for="({ name, id, source, sourceMark }, index) in interFaceOption"
+                      @click.native="onClickOption(id,source, sourceMark)"
+                      :key="index"
+                      :label="name"
+                      :value="id" />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="variableOption.length" label="关联">
+        <div v-for="(variable,index) in variableArr" :key="index">
+          <div>{{variable}}</div>
+          <el-input v-model="variableOption[index][variable]" ></el-input>
+        </div>
       </el-form-item>
       <el-form-item label="显示标识">
         <el-input v-model="props.props.props.label"></el-input>
@@ -104,6 +120,7 @@
                 :show-close="false"
                 :center="true"
                 top="20px"
+                append-to-body
     >
       <codemirror v-model="staticOptions" :options="codeMirror"/>
       <span slot="footer" class="dialog-footer">
@@ -122,6 +139,9 @@ import 'codemirror/lib/codemirror.css';
 // 引入主题后还需要在 options 中指定主题才会生效
 import 'codemirror/theme/dracula.css';
 import 'codemirror/mode/javascript/javascript'
+import {mapActions, mapMutations, mapState} from "vuex";
+import {apiDetail} from "@/api/globalConfig";
+import {variableFactory} from "@/mixin/formDepMonitor";
 const options = {
     tabSize: 2, // 缩进格式
     theme: 'dracula', // 主题，对应主题库 JS 需要提前引入
@@ -137,7 +157,7 @@ const options = {
  */
 export default {
   name:"cascaderConfig",
-  props:['props'],
+  props:['props', 'itemList'],
   components:{
     codemirror
   },
@@ -147,10 +167,52 @@ export default {
       staticDataVisible:false,
       codeMirror:options,
       staticOptions:'',
-      tempOptions:[]
+      tempOptions:[],
+      currentDetail: {},
+      variableOption: [],
+      variableArr: [],
+      interFace: ''
     }
   },
+  computed: {
+    ...mapState('account', ['tenantId', 'currentOrganization']),
+    ...mapState('form',['interFaceOption', 'dynamicOption'])
+  },
   methods:{
+    ...mapActions('form',['refreshApiList', 'executeFunction']),
+    ...mapMutations('form',['addThirdPartyApi']),
+    onClickOption(id,source, sourceMark) {
+      let _this = this
+      apiDetail({
+        source: source,
+        sourceMark: sourceMark,
+        tenantId: this.tenantId
+      }).then((res)=> {
+        // 获取开闭所问题是不是
+        this.currentDetail = res.result.filter(item => item.id === id)[0]
+        this.variableArr = variableFactory(this.currentDetail)
+        this.addThirdPartyApi( { id: this.currentDetail.id } )
+        if (this.variableArr) {
+          this.variableOption = this.variableArr.map(variable =>(
+              {
+                [variable] : variable
+              }
+          ))
+        }
+
+        this.itemList.forEach(item => {
+          if (item.id ===  this.props.id) {
+            item.requestConfig = this.currentDetail
+            item.relationMapping = this.variableOption
+          }
+        })
+
+
+        // console.log(arr)
+        // _this.executeFunction({api: this.currentDetail, relation: this.props.relation, value: ''}  )
+        // this.addThirdPartyApi( { id: this.currentDetail.id } )
+      })
+    },
     handlerChangeLabel(val){
       this.props.labelWidth = val?'80':'1'
     },
@@ -170,6 +232,7 @@ export default {
       }else{
         this.tempOptions = this.props.options;
         this.props.options = [];
+        this.refreshApiList()
       }
     },
     handlerSetAreaData(val){

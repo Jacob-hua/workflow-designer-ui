@@ -29,7 +29,7 @@
     <el-form-item label="显示标签">
       <el-switch v-model="props.showLabel" @change="handlerChangeLabel"></el-switch>
     </el-form-item>
-    <el-form-item label="请求地址">
+    <el-form-item v-show="false" label="请求地址">
       <el-input v-model="props.action"></el-input>
     </el-form-item>
     <el-form-item label="大小(MB)">
