@@ -7,7 +7,13 @@
       </div>
     </div>
     <span class="editButton" @click="onEditSignature()">编辑</span>
-    <runtime-people ref="runtimePeople" @submit="onRuntimePeopleSubmit" />
+    <runtime-people
+      ref="runtimePeople"
+      title="用户选择"
+      :visible.sync="runtimePeopleVisible"
+      :selected="runtimePeopleSelected"
+      @submit="onRuntimePeopleSubmit"
+    />
   </div>
 </template>
 
@@ -24,35 +30,32 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return {
+      runtimePeopleVisible: false,
+      runtimePeopleSelected: [],
+    }
+  },
   computed: {
     signature() {
       const assignees = this.workflow.curTrack?.assignee.split(',') ?? []
-      // TODO: userId 改为 account 更合适
       return assignees.reduce((signature, assignee) => [...signature, { userId: assignee }], [])
     },
   },
   methods: {
     onEditSignature() {
-      this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(this.signature))
-      this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(this.signature))
-      this.$refs.runtimePeople.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.runtimePeople.toggleRowSelection()
-      })
+      this.runtimePeopleSelected = this.signature
+      this.runtimePeopleVisible = true
     },
-    async onRuntimePeopleSubmit() {
-      let dataListsignature = []
-      this.$refs.runtimePeople.multipleSelection.forEach((item) => {
-        dataListsignature.push(item.userId)
-      })
+    async onRuntimePeopleSubmit({ selections }) {
+      const userList = selections.map(({ userId }) => userId)
       await postModifyProcessUser({
         processInstanceId: this.workflow.processInstanceId,
         taskKey: this.workflow.taskKey,
-        userList: dataListsignature,
+        userList,
       })
       this.$message.success('加减签成功')
       this.$emit('completed')
-      this.$refs.runtimePeople.dialogVisible = false
     },
   },
 }
@@ -73,7 +76,6 @@ export default {
   border-radius: 5px;
   margin-left: 20px;
 }
-
 
 .editButton {
   position: absolute;
