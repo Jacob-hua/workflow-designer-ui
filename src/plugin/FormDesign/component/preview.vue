@@ -137,7 +137,7 @@ export default {
           if(fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox' ){
               this.quoteOption = options
           } else if(fieldInfo.compType === 'cascader') { // 处理级联
-            this.quoteOption = options.result
+              this.quoteOption = options.result
           } else { // 处理选择列表
 
           }
