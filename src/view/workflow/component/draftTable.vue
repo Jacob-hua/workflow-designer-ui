@@ -122,7 +122,10 @@ export default {
           cancelButtonText: '取消',
           type: 'warning',
         })
-        const { errorInfo } = await deleteWorkflow(row.id)
+        const { errorInfo } = await deleteWorkflow({
+          id: row.id,
+          updateBy: this.userInfo.account
+        })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
           return

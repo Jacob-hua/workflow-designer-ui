@@ -30,5 +30,5 @@ export const publishWorkflow = (params) =>
     post('/design/processDesignService/realiseProcessData', params);
 
 // 删除 工作流
-export const deleteWorkflow = (id) =>
-    deletefn('/design/processDesignService/delete', {id:id});
+export const deleteWorkflow = (params) =>
+    deletefn('/design/processDesignService/delete', params);
