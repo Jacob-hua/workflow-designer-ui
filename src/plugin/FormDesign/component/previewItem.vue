@@ -3,7 +3,7 @@ import render from '../custom/previewRender'
 import checkRules from '../custom/rule';
 
 const layouts = {
-  colItem(h, element,value, quoteOption) {
+  colItem(h, element,value, quoteOption, getFileList) {
     let labelWidth = element.labelWidth ? `${element.labelWidth}px` : null
     const {valChange} = this.$listeners;
     const rules = checkRules(element);
@@ -14,7 +14,7 @@ const layouts = {
                         prop={element.id}
                         rules={rules}
                         >
-            <render key={element.id} conf={element} value={value} quoteOption={quoteOption} onInput={ event => {
+            <render key={element.id} conf={element} value={value} getFileList={getFileList} quoteOption={quoteOption} onInput={ event => {
               this.$set(element,'value',event);
               valChange(element.id,event);
             }}/>
@@ -29,7 +29,7 @@ export default {
   components: {
     render
   },
-  props: ['model','value', 'quoteOption'],
+  props: ['model','value', 'quoteOption', 'getFileList'],
   data(){
     return {
       eleConfig:this.model
@@ -37,7 +37,7 @@ export default {
   },
 
   render(h) {
-    return layouts.colItem.call(this, h, this.eleConfig,this.value, this.quoteOption)
+    return layouts.colItem.call(this, h, this.eleConfig,this.value, this.quoteOption, this.getFileList)
   }
 }
 </script>

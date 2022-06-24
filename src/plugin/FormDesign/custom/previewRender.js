@@ -9,6 +9,10 @@ function vModel(self, dataObject) {
   }
   //判断是否为上传组件
   if(self.conf.compType === 'upload'){
+    dataObject.attrs['auto-upload'] = false // 文件手动上传
+    dataObject.attrs['on-change'] = (file, fileList) => { // 文件变换 钩子
+      self.getFileList(file, fileList)
+    }
     dataObject.attrs['before-upload'] = file=>{
       //非限定后缀不允许上传
       const fileName = file.name;
@@ -62,6 +66,6 @@ export default {
     vModel(this, dataObject);
     return h(confClone.ele, dataObject, children)
   },
-  props: ['conf','value','quoteOption'],
+  props: ['conf','value','quoteOption','getFileList'],
   mixins:[remoteData]
 }
