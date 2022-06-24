@@ -32,6 +32,7 @@
               row-key="userId"
               style="width: 100%"
               @select="onSelectionChange"
+              @select-all="onSelectionAll"
             >
               <el-table-column type="selection" width="55" align="center" :reserve-selection="true"> </el-table-column>
               <el-table-column label="序号" type="index" align="center"> </el-table-column>
@@ -88,6 +89,10 @@ export default {
       type: String,
       default: '标题',
     },
+    isRadio: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -134,8 +139,17 @@ export default {
     onOpen() {
       this.fetchTreeData()
     },
+    onSelectionAll() {
+      if (this.isRadio) {
+        this.multipleSelection = []
+      }
+    },
     onSelectionChange(_, row) {
       const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
+      if (this.isRadio) {
+        this.multipleSelection = targetIndex !== -1 ? [] : [row]
+        return
+      }
       if (targetIndex === -1) {
         this.multipleSelection.push(row)
       } else {
