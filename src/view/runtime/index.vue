@@ -120,22 +120,27 @@
       @close="onRuntimeAddClose"
       @succseeAdd="onAddSuccess"
     ></runtime-add>
-    <runTimeImplement
+    <runtime-implement
       v-if="runtimeImplementVisible"
       :visible="runtimeImplementVisible"
       :processInstanceId="workflow.processInstanceId"
       @close="onRuntimeImplementClose"
-      @goSee="onDetail"
       @taskSuccess="onTaskSuccess"
-    ></runTimeImplement>
-    <lookover ref="lookover"></lookover>
+    ></runtime-implement>
+    <lookover
+      v-if="lookoverVisible"
+      ref="lookover"
+      :visible="lookoverVisible"
+      :processInstanceId="workflow.processInstanceId"
+      @close="onLookoverClose"
+    ></lookover>
   </div>
 </template>
 
 <script>
 import RuntimeAdd from './component/RuntimeAdd.vue'
-import runTimeImplement from './component/runTimeImplement.vue'
-import lookover from './component/lookover.vue'
+import RuntimeImplement from './component/runTimeImplement.vue'
+import Lookover from './component/lookover.vue'
 import { getTaskCountStatistic, postTaskCountStatistics, getExecuteList } from '@/api/unit/api.js'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
@@ -145,14 +150,15 @@ export default {
   name: 'Runtime',
   components: {
     RuntimeAdd,
-    runTimeImplement,
-    lookover,
+    RuntimeImplement,
+    Lookover,
   },
   data() {
     const { start, end } = currentOneMonthAgo('YYYY-MM-DD HH:mm:ss')
     return {
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
+      lookoverVisible: false,
       newTasks: [],
       searchForm: {
         ascription: '',
@@ -267,7 +273,11 @@ export default {
     },
     onDetail(row) {
       this.workflow = { ...row }
-      this.detailsDiolog(row)
+      this.lookoverVisible = true
+      // this.detailsDiolog(row)
+    },
+    onLookoverClose() {
+      this.lookoverVisible = false
     },
     onPageSizeChange() {
       this.fetchNewTasks()
@@ -346,8 +356,7 @@ export default {
           return
         }
         const { dataList = [], count } = result
-        this.newTasks = dataList
-          .map((task) => handleDisplay.call(this, task))
+        this.newTasks = dataList.map((task) => handleDisplay.call(this, task))
         this.pageInfo.total = +count
       } catch (error) {
         this.newTasks = []

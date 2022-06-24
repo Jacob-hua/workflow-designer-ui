@@ -22,7 +22,12 @@
         </div>
       </div>
     </div>
-    <runtime-people ref="runtimePeople" @submit="onRuntimePeopleSubmit" />
+    <runtime-people
+      title="选择传阅人"
+      :visible.sync="runtimePeopleVisible"
+      :selected="runtimePeopleSelected"
+      @submit="onRuntimePeopleSubmit"
+    />
   </div>
 </template>
 
@@ -43,6 +48,8 @@ export default {
   data() {
     return {
       editTaskId: '',
+      runtimePeopleVisible: false,
+      runtimePeopleSelected: [],
     }
   },
   computed: {
@@ -54,23 +61,18 @@ export default {
   methods: {
     onAddCirculate(taskId) {
       this.editTaskId = taskId
-      this.$refs.runtimePeople.dialogVisible = true
+      this.runtimePeopleVisible = true
     },
     onEditCirculate(taskId, circulations) {
       this.editTaskId = taskId
-      this.$refs.runtimePeople.detailSelection = circulations[0].unitList.map((userName) => {
-        return {
-          userId: userName,
-        }
-      })
-      this.$refs.runtimePeople.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.runtimePeople.toggleRowSelection()
-      })
+      this.runtimePeopleSelected = circulations[0].unitList.map((userName) => ({
+        userId: userName,
+      }))
+      this.runtimePeopleVisible = true
     },
-    async onRuntimePeopleSubmit({ dataList, deleteList }) {
-      if (deleteList.length) {
-        let strDelete = deleteList.join(',')
+    async onRuntimePeopleSubmit({ addeds, removeds }) {
+      if (removeds.length) {
+        let strDelete = removeds.map(({ userId }) => userId).join(',')
         await getCirculation({
           unitList: strDelete,
           operateType: 'delete',
@@ -80,8 +82,8 @@ export default {
           processInstanceId: this.workflow.processInstanceId,
         })
       }
-      if (dataList.length) {
-        let strData = dataList.join(',')
+      if (addeds.length) {
+        let strData = addeds.map(({ userId }) => userId).join(',')
         await getCirculation({
           unitList: strData,
           operateType: 'add',
@@ -93,7 +95,6 @@ export default {
       }
       this.$message.success('传阅成功')
       this.$emit('completed')
-      this.$refs.runtimePeople.dialogVisible = false
     },
   },
 }

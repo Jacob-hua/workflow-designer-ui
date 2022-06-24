@@ -1,69 +1,51 @@
 <template>
-  <el-dialog title="查看流程信息" :visible.sync="dialogVisible" width="70%" :before-close="handleClose">
+  <el-dialog title="查看流程信息" :visible="visible" width="70%" @close="onClose">
     <div>
-      <ProcessInformation ref="ProcessInformation" :processTaskList="listData" v-if="dialogVisible" seeType="runTime"></ProcessInformation>
+      <ProcessInformation
+        v-if="workflow.trackList"
+        ref="ProcessInformation"
+        :processInfo="workflow"
+        seeType="runTime"
+      ></ProcessInformation>
     </div>
-    <div style="position: relative;">
-      <!-- <span style="position: absolute;right: 10px;color: #0055ff;cursor: pointer;" @click="goReject">执行</span> -->
-      <div style="margin: 20px 0px 10px 0px;font-weight: 700;">工作流执行详情</div>
+    <div style="position: relative">
+      <div style="margin: 20px 0px 10px 0px; font-weight: 700">工作流执行详情</div>
       <div class="processDetail">
         <div class="block">
           <el-timeline>
-            <el-timeline-item :timestamp="item.taskName" placement="top" v-for="(item, index) in listData" :key="index">
+            <el-timeline-item
+              :timestamp="taskName"
+              placement="top"
+              v-for="({ taskName, formDataList, endTime, status, commentList }, index) in trackList"
+              :key="index"
+            >
               <div class="contant">
-                <div v-for="(item1, index1) in item.formDataList">
-                 <div v-if="item1.formData && JSON.parse(item1.formData).list" class="form">
-                   <!-- <div v-for="(item2, index2) in JSON.parse(item1.formData).list">
-                      <span>{{ item2.label }}</span>
-                      <span style="margin-left: 20px;">{{ item2.value }}</span>
-                    </div> -->
-                    <preview :itemList="formListFun(item1.formData)"  :formConf="configFun(item1.formData)"></preview>
-                 </div>
-                 <div v-if="item1.formData && JSON.parse(item1.formData).component">
-                   <div v-for="(item2, index2) in JSON.parse(item1.formData).component">
-                      <span>{{ item2.label }}</span>
-                      <span style="margin-left: 20px;">{{ item2.value }}</span>
-                    </div>
-                 </div>
-                 <div v-if="item1.status === 'completed'">
-                    <i class="el-icon-check" :class="item.endTime === '-' ? 'error' : 'success'"></i>
-                    <span class="word1">{{ item1.assignee }} <span>(执行)</span></span>
-                    <span class="dataYear">{{ item.endTime }}</span>
+                <div
+                  v-for="({ formData, status: formStatus, assignee: formAssignee }, index1) in formDataList"
+                  :key="index1"
+                >
+                  <div v-if="formData" class="form">
+                    <preview :itemList="formListFun(formData)" :formConf="configFun(formData)"></preview>
                   </div>
-                 <div v-if="item.status === 'rejected'">
-                    <div v-for="(item1, index1) in item.commentList">
-                      <div v-for="(item2, index2) in item1.comments">
+                  <div v-if="formStatus === 'completed'">
+                    <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
+                    <span class="word1">{{ formAssignee }} <span>(执行)</span></span>
+                    <span class="dataYear">{{ endTime }}</span>
+                  </div>
+                  <div v-if="status === 'rejected'">
+                    <div v-for="({ comments, assignee: commentAssignee }, index1) in commentList" :key="index1">
+                      <div v-for="({ message }, index2) in comments" :key="index2">
                         <i class="el-icon-warning-outline success"></i>
-                        <span class="word1">{{ item2.message }}</span>
+                        <span class="word1">{{ message }}</span>
                       </div>
                       <div>
-                        <i class="el-icon-check" :class="item.endTime === '-' ? 'error' : 'success'"></i>
-                        <span class="word1">{{ item1.assignee }} <span style="color: red;">(驳回)</span> </span>
-                        <span class="dataYear">{{ item.endTime }}</span>
+                        <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
+                        <span class="word1">{{ commentAssignee }} <span style="color: red">(驳回)</span> </span>
+                        <span class="dataYear">{{ endTime }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <!-- <div v-for="(item, index) in JSON.parse(item.formData)">
-                  <span>{{ item.label }}</span>
-                  <span style="margin-left: 20px;">{{ item.value }}</span>
-                </div> -->
-                <!-- <div v-if="item.status === 'completed'">
-                  <i class="el-icon-check" :class="item.time === '-' ? 'error' : 'success'"></i>
-                  <span class="word1">{{ item.assignee }} <span>(执行)</span></span>
-                  <span class="dataYear">{{ item.time }}</span>
-                </div> -->
-                <!-- <div v-if="item.status === 'deleted'">
-                  <div>
-                    <i class="el-icon-warning-outline success"></i>
-                    <span class="word1">{{ item.commentList[0] }}</span>
-                  </div>
-                  <div>
-                    <i class="el-icon-check" :class="item.time === '-' ? 'error' : 'success'"></i>
-                    <span class="word1">{{ item.assignee }} <span style="color: red;">(驳回)</span> </span>
-                    <span class="dataYear">{{ item.time }}</span>
-                  </div>
-                </div> -->
               </div>
             </el-timeline-item>
           </el-timeline>
@@ -74,133 +56,146 @@
 </template>
 
 <script>
-  import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
-  import preview from "@/plugin/FormDesign/component/preview";
-  import {
-    getTaskTrackList
-  } from '@/api/unit/api.js'
-  export default {
-    data() {
-      return {
-        dialogVisible: false,
-        listData: []
-      }
+import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
+import preview from '@/plugin/FormDesign/component/preview'
+import { getExecuteDetail } from '@/api/unit/api.js'
+import { mapState } from 'vuex'
+
+export default {
+  components: {
+    ProcessInformation,
+    preview,
+  },
+  props: {
+    visible: {
+      type: Boolean,
+      default: false,
     },
-    methods: {
-      handleClose() {
-        this.dialogVisible = false
-      },
-      goReject() {
-        this.$emit('goReject', this.$refs.ProcessInformation.postData)
-      },
-      getListData(result) {
-        this.listData = JSON.parse(JSON.stringify(result))
-        this.listData.forEach((item, index) => {
-          item.status.split(',').forEach((item1, index1) => {
-            item.formDataList[index1].status = item1
-          })
-        })
-        
-      },
-      formListFun(item) {
-        let content = JSON.parse(item)
-          let list = content.list
-          for (const formItem of list) {
-            if (formItem.columns && formItem.columns.length) {
-              for (const formItemElement of formItem.columns) {
-                for (const formItemElementElement of formItemElement.list) {
-                  formItemElementElement.disabled = true
-                }
-              }
-            } else {
-              if ( Object.keys(formItem).includes('disabled')) {
-                formItem.disabled  =  true
-              } else  {}
+    processInstanceId: {
+      type: String,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      workflow: {},
+    }
+  },
+  computed: {
+    ...mapState('account', ['tenantId', 'userInfo']),
+    trackList() {
+      return this.workflow.trackList ?? []
+    },
+  },
+  mounted() {
+    this.fetchExecuteDetail()
+  },
+  methods: {
+    onClose() {
+      this.$emit('close')
+    },
+    formListFun(item) {
+      let content = JSON.parse(item)
+      let list = content.list
+      for (const formItem of list) {
+        if (formItem.columns && formItem.columns.length) {
+          for (const formItemElement of formItem.columns) {
+            for (const formItemElementElement of formItemElement.list) {
+              formItemElementElement.disabled = true
             }
           }
-        return list
-      },
-      configFun(item) {
-        return JSON.parse(item).config
-      },
-      // getListData(id) {
-      //   return getTaskTrackList({
-      //     processInstanceId: id
-      //   }).then((res) => {
-      //     this.listData = res.result
-      //   })
-      // }
+        } else {
+          if (Object.keys(formItem).includes('disabled')) {
+            formItem.disabled = true
+          } else {
+          }
+        }
+      }
+      return list
     },
-    components: {
-      ProcessInformation,
-      preview
-    }
-  }
+    configFun(item) {
+      return JSON.parse(item).config
+    },
+    async fetchExecuteDetail() {
+      try {
+        const { errorInfo, result } = await getExecuteDetail({
+          processInstanceId: this.processInstanceId,
+          assignee: this.userInfo.account,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.workflow = { ...result }
+      } catch (error) {}
+    },
+  },
+}
 </script>
 
 <style scoped="scoped">
-  .processDetail {
-    border: 1px solid #000000;
-    height: 300px;
-    overflow: auto;
-    padding: 10px 10px;
-  }
+.processDetail {
+  border: 1px solid #000000;
+  height: 300px;
+  overflow: auto;
+  padding: 10px 10px;
+}
 
-  /deep/ .el-dialog__body {
-    max-height: 97vh;
-  }
+::v-deep .el-dialog__body {
+  max-height: 97vh;
+}
 
-  /deep/ .el-timeline-item__tail {
-    border-left: 2px solid #7fbcff;
-  }
+::v-deep .el-timeline-item__tail {
+  border-left: 2px solid #7fbcff;
+}
 
-  /deep/ .el-timeline-item__node {
-    background-color: #7fbcff;
-  }
+::v-deep .el-timeline-item__node {
+  background-color: #7fbcff;
+}
 
-  .contant {
-    background-color: #f2f2f2;
-    line-height: 54px;
-    padding: 0px 20px 0px 20px;
-    position: relative;
-  }
-  
-  .contant .form {
-    padding-top: 20px;
-  }
-  
-  .el-icon-check {
-    font-size: 20px;
-    margin-right: 20px;
-  }
+.contant {
+  background-color: #f2f2f2;
+  line-height: 54px;
+  padding: 0px 20px 0px 20px;
+  position: relative;
+}
 
-  .el-icon-warning-outline {
-    font-size: 20px;
-    margin-right: 20px;
-  }
+.contant .form {
+  padding-top: 20px;
+}
 
-  .success {
-    background-color: #009900;
-    color: white;
-    border-radius: 50%;
-    /* border: 1px solid #009900; */
-    border: none;
-  }
+.el-icon-check {
+  font-size: 20px;
+  margin-right: 20px;
+}
 
-  .error {
-    background-color: #999999;
-    color: white;
-    border-radius: 50%;
-    border: none;
-  }
+.el-icon-warning-outline {
+  font-size: 20px;
+  margin-right: 20px;
+}
 
-  .dataYear {
-    position: absolute;
-    right: 20px;
-  }
+.success {
+  background-color: #009900;
+  color: white;
+  border-radius: 50%;
+  /* border: 1px solid #009900; */
+  border: none;
+}
 
-  .dataMin {
-    position: absolute;
-    right: 20px;
-  }
+.error {
+  background-color: #999999;
+  color: white;
+  border-radius: 50%;
+  border: none;
+}
+
+.dataYear {
+  position: absolute;
+  right: 20px;
+}
+
+.dataMin {
+  position: absolute;
+  right: 20px;
+}
 </style>

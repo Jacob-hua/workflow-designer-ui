@@ -1,12 +1,5 @@
 <template>
-  <el-dialog
-    :title="titlePeople()"
-    :visible.sync="dialogVisible"
-    width="70%"
-    :before-close="handleClose"
-    @open="open()"
-    append-to-body
-  >
+  <el-dialog :title="title" :visible="visible" :before-close="onCancel" @open="onOpen" width="70%" append-to-body>
     <div class="people">
       <div>
         <span>组织结构</span>
@@ -14,10 +7,10 @@
       <div class="people-main">
         <div class="people-main-left">
           <el-tree
-            :data="data"
+            :data="treeData"
             node-key="groupId"
             :current-node-key="currentKey"
-            @current-change="changeCurrentKey"
+            @current-change="onTreeSelectedChange"
             :highlight-current="true"
             :props="{ label: 'groupName', children: 'children' }"
           ></el-tree>
@@ -25,7 +18,7 @@
         <div class="people-main-right">
           <div class="people-main-right-search">
             <el-input
-              v-model="input"
+              v-model="userName"
               placeholder="请输入姓名搜索人员"
               prefix-icon="el-icon-search"
               @keyup.enter.native="getPeopleList"
@@ -38,7 +31,8 @@
               tooltip-effect="dark"
               row-key="userId"
               style="width: 100%"
-              @selection-change="handleSelectionChange"
+              @select="onSelectionChange"
+              @select-all="onSelectionAll"
             >
               <el-table-column type="selection" width="55" align="center" :reserve-selection="true"> </el-table-column>
               <el-table-column label="序号" type="index" align="center"> </el-table-column>
@@ -49,7 +43,7 @@
           </div>
           <div class="people-main-right-page">
             <el-pagination
-              @current-change="getPeopleList()"
+              @current-change="fetchPeopleList"
               :current-page.sync="getData.page"
               :page-size="getData.limit"
               layout="prev, pager, next, jumper"
@@ -65,157 +59,162 @@
       <div class="people-footer">
         <div class="peopleList">
           <div class="peopleList-item" v-for="(item, index) in multipleSelection" :key="index">
-            {{ item.userId }} <i class="el-icon-remove-outline" @click="deletePeople(item, index)"></i>
+            {{ item.userId }} <i class="el-icon-remove-outline" @click="onDeletePeople(index)"></i>
           </div>
         </div>
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button
-        @click="
-          dialogVisible = false
-          $refs.multipleTable.clearSelection()
-        "
-      >
-        取 消
-      </el-button>
-      <el-button type="primary" @click="onSubmit()">确 定</el-button>
+      <el-button @click="onCancel"> 取 消 </el-button>
+      <el-button type="primary" @click="onSubmit">确 定</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-import {
-  getPersonUser,
-  getThreeSystemOrganize,
-} from '@/api/unit/api.js'
+import { getPersonUser, getThreeSystemOrganize } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
+
 export default {
   props: {
-    taskId: {
-      type: String,
-      default: '',
+    visible: {
+      type: Boolean,
+      default: false,
     },
-    processInstanceId: {
-      type: String,
-      default: '',
+    selected: {
+      type: Array,
+      default: () => [],
     },
-    taskKey: {
+    title: {
       type: String,
-      default: '',
+      default: '标题',
+    },
+    isRadio: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
     return {
-      dialogVisible: false,
-      input: '',
-      activeName: '',
-      detailSelection: [],
+      userName: '',
       multipleSelection: [],
       currentKey: '',
       getData: {
         groupId: '',
         name: '',
         tenantId: this.tenantId,
-        userId: '',
         limit: 5,
         page: 1,
         total: 1,
       },
       tableData: [],
-      data: [],
-      peopleTitle: {
-        Agency: '指定代办',
-        Circulate: '指定传阅',
-        Signature: '指定加减签',
-      },
+      treeData: [],
     }
   },
   computed: {
-    ...mapState('account', ['userInfo', 'tenantId']),
+    ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
+  },
+  watch: {
+    selected(selected) {
+      this.multipleSelection = JSON.parse(JSON.stringify(selected))
+    },
+    tableData(tableData) {
+      tableData.forEach((row) => {
+        const targetIndex = this.multipleSelection.findIndex(({ userId }) => userId === row.userId)
+        if (targetIndex !== -1) {
+          this.multipleSelection.splice(targetIndex, 1, row)
+        }
+      })
+    },
+    multipleSelection(multipleSelection) {
+      this.$nextTick(() => {
+        this.$refs.multipleTable.clearSelection()
+        multipleSelection.forEach((item) => {
+          this.$refs.multipleTable.toggleRowSelection(item, true)
+        })
+      })
+    },
   },
   methods: {
-    handleClick() {},
-    titlePeople() {
-      return this.peopleTitle[this.$parent.functionCheck]
+    onOpen() {
+      this.fetchTreeData()
     },
-    open() {
-      this.getTreeData()
+    onSelectionAll() {
+      if (this.isRadio) {
+        this.multipleSelection = []
+      }
     },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
+    onSelectionChange(_, row) {
+      const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
+      if (this.isRadio) {
+        this.multipleSelection = targetIndex !== -1 ? [] : [row]
+        return
+      }
+      if (targetIndex === -1) {
+        this.multipleSelection.push(row)
+      } else {
+        this.multipleSelection.splice(targetIndex, 1)
+      }
     },
-    toggleRowSelection() {
-      // TODO: 此处同步选中值到表格存在问题
-      this.detailSelection.forEach((item) => {
-        this.$refs.multipleTable.toggleRowSelection(item)
-      })
-    },
-    handleSizeChange() {},
-    handleClose() {
+    onCancel() {
       this.dialogVisible = false
+      this.$emit('update:visible', false)
     },
-    changeCurrentKey(key) {
+    onTreeSelectedChange(key) {
       this.currentKey = key.groupId
-      this.getPeopleList()
+      this.fetchPeopleList()
     },
-    getPeopleList() {
-      this.getData.groupId = this.currentKey
-      this.getData.name = this.input
-      getPersonUser(this.getData).then((res) => {
-        this.tableData = res.result.list
-        this.getData.total = res.result.total * 1
-      })
-    },
-
-    getTreeData() {
-      getThreeSystemOrganize({
-        projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
-      }).then((res) => {
-        this.data = res.result
-        this.currentKey = res.result[0].groupId
-        this.getPeopleList()
-      })
-    },
-    deletePeople(item, index) {
-      this.$refs.multipleTable.toggleRowSelection(item)
+    onDeletePeople(index) {
+      this.multipleSelection.splice(index, 1)
     },
     onSubmit() {
-      let dataList = []
-      let deleteList = []
-      this.detailSelection.forEach((item1) => {
-        let BoolType = true
-        this.multipleSelection.forEach((item2) => {
-          if (item1.userId === item2.userId) {
-            BoolType = false
-          }
-        })
-        if (BoolType) {
-          deleteList.push(item1.userId)
+      const removeds = this.selected.reduce((removeds, item) => {
+        if (!this.multipleSelection.find(({ userId }) => userId === item.userId)) {
+          removeds.push({ ...item })
         }
-      })
-      this.multipleSelection.forEach((item1) => {
-        let BoolType = true
-        this.detailSelection.forEach((item2) => {
-          if (item1.userId === item2.userId) {
-            BoolType = false
-          }
-        })
-        if (BoolType) {
-          dataList.push(item1.userId)
+        return removeds
+      }, [])
+      const addeds = this.multipleSelection.reduce((addeds, item) => {
+        if (!this.selected.find(({ userId }) => userId === item.userId)) {
+          addeds.push({ ...item })
         }
-      })
-
-      this.$emit('submit', { dataList, deleteList, multipleSelection :this.multipleSelection })
+        return addeds
+      }, [])
+      this.$emit('submit', { removeds, addeds, selections: this.multipleSelection })
+      this.$emit('update:visible', false)
+    },
+    async fetchPeopleList() {
+      try {
+        const { errorInfo, result } = await getPersonUser({
+          ...this.getData,
+          groupId: this.currentKey,
+          name: this.userName,
+        })
+        if (errorInfo.errorCode) {
+          return
+        }
+        this.tableData = result.list
+        this.getData.total = result.total * 1
+      } catch (error) {}
+    },
+    async fetchTreeData() {
+      try {
+        const { errorInfo, result = [] } = await getThreeSystemOrganize({
+          projectCode: this.currentOrganization,
+        })
+        if (errorInfo.errorCode) {
+          return
+        }
+        this.treeData = result
+        this.currentKey = result[0]?.groupId
+        this.fetchPeopleList()
+      } catch (error) {}
     },
   },
 }
 </script>
 
 <style scoped="scoped">
-.people {
-}
-
 .people-main {
   display: flex;
 }

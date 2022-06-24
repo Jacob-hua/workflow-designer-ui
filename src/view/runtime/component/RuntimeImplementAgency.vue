@@ -26,7 +26,12 @@
         </div>
       </div>
     </div>
-    <runtime-people ref="runtimePeople" @submit="onRuntimePeopleSubmit" />
+    <runtime-people
+      title="选择代办人"
+      :visible.sync="runtimePeopleVisible"
+      :selected="runtimePeopleSelected"
+      @submit="onRuntimePeopleSubmit"
+    />
   </div>
 </template>
 
@@ -49,6 +54,8 @@ export default {
   data() {
     return {
       editTaskId: '',
+      runtimePeopleVisible: false,
+      runtimePeopleSelected: [],
     }
   },
   computed: {
@@ -60,31 +67,26 @@ export default {
   methods: {
     onAddAgency(taskId) {
       this.editTaskId = taskId
-      this.$refs.runtimePeople.dialogVisible = true
+      this.runtimePeopleVisible = true
     },
     onEditAgency(taskId, candidateUsers) {
       this.editTaskId = taskId
-      this.$refs.runtimePeople.detailSelection = candidateUsers.map((userName) => {
-        return {
-          userId: userName,
-        }
-      })
-      this.$refs.runtimePeople.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.runtimePeople.toggleRowSelection()
-      })
+      this.runtimePeopleSelected = candidateUsers.map((userName) => ({
+        userId: userName,
+      }))
+      this.runtimePeopleVisible = true
     },
-    async onRuntimePeopleSubmit({ dataList, deleteList }) {
-      if (deleteList.length) {
-        let strDelete = deleteList.join(',')
+    async onRuntimePeopleSubmit({ addeds, removeds }) {
+      if (removeds.length) {
+        let strDelete = removeds.map(({ userId }) => userId).join(',')
         await getModifyCandidate({
           dataList: strDelete,
           operateType: 'user:delete',
           taskId: this.editTaskId,
         })
       }
-      if (dataList.length) {
-        let strData = dataList.join(',')
+      if (addeds.length) {
+        let strData = addeds.map(({ userId }) => userId).join(',')
         await getModifyCandidate({
           dataList: strData,
           operateType: 'user:add',
@@ -93,7 +95,6 @@ export default {
       }
       this.$message.success('代办成功')
       this.$emit('completed')
-      this.$refs.runtimePeople.dialogVisible = false
     },
   },
 }

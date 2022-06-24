@@ -5,7 +5,6 @@
         <div class="Implement-left">
           <ProcessInformation
             v-if="workflow.trackList"
-            ref="ProcessInformation"
             :processInfo="workflow"
             @executeShape="onExecuteShape"
             seeType="runTime"
@@ -172,7 +171,7 @@ export default {
       if (this.hang) {
         temps.push(this.actionsConfig['Hang'])
       }
-      const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions').split(',') ?? []
+      const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
       return actions.map((action) => this.actionsConfig[action]).concat(temps)
     },
   },
@@ -212,9 +211,6 @@ export default {
       } else {
         this.roleBoolean = true
       }
-    },
-    goSee() {
-      this.$emit('goSee', this.$refs.ProcessInformation.postData)
     },
     onExecuteShape(value) {
       this.curExecuteShape = value
@@ -344,11 +340,11 @@ export default {
         if (!workflow.curTrack) {
           return
         }
-        return workflow.curTrack.assignee.split(',').includes(account)
+        return workflow.curTrack.assignee?.split(',').includes(account)
       }
 
       function getTaskIdBy(workflow, account) {
-        return workflow.curTrack.taskId.split(',')[workflow.curTrack.assignee.split(',').indexOf(account)]
+        return workflow.curTrack.taskId.split(',')[workflow.curTrack.assignee?.split(',').indexOf(account)]
       }
 
       function candidateUsersInclude(workflow, account) {

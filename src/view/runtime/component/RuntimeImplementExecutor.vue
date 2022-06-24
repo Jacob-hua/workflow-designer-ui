@@ -10,7 +10,13 @@
       </div>
       <span class="addCirculate" @click="onEditExecutor"> 编辑 </span>
     </div>
-    <runtime-people ref="runtimePeople" @submit="onRuntimePeopleSubmit" />
+    <runtime-people
+      ref="runtimePeople"
+      :visible.sync="runtimePeopleVisible"
+      :selected="runtimePeopleSelected"
+      @submit="onRuntimePeopleSubmit"
+      :isRadio="true"
+    />
   </div>
 </template>
 
@@ -26,25 +32,27 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return {
+      runtimePeopleVisible: false,
+      runtimePeopleSelected: []
+    }
+  },
   computed: {
     executors() {
       return this.workflow?.executors ?? []
-    }
+    },
   },
   methods: {
     onConfirmation() {
-      this.$refs.runtimePeople.dialogVisible = true
+      this.runtimePeopleVisible = true
     },
     onEditExecutor() {
-      this.$refs.runtimePeople.dialogVisible = true
-      this.$refs.runtimePeople.detailSelection = this.executors
-      this.$nextTick(() => {
-        this.$refs.runtimePeople.toggleRowSelection()
-      })
+      this.runtimePeopleVisible = true
+      this.runtimePeopleSelected = this.executors
     },
-    onRuntimePeopleSubmit({ multipleSelection }) {
-      this.$emit('selectExecutor', multipleSelection)
-      this.$refs.runtimePeople.dialogVisible = false
+    onRuntimePeopleSubmit({ selections }) {
+      this.$emit('selectExecutor', selections)
     },
   },
 }
