@@ -105,7 +105,6 @@
         deep: true,
         immediate: true,
         handler(newValue, oldValue) {
-          debugger
           if (newValue.content) {
             let content = JSON.parse(newValue.content)
             let list = content.list

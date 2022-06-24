@@ -19,6 +19,7 @@
               :key="'row-'+index"
               :model="element"
               :quoteOption="quoteOption"
+              :getFileList="getFileList"
               >
               <el-col v-for="(column) in element.columns" :key="column.index" :span="column.span">
                 <template v-for="(col) in column.list">
@@ -29,6 +30,7 @@
                     v-model="form[col.id]"
                     @valChange="handlerValChange"
                     :quoteOption="quoteOption"
+                    :getFileList="getFileList"
                   />
 
                 </template>
@@ -40,11 +42,18 @@
                 :model="element"
                 v-model="form[element.id]"
                 :quoteOption="quoteOption"
+                :getFileList="getFileList"
                 @valChange="handlerValChange"
               />
             </el-col>
           </template>
         </el-form>
+          <el-divider></el-divider>
+          <div style="text-align: center;">
+            <span slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="handlerSubmit">提交</el-button>
+            </span>
+          </div>
     </el-row>
   </div>
 </template>
@@ -70,7 +79,9 @@ export default {
       form:{},
       rules:{},
       currentIndex:-1,
-      quoteOption: []
+      quoteOption: [],
+      fileList: [],
+      file:{}
     }
   },
   mixins: [
@@ -80,6 +91,10 @@ export default {
     }),
   ],
   methods:{
+    getFileList(file, fileList) {
+      this.fileList = fileList
+      this.file = file
+    },
     handlerValChange(key,origin){
       this.$set(this.form,key,origin);
     },
@@ -94,7 +109,11 @@ export default {
         try {
           this.$refs[this.formConf.formModel].validate((valid) => {
             if (valid) {
-              return JSON.parse(JSON.stringify(this.form))
+              let outPutFormData = JSON.parse(JSON.stringify(this.form))
+              if (this.fileList.length) { // 存在上传组件 并且有文件上传
+                outPutFormData['fileList'] = this.fileList
+              }
+              return  outPutFormData
             } else {
               this.$message.error('error submit');
               return false
