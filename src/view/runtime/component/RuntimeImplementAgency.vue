@@ -27,7 +27,6 @@
       </div>
     </div>
     <runtime-people
-      ref="runtimePeople"
       title="选择代办人"
       :visible.sync="runtimePeopleVisible"
       :selected="runtimePeopleSelected"
