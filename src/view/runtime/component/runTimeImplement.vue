@@ -5,7 +5,6 @@
         <div class="Implement-left">
           <ProcessInformation
             v-if="workflow.trackList"
-            ref="ProcessInformation"
             :processInfo="workflow"
             @executeShape="onExecuteShape"
             seeType="runTime"
@@ -212,9 +211,6 @@ export default {
       } else {
         this.roleBoolean = true
       }
-    },
-    goSee() {
-      this.$emit('goSee', this.$refs.ProcessInformation.postData)
     },
     onExecuteShape(value) {
       this.curExecuteShape = value
