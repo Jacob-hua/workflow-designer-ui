@@ -139,42 +139,42 @@ export default {
   },
   mounted() {
   },
-  watch: {
-    itemList: {
-      immediate: false,
-      deep: true,
-      handler(value) {
-        let relationMap = new Map()
-        let select = value.find(val => val.compType === 'select')
-        let relationArr = select.relation.split(',')
-        if (select.relation) {
-         let input = value.find(val =>{
-             relationArr.forEach(relation => {
-               if (relation === val.id) {
-                 relationMap.set(relation,val.value)
-               }
-               return val
-             })
-           })
-          this.executeFunction({ api:this.currentDetail,relationMap: relationMap })
-        }
-      },
-    },
-    dynamicOption: {
-      immediate: true,
-      handler(value) {
-        this.props.options = value
-      },
-    },
-    "props.relation": {
-      immediate: true,
-      handler(relation) {
-        if (relation) {
-          this.executeFunction(this.currentDetail, relation, '')
-        }
-      },
-    }
-  },
+  // watch: {
+  //   itemList: {
+  //     immediate: false,
+  //     deep: true,
+  //     handler(value) {
+  //       let relationMap = new Map()
+  //       let select = value.find(val => val.compType === 'select')
+  //       let relationArr = select.relation.split(',')
+  //       if (select.relation) {
+  //        let input = value.find(val =>{
+  //            relationArr.forEach(relation => {
+  //              if (relation === val.id) {
+  //                relationMap.set(relation,val.value)
+  //              }
+  //              return val
+  //            })
+  //          })
+  //         this.executeFunction({ api:this.currentDetail,relationMap: relationMap })
+  //       }
+  //     },
+  //   },
+  //   dynamicOption: {
+  //     immediate: true,
+  //     handler(value) {
+  //       this.props.options = value
+  //     },
+  //   },
+  //   "props.relation": {
+  //     immediate: true,
+  //     handler(relation) {
+  //       if (relation) {
+  //         this.executeFunction(this.currentDetail, relation, '')
+  //       }
+  //     },
+  //   }
+  // },
   methods:{
     ...mapActions('form',['refreshApiList', 'executeFunction']),
     ...mapMutations('form',['addThirdPartyApi']),
