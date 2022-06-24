@@ -12,7 +12,7 @@
                 trigger="click">
               <div  @click="lookBusiness(item.id)" v-role="{ id: 'BusinessCallLook', type: 'button', business: business }"><i style="margin-top: 10px; margin-right: 15px; font-size: 20px; color: #333333" class=" el-icon-s-order"></i>查看</div>
               <div  @click="editBusiness(item.id)" v-role="{ id: 'BusinessCallEdit', type: 'button', business: business }"><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class=" el-icon-edit-outline"></i>编辑</div>
-              <div @click ='deleteBusinessConfig(item.id)' v-role="{ id: 'BusinessCallDelete', type: 'button', business: business }" ><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete"></i>删除</div>
+              <div @click ='deleteBusinessConfig(row)' v-role="{ id: 'BusinessCallDelete', type: 'button', business: business }" ><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete"></i>删除</div>
               <el-button slot="reference">···</el-button>
             </el-popover>
           </div>
@@ -75,12 +75,17 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId'])
   },
   methods: {
-    deleteBusinessConfig(id) {
-      deleteBusinessConfig(id).then(res=> {
+    deleteBusinessConfig(row) {
+      deleteBusinessConfig({
+        id: parseInt(row.id),
+        projectCode: row.code,
+        tenantId: this.tenantId
+      }).then(res=> {
         this.$message({
           type: 'success',
           message: '删除成功'
         })
+        
         this.getBusinessConfigBasicList()
       })
     },

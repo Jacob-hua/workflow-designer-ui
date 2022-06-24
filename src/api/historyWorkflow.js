@@ -9,4 +9,4 @@ export const historyTaskList = (params) =>
 
 // 累计工作流
 export const postHistoryProcessCountStatistic = (params) =>
-    post('/history/historyProcessCountStatistic', params);
+    post('/execute/historyProcessCountStatistic', params);

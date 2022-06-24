@@ -59,8 +59,8 @@ export const postFormDesignRecordFormDesignRecordInfo = (params) =>
   post('/design/formDesignService/formDesignRecordInfo', params);
   
 // 删除表单
-export const deleteFormDesignService = (id) =>
-  deletefn('/design/formDesignService/delete', { id: id });
+export const deleteFormDesignService = (params) =>
+  deletefn('/design/formDesignService/delete', params);
   
 //查询所有表单
 export const designFormDesignServiceAll = (params) =>

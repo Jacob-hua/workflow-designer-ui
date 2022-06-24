@@ -193,7 +193,10 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteFormDesignService(this.value || this.formDatas.id ).then((res) => {
+          deleteFormDesignService({
+            id: this.value || this.formDatas.id,
+            updateBy: this.userInfo.account
+          }).then((res) => {
             this.$message({
               type: 'success',
               message: '删除成功!'
