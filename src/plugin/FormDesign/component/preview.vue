@@ -48,12 +48,6 @@
             </el-col>
           </template>
         </el-form>
-          <el-divider></el-divider>
-          <div style="text-align: center;">
-            <span slot="footer" class="dialog-footer">
-              <el-button type="primary" @click="handlerSubmit">提交</el-button>
-            </span>
-          </div>
     </el-row>
   </div>
 </template>
