@@ -187,7 +187,6 @@ export default {
   },
   watch:{
     value(newVal){
-      debugger
       if(newVal !==''){
         const formData = JSON.parse(newVal);
         this.designList= formData.list;

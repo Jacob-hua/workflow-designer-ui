@@ -109,6 +109,7 @@ export default {
         await getAllBusinessConfig({tenantId: this.tenantId})
       ]).then(res => {
         this.tableData = res[0].result.dataList
+        this.pageInfo.total = +res[0].result.count
         this.tableData.forEach(table => {
           res[1].result.forEach(item => {
             if (table.businessMap.business === item.code) {
@@ -116,7 +117,7 @@ export default {
             }
           })
         })
-        this.pageInfo.total = +data.result.count
+
       })
     },
     handleSizeChange(val) {

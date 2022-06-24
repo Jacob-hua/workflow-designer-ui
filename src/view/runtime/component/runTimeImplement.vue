@@ -4,154 +4,62 @@
       <div class="Implement">
         <div class="Implement-left">
           <ProcessInformation
-            v-if="visible"
+            v-if="workflow.trackList"
             ref="ProcessInformation"
-            :processTaskList="processTaskList"
             :processInfo="workflow"
-            @executeShape="selectOneSet"
+            @executeShape="onExecuteShape"
             seeType="runTime"
           ></ProcessInformation>
-          <div class="function-list" v-if="bpmnType === 'bpmn:UserTask' && btnList.length > 0">
+          <div class="function-list" v-if="actions.length > 0">
             <span
               class="function-item"
-              v-for="(item, index) in btnList"
+              v-for="({ label, value }, index) in actions"
               :key="index"
-              v-if="functionItemShow(item)"
-              @click="changeFunction(btnListKey[item])"
-              :class="functionCheck === btnListKey[item] ? 'function-check' : ''"
-              >{{ item }}</span
+              @click="onSelectAction(value)"
+              :class="functionCheck === value ? 'function-check' : ''"
             >
+              {{ label }}
+            </span>
           </div>
-          <div class="function-main" :class="btnList.length === 0 ? 'noData' : ''">
-            <div v-if="functionCheck === 'Agency' && roleBoolean">
-              <div v-if="dataList.Agency.length > 0">
-                <div class="peopleList-title">指定代办人员:</div>
-                <div class="peopleList">
-                  <div v-for="(item, index) in dataList.Agency">
-                    <span v-show="item.assignee"> {{ item.assignee }}: </span>
-                    <div class="peopleList-item" v-for="(item1
-                    , index1) in item.candidateUsers" v-if="item.candidateUsers.length > 0">{{ item1 }}</div>
-                    <div v-if="item.candidateUsers.length == 0" style="display: inline-block;"> <span>暂无代办</span>
-                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === userInfo.account && item.candidateUsers.length == 0">点击添加</span>
-                    </div>
-                    <div v-if="item.candidateUsers.length == 0" style="display: inline-block">
-                      <span>暂无代办</span>
-                      <span
-                        class="addCirculate"
-                        @click="changePeopleList(item.taskId)"
-                        v-if="item.assignee === userInfo.account && item.candidateUsers.length == 0"
-                        >点击添加</span
-                      >
-                    </div>
-                    <div v-if="item.candidateUsers.length > 0" style="display: inline-block">
-                      <span
-                        class="addCirculate"
-                        @click="changePeopleList(item.taskId, 'edit', 'Agency', item.candidateUsers)"
-                        v-if="item.assignee === userInfo.account && item.candidateUsers.length > 0"
-                        >编辑</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div v-if="functionCheck === 'Circulate' && roleBoolean">
-              <div v-if="dataList.Circulate.length > 0">
-                <div class="peopleList-title">指定传阅人员:</div>
-                <div class="peopleList">
-                  <div v-for="(item, index) in dataList.Circulate">
-                    <span v-show="item.assignee"> {{ item.assignee }}: </span>
-                    <div class="peopleList-item" v-for="(item1, index1) in item.circulations[0].unitList" v-if="item.circulations[0].unitList.length > 0">{{ item1 }}</div>
-                    <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block;"> <span>暂无传阅</span>
-                      <span class="addCirculate" @click="changePeopleList(item.taskId)" v-if="item.assignee === userInfo.account">点击添加</span>
-                    </div>
-                    <div v-if="item.circulations[0].unitList.length == 0" style="display: inline-block">
-                      <span>暂无传阅</span>
-                      <span
-                        class="addCirculate"
-                        @click="changePeopleList(item.taskId)"
-                        v-if="item.assignee === userInfo.account"
-                        >点击添加</span
-                      >
-                    </div>
-                    <div v-if="item.circulations[0].unitList.length > 0" style="display: inline-block">
-                      <span
-                        class="addCirculate"
-                        @click="changePeopleList(item.taskId, 'edit', 'Circulate', item.circulations[0].unitList)"
-                        v-if="item.assignee === userInfo.account"
-                        >编辑</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div v-if="functionCheck === 'Signature' && roleBoolean">
-              <div style="margin-top: 15px">
-                <div class="peopleList-title">加签:</div>
-                <div class="peopleList">
-                  <div class="peopleList-item" v-for="(item, index) in dataList.Signature" :key="index">
-                    {{ item.userId }}
-                  </div>
-                </div>
-                <span class="editButton" @click="editDataList('Signature')">编辑</span>
-              </div>
-            </div>
-            <div v-if="functionCheck === 'Hang' && roleBoolean">
-              <div v-if="dataList.Hang" class="HangStyle">
-                <span style="color: #0066cc">当前流程正常运行，如需将流程挂起，请进行认证操作</span>
-                <div class="confirm" @click="confirmation()">挂起确认</div>
-              </div>
-              <div v-if="!dataList.Hang" class="HangStyle">
-                <span style="color: #0066cc">当前流程已被挂起，如需将继续执行流程，请进行认证操作</span>
-                <div class="confirm" @click="confirmation()">重新激活</div>
-              </div>
-            </div>
-            <div v-if="functionCheck === 'Reject' && roleBoolean">
-              <div v-if="dataList.Reject.rejectBollen" class="HangStyle">
-                <span style="color: #0066cc">当前流程正常运行，如需将流程驳回，请进行认证操作</span>
-                <div class="confirm" @click="confirmation()">驳回验证</div>
-              </div>
-              <div v-if="!dataList.Reject.rejectBollen">
-                <div class="rejectData">
-                  <span>{{ dataList.Reject.data }}</span>
-                </div>
-                <div class="rejectName">
-                  <span>{{ dataList.Reject.userId }}</span>
-                </div>
-                <div>
-                  <span class="rejectWord">驳回至</span>
-                  <span class="rejectResult">{{ dataList.Reject.rejectResult }}</span>
-                </div>
-              </div>
-            </div>
-            <div v-if="functionCheck === 'Termination' && roleBoolean">
-              <div v-if="dataList.Termination.terminationBollon" class="HangStyle">
-                <span style="color: #0066cc">当前流程正常运行，如需将流程终止，请进行认证操作</span>
-                <div class="confirm" @click="confirmation()">终止确认</div>
-              </div>
-              <div v-if="!dataList.Termination.terminationBollon">
-                <div class="rejectData">
-                  <span>{{ dataList.Termination.data }}</span>
-                </div>
-                <div class="rejectName">
-                  <span>{{ dataList.Termination.name }}</span>
-                </div>
-                <div class="rejectWord">流程终止</div>
-              </div>
-            </div>
-            <div v-if="btnList.length === 0" class="heightFunction">无信息</div>
+          <div class="function-main" :class="actions.length === 0 ? 'noData' : ''">
             <div v-if="!roleBoolean" class="heightFunction">无权限</div>
+            <div v-else-if="actions.length === 0" class="heightFunction">无信息</div>
+            <div v-else>
+              <div v-if="functionCheck === 'Agency'">
+                <runtime-implement-agency :workflow="workflow" @completed="onAgencyCompleted" />
+              </div>
+              <div v-if="functionCheck === 'Circulate'">
+                <runtime-implement-circulate :workflow="workflow" @completed="onAgencyCompleted" />
+              </div>
+              <div v-if="functionCheck === 'Signature'">
+                <runtime-implement-signature :workflow="workflow" @completed="onAgencyCompleted" />
+              </div>
+              <div v-if="functionCheck === 'Hang'">
+                <runtime-implement-hang :workflow="workflow" @completed="onAgencyCompleted" />
+              </div>
+              <div v-if="functionCheck === 'Reject'">
+                <runtime-implement-reject
+                  :workflow="workflow"
+                  @completed="onAgencyCompleted"
+                  @rejectSuccess="onRejectSuccess"
+                />
+              </div>
+              <div v-if="functionCheck === 'Terminate'">
+                <runtime-implement-termination
+                  :workflow="workflow"
+                  @completed="onAgencyCompleted"
+                  @terminateSuccess="onRejectSuccess"
+                />
+              </div>
+              <div v-if="functionCheck === 'NoExecutor'">
+                <runtime-implement-executor :workflow="workflow" @selectExecutor="onSelectExecutor" />
+              </div>
+            </div>
           </div>
         </div>
         <div class="Implement-right">
           <div style="margin-top: 20px; margin-bottom: 10px">表单内容</div>
           <div class="Implement-right-form">
-            <formRuntime
-              :formContant="formContant.content"
-              v-if="formShow && (formContant.docType === '.form' || formContant.docType === null)"
-              ref="formRuntime"
-            ></formRuntime>
             <preview
               :itemList="formListFun(formContant)"
               :formConf="configFun(formContant)"
@@ -163,97 +71,122 @@
       </div>
       <span slot="footer" class="dialog-footer" style="text-align: center">
         <el-button @click="onCancel">取 消</el-button>
-        <el-button type="primary" @click="onExecute" :disabled="!dataList.Hang">执 行</el-button>
+        <el-button type="primary" @click="onExecute" :disabled="hang">执 行</el-button>
       </span>
     </el-dialog>
-    <runtimePeople
-      ref="runtimePeople"
-      v-if="$refs.ProcessInformation"
-      :taskId="taskId"
-      :processInstanceId="$refs.ProcessInformation.processInfo.processInstanceId"
-      :taskKey="$refs.ProcessInformation.processInfo.taskKey"
-    ></runtimePeople>
-    <runtimeConfirmation
-      v-if="$refs.ProcessInformation"
-      ref="runtimeConfirmation"
-      :processInstanceDetail="$refs.ProcessInformation.processInfo"
-      :processInstanceId="$refs.ProcessInformation.processInfo.processInstanceId"
-      :BpmnContant="$refs.ProcessInformation.processInfo.content"
-      :taskId="$refs.ProcessInformation.processInfo.taskKey"
-      :taskKey="$refs.ProcessInformation.processInfo.taskId"
-    ></runtimeConfirmation>
   </div>
 </template>
 
 <script>
 import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
-import runtimePeople from './runtimePeople.vue'
-import runtimeConfirmation from './runtimeConfirmation.vue'
-import formRuntime from './formRuntime.vue'
+import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
+import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
+import RuntimeImplementSignature from './RuntimeImplementSignature.vue'
+import RuntimeImplementHang from './RuntimeImplementHang.vue'
+import RuntimeImplementReject from './RuntimeImplementReject.vue'
+import RuntimeImplementTermination from './RuntimeImplementTermination.vue'
+import RuntimeImplementExecutor from './RuntimeImplementExecutor.vue'
 import preview from '@/plugin/FormDesign/component/preview'
-import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo } from '@/api/unit/api.js'
+import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    ProcessInformation,
+    preview,
+    RuntimeImplementAgency,
+    RuntimeImplementCirculate,
+    RuntimeImplementSignature,
+    RuntimeImplementHang,
+    RuntimeImplementReject,
+    RuntimeImplementTermination,
+    RuntimeImplementExecutor,
+  },
   props: {
     visible: {
       type: Boolean,
       default: false,
     },
-    workflow: {
-      type: Object,
-      default: () => ({}),
+    processInstanceId: {
+      type: String,
+      required: true,
     },
   },
   data() {
     return {
-      processTaskList: [],
+      workflow: {},
       functionCheck: '',
-      bpmnType: '',
-      bpmnTypeloopChara: '',
       formContant: '',
       formShow: false,
-      peopleListDefatil: [],
-      taskId: '',
       roleBoolean: true,
-      bpmnData: {
-        name: '',
-        grounp: '',
-        assignee: '',
-        document: '',
-      },
-      btnListKey: {
-        Agency: 'Agency',
-        Circulate: 'Circulate',
-        Signature: 'Signature',
-        Hang: 'Hang',
-        Reject: 'Reject',
-        Termination: 'Termination',
-      },
-      btnList: [],
-      dataList: {
-        Agency: [],
-        Circulate: [],
-        Signature: [],
-        Hang: true,
+      actionsConfig: {
+        Agency: {
+          label: '代办',
+          value: 'Agency',
+        },
+        Circulate: {
+          label: '传阅',
+          value: 'Circulate',
+        },
+        Signature: {
+          label: '加减签',
+          value: 'Signature',
+        },
+        Hang: {
+          label: '挂起',
+          value: 'Hang',
+        },
         Reject: {
-          rejectBollen: true,
-          data: '',
-          name: '',
-          rejectResult: '',
+          label: '驳回',
+          value: 'Reject',
         },
-        Termination: {
-          terminationBollon: true,
-          data: '',
-          name: '',
+        Terminate: {
+          label: '终止',
+          value: 'Terminate',
+        },
+        NoExecutor: {
+          label: '指定后续执行人',
+          value: 'NoExecutor',
         },
       },
+      curExecuteShape: undefined,
+      noExecutor: false,
     }
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
+    hang() {
+      if (!this.workflow.curTrack) {
+        return false
+      }
+      return this.workflow.curTrack.status.split(',').includes('hang')
+    },
+    actions() {
+      if (!this.curExecuteShape) {
+        return []
+      }
+      const temps = []
+      if (this.noExecutor) {
+        temps.push(this.actionsConfig['NoExecutor'])
+      }
+      if (this.hang) {
+        temps.push(this.actionsConfig['Hang'])
+      }
+      const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions').split(',') ?? []
+      return actions.map((action) => this.actionsConfig[action]).concat(temps)
+    },
+  },
+  async mounted() {
+    await this.fetchExecuteDetail()
+    await this.fetchProcessNodeInfo()
   },
   methods: {
+    onAgencyCompleted() {
+      this.fetchExecuteDetail()
+    },
+    onRejectSuccess() {
+      this.$emit('taskSuccess')
+    },
     onDialogClose() {
       this.formShow = false
       this.$emit('close')
@@ -261,116 +194,33 @@ export default {
     onCancel() {
       this.$emit('close')
     },
-    getNachList(result) {
-      this.dataList.Circulate = []
-      this.dataList.Signature = []
-      this.dataList.Agency = []
-      this.processTaskList = result
-      this.dataList.Circulate = result[result.length - 1].circulationList
-      if (result[result.length - 1].assignee) {
-        result[result.length - 1].assignee.split(',').forEach((item) => {
-          this.dataList.Signature.push({
-            userId: item,
-          })
-        })
-      }
-      this.dataList.Agency = result[result.length - 1].candidateUsers
+    onSelectExecutor(value) {
+      this.$set(this.workflow, 'executors', value)
     },
-    functionItemShow(item) {
-      let value = this.btnListKey[item]
-      switch (value) {
-        case 'Agency':
-          return !!this.dataList.Hang
-          break
-        case 'Circulate':
-          return !!this.dataList.Hang
-          break
-        case 'Signature':
-          return !!(this.dataList.Hang && this.bpmnTypeloopChara === 'bpmn:MultiInstanceLoopCharacteristics')
-          break
-        case 'Hang':
-          return true
-          break
-        case 'Reject':
-          return !!this.dataList.Hang
-          break
-        case 'Termination':
-          return !!this.dataList.Hang
-          break
-        default:
-          break
-      }
-    },
-    changeFunction(value) {
+    onSelectAction(value) {
       this.functionCheck = value
       let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
       let proJectRole =
         permissions.filter((item) => {
-          return item.projectCode === this.workflow.business
+          return item.projectCode === this.workflow.ascription
         })[0]?.permissionSet || []
       let findEle = proJectRole.findIndex((item) => {
         return item.frontRoute === 'RunTime' + value
       })
-      if (findEle === -1) {
+      if (findEle === -1 && value !== 'NoExecutor') {
         this.roleBoolean = false
       } else {
         this.roleBoolean = true
       }
     },
-    changePeopleList(taskId, type, value, item) {
-      if (type === 'edit') {
-        let a = []
-        item.forEach((item1) => {
-          a.push({
-            userId: item1,
-          })
-        })
-        switch (value) {
-          case 'Agency':
-            this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
-            break
-          case 'Circulate':
-            this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(a))
-            break
-          default:
-            break
-        }
-      }
-      this.$refs.runtimePeople.dialogVisible = true
-      this.taskId = taskId
-      this.$nextTick(() => {
-        this.$refs.runtimePeople.toggleRowSelection()
-      })
-    },
-    editDataList(value) {
-      this.$refs.runtimePeople.multipleSelection = JSON.parse(JSON.stringify(this.dataList[value]))
-      this.$refs.runtimePeople.detailSelection = JSON.parse(JSON.stringify(this.dataList[value]))
-      this.$refs.runtimePeople.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.runtimePeople.toggleRowSelection()
-      })
-    },
-    confirmation() {
-      this.$refs.runtimeConfirmation.dialogVisible = true
-    },
     goSee() {
       this.$emit('goSee', this.$refs.ProcessInformation.postData)
     },
-    selectOneSet(value) {
-      this.btnList = this.$iBpmn.getShapeInfoByType(value, 'actions')?.split(',') || []
-      if (this.btnList.length > 0) {
-        if (!this.dataList.Hang) {
-          this.changeFunction('Hang')
-        } else {
-          this.changeFunction(this.btnListKey[this.btnList[0]])
-        }
-      } else {
-        this.changeFunction('')
+    onExecuteShape(value) {
+      this.curExecuteShape = value
+      if (value) {
+        this.getFormData(value.businessObject.formKey)
       }
-      this.bpmnType = value.type
-      this.bpmnTypeloopChara =
-        value.businessObject.loopCharacteristics && value.businessObject.loopCharacteristics.$type
-      this.selection(value)
     },
 
     formListFun(item) {
@@ -384,35 +234,10 @@ export default {
     onExecute() {
       let formData = {}
       let data = {}
-      let errors = {}
       if (this.formShow) {
         switch (this.formContant.docType) {
-          case '.form':
-            data = this.$refs.formRuntime.formEditor.submit().data
-            errors = this.$refs.formRuntime.formEditor.submit().errors
-
-            formData = JSON.parse(this.formContant.content)
-            break
-          case null:
-            data = this.$refs.formRuntime.formEditor.submit().data
-            errors = this.$refs.formRuntime.formEditor.submit().errors
-
-            formData = JSON.parse(this.formContant.content)
-            console.log(formData)
-            formData.components.forEach((item) => {
-              switch (item.type) {
-                case 'radio':
-                  item.value = item.values.filter((values) => {
-                    return values.value == data[item.key]
-                  })[0].label
-                  break
-                default:
-                  item.value = data[item.key]
-                  break
-              }
-            })
-            break
           case 'json':
+            // TODO: 再preview层提供一个submit方法和reset方法
             this.$refs.preview.$refs[this.$refs.preview.formConf.formModel].validate((valid) => {
               if (valid) {
                 data = this.$refs.preview.form
@@ -421,7 +246,7 @@ export default {
                   item.value = data[item.id]
                 })
               } else {
-                errors.boolean = true
+                this.$message.error('有必填项未填写')
               }
             })
             break
@@ -429,60 +254,35 @@ export default {
             break
         }
       }
-      if (Object.keys(errors).length > 0) {
-        this.$message.error('有必填项未填写')
+      if (this.noExecutor && !Array.isArray(this.workflow.executors) && this.workflow.executors.length === 0) {
+        this.$message.error('后续执行人为空！')
         return
       }
-      getProcessNodeInfo({
-        processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
+      postCompleteTask({
+        assignee: this.userInfo.account,
+        nextAssignee: this.workflow.executors?.[0].userId,
+        commentList: [],
+        formData: formData,
+        processInstanceId: this.workflow.processInstanceId,
+        processKey: this.workflow.processDeployKey,
+        taskId: this.workflow.newTaskId,
+        taskKey: this.workflow.taskKey,
+        taskName: this.workflow.processDeployName,
+        variable: data,
       }).then((res) => {
-        let nodeInfoBoole = res.result.some((item) => {
-          if (item.assignee || item.candidateGroup || item.candidateUser) {
-            return true
-          }
-        })
-        if (nodeInfoBoole) {
-          postCompleteTask({
-            assignee: this.userInfo.account,
-            commentList: [],
-            formData: formData,
-            processInstanceId: this.$refs.ProcessInformation.postData.processInstanceId,
-            processKey: this.$refs.ProcessInformation.postData.deployKey,
-            taskId: this.$refs.ProcessInformation.postData.newTaskId,
-            taskKey: this.$refs.ProcessInformation.postData.taskKey,
-            taskName: this.$refs.ProcessInformation.postData.taskName,
-            variable: data,
-          }).then((res) => {
-            this.formShow = false
-            this.$message.success('执行成功')
-            this.$emit('taskSuccess')
-          })
-        } else {
-          this.$message.error('下一步流程无执行人')
-        }
+        this.formShow = false
+        this.$message.success('执行成功')
+        this.$emit('taskSuccess')
       })
     },
-
-    selection(element) {
-      if (element) {
-        this.bpmnData.name = element.businessObject.name
-        this.bpmnData.grounp = element.businessObject.$attrs['camunda:' + 'candidateGroups']
-        this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
-        this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
-        this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
-      } else {
-        this.initData()
-      }
-    },
-
     getFormData(formKey) {
       if (formKey) {
         let docName = formKey.split(':')[2]
         designFormDesignServiceAll({
           status: 'enabled',
           tenantId: this.tenantId,
-          ascription: this.$refs.ProcessInformation.postData.ascription,
-          business: '',
+          ascription: this.workflow.ascription,
+          business: this.workflow.business,
           createBy: '',
           numberCode: '',
           name: '',
@@ -496,13 +296,68 @@ export default {
         this.formShow = false
       }
     },
-  },
-  components: {
-    ProcessInformation,
-    runtimePeople,
-    runtimeConfirmation,
-    formRuntime,
-    preview,
+    async fetchProcessNodeInfo() {
+      const { errorInfo, result } = await getProcessNodeInfo({
+        processInstanceId: this.workflow.processInstanceId,
+      })
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      this.noExecutor = result.some(
+        ({ assignee, candidateGroup, candidateUser }) =>
+          assignee === null && candidateGroup === null && candidateUser === null
+      )
+      if (this.noExecutor) {
+        this.$message.warning('下一步无执行人')
+      }
+    },
+    async fetchExecuteDetail() {
+      try {
+        const { errorInfo, result } = await getExecuteDetail({
+          processInstanceId: this.processInstanceId,
+          assignee: this.userInfo.account,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        result.curTrack = this.getCurTrack(result)
+        this.workflow = { ...result, newTaskId: this.calculateNewTaskId(result, this.userInfo.account) }
+      } catch (error) {}
+    },
+    getCurTrack(workflow) {
+      if (!Array.isArray(workflow.trackList)) {
+        return
+      }
+      return workflow.trackList.at(-1)
+    },
+    calculateNewTaskId(workflow, account) {
+      if (assigneesInclude(workflow, account)) {
+        return getTaskIdBy(workflow, account)
+      }
+      if (candidateUsersInclude(workflow, account)) {
+        return candidateUsersInclude(workflow, account).taskId
+      }
+
+      function assigneesInclude(workflow, account) {
+        if (!workflow.curTrack) {
+          return
+        }
+        return workflow.curTrack.assignee.split(',').includes(account)
+      }
+
+      function getTaskIdBy(workflow, account) {
+        return workflow.curTrack.taskId.split(',')[workflow.curTrack.assignee.split(',').indexOf(account)]
+      }
+
+      function candidateUsersInclude(workflow, account) {
+        if (!workflow.curTrack) {
+          return
+        }
+        return workflow.curTrack.candidateUsers?.find(({ candidateUsers = [] }) => candidateUsers.includes(account))
+      }
+    },
   },
 }
 </script>
@@ -589,12 +444,6 @@ export default {
   border: 1px solid #108cee;
   border-radius: 5px;
   margin-left: 20px;
-}
-
-.peopleListDefatil {
-  margin-top: 15px;
-  display: flex;
-  color: #a599b1;
 }
 
 .peopleList-item-defail {

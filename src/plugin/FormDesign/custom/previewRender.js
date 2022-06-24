@@ -9,6 +9,10 @@ function vModel(self, dataObject) {
   }
   //判断是否为上传组件
   if(self.conf.compType === 'upload'){
+    dataObject.attrs['auto-upload'] = false // 文件手动上传
+    dataObject.attrs['on-change'] = (file, fileList) => { // 文件变换 钩子
+      self.getFileList(file, fileList)
+    }
     dataObject.attrs['before-upload'] = file=>{
       //非限定后缀不允许上传
       const fileName = file.name;
@@ -28,6 +32,7 @@ function vModel(self, dataObject) {
 }
 
 export default {
+  // inject: ['quoteOption'],
   render(h) {
     let dataObject = {
       attrs: {},
@@ -37,8 +42,12 @@ export default {
     }
     //远程获取数据
     this.getRemoteData();
+    if (this.quoteOption.length) {
+      this.conf.options = this.quoteOption
+    }
     const confClone = jsonClone(this.conf);
     const children = childrenItem(h,confClone);
+
     Object.keys(confClone).forEach(key => {
       const val = confClone[key]
       if (dataObject[key]) {
@@ -57,6 +66,6 @@ export default {
     vModel(this, dataObject);
     return h(confClone.ele, dataObject, children)
   },
-  props: ['conf','value'],
+  props: ['conf','value','quoteOption','getFileList'],
   mixins:[remoteData]
 }

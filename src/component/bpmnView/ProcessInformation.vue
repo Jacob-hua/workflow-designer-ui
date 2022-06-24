@@ -2,43 +2,40 @@
   <div>
     <div class="ProcessInformation-title">
       <div class="title-item">
-        <span class="title-item-label"> 流程编码：</span>
-        <div class="title-item-main">
-          {{ processInfo.numberCode }}
-        </div>
+        <span> 流程编码：</span>
+        <span>
+          {{ processInfo.processNumber }}
+        </span>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40"> {{ seeType === 'runTime' ? '部署' : '流程' }}名称：</span>
-        <div class="title-item-main">
-          {{ processInfo.processName }}
-        </div>
+        <span> {{ seeType === 'runTime' ? '部署' : '流程' }}名称：</span>
+        <span>
+          {{ processInfo.processDeployName }}
+        </span>
       </div>
-
       <div class="title-item">
-        <span class="title-item-label marginLeft40"> {{ seeType === 'runTime' ? '部署' : '创建' }}时间：</span>
-        <div class="title-item-main">
+        <span> {{ seeType === 'runTime' ? '部署' : '创建' }}时间：</span>
+        <span>
           {{ processInfo.startTime }}
-        </div>
+        </span>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40"> 应用项目：</span>
-        <div class="title-item-main">
+        <span> 应用项目：</span>
+        <span>
           {{ $getMappingName(processInfo.ascription) }}
-        </div>
+        </span>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40"> 流程类型：</span>
-        <div class="title-item-main">
+        <span> 流程类型：</span>
+        <span>
           {{ $getMappingName(processInfo.business) }}
-        </div>
+        </span>
       </div>
       <div class="title-item" v-if="seeType === 'runTime'">
-        <span class="title-item-label marginLeft40">
-          {{ seeType === 'runTime' ? '部署人' : '流程版本' }}
-        </span>
-        <div class="title-item-main">
+        <span> {{ seeType === 'runTime' ? '部署人' : '流程版本' }}： </span>
+        <span>
           {{ processInfo.starter }}
-        </div>
+        </span>
       </div>
     </div>
     <div class="ProcessInformation-bpmn">
@@ -46,7 +43,7 @@
         :pelatteVisible="false"
         :headerVisible="false"
         :linterToggle="false"
-        :xml="processInfo.content"
+        :xml="processInfo.processDeployResource"
         @loaded="onBpmnLoaded"
       />
     </div>
@@ -68,6 +65,7 @@ export default {
   },
   methods: {
     onBpmnLoaded() {
+      // TODO: 此处应该禁用画布的选择事件的
       const completedTaskList = this.processInfo.trackList
         .filter(({ taskKey }) => taskKey !== this.processInfo.taskKey)
         .map(({ taskKey }) => taskKey)
@@ -84,7 +82,10 @@ export default {
           }
           this.$iBpmn.canvasAddMarker(element, 'svgIncomplete')
         })
-      this.$emit('executeShape', this.$iBpmn.elementRegistryFind(({id}) => id === this.processInfo.taskKey))
+      this.$emit(
+        'executeShape',
+        this.$iBpmn.elementRegistryFind(({ id }) => id === this.processInfo.taskKey)
+      )
     },
   },
 }
@@ -92,23 +93,16 @@ export default {
 
 <style scoped="scoped">
 .ProcessInformation-title {
-  border-bottom: 1px solid #cccccc;
-  margin-bottom: 40px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: space-around;
 }
 
 .title-item {
-  display: inline-block;
-  margin-bottom: 20px;
-}
-
-.title-item-label {
-  margin-right: 15px;
-  width: 60px;
-  display: inline-block;
-}
-
-.title-item-main {
-  display: inline-block;
+  line-height: 40px;
 }
 
 ::v-deep .el-input.is-disabled .el-input__inner {

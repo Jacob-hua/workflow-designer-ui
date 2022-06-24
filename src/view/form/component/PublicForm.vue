@@ -193,7 +193,6 @@
         this.$refs.PublicFormDiolog.dialogVisible2 = true
       },
       detailsDiolog(item) {
-        this.$refs.detailsDiolog.dialogVisible2 = true
         postFormDesignRecordFormDesignRecordInfo({
           id: item.id,
           status: this.activeName,
@@ -202,7 +201,7 @@
           business: '',
           createBy: this.userInfo.account
         }).then((res) => {
-          this.$refs.detailsDiolog.previewVisible = true
+          this.$refs.detailsDiolog.dialogVisible2 = true
           this.formData = res.result
           this.$nextTick(() => {
             let arr = []

@@ -67,7 +67,7 @@
       <div class="home-table-main">
         <el-table :data="newTasks">
           <el-table-column type="index" label="序号" align="center"> </el-table-column>
-          <el-table-column prop="processName" label="名称" align="center" show-overflow-tooltip="" />
+          <el-table-column prop="processDeployName" label="名称" align="center" show-overflow-tooltip="" />
           <el-table-column prop="displayEnergyType" label="部署类型" align="center" />
           <el-table-column prop="starter" label="发起人" align="center" />
           <el-table-column prop="startTime" label="发起时间" align="center" />
@@ -121,14 +121,14 @@
       @succseeAdd="onAddSuccess"
     ></runtime-add>
     <runTimeImplement
-      ref="runTimeImplement"
+      v-if="runtimeImplementVisible"
       :visible="runtimeImplementVisible"
-      :workflow="workflow"
+      :processInstanceId="workflow.processInstanceId"
       @close="onRuntimeImplementClose"
       @goSee="onDetail"
       @taskSuccess="onTaskSuccess"
     ></runTimeImplement>
-    <lookover ref="lookover" @goReject="deployDiolog"></lookover>
+    <lookover ref="lookover"></lookover>
   </div>
 </template>
 
@@ -136,7 +136,7 @@
 import RuntimeAdd from './component/RuntimeAdd.vue'
 import runTimeImplement from './component/runTimeImplement.vue'
 import lookover from './component/lookover.vue'
-import { getTaskCountStatistic, getNewTaskList, postTaskCountStatistics } from '@/api/unit/api.js'
+import { getTaskCountStatistic, postTaskCountStatistics, getExecuteList } from '@/api/unit/api.js'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 import { currentOneMonthAgo } from '@/util/date'
@@ -275,16 +275,6 @@ export default {
     onPageChange() {
       this.fetchNewTasks()
     },
-    deployDiolog(row) {
-      this.runtimeImplementVisible = true
-      this.$nextTick(() => {
-        this.$refs.runTimeImplement.getNachList(row.trackList)
-        this.$refs.runTimeImplement.dataList.Hang = row.taskStatus.split(',').indexOf('hang') == '-1'
-        if (!this.$refs.runTimeImplement.dataList.Hang) {
-          this.$refs.runTimeImplement.functionCheck = 'Hang'
-        }
-      })
-    },
     onRuntimeImplementClose() {
       this.runtimeImplementVisible = false
     },
@@ -299,7 +289,7 @@ export default {
         this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
         this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
         this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
-        this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.energyType
+        this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.processDeployType
         this.$refs.lookover.getListData(row.trackList)
         this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
       })
@@ -342,7 +332,7 @@ export default {
     },
     async fetchNewTasks() {
       try {
-        const { errorInfo, result } = await getNewTaskList({
+        const { errorInfo, result } = await getExecuteList({
           ...this.searchForm,
           ...this.pageInfo,
           taskFilter: this.searchForm.taskType,
@@ -357,7 +347,6 @@ export default {
         }
         const { dataList = [], count } = result
         this.newTasks = dataList
-          .map((task) => handleNewTaskId(task, this.userInfo.account))
           .map((task) => handleDisplay.call(this, task))
         this.pageInfo.total = +count
       } catch (error) {
@@ -367,45 +356,12 @@ export default {
       function handleDisplay(task) {
         const newTask = { ...task }
 
-        newTask.displayTrackList = newTask.trackList.map(({ taskName, status }) => ({
+        newTask.displayTrackList = newTask.progressBarList.map(({ taskName, taskStatus }) => ({
           taskName,
-          ...(this.taskStatusConfig[status] ?? { title: '多人执行', className: '' }),
+          ...(this.taskStatusConfig[taskStatus] ?? { title: '多人执行', className: '' }),
         }))
-
-        newTask.displayEnergyType = this.$getMappingName(newTask.energyType)
-
-        // 按照约定，trackList中最后一个节点是最新节点
-        const candidateUsers = newTask.trackList[newTask.trackList.length - 1]?.candidateUsers
-        const canExecuteUsers = candidateUsers?.reduce(
-          (canExecuteUsers, { candidateUsers, assignee }) => [...canExecuteUsers, ...candidateUsers, assignee],
-          []
-        )
-        newTask.canExecute = canExecuteUsers.includes(this.userInfo.account)
-        return newTask
-      }
-
-      function handleNewTaskId(task, account) {
-        const newTask = { ...task }
-        if (
-          newTask.taskAssignee.split(',').includes(account) &&
-          newTask.taskId.split(',').length === newTask.taskAssignee.split(',').length
-        ) {
-          newTask.newTaskId = newTask.taskId.split(',')[newTask.taskAssignee.split(',').indexOf(account)]
-          return newTask
-        }
-        if (!Array.isArray(newTask.trackList)) {
-          return newTask
-        }
-        // 按照约定，trackList中最后一个节点是最新节点
-        const candidateUsers = newTask.trackList[newTask.trackList.length - 1]?.candidateUsers
-        if (!Array.isArray(candidateUsers)) {
-          return newTask
-        }
-        const newTaskId = candidateUsers.find(({ candidateUsers = [] }) => candidateUsers.includes(account))?.taskId
-        if (!newTaskId) {
-          return newTask
-        }
-        newTask.newTaskId = newTaskId
+        newTask.displayEnergyType = this.$getMappingName(newTask.processDeployType)
+        newTask.canExecute = task.taskUserSet.includes(this.userInfo.account)
         return newTask
       }
     },

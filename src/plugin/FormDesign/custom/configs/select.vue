@@ -91,16 +91,18 @@
       <el-form-item label="第三方API">
         <el-select v-model="interFace"
                    clearable>
-          <el-option  v-for="({name, id, source, sourceMark}, index) in interFaceOption"
+          <el-option  v-for="({ name, id, source, sourceMark }, index) in interFaceOption"
                       @click.native="onClickOption(id,source, sourceMark)"
                      :key="index"
                      :label="name"
                      :value="id" />
         </el-select>
-<!--        <el-input v-model="props.action"></el-input>-->
       </el-form-item>
-      <el-form-item label="关联">
-        <el-input v-model="props.relation" placeholder="关联逗号分开"></el-input>
+      <el-form-item v-if="variableOption.length" label="关联">
+        <div v-for="(variable,index) in variableArr" :key="index">
+          <div>{{variable}}</div>
+          <el-input v-model="variableOption[index][variable]" ></el-input>
+        </div>
       </el-form-item>
     </div>
   </div>
@@ -111,6 +113,7 @@ import draggable from "vuedraggable";
 import { isNumberStr } from '../../utils/index'
 import {apiDetail} from "@/api/globalConfig";
 import {mapState, mapActions, mapMutations} from "vuex";
+import {variableFactory} from "@/mixin/formDepMonitor";
 
 
 export default {
@@ -126,6 +129,8 @@ export default {
       interFace: '',
       tempOptions:[],
       currentDetail: {},
+      variableOption: [],
+      variableArr: []
     }
   },
   computed: {
@@ -139,21 +144,19 @@ export default {
       immediate: false,
       deep: true,
       handler(value) {
-        console.log(value)
-        debugger
         let relationMap = new Map()
         let select = value.find(val => val.compType === 'select')
         let relationArr = select.relation.split(',')
         if (select.relation) {
          let input = value.find(val =>{
-           relationArr.forEach(relation => {
-             if (relation === val.id) {
-               relationMap.set(relation,val.value)
-             }
-             return val
+             relationArr.forEach(relation => {
+               if (relation === val.id) {
+                 relationMap.set(relation,val.value)
+               }
+               return val
+             })
            })
-           })
-          this.executeFunction({api:this.currentDetail,relationMap: relationMap})
+          this.executeFunction({ api:this.currentDetail,relationMap: relationMap })
         }
       },
     },
@@ -182,9 +185,29 @@ export default {
         sourceMark: sourceMark,
         tenantId: this.tenantId
       }).then((res)=> {
-        this.currentDetail = res.result.filter(item => item.id === id)[0]
-        _this.executeFunction({api: this.currentDetail, relation: this.props.relation, value: ''}  )
-        this.addThirdPartyApi( { id: this.currentDetail.id } )
+        // 获取开闭所问题是不是
+         this.currentDetail = res.result.filter(item => item.id === id)[0]
+         this.variableArr = variableFactory(this.currentDetail)
+         this.addThirdPartyApi( { id: this.currentDetail.id } )
+        if (this.variableArr) {
+          this.variableOption = this.variableArr.map(variable =>(
+              {
+                [variable] : variable
+              }
+          ))
+        }
+
+          this.itemList.forEach(item => {
+            if (item.id ===  this.props.id) {
+              item.requestConfig = this.currentDetail
+              item.relationMapping = this.variableOption
+            }
+          })
+
+
+          // console.log(arr)
+        // _this.executeFunction({api: this.currentDetail, relation: this.props.relation, value: ''}  )
+        // this.addThirdPartyApi( { id: this.currentDetail.id } )
       })
     },
     handlerChangeLabel(val){

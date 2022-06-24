@@ -10,13 +10,16 @@
           :disabled="formConf.disabled"
           :validate-on-rule-change="false"
           label-width="formConf.labelWidth + 'px'"
+          @submit.native.prevent="handlerSubmit"
         >
-          <template v-for="(element,index) in this.itemList"  >
+          <template v-for="(element,index) in itemList"  >
             <!-- <el-input v-model="element.id" placeholder=""></el-input> -->
              <preview-row-item 
               v-if="element.compType === 'row'"
-              :key="'row-'+index" 
+              :key="'row-'+index"
               :model="element"
+              :quoteOption="quoteOption"
+              :getFileList="getFileList"
               >
               <el-col v-for="(column) in element.columns" :key="column.index" :span="column.span">
                 <template v-for="(col) in column.list">
@@ -26,6 +29,8 @@
                     :model="col"
                     v-model="form[col.id]"
                     @valChange="handlerValChange"
+                    :quoteOption="quoteOption"
+                    :getFileList="getFileList"
                   />
 
                 </template>
@@ -36,18 +41,14 @@
               <preview-item 
                 :model="element"
                 v-model="form[element.id]"
+                :quoteOption="quoteOption"
+                :getFileList="getFileList"
                 @valChange="handlerValChange"
               />
             </el-col>
           </template>
         </el-form>
     </el-row>
-<!--    <el-divider></el-divider>-->
-<!--    <div style="text-align: center;">-->
-<!--      <span slot="footer" class="dialog-footer">-->
-<!--        <el-button type="primary" @click="handlerSubForm">提交</el-button>-->
-<!--      </span>-->
-<!--    </div>-->
   </div>
 </template>
 <script>
@@ -56,6 +57,8 @@ import previewRowItem from "./previewRowItem";
 import fancyDynamicTable from "../dynamic/fancyDynamicTable";
 import fancyDynamicTableItem from "../dynamic/fancyDynamicTableItem";
 import {datas,addRow,batchDeleteRow,deleteRow} from "../custom/formDraw";
+import formDepMonitorMixin, {mixinExecuteFunction} from "@/mixin/formDepMonitor";
+import {executeApi} from "@/api/globalConfig";
 export default {
   name:'preview',
   props:['itemList','formConf'],
@@ -69,18 +72,23 @@ export default {
     return{
       form:{},
       rules:{},
-      currentIndex:-1
+      currentIndex:-1,
+      quoteOption: [],
+      fileList: [],
+      file:{}
     }
   },
-  // watch: {
-  //   form: {
-  //     immediate: true,
-  //     handler(value) {
-  //       console.log(value)
-  //     },
-  //   },
-  // },
+  mixins: [
+    formDepMonitorMixin({
+      formData: 'form',
+      formFields: 'itemList',
+    }),
+  ],
   methods:{
+    getFileList(file, fileList) {
+      this.fileList = fileList
+      this.file = file
+    },
     handlerValChange(key,origin){
       this.$set(this.form,key,origin);
     },
@@ -88,22 +96,54 @@ export default {
       this.$set(this.form[parentId][index],key,origin);
       this.currentIndex = index;
     },
-    handlerSubForm(){
-      this.$refs[this.formConf.formModel].validate((valid) => {
-        if (valid) {
-          this.$message.success('success');
-        }
-      });
+    async resetField () {
+       this.$refs[this.formConf.formModel].resetField()
     },
+     async handlerSubmit(){
+        try {
+          this.$refs[this.formConf.formModel].validate((valid) => {
+            if (valid) {
+              let outPutFormData = JSON.parse(JSON.stringify(this.form))
+              if (this.fileList.length) { // 存在上传组件 并且有文件上传
+                outPutFormData['fileList'] = this.fileList
+              }
+              return  outPutFormData
+            } else {
+              this.$message.error('error submit');
+              return false
+            }
+          });
+        }catch (e) {
+          throw  new Error(e.toString())
+        }
+      },
     handlerAddRow:addRow,
     handlerDeleteRow:deleteRow,
     handlerBatchDeleteRow:batchDeleteRow,
     handlerInitDatas:datas,
   },
   created(){
-    this.handlerInitDatas();//初始化表单
+    this.handlerInitDatas();
   },
   mounted() {
+
+    this.itemList = this.itemList.map((fieldInfo) => {
+      return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
+        executeApi({
+          apiMark: fieldInfo.requestConfig.apiMark,
+          sourceMark: fieldInfo.requestConfig.sourceMark,
+          data,
+        }).then(({ result: options }) => {
+          if(fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox' ){
+              this.quoteOption = options
+          } else if(fieldInfo.compType === 'cascader') { // 处理级联
+            this.quoteOption = options.result
+          } else { // 处理选择列表
+
+          }
+        })
+      })
+    })
     this.$nextTick(()=> {
     })
   },
