@@ -154,51 +154,47 @@ export default {
       this.multipleSelection.splice(index, 1)
     },
     onSubmit() {
-      let dataList = []
-      let deleteList = []
-      this.selected.forEach((item1) => {
-        let BoolType = true
-        this.multipleSelection.forEach((item2) => {
-          if (item1.userId === item2.userId) {
-            BoolType = false
-          }
-        })
-        if (BoolType) {
-          deleteList.push(item1.userId)
+      const removeds = this.selected.reduce((removeds, item) => {
+        if (!this.multipleSelection.find(({ userId }) => userId === item.userId)) {
+          removeds.push({ ...item })
         }
-      })
-      this.multipleSelection.forEach((item1) => {
-        let BoolType = true
-        this.selected.forEach((item2) => {
-          if (item1.userId === item2.userId) {
-            BoolType = false
-          }
-        })
-        if (BoolType) {
-          dataList.push(item1.userId)
+        return removeds
+      }, [])
+      const addeds = this.multipleSelection.reduce((addeds, item) => {
+        if (!this.selected.find(({ userId }) => userId === item.userId)) {
+          addeds.push({ ...item })
         }
-      })
-
-      this.$emit('submit', { dataList, deleteList, multipleSelection: this.multipleSelection })
+        return addeds
+      }, [])
+      this.$emit('submit', { removeds, addeds, selections: this.multipleSelection })
+      this.$emit('update:visible', false)
     },
-    fetchPeopleList() {
-      getPersonUser({
-        ...this.getData,
-        groupId: this.currentKey,
-        name: this.userName,
-      }).then((res) => {
-        this.tableData = res.result.list
-        this.getData.total = res.result.total * 1
-      })
+    async fetchPeopleList() {
+      try {
+        const { errorInfo, result } = await getPersonUser({
+          ...this.getData,
+          groupId: this.currentKey,
+          name: this.userName,
+        })
+        if (errorInfo.errorCode) {
+          return
+        }
+        this.tableData = result.list
+        this.getData.total = result.total * 1
+      } catch (error) {}
     },
-    fetchTreeData() {
-      getThreeSystemOrganize({
-        projectCode: this.currentOrganization,
-      }).then((res) => {
-        this.treeData = res.result
-        this.currentKey = res.result[0].groupId
+    async fetchTreeData() {
+      try {
+        const { errorInfo, result = [] } = await getThreeSystemOrganize({
+          projectCode: this.currentOrganization,
+        })
+        if (errorInfo.errorCode) {
+          return
+        }
+        this.treeData = result
+        this.currentKey = result[0]?.groupId
         this.fetchPeopleList()
-      })
+      } catch (error) {}
     },
   },
 }
