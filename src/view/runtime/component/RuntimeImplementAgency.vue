@@ -28,6 +28,7 @@
     </div>
     <runtime-people
       ref="runtimePeople"
+      title="选择代办人"
       :visible.sync="runtimePeopleVisible"
       :selected="runtimePeopleSelected"
       @submit="onRuntimePeopleSubmit"
@@ -76,17 +77,17 @@ export default {
       }))
       this.runtimePeopleVisible = true
     },
-    async onRuntimePeopleSubmit({ dataList, deleteList }) {
-      if (deleteList.length) {
-        let strDelete = deleteList.join(',')
+    async onRuntimePeopleSubmit({ addeds, removeds }) {
+      if (removeds.length) {
+        let strDelete = removeds.map(({ userId }) => userId).join(',')
         await getModifyCandidate({
           dataList: strDelete,
           operateType: 'user:delete',
           taskId: this.editTaskId,
         })
       }
-      if (dataList.length) {
-        let strData = dataList.join(',')
+      if (addeds.length) {
+        let strData = addeds.map(({ userId }) => userId).join(',')
         await getModifyCandidate({
           dataList: strData,
           operateType: 'user:add',

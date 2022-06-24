@@ -111,7 +111,7 @@ export default {
   },
   watch: {
     selected(selected) {
-      this.multipleSelection = selected
+      this.multipleSelection = JSON.parse(JSON.stringify(selected))
     },
     tableData(tableData) {
       tableData.forEach((row) => {
