@@ -10,7 +10,7 @@
             :data="treeData"
             node-key="groupId"
             :current-node-key="currentKey"
-            @current-change="changeCurrentKey"
+            @current-change="onTreeSelectedChange"
             :highlight-current="true"
             :props="{ label: 'groupName', children: 'children' }"
           ></el-tree>
@@ -42,7 +42,7 @@
           </div>
           <div class="people-main-right-page">
             <el-pagination
-              @current-change="getPeopleList()"
+              @current-change="fetchPeopleList"
               :current-page.sync="getData.page"
               :page-size="getData.limit"
               layout="prev, pager, next, jumper"
@@ -98,7 +98,6 @@ export default {
         groupId: '',
         name: '',
         tenantId: this.tenantId,
-        userId: '',
         limit: 5,
         page: 1,
         total: 1,
@@ -108,7 +107,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('account', ['userInfo', 'tenantId']),
+    ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
   },
   watch: {
     selected(selected) {
@@ -133,7 +132,7 @@ export default {
   },
   methods: {
     onOpen() {
-      this.getTreeData()
+      this.fetchTreeData()
     },
     onSelectionChange(_, row) {
       const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
@@ -147,26 +146,9 @@ export default {
       this.dialogVisible = false
       this.$emit('update:visible', false)
     },
-    changeCurrentKey(key) {
+    onTreeSelectedChange(key) {
       this.currentKey = key.groupId
-      this.getPeopleList()
-    },
-    getPeopleList() {
-      this.getData.groupId = this.currentKey
-      this.getData.name = this.userName
-      getPersonUser(this.getData).then((res) => {
-        this.tableData = res.result.list
-        this.getData.total = res.result.total * 1
-      })
-    },
-    getTreeData() {
-      getThreeSystemOrganize({
-        projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
-      }).then((res) => {
-        this.treeData = res.result
-        this.currentKey = res.result[0].groupId
-        this.getPeopleList()
-      })
+      this.fetchPeopleList()
     },
     onDeletePeople(index) {
       this.multipleSelection.splice(index, 1)
@@ -198,6 +180,25 @@ export default {
       })
 
       this.$emit('submit', { dataList, deleteList, multipleSelection: this.multipleSelection })
+    },
+    fetchPeopleList() {
+      getPersonUser({
+        ...this.getData,
+        groupId: this.currentKey,
+        name: this.userName,
+      }).then((res) => {
+        this.tableData = res.result.list
+        this.getData.total = res.result.total * 1
+      })
+    },
+    fetchTreeData() {
+      getThreeSystemOrganize({
+        projectCode: this.currentOrganization,
+      }).then((res) => {
+        this.treeData = res.result
+        this.currentKey = res.result[0].groupId
+        this.fetchPeopleList()
+      })
     },
   },
 }
