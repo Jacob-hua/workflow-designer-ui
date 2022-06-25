@@ -10,7 +10,7 @@
           :disabled="formConf.disabled"
           :validate-on-rule-change="false"
           label-width="formConf.labelWidth + 'px'"
-          @submit.native.prevent="handlerSubmit"
+          @submit.native.prevent="submit"
         >
           <template v-for="(element,index) in metaDataList"  >
             <!-- <el-input v-model="element.id" placeholder=""></el-input> -->
@@ -120,7 +120,7 @@ export default {
     async resetField () {
        this.$refs[this.formConf.formModel].resetField()
     },
-     async handlerSubmit(){
+     async submit(){
         try {
           await this.$refs[this.formConf.formModel].validate()
           return JSON.parse(JSON.stringify(this.form))
