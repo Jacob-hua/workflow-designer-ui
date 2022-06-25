@@ -70,10 +70,6 @@
         <span class="bpmnView-title-public-label">流程名称:</span><span class="bpmnView-title-public-value">{{projectData.name}}</span>
         <span class="bpmnView-title-public-label">创建时间:</span><span class="bpmnView-title-public-value">{{projectData.createTime}}</span>
       </div>
-      <div class="bpmnView-title-button">
-        <el-button type="primary"
-                   @click="$emit('edit')">编辑</el-button>
-      </div>
     </div>
     <div class="bpmnView-process">
       <span class="bpmn-Main-title">BPMN流程</span>

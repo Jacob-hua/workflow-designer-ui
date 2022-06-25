@@ -1,46 +1,27 @@
 <template>
-  <el-dialog title="引用工作流"
-             :visible="visible"
-             width="70%"
-             custom-class="dialogVisible"
-             @close="close">
+  <el-dialog title="引用工作流" :visible="visible" width="70%" custom-class="dialogVisible" @close="close">
     <div class="dialogVisible-main">
-      <el-table :data="tableData"
-                style="width: 100%">
-        <el-table-column type="index"
-                         label="序号"
-                         width="180"
-                         align="center">
-        </el-table-column>
-        <el-table-column prop="name"
-                         label="名称"
-                         align="center">
-        </el-table-column>
-        <el-table-column prop="createBy"
-                         label="创建人"
-                         align="center">
-        </el-table-column>
-        <el-table-column prop="createTime"
-                         label="编辑时间"
-                         align="center">
-        </el-table-column>
-        <el-table-column label="操作"
-                         align="center">
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>
+        <el-table-column prop="name" label="名称" align="center"> </el-table-column>
+        <el-table-column prop="createBy" label="创建人" align="center"> </el-table-column>
+        <el-table-column prop="createTime" label="编辑时间" align="center"> </el-table-column>
+        <el-table-column label="操作" align="center">
           <template slot-scope="{ $index, row }">
-            <el-button size="mini"
-                       @click="onLookBpmn('引用', $index, row)">查看</el-button>
-            <el-button size="mini"
-                       @click="onQuoteBpmn('引用工作流', $index, row)">引用</el-button>
+            <el-button size="mini" @click="onLookBpmn('引用', $index, row)">查看</el-button>
+            <el-button size="mini" @click="onQuoteBpmn('引用工作流', $index, row)">引用</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="table-page">
-        <el-pagination @size-change="handleSizeChange"
-                       @current-change="handleCurrentChange"
-                       :current-page="getData.page"
-                       :page-size="getData.limit"
-                       layout="prev, pager, next, jumper"
-                       :total="getData.total">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="getData.page"
+          :page-size="getData.limit"
+          layout="prev, pager, next, jumper"
+          :total="getData.total"
+        >
         </el-pagination>
       </div>
     </div>
@@ -114,7 +95,7 @@ export default {
       this.$emit('lookBpmn', row, tit)
     },
     onQuoteBpmn(title, _, row) {
-      const newData = {...row}
+      const newData = { ...row }
       delete newData.id
       this.$emit('quoteBpmn', title, newData)
     },
