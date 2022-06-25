@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <HistorySearch @searchHistory="searchHistory" />
-    <HistoryHeadContent />
+    <HistorySearch @searchHistory="searchHistory"  ref="searchHistory"/>
+    <HistoryHeadContent  ref="historyHeadContent"/>
     <HistoryTable @showDetail="showDetail"
                   ref="historyTable" />
     <LookOver ref="lookover" />
@@ -12,6 +12,7 @@ import HistorySearch from '@/view/historyWorkflow/components/HistorySearch.vue'
 import HistoryHeadContent from '@/view/historyWorkflow/components/HistoryHeadContent.vue'
 import HistoryTable from '@/view/historyWorkflow/components/HistoryTable.vue'
 import LookOver from '@/view/historyWorkflow/components/Lookover.vue'
+import {currentOneMonthAgo} from "@/util/date";
 
 export default {
   name: 'HistoryWorkflow',
@@ -24,10 +25,29 @@ export default {
   data() {
     return {}
   },
+   mounted() {
+    this.$nextTick(async () => {
+    await this.$refs.searchHistory.dispatchRefreshOrganization()
+        let projectValue = this.$refs.searchHistory.projectValue
+        let business = this.$refs.searchHistory.business
+        this.$refs.historyTable.projectValue = projectValue
+        this.$refs.historyTable.business = business
+
+     await this.$refs.historyTable.getHistoryTaskList(
+            this.$refs.historyTable.pageInfo
+        )
+        this.$refs.historyHeadContent.projectValue = projectValue
+        this.$refs.historyHeadContent.business = business
+      await  this.$refs.historyHeadContent.getHeaderNum()
+    })
+
+
+  },
   methods: {
-    searchHistory(dateRang, projectValue) {
+    searchHistory(dateRang, projectValue, business) {
       this.$refs.historyTable.dateRang = dateRang
       this.$refs.historyTable.projectValue = projectValue
+      this.$refs.historyTable.business = business
       this.$refs.historyTable.getHistoryTaskList(
         this.$refs.historyTable.pageInfo
       )
