@@ -168,9 +168,6 @@ export default {
       if (this.noExecutor) {
         temps.push(this.actionsConfig['NoExecutor'])
       }
-      if (this.hang) {
-        temps.push(this.actionsConfig['Hang'])
-      }
       const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
       return actions.map((action) => this.actionsConfig[action]).concat(temps)
     },
