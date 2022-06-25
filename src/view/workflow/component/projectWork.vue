@@ -2,98 +2,121 @@
   <div class="PublicForm">
     <div class="projectHeader">
       <el-select v-model="searchForm.ascription">
-        <el-option v-for="{id, label, value} in rootOrganizations"
-                   :key="id"
-                   :label="label"
-                   :value="value"></el-option>
+        <el-option
+          v-for="{ id, label, value } in rootOrganizations"
+          :key="id"
+          :label="label"
+          :value="value"
+        ></el-option>
       </el-select>
     </div>
     <div class="PublicForm-title">
       <div class="PublicForm-title-option">
-        <el-cascader v-model="searchForm.business"
-                     :key="searchForm.ascription"
-                     :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
-                     :props='cascaderProps'></el-cascader>
+        <el-cascader
+          v-model="searchForm.business"
+          :key="searchForm.ascription"
+          :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
+          :props="cascaderProps"
+        ></el-cascader>
       </div>
       <div class="datePick">
         <span class="datePickTitle">编辑时间</span>
-        <el-date-picker v-model="searchForm.valueDate"
-                        type="daterange"
-                        align="right"
-                        unlink-panels
-                        range-separator="——"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        :default-time="['00:00:00', '23:59:59']">
+        <el-date-picker
+          v-model="searchForm.valueDate"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="——"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
+        >
         </el-date-picker>
       </div>
       <div class="PublicForm-title-input">
-        <el-input v-model="searchForm.name"
-                  placeholder="请输入工作流名称"></el-input>
+        <el-input v-model="searchForm.name" placeholder="请输入工作流名称"></el-input>
       </div>
       <div class="PublicForm-title-input">
-        <el-button type="primary"
-                   @click="refreshWorkFlowRecord">查询</el-button>
+        <el-button type="primary" @click="refreshWorkFlowRecord">查询</el-button>
       </div>
       <div class="PublicForm-title-input">
-        <el-button  type="primary" 
-                   @click="onReset">重置</el-button>
+        <el-button type="primary" @click="onReset">重置</el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary"
-                   @click="onAddProject"
-                   v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }">新建工作流</el-button>
+        <el-button
+          type="primary"
+          @click="onAddProject"
+          v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }"
+          >新建工作流</el-button
+        >
       </div>
       <div class="PublicForm-title-button">
-        <el-button type="primary"
-                   @click="onQuoteBpmnShow"
-                   v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }">关联工作流</el-button>
+        <el-button
+          type="primary"
+          @click="onQuoteBpmnShow"
+          v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }"
+          >关联工作流</el-button
+        >
       </div>
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item"
-              :class="activeName === 'enabled,disabled' ? 'active' : ''"
-              @click="onChangeActiveName('enabled,disabled')">工作流({{ processCount }})</span>
-        <span class="home-main-tab-item"
-              :class="activeName === 'drafted' ? 'active' : ''"
-              @click="onChangeActiveName('drafted')">草稿箱（{{ draftProcessCount }}）</span>
+        <span
+          class="home-main-tab-item"
+          :class="activeName === 'enabled,disabled' ? 'active' : ''"
+          @click="onChangeActiveName('enabled,disabled')"
+          >工作流({{ processCount }})</span
+        >
+        <span
+          class="home-main-tab-item"
+          :class="activeName === 'drafted' ? 'active' : ''"
+          @click="onChangeActiveName('drafted')"
+          >草稿箱（{{ draftProcessCount }}）</span
+        >
       </div>
       <div class="home-table">
-        <projectTable v-if="activeName === 'enabled,disabled'"
-                      :business="projectValue"
-                      :searchForm="searchFormData"
-                      @lookBpmnShow="onLookBpmnShow"
-                      @deleteRow="onProjectDeleteRow"></projectTable>
-        <draftTable v-if="activeName === 'drafted'"
-                    :business="projectValue"
-                    :searchForm="searchFormData"
-                    @draftTableEdit="onDraftTableEdit"
-                    @deleteRow="onDraftDeleteRow"></draftTable>
+        <projectTable
+          v-if="activeName === 'enabled,disabled'"
+          :business="projectValue"
+          :searchForm="searchFormData"
+          @lookBpmnShow="onLookBpmnShow"
+          @deleteRow="onProjectDeleteRow"
+        ></projectTable>
+        <draftTable
+          v-if="activeName === 'drafted'"
+          :business="projectValue"
+          :searchForm="searchFormData"
+          @draftTableEdit="onDraftTableEdit"
+          @deleteRow="onDraftDeleteRow"
+        ></draftTable>
       </div>
     </div>
-    <addProject :visible="addProjectVisible"
-                @close="onAddProjectClose"
-                @submit="onAddProjectSubmit"></addProject>
-    <addBpmn v-if="addBpmnVisible"
-             :visible="addBpmnVisible"
-             :projectData="projectData"
-             @close="onAddBpmnClose"
-             @submit="onAddBpmnSubmit"></addBpmn>
-    <quoteBpmn v-if="quoteBpmnVisible"
-               :valueDate="searchForm.valueDate"
-               :ascription="searchForm.ascription"
-               :business="projectValue"
-               :visible="quoteBpmnVisible"
-               @close="onQuoteBpmnClose"
-               @lookBpmn="onLookBpmnShow"
-               @quoteBpmn="onQuoteBpmn"></quoteBpmn>
-    <lookBpmn v-if="lookBpmnVisible"
-              :projectData="projectData"
-              :visible="lookBpmnVisible"
-              @close="onLookBpmnClose"
-              @edit="onLookBpmnEdit"></lookBpmn>
+    <addProject :visible="addProjectVisible" @close="onAddProjectClose" @submit="onAddProjectSubmit"></addProject>
+    <addBpmn
+      v-if="addBpmnVisible"
+      :visible="addBpmnVisible"
+      :projectData="projectData"
+      @close="onAddBpmnClose"
+      @submit="onAddBpmnSubmit"
+    ></addBpmn>
+    <quoteBpmn
+      v-if="quoteBpmnVisible"
+      :valueDate="searchForm.valueDate"
+      :ascription="searchForm.ascription"
+      :business="projectValue"
+      :visible="quoteBpmnVisible"
+      @close="onQuoteBpmnClose"
+      @lookBpmn="onLookBpmnShow"
+      @quoteBpmn="onQuoteBpmn"
+    ></quoteBpmn>
+    <lookBpmn
+      v-if="lookBpmnVisible"
+      :projectData="projectData"
+      :visible="lookBpmnVisible"
+      @close="onLookBpmnClose"
+      @edit="onLookBpmnEdit"
+    ></lookBpmn>
   </div>
 </template>
 
@@ -142,10 +165,7 @@ export default {
   computed: {
     ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
     ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', [
-      'rootOrganizations',
-      'rootOrganizationChildrenAndAll',
-    ]),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
   },
   watch: {
     'searchForm.ascription'(value) {
@@ -172,7 +192,7 @@ export default {
       const uuid = await this.$generateUUID()
       this.addProjectVisible = true
       this.projectData = {
-        code: `process_${uuid}`
+        code: `process_${uuid}`,
       }
     },
     async onQuoteBpmn(_, row) {

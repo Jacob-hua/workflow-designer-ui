@@ -1,23 +1,20 @@
 <template>
-  <el-dialog title="查看"
-             :visible="visible"
-             width="70%"
-             custom-class="dialogVisible"
-             @close="close">
+  <el-dialog title="查看" :visible="visible" width="70%" custom-class="dialogVisible" @close="close">
     <div class="dialogVisible-main">
-      <bpmnView ref="bpmnView"
-                :valueType="valueType"
-                :projectData="projectData"
-                @edit="onEdit"></bpmnView>
+      <bpmnView ref="bpmnView" :valueType="valueType" :projectData="projectData" @edit="onEdit"></bpmnView>
     </div>
-    <span v-if="valueType === 'project'"
-          slot="footer"
-          class="dialog-footer">
-      <el-button @click="onEdit"
-                 type="primary"
-                 v-role="{ id: 'WorkflowEdit', type: 'button', business: projectData.business }">编辑</el-button>
-      <el-button @click="onDeactivate"
-                 v-role="{ id: 'WorkflowStart', type: 'button', business: projectData.business }">{{statusButtonLabel}}</el-button>
+    <span slot="footer" class="dialog-footer">
+      <el-button
+        @click="onEdit"
+        type="primary"
+        v-role="{ id: 'WorkflowEdit', type: 'button', business: projectData.business }"
+        >编辑</el-button
+      >
+      <el-button
+        @click="onDeactivate"
+        v-role="{ id: 'WorkflowStart', type: 'button', business: projectData.business }"
+        >{{ statusButtonLabel }}</el-button
+      >
     </span>
   </el-dialog>
 </template>
@@ -57,13 +54,9 @@ export default {
       this.$emit('edit', this.projectData, '查看')
     },
     onDeactivate() {
-      const file1 = new File(
-        [this.projectData.content],
-        this.projectData.name + '.bpmn',
-        {
-          type: 'bpmn20-xml',
-        }
-      )
+      const file1 = new File([this.projectData.content], this.projectData.name + '.bpmn', {
+        type: 'bpmn20-xml',
+      })
       let formData = new FormData()
       formData.set('id', this.projectData.id)
       formData.set('name', this.projectData.name)
@@ -85,9 +78,7 @@ export default {
       formData.set('tenantId', '18')
       formData.set('file', file1)
       updateWorkFlow(formData).then(() => {
-        this.$message.success(
-          this.projectData.status === 'disabled' ? '启用成功' : '停用成功'
-        )
+        this.$message.success(this.projectData.status === 'disabled' ? '启用成功' : '停用成功')
         this.$emit('close')
       })
     },
@@ -98,5 +89,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>
