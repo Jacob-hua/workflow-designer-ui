@@ -126,9 +126,10 @@ export default {
             this.form.fileList = this.metaDataList
                 .filter( (item) => item.compType=== 'upload')
                 .reduce((fileList, upload)=> {
-                fileList= [...upload.fileList]
+                fileList = fileList.concat(upload.fileList)
                   return fileList
             },[])
+          console.log(this.form)
           return JSON.parse(JSON.stringify(this.form))
         }catch (e) {
           throw  new Error(e.toString())
