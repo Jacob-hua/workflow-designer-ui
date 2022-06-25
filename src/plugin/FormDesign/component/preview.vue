@@ -80,8 +80,8 @@ export default {
   },
   mixins: [
     formDepMonitorMixin({
-      formData: 'form',
-      formFields: 'itemList',
+        formData: 'form',
+        formFields: 'itemList',
     }),
   ],
   computed:{
