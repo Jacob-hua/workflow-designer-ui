@@ -17,10 +17,7 @@
                          label="部署类型"
                          align="center">
         </el-table-column>
-        <!-- <el-table-column prop="docName"
-                         label="执行厂站"
-                         align="center"> -->
-        </el-table-column>
+
         <el-table-column prop="startUser"
                          label="发起人"
                          align="center">
@@ -76,6 +73,7 @@ export default {
       radio: '1',
       tableData: [],
       projectValue: '',
+      business: '',
       pageInfo: {
         [CONSTANT.PAGE]: 1,
         [CONSTANT.LIMIT]: 10,
@@ -89,7 +87,7 @@ export default {
   watch: {
     pageInfo: {
       deep: true,
-      immediate: true,
+      immediate: false,
       handler(newValue, oldValue) {
         this.getHistoryTaskList(newValue)
       },
@@ -100,6 +98,8 @@ export default {
       Promise.all([await historyTaskList({
         assignee: this.userInfo.account, // 执行人
         candidate: true, // 是否包含候选
+        ascription: this.projectValue,
+        business: this.business,
         endTime: `${this.dateRang[1]} 23:59:59`, // 结束时间
         ...pageInfo,
         order: 'desc', // 排序方式

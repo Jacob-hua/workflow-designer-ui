@@ -47,21 +47,23 @@ export default {
         currentMonthAvgTime: '0时0分',
         currentMonthCompleteProcessCount: 0,
       },
+      projectValue: '',
+      business: ''
     }
   },
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
   mounted() {
-    this.getHeaderNum()
+    // this.getHeaderNum()
   },
   methods: {
     getHeaderNum() {
       const { start, end } = currentMonthRangeFormat('YYYY-MM-DD HH:mm:ss')
       postHistoryProcessCountStatistic({
         assignee: this.userInfo.account,
-        ascription: '',
-        business: '',
+        ascription: this.projectValue,
+        business: this.business,
         startTime: start,
         endTime: end,
         tenantId: this.tenantId,
