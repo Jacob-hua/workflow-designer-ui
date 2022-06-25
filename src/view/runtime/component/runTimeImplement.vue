@@ -87,7 +87,9 @@ import RuntimeImplementTermination from './RuntimeImplementTermination.vue'
 import RuntimeImplementExecutor from './RuntimeImplementExecutor.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
+import { readFileToBlob } from '@/util/file.js'
 import { mapState } from 'vuex'
+import { readFile } from '../../../plugin/Bpmn/utils/file'
 
 export default {
   components: {
@@ -224,49 +226,52 @@ export default {
     configFun(item) {
       return JSON.parse(item.content).config
     },
-    onExecute() {
+    async onExecute() {
       let formData = {}
       let data = {}
       if (this.formShow) {
-        switch (this.formContant.docType) {
-          case 'json':
-            // TODO: 再preview层提供一个submit方法和reset方法
-            this.$refs.preview.$refs[this.$refs.preview.formConf.formModel].validate((valid) => {
-              if (valid) {
-                data = this.$refs.preview.form
-                formData = JSON.parse(this.formContant.content)
-                formData.list.forEach((item) => {
-                  item.value = data[item.id]
-                })
-              } else {
-                this.$message.error('有必填项未填写')
-              }
-            })
-            break
-          default:
-            break
-        }
+        data = await this.$refs.preview.submit()
+        formData = JSON.parse(this.formContant.content)
+        formData.list.forEach((item) => {
+          item.value = data[item.id]
+        })
+        this.completeTask(formData, data)
+        return
       }
       if (this.noExecutor && !Array.isArray(this.workflow.executors) && this.workflow.executors.length === 0) {
         this.$message.error('后续执行人为空！')
         return
       }
-      postCompleteTask({
-        assignee: this.userInfo.account,
-        nextAssignee: this.workflow.executors?.[0].userId,
-        commentList: [],
-        formData: formData,
-        processInstanceId: this.workflow.processInstanceId,
-        processKey: this.workflow.processDeployKey,
-        taskId: this.workflow.newTaskId,
-        taskKey: this.workflow.taskKey,
-        taskName: this.workflow.processDeployName,
-        variable: data,
-      }).then((res) => {
-        this.formShow = false
-        this.$message.success('执行成功')
-        this.$emit('taskSuccess')
-      })
+      this.completeTask(formData, data)
+    },
+    async completeTask(formData, data) {
+      const parameters = new FormData()
+      parameters.append('assignee', this.userInfo.account)
+      parameters.append('nextAssignee', this.workflow.executors?.[0].userId)
+      parameters.append('commentList', [])
+      parameters.append('formData', JSON.stringify(formData))
+      parameters.append('processInstanceId', this.workflow.processInstanceId)
+      parameters.append('processKey', this.workflow.processDeployKey)
+      parameters.append('taskId', this.workflow.newTaskId)
+      parameters.append('taskKey', this.workflow.taskKey)
+      parameters.append('taskName', this.workflow.processDeployName)
+      parameters.append('variable', JSON.stringify(data))
+      if (data.fileList) {
+        data.fileList.forEach(({ name, raw, type }, i) => {
+          parameters.append(`attachmentList[${i}][name]`, name)
+          parameters.append(`attachmentList[${i}][type]`, 'file')
+          parameters.append(`attachmentList[${i}][file]`, raw)
+          parameters.append(`attachmentList[${i}][description]`, '')
+        })
+      }
+      const { errorInfo } = await postCompleteTask(parameters)
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      this.formShow = false
+      this.$message.success('执行成功')
+      this.$emit('taskSuccess')
     },
     getFormData(formKey) {
       if (formKey) {
