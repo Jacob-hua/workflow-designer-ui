@@ -48,7 +48,6 @@
             </el-col>
           </template>
         </el-form>
-      <el-button @click="submit"></el-button>
     </el-row>
   </div>
 </template>
