@@ -224,49 +224,50 @@ export default {
     configFun(item) {
       return JSON.parse(item.content).config
     },
-    onExecute() {
+    async onExecute() {
       let formData = {}
       let data = {}
       if (this.formShow) {
-        switch (this.formContant.docType) {
-          case 'json':
-            // TODO: 再preview层提供一个submit方法和reset方法
-            this.$refs.preview.$refs[this.$refs.preview.formConf.formModel].validate((valid) => {
-              if (valid) {
-                data = this.$refs.preview.form
-                formData = JSON.parse(this.formContant.content)
-                formData.list.forEach((item) => {
-                  item.value = data[item.id]
-                })
-              } else {
-                this.$message.error('有必填项未填写')
-              }
-            })
-            break
-          default:
-            break
-        }
+        data = await this.$refs.preview.submit()
+        formData = JSON.parse(this.formContant.content)
+        formData.list.forEach((item) => {
+          item.value = data[item.id]
+        })
+        this.completeTask(formData, data)
+        return
       }
       if (this.noExecutor && !Array.isArray(this.workflow.executors) && this.workflow.executors.length === 0) {
         this.$message.error('后续执行人为空！')
         return
       }
-      postCompleteTask({
-        assignee: this.userInfo.account,
-        nextAssignee: this.workflow.executors?.[0].userId,
-        commentList: [],
-        formData: formData,
-        processInstanceId: this.workflow.processInstanceId,
-        processKey: this.workflow.processDeployKey,
-        taskId: this.workflow.newTaskId,
-        taskKey: this.workflow.taskKey,
-        taskName: this.workflow.processDeployName,
-        variable: data,
-      }).then((res) => {
-        this.formShow = false
-        this.$message.success('执行成功')
-        this.$emit('taskSuccess')
-      })
+      this.completeTask(formData, data)
+    },
+    async completeTask(formData, data) {
+      let attachmentList
+      if (data.fileList) {
+        attachmentList = data.fileList.map(({name, }) => {
+
+        })
+      }
+      // const { errorInfo } = await postCompleteTask({
+      //   assignee: this.userInfo.account,
+      //   nextAssignee: this.workflow.executors?.[0].userId,
+      //   commentList: [],
+      //   formData,
+      //   processInstanceId: this.workflow.processInstanceId,
+      //   processKey: this.workflow.processDeployKey,
+      //   taskId: this.workflow.newTaskId,
+      //   taskKey: this.workflow.taskKey,
+      //   taskName: this.workflow.processDeployName,
+      //   variable: data,
+      // })
+      // if (errorInfo.errorCode) {
+      //   this.$message.error(errorInfo.errorMsg)
+      //   return
+      // }
+      // this.formShow = false
+      // this.$message.success('执行成功')
+      // this.$emit('taskSuccess')
     },
     getFormData(formKey) {
       if (formKey) {
