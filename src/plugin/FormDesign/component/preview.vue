@@ -12,7 +12,7 @@
           label-width="formConf.labelWidth + 'px'"
           @submit.native.prevent="handlerSubmit"
         >
-          <template v-for="(element,index) in itemList"  >
+          <template v-for="(element,index) in metaDataList"  >
             <!-- <el-input v-model="element.id" placeholder=""></el-input> -->
              <preview-row-item 
               v-if="element.compType === 'row'"
@@ -75,15 +75,36 @@ export default {
       currentIndex:-1,
       quoteOption: [],
       fileList: [],
-      file:{}
+      file:{},
     }
   },
   mixins: [
     formDepMonitorMixin({
-      formData: 'form',
-      formFields: 'itemList',
+        formData: 'form',
+        formFields: 'itemList',
     }),
   ],
+  computed:{
+    metaDataList : function () {
+      return this.itemList.map((fieldInfo) => {
+        return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
+          executeApi({
+            apiMark: fieldInfo.requestConfig.apiMark,
+            sourceMark: fieldInfo.requestConfig.sourceMark,
+            data,
+          }).then(({ result: options }) => {
+            if(fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox' ){
+              this.quoteOption = options
+            } else if(fieldInfo.compType === 'cascader') { // 处理级联
+              this.quoteOption = options.result
+            } else { // 处理选择列表
+
+            }
+          })
+        })
+      })
+    }
+  },
   methods:{
     getFileList(file, fileList) {
       this.fileList = fileList
@@ -101,18 +122,9 @@ export default {
     },
      async handlerSubmit(){
         try {
-          this.$refs[this.formConf.formModel].validate((valid) => {
-            if (valid) {
-              let outPutFormData = JSON.parse(JSON.stringify(this.form))
-              if (this.fileList.length) { // 存在上传组件 并且有文件上传
-                outPutFormData['fileList'] = this.fileList
-              }
-              return  outPutFormData
-            } else {
-              this.$message.error('error submit');
-              return false
-            }
-          });
+          await this.$refs[this.formConf.formModel].validate()
+          return JSON.parse(JSON.stringify(this.form))
+
         }catch (e) {
           throw  new Error(e.toString())
         }
@@ -127,30 +139,13 @@ export default {
   },
   mounted() {
 
-    this.itemList = this.itemList.map((fieldInfo) => {
-      return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
-        executeApi({
-          apiMark: fieldInfo.requestConfig.apiMark,
-          sourceMark: fieldInfo.requestConfig.sourceMark,
-          data,
-        }).then(({ result: options }) => {
-          if(fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox' ){
-              this.quoteOption = options
-          } else if(fieldInfo.compType === 'cascader') { // 处理级联
-              this.quoteOption = options.result
-          } else { // 处理选择列表
 
-          }
-        })
-      })
-    })
     this.$nextTick(()=> {
     })
   },
   beforeCreate(){
   },
-  computed:{
-  }
+
 }
 </script>
 <style scoped>

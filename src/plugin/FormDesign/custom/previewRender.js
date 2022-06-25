@@ -11,7 +11,7 @@ function vModel(self, dataObject) {
   if(self.conf.compType === 'upload'){
     dataObject.attrs['auto-upload'] = false // 文件手动上传
     dataObject.attrs['on-change'] = (file, fileList) => { // 文件变换 钩子
-      self.getFileList(file, fileList)
+     self.conf['fileList'] = fileList
     }
     dataObject.attrs['before-upload'] = file=>{
       //非限定后缀不允许上传
