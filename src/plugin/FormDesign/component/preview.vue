@@ -59,6 +59,8 @@ import fancyDynamicTableItem from "../dynamic/fancyDynamicTableItem";
 import {datas,addRow,batchDeleteRow,deleteRow} from "../custom/formDraw";
 import formDepMonitorMixin, {mixinExecuteFunction} from "@/mixin/formDepMonitor";
 import {executeApi} from "@/api/globalConfig";
+import _ from 'lodash'
+
 export default {
   name:'preview',
   props:['itemList','formConf'],
@@ -129,8 +131,7 @@ export default {
                 fileList = fileList.concat(upload.fileList)
                   return fileList
             },[])
-          console.log(this.form)
-          return JSON.parse(JSON.stringify(this.form))
+          return _.cloneDeep(this.form)
         }catch (e) {
           throw  new Error(e.toString())
         }
