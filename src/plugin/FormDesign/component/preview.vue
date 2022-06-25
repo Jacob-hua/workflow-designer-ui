@@ -123,8 +123,13 @@ export default {
      async submit(){
         try {
           await this.$refs[this.formConf.formModel].validate()
+            this.form.fileList = this.metaDataList
+                .filter( (item) => item.compType=== 'upload')
+                .reduce((fileList, upload)=> {
+                fileList= [...upload.fileList]
+                  return fileList
+            },[])
           return JSON.parse(JSON.stringify(this.form))
-
         }catch (e) {
           throw  new Error(e.toString())
         }
