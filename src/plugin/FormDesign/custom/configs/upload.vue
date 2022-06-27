@@ -33,7 +33,7 @@
       <el-input v-model="props.action"></el-input>
     </el-form-item>
     <el-form-item label="大小(MB)">
-      <el-input-number v-model="props.fileSize"  :min="1" :max="10000" :step="10"/>
+      <el-input-number v-model="props.fileSize"  :min="1" :max="100" :step="10"/>
     </el-form-item>
     <el-form-item label="允许文件类型">
       <el-input v-model="props.accept"></el-input>
