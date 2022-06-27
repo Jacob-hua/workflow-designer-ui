@@ -62,7 +62,9 @@
             <preview
               :itemList="formListFun(formContant)"
               :formConf="configFun(formContant)"
-              v-if="formShow && formContant.docType === 'json'"
+              :uploadFunc="uploadFile.bind(this)"
+              :downloadFunc="downloadFile.bind(this)"
+              v-if="formShow"
               ref="preview"
             ></preview>
           </div>
@@ -92,6 +94,7 @@ import {
   getProcessNodeInfo,
   getExecuteDetail,
   uploadTaskAttachmentFile,
+  downloadTaskAttachmentFile,
 } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 
@@ -218,7 +221,7 @@ export default {
     onExecuteShape(value) {
       this.curExecuteShape = value
       if (value) {
-        this.getFormData(value.businessObject.formKey)
+        this.fetchFormData(value.businessObject.formKey)
       }
     },
     formListFun(item) {
@@ -248,7 +251,6 @@ export default {
       this.completeTask(formData, data)
     },
     async completeTask(formData, data) {
-      const attachmentList = await this.uploadFileList(data.fileList)
       const { errorInfo } = await postCompleteTask({
         assignee: this.userInfo.account,
         nextAssignee: this.workflow.executors?.[0].userId,
@@ -260,7 +262,6 @@ export default {
         taskKey: this.workflow.taskKey,
         taskName: this.workflow.processDeployName,
         variable: data,
-        attachmentList,
       })
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
@@ -270,10 +271,10 @@ export default {
       this.$message.success('执行成功')
       this.$emit('taskSuccess')
     },
-    getFormData(formKey) {
+    async fetchFormData(formKey) {
       if (formKey) {
         let docName = formKey.split(':')[2]
-        designFormDesignServiceAll({
+        const { errorInfo, result } = await designFormDesignServiceAll({
           status: 'enabled',
           tenantId: this.tenantId,
           ascription: this.workflow.ascription,
@@ -282,27 +283,22 @@ export default {
           numberCode: '',
           name: '',
           docName: docName,
-        }).then((res) => {
-          this.formContant = res.result[0]
-          this.formShow = true
         })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        if (!Array.isArray(result)) {
+          return
+        }
+        this.formContant = result[0]
+        this.formShow = true
       } else {
         this.formContant = ''
         this.formShow = false
       }
     },
-    async uploadFileList(fileList) {
-      if (!Array.isArray(fileList)) {
-        return
-      }
-      const sumFileSize = fileList.reduce((sumFileSize, { raw }) => sumFileSize + raw.size, 0)
-      if (sumFileSize >= 1024 * 1024 * 100) {
-        this.$message.error('上传文件过大')
-      }
-      const attachmentList = await Promise.all(fileList.map(async ({ name, raw }) => this.uploadFile(name, raw)))
-      return attachmentList.filter((fileId) => fileId)
-    },
-    async uploadFile(name, file) {
+    async uploadFile({ name, raw: file }) {
       const uploadParameters = new FormData()
       uploadParameters.append('name', name)
       uploadParameters.append('type', 'file')
@@ -311,6 +307,16 @@ export default {
       uploadParameters.append('processInstanceId', this.workflow.processInstanceId)
       uploadParameters.append('taskId', this.workflow.newTaskId)
       const { errorInfo, result } = await uploadTaskAttachmentFile(uploadParameters)
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      return result
+    },
+    async downloadFile(url) {
+      const { errorInfo, result } = await downloadTaskAttachmentFile({
+        attachmentId: url,
+      })
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
         return

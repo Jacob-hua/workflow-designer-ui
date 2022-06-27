@@ -220,9 +220,14 @@ export const postTaskCountStatistics = (params) =>
 export const getProcessNodeInfo = (params) =>
   get('/execute/processNodeInfo', params);
 
+// 上传文件
 export const uploadTaskAttachmentFile = (params) => 
   post('/execute/taskAttachment', params);
-  
+
+// 文件下载
+export const downloadTaskAttachmentFile = (params) => 
+  get('/execute/taskAttachmentDownload', params);
+
 // 权限管理
 
 // 获取组树
