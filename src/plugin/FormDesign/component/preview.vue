@@ -20,6 +20,8 @@
               :model="element"
               :quoteOption="quoteOption"
               :getFileList="getFileList"
+              :uploadFun = 'uploadFun'
+              :downloadFun = 'downloadFun'
               >
               <el-col v-for="(column) in element.columns" :key="column.index" :span="column.span">
                 <template v-for="(col) in column.list">
@@ -31,6 +33,8 @@
                     @valChange="handlerValChange"
                     :quoteOption="quoteOption"
                     :getFileList="getFileList"
+                    :uploadFun = 'uploadFun'
+                    :downloadFun = 'downloadFun'
                   />
 
                 </template>
@@ -44,6 +48,8 @@
                 :quoteOption="quoteOption"
                 :getFileList="getFileList"
                 @valChange="handlerValChange"
+                :uploadFun = 'uploadFun'
+                :downloadFun = 'downloadFun'
               />
             </el-col>
           </template>
@@ -63,7 +69,7 @@ import _ from 'lodash'
 
 export default {
   name:'preview',
-  props:['itemList','formConf'],
+  props:['itemList','formConf', 'uploadFun', 'downloadFun'],
   components:{
     previewItem,
     previewRowItem,
@@ -125,13 +131,12 @@ export default {
      async submit(){
         try {
           await this.$refs[this.formConf.formModel].validate()
-            this.form.fileList = this.metaDataList
-                .filter( (item) => item.compType=== 'upload')
-                .reduce((fileList, upload)=> {
-                fileList = fileList.concat(upload.fileList)
-                  return fileList
-            },[])
-          return _.cloneDeep(this.form)
+          return _.cloneDeep(
+                {
+                  metaDataList: this.metaDataList,
+                  formData: this.form
+                }
+              )
         }catch (e) {
           throw  new Error(e.toString())
         }

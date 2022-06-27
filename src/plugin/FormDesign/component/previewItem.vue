@@ -3,7 +3,7 @@ import render from '../custom/previewRender'
 import checkRules from '../custom/rule';
 
 const layouts = {
-  colItem(h, element,value, quoteOption, getFileList) {
+  colItem(h, element,value, quoteOption, getFileList, uploadFun, downloadFun) {
     let labelWidth = element.labelWidth ? `${element.labelWidth}px` : null
     const {valChange} = this.$listeners;
     const rules = checkRules(element);
@@ -14,7 +14,15 @@ const layouts = {
                         prop={element.id}
                         rules={rules}
                         >
-            <render key={element.id} conf={element} value={value} getFileList={getFileList} quoteOption={quoteOption} onInput={ event => {
+            <render
+                key={element.id}
+                conf={element}
+                value={value}
+                getFileList={getFileList}
+                quoteOption={quoteOption}
+                uploadFun= { uploadFun }
+                downloadFun= { downloadFun }
+                onInput={ event => {
               this.$set(element,'value',event);
               valChange(element.id,event);
             }}/>
@@ -29,7 +37,7 @@ export default {
   components: {
     render
   },
-  props: ['model','value', 'quoteOption', 'getFileList'],
+  props: ['model','value', 'quoteOption', 'getFileList', 'downloadFun', 'uploadFun'],
   data(){
     return {
       eleConfig:this.model
@@ -37,7 +45,7 @@ export default {
   },
 
   render(h) {
-    return layouts.colItem.call(this, h, this.eleConfig,this.value, this.quoteOption, this.getFileList)
+    return layouts.colItem.call(this, h, this.eleConfig,this.value, this.quoteOption, this.getFileList, this.uploadFun, this.downloadFun)
   }
 }
 </script>
