@@ -129,7 +129,7 @@ export default {
         createBy: this.userInfo.account,
         startTime: this.valueDate[0],
         endTime: this.valueDate[1],
-        business: this.business.at(-1),
+        business: this.business,
         ascription: this.ascription,
       }).then((res) => {
         this.tableData = res.result.list
@@ -155,7 +155,7 @@ export default {
       this.editData = JSON.parse(JSON.stringify(row))
       this.$refs.deploy.dialogVisible1 = true
       this.$refs.deploy.firstData.ascription = row.ascription
-      this.$refs.deploy.firstData.business = row.business.at(-1)
+      this.$refs.deploy.firstData.business = row.business
       this.$refs.deploy.changeOptions()
       this.$refs.deploy.firstData.id = row.id
     },

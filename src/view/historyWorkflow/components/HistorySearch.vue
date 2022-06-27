@@ -65,7 +65,7 @@ export default {
     }
   },
   mounted() {
-    this.dispatchRefreshOrganization();
+     // this.dispatchRefreshOrganization();
   },
   methods: {
     ...mapMutations('account', ['updateCurrentOrganization']),

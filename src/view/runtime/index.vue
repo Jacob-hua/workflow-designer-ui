@@ -247,9 +247,9 @@ export default {
   async mounted() {
     await this.dispatchRefreshOrganization()
     this.searchForm.ascription = this.currentOrganization
-    await this.fetchNewTasks()
-    await this.fetchAmount()
-    await this.fetchDataNumber()
+    this.fetchNewTasks()
+    this.fetchAmount()
+    this.fetchDataNumber()
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
