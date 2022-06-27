@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import runtimeConfirmation from './runtimeConfirmation.vue'
+import RuntimeConfirmation from './RuntimeConfirmation.vue'
 import RuntimeRejectConfirmation from './RuntimeRejectConfirmation.vue'
 import { putRejectTask } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
@@ -20,7 +20,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'RuntimeImplementReject',
   components: {
-    runtimeConfirmation,
+    RuntimeConfirmation,
     RuntimeRejectConfirmation,
   },
   props: {

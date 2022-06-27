@@ -36,14 +36,14 @@
 </template>
 
 <script>
-import runtimePeople from './runtimePeople.vue'
+import RuntimePeople from './RuntimePeople.vue'
 import { getModifyCandidate } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 
 export default {
   name: 'RuntimeImplementAgency',
   components: {
-    runtimePeople,
+    RuntimePeople,
   },
   props: {
     workflow: {

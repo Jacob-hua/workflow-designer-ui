@@ -13,13 +13,13 @@
 </template>
 
 <script>
-import runtimeConfirmation from './runtimeConfirmation.vue'
+import RuntimeConfirmation from './RuntimeConfirmation.vue'
 import { putHangInstance, getActiveInstance } from '@/api/unit/api.js'
 
 export default {
   name: 'RuntimeImplementHang',
   components: {
-    runtimeConfirmation,
+    RuntimeConfirmation,
   },
   props: {
     workflow: {
