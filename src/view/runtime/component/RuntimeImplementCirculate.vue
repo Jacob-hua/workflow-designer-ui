@@ -33,12 +33,12 @@
 
 <script>
 import { mapState } from 'vuex'
-import runtimePeople from './runtimePeople.vue'
+import RuntimePeople from './RuntimePeople.vue'
 import { getCirculation } from '@/api/unit/api.js'
 
 export default {
   name: 'RuntimeImplementCirculate',
-  components: { runtimePeople },
+  components: { RuntimePeople },
   props: {
     workflow: {
       type: Object,

@@ -11,7 +11,6 @@
       <span class="addCirculate" @click="onEditExecutor"> 编辑 </span>
     </div>
     <runtime-people
-      ref="runtimePeople"
       :visible.sync="runtimePeopleVisible"
       :selected="runtimePeopleSelected"
       @submit="onRuntimePeopleSubmit"
@@ -21,11 +20,11 @@
 </template>
 
 <script>
-import runtimePeople from './runtimePeople.vue'
+import RuntimePeople from './RuntimePeople.vue'
 
 export default {
   name: 'RuntimeImplementExecutor',
-  components: { runtimePeople },
+  components: { RuntimePeople },
   props: {
     workflow: {
       type: Object,
@@ -35,7 +34,7 @@ export default {
   data() {
     return {
       runtimePeopleVisible: false,
-      runtimePeopleSelected: []
+      runtimePeopleSelected: [],
     }
   },
   computed: {

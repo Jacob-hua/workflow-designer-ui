@@ -8,7 +8,6 @@
     </div>
     <span class="editButton" @click="onEditSignature()">编辑</span>
     <runtime-people
-      ref="runtimePeople"
       title="用户选择"
       :visible.sync="runtimePeopleVisible"
       :selected="runtimePeopleSelected"
@@ -18,11 +17,11 @@
 </template>
 
 <script>
-import runtimePeople from './runtimePeople.vue'
+import RuntimePeople from './RuntimePeople.vue'
 import { postModifyProcessUser } from '@/api/unit/api.js'
 
 export default {
-  components: { runtimePeople },
+  components: { RuntimePeople },
   name: 'RuntimeImplementSignature',
   props: {
     workflow: {

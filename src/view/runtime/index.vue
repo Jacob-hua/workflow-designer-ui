@@ -139,7 +139,7 @@
 
 <script>
 import RuntimeAdd from './component/RuntimeAdd.vue'
-import RuntimeImplement from './component/runTimeImplement.vue'
+import RuntimeImplement from './component/RuntimeImplement.vue'
 import Lookover from './component/lookover.vue'
 import { getTaskCountStatistic, postTaskCountStatistics, getExecuteList } from '@/api/unit/api.js'
 import { mapActions, mapGetters, mapState } from 'vuex'

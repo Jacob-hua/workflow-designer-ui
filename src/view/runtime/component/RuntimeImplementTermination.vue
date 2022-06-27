@@ -4,10 +4,7 @@
       <span style="color: #0066cc">当前流程正常运行，如需将流程终止，请进行认证操作</span>
       <div class="confirm" @click="onConfirmation">终止确认</div>
     </div>
-    <runtime-confirmation
-      :visible.sync="confirmationVisible"
-      @validate="onConfirmationValidate"
-    />
+    <runtime-confirmation :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
     <runtime-terminate-confirmation
       :visible.sync="terminateConfirmationVisible"
       @submit="onTerminateConfirmationSubmit"
@@ -16,7 +13,7 @@
 </template>
 
 <script>
-import RuntimeConfirmation from './runtimeConfirmation.vue'
+import RuntimeConfirmation from './RuntimeConfirmation.vue'
 import RuntimeTerminateConfirmation from './RuntimeTerminateConfirmation.vue'
 import { putCancelInstance } from '@/api/unit/api.js'
 
