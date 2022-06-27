@@ -24,7 +24,6 @@ function vModel(self, dataObject) {
   //判断是否为上传组件
   if(self.conf.compType === 'upload'){
     if (self.conf.value.length) {
-      dataObject.attrs['disabled'] = true
       dataObject.attrs['file-list'] = self.conf.value
     }
     dataObject.attrs['auto-upload'] = false // 文件手动上传
