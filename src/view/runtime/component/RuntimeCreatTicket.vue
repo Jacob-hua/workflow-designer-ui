@@ -120,7 +120,7 @@ export default {
           return
         }
         this.isLoading = true
-        this.startConfigList = await this.fetchProcessStartConfigList(process.business)
+        this.startConfigList = await this.fetchProcessStartConfigList(process.systemType)
         this.isLoading = false
       },
     },
