@@ -4,10 +4,9 @@
       <div class="Implement">
         <div class="Implement-left">
           <ProcessInformation
-            v-if="workflow.trackList"
-            :processInfo="workflow"
-            @executeShape="onExecuteShape"
-            seeType="runTime"
+            :xml="workflow.processDeployResource"
+            :processDisplayInfo="processDisplayInfo"
+            @loaded="onLoaded"
           ></ProcessInformation>
           <div class="function-list" v-if="actions.length > 0">
             <span
@@ -180,6 +179,34 @@ export default {
       const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
       return actions.map((action) => this.actionsConfig[action]).concat(temps)
     },
+    processDisplayInfo() {
+      return [
+        {
+          label: '流程编码',
+          value: this.workflow.processNumber,
+        },
+        {
+          label: '部署名称',
+          value: this.workflow.processDeployName,
+        },
+        {
+          label: '部署时间',
+          value: this.workflow.startTime,
+        },
+        {
+          label: '应用项目',
+          value: this.$getMappingName(this.workflow.ascription),
+        },
+        {
+          label: '流程类型',
+          value: this.$getMappingName(this.workflow.business),
+        },
+        {
+          label: '部署人',
+          value: this.workflow.starter,
+        },
+      ]
+    },
   },
   async mounted() {
     await this.fetchExecuteDetail()
@@ -218,7 +245,24 @@ export default {
         this.roleBoolean = true
       }
     },
-    onExecuteShape(value) {
+    onLoaded() {
+      const completedTaskList = this.workflow.trackList
+        .filter(({ taskKey }) => taskKey !== this.workflow.taskKey)
+        .map(({ taskKey }) => taskKey)
+      this.$iBpmn
+        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
+        .forEach((element) => {
+          if (element.id === this.workflow.taskKey) {
+            this.$iBpmn.canvasAddMarker(element, 'svgOncomplete')
+            return
+          }
+          if (completedTaskList.includes(element.id)) {
+            this.$iBpmn.canvasAddMarker(element, 'svgComplete')
+            return
+          }
+          this.$iBpmn.canvasAddMarker(element, 'svgIncomplete')
+        })
+      const value = this.$iBpmn.elementRegistryFind(({ id }) => id === this.workflow.taskKey)
       this.curExecuteShape = value
       if (value) {
         this.fetchFormData(value.businessObject.formKey)

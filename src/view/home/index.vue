@@ -2,7 +2,7 @@
   <div class="home">
     <div class="home-filter">
       <div class="projectSelect">
-        <el-select @change="projectChange" v-model="ascription">
+        <el-select v-model="searchForm.ascription">
           <el-option
             v-for="{ id, label, value } in rootOrganizations"
             :key="id"
@@ -14,17 +14,16 @@
       <div class="businessSelect">
         <el-cascader
           style="margin-right: 10px"
-          v-model="projectCode"
-          :options="rootOrganizationChildrenAndAll(ascription)"
+          v-model="searchForm.business"
+          :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
           :props="cascaderProps"
           clearable
-          @change="handleChange"
         ></el-cascader>
       </div>
       <div class="datePick">
         <span class="datePickTitle">时间</span>
         <el-date-picker
-          v-model="valueDate"
+          v-model="searchForm.valueDate"
           type="daterange"
           align="right"
           unlink-panels
@@ -34,7 +33,6 @@
           value-format="yyyy-MM-dd HH:mm:ss"
           :default-time="['00:00:00', '23:59:59']"
           :clearable="false"
-          @change="getManyData()"
         >
         </el-date-picker>
       </div>
@@ -65,7 +63,7 @@
         </div>
       </div>
       <div class="data3">
-        <div @click="goBpmn()">
+        <div @click="gotoWorkflow">
           <div class="title">
             <i class="el-icon-circle-plus"></i>
           </div>
@@ -75,36 +73,41 @@
     </div>
     <div class="home-main">
       <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="changeAction('first')">
+        <span
+          class="home-main-tab-item"
+          :class="activeName === 'workflow' ? 'active' : ''"
+          @click="changeAction('workflow')"
+        >
           工作流（{{ WorkflowTableNum }}）
         </span>
         <span
           class="home-main-tab-item"
-          :class="activeName === 'second' ? 'active' : ''"
-          @click="changeAction('second')"
+          :class="activeName === 'drafts' ? 'active' : ''"
+          @click="changeAction('drafts')"
         >
           草稿箱（{{ draftsTableNum }}）
         </span>
       </div>
       <div class="home-table">
-        <WorkflowTable
-          v-show="activeName === 'first'"
-          :valueDate="valueDate"
-          :ascription="ascription"
-          :business="projectCode"
+        <workflow-table
+          v-show="activeName === 'workflow'"
+          :valueDate="searchForm.valueDate"
+          :ascription="searchForm.ascription"
+          :business="searchForm.business"
+          :searchForm="searchForm"
           @totalChange="totalChange"
-          ref="first"
+          ref="workflow"
           @getManyData="getManyData()"
-        ></WorkflowTable>
-        <draftsTable
-          v-show="activeName === 'second'"
-          :valueDate="valueDate"
-          :ascription="ascription"
-          :business="projectCode"
+        ></workflow-table>
+        <drafts-table
+          v-show="activeName === 'drafts'"
+          :valueDate="searchForm.valueDate"
+          :ascription="searchForm.ascription"
+          :business="searchForm.business"
           @totalChange="totalChange"
-          ref="second"
+          ref="drafts"
           @getManyData="getManyData()"
-        ></draftsTable>
+        ></drafts-table>
       </div>
     </div>
   </div>
@@ -112,30 +115,30 @@
 
 <script>
 import WorkflowTable from './component/WorkflowTable.vue'
-import draftsTable from './component/draftsTable.vue'
+import DraftsTable from './component/draftsTable.vue'
 import { getDeployCount, getTaskCountStatistic } from '@/api/unit/api.js'
-import { getProjectList } from '@/api/globalConfig'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
 
 export default {
   components: {
     WorkflowTable,
-    draftsTable,
+    DraftsTable,
   },
   data() {
     const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
-      projectOption: [],
-      valueDate: [start, end],
+      searchForm: {
+        ascription: '',
+        business: '',
+        valueDate: [start, end],
+      },
       workflowContents: {
         executionCompleteCount: 0,
         executionInProcessCount: 0,
         executionTotalProcessCount: 0,
       },
-      activeName: 'first',
-      ascription: '',
-      projectCode: '',
+      activeName: 'workflow',
       WorkflowTableNum: 0,
       draftsTableNum: 0,
       deployedWorkflowContents: 0,
@@ -146,30 +149,23 @@ export default {
     ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll', 'findRootOrganizationByIndex']),
   },
+  watch: {
+    searchForm: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.getManyData()
+      },
+    },
+  },
   async created() {
     await this.dispatchRefreshOrganization()
-    this.ascription = this.findRootOrganizationByIndex(0).value
+    this.searchForm.ascription = this.findRootOrganizationByIndex(0).value
     this.getManyData()
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
-    handleChange() {
-      this.getManyData()
-    },
-    projectChange(val) {
-      this.getManyData()
-    },
-    async getProjectList() {
-      let res = await getProjectList({
-        count: -1,
-        projectCode: '',
-        tenantId: this.tenantId,
-        type: '',
-      })
-      this.projectOption = res?.result ?? []
-      this.ascription = this.projectOption[0].code
-    },
-    goBpmn() {
+    gotoWorkflow() {
       let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'))
 
       this.menuList = menuProjectList.filter((item) => {
@@ -189,14 +185,15 @@ export default {
     },
     changeAction(value) {
       this.activeName = value
-      this.$refs[value].getTableData()
+      // this.$refs[value].getTableData()
+      this.$refs.workflow.fetchWorkflows()
     },
     getDeployCountList() {
       getDeployCount({
-        ascription: this.ascription,
-        business: this.projectCode,
-        startTime: this.valueDate[0],
-        endTime: this.valueDate[1],
+        ascription: this.searchForm.ascription,
+        business: this.searchForm.business,
+        startTime: this.searchForm.valueDate[0],
+        endTime: this.searchForm.valueDate[1],
         status: 'activation',
         tenantId: this.tenantId,
       }).then((res) => {
@@ -207,17 +204,17 @@ export default {
       this.getDataNumber()
       this.getDeployCountList()
       this.$nextTick(() => {
-        this.$refs.first.getTableData()
-        this.$refs.second.getTableData()
+        this.$refs.workflow.fetchWorkflows()
+        this.$refs.drafts.getTableData()
       })
     },
     getDataNumber() {
       getTaskCountStatistic({
-        ascription: this.ascription,
+        ascription: this.searchForm.ascription,
         assignee: this.userInfo.account,
-        business: this.projectCode,
-        endTime: this.valueDate[1],
-        startTime: this.valueDate[0],
+        business: this.searchForm.business,
+        endTime: this.searchForm.valueDate[1],
+        startTime: this.searchForm.valueDate[0],
         tenantId: this.tenantId,
       }).then((res) => {
         if (res) {

@@ -1,41 +1,10 @@
 <template>
   <div>
     <div class="ProcessInformation-title">
-      <div class="title-item">
-        <span> 流程编码：</span>
-        <span>
-          {{ processInfo.processNumber }}
-        </span>
-      </div>
-      <div class="title-item">
-        <span> {{ seeType === 'runTime' ? '部署' : '流程' }}名称：</span>
-        <span>
-          {{ processInfo.processDeployName }}
-        </span>
-      </div>
-      <div class="title-item">
-        <span> {{ seeType === 'runTime' ? '部署' : '创建' }}时间：</span>
-        <span>
-          {{ processInfo.startTime }}
-        </span>
-      </div>
-      <div class="title-item">
-        <span> 应用项目：</span>
-        <span>
-          {{ $getMappingName(processInfo.ascription) }}
-        </span>
-      </div>
-      <div class="title-item">
-        <span> 流程类型：</span>
-        <span>
-          {{ $getMappingName(processInfo.business) }}
-        </span>
-      </div>
-      <div class="title-item" v-if="seeType === 'runTime'">
-        <span> {{ seeType === 'runTime' ? '部署人' : '流程版本' }}： </span>
-        <span>
-          {{ processInfo.starter }}
-        </span>
+      <div class="title-item" v-for="({ label, value }, index) in processDisplayInfo" :key="index">
+        <span>{{ label }}</span
+        >:
+        <span>{{ value }}</span>
       </div>
     </div>
     <div class="ProcessInformation-bpmn">
@@ -43,7 +12,7 @@
         :pelatteVisible="false"
         :headerVisible="false"
         :linterToggle="false"
-        :xml="processInfo.processDeployResource"
+        :xml="xml"
         @loaded="onBpmnLoaded"
       />
     </div>
@@ -54,38 +23,18 @@
 export default {
   name: 'ProcessInformation',
   props: {
-    seeType: {
+    xml: {
       type: String,
-      default: 'delete',
+      default: '',
     },
-    processInfo: {
-      type: Object,
-      default: () => ({}),
+    processDisplayInfo: {
+      type: Array,
+      default: () => [],
     },
   },
   methods: {
     onBpmnLoaded() {
-      // TODO: 此处应该禁用画布的选择事件的
-      const completedTaskList = this.processInfo.trackList
-        .filter(({ taskKey }) => taskKey !== this.processInfo.taskKey)
-        .map(({ taskKey }) => taskKey)
-      this.$iBpmn
-        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
-        .forEach((element) => {
-          if (element.id === this.processInfo.taskKey) {
-            this.$iBpmn.canvasAddMarker(element, 'svgOncomplete')
-            return
-          }
-          if (completedTaskList.includes(element.id)) {
-            this.$iBpmn.canvasAddMarker(element, 'svgComplete')
-            return
-          }
-          this.$iBpmn.canvasAddMarker(element, 'svgIncomplete')
-        })
-      this.$emit(
-        'executeShape',
-        this.$iBpmn.elementRegistryFind(({ id }) => id === this.processInfo.taskKey)
-      )
+      this.$emit('loaded')
     },
   },
 }
