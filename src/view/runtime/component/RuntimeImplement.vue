@@ -86,10 +86,14 @@ import RuntimeImplementReject from './RuntimeImplementReject.vue'
 import RuntimeImplementTermination from './RuntimeImplementTermination.vue'
 import RuntimeImplementExecutor from './RuntimeImplementExecutor.vue'
 import preview from '@/plugin/FormDesign/component/preview'
-import { designFormDesignServiceAll, postCompleteTask, getProcessNodeInfo, getExecuteDetail } from '@/api/unit/api.js'
-import { readFileToBlob } from '@/util/file.js'
+import {
+  designFormDesignServiceAll,
+  postCompleteTask,
+  getProcessNodeInfo,
+  getExecuteDetail,
+  uploadTaskAttachmentFile,
+} from '@/api/unit/api.js'
 import { mapState } from 'vuex'
-import { readFile } from '../../../plugin/Bpmn/utils/file'
 
 export default {
   components: {
@@ -217,7 +221,6 @@ export default {
         this.getFormData(value.businessObject.formKey)
       }
     },
-
     formListFun(item) {
       let content = JSON.parse(item.content)
       let list = content.list
@@ -245,26 +248,24 @@ export default {
       this.completeTask(formData, data)
     },
     async completeTask(formData, data) {
-      const parameters = new FormData()
-      parameters.append('assignee', this.userInfo.account)
-      parameters.append('nextAssignee', this.workflow.executors?.[0].userId)
-      parameters.append('commentList', [])
-      parameters.append('formData', JSON.stringify(formData))
-      parameters.append('processInstanceId', this.workflow.processInstanceId)
-      parameters.append('processKey', this.workflow.processDeployKey)
-      parameters.append('taskId', this.workflow.newTaskId)
-      parameters.append('taskKey', this.workflow.taskKey)
-      parameters.append('taskName', this.workflow.processDeployName)
-      parameters.append('variable', JSON.stringify(data))
+      let attachmentList
       if (data.fileList) {
-        data.fileList.forEach(({ name, raw, type }, i) => {
-          parameters.append(`attachmentList[${i}][name]`, name)
-          parameters.append(`attachmentList[${i}][type]`, 'file')
-          parameters.append(`attachmentList[${i}][file]`, raw)
-          parameters.append(`attachmentList[${i}][description]`, '')
-        })
+        attachmentList = await Promise.all(data.fileList.map(async ({ name, raw }) => this.uploadFile(name, raw)))
+        attachmentList = attachmentList.filter((fileId) => fileId)
       }
-      const { errorInfo } = await postCompleteTask(parameters)
+      const { errorInfo } = await postCompleteTask({
+        assignee: this.userInfo.account,
+        nextAssignee: this.workflow.executors?.[0].userId,
+        commentList: [],
+        formData,
+        processInstanceId: this.workflow.processInstanceId,
+        processKey: this.workflow.processDeployKey,
+        taskId: this.workflow.newTaskId,
+        taskKey: this.workflow.taskKey,
+        taskName: this.workflow.processDeployName,
+        variable: data,
+        attachmentList,
+      })
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
         return
@@ -293,6 +294,21 @@ export default {
         this.formContant = ''
         this.formShow = false
       }
+    },
+    async uploadFile(name, file) {
+      const uploadParameters = new FormData()
+      uploadParameters.append('name', name)
+      uploadParameters.append('type', 'file')
+      uploadParameters.append('file', file)
+      uploadParameters.append('description', '')
+      uploadParameters.append('processInstanceId', this.workflow.processInstanceId)
+      uploadParameters.append('taskId', this.workflow.newTaskId)
+      const { errorInfo, result } = await uploadTaskAttachmentFile(uploadParameters)
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      return result
     },
     async fetchProcessNodeInfo() {
       const { errorInfo, result } = await getProcessNodeInfo({

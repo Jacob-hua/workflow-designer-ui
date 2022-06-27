@@ -220,6 +220,8 @@ export const postTaskCountStatistics = (params) =>
 export const getProcessNodeInfo = (params) =>
   get('/execute/processNodeInfo', params);
 
+export const uploadTaskAttachmentFile = (params) => 
+  post('/execute/taskAttachment', params);
   
 // 权限管理
 
