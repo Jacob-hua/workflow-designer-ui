@@ -248,11 +248,7 @@ export default {
       this.completeTask(formData, data)
     },
     async completeTask(formData, data) {
-      let attachmentList
-      if (data.fileList) {
-        attachmentList = await Promise.all(data.fileList.map(async ({ name, raw }) => this.uploadFile(name, raw)))
-        attachmentList = attachmentList.filter((fileId) => fileId)
-      }
+      const attachmentList = await this.uploadFileList(data.fileList)
       const { errorInfo } = await postCompleteTask({
         assignee: this.userInfo.account,
         nextAssignee: this.workflow.executors?.[0].userId,
@@ -294,6 +290,17 @@ export default {
         this.formContant = ''
         this.formShow = false
       }
+    },
+    async uploadFileList(fileList) {
+      if (!Array.isArray(fileList)) {
+        return
+      }
+      const sumFileSize = fileList.reduce((sumFileSize, { raw }) => sumFileSize + raw.size, 0)
+      if (sumFileSize >= 1024 * 1024 * 100) {
+        this.$message.error('上传文件过大')
+      }
+      const attachmentList = await Promise.all(fileList.map(async ({ name, raw }) => this.uploadFile(name, raw)))
+      return attachmentList.filter((fileId) => fileId)
     },
     async uploadFile(name, file) {
       const uploadParameters = new FormData()
