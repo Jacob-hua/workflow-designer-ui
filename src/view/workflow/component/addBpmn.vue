@@ -50,6 +50,7 @@ export default {
       return this.projectData.id ? '编辑流程' : '新建流程'
     },
     processFormData() {
+      // TODO: 此处的文件名和文件id应该以addProject.vue中设置的参数为主
       const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
       let processFormData = new FormData()
       if (this.projectData.id) {
