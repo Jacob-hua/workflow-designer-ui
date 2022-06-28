@@ -1,28 +1,35 @@
 <template>
   <div>
     <el-dialog title="表单" :visible.sync="dialogVisible1" width="35%" custom-class="dialogVisible1">
-      <div>
-        <div class="from-item">
-          <span>应用项目</span>
-          <el-select disabled="true" v-model="postData.ascription">
-            <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
-          </el-select>
-        </div>
-        <div class="from-item">
-          <span style="width: 79px">流程类型</span>
-          <el-cascader
-              ref="cascader"
-              v-model="postData.business"
-              :options="systemOption"
-              :props='sysProps'
-              clearable
-              @change="onOptionClick"
-          ></el-cascader>
-        </div>
-        <div class="from-item">
-          <span>表单名称</span>
-          <el-input v-model="postData.name" placeholder="请输入表单名称"></el-input>
-        </div>
+      <div class="guid">
+        <el-form ref="form" :rules="rules" :model="postData">
+          <div class="from-item">
+            <el-form-item label="应用项目" prop="ascription">
+
+              <el-select disabled="true" v-model="postData.ascription">
+                <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
+              </el-select>
+            </el-form-item>
+          </div>
+          <div class="from-item">
+            <el-form-item label="流程类型"  prop="business">
+              <el-cascader
+                  ref="cascader"
+                  v-model="postData.business"
+                  :options="systemOption"
+                  :props='sysProps'
+                  clearable
+                  @change="onOptionClick"
+              ></el-cascader>
+            </el-form-item>
+          </div>
+          <div class="from-item">
+            <el-form-item label="表单名称"  prop="name">
+              <el-input v-model="postData.name" placeholder="请输入表单名称"></el-input>
+            </el-form-item>
+          </div>
+        </el-form>
+
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="nextDiolog()" type="primary">下一步</el-button>
@@ -105,6 +112,19 @@ export default {
   },
   data() {
     return {
+      rules: {
+        ascription: [
+          { required: true, message: '请输入资源名称', trigger: 'blur' }
+        ],
+        business: [
+          { required: true, message: '请输入资源标识', trigger: 'change' }
+        ],
+        name: [
+          { required: true, message: '请输入表单名称', trigger: 'blur' },
+          { min: 0, max: 100, message: '长度在 0 到 100 个字符', trigger: 'blur' }
+        ],
+      },
+
       dialogVisible1: false,
       dialogVisible2: false,
       postData: {
@@ -137,17 +157,17 @@ export default {
       this.postData.ascName = nodeInfo[0].label
     },
     nextDiolog() {
-      if (this.postData.name) {
-        if (this.postData.name.length > 2) {
-          this.dialogVisible1 = false
-          this.dialogVisible2 = true
-          this.$refs.formDesigner.clear()
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+              this.dialogVisible1 = false
+              this.dialogVisible2 = true
+              this.$refs.formDesigner.clear()
         } else {
-          this.$message.error('表单名称必须大于两个字符')
+          console.log('error submit!!');
+          return false;
         }
-      } else {
-        this.$message.error('未填写表单名称')
-      }
+      });
+
 
     },
     addEnableForm() {
@@ -314,7 +334,15 @@ export default {
 >>> .el-cascader {
   width: 320px;
 }
-
+.guid >>> .el-select {
+  width: 320px;
+}
+.guid >>> .el-input {
+  width: 320px;
+}
+>>> .el-form-item__content {
+  display: flex;
+}
 /deep/ .dialogVisible1 .el-dialog__body {
   padding: 16px 180px 0px 100px;
 }
