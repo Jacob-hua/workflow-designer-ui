@@ -42,7 +42,7 @@ function vModel(self, dataObject) {
       if (self.uploadFun) {
         const result = await Promise.resolve( self.uploadFun(file))
         self.conf.value.push({
-          name: file.raw.fileName,
+          name: file.raw.name,
           url: result,
           type: file.raw.type
         })

@@ -121,8 +121,8 @@ export default {
   mounted() {
   },
   methods: {
-    upload() {
-      console.log('saddasda')
+    upload(file) {
+      console.log(file)
     },
     setting(){
       this.formConfVisible = true;
