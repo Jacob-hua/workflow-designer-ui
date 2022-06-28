@@ -41,7 +41,7 @@
         <el-button @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
-    <deploy-options :visible.sync="deployOptionsVisible" :workflow="workflow" />
+    <deploy-options v-if="deployOptionsVisible" :visible.sync="deployOptionsVisible" :workflow="formData" />
   </div>
 </template>
 
