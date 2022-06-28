@@ -89,7 +89,7 @@ export default {
   mixins: [
     formDepMonitorMixin({
         formData: 'form',
-        formFields: 'itemList',
+        formFields: 'metaDataList',
     }),
   ],
   computed:{
