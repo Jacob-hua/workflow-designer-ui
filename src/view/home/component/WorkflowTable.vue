@@ -46,10 +46,10 @@
       >
       </el-pagination>
     </div>
-    <deploy-confirmation
+    <!-- <deploy-confirmation
       :visible.sync="deployConfirmationVisible"
       :workflow="workflow"
-    />
+    /> -->
     <deploy
       ref="deploy"
       :editData="workflow"
@@ -137,12 +137,12 @@ export default {
     onDeploy(row) {
       this.workflow = { ...row }
       this.deployConfirmationVisible = true
-      // this.workflow = JSON.parse(JSON.stringify(row))
-      // this.$refs.deploy.dialogVisible1 = true
-      // this.$refs.deploy.firstData.ascription = row.ascription
-      // this.$refs.deploy.firstData.business = row.business
-      // this.$refs.deploy.changeOptions()
-      // this.$refs.deploy.firstData.id = row.id
+      this.workflow = JSON.parse(JSON.stringify(row))
+      this.$refs.deploy.dialogVisible1 = true
+      this.$refs.deploy.firstData.ascription = row.ascription
+      this.$refs.deploy.firstData.business = row.business
+      this.$refs.deploy.changeOptions()
+      this.$refs.deploy.firstData.id = row.id
     },
     onDetails(item) {
       this.$refs.detailsBnpm.dialogVisible1 = true

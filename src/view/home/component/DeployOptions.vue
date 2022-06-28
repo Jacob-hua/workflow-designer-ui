@@ -1,13 +1,13 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible="visible" @close="onCancel" width="90%">
+    <el-dialog title="部署工作流" :visible="visible" @close="onCancel" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-left">
         <div class="bpmn-Main">
           <ProcessInformation
             :processDisplayInfo="processDisplayInfo"
             :xml="workflow.content"
-            @selection="selection"
-          ></ProcessInformation>
+            @selectedShape="onSelectedShape"
+          />
         </div>
         <div class="bpmn-configure">
           <div class="bpmn-configure-basic">
@@ -17,7 +17,7 @@
                 <span>名<span style="visibility: hidden">占位</span>称</span>: <span>{{ bpmnData.name }}</span>
               </div>
               <div class="bpmn-configure-Main-item">
-                <span>绑定岗位</span>: <span>{{ bpmnData.grounp }}</span>
+                <span>绑定岗位</span>: <span>{{ bpmnData.group }}</span>
               </div>
               <div class="bpmn-configure-Main-item">
                 <span>绑定人员</span>: <span>{{ bpmnData.assignee }}</span>
@@ -74,8 +74,9 @@
           type="primary"
           @click="addWorkFlow()"
           v-role="{ id: 'HomeDeploy', type: 'button', business: business }"
-          >部署</el-button
         >
+          部署
+        </el-button>
         <el-button @click="onSave">保存</el-button>
         <el-button @click="onCancel">取消</el-button>
       </span>
@@ -86,7 +87,6 @@
 <script>
 import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
 import { postProcessDraft, putProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
-import X2JS from 'x2js'
 import preview from '@/plugin/FormDesign/component/preview'
 import { mapState, mapGetters } from 'vuex'
 
@@ -126,7 +126,7 @@ export default {
     return {
       bpmnData: {
         name: '',
-        grounp: '',
+        group: '',
         assignee: '',
         document: '',
         id: '',
@@ -184,7 +184,7 @@ export default {
     initData() {
       this.bpmnData = {
         name: '',
-        grounp: '',
+        group: '',
         assignee: '',
         document: '',
         id: '',
@@ -196,9 +196,12 @@ export default {
       this.$emit('cancel')
       this.$emit('update:visible', false)
     },
-    addWorkFlow() {
-      const newConvert = new X2JS()
+    async addWorkFlow() {
       let formIds = ''
+      const { xml } = await this.$iBpmn.saveXML({ format: true })
+      const shapeInfo = this.$iBpmn.getRootShapeInfo()
+      console.log(shapeInfo);
+
       this.bpmnModeler
         .saveXML({
           format: true,
@@ -236,7 +239,6 @@ export default {
             default:
               break
           }
-          // formData.append('createTime', new Date())
           formData.append('createBy', this.userInfo.account)
           formData.append('deployKey', definitions.process['_id'])
           formData.append('deployName', this.workflow.deployName)
@@ -251,7 +253,6 @@ export default {
             formData.append('systemType', this.workflow.business)
           }
           formData.append('updateBy', this.userInfo.account)
-          // formData.append('processResource', '')
           formData.append('tenantId', this.tenantId)
           postDeployForOnline(formData).then((res) => {
             this.$message.success('部署成功')
@@ -273,18 +274,25 @@ export default {
         this.formList = res.result
       })
     },
-    selection(element, bpmn) {
-      this.bpmnModeler = bpmn
-      if (element) {
-        window.bpmnInstances.modeler = element
-        this.bpmnData.name = element.businessObject.name
-        this.bpmnData.grounp = element.businessObject.$attrs['camunda:' + 'candidateGroups']
-        this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
-        this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
-        this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
-      } else {
+    onSelectedShape(element) {
+      if (!element) {
         this.initData()
+        return
       }
+      this.bpmnData.name = this.$iBpmn.getSelectedShapeInfoByType('name')
+      this.bpmnData.group = this.$iBpmn.getSelectedShapeInfoByType('candidateGroups')
+      this.bpmnData.assignee = this.$iBpmn.getSelectedShapeInfoByType('assignee')
+      // this.bpmnModeler = bpmn
+      // if (element) {
+      //   window.bpmnInstances.modeler = element
+      //   this.bpmnData.name = element.businessObject.name
+      //   this.bpmnData.group = element.businessObject.$attrs['camunda:' + 'candidateGroups']
+      //   this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
+      //   this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
+      //   this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
+      // } else {
+      //   this.initData()
+      // }
     },
     showForm(item) {
       if (window.bpmnInstances.modeler) {
@@ -296,14 +304,12 @@ export default {
       }
     },
     onSave() {
-      const newConvert = new X2JS()
       let formIds = ''
       this.bpmnModeler
         .saveXML({
           format: true,
         })
         .then(({ xml }) => {
-          const { definitions } = newConvert.xml2js(xml)
           var file1 = new File([xml], definitions.process._name + '.bpmn', {
             type: 'bpmn20-xml',
           })

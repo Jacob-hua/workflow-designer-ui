@@ -13,6 +13,7 @@
         :headerVisible="false"
         :linterToggle="false"
         :xml="xml"
+        :selectedChanged="onSelectedChange"
         @loaded="onBpmnLoaded"
       />
     </div>
@@ -35,6 +36,12 @@ export default {
   methods: {
     onBpmnLoaded() {
       this.$emit('loaded')
+    },
+    onSelectedChange(shape) {
+      if (!shape) {
+        return
+      }
+      this.$emit('selectedShape', shape)
     },
   },
 }
