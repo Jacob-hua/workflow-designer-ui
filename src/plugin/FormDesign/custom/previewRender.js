@@ -8,11 +8,11 @@ function downloadFile(fileName, fileType, content, charset = "utf-8") {
     throw new Error("This is not a browser environment");
   }
   const blob = new Blob([content], {
-    type: `${mimes[String.prototype.toLowerCase.call(fileType)]};charset=${charset}`,
+    type: `${fileType};charset=${charset}`,
   });
   const link = document.createElement("a");
   link.href = window.URL.createObjectURL(blob);
-  link.download = `${fileName}.${fileType}`;
+  link.download = `${fileName}`;
   link.click();
   window.URL.revokeObjectUR
 }
@@ -28,6 +28,7 @@ function vModel(self, dataObject) {
     }
     dataObject.attrs['auto-upload'] = false // 文件手动上传
     dataObject.attrs['on-preview'] = async (file) => {
+
       if (self.downloadFun) {
         const result = await Promise.resolve( self.downloadFun(file))
         if(!result) {
