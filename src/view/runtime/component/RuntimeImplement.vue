@@ -59,8 +59,8 @@
           <div style="margin-top: 20px; margin-bottom: 10px">表单内容</div>
           <div class="Implement-right-form">
             <preview
-              :itemList="formListFun(formContant)"
-              :formConf="configFun(formContant)"
+              :itemList="formContant.list"
+              :formConf="formContant.config"
               :uploadFun="uploadFile.bind(this)"
               :downloadFun="downloadFile.bind(this)"
               v-if="formShow"
@@ -123,7 +123,7 @@ export default {
     return {
       workflow: {},
       functionCheck: '',
-      formContant: '',
+      formContant: {},
       formShow: false,
       roleBoolean: true,
       actionsConfig: {
@@ -268,33 +268,20 @@ export default {
         this.fetchFormData(value.businessObject.formKey)
       }
     },
-    formListFun(item) {
-      let content = JSON.parse(item.content)
-      let list = content.list
-      return list
-    },
-    configFun(item) {
-      return JSON.parse(item.content).config
-    },
     async onExecute() {
-      let formData = {}
-      let data = {}
       if (this.formShow) {
-        data = await this.$refs.preview.submit()
-        formData = JSON.parse(this.formContant.content)
-        formData.list.forEach((item) => {
-          item.value = data[item.id]
-        })
-        this.completeTask(formData, data)
+        const { formData, metaDataList } = await this.$refs.preview.submit()
+        this.formContant.list = [...metaDataList]
+        this.completeTask(this.formContant, formData)
         return
       }
       if (this.noExecutor && !Array.isArray(this.workflow.executors) && this.workflow.executors.length === 0) {
         this.$message.error('后续执行人为空！')
         return
       }
-      this.completeTask(formData, data)
+      this.completeTask()
     },
-    async completeTask(formData, data) {
+    async completeTask(formData = {}, data = {}) {
       const { errorInfo } = await postCompleteTask({
         assignee: this.userInfo.account,
         nextAssignee: this.workflow.executors?.[0].userId,
@@ -335,10 +322,10 @@ export default {
         if (!Array.isArray(result)) {
           return
         }
-        this.formContant = result[0]
+        this.formContant = JSON.parse(result[0]?.content ?? '{}')
         this.formShow = true
       } else {
-        this.formContant = ''
+        this.formContant = {}
         this.formShow = false
       }
     },
@@ -357,7 +344,7 @@ export default {
       }
       return result
     },
-    async downloadFile(url) {
+    async downloadFile({ url }) {
       const { errorInfo, result } = await downloadTaskAttachmentFile({
         attachmentId: url,
       })
