@@ -14,31 +14,26 @@
             <div class="bpmn-configure-title">工单分配</div>
             <div class="bpmn-configure-Main">
               <div class="bpmn-configure-Main-item">
-                <span>名<span style="visibility: hidden">占位</span>称</span>: <span>{{ bpmnData.name }}</span>
+                <span>名<span style="visibility: hidden">占位</span>称</span>: <span>{{ taskInfo.name }}</span>
               </div>
               <div class="bpmn-configure-Main-item">
-                <span>绑定岗位</span>: <span>{{ bpmnData.group }}</span>
+                <span>绑定岗位</span>: <span>{{ taskInfo.group }}</span>
               </div>
               <div class="bpmn-configure-Main-item">
-                <span>绑定人员</span>: <span>{{ bpmnData.assignee }}</span>
-              </div>
-              <div class="bpmn-configure-Main-item">
-                <span>备<span style="visibility: hidden">占位</span>注</span>: <span>{{ bpmnData.document }}</span>
+                <span>绑定人员</span>: <span>{{ taskInfo.assignee }}</span>
               </div>
             </div>
           </div>
           <div class="bpmn-configure-form">
             <div class="bpmn-configure-title">工单分配-表单内容</div>
             <div class="bpmn-configure-Main">
-              <span v-if="!formShow" class="noneForm"> 当前未关联表单 </span>
-              <span v-if="formShow" class="formRemove" @click="removeForm()">移除表单</span>
-              <div v-if="formShow" class="formShowForm">
-                <preview
-                  :itemList="formListFun(formContent)"
-                  :formConf="configFun(formContent)"
-                  v-if="formShow && formContent.docType === 'json'"
-                ></preview>
+              <div v-if="formShow">
+                <span class="formRemove" @click="onRemoveForm">移除表单</span>
+                <div class="formShowForm">
+                  <preview :itemList="formContent.fields" :formConf="formContent.config"></preview>
+                </div>
               </div>
+              <span v-else class="noneForm"> 当前未关联表单 </span>
             </div>
           </div>
         </div>
@@ -46,25 +41,31 @@
       <div class="dialogVisible2-right">
         <div class="dialogVisible2-right-title">表单筛选</div>
         <div class="dialogVisible2-right-search">
-          <el-input v-model="input" placeholder="请输入内容" @keyup.native.enter="getFormList()"></el-input>
+          <el-input v-model="formName" placeholder="请输入内容" @keyup.native.enter="fetchFormList"></el-input>
         </div>
         <div class="formList">
-          <div class="listItem" v-for="(item, index) in formList" :key="index">
-            <span class="listItem-title" :title="item.name">{{ item.name }}</span>
+          <div
+            class="listItem"
+            v-for="{ id, version, name, formContent: { list: fields, config }, docName } in formList"
+            :key="id"
+          >
+            <span class="listItem-title" :title="name">{{ name }}</span>
             <div class="listItem-V1">
-              <el-input v-model="item.version"></el-input>
+              {{ version }}
             </div>
             <div class="listItem-button">
               <el-popover placement="right" width="400" trigger="click">
-                <preview
-                  :itemList="formListFun(item)"
-                  :formConf="configFun(item)"
-                  v-if="item.docType === 'json'"
-                ></preview>
-                <el-button type="text" size="small" class="listItem-button1" slot="reference">查看</el-button>
+                <preview :itemList="fields" :formConf="config"></preview>
+                <el-button type="text" size="small" class="listItem-button1" slot="reference"> 查看 </el-button>
               </el-popover>
-
-              <el-button type="text" size="small" class="listItem-button2" @click="showForm(item)"> 关联 </el-button>
+              <el-button
+                type="text"
+                size="small"
+                class="listItem-button2"
+                @click="onLinked({ id, docName, fields, config })"
+              >
+                关联
+              </el-button>
             </div>
           </div>
         </div>
@@ -72,8 +73,8 @@
       <span slot="footer" class="dialog-footer">
         <el-button
           type="primary"
-          @click="addWorkFlow()"
-          v-role="{ id: 'HomeDeploy', type: 'button', business: business }"
+          @click="onDeploy"
+          v-role="{ id: 'HomeDeploy', type: 'button', business: workflow.business }"
         >
           部署
         </el-button>
@@ -106,37 +107,20 @@ export default {
       default: () => ({}),
       required: true,
     },
-    editData: {
-      type: Object,
-    },
-    dataType: {
-      type: String,
-      default: '',
-    },
-    business: {
-      type: String,
-      default: '',
-    },
-    ascription: {
-      type: String,
-      default: '',
-    },
   },
   data() {
     return {
-      bpmnData: {
+      taskInfo: {
+        id: '',
         name: '',
         group: '',
         assignee: '',
-        document: '',
-        id: '',
       },
       bpmnModeler: null,
-      formContent: '',
-      formOBKey: 0,
+      formContent: {},
       formList: [],
       formShow: false,
-      input: '',
+      formName: '',
       options: [],
       valueV: '1.0',
       optionsV: [
@@ -155,15 +139,15 @@ export default {
       return [
         {
           label: '流程编码',
-          value: this.workflow.processNumber,
+          value: this.workflow.numberCode,
         },
         {
           label: '部署名称',
-          value: this.workflow.processDeployName,
+          value: this.workflow.deployName,
         },
         {
           label: '部署时间',
-          value: this.workflow.startTime,
+          value: this.workflow.createTime,
         },
         {
           label: '应用项目',
@@ -175,60 +159,49 @@ export default {
         },
         {
           label: '部署人',
-          value: this.workflow.starter,
+          value: this.workflow.createBy,
         },
       ]
     },
   },
+  mounted() {
+    this.fetchFormList()
+  },
   methods: {
-    initData() {
-      this.bpmnData = {
+    resetData() {
+      this.taskInfo = {
+        id: '',
         name: '',
         group: '',
         assignee: '',
-        document: '',
-        id: '',
       }
       this.formShow = false
-      this.formContent = ''
+      this.formContent = {}
     },
     onCancel() {
       this.$emit('cancel')
       this.$emit('update:visible', false)
     },
-    async addWorkFlow() {
-      let formIds = ''
+    async onDeploy() {
+      const formIds = this.$iBpmn
+        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
+        .map((element) => this.$iBpmn.getShapeInfoByType(element, 'formId'))
+        .filter((formId) => formId)
+        .join(',')
       const { xml } = await this.$iBpmn.saveXML({ format: true })
       const shapeInfo = this.$iBpmn.getRootShapeInfo()
-      console.log(shapeInfo);
 
       this.bpmnModeler
         .saveXML({
           format: true,
         })
         .then(({ xml }) => {
-          let a = xml.replaceAll(this.workflow.code, `Process_${new Date().getTime()}`)
-          const { definitions } = newConvert.xml2js(a)
-
-          var file1 = new File([a], definitions.process._name + '.bpmn', {
+          var file1 = new File([xml], definitions.process._name + '.bpmn', {
             type: 'bpmn20-xml',
           })
-          if (definitions.process.userTask) {
-            if (Array.isArray(definitions.process.userTask)) {
-              definitions.process.userTask.forEach((item, index) => {
-                if (item['_camunda:formKey']) {
-                  formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
-                }
-              })
-            } else {
-              formIds =
-                (definitions.process.userTask['_camunda:formKey'] &&
-                  definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) ||
-                ''
-            }
-          }
+
           let formData = new FormData()
-          switch (this.dataType) {
+          switch (this.workflow.status) {
             case 'enabled':
               formData.append('processId', this.workflow.id)
               break
@@ -260,48 +233,41 @@ export default {
           })
         })
     },
-    getFormList() {
-      designFormDesignServiceAll({
-        status: 'enabled',
-        tenantId: this.tenantId,
-        ascription: this.workflow.ascription,
-        business: this.workflow.business,
-        createBy: '',
-        numberCode: '',
-        name: this.input,
-        docName: '',
-      }).then((res) => {
-        this.formList = res.result
-      })
-    },
     onSelectedShape(element) {
       if (!element) {
-        this.initData()
+        this.resetData()
         return
       }
-      this.bpmnData.name = this.$iBpmn.getSelectedShapeInfoByType('name')
-      this.bpmnData.group = this.$iBpmn.getSelectedShapeInfoByType('candidateGroups')
-      this.bpmnData.assignee = this.$iBpmn.getSelectedShapeInfoByType('assignee')
-      // this.bpmnModeler = bpmn
-      // if (element) {
-      //   window.bpmnInstances.modeler = element
-      //   this.bpmnData.name = element.businessObject.name
-      //   this.bpmnData.group = element.businessObject.$attrs['camunda:' + 'candidateGroups']
-      //   this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
-      //   this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
-      //   this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
-      // } else {
-      //   this.initData()
-      // }
+      this.taskInfo.name = this.$iBpmn.getSelectedShapeInfoByType('name')
+      this.taskInfo.group = this.$iBpmn.getSelectedShapeInfoByType('candidateGroups')
+      this.taskInfo.assignee = this.$iBpmn.getSelectedShapeInfoByType('assignee')
+      this.fetchFormContent(this.$iBpmn.getSelectedShapeInfoByType('formKey'))
     },
-    showForm(item) {
-      if (window.bpmnInstances.modeler) {
-        window.bpmnInstances.modeling.updateProperties(window.bpmnInstances.modeler, {
-          'camunda:formKey': 'camunda-forms:deployment:' + item.docName,
-        })
-        this.formShow = true
-        this.formContent = item
+    onLinked({ id, docName, fields, config }) {
+      if (!this.$iBpmn.getSelectedShape()) {
+        return
       }
+      this.$iBpmn.updateSelectedShapeProperties({
+        'camunda:formKey': 'camunda-forms:deployment:' + docName,
+      })
+      this.$iBpmn.updateSelectedShapeProperties({
+        'camunda:formId': id,
+      })
+      this.formShow = true
+      this.formContent = {
+        fields,
+        config,
+      }
+    },
+    onRemoveForm() {
+      if (!this.$iBpmn.getSelectedShape()) {
+        return
+      }
+      this.$iBpmn.updateSelectedShapeProperties({
+        'camunda:formKey': '',
+      })
+      this.formShow = false
+      this.formContent = ''
     },
     onSave() {
       let formIds = ''
@@ -326,7 +292,7 @@ export default {
               ''
           }
           let formData = new FormData()
-          switch (this.dataType) {
+          switch (this.workflow.status) {
             case 'enabled':
               formData.append('processId', this.workflow.id)
               break
@@ -352,7 +318,7 @@ export default {
 
           // formData.append('processResource', '')
           formData.append('tenantId', this.tenantId)
-          if (this.dataType === 'enabled') {
+          if (this.workflow.status === 'enabled') {
             postProcessDraft(formData).then((res) => {
               this.$message.success('保存成功')
               this.visible = false
@@ -367,58 +333,53 @@ export default {
           }
         })
     },
-    getFormData(formKey) {
-      if (formKey) {
-        let docName = formKey.split(':')[2]
-        designFormDesignServiceAll({
-          status: 'enabled',
-          tenantId: this.tenantId,
-          ascription: this.workflow.ascription,
-          business: this.workflow.business,
-          createBy: '',
-          numberCode: '',
-          name: '',
-          docName: docName,
-        }).then((res) => {
-          this.formContent = res.result[0]
-          this.formOBKey++
-          this.formShow = true
-        })
+    async fetchFormList() {
+      const { errorInfo, result: formList = [] } = await designFormDesignServiceAll({
+        status: 'enabled',
+        tenantId: this.tenantId,
+        ascription: this.workflow.ascription,
+        business: this.workflow.business,
+        name: this.formName,
+      })
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+      }
+      this.formList = formList.map(this.disableForm)
+    },
+    async fetchFormContent(formKey) {
+      if (!formKey) {
+        this.formContent = ''
+        this.formShow = false
+        return
+      }
+      let docName = formKey.split(':')[2]
+      const { errorInfo, result = [] } = await designFormDesignServiceAll({
+        status: 'enabled',
+        tenantId: this.tenantId,
+        ascription: this.workflow.ascription,
+        business: this.workflow.business,
+        createBy: '',
+        numberCode: '',
+        name: '',
+        docName: docName,
+      })
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      if (result[0]) {
+        this.formContent = this.disableForm(result[0]).formContent
       } else {
-        this.formContent = ''
-        this.formShow = false
+        this.formContent = {}
       }
+      this.formShow = true
     },
-    removeForm() {
-      if (window.bpmnInstances.modeler) {
-        window.bpmnInstances.modeling.updateProperties(window.bpmnInstances.modeler, {
-          'camunda:formKey': '',
-        })
-        this.formShow = false
-        this.formContent = ''
-      }
-    },
-    formListFun(item) {
-      let content = JSON.parse(item.content)
-      let list = content.list
-      for (const formItem of list) {
-        if (formItem.columns && formItem.columns.length) {
-          for (const formItemElement of formItem.columns) {
-            for (const formItemElementElement of formItemElement.list) {
-              formItemElementElement.disabled = true
-            }
-          }
-        } else {
-          if (Object.keys(formItem).includes('disabled')) {
-            formItem.disabled = true
-          } else {
-          }
-        }
-      }
-      return list
-    },
-    configFun(item) {
-      return JSON.parse(item.content).config
+    disableForm(form) {
+      const newForm = { ...form }
+      newForm.formContent = JSON.parse(newForm.content)
+      newForm.formContent.fields = newForm.formContent.list
+      newForm.formContent.config && (newForm.formContent.config.disabled = true)
+      return newForm
     },
   },
 }

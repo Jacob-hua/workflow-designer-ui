@@ -19,11 +19,15 @@
             >
               <div class="contant">
                 <div
-                  v-for="({ formData, status: formStatus, assignee: formAssignee }, index1) in formDataList"
+                  v-for="({ formContent, status: formStatus, assignee: formAssignee }, index1) in formDataList"
                   :key="index1"
                 >
-                  <div v-if="formData" class="form">
-                    <preview :itemList="formListFun(formData)" :formConf="configFun(formData)"></preview>
+                  <div v-if="formContent" class="form">
+                    <preview
+                      :itemList="formContent.list"
+                      :formConf="formContent.config"
+                      :downloadFun="downloadFile.bind(this)"
+                    ></preview>
                   </div>
                   <div v-if="formStatus === 'completed'">
                     <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
@@ -56,7 +60,7 @@
 <script>
 import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
 import preview from '@/plugin/FormDesign/component/preview'
-import { getExecuteDetail } from '@/api/unit/api.js'
+import { getExecuteDetail, downloadTaskAttachmentFile } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 
 export default {
@@ -82,7 +86,24 @@ export default {
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
     trackList() {
-      return this.workflow.trackList ?? []
+      const trackList = this.workflow.trackList ?? []
+      return trackList.map((track) => {
+        if (!track) {
+          return track
+        }
+        track.formDataList = handleFormDataList(track)
+        return track
+      })
+      function handleFormDataList({ formDataList = [] }) {
+        return formDataList.map((item) => {
+          if (!item.formData) {
+            return { ...item }
+          }
+          const formContent = JSON.parse(item.formData)
+          formContent.config['disabled'] = true
+          return { ...item, formContent }
+        })
+      }
     },
     processDisplayInfo() {
       return [
@@ -120,27 +141,15 @@ export default {
     onClose() {
       this.$emit('close')
     },
-    formListFun(item) {
-      let content = JSON.parse(item)
-      let list = content.list
-      for (const formItem of list) {
-        if (formItem.columns && formItem.columns.length) {
-          for (const formItemElement of formItem.columns) {
-            for (const formItemElementElement of formItemElement.list) {
-              formItemElementElement.disabled = true
-            }
-          }
-        } else {
-          if (Object.keys(formItem).includes('disabled')) {
-            formItem.disabled = true
-          } else {
-          }
-        }
+    async downloadFile({ url }) {
+      const { errorInfo, result } = await downloadTaskAttachmentFile({
+        attachmentId: url,
+      })
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
       }
-      return list
-    },
-    configFun(item) {
-      return JSON.parse(item).config
+      return result
     },
     async fetchExecuteDetail() {
       try {

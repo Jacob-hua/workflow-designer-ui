@@ -38,9 +38,6 @@ export default {
       this.$emit('loaded')
     },
     onSelectedChange(shape) {
-      if (!shape) {
-        return
-      }
       this.$emit('selectedShape', shape)
     },
   },

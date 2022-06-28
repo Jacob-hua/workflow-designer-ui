@@ -274,7 +274,6 @@ export default {
     onDetail(row) {
       this.workflow = { ...row }
       this.lookoverVisible = true
-      // this.detailsDiolog(row)
     },
     onLookoverClose() {
       this.lookoverVisible = false
