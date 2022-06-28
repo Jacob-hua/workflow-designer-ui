@@ -2,6 +2,20 @@ import { isAttr,jsonClone } from '../utils';
 import childrenItem from './slot/index';
 import {remoteData} from './mixin';
 //先修改在这里,后续需要优化
+
+function downloadFile(fileName, fileType, content, charset = "utf-8") {
+  if (!document || !document instanceof Document) {
+    throw new Error("This is not a browser environment");
+  }
+  const blob = new Blob([content], {
+    type: `${fileType};charset=${charset}`,
+  });
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(blob);
+  link.download = `${fileName}`;
+  link.click();
+  window.URL.revokeObjectUR
+}
 function vModel(self, dataObject) {
   dataObject.props.value = self.value;
   dataObject.on.input = val => {
@@ -9,13 +23,34 @@ function vModel(self, dataObject) {
   }
   //判断是否为上传组件
   if(self.conf.compType === 'upload'){
-    dataObject.attrs['auto-upload'] = false // 文件手动上传
-    dataObject.attrs['on-change'] = (file, fileList) => { // 文件变换 钩子
-     self.conf['fileList'] = fileList
-
+    if (self.conf.value.length) {
+      dataObject.attrs['file-list'] = self.conf.value
     }
-    dataObject.attrs['before-upload'] = file=>{
+    dataObject.attrs['auto-upload'] = false // 文件手动上传
+    dataObject.attrs['on-preview'] = async (file) => {
+
+      if (self.downloadFun) {
+        const result = await Promise.resolve( self.downloadFun(file))
+        if(!result) {
+          return
+        }
+        downloadFile(file.name,file.type,result)
+      }
+    }
+    dataObject.attrs['on-change'] = async (file, fileList) => { // 文件变换 钩子
+     self.conf['fileList'] = fileList
+      if (self.uploadFun) {
+        const result = await Promise.resolve( self.uploadFun(file))
+        self.conf.value.push({
+          name: file.raw.fileName,
+          url: result,
+          type: file.raw.type
+        })
+      }
+    }
+    dataObject.attrs['before-upload'] =  (file)=>{
       //非限定后缀不允许上传
+
       const fileName = file.name;
       const suffixName = fileName.split('.').pop();
       
@@ -67,6 +102,6 @@ export default {
     vModel(this, dataObject);
     return h(confClone.ele, dataObject, children)
   },
-  props: ['conf','value','quoteOption','getFileList'],
+  props: ['conf','value','quoteOption','getFileList', 'uploadFun','downloadFun'],
   mixins:[remoteData]
 }
