@@ -61,8 +61,8 @@
             <preview
               :itemList="formListFun(formContant)"
               :formConf="configFun(formContant)"
-              :uploadFunc="uploadFile.bind(this)"
-              :downloadFunc="downloadFile.bind(this)"
+              :uploadFun="uploadFile.bind(this)"
+              :downloadFun="downloadFile.bind(this)"
               v-if="formShow"
               ref="preview"
             ></preview>
