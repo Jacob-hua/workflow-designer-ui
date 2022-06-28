@@ -49,7 +49,7 @@
     <config-panel :activeItem="activeItem" :itemList="list"/>
     <!-- 设计器配置弹出框 -->
     <el-dialog :visible.sync="previewVisible" width="70%" title="预览" append-to-body>
-      <preview :itemList="itemList"  :formConf="formConf" v-if="previewVisible"/>
+      <preview :uploadFun="upload" :itemList="itemList"  :formConf="formConf" v-if="previewVisible"/>
     </el-dialog>
     <el-dialog :visible.sync="JSONVisible" width="70%" title="JSON" center :close-on-click-modal="false" append-to-body>
       <codemirror v-model="viewCode" :options="options"/>
@@ -121,6 +121,9 @@ export default {
   mounted() {
   },
   methods: {
+    upload() {
+      console.log('saddasda')
+    },
     setting(){
       this.formConfVisible = true;
     },

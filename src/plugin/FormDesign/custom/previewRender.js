@@ -48,6 +48,9 @@ function vModel(self, dataObject) {
         })
       }
     }
+    dataObject.attrs['before-remove'] = (file, fileList) => {
+
+    }
     dataObject.attrs['before-upload'] =  (file)=>{
       //非限定后缀不允许上传
 

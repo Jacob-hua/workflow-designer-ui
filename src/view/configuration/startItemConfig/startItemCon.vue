@@ -61,7 +61,7 @@
                 label="Code"
                 width="180">
               <template slot-scope="scope">
-                <el-input :disabled="scope.row.disabled" v-model="scope.row.code"></el-input>
+                <el-input @blur="codeChange(scope.row.code)" :disabled="scope.row.disabled" v-model="scope.row.code"></el-input>
               </template>
             </el-table-column>
             <el-table-column
@@ -189,6 +189,14 @@ export default {
     })
   },
   methods: {
+    codeChange(value) {
+      if (value.length< 1 || value.length> 100) {
+        this.$message({
+          type: 'warning',
+          message: '编码长度必须大于0小于100字符'
+        })
+      }
+    },
     deleteRow(row) {
       if (this.processFlag) {
         this.tableData.splice(this.tableData.findIndex(item => item.id === row.id), 1)
@@ -222,18 +230,30 @@ export default {
         item.startType = +item.startType
       })
     },
+    checkCodeIsNull() {
+      return this.tableData.every(table => table.code)
+    },
     saveStart() {
-      this.formatData(this.tableData)
-      startConfig({
-        businessConfigId:  this.businessConfigId,
-        list:  this.tableData
-      }).then(res => {
-        this.$message({
-          type: 'success',
-          message: '保存成功'
-        })
-      })
-      this.dialogVisible = false
+
+     if (this.checkCodeIsNull()) {
+       this.formatData(this.tableData)
+       startConfig({
+         businessConfigId:  this.businessConfigId,
+         list:  this.tableData
+       }).then(res => {
+         this.$message({
+           type: 'success',
+           message: '保存成功'
+         })
+       })
+       this.dialogVisible = false
+     } else {
+       this.$message({
+         type: 'warning',
+         message: '当前提交的启动项中存在code为空、请检查填写code提交'
+       })
+     }
+
     },
     handleNodeClick(data) {
       this.currentId = data.id
@@ -255,18 +275,26 @@ export default {
       this.tableData.forEach(item => item.disabled = false)
     },
     saveTag() {
-      this.dialogVisible2 = false;
-      if (this.tableData.length ) {
-        if (this.tableData.every(item => Object.keys(item).includes('type') === true)) {
+      if (this.tags.length) {
+        this.dialogVisible2 = false;
+        if (this.tableData.length ) {
+          if (this.tableData.every(item => Object.keys(item).includes('type') === true)) {
+            this.tableData = this.tags;
+          } else  {
+            this.tableData = this.tableData.concat(this.tags)
+          }
+        } else {
           this.tableData = this.tags;
-        } else  {
-          this.tableData = this.tableData.concat(this.tags)
         }
+        this.tableFlag = true;
+        this.btnFlag = true;
       } else {
-        this.tableData = this.tags;
+        this.$message({
+          type: 'warning',
+          message: '没有可添加的启动项！'
+        })
       }
-      this.tableFlag = true;
-      this.btnFlag = true;
+
     },
     showSelf() {
       this.tags = []
@@ -277,36 +305,44 @@ export default {
     },
     handleInputConfirm() {
       let inputValue = this.inputValue;
-      let index = parseInt(Math.random() * 5)
-      if (inputValue) {
-        this.tags.push({
-          // "businessConfigId": 0,
-          // "code": "string",
+      if (inputValue.length > 0 && inputValue.length<= 100) {
+        let index = parseInt(Math.random() * 5)
+        if (inputValue) {
+          this.tags.push({
+            // "businessConfigId": 0,
+            // "code": "string",
 
-          // "id": 0,
-          // "isRequired": 0,
-          // "isSetting": 0,
-          // "name": "string",
-          // "tenantId": 0,
-          // "thirdInterfaceId": 0,
-          // "type": 0,
-          // "updateBy": "string",
-          isUse: 0,
-          "createBy": this.userInfo.account,
-          businessConfigId: this.currentId,
-          code: "",
-          tenantId: this.tenantId,
-          thirdInterfaceId: null,
-          value: null,
-          name: this.inputValue,
-          isSetting: true,
-          isRequired: true,
-          type: this.color[index],
-          startType: '1',
-          disabled: true
-        });
+            // "id": 0,
+            // "isRequired": 0,
+            // "isSetting": 0,
+            // "name": "string",
+            // "tenantId": 0,
+            // "thirdInterfaceId": 0,
+            // "type": 0,
+            // "updateBy": "string",
+            isUse: 0,
+            "createBy": this.userInfo.account,
+            businessConfigId: this.currentId,
+            code: "",
+            tenantId: this.tenantId,
+            thirdInterfaceId: null,
+            value: null,
+            name: this.inputValue,
+            isSetting: true,
+            isRequired: true,
+            type: this.color[index],
+            startType: '1',
+            disabled: true
+          });
+        }
+        this.inputValue = '';
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '名称长度必须大于0字符小于100个字符'
+        })
       }
-      this.inputValue = '';
+
     }
   }
 }
