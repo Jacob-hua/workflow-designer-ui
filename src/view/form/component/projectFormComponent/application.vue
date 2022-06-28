@@ -31,26 +31,32 @@
           </div>
           <el-dialog title="表单" :visible.sync="dialogVisibleModal" width="35%" custom-class="dialogVisible1" append-to-body>
             <div class="container">
-              <div class="from-item">
-                <span>应用项目</span>
-                <el-select v-model="postData.ascription">
-                  <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
-                </el-select>
-              </div>
-              <div class="from-item">
-                <span style="width: 79px">流程类型</span>
-                <el-cascader
-                    ref="cascader"
-                    v-model="postData.business"
-                    :options="systemOption"
-                    :props='sysProps'
-                    clearable
-                ></el-cascader>
-              </div>
-              <div class="from-item">
-                <span>表单名称</span>
-                <el-input v-model="postData.name" placeholder="请输入表单名称"></el-input>
-              </div>
+              <el-form ref="form" :rules="rules" :model="postData">
+                <el-form-item style="margin-left: 12px" label="应用项目" prop="ascription">
+                  <el-select v-model="postData.ascription">
+                    <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
+                  </el-select>
+                </el-form-item>
+
+                <div class="from-item">
+                  <el-form-item label="流程类型"  prop="business">
+                    <el-cascader
+                        ref="cascader"
+                        v-model="postData.business"
+                        :options="systemOption"
+                        :props='sysProps'
+                        clearable
+                        @change="onOptionClick"
+                    ></el-cascader>
+                  </el-form-item>
+                </div>
+                <div class="from-item">
+                  <el-form-item label="表单名称"  prop="name">
+                    <el-input v-model="postData.name" placeholder="请输入表单名称"></el-input>
+                  </el-form-item>
+                </div>
+              </el-form>
+
             </div>
             <span slot="footer" class="dialog-footer">
         <el-button @click="onSure()" type="primary">确定</el-button>
@@ -97,6 +103,18 @@ export default {
   },
   data() {
     return {
+      rules: {
+        ascription: [
+          { required: true, message: '请输入资源名称', trigger: 'blur' }
+        ],
+        business: [
+          { required: true, message: '请输入资源标识', trigger: 'change' }
+        ],
+        name: [
+          { required: true, message: '请输入表单名称', trigger: 'blur' },
+          { min: 0, max: 100, message: '长度在 0 到 100 个字符', trigger: 'blur' }
+        ],
+      },
       sysProps:{
         label: 'name',
         value: 'code',
@@ -174,27 +192,34 @@ export default {
       })
     },
     onSure() {
-      let _this = this
-      const id = 'form_' + Date.parse(new Date())
-      var file1 = new File([_this.currentData.content], 'test.form', {
-        type: 'text/xml',
-      })
-      let formData = new FormData()
-      formData.append('name', this.postData.name)
-      formData.append('docName', this.postData.name + '.form')
-      formData.append('docType', 'json')
-      formData.append('ascription', this.postData.ascription)
-      formData.append('code', id)
-      formData.append('business', this.postData.business)
-      formData.append('status', 'enabled')
-      formData.append('createBy', this.userInfo.account)
-      formData.append('createName', this.userInfo.name)
-      formData.append('tenantId', this.tenantId)
-      formData.append('file', file1)
-      postFormDesignServiceRealiseProcessData(formData).then((res) => {
-        this.$message.success('应用至项目表单成功')
-        this.dialogVisibleModal = false
-      })
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          let _this = this
+          const id = 'form_' + Date.parse(new Date())
+          var file1 = new File([_this.currentData.content], 'test.form', {
+            type: 'text/xml',
+          })
+          let formData = new FormData()
+          formData.append('name', this.postData.name)
+          formData.append('docName', this.postData.name + '.form')
+          formData.append('docType', 'json')
+          formData.append('ascription', this.postData.ascription)
+          formData.append('code', id)
+          formData.append('business', this.postData.business)
+          formData.append('status', 'enabled')
+          formData.append('createBy', this.userInfo.account)
+          formData.append('createName', this.userInfo.name)
+          formData.append('tenantId', this.tenantId)
+          formData.append('file', file1)
+          postFormDesignServiceRealiseProcessData(formData).then((res) => {
+            this.$message.success('应用至项目表单成功')
+            this.dialogVisibleModal = false
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     },
     open(item) {
       this.currentData = item

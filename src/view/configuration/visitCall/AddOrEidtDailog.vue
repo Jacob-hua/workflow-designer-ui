@@ -13,22 +13,22 @@
               <i @click="addApiBox" v-if="index === 0" class="el-icon-circle-plus-outline"></i>
               <span @click="deleteApiBox(index)" v-else class="el-icon-delete"></span>
             </p>
-            <el-form  ref="form"  label-width="80px">
+            <el-form  :ref="`form${index}`" :model="item"  label-width="80px">
               <div class="cardBox">
                 <div style="display: flex; flex-wrap: wrap">
-                  <el-form-item label="api名称">
+                  <el-form-item label="api名称" prop="name"  :rules="[{ required: true, trigger: ['blur', 'change'], message: '请填写api名称' },  { min: 1, max: 100 , message: '长度在 1 到 100 个字符', trigger: 'blur' }]">
                     <el-input v-model="item.name"></el-input>
                   </el-form-item>
-                  <el-form-item label="api标识">
+                  <el-form-item label="api标识" prop="apiMark"  :rules="[{ required: true, trigger: ['blur', 'change'], message: '请填写api标识' },  { min: 1, max: 100 , message: '长度在 1 到 100 个字符', trigger: 'blur' }]">
                     <el-input v-model="item.apiMark"></el-input>
                   </el-form-item>
-                  <el-form-item label="主机地址">
+                  <el-form-item label="主机地址" prop="host" :rules="[{ required: true, trigger: ['blur', 'change'], message: '请填写主机地址' }]">
                     <el-input v-model="item.host"></el-input>
                   </el-form-item>
-                  <el-form-item label="访问路径">
+                  <el-form-item label="访问路径" prop="path" :rules="[{ required: true, trigger: ['blur', 'change'], message: '请填写访问路径' }]">
                     <el-input v-model="item.path"></el-input>
                   </el-form-item>
-                  <el-form-item label="api类型">
+                  <el-form-item label="api类型" prop="type" :rules="[{ required: true, trigger: ['blur', 'change'], message: '请选择api类型' }]">
                     <el-select  v-model="item.type" placeholder="请选择api类型">
                       <el-option
                           v-for="(apiItem,idxe) in apiOptions"
@@ -40,7 +40,7 @@
                     </el-select>
                   </el-form-item>
                   <p @click="addApiType" style="color: rgb(26, 136, 255); font-size: 14px">未找到类型点击添加</p>
-                  <el-form-item label="请求类型">
+                  <el-form-item label="请求类型" prop="method" :rules="[{ required: true, trigger: ['blur', 'change'], message: '请选择请求类型' }]">
                     <el-select v-model="item.method" placeholder="请选择api类型">
                       <el-option
                           v-for="item in methodsOptions"
@@ -50,7 +50,7 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="请求头">
+                  <el-form-item label="请求头" prop="headers"  :rules="[{ required: true, trigger: ['blur', 'change'], message: '请填写请求头' },  { min: 1, max: 100 , message: '长度在 1 到 100 个字符', trigger: 'blur' }]">
                     <el-input v-model="item.headers"></el-input>
                   </el-form-item>
                 </div>
@@ -85,7 +85,6 @@
               </div>
             </el-form>
           </div>
-
         </div>
         <div>
           <p>请求结果</p>
@@ -109,7 +108,7 @@
         width="40%"
         append-to-body
     >
-      <el-form  ref="form"  label-width="80px">
+      <el-form  ref="formMethod"  label-width="80px">
         <el-form-item label="类型">
           <el-input v-model="typeForm.type"></el-input>
         </el-form-item>
@@ -285,21 +284,33 @@ export default {
       })
     },
     saveOrEdite() {
-      // dataParse {"userId":"$.result.account","userName":"$.result.name"}
-      let pars = {}
-      this.apiBoxList.forEach(apibox => {
-        apibox.parseParams.forEach(parse => {
-            pars[parse.key] =  parse.value
+      let flag = false
+        this.apiBoxList.forEach( ( apiBox, index )=> {
+          let refName = `form${index}`
+          try {
+            this.$refs[refName][0].validate(valid => {
+              flag = !!valid;
+            })
+          } catch (e) {
+            flag = false
+            throw  new Error(e.toString())
+          }
         })
-        apibox.dataParse = JSON.stringify(pars)
-        if (apibox.method === ApiEnum.API_TYPE_POST) {
-          let obj = {}
+      if (flag) {
+        let pars = {}
+        this.apiBoxList.forEach(apibox => {
+          apibox.parseParams.forEach(parse => {
+            pars[parse.key] =  parse.value
+          })
+          apibox.dataParse = JSON.stringify(pars)
+          if (apibox.method === ApiEnum.API_TYPE_POST) {
+            let obj = {}
             apibox.configParams.forEach(item=> {
               obj[item.key] = item.value
             })
-          apibox.body = JSON.stringify(obj)
-        } else {
-          // ?id=${id}&&name=${name}
+            apibox.body = JSON.stringify(obj)
+          } else {
+            // ?id=${id}&&name=${name}
             apibox.configParams.forEach((config,index) => {
               if (index === 0) {
                 apibox.parameter = `?${config.key}=${config.value}`
@@ -307,39 +318,39 @@ export default {
                 apibox.parameter += `&${config.key}=${config.value}`
               }
             })
+          }
+        })
+        let parameterMap = {}
+        this.apiBoxList.forEach(apiBox => {
+          apiBox.configParams.forEach(con => {
+            parameterMap[con.key] = con.value? con.value : null
+          })
+          apiBox.parameterMap = parameterMap
+        })
+        this.apiBoxList.forEach(apiBox => {
+          delete apiBox.configParams
+          apiBox.ascription = this.business
+        })
+
+        if (this.type === 'see') {
+          postSaveOrEdite(this.apiBoxList).then(res => {
+            this.dialogVisible = false
+            this.$message({
+              type:'success',
+              message: '保存成功'
+            })
+            this.$parent.GetGlobalList(this.$parent.pageInfo)
+          })
+        } else{
+          putSaveOrEdite(this.apiBoxList).then(res => {
+            this.dialogVisible = false
+            this.$message({
+              type:'success',
+              message: '保存成功'
+            })
+            this.$parent.GetGlobalList(this.$parent.pageInfo)
+          })
         }
-      })
-
-
-      let parameterMap = {}
-      this.apiBoxList.forEach(apiBox => {
-        apiBox.configParams.forEach(con => {
-          parameterMap[con.key] = con.value? con.value : null
-        })
-        apiBox.parameterMap = parameterMap
-      })
-      this.apiBoxList.forEach(apiBox => {
-        delete apiBox.configParams
-        apiBox.ascription = this.business
-      })
-      if (this.type === 'see') {
-        postSaveOrEdite(this.apiBoxList).then(res => {
-          this.dialogVisible = false
-          this.$message({
-            type:'success',
-            message: '保存成功'
-          })
-          this.$parent.GetGlobalList(this.$parent.pageInfo)
-        })
-      } else{
-        putSaveOrEdite(this.apiBoxList).then(res => {
-          this.dialogVisible = false
-          this.$message({
-            type:'success',
-            message: '保存成功'
-          })
-          this.$parent.GetGlobalList(this.$parent.pageInfo)
-        })
       }
     },
     addApiBox() {
