@@ -2,10 +2,8 @@
   <el-dialog title="查看流程信息" :visible="visible" width="70%" @close="onClose">
     <div>
       <ProcessInformation
-        v-if="workflow.trackList"
-        ref="ProcessInformation"
-        :processInfo="workflow"
-        seeType="runTime"
+        :xml="workflow.processDeployResource"
+        :processDisplayInfo="processDisplayInfo"
       ></ProcessInformation>
     </div>
     <div style="position: relative">
@@ -85,6 +83,34 @@ export default {
     ...mapState('account', ['tenantId', 'userInfo']),
     trackList() {
       return this.workflow.trackList ?? []
+    },
+    processDisplayInfo() {
+      return [
+        {
+          label: '流程编码',
+          value: this.workflow.processNumber,
+        },
+        {
+          label: '部署名称',
+          value: this.workflow.processDeployName,
+        },
+        {
+          label: '部署时间',
+          value: this.workflow.startTime,
+        },
+        {
+          label: '应用项目',
+          value: this.$getMappingName(this.workflow.ascription),
+        },
+        {
+          label: '流程类型',
+          value: this.$getMappingName(this.workflow.business),
+        },
+        {
+          label: '部署人',
+          value: this.workflow.starter,
+        },
+      ]
     },
   },
   mounted() {

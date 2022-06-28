@@ -1,55 +1,13 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible.sync="dialogVisible1" width="35%" custom-class="dialogVisible1">
-      <el-form label-position="right" label-width="80px" ref="formData" :model="firstData">
-        <el-form-item label="应用项目" prop="ascription">
-          <el-col :span="24">
-            <el-input
-              :value="$getMappingName(firstData.ascription)"
-              placeholder="请输入应用项目"
-              :disabled="true"
-            ></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="流程类型" prop="business">
-          <el-col :span="24">
-            <el-cascader
-              v-model="firstData.business"
-              clearable
-              :style="{ width: '100%' }"
-              :options="rootOrganizationChildren(firstData.ascription)"
-              :props="cascaderProps"
-              :disabled="true"
-            ></el-cascader>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="部署类型" prop="name" v-if="options.length > 0">
-          <el-col :span="24">
-            <el-select v-model="firstData.systemType" placeholder="请选择部署类型">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-            </el-select>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="部署名称" prop="name">
-          <el-col :span="24">
-            <el-input v-model="firstData.deployName" placeholder="请输入部署名称"></el-input>
-          </el-col>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="nextDiolog()" type="primary">下一步</el-button>
-        <el-button @click="dialogVisible1 = false">取消</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog title="部署工作流" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog title="部署工作流" :visible="visible" @close="onCancel" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-left">
         <div class="bpmn-Main">
           <ProcessInformation
-            type="deploy2"
-            ref="ProcessInformation"
-            v-if="dialogVisible2"
-            @selection="selection"
-          ></ProcessInformation>
+            :processDisplayInfo="processDisplayInfo"
+            :xml="workflow.content"
+            @selectedShape="onSelectedShape"
+          />
         </div>
         <div class="bpmn-configure">
           <div class="bpmn-configure-basic">
@@ -59,7 +17,7 @@
                 <span>名<span style="visibility: hidden">占位</span>称</span>: <span>{{ bpmnData.name }}</span>
               </div>
               <div class="bpmn-configure-Main-item">
-                <span>绑定岗位</span>: <span>{{ bpmnData.grounp }}</span>
+                <span>绑定岗位</span>: <span>{{ bpmnData.group }}</span>
               </div>
               <div class="bpmn-configure-Main-item">
                 <span>绑定人员</span>: <span>{{ bpmnData.assignee }}</span>
@@ -75,11 +33,6 @@
               <span v-if="!formShow" class="noneForm"> 当前未关联表单 </span>
               <span v-if="formShow" class="formRemove" @click="removeForm()">移除表单</span>
               <div v-if="formShow" class="formShowForm">
-                <formOB
-                  v-if="formShow && (formContent.docType === '.form' || formContent.docType === null)"
-                  :formContant="formContent.content"
-                  :key="formOBKey"
-                ></formOB>
                 <preview
                   :itemList="formListFun(formContent)"
                   :formConf="configFun(formContent)"
@@ -103,7 +56,6 @@
             </div>
             <div class="listItem-button">
               <el-popover placement="right" width="400" trigger="click">
-                <formOB :formContant="item.content" v-if="item.docType === '.form' || item.docType === null"></formOB>
                 <preview
                   :itemList="formListFun(item)"
                   :formConf="configFun(item)"
@@ -122,25 +74,38 @@
           type="primary"
           @click="addWorkFlow()"
           v-role="{ id: 'HomeDeploy', type: 'button', business: business }"
-          >部署</el-button
         >
-        <el-button @click="Adddraft()">保存</el-button>
-        <el-button @click="dialogVisible2 = false">取消</el-button>
+          部署
+        </el-button>
+        <el-button @click="onSave">保存</el-button>
+        <el-button @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import ProcessInformation from './ProcessInformation.vue'
-import formOB from './formOB.vue'
+import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
 import { postProcessDraft, putProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
-import X2JS from 'x2js'
 import preview from '@/plugin/FormDesign/component/preview'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
+  name: 'DeployOptions',
+  components: {
+    ProcessInformation,
+    preview,
+  },
   props: {
+    visible: {
+      type: Boolean,
+      default: false,
+    },
+    workflow: {
+      type: Object,
+      default: () => ({}),
+      required: true,
+    },
     editData: {
       type: Object,
     },
@@ -159,20 +124,12 @@ export default {
   },
   data() {
     return {
-      dialogVisible1: false,
-      dialogVisible2: false,
       bpmnData: {
         name: '',
-        grounp: '',
+        group: '',
         assignee: '',
         document: '',
         id: '',
-      },
-      firstData: {
-        ascription: '',
-        business: '',
-        systemType: '',
-        deployName: '',
       },
       bpmnModeler: null,
       formContent: '',
@@ -194,12 +151,40 @@ export default {
     ...mapState('account', ['tenantId', 'userInfo']),
     ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
+    processDisplayInfo() {
+      return [
+        {
+          label: '流程编码',
+          value: this.workflow.processNumber,
+        },
+        {
+          label: '部署名称',
+          value: this.workflow.processDeployName,
+        },
+        {
+          label: '部署时间',
+          value: this.workflow.startTime,
+        },
+        {
+          label: '应用项目',
+          value: this.$getMappingName(this.workflow.ascription),
+        },
+        {
+          label: '流程类型',
+          value: this.$getMappingName(this.workflow.business),
+        },
+        {
+          label: '部署人',
+          value: this.workflow.starter,
+        },
+      ]
+    },
   },
   methods: {
     initData() {
       this.bpmnData = {
         name: '',
-        grounp: '',
+        group: '',
         assignee: '',
         document: '',
         id: '',
@@ -207,24 +192,22 @@ export default {
       this.formShow = false
       this.formContent = ''
     },
-    changeOptions() {
-      let manyValue = this.rootOrganizationChildren(this.firstData.ascription)
-      let systemOption = manyValue.filter((item) => {
-        return item.value === this.firstData.business
-      })
-      if (systemOption.length > 0) {
-        this.options = systemOption[0].children || []
-      }
+    onCancel() {
+      this.$emit('cancel')
+      this.$emit('update:visible', false)
     },
-    addWorkFlow() {
-      const newConvert = new X2JS()
+    async addWorkFlow() {
       let formIds = ''
+      const { xml } = await this.$iBpmn.saveXML({ format: true })
+      const shapeInfo = this.$iBpmn.getRootShapeInfo()
+      console.log(shapeInfo);
+
       this.bpmnModeler
         .saveXML({
           format: true,
         })
         .then(({ xml }) => {
-          let a = xml.replaceAll(this.$refs.ProcessInformation.postData.code, `Process_${new Date().getTime()}`)
+          let a = xml.replaceAll(this.workflow.code, `Process_${new Date().getTime()}`)
           const { definitions } = newConvert.xml2js(a)
 
           var file1 = new File([a], definitions.process._name + '.bpmn', {
@@ -247,35 +230,32 @@ export default {
           let formData = new FormData()
           switch (this.dataType) {
             case 'enabled':
-              formData.append('processId', this.$refs.ProcessInformation.postData.id)
+              formData.append('processId', this.workflow.id)
               break
             case 'drafted':
-              formData.append('processId', this.$refs.ProcessInformation.postData.processId)
-              formData.append('id', this.$refs.ProcessInformation.postData.id)
+              formData.append('processId', this.workflow.processId)
+              formData.append('id', this.workflow.id)
               break
             default:
               break
           }
-          // formData.append('createTime', new Date())
           formData.append('createBy', this.userInfo.account)
           formData.append('deployKey', definitions.process['_id'])
-          formData.append('deployName', this.$refs.ProcessInformation.postData.deployName)
-          formData.append('draftId', this.$refs.ProcessInformation.postData.id)
+          formData.append('deployName', this.workflow.deployName)
+          formData.append('draftId', this.workflow.id)
           formData.append('formIds', formIds)
           formData.append('operatorId', '1')
           formData.append('operatorName', this.userInfo.account)
           formData.append('processResource', file1)
-          if (this.$refs.ProcessInformation.postData.systemType) {
-            formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
+          if (this.workflow.systemType) {
+            formData.append('systemType', this.workflow.systemType)
           } else {
-            formData.append('systemType', this.$refs.ProcessInformation.postData.business)
+            formData.append('systemType', this.workflow.business)
           }
           formData.append('updateBy', this.userInfo.account)
-          // formData.append('processResource', '')
           formData.append('tenantId', this.tenantId)
           postDeployForOnline(formData).then((res) => {
             this.$message.success('部署成功')
-            this.dialogVisible2 = false
             this.$emit('addWorkSuccess')
           })
         })
@@ -284,8 +264,8 @@ export default {
       designFormDesignServiceAll({
         status: 'enabled',
         tenantId: this.tenantId,
-        ascription: this.$refs.ProcessInformation.postData.ascription,
-        business: this.firstData.business,
+        ascription: this.workflow.ascription,
+        business: this.workflow.business,
         createBy: '',
         numberCode: '',
         name: this.input,
@@ -294,35 +274,25 @@ export default {
         this.formList = res.result
       })
     },
-    nextDiolog() {
-      this.dialogVisible1 = false
-      this.dialogVisible2 = true
-      this.$nextTick(() => {
-        this.$refs.ProcessInformation.postData = this.editData
-        this.$refs.ProcessInformation.postData.ascription = this.firstData.ascription
-        this.$refs.ProcessInformation.postData.business = this.firstData.business
-        this.$refs.ProcessInformation.postData.systemType = this.firstData.systemType
-        this.$refs.ProcessInformation.postData.deployName = this.firstData.deployName
-        this.getFormList()
-        this.$refs.ProcessInformation.createNewDiagram(this.editData.content)
-      })
-    },
-    selection(element, bpmn) {
-      this.bpmnModeler = bpmn
-      if (element) {
-        window.bpmnInstances.modeler = element
-        this.bpmnData.name = element.businessObject.name
-        this.bpmnData.grounp = element.businessObject.$attrs['camunda:' + 'candidateGroups']
-        this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
-        this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
-        // window.bpmnInstances.elementRegistry.forEach((item) => {
-        //   window.bpmnInstances.modeling.setColor(item, { 'fill': '#ffffff' } )
-        // })
-        // window.bpmnInstances.modeling.setColor(window.bpmnInstances.modeler, { 'fill': '#cccccc', 'stroke': '#1890ff' } )
-        this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
-      } else {
+    onSelectedShape(element) {
+      if (!element) {
         this.initData()
+        return
       }
+      this.bpmnData.name = this.$iBpmn.getSelectedShapeInfoByType('name')
+      this.bpmnData.group = this.$iBpmn.getSelectedShapeInfoByType('candidateGroups')
+      this.bpmnData.assignee = this.$iBpmn.getSelectedShapeInfoByType('assignee')
+      // this.bpmnModeler = bpmn
+      // if (element) {
+      //   window.bpmnInstances.modeler = element
+      //   this.bpmnData.name = element.businessObject.name
+      //   this.bpmnData.group = element.businessObject.$attrs['camunda:' + 'candidateGroups']
+      //   this.bpmnData.assignee = element.businessObject.$attrs['camunda:' + 'assignee']
+      //   this.bpmnData.document = element.businessObject.documentation && element.businessObject.documentation[0].text
+      //   this.getFormData(element.businessObject.$attrs['camunda:' + 'formKey'])
+      // } else {
+      //   this.initData()
+      // }
     },
     showForm(item) {
       if (window.bpmnInstances.modeler) {
@@ -333,15 +303,13 @@ export default {
         this.formContent = item
       }
     },
-    Adddraft() {
-      const newConvert = new X2JS()
+    onSave() {
       let formIds = ''
       this.bpmnModeler
         .saveXML({
           format: true,
         })
         .then(({ xml }) => {
-          const { definitions } = newConvert.xml2js(xml)
           var file1 = new File([xml], definitions.process._name + '.bpmn', {
             type: 'bpmn20-xml',
           })
@@ -360,28 +328,26 @@ export default {
           let formData = new FormData()
           switch (this.dataType) {
             case 'enabled':
-              // formData.append('id', this.$refs.ProcessInformation.postData.id)
-              formData.append('processId', this.$refs.ProcessInformation.postData.id)
+              formData.append('processId', this.workflow.id)
               break
             case 'drafted':
-              formData.append('processId', this.$refs.ProcessInformation.postData.processId)
-              formData.append('id', this.$refs.ProcessInformation.postData.id)
+              formData.append('processId', this.workflow.processId)
+              formData.append('id', this.workflow.id)
               break
             default:
               break
           }
-          // formData.append('createTime', new Date())
           formData.append('createBy', this.userInfo.account)
           formData.append('deployKey', Date.parse(new Date()))
-          formData.append('deployName', this.$refs.ProcessInformation.postData.deployName)
+          formData.append('deployName', this.workflow.deployName)
           formData.append('formIds', formIds)
           formData.append('operatorId', '1')
           formData.append('operatorName', 'admin')
           formData.append('processFile', file1)
-          if (this.$refs.ProcessInformation.postData.systemType) {
-            formData.append('systemType', this.$refs.ProcessInformation.postData.systemType)
+          if (this.workflow.systemType) {
+            formData.append('systemType', this.workflow.systemType)
           } else {
-            formData.append('systemType', this.$refs.ProcessInformation.postData.business)
+            formData.append('systemType', this.workflow.business)
           }
 
           // formData.append('processResource', '')
@@ -389,13 +355,13 @@ export default {
           if (this.dataType === 'enabled') {
             postProcessDraft(formData).then((res) => {
               this.$message.success('保存成功')
-              this.dialogVisible2 = false
+              this.visible = false
               this.$emit('addDraftSuccess')
             })
           } else {
             putProcessDraft(formData).then((res) => {
               this.$message.success('保存成功')
-              this.dialogVisible2 = false
+              this.visible = false
               this.$emit('addDraftSuccess')
             })
           }
@@ -407,8 +373,8 @@ export default {
         designFormDesignServiceAll({
           status: 'enabled',
           tenantId: this.tenantId,
-          ascription: this.$refs.ProcessInformation.postData.ascription,
-          business: this.firstData.business,
+          ascription: this.workflow.ascription,
+          business: this.workflow.business,
           createBy: '',
           numberCode: '',
           name: '',
@@ -454,11 +420,6 @@ export default {
     configFun(item) {
       return JSON.parse(item.content).config
     },
-  },
-  components: {
-    ProcessInformation,
-    formOB,
-    preview,
   },
 }
 </script>
