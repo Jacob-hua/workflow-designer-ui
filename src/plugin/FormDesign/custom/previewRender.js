@@ -14,7 +14,7 @@ function downloadFile(fileName, fileType, content, charset = "utf-8") {
   link.href = window.URL.createObjectURL(blob);
   link.download = `${fileName}`;
   link.click();
-  window.URL.revokeObjectUR
+  window.URL.revokeObjectURL(link.href);
 }
 function vModel(self, dataObject) {
   dataObject.props.value = self.value;
@@ -28,7 +28,6 @@ function vModel(self, dataObject) {
     }
     dataObject.attrs['auto-upload'] = false // 文件手动上传
     dataObject.attrs['on-preview'] = async (file) => {
-
       if (self.downloadFun) {
         const result = await Promise.resolve( self.downloadFun(file))
         if(!result) {
@@ -37,19 +36,19 @@ function vModel(self, dataObject) {
         downloadFile(file.name,file.type,result)
       }
     }
+    dataObject.attrs['on-remove'] = async (file, fileList) =>{
+      self.conf.value.splice(self.conf.value.findIndex(item => item.uid === file.uid), 1)
+    }
     dataObject.attrs['on-change'] = async (file, fileList) => { // 文件变换 钩子
-     self.conf['fileList'] = fileList
+      self.conf['fileList'] = fileList
       if (self.uploadFun) {
         const result = await Promise.resolve( self.uploadFun(file))
         self.conf.value.push({
-          name: file.raw.fileName,
+          name: file.name,
           url: result,
           type: file.raw.type
         })
       }
-    }
-    dataObject.attrs['before-remove'] = (file, fileList) => {
-
     }
     dataObject.attrs['before-upload'] =  (file)=>{
       //非限定后缀不允许上传
