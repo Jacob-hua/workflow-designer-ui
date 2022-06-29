@@ -41,7 +41,7 @@
         <el-button @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
-    <deploy-options v-if="deployOptionsVisible" :visible.sync="deployOptionsVisible" :workflow="formData" />
+    <deploy-options v-if="deployOptionsVisible" :visible.sync="deployOptionsVisible" :workflow="formData" v-on="$listeners" />
   </div>
 </template>
 
@@ -100,6 +100,7 @@ export default {
       immediate: true,
       handler(workflow) {
         this.formData = { ...this.formData, ...workflow }
+        this.changeOptions()
       },
     },
   },
@@ -124,6 +125,16 @@ export default {
     onCancel() {
       this.$emit('cancel')
       this.$emit('update:visible', false)
+    },
+    changeOptions() {
+      let manyValue = this.rootOrganizationChildren(this.formData.ascription)
+      let systemOption = manyValue.filter((item) => {
+        return item.value === this.formData.business
+      })
+      this.options = systemOption[0]?.children || []
+      // if (systemOption.length > 0) {
+      //   this.options = systemOption[0].children || []
+      // }
     },
   },
 }
