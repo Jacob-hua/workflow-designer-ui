@@ -190,6 +190,13 @@ export default {
       ],
     }
   },
+  watch: {
+    'firstData.business': {
+      handler() {
+        this.changeOptions()
+      }
+    }
+  },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
     ...mapState('uiConfig', ['cascaderProps']),

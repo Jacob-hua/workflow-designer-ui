@@ -182,57 +182,6 @@ export default {
       this.$emit('cancel')
       this.$emit('update:visible', false)
     },
-    async onDeploy() {
-      const formIds = this.$iBpmn
-        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
-        .map((element) => this.$iBpmn.getShapeInfoByType(element, 'formId'))
-        .filter((formId) => formId)
-        .join(',')
-      const { xml } = await this.$iBpmn.saveXML({ format: true })
-      const shapeInfo = this.$iBpmn.getRootShapeInfo()
-
-      this.bpmnModeler
-        .saveXML({
-          format: true,
-        })
-        .then(({ xml }) => {
-          var file1 = new File([xml], definitions.process._name + '.bpmn', {
-            type: 'bpmn20-xml',
-          })
-
-          let formData = new FormData()
-          switch (this.workflow.status) {
-            case 'enabled':
-              formData.append('processId', this.workflow.id)
-              break
-            case 'drafted':
-              formData.append('processId', this.workflow.processId)
-              formData.append('id', this.workflow.id)
-              break
-            default:
-              break
-          }
-          formData.append('createBy', this.userInfo.account)
-          formData.append('deployKey', definitions.process['_id'])
-          formData.append('deployName', this.workflow.deployName)
-          formData.append('draftId', this.workflow.id)
-          formData.append('formIds', formIds)
-          formData.append('operatorId', '1')
-          formData.append('operatorName', this.userInfo.account)
-          formData.append('processResource', file1)
-          if (this.workflow.systemType) {
-            formData.append('systemType', this.workflow.systemType)
-          } else {
-            formData.append('systemType', this.workflow.business)
-          }
-          formData.append('updateBy', this.userInfo.account)
-          formData.append('tenantId', this.tenantId)
-          postDeployForOnline(formData).then((res) => {
-            this.$message.success('部署成功')
-            this.$emit('addWorkSuccess')
-          })
-        })
-    },
     onSelectedShape(element) {
       if (!element) {
         this.resetData()
@@ -269,69 +218,102 @@ export default {
       this.formShow = false
       this.formContent = ''
     },
-    onSave() {
-      let formIds = ''
-      this.bpmnModeler
-        .saveXML({
-          format: true,
-        })
-        .then(({ xml }) => {
-          var file1 = new File([xml], definitions.process._name + '.bpmn', {
-            type: 'bpmn20-xml',
-          })
-          if (Array.isArray(definitions.process.userTask)) {
-            definitions.process.userTask.forEach((item, index) => {
-              if (item['_camunda:formKey']) {
-                formIds = formIds + item['_camunda:formKey'].split('.')[1].split('_')[1] + ','
-              }
-            })
-          } else {
-            formIds =
-              (definitions.process.userTask['_camunda:formKey'] &&
-                definitions.process.userTask['_camunda:formKey'].split('.')[1].split('_')[1]) ||
-              ''
-          }
-          let formData = new FormData()
-          switch (this.workflow.status) {
-            case 'enabled':
-              formData.append('processId', this.workflow.id)
-              break
-            case 'drafted':
-              formData.append('processId', this.workflow.processId)
-              formData.append('id', this.workflow.id)
-              break
-            default:
-              break
-          }
-          formData.append('createBy', this.userInfo.account)
-          formData.append('deployKey', Date.parse(new Date()))
-          formData.append('deployName', this.workflow.deployName)
-          formData.append('formIds', formIds)
-          formData.append('operatorId', '1')
-          formData.append('operatorName', 'admin')
-          formData.append('processFile', file1)
-          if (this.workflow.systemType) {
-            formData.append('systemType', this.workflow.systemType)
-          } else {
-            formData.append('systemType', this.workflow.business)
-          }
+    async onDeploy() {
+      const formIds = this.$iBpmn
+        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
+        .map((element) => this.$iBpmn.getShapeInfoByType(element, 'formId'))
+        .filter((formId) => formId)
+        .join(',')
+      const newProcessId = await this.$generateUUID()
+      this.$iBpmn.updateSelectedShapeProperties({ id: `process_${newProcessId}` })
+      const { xml } = await this.$iBpmn.saveXML({ format: true })
+      const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
+      const file = new File([xml], processName + '.bpmn', {
+        type: 'bpmn20-xml',
+      })
 
-          // formData.append('processResource', '')
-          formData.append('tenantId', this.tenantId)
-          if (this.workflow.status === 'enabled') {
-            postProcessDraft(formData).then((res) => {
-              this.$message.success('保存成功')
-              this.visible = false
-              this.$emit('addDraftSuccess')
-            })
-          } else {
-            putProcessDraft(formData).then((res) => {
-              this.$message.success('保存成功')
-              this.visible = false
-              this.$emit('addDraftSuccess')
-            })
-          }
+      const formData = new FormData()
+      const formDataFactory = {
+        enabled: (formData) => {
+          formData.append('processId', this.workflow.id)
+        },
+        drafted: (formData) => {
+          formData.append('processId', this.workflow.processId)
+          formData.append('id', this.workflow.id)
+        },
+      }
+      formDataFactory[this.workflow.status](formData)
+      formData.append('createBy', this.userInfo.account)
+      formData.append('deployKey', processId)
+      formData.append('deployName', this.workflow.deployName)
+      formData.append('draftId', this.workflow.id)
+      formData.append('formIds', formIds)
+      formData.append('operatorId', '1')
+      formData.append('operatorName', this.userInfo.account)
+      formData.append('processResource', file)
+      const systemType = this.workflow.systemType || this.workflow.business
+      formData.append('systemType', systemType)
+      formData.append('updateBy', this.userInfo.account)
+      formData.append('tenantId', this.tenantId)
+
+      const { errorInfo } = await postDeployForOnline(formData)
+      if (errorInfo.errorCode) {
+        this.$message.error(this.errorInfo.errorMsg)
+        return
+      }
+      this.$message.success('部署成功')
+      this.$emit('deploy')
+      this.$emit('update:visible', false)
+    },
+    async onSave() {
+      const formIds = this.$iBpmn
+        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
+        .map((element) => this.$iBpmn.getShapeInfoByType(element, 'formId'))
+        .filter((formId) => formId)
+        .join(',')
+      const newProcessId = await this.$generateUUID()
+      this.$iBpmn.updateSelectedShapeProperties({ id: `process_${newProcessId}` })
+      const { xml } = await this.$iBpmn.saveXML({ format: true })
+      const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
+      const file = new File([xml], processName + '.bpmn', {
+        type: 'bpmn20-xml',
+      })
+
+      const formData = new FormData()
+      const formDataFactory = {
+        enabled: (formData) => {
+          formData.append('processId', this.workflow.id)
+        },
+        drafted: (formData) => {
+          formData.append('processId', this.workflow.processId)
+          formData.append('id', this.workflow.id)
+        },
+      }
+      formDataFactory[this.workflow.status](formData)
+      formData.append('createBy', this.userInfo.account)
+      formData.append('deployKey', processId)
+      formData.append('deployName', this.workflow.deployName)
+      formData.append('draftId', this.workflow.id)
+      formData.append('formIds', formIds)
+      formData.append('operatorId', '1')
+      formData.append('operatorName', this.userInfo.account)
+      formData.append('processFile', file)
+      const systemType = this.workflow.systemType || this.workflow.business
+      formData.append('systemType', systemType)
+      formData.append('tenantId', this.tenantId)
+      if (this.workflow.status === 'enabled') {
+        postProcessDraft(formData).then(() => {
+          this.$message.success('保存成功')
+          this.visible = false
         })
+      } else {
+        putProcessDraft(formData).then(() => {
+          this.$message.success('保存成功')
+          this.visible = false
+        })
+      }
+      this.$emit('save')
+      this.$emit('update:visible', false)
     },
     async fetchFormList() {
       const { errorInfo, result: formList = [] } = await designFormDesignServiceAll({

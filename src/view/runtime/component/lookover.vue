@@ -141,15 +141,10 @@ export default {
     onClose() {
       this.$emit('close')
     },
-    async downloadFile({ url }) {
-      const { errorInfo, result } = await downloadTaskAttachmentFile({
-        attachmentId: url,
+    async downloadFile(result) {
+      return await downloadTaskAttachmentFile({
+        attachmentId: result.url,
       })
-      if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
-      }
-      return result
     },
     async fetchExecuteDetail() {
       try {
