@@ -54,6 +54,7 @@
             </el-col>
           </template>
         </el-form>
+      <el-button @click="submit">tijiao</el-button>
     </el-row>
   </div>
 </template>
@@ -129,8 +130,21 @@ export default {
        this.$refs[this.formConf.formModel].resetField()
     },
      async submit(){
+      this.metaDataList.forEach(metaData => {
+        Object.keys(this.form).forEach(form => {
+            if (form === metaData.id) {
+              metaData.value = this.form[form]
+            }
+        })
+      })
         try {
           await this.$refs[this.formConf.formModel].validate()
+          console.log(_.cloneDeep(
+              {
+                metaDataList: this.metaDataList,
+                formData: this.form
+              }
+          ))
           return _.cloneDeep(
                 {
                   metaDataList: this.metaDataList,
