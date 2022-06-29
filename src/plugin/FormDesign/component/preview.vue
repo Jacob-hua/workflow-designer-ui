@@ -54,7 +54,6 @@
             </el-col>
           </template>
         </el-form>
-      <el-button @click="submit">tijiao</el-button>
     </el-row>
   </div>
 </template>
