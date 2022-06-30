@@ -1,4 +1,4 @@
-import {
+import  {
   get,
   post,
   deletefn,
@@ -226,7 +226,9 @@ export const uploadTaskAttachmentFile = (params) =>
 
 // 文件下载
 export const downloadTaskAttachmentFile = (params) => 
-  get('/execute/taskAttachmentDownload', params);
+  get('/execute/taskAttachmentDownload', params, {
+    responseType: 'blob'
+  });
 
 // 权限管理
 
