@@ -94,7 +94,7 @@ service.interceptors.response.use(
 )
 
 export function get(url, params, config) {
-  return service.get(url, {params,...config})
+  return service.get(url, {params, ...config})
 }
 
 export function post(url, params) {

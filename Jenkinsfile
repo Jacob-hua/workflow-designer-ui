@@ -106,14 +106,19 @@ pipeline {
 				}
 			}
 		}
-		stage('Check') {
-			steps {
-				echo "5.校验程序是否部署成功"
-				sh """
-				sudo kubectl get pod -n ${namespace}
-				"""
-			}
-		}
+        stage('Check Deploy Status'){
+            steps{
+                script{
+                    println "判断程序是否启动成功，等待30S"
+                    sleep(30)
+                    POD_STATUS = sh(returnStdout: true, script: '''sudo kubectl get pod -l app=${service} -n ${namespace} | awk 'NR!=1{print $3}' ''').trim()
+                    println "pod status: ${POD_STATUS}"
+                    if ( "${POD_STATUS}" != 'Running' ){
+                        error "This pod status not running!"
+                    }
+                }
+            }
+        }
 	}
 	post {
         success {
