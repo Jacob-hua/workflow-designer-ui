@@ -100,9 +100,9 @@
 </template>
 
 <script>
-  import {
-    format
-  } from '@/assets/js/unit.js'
+  // import {
+  //   format
+  // } from '@/assets/js/unit.js'
   import projectFormDiolog from './projectFormComponent/index.vue'
   import detailsDiologForm from './details.vue'
   import application from './projectFormComponent/application.vue'
@@ -110,8 +110,10 @@
   import {mapActions, mapGetters, mapMutations, mapState} from 'vuex'
   import {getProjectList} from "@/api/globalConfig";
   import router from "@/router";
+  import {currentOneMonthAgo} from "@/util/date";
   export default {
     data() {
+      const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
       return {
         sysProps:{
           label: 'name',
@@ -125,7 +127,7 @@
         projectOption: [],
         dataType: 'enabled',
         projectCode: '',
-        valueDate: [format(new Date(), 'yyyy-MM-1'), format(new Date(), 'yyyy-MM-dd')],
+        valueDate: [start, end],
         input: '',
         activeName: 'enabled',
         formListFirst: [],
