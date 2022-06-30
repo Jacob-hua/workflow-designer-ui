@@ -58,7 +58,7 @@ export default {
       this.username = this.$route.query.account
       this.password = this.$route.query.account
       sessionStorage.setItem('status', CONSTANT.LOGIN_FROM_WORKFLOW_ITSELF)
-      this.login()
+       this.login()
     } else {
       sessionStorage.clear()
       sessionStorage.setItem('mapping', '[]' )
