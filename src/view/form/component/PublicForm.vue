@@ -82,7 +82,7 @@
   import {currentOneMonthAgo} from "@/util/date";
   export default {
     data() {
-      const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
+       const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
       return {
         formData: {},
         valueDate: [start, end],
