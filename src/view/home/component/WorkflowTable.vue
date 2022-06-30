@@ -52,36 +52,28 @@
       @addDraftSuccess="getManyData()"
       @addWorkSuccess="getManyData()"
     />
-    <deploy
-      ref="deploy"
-      :editData="workflow"
-      @addWorkSuccess="getManyData()"
-      dataType="enabled"
-      :ascription="searchForm.ascription"
-      :business="searchForm.business"
-      @addDraftSuccess="getManyData()"
-    ></deploy>
-    <detailsBnpm
+    <deploy-cabin-detail :visible.sync="deployCabinDetailVisible" :workflow="workflow" />
+    <details-bnpm
       ref="detailsBnpm"
       :ascription="searchForm.ascription"
       :business="searchForm.business"
       @deleteSuccess="fetchWorkflows()"
-    ></detailsBnpm>
+    />
   </div>
 </template>
 
 <script>
-import deploy from './deploy.vue'
-import detailsBnpm from './details.vue'
 import { postProcessDesignServicePage } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
+import DetailsBnpm from './details.vue'
 import DeployConfirmation from './DeployConfirmation.vue'
+import DeployCabinDetail from './DeployCabinDetail.vue'
 
 export default {
   components: {
-    deploy,
-    detailsBnpm,
+    DetailsBnpm,
     DeployConfirmation,
+    DeployCabinDetail,
   },
   props: {
     searchForm: {
@@ -93,6 +85,7 @@ export default {
   data() {
     return {
       deployConfirmationVisible: false,
+      deployCabinDetailVisible: false,
       pageInfo: {
         page: 1,
         limit: 10,
@@ -139,24 +132,20 @@ export default {
     onDeploy(row) {
       this.workflow = { ...row }
       this.deployConfirmationVisible = true
-      // this.workflow = JSON.parse(JSON.stringify(row))
-      // this.$refs.deploy.dialogVisible1 = true
-      // this.$refs.deploy.firstData.ascription = row.ascription
-      // this.$refs.deploy.firstData.business = row.business
-      // this.$refs.deploy.changeOptions()
-      // this.$refs.deploy.firstData.id = row.id
     },
-    onDetails(item) {
-      this.$refs.detailsBnpm.dialogVisible1 = true
-      this.$nextTick(() => {
-        this.$refs.detailsBnpm.postData.business = item.business
-        this.$refs.detailsBnpm.changeOptions()
-        this.$refs.detailsBnpm.$refs.details1.postData = JSON.parse(JSON.stringify(item))
-        this.$refs.detailsBnpm.$refs.details1.postData.deployName = this.$refs.detailsBnpm.$refs.details1.postData.name
+    onDetails(row) {
+      this.workflow = { ...row }
+      this.deployCabinDetailVisible = true
+      // this.$refs.detailsBnpm.dialogVisible1 = true
+      // this.$nextTick(() => {
+      //   this.$refs.detailsBnpm.postData.business = row.business
+      //   this.$refs.detailsBnpm.changeOptions()
+      //   this.$refs.detailsBnpm.$refs.details1.postData = JSON.parse(JSON.stringify(row))
+      //   this.$refs.detailsBnpm.$refs.details1.postData.deployName = this.$refs.detailsBnpm.$refs.details1.postData.name
 
-        this.$refs.detailsBnpm.$refs.details1.createNewDiagram(item.content)
-        this.$refs.detailsBnpm.getDetailList()
-      })
+      //   this.$refs.detailsBnpm.$refs.details1.createNewDiagram(row.content)
+      //   this.$refs.detailsBnpm.getDetailList()
+      // })
     },
   },
 }

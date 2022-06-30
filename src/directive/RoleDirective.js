@@ -7,6 +7,7 @@ Vue.directive('role', {
     let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
     let proJectRole = permissions.filter((item) => {
       // return item.projectCode === binding.value.business
+      // TODO: 应该匹配vuex中的项目选项
       return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
     })[0].permissionSet
     switch (type){
