@@ -61,7 +61,8 @@
                 label="Code"
                 width="180">
               <template slot-scope="scope">
-                <el-input @blur="codeChange(scope.row.code)" :disabled="scope.row.disabled" v-model="scope.row.code"></el-input>
+                <el-input @blur="codeChange(scope.row.code)" :disabled="scope.row.disabled"
+                          v-model="scope.row.code"></el-input>
               </template>
             </el-table-column>
             <el-table-column
@@ -190,7 +191,7 @@ export default {
   },
   methods: {
     codeChange(value) {
-      if (value.length< 1 || value.length> 100) {
+      if (value.length < 1 || value.length > 100) {
         this.$message({
           type: 'warning',
           message: '编码长度必须大于0小于100字符'
@@ -234,28 +235,28 @@ export default {
       return this.tableData.every(table => table.code)
     },
     saveStart() {
-
-     if (this.checkCodeIsNull()) {
-       this.formatData(this.tableData)
-       startConfig({
-         businessConfigId:  this.businessConfigId,
-         list:  this.tableData
-       }).then(res => {
-         this.$message({
-           type: 'success',
-           message: '保存成功'
-         })
-       })
-       this.dialogVisible = false
-     } else {
-       this.$message({
-         type: 'warning',
-         message: '当前提交的启动项中存在code为空、请检查填写code提交'
-       })
-     }
+      if (this.checkCodeIsNull()) {
+        this.formatData(this.tableData)
+        startConfig({
+          businessConfigId: this.businessConfigId,
+          list: this.tableData
+        }).then(res => {
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
+        })
+        this.dialogVisible = false
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '当前提交的启动项中存在code为空、请检查填写code提交'
+        })
+      }
 
     },
     handleNodeClick(data) {
+      this.processFlag = false
       this.currentId = data.id
       this.businessConfigId = data.id
       selectProcessStartConfigList(data.id, +this.tenantId).then(res => {
@@ -277,10 +278,10 @@ export default {
     saveTag() {
       if (this.tags.length) {
         this.dialogVisible2 = false;
-        if (this.tableData.length ) {
+        if (this.tableData.length) {
           if (this.tableData.every(item => Object.keys(item).includes('type') === true)) {
             this.tableData = this.tags;
-          } else  {
+          } else {
             this.tableData = this.tableData.concat(this.tags)
           }
         } else {
@@ -305,7 +306,7 @@ export default {
     },
     handleInputConfirm() {
       let inputValue = this.inputValue;
-      if (inputValue.length > 0 && inputValue.length<= 100) {
+      if (inputValue.length > 0 && inputValue.length <= 100) {
         let index = parseInt(Math.random() * 5)
         if (inputValue) {
           this.tags.push({
