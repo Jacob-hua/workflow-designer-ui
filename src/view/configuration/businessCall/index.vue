@@ -10,9 +10,9 @@
             <el-popover
                 placement="bottom"
                 trigger="click">
-              <div  @click="lookBusiness(item.id)" v-role="{ id: 'BusinessCallLook', type: 'button', business: business }"><i style="margin-top: 10px; margin-right: 15px; font-size: 20px; color: #333333" class=" el-icon-s-order"></i>查看</div>
-              <div  @click="editBusiness(item.id)" v-role="{ id: 'BusinessCallEdit', type: 'button', business: business }"><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class=" el-icon-edit-outline"></i>编辑</div>
-              <div @click ='deleteBusinessConfig(row)' v-role="{ id: 'BusinessCallDelete', type: 'button', business: business }" ><i style="margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete"></i>删除</div>
+              <div  @click="lookBusiness(item.id)" v-role="{ id: 'BusinessCallLook', type: 'button', business: business }"><i style="cursor: pointer; margin-top: 10px; margin-right: 15px; font-size: 20px; color: #333333" class=" el-icon-s-order"></i>查看</div>
+              <div  @click="editBusiness(item.id)" v-role="{ id: 'BusinessCallEdit', type: 'button', business: business }"><i style="cursor: pointer; margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class=" el-icon-edit-outline"></i>编辑</div>
+              <div @click ='deleteBusinessConfig(item)' v-role="{ id: 'BusinessCallDelete', type: 'button', business: business }" ><i style="cursor: pointer; margin-top: 10px; margin-right: 15px;font-size: 20px; color: #333333" class="el-icon-delete"></i>删除</div>
               <el-button slot="reference">···</el-button>
             </el-popover>
           </div>
@@ -79,7 +79,8 @@ export default {
       deleteBusinessConfig({
         id: parseInt(row.id),
         projectCode: row.code,
-        tenantId: this.tenantId
+        tenantId: this.tenantId,
+        updateBy: this.userInfo.account
       }).then(res=> {
         this.$message({
           type: 'success',
@@ -131,19 +132,21 @@ export default {
       this.$refs.BusinessCon.btnTxt = '预览'
       this.$refs.BusinessCon.data = [
             {
-              "code": 1,
+              "code": form.code,
               "label": '莱芜供热项目',
               "name": '',
               "active": "Y",
               "type": 'industry',
               "parentId":	-1,
               "createBy": this.userInfo.account,
-              "tenantId": this.tenantId
+              "tenantId": this.tenantId,
+              "ascription": form.code
             }
         ]
       this.$refs.BusinessCon.data[0].label = form.name
       this.$refs.BusinessCon.data[0].name = form.name
       this.$refs.BusinessCon.forms = form
+      this.$refs.BusinessCon.businessConfigWithTreeCreate(this.$refs.BusinessCon.data[0])
       this.showBtn = true
     },
     showGuide() {

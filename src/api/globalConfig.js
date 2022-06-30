@@ -10,6 +10,8 @@ import { get, post, deletefn, put } from "./unit/request";
 //       }
 //     }
 
+export const businessConfigWithTreeCreate = (params) => post("/config/businessConfig/businessConfigWithTree/create", params);
+
 // 获取 节点字典
 
 export const getAllBusinessConfig = (params) => get(`/config/businessConfig/getAllBusinessConfig`, params);
