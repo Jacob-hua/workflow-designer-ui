@@ -75,18 +75,17 @@
 </template>
 
 <script>
-  import {
-    format
-  } from '@/assets/js/unit.js'
   import PublicFormDiolog from './PublicFormComponent/index.vue'
   import detailsDiolog from './details.vue'
   import { postFormDesignRecordDraftInfo, postFormDesignBasicFormRecord, postFormDesignRecordFormDesignRecordInfo } from '@/api/unit/api.js'
   import { mapState } from 'vuex'
+  import {currentOneMonthAgo} from "@/util/date";
   export default {
     data() {
+      const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
       return {
         formData: {},
-        valueDate: [format(new Date(), 'yyyy-MM-1'), format(new Date(), 'yyyy-MM-dd')],
+        valueDate: [start, end],
         input: '',
         activeName: 'enabled',
         formListFirst: [],
