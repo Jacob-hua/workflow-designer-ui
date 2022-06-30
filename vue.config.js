@@ -1,23 +1,29 @@
 module.exports = {
-  publicPath: "./",
+  publicPath: './',
   runtimeCompiler: true,
   devServer: {
     proxy: {
-      "": {
+      '': {
         // target: "http://192.100.8.208:8060",
         // target: "http://192.100.8.80:8060",
-        target: "http://k8s.isiact.com/workflow-runtime-service",
+        target: 'http://k8s.isiact.com/workflow-runtime-service',
         changeOrigin: true, //是否允许跨域
-
+      },
+    },
+  },
+  css: {
+    loaderOptions: {
+      scss: {
+        additionalData: `@import '~@/assets/style/variable.scss';`,
       },
     },
   },
   chainWebpack: (config) => {
     config.module
-      .rule("bpmnlint")
+      .rule('bpmnlint')
       .test(/\.bpmnlintrc$/)
-      .use("bpmnlint-loader")
-      .loader("bpmnlint-loader")
-      .end();
+      .use('bpmnlint-loader')
+      .loader('bpmnlint-loader')
+      .end()
   },
-};
+}

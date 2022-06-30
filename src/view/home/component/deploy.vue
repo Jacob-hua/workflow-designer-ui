@@ -75,11 +75,6 @@
               <span v-if="!formShow" class="noneForm"> 当前未关联表单 </span>
               <span v-if="formShow" class="formRemove" @click="removeForm()">移除表单</span>
               <div v-if="formShow" class="formShowForm">
-                <formOB
-                  v-if="formShow && (formContent.docType === '.form' || formContent.docType === null)"
-                  :formContant="formContent.content"
-                  :key="formOBKey"
-                ></formOB>
                 <preview
                   :itemList="formListFun(formContent)"
                   :formConf="configFun(formContent)"
@@ -103,7 +98,6 @@
             </div>
             <div class="listItem-button">
               <el-popover placement="right" width="400" trigger="click">
-                <formOB :formContant="item.content" v-if="item.docType === '.form' || item.docType === null"></formOB>
                 <preview
                   :itemList="formListFun(item)"
                   :formConf="configFun(item)"
@@ -111,7 +105,6 @@
                 ></preview>
                 <el-button type="text" size="small" class="listItem-button1" slot="reference">查看</el-button>
               </el-popover>
-
               <el-button type="text" size="small" class="listItem-button2" @click="showForm(item)"> 关联 </el-button>
             </div>
           </div>
@@ -133,7 +126,6 @@
 
 <script>
 import ProcessInformation from './ProcessInformation.vue'
-import formOB from './formOB.vue'
 import { postProcessDraft, putProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
 import X2JS from 'x2js'
 import preview from '@/plugin/FormDesign/component/preview'
@@ -194,8 +186,8 @@ export default {
     'firstData.business': {
       handler() {
         this.changeOptions()
-      }
-    }
+      },
+    },
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
@@ -464,7 +456,6 @@ export default {
   },
   components: {
     ProcessInformation,
-    formOB,
     preview,
   },
 }

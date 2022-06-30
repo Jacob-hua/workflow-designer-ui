@@ -19,6 +19,7 @@
             <el-button @click.native.prevent="showAddOrEidtDailog(scope.row)" type="text" size="small" v-role="{ id: 'VisitCallEdit', type: 'button', business: business }">
               编辑
             </el-button>
+            <!-- TODO: id: 权限名，type: 权限类型， business：项目归属 -->
             <el-button @click.native.prevent="showDetail(scope.row)" type="text" size="small" v-role="{ id: 'VisitCallLook', type: 'button', business: business }">
               查看
             </el-button>

@@ -14,19 +14,10 @@ import "bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css";
 
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
-import "@/plugin/package/theme/element-variables.scss";
 import JsonViewer from "vue-json-viewer";
 
 import { Bpmn, FormPlugin } from "./plugin";
 import { bpmnVuexPlugin } from "./plugin/Bpmn";
-
-import "./assets/iconfont/iconfont.js";
-
-import { vuePlugin } from "@/plugin/package/highlight";
-import "highlight.js/styles/atom-one-dark-reasonable.css";
-
-import MyPD from "@/plugin/package/index.js";
-import "@/plugin/package/theme/index.scss";
 
 Vue.config.productionTip = false;
 
@@ -38,9 +29,6 @@ Vue.use(Bpmn, {
   lintActive: true,
 });
 
-Vue.use(vuePlugin);
-
-Vue.use(MyPD);
 import "@/directive/RoleDirective.js";
 
 Vue.use(Vuex);

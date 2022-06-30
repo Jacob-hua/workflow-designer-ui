@@ -22,7 +22,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 body {
   overflow: hidden;
   margin: 0;
@@ -33,7 +33,7 @@ body {
   box-sizing: border-box;
   min-width: 1920px;
   min-height: 1080px;
-  background-color: white;
+  background-color: $color-theme;
 }
 
 .bjs-powered-by {
