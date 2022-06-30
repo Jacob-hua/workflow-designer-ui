@@ -2,49 +2,37 @@
   <div class="bpmnView">
     <div class="bpmnView-title" v-if="valueType === 'project'">
       <div class="title-item">
-        <span class="title-item-label">
-          流程编码
-        </span>
+        <span class="title-item-label"> 流程编码 </span>
         <div class="title-item-main">
           <el-input v-model="postData.processNumber" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40">
-          流程名称
-        </span>
+        <span class="title-item-label marginLeft40"> 流程名称 </span>
         <div class="title-item-main">
           <el-input v-model="postData.processInstanceName" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40">
-          创建时间
-        </span>
+        <span class="title-item-label marginLeft40"> 创建时间 </span>
         <div class="title-item-main">
           <el-input v-model="postData.startTime" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40">
-          应用项目
-        </span>
+        <span class="title-item-label marginLeft40"> 应用项目 </span>
         <div class="title-item-main">
           <el-input v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label ">
-          流程类型
-        </span>
+        <span class="title-item-label"> 流程类型 </span>
         <div class="title-item-main">
           <el-input v-model="postData.business" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label marginLeft40">
-          部署类型
-        </span>
+        <span class="title-item-label marginLeft40"> 部署类型 </span>
         <div class="title-item-main">
           <el-input v-model="postData.energyType" placeholder="" :disabled="true"></el-input>
         </div>
@@ -52,10 +40,13 @@
     </div>
     <div class="bpmnView-title" v-if="valueType === 'public'">
       <div class="bpmnView-title-public">
-        <span class="bpmnView-title-public-label">流程编码:</span><span class="bpmnView-title-public-value">21321321</span>
-        <span class="bpmnView-title-public-label">流程名称:</span><span class="bpmnView-title-public-value">巡视工作流</span>
+        <span class="bpmnView-title-public-label">流程编码:</span
+        ><span class="bpmnView-title-public-value">21321321</span>
+        <span class="bpmnView-title-public-label">流程名称:</span
+        ><span class="bpmnView-title-public-value">巡视工作流</span>
         <span class="bpmnView-title-public-label">流程版本:</span><span class="bpmnView-title-public-value">V1.0</span>
-        <span class="bpmnView-title-public-label">创建时间:</span><span class="bpmnView-title-public-value">2011-11-11 19:11:11</span>
+        <span class="bpmnView-title-public-label">创建时间:</span
+        ><span class="bpmnView-title-public-value">2011-11-11 19:11:11</span>
       </div>
       <div class="bpmnView-title-button">
         <el-button type="primary" @click="$emit('edit')">编辑</el-button>
@@ -70,19 +61,17 @@
 </template>
 
 <script>
-import BpmnModeler from "bpmn-js/lib/Modeler";
-import DefaultEmptyXML from "@/plugin/package/designer/plugins/defaultEmpty";
-import bpmnData from "@/assets/js/bpmnMock.js"
-import {
-  designFormDesignServiceAll
-} from '@/api/unit/api.js'
+import BpmnModeler from 'bpmn-js/lib/Modeler'
+import DefaultEmptyXML from '@/plugin/package/designer/plugins/defaultEmpty'
+import { designFormDesignServiceAll } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
+
 export default {
-  props:{
+  props: {
     valueType: {
       type: String,
-      default: 'project'
-    }
+      default: 'project',
+    },
   },
   data() {
     return {
@@ -93,71 +82,65 @@ export default {
         createTime: '',
         business: '',
         ascription: '',
-        systemType: ''
+        systemType: '',
       },
       bpmnData: {
         name: '',
         grounp: '',
         assignee: '',
-        document: ''
+        document: '',
       },
       formShow: false,
       formContent: '',
-      formOBKey: 0
+      formOBKey: 0,
     }
   },
-  computed:{
+  computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
   },
   methods: {
     initBpmnModeler() {
-      if (this.bpmnModeler) return;
+      if (this.bpmnModeler) return
       this.bpmnModeler = new BpmnModeler({
-        container: this.$refs["bpmn-canvas"],
+        container: this.$refs['bpmn-canvas'],
         additionalModules: [
           {
-            labelEditingProvider: ["value", ""]
-          }
+            labelEditingProvider: ['value', ''],
+          },
         ],
         moddleExtensions: [],
-      });
-      this.bpmnModeler.on("selection.changed", ({
-                                                  newSelection
-                                                }) => {
+      })
+      this.bpmnModeler.on('selection.changed', ({ newSelection }) => {
         this.selection(newSelection[0] || null)
-      });
+      })
       window.bpmnInstances = {
         modeler: this.bpmnModeler,
-        modeling: this.bpmnModeler.get("modeling"),
-        moddle: this.bpmnModeler.get("moddle"),
-        eventBus: this.bpmnModeler.get("eventBus"),
-        bpmnFactory: this.bpmnModeler.get("bpmnFactory"),
-        elementFactory: this.bpmnModeler.get("elementFactory"),
-        elementRegistry: this.bpmnModeler.get("elementRegistry"),
-        replace: this.bpmnModeler.get("replace"),
-        selection: this.bpmnModeler.get("selection")
-      };
+        modeling: this.bpmnModeler.get('modeling'),
+        moddle: this.bpmnModeler.get('moddle'),
+        eventBus: this.bpmnModeler.get('eventBus'),
+        bpmnFactory: this.bpmnModeler.get('bpmnFactory'),
+        elementFactory: this.bpmnModeler.get('elementFactory'),
+        elementRegistry: this.bpmnModeler.get('elementRegistry'),
+        replace: this.bpmnModeler.get('replace'),
+        selection: this.bpmnModeler.get('selection'),
+      }
       this.$nextTick(() => {
         console.log(this.postData)
         this.createNewDiagram(this.postData.content)
       })
-
-
     },
     async createNewDiagram(xml) {
       // 将字符串转换成图显示出来
-      let newId = this.processId || `Process_${new Date().getTime()}`;
-      let newName = this.processName || `业务流程_${new Date().getTime()}`;
-      let xmlString = xml || DefaultEmptyXML(newId, newName, this.prefix);
+      let newId = this.processId || `Process_${new Date().getTime()}`
+      let newName = this.processName || `业务流程_${new Date().getTime()}`
+      let xmlString = xml || DefaultEmptyXML(newId, newName, this.prefix)
       try {
-        let {
-          warnings
-        } = await this.bpmnModeler.importXML(xmlString);
+        let { warnings } = await this.bpmnModeler.importXML(xmlString)
         if (warnings && warnings.length) {
-          warnings.forEach(warn => console.warn(warn));
+          warnings.forEach((warn) => console.warn(warn))
         }
       } catch (e) {
-        console.error(`[Process Designer Warn]: ${e?.message || e}`);
+        console.error(`[Process Designer Warn]: ${e?.message || e}`)
       }
     },
     selection(element, bpmn) {
@@ -183,7 +166,7 @@ export default {
           createBy: '',
           numberCode: '',
           name: '',
-          docName: docName
+          docName: docName,
         }).then((res) => {
           this.formContent = res.result[0].content
           this.formOBKey++
@@ -200,7 +183,7 @@ export default {
         grounp: '',
         assignee: '',
         document: '',
-        id: ''
+        id: '',
       }
       this.formShow = false
       this.formContent = ''
@@ -208,18 +191,18 @@ export default {
   },
   mounted() {
     this.initBpmnModeler()
-    this.$once("hook:beforeDestroy", () => {
-      if (this.bpmnModeler) this.bpmnModeler.destroy();
-      this.$emit("destroy", this.bpmnModeler);
-      this.bpmnModeler = null;
-    });
-  }
+    this.$once('hook:beforeDestroy', () => {
+      if (this.bpmnModeler) this.bpmnModeler.destroy()
+      this.$emit('destroy', this.bpmnModeler)
+      this.bpmnModeler = null
+    })
+  },
 }
 </script>
 
 <style scoped="scoped">
 .bpmnView-title {
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid #cccccc;
   margin-bottom: 40px;
 }
 
@@ -255,7 +238,6 @@ export default {
   margin-right: 20px;
   margin-bottom: 20px;
 }
-
 
 /deep/ .el-input.is-disabled .el-input__inner {
   color: black;
