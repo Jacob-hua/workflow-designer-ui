@@ -351,6 +351,8 @@ export default {
         }
         row.disabled = true
         row.btnTxt = '编辑'
+        row.isSetting = !!row.isSetting
+        row.isRequired = !!row.isRequired
       }
           // this.tableData.forEach(item => item.disabled = false)
     },
