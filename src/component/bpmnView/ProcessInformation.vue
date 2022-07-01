@@ -2,13 +2,13 @@
   <div>
     <div class="ProcessInformation-title">
       <div class="title-item" v-for="({ label, value }, index) in processDisplayInfo" :key="index">
-        <span>{{ label }}</span
-        >:
+        <span>{{ label }}</span>
+        :
         <span>{{ value }}</span>
       </div>
     </div>
     <div class="ProcessInformation-bpmn">
-      <bpmn-editor
+      <bpmn-canvas
         :pelatteVisible="false"
         :headerVisible="false"
         :linterToggle="false"

@@ -2,41 +2,13 @@
   <div>
     <el-dialog title="部署工作流" :visible="visible" @close="onCancel" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-left">
-        <div class="bpmn-Main">
-          <ProcessInformation
-            :processDisplayInfo="processDisplayInfo"
-            :xml="workflow.content"
-            @selectedShape="onSelectedShape"
-          />
-        </div>
-        <div class="bpmn-configure">
-          <div class="bpmn-configure-basic">
-            <div class="bpmn-configure-title">工单分配</div>
-            <div class="bpmn-configure-Main">
-              <div class="bpmn-configure-Main-item">
-                <span>名<span style="visibility: hidden">占位</span>称</span>: <span>{{ taskInfo.name }}</span>
-              </div>
-              <div class="bpmn-configure-Main-item">
-                <span>绑定岗位</span>: <span>{{ taskInfo.group }}</span>
-              </div>
-              <div class="bpmn-configure-Main-item">
-                <span>绑定人员</span>: <span>{{ taskInfo.assignee }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="bpmn-configure-form">
-            <div class="bpmn-configure-title">工单分配-表单内容</div>
-            <div class="bpmn-configure-Main">
-              <div v-if="formShow">
-                <span class="formRemove" @click="onRemoveForm">移除表单</span>
-                <div class="formShowForm">
-                  <preview :itemList="formContent.fields" :formConf="formContent.config"></preview>
-                </div>
-              </div>
-              <span v-else class="noneForm"> 当前未关联表单 </span>
-            </div>
-          </div>
-        </div>
+        <workflow-info
+          :form="formContent"
+          :xml="workflow.content"
+          :workflow="workflow"
+          :processDisplayInfo="processDisplayInfo"
+          canRemoveForm
+        />
       </div>
       <div class="dialogVisible2-right">
         <div class="dialogVisible2-right-title">表单筛选</div>
@@ -86,16 +58,16 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
+import WorkflowInfo from './WorkflowInfo.vue'
 import { postProcessDraft, putProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
 import preview from '@/plugin/FormDesign/component/preview'
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'DeployOptions',
   components: {
-    ProcessInformation,
     preview,
+    WorkflowInfo,
   },
   props: {
     visible: {
@@ -110,31 +82,13 @@ export default {
   },
   data() {
     return {
-      taskInfo: {
-        id: '',
-        name: '',
-        group: '',
-        assignee: '',
-      },
-      bpmnModeler: null,
       formContent: {},
       formList: [],
-      formShow: false,
       formName: '',
-      options: [],
-      valueV: '1.0',
-      optionsV: [
-        {
-          value: '1.0',
-          label: 'V1.0',
-        },
-      ],
     }
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
-    ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
     processDisplayInfo() {
       return [
         {
@@ -168,29 +122,9 @@ export default {
     this.fetchFormList()
   },
   methods: {
-    resetData() {
-      this.taskInfo = {
-        id: '',
-        name: '',
-        group: '',
-        assignee: '',
-      }
-      this.formShow = false
-      this.formContent = {}
-    },
     onCancel() {
       this.$emit('cancel')
       this.$emit('update:visible', false)
-    },
-    onSelectedShape(element) {
-      if (!element) {
-        this.resetData()
-        return
-      }
-      this.taskInfo.name = this.$iBpmn.getSelectedShapeInfoByType('name')
-      this.taskInfo.group = this.$iBpmn.getSelectedShapeInfoByType('candidateGroups')
-      this.taskInfo.assignee = this.$iBpmn.getSelectedShapeInfoByType('assignee')
-      this.fetchFormContent(this.$iBpmn.getSelectedShapeInfoByType('formKey'))
     },
     onLinked({ id, docName, fields, config }) {
       if (!this.$iBpmn.getSelectedShape()) {
@@ -202,68 +136,58 @@ export default {
       this.$iBpmn.updateSelectedShapeProperties({
         'camunda:formId': id,
       })
-      this.formShow = true
       this.formContent = {
         fields,
         config,
       }
     },
-    onRemoveForm() {
-      if (!this.$iBpmn.getSelectedShape()) {
-        return
-      }
-      this.$iBpmn.updateSelectedShapeProperties({
-        'camunda:formKey': '',
-      })
-      this.formShow = false
-      this.formContent = ''
-    },
     async onDeploy() {
-      const formIds = this.$iBpmn
-        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
-        .map((element) => this.$iBpmn.getShapeInfoByType(element, 'formId'))
-        .filter((formId) => formId)
-        .join(',')
+      // const formIds = this.$iBpmn
+      //   .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
+      //   .map((element) => this.$iBpmn.getShapeInfoByType(element, 'formId'))
+      //   .filter((formId) => formId)
+      //   .join(',')
       const newProcessId = await this.$generateUUID()
       this.$iBpmn.updateSelectedShapeProperties({ id: `process_${newProcessId}` })
       const { xml } = await this.$iBpmn.saveXML({ format: true })
-      const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
-      const file = new File([xml], processName + '.bpmn', {
-        type: 'bpmn20-xml',
-      })
+      console.log('ddddd', xml);
+      // const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
+      // const file = new File([xml], processName + '.bpmn', {
+      //   type: 'bpmn20-xml',
+      // })
 
-      const formData = new FormData()
-      const formDataFactory = {
-        enabled: (formData) => {
-          formData.append('processId', this.workflow.id)
-        },
-        drafted: (formData) => {
-          formData.append('processId', this.workflow.processId)
-          formData.append('id', this.workflow.id)
-        },
-      }
-      formDataFactory[this.workflow.status](formData)
-      formData.append('createBy', this.userInfo.account)
-      formData.append('deployKey', processId)
-      formData.append('deployName', this.workflow.deployName)
-      formData.append('draftId', this.workflow.id)
-      formData.append('formIds', formIds)
-      formData.append('operatorId', '1')
-      formData.append('operatorName', this.userInfo.account)
-      formData.append('processResource', file)
-      const systemType = this.workflow.systemType || this.workflow.business
-      formData.append('systemType', systemType)
-      formData.append('updateBy', this.userInfo.account)
-      formData.append('tenantId', this.tenantId)
+      // const formData = new FormData()
+      // const formDataFactory = {
+      //   enabled: (formData) => {
+      //     formData.append('processId', this.workflow.id)
+      //   },
+      //   drafted: (formData) => {
+      //     formData.append('processId', this.workflow.processId)
+      //     formData.append('id', this.workflow.id)
+      //   },
+      // }
+      // formDataFactory[this.workflow.status](formData)
+      // formData.append('createBy', this.userInfo.account)
+      // formData.append('deployKey', processId)
+      // formData.append('deployName', this.workflow.deployName)
+      // formData.append('draftId', this.workflow.id)
+      // formData.append('formIds', formIds)
+      // formData.append('operatorId', '1')
+      // formData.append('operatorName', this.userInfo.account)
+      // formData.append('processResource', file)
+      // const systemType = this.workflow.systemType || this.workflow.business
+      // formData.append('systemType', systemType)
+      // formData.append('updateBy', this.userInfo.account)
+      // formData.append('tenantId', this.tenantId)
 
-      const { errorInfo } = await postDeployForOnline(formData)
-      if (errorInfo.errorCode) {
-        this.$message.error(this.errorInfo.errorMsg)
-        return
-      }
-      this.$message.success('部署成功')
-      this.$emit('deploy')
-      this.$emit('update:visible', false)
+      // const { errorInfo } = await postDeployForOnline(formData)
+      // if (errorInfo.errorCode) {
+      //   this.$message.error(this.errorInfo.errorMsg)
+      //   return
+      // }
+      // this.$message.success('部署成功')
+      // this.$emit('deploy')
+      // this.$emit('update:visible', false)
     },
     async onSave() {
       const formIds = this.$iBpmn
@@ -327,34 +251,6 @@ export default {
         this.$message.error(errorInfo.errorMsg)
       }
       this.formList = formList.map(this.disableForm)
-    },
-    async fetchFormContent(formKey) {
-      if (!formKey) {
-        this.formContent = ''
-        this.formShow = false
-        return
-      }
-      let docName = formKey.split(':')[2]
-      const { errorInfo, result = [] } = await designFormDesignServiceAll({
-        status: 'enabled',
-        tenantId: this.tenantId,
-        ascription: this.workflow.ascription,
-        business: this.workflow.business,
-        createBy: '',
-        numberCode: '',
-        name: '',
-        docName: docName,
-      })
-      if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
-      }
-      if (result[0]) {
-        this.formContent = this.disableForm(result[0]).formContent
-      } else {
-        this.formContent = {}
-      }
-      this.formShow = true
     },
     disableForm(form) {
       const newForm = { ...form }

@@ -24,11 +24,11 @@
           <div style="line-height: 194px; width: 100%; text-align: center" v-if="!deployments.length">暂无数据</div>
           <div v-else>
             <div
-              v-for="{ id, deployName, createBy, createTime, displayStatus } in deployments"
+              v-for="({ id, deployName, createBy, createTime, displayStatus }, index) in deployments"
               :key="id"
               class="detail-list-item"
             >
-              <span class="detailsWord">详情</span>
+              <span class="detailsWord" @click="onClickDetail(index)">详情</span>
               <div class="item-item">
                 <span>部署名称:</span>
                 <span>{{ deployName }}</span>
@@ -50,6 +50,7 @@
         </div>
       </div>
     </el-dialog>
+    <deploy-detail :visible.sync="deployDetailVisible" :deployedId="deployedId" />
   </div>
 </template>
 
@@ -57,11 +58,13 @@
 import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
 import { mapGetters } from 'vuex'
 import { getDeployBasic } from '@/api/unit/api.js'
+import DeployDetail from './DeployDetail.vue'
 
 export default {
   name: 'DeployCabinDetail',
   components: {
     ProcessInformation,
+    DeployDetail,
   },
   props: {
     visible: {
@@ -79,6 +82,8 @@ export default {
       deployments: [],
       deployNumber: 0,
       systemType: null,
+      deployDetailVisible: false,
+      deployedId: '',
     }
   },
   computed: {
@@ -125,6 +130,10 @@ export default {
     },
     onSystemTypeChange() {
       this.fetchDeployDetails()
+    },
+    onClickDetail(index) {
+      this.deployedId = this.deployments[index].id
+      this.deployDetailVisible = true
     },
     async fetchDeployDetails() {
       try {
