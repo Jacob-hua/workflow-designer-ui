@@ -91,9 +91,6 @@
       <div class="home-table">
         <workflow-table
           v-show="activeName === 'workflow'"
-          :valueDate="searchForm.valueDate"
-          :ascription="searchForm.ascription"
-          :business="searchForm.business"
           :searchForm="searchForm"
           @totalChange="totalChange"
           ref="workflow"
@@ -101,9 +98,7 @@
         ></workflow-table>
         <drafts-table
           v-show="activeName === 'drafts'"
-          :valueDate="searchForm.valueDate"
-          :ascription="searchForm.ascription"
-          :business="searchForm.business"
+          :searchForm="searchForm"
           @totalChange="totalChange"
           ref="drafts"
           @getManyData="getManyData()"

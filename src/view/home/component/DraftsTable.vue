@@ -6,19 +6,15 @@
         <el-table-column prop="deployName" label="名称" align="center"> </el-table-column>
         <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
-            <span class="fileStyle">{{ scope.row.deployName }}.bpmn</span>
+            <span class="fileStyle">{{ scope.row.docName }}.bpmn</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createBy" label="创建人" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.createBy == -1 ? '系统' : scope.row.createBy }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="createBy" label="创建人" align="center"> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" align="center"> </el-table-column>
         <el-table-column prop="name" label="操作" align="center">
-          <template slot-scope="scope">
+          <template slot-scope="{ row }">
             <el-button
-              @click.native.prevent="deployDiolog(scope.row)"
+              @click.native.prevent="onEditWorkflow(row)"
               type="text"
               size="small"
               class="button1"
@@ -27,7 +23,7 @@
               编辑
             </el-button>
             <el-button
-              @click.native.prevent="deleteRow(scope.row.id)"
+              @click.native.prevent="onDeleteWorkflow(row)"
               type="text"
               size="small"
               v-role="{ id: 'HomeDelete', type: 'button', business: business }"
@@ -40,99 +36,113 @@
     </div>
     <div class="home-table-page">
       <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="getData.page"
-        :page-size="getData.limit"
+        @size-change="onPageSizeChange"
+        @current-change="onPageChange"
+        :current-page="pageInfo.page"
+        :page-size="pageInfo.limit"
         layout="prev, pager, next, jumper"
-        :total="getData.total"
+        :total="pageInfo.total"
       >
       </el-pagination>
     </div>
+    <deploy-options
+      :visible.sync="deployOptionsVisible"
+      :workflow="workflow"
+      @deploySuccess="onDeploySuccess"
+      @saveSuccess="onSaveSuccess"
+    />
   </div>
 </template>
 
 <script>
 import { getProcessDraftList, deleteDraft } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
+import DeployOptions from './DeployOptions.vue'
 
 export default {
   name: 'DraftsTable',
+  components: { DeployOptions },
   props: {
-    valueDate: {
-      default: [],
-    },
-    ascription: {
-      type: String,
-      default: '',
-    },
-    business: {
-      type: String,
-      default: '',
+    searchForm: {
+      type: Object,
+      required: true,
+      default: () => ({}),
     },
   },
   data() {
     return {
-      currentPage4: 1,
-      getData: {
+      deployOptionsVisible: false,
+      pageInfo: {
         page: 1,
         limit: 10,
         total: 100,
         order: 'desc',
       },
       tableData: [],
+      workflow: {},
     }
   },
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
+  mounted() {
+    this.fetchWorkflows()
+  },
   methods: {
-    getTableData() {
-      getProcessDraftList({
-        ...this.getData,
+    onDeploySuccess() {
+      this.getManyData()
+    },
+    onSaveSuccess() {
+      this.getManyData()
+    },
+    async fetchWorkflows() {
+      const { errorInfo, result } = await getProcessDraftList({
+        ...this.pageInfo,
         tenantId: this.tenantId,
         createBy: this.userInfo.account,
-        startTime: this.valueDate[0],
-        endTime: this.valueDate[1],
-        business: this.business,
-        ascription: this.ascription,
-      }).then((res) => {
-        this.tableData = res.result.dataList
-        this.getData.total = res.result.count * 1
-        this.$emit('totalChange', res.result.count * 1, 'draftsTableNum')
+        startTime: this.searchForm.valueDate[0],
+        endTime: this.searchForm.valueDate[1],
+        business: this.searchForm.business,
+        ascription: this.searchForm.ascription,
       })
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      this.tableData = result.dataList
+      this.pageInfo.total = +result.count
+      this.$emit('totalChange', result.count, 'draftsTableNum')
     },
     getManyData() {
       this.$emit('getManyData')
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
-      this.getData.limit = val
-      this.getTableData()
+    onPageSizeChange(val) {
+      this.pageInfo.limit = val
+      this.fetchWorkflows()
     },
-    handleCurrentChange(val) {
-      this.getData.page = val
-      console.log(`当前页: ${val}`)
-      this.getTableData()
+    onPageChange(val) {
+      this.pageInfo.page = val
+      this.fetchWorkflows()
     },
-    deleteRow(id) {
-      this.$confirm('从草稿箱删除草稿不可恢复, 请确认是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      })
-        .then(() => {
-          deleteDraft(id).then((res) => {
-            this.$message({
-              type: 'success',
-              message: '删除成功!',
-            })
-            this.getTableData()
-          })
+    async onDeleteWorkflow(workflow) {
+      try {
+        await this.$confirm('从草稿箱删除草稿不可恢复, 请确认是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
         })
-        .catch(() => {})
+        const { errorInfo } = await deleteDraft(workflow.id)
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.$message.success('删除成功!')
+        this.fetchWorkflows()
+      } catch (error) {}
     },
-    deployDiolog(item) {},
+    onEditWorkflow(workflow) {
+      this.workflow = { ...workflow }
+    },
   },
 }
 </script>

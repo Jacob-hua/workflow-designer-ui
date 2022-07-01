@@ -100,6 +100,9 @@ export default {
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
+  mounted() {
+    this.fetchWorkflows()
+  },
   methods: {
     onConfirmationSubmit(workflow) {
       this.workflow = { ...this.workflow, ...workflow }
