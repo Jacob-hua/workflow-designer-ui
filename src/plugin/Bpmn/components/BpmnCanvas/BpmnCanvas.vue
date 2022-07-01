@@ -95,7 +95,7 @@ export default {
         })
       }
       this.iBpmn.on('selection.changed', () => {
-        this.selectedChanged(this.iBpmn.getSelectedShape())
+        this.selectedChanged(this.iBpmn.getSelectedShape(), this.iBpmn)
       })
     },
     onLoaded() {

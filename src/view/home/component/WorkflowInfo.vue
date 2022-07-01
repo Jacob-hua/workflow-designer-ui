@@ -2,7 +2,12 @@
   <div>
     <div class="dialogVisible2-left">
       <div class="bpmn-Main">
-        <ProcessInformation :processDisplayInfo="processDisplayInfo" :xml="xml" @selectedShape="onSelectedShape" />
+        <ProcessInformation
+          :processDisplayInfo="processDisplayInfo"
+          :xml="xml"
+          @loaded="onLoaded"
+          @selectedShape="onSelectedShape"
+        />
       </div>
       <div class="bpmn-configure">
         <div class="bpmn-configure-basic">
@@ -74,6 +79,7 @@ export default {
   },
   data() {
     return {
+      iBpmn: {},
       taskInfo: {
         id: '',
         name: '',
@@ -102,7 +108,12 @@ export default {
     },
   },
   methods: {
-    onSelectedShape(element) {
+    onLoaded(iBpmn) {
+      this.iBpmn = iBpmn
+      this.$emit('canvasLoaded', iBpmn)
+    },
+    onSelectedShape(element, iBpmn) {
+      this.iBpmn = iBpmn
       if (!element) {
         this.taskInfo = {
           id: '',
@@ -113,16 +124,16 @@ export default {
         this.formContent = {}
         return
       }
-      this.taskInfo.name = this.$iBpmn.getSelectedShapeInfoByType('name')
-      this.taskInfo.group = this.$iBpmn.getSelectedShapeInfoByType('candidateGroups')
-      this.taskInfo.assignee = this.$iBpmn.getSelectedShapeInfoByType('assignee')
-      this.fetchFormContent(this.$iBpmn.getSelectedShapeInfoByType('formKey'))
+      this.taskInfo.name = this.iBpmn.getSelectedShapeInfoByType('name')
+      this.taskInfo.group = this.iBpmn.getSelectedShapeInfoByType('candidateGroups')
+      this.taskInfo.assignee = this.iBpmn.getSelectedShapeInfoByType('assignee')
+      this.fetchFormContent(this.iBpmn.getSelectedShapeInfoByType('formKey'))
     },
     onRemoveForm() {
-      if (!this.$iBpmn.getSelectedShape()) {
+      if (!this.iBpmn.getSelectedShape()) {
         return
       }
-      this.$iBpmn.updateSelectedShapeProperties({
+      this.iBpmn.updateSelectedShapeProperties({
         'camunda:formKey': '',
       })
       this.formContent = {}

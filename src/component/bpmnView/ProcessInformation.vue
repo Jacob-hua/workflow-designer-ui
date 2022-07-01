@@ -14,7 +14,7 @@
         :linterToggle="false"
         :xml="xml"
         :selectedChanged="onSelectedChange"
-        @loaded="onBpmnLoaded"
+        @loaded="onCanvasLoaded"
       />
     </div>
   </div>
@@ -34,11 +34,11 @@ export default {
     },
   },
   methods: {
-    onBpmnLoaded() {
-      this.$emit('loaded')
+    onCanvasLoaded(iBpmn) {
+      this.$emit('loaded', iBpmn)
     },
-    onSelectedChange(shape) {
-      this.$emit('selectedShape', shape)
+    onSelectedChange(shape, iBpmn) {
+      this.$emit('selectedShape', shape, iBpmn)
     },
   },
 }

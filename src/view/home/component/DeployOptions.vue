@@ -8,6 +8,7 @@
           :workflow="workflow"
           :processDisplayInfo="processDisplayInfo"
           canRemoveForm
+          @canvasLoaded="onCanvasLoaded"
         />
       </div>
       <div class="dialogVisible2-right">
@@ -82,6 +83,7 @@ export default {
   },
   data() {
     return {
+      iBpmn: {},
       formContent: {},
       formList: [],
       formName: '',
@@ -127,13 +129,13 @@ export default {
       this.$emit('update:visible', false)
     },
     onLinked({ id, docName, fields, config }) {
-      if (!this.$iBpmn.getSelectedShape()) {
+      if (!this.iBpmn.getSelectedShape()) {
         return
       }
-      this.$iBpmn.updateSelectedShapeProperties({
+      this.iBpmn.updateSelectedShapeProperties({
         'camunda:formKey': 'camunda-forms:deployment:' + docName,
       })
-      this.$iBpmn.updateSelectedShapeProperties({
+      this.iBpmn.updateSelectedShapeProperties({
         'camunda:formId': id,
       })
       this.formContent = {
@@ -141,64 +143,66 @@ export default {
         config,
       }
     },
-    async onDeploy() {
-      // const formIds = this.$iBpmn
-      //   .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
-      //   .map((element) => this.$iBpmn.getShapeInfoByType(element, 'formId'))
-      //   .filter((formId) => formId)
-      //   .join(',')
-      const newProcessId = await this.$generateUUID()
-      this.$iBpmn.updateSelectedShapeProperties({ id: `process_${newProcessId}` })
-      const { xml } = await this.$iBpmn.saveXML({ format: true })
-      console.log('ddddd', xml);
-      // const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
-      // const file = new File([xml], processName + '.bpmn', {
-      //   type: 'bpmn20-xml',
-      // })
-
-      // const formData = new FormData()
-      // const formDataFactory = {
-      //   enabled: (formData) => {
-      //     formData.append('processId', this.workflow.id)
-      //   },
-      //   drafted: (formData) => {
-      //     formData.append('processId', this.workflow.processId)
-      //     formData.append('id', this.workflow.id)
-      //   },
-      // }
-      // formDataFactory[this.workflow.status](formData)
-      // formData.append('createBy', this.userInfo.account)
-      // formData.append('deployKey', processId)
-      // formData.append('deployName', this.workflow.deployName)
-      // formData.append('draftId', this.workflow.id)
-      // formData.append('formIds', formIds)
-      // formData.append('operatorId', '1')
-      // formData.append('operatorName', this.userInfo.account)
-      // formData.append('processResource', file)
-      // const systemType = this.workflow.systemType || this.workflow.business
-      // formData.append('systemType', systemType)
-      // formData.append('updateBy', this.userInfo.account)
-      // formData.append('tenantId', this.tenantId)
-
-      // const { errorInfo } = await postDeployForOnline(formData)
-      // if (errorInfo.errorCode) {
-      //   this.$message.error(this.errorInfo.errorMsg)
-      //   return
-      // }
-      // this.$message.success('部署成功')
-      // this.$emit('deploy')
-      // this.$emit('update:visible', false)
+    onCanvasLoaded(iBpmn) {
+      this.iBpmn = iBpmn
     },
-    async onSave() {
-      const formIds = this.$iBpmn
+    async onDeploy() {
+      const formIds = this.iBpmn
         .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
-        .map((element) => this.$iBpmn.getShapeInfoByType(element, 'formId'))
+        .map((element) => this.iBpmn.getShapeInfoByType(element, 'formId'))
         .filter((formId) => formId)
         .join(',')
       const newProcessId = await this.$generateUUID()
-      this.$iBpmn.updateSelectedShapeProperties({ id: `process_${newProcessId}` })
-      const { xml } = await this.$iBpmn.saveXML({ format: true })
-      const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
+      this.iBpmn.updateSelectedShapeProperties({ id: `process_${newProcessId}` })
+      const { xml } = await this.iBpmn.saveXML({ format: true })
+      const { name: processName, id: processId } = this.iBpmn.getRootShapeInfo()
+      const file = new File([xml], processName + '.bpmn', {
+        type: 'bpmn20-xml',
+      })
+
+      const formData = new FormData()
+      const formDataFactory = {
+        enabled: (formData) => {
+          formData.append('processId', this.workflow.id)
+        },
+        drafted: (formData) => {
+          formData.append('processId', this.workflow.processId)
+          formData.append('id', this.workflow.id)
+        },
+      }
+      formDataFactory[this.workflow.status](formData)
+      formData.append('createBy', this.userInfo.account)
+      formData.append('deployKey', processId)
+      formData.append('deployName', this.workflow.deployName)
+      formData.append('draftId', this.workflow.id)
+      formData.append('formIds', formIds)
+      formData.append('operatorId', '1')
+      formData.append('operatorName', this.userInfo.account)
+      formData.append('processResource', file)
+      const systemType = this.workflow.systemType || this.workflow.business
+      formData.append('systemType', systemType)
+      formData.append('updateBy', this.userInfo.account)
+      formData.append('tenantId', this.tenantId)
+
+      const { errorInfo } = await postDeployForOnline(formData)
+      if (errorInfo.errorCode) {
+        this.$message.error(this.errorInfo.errorMsg)
+        return
+      }
+      this.$message.success('部署成功')
+      this.$emit('deploy')
+      this.$emit('update:visible', false)
+    },
+    async onSave() {
+      const formIds = this.iBpmn
+        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
+        .map((element) => this.iBpmn.getShapeInfoByType(element, 'formId'))
+        .filter((formId) => formId)
+        .join(',')
+      const newProcessId = await this.$generateUUID()
+      this.iBpmn.updateSelectedShapeProperties({ id: `process_${newProcessId}` })
+      const { xml } = await this.iBpmn.saveXML({ format: true })
+      const { name: processName, id: processId } = this.iBpmn.getRootShapeInfo()
       const file = new File([xml], processName + '.bpmn', {
         type: 'bpmn20-xml',
       })
