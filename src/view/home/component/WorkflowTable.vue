@@ -52,7 +52,12 @@
       :business="workflow.business"
       @submit="onConfirmationSubmit"
     />
-    <deploy-options :visible.sync="deployOptionsVisible" :workflow="workflow" @deploySuccess="onDeploySuccess" />
+    <deploy-options
+      :visible.sync="deployOptionsVisible"
+      :workflow="workflow"
+      @deploySuccess="onDeploySuccess"
+      @saveSuccess="onSaveSuccess"
+    />
     <deploy-cabin-detail :visible.sync="deployCabinDetailVisible" :workflow="workflow" />
   </div>
 </template>
@@ -101,6 +106,9 @@ export default {
       this.deployOptionsVisible = true
     },
     onDeploySuccess() {
+      this.getManyData()
+    },
+    onSaveSuccess() {
       this.getManyData()
     },
     async fetchWorkflows() {
