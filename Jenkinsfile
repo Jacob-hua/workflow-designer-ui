@@ -135,7 +135,7 @@ pipeline {
        always {
            script {
                println "Push deploy message to ELK"
-               projectId = "com.siact.${GROUP_SUFFIX}:${ARTIFACT_NAME}"
+               projectId = "com.siact.product.jwp:workflow-design-ui"
 				try {
 					metricValue = quality.GetQualityStatus(projectId,'bugs,coverage,tests,vulnerabilities')
 					coverageRate = quality.GetMetricValue(metricValue,"coverage")
