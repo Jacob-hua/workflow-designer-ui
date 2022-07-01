@@ -78,7 +78,16 @@ export const deleteBusinessConfig = (params) => deletefn(`/config/businessConfig
 // export const UpdatebusinessConfig = (params) => put(`/config/businessConfig`, params);
 // export const UpdatebusinessConfig = (params) => put(`/config/businessConfig/businessConfigWithTree/create`, params);
 
-export const startConfig = (params) => put("/config/startConfig/update", params);
+
+// 启动项删除
+export const startConfigDelete = (params) => deletefn("/config/startConfig/delete", params);
+  // 启动项修改/config/startConfig/update
+export const startConfigUpdate = (params) => put("/config/startConfig/update", params);
+
+// 根据业务节点获取配置
+export const checkIsReferenced = (params) => get(`/config/startConfig/checkIsReferenced`, params);
+
+export const startConfig = (params) => post("/config/startConfig/create", params);
 // 回去第三方杰奎
 export const getThirdInterfaceList = (params) => get(`/config/global/getThirdInterfaceList`, params);
 //根据业务节点获取配置

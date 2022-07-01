@@ -75,7 +75,6 @@ function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFi
         immediate: true,
         deep: true,
         handler(data) {
-          debugger
           const needExecutes = this[formFields]?.filter(({ executeFunc }) => executeFunc) ?? []
           needExecutes.forEach(({ executeFunc }) => {
             executeFunc({ ...data })

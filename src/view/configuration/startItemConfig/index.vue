@@ -69,6 +69,9 @@ export default {
           })
           selectProcessStartConfigList(id, +this.tenantId).then(res => {
             res.result.forEach(item => {
+              item['btnTxt'] = '编辑'
+            })
+            res.result.forEach(item => {
               item.disabled = true
               item.startType = item.startType+ ''
               item.isSetting = !!item.isSetting

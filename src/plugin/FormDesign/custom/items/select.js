@@ -55,6 +55,5 @@ export let select = {
   ruleError: '该字段不能为空',
   // 当前表单所依赖的字段
   relation: '',
-  relationMapping: [],
-  requestConfig: {}
+  relationMapping: []
 }

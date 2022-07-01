@@ -96,24 +96,37 @@ export default {
     metaDataList : function () {
       return this.itemList.map((fieldInfo) => {
         return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
-          executeApi({
-            apiMark: fieldInfo.requestConfig.apiMark,
-            sourceMark: fieldInfo.requestConfig.sourceMark,
-            data,
-          }).then(({ result: options }) => {
-            if(fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox' ){
-              this.quoteOption = options
-            } else if(fieldInfo.compType === 'cascader') { // 处理级联
-              this.quoteOption = options.result
-            } else { // 处理选择列表
+            executeApi({
+              apiMark: fieldInfo.requestConfig.apiMark,
+              sourceMark: fieldInfo.requestConfig.sourceMark,
+              data,
+            }).then(({ result: options }) => {
+              if(fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox' ){
+                this.quoteOption = options
+              } else if(fieldInfo.compType === 'cascader') { // 处理级联
+                this.deleteEmptyChildren(options.result)
+                this.quoteOption = options.result
+              } else { // 处理选择列表
 
-            }
-          })
+              }
+            })
         })
       })
     }
   },
   methods:{
+    deleteEmptyChildren(arr) {
+      for (let i = 0; i < arr.length; i++) {
+        const arrElement = arr[i];
+        if (!arrElement.children.length) {
+          delete arrElement.children
+          continue
+        }
+        if (arrElement.children) {
+          this.deleteEmptyChildren(arrElement.children)
+        }
+      }
+    },
     getFileList(file, fileList) {
       this.fileList = fileList
       this.file = file

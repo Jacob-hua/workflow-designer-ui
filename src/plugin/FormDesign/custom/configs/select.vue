@@ -260,6 +260,7 @@ export default {
     },
     handlerChangeDataType(value){
       if(value === 'static'){
+        delete this.props.requestConfig
         this.props.options = [];
         this.props.options = this.tempOptions;
       }else{
