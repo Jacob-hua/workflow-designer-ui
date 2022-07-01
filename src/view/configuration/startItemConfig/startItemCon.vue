@@ -349,7 +349,6 @@ export default {
             message: 'code或启动类型不能为空！'
           })
         }
-
         row.disabled = true
         row.btnTxt = '编辑'
       }
@@ -359,11 +358,7 @@ export default {
       if (this.tags.length) {
         this.dialogVisible2 = false;
         if (this.tableData.length) {
-          // if (this.tableData.every(item => Object.keys(item).includes('type') === true)) {
-          //   this.tableData = this.tags;
-          // } else {
             this.tableData = this.tableData.concat(this.tags)
-          // }
         } else {
           this.tableData = this.tags;
         }
@@ -399,17 +394,7 @@ export default {
             })
           } else {
             this.tags.push({
-              // "businessConfigId": 0,
-              // "code": "string",
 
-              // "id": 0,
-              // "isRequired": 0,
-              // "isSetting": 0,
-              // "name": "string",
-              // "tenantId": 0,
-              // "thirdInterfaceId": 0,
-              // "type": 0,
-              // "updateBy": "string",
               isUse: 0,
               "createBy": this.userInfo.account,
               updateBy: this.userInfo.account,
