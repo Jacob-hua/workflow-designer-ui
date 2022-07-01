@@ -1,12 +1,13 @@
 import IBpmn from './iBpmn'
 import BpmnEditor from './components/BpmnEditor'
 import BpmnPropertiesPanel from './components/BpmnPropertiesPanel'
+import BpmnCanvas from './components/BpmnCanvas'
 
 import bpmnVuexPlugin from './store'
 
 import 'highlight.js/styles/atom-one-dark-reasonable.css'
 
-const components = [BpmnEditor, BpmnPropertiesPanel]
+const components = [BpmnEditor, BpmnPropertiesPanel, BpmnCanvas]
 
 const highlight = require('highlight.js/lib/core')
 highlight.registerLanguage('xml', require('highlight.js/lib/languages/xml'))

@@ -54,12 +54,10 @@
       @close="onCreateTicketVisible"
       @submit="onCreateTicketSubmit"
     />
-    <detailsRem ref="detailsRem" seeType="runTime"></detailsRem>
   </div>
 </template>
 
 <script>
-import detailsRem from '@/view/home/component/details.vue'
 import { getProcessDefinitionList } from '@/api/unit/api.js'
 import { mapState, mapGetters } from 'vuex'
 import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
@@ -67,7 +65,6 @@ import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
 export default {
   name: 'RuntimeAdd',
   components: {
-    detailsRem,
     RuntimeCreatTicket,
   },
   props: {
@@ -103,19 +100,8 @@ export default {
     ...mapState('account', ['tenantId', 'userInfo']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
-  mounted() {
-    // TODO: 此处的工单加载需要重新设计
-    // this.getProcessList()
-  },
   methods: {
-    detailsShow(item) {
-      this.$refs.detailsRem.dialogVisible2 = true
-      this.$nextTick(() => {
-        this.$refs.detailsRem.$refs.details2.postData = item
-        this.$refs.detailsRem.$refs.details2.postData.version = item.user
-        this.$refs.detailsRem.$refs.details2.createNewDiagram(item.content)
-      })
-    },
+    detailsShow(item) {},
     handleNodeClick(data) {
       this.getData.type = data.value
       this.getProcessList()
