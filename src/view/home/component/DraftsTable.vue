@@ -75,7 +75,7 @@ export default {
       pageInfo: {
         page: 1,
         limit: 10,
-        total: 100,
+        total: 0,
         order: 'desc',
       },
       tableData: [],
@@ -136,9 +136,16 @@ export default {
           this.$message.error(errorInfo.errorMsg)
           return
         }
+        this.updatePageNum()
         this.$message.success('删除成功!')
         this.fetchWorkflows()
       } catch (error) {}
+    },
+    updatePageNum() {
+      const totalPage = Math.ceil((this.pageInfo.total - 1) / this.pageInfo.limit)
+      this.pageInfo.page =
+        this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page
+      this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page
     },
     onEditWorkflow(workflow) {
       this.workflow = { ...workflow }
