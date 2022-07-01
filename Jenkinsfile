@@ -154,7 +154,7 @@ pipeline {
                {
                     "triggerBy": "${BUILD_USER}",
                     "project": "${project}",
-                    "git": "",
+                    "git": "${gitURL}",
                     "branch": "${Branch}",
                     "environment": "${environment}",
                     "status": "${currentBuild.currentResult}",
