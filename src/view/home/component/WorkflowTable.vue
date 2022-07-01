@@ -53,25 +53,17 @@
       @addWorkSuccess="getManyData()"
     />
     <deploy-cabin-detail :visible.sync="deployCabinDetailVisible" :workflow="workflow" />
-    <details-bnpm
-      ref="detailsBnpm"
-      :ascription="searchForm.ascription"
-      :business="searchForm.business"
-      @deleteSuccess="fetchWorkflows()"
-    />
   </div>
 </template>
 
 <script>
 import { postProcessDesignServicePage } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
-import DetailsBnpm from './details.vue'
 import DeployConfirmation from './DeployConfirmation.vue'
 import DeployCabinDetail from './DeployCabinDetail.vue'
 
 export default {
   components: {
-    DetailsBnpm,
     DeployConfirmation,
     DeployCabinDetail,
   },
@@ -136,16 +128,6 @@ export default {
     onDetails(row) {
       this.workflow = { ...row }
       this.deployCabinDetailVisible = true
-      // this.$refs.detailsBnpm.dialogVisible1 = true
-      // this.$nextTick(() => {
-      //   this.$refs.detailsBnpm.postData.business = row.business
-      //   this.$refs.detailsBnpm.changeOptions()
-      //   this.$refs.detailsBnpm.$refs.details1.postData = JSON.parse(JSON.stringify(row))
-      //   this.$refs.detailsBnpm.$refs.details1.postData.deployName = this.$refs.detailsBnpm.$refs.details1.postData.name
-
-      //   this.$refs.detailsBnpm.$refs.details1.createNewDiagram(row.content)
-      //   this.$refs.detailsBnpm.getDetailList()
-      // })
     },
   },
 }

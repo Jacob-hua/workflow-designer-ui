@@ -1,51 +1,37 @@
 <template>
   <div>
     <div class="home-table-main">
-      <el-table :data="tableData"
-                style="width: 100%">
-        <el-table-column type="index"
-                         label="序号"
-                         align="center">
-        </el-table-column>
-        <el-table-column prop="deployName"
-                         label="名称"
-                         align="center">
-        </el-table-column>
-        <!-- <el-table-column prop="version" label="版本" align="center">
-        </el-table-column> -->
-        <el-table-column prop="docName"
-                         label="流程文件"
-                         align="center">
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column type="index" label="序号" align="center"> </el-table-column>
+        <el-table-column prop="deployName" label="名称" align="center"> </el-table-column>
+        <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
             <span class="fileStyle">{{ scope.row.deployName }}.bpmn</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createBy"
-                         label="创建人"
-                         align="center">
+        <el-table-column prop="createBy" label="创建人" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.createBy == -1 ? '系统' : scope.row.createBy }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime"
-                         label="创建时间"
-                         align="center">
-        </el-table-column>
-        <el-table-column prop="name"
-                         label="操作"
-                         align="center">
+        <el-table-column prop="createTime" label="创建时间" align="center"> </el-table-column>
+        <el-table-column prop="name" label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="deployDiolog(scope.row)"
-                       type="text"
-                       size="small"
-                       class="button1"
-                       v-role="{ id: 'HomeLook', type: 'button', business: business }">
+            <el-button
+              @click.native.prevent="deployDiolog(scope.row)"
+              type="text"
+              size="small"
+              class="button1"
+              v-role="{ id: 'HomeLook', type: 'button', business: business }"
+            >
               编辑
             </el-button>
-            <el-button @click.native.prevent="deleteRow(scope.row.id)"
-                       type="text"
-                       size="small"
-                       v-role="{ id: 'HomeDelete', type: 'button', business: business }">
+            <el-button
+              @click.native.prevent="deleteRow(scope.row.id)"
+              type="text"
+              size="small"
+              v-role="{ id: 'HomeDelete', type: 'button', business: business }"
+            >
               删除
             </el-button>
           </template>
@@ -53,30 +39,25 @@
       </el-table>
     </div>
     <div class="home-table-page">
-      <el-pagination @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange"
-                     :current-page="getData.page"
-                     :page-size="getData.limit"
-                     layout="prev, pager, next, jumper"
-                     :total="getData.total">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="getData.page"
+        :page-size="getData.limit"
+        layout="prev, pager, next, jumper"
+        :total="getData.total"
+      >
       </el-pagination>
     </div>
-    <deploy ref="deploy"
-            dataType="drafted"
-            @addDraftSuccess="getManyData()"
-            @addWorkSuccess="getManyData()"></deploy>
   </div>
 </template>
 
 <script>
-import deploy from './deploy.vue'
-import {
-  getProcessDesignService,
-  getProcessDraftList,
-  deleteDraft,
-} from '@/api/unit/api.js'
+import { getProcessDraftList, deleteDraft } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
+
 export default {
+  name: 'DraftsTable',
   props: {
     valueDate: {
       default: [],
@@ -149,28 +130,9 @@ export default {
             this.getTableData()
           })
         })
-        .catch(() => {
-        })
+        .catch(() => {})
     },
-    deployDiolog(item) {
-      this.$refs.deploy.dialogVisible2 = true
-      this.$nextTick(() => {
-        this.$refs.deploy.initData()
-        this.$refs.deploy.$refs.ProcessInformation.postData = JSON.parse(
-          JSON.stringify(item)
-        )
-        this.$refs.deploy.$refs.ProcessInformation.createNewDiagram(
-          item.content
-        )
-        this.$refs.deploy.getFormList()
-      })
-    },
-  },
-  components: {
-    deploy,
-  },
-  created() {
-    // this.getTableData()
+    deployDiolog(item) {},
   },
 }
 </script>
