@@ -48,10 +48,11 @@
     </div>
     <deploy-confirmation
       :visible.sync="deployConfirmationVisible"
-      :workflow="workflow"
-      @addDraftSuccess="getManyData()"
-      @addWorkSuccess="getManyData()"
+      :ascription="workflow.ascription"
+      :business="workflow.business"
+      @submit="onConfirmationSubmit"
     />
+    <deploy-options :visible.sync="deployOptionsVisible" :workflow="workflow" @deploySuccess="onDeploySuccess" />
     <deploy-cabin-detail :visible.sync="deployCabinDetailVisible" :workflow="workflow" />
   </div>
 </template>
@@ -61,11 +62,13 @@ import { postProcessDesignServicePage } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 import DeployConfirmation from './DeployConfirmation.vue'
 import DeployCabinDetail from './DeployCabinDetail.vue'
+import DeployOptions from './DeployOptions.vue'
 
 export default {
   components: {
     DeployConfirmation,
     DeployCabinDetail,
+    DeployOptions,
   },
   props: {
     searchForm: {
@@ -76,6 +79,7 @@ export default {
   },
   data() {
     return {
+      deployOptionsVisible: false,
       deployConfirmationVisible: false,
       deployCabinDetailVisible: false,
       pageInfo: {
@@ -92,6 +96,13 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
   methods: {
+    onConfirmationSubmit(workflow) {
+      this.workflow = { ...this.workflow, ...workflow }
+      this.deployOptionsVisible = true
+    },
+    onDeploySuccess() {
+      this.getManyData()
+    },
     async fetchWorkflows() {
       const { errorInfo, result } = await postProcessDesignServicePage({
         ...this.pageInfo,

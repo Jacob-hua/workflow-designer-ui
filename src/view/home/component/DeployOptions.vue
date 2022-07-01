@@ -120,13 +120,10 @@ export default {
       ]
     },
   },
-  mounted() {
-    this.fetchFormList()
-  },
   methods: {
     onCancel() {
       this.$emit('cancel')
-      this.$emit('update:visible', false)
+      this.onClose()
     },
     onLinked({ id, docName, fields, config }) {
       if (!this.iBpmn.getSelectedShape()) {
@@ -145,6 +142,9 @@ export default {
     },
     onCanvasLoaded(iBpmn) {
       this.iBpmn = iBpmn
+    },
+    onClose() {
+      this.$emit('update:visible', false)
     },
     generateWorkflowFormData() {
       const formIds = this.iBpmn
@@ -201,8 +201,8 @@ export default {
           return
         }
         this.$message.success('部署成功')
-        this.$emit('deploy')
-        this.$emit('update:visible', false)
+        this.$emit('deploySuccess')
+        this.onClose()
       } catch (error) {}
     },
     async onSave() {
@@ -221,8 +221,8 @@ export default {
             this.$message.success('保存成功')
           })
         }
-        this.$emit('save')
-        this.$emit('update:visible', false)
+        this.$emit('saveSuccess')
+        this.onClose()
       } catch (error) {}
     },
     async fetchFormList() {

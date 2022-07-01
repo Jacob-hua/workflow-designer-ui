@@ -42,38 +42,33 @@
         <el-button @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
-    <deploy-options
-      v-if="deployOptionsVisible"
-      :visible.sync="deployOptionsVisible"
-      :workflow="formData"
-      v-on="$listeners"
-    />
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import DeployOptions from './DeployOptions.vue'
 
 export default {
-  components: { DeployOptions },
   name: 'DeployConfirmation',
   props: {
     visible: {
       type: Boolean,
       default: false,
     },
-    workflow: {
-      type: Object,
-      required: true,
-      default: () => ({}),
+    ascription: {
+      type: String,
+      default: '',
+    },
+    business: {
+      type: String,
+      default: '',
     },
   },
   data() {
     return {
       formData: {
-        ascription: '',
-        business: '',
+        ascription: this.ascription,
+        business: this.business,
         systemType: '',
         deployName: '',
       },
@@ -97,15 +92,14 @@ export default {
           },
         ],
       },
-      deployOptionsVisible: false,
     }
   },
   watch: {
-    workflow: {
-      immediate: true,
-      handler(workflow) {
-        this.formData = { ...this.formData, ...workflow }
-      },
+    business(business) {
+      this.formData.business = business
+    },
+    ascription(ascription) {
+      this.formData.ascription = ascription
     },
   },
   computed: {
@@ -124,9 +118,8 @@ export default {
       this.$refs.formData &&
         this.$refs.formData.validate((validate) => {
           if (validate) {
-            this.$emit('submit')
+            this.$emit('submit', { ...this.formData })
             this.onClose()
-            this.deployOptionsVisible = true
           }
         })
     },
