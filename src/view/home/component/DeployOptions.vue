@@ -189,37 +189,41 @@ export default {
       }
     },
     async onDeploy() {
-      const { file, processId } = await this.getXMLInfo()
-      const workflowFormData = this.generateWorkflowFormData()
-      workflowFormData.append('deployKey', processId)
-      workflowFormData.append('processResource', file)
+      try {
+        const { file, processId } = await this.getXMLInfo()
+        const workflowFormData = this.generateWorkflowFormData()
+        workflowFormData.append('deployKey', processId)
+        workflowFormData.append('processResource', file)
 
-      const { errorInfo } = await postDeployForOnline(workflowFormData)
-      if (errorInfo.errorCode) {
-        this.$message.error(this.errorInfo.errorMsg)
-        return
-      }
-      this.$message.success('部署成功')
-      this.$emit('deploy')
-      this.$emit('update:visible', false)
+        const { errorInfo } = await postDeployForOnline(workflowFormData)
+        if (errorInfo.errorCode) {
+          this.$message.error(this.errorInfo.errorMsg)
+          return
+        }
+        this.$message.success('部署成功')
+        this.$emit('deploy')
+        this.$emit('update:visible', false)
+      } catch (error) {}
     },
     async onSave() {
-      const { file, processId } = await this.getXMLInfo()
-      const workflowFormData = this.generateWorkflowFormData()
-      workflowFormData.append('deployKey', processId)
-      workflowFormData.append('processFile', file)
+      try {
+        const { file, processId } = await this.getXMLInfo()
+        const workflowFormData = this.generateWorkflowFormData()
+        workflowFormData.append('deployKey', processId)
+        workflowFormData.append('processFile', file)
 
-      if (this.workflow.status === 'enabled') {
-        postProcessDraft(workflowFormData).then(() => {
-          this.$message.success('保存成功')
-        })
-      } else {
-        putProcessDraft(workflowFormData).then(() => {
-          this.$message.success('保存成功')
-        })
-      }
-      this.$emit('save')
-      this.$emit('update:visible', false)
+        if (this.workflow.status === 'enabled') {
+          postProcessDraft(workflowFormData).then(() => {
+            this.$message.success('保存成功')
+          })
+        } else {
+          putProcessDraft(workflowFormData).then(() => {
+            this.$message.success('保存成功')
+          })
+        }
+        this.$emit('save')
+        this.$emit('update:visible', false)
+      } catch (error) {}
     },
     async fetchFormList() {
       const { errorInfo, result: formList = [] } = await designFormDesignServiceAll({

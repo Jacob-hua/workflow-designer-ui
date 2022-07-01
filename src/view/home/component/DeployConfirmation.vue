@@ -125,15 +125,17 @@ export default {
         this.$refs.formData.validate((validate) => {
           if (validate) {
             this.$emit('submit')
-            this.$emit('update:visible', false)
+            this.onClose()
             this.deployOptionsVisible = true
-          } else {
-            return
           }
         })
     },
     onCancel() {
       this.$emit('cancel')
+      this.onClose()
+    },
+    onClose() {
+      this.$refs.formData && this.$refs.formData.resetFields()
       this.$emit('update:visible', false)
     },
   },
