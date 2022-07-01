@@ -1,4 +1,3 @@
-import { userLogin } from '@/constant/index.js'
 <template>
   <div class="background body"
        v-show="showHtml">

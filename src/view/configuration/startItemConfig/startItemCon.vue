@@ -42,9 +42,9 @@
           <p>自定义启动项</p>
           <div v-if="!tableData.length" class="tip_content">当前未配置自定义启动项</div>
           <el-button v-if="footFlag" @click="showSelf">自定义</el-button>
-          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary"
-                     v-role="{ id: 'StartItemConfigEdit', type: 'button', business: business }">编辑
-          </el-button>
+<!--          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary"-->
+<!--                     v-role="{ id: 'StartItemConfigEdit', type: 'button', business: business }">编辑-->
+<!--          </el-button>-->
           <el-table
               v-if="tableFlag && tableData.length > 0"
               :data="tableData"
@@ -98,13 +98,14 @@
                 align="center"
                 prop=""
                 label="配置"
-                width="180">
+                width="100">
               <template slot-scope="scope">
                 <el-checkbox :disabled="scope.row.disabled" v-model="scope.row.isSetting"></el-checkbox>
               </template>
             </el-table-column>
             <el-table-column
                 align="center"
+                width="100"
                 prop=""
                 label="必填">
               <template slot-scope="scope">
@@ -113,13 +114,15 @@
               </template>
             </el-table-column>
             <el-table-column
+                width="100"
                 align="center"
                 v-if="processFlag"
                 prop=""
                 label="操作">
               <template slot-scope="scope">
-                <span @click='deleteRow(scope.row)' style="color: #1d89ff; cursor: pointer"
+                <span @click='deleteRow(scope.row)' style="color: #1d89ff; cursor: pointer; margin-right: 5px;"
                       v-role="{ id: 'StartItemConfigDelete', type: 'button', business: business }">删除</span>
+                <span @click="editTable(scope.row, scope.row.btnTxt)" style="color: #1d89ff; cursor: pointer" v-if="btnFlag && tableData.length">{{scope.row.btnTxt}}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -127,18 +130,17 @@
 
       </div>
       <span slot="footer" class="dialog-footer">
-        <div v-if="footFlag">
-           <el-button @click="saveStart">保 存</el-button>
-           <el-button @click="dialogVisible = false">取 消</el-button>
-        </div>
-
+<!--        <div v-if="footFlag">-->
+<!--           <el-button @click="saveStart">保 存</el-button>-->
+<!--           <el-button @click="dialogVisible = false">取 消</el-button>-->
+<!--        </div>-->
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import {getThirdInterfaceList, selectProcessStartConfigList, startConfig} from "@/api/globalConfig";
+import {getThirdInterfaceList, selectProcessStartConfigList, startConfig, checkIsReferenced, startConfigUpdate, startConfigDelete} from "@/api/globalConfig";
 
 import FormTypeEnum from "@/enum/FormTypeEnum";
 import StartItemEnum from "@/enum/StartItemEnum";
@@ -157,7 +159,8 @@ export default {
   },
   data() {
     return {
-      processFlag: false,
+      deleteIds: [],
+      processFlag: true,
       btnFlag: false,
       tableFlag: false,
       tableData: [],
@@ -199,9 +202,17 @@ export default {
       }
     },
     deleteRow(row) {
-      if (this.processFlag) {
-        this.tableData.splice(this.tableData.findIndex(item => item.id === row.id), 1)
-      }
+      startConfigDelete({
+        id: row.id,
+        tenantId: this.tenantId
+      }).then(res => {
+        if (this.processFlag) {
+          this.tableData.splice(this.tableData.findIndex(item => item.id === row.id), 1)
+          if (row.id) {
+            this.deleteIds.push(row.id)
+          }
+        }
+      })
     },
     write(data) {
       if (data.isRequired) {
@@ -234,19 +245,32 @@ export default {
     checkCodeIsNull() {
       return this.tableData.every(table => table.code)
     },
+    checkCodeIsRepeat(data) {
+      return data.map(item => item.code).length === new Set(data.map(item => item.code)).size
+    },
     saveStart() {
       if (this.checkCodeIsNull()) {
         this.formatData(this.tableData)
-        startConfig({
-          businessConfigId: this.businessConfigId,
-          list: this.tableData
-        }).then(res => {
-          this.$message({
-            type: 'success',
-            message: '保存成功'
+        if (this.checkCodeIsRepeat(this.tableData)) {
+          startConfig({
+            businessConfigId: this.businessConfigId,
+            list: this.tableData,
+            ascription: this.businessData.code,
+            deleteIds: this.deleteIds,
+            tenantId: this.tenantId
+          }).then(res => {
+            this.$message({
+              type: 'success',
+              message: '保存成功'
+            })
           })
-        })
-        this.dialogVisible = false
+          this.dialogVisible = false
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '当前添加启动项列表中存在code重复,请重新填写提交'
+          })
+        }
       } else {
         this.$message({
           type: 'warning',
@@ -271,19 +295,70 @@ export default {
       })
 
     },
-    editTable() {
+    // 检查引用
+    checkIsReferenced(data) {
+      checkIsReferenced({
+        ascription: this.data[0].code,
+        startConfigId: data.id,
+        tenantId: data.tenantId
+      }).then(res =>{
+        if (res.result) {
+          this.$message({
+            type: 'warning',
+            message: '此启动项被引用请慎重编辑！'
+          })
+        }
+      })
+    },
+    editTable(row,txt) {
+      if (row.btnTxt ==='编辑' && row.id) {
+        this.checkIsReferenced(row)
+      }
+      row.btnTxt = '保存'
       this.processFlag = true
-      this.tableData.forEach(item => item.disabled = false)
+      row.disabled = false
+      if (txt === '保存') {
+        row.isSetting ?
+            row.isSetting = StartItemEnum.SURE_SETTING
+            : row.isSetting = StartItemEnum.NOT_SETTING
+
+        row.isRequired ?
+            row.isRequired = StartItemEnum.SURE_REQUIRED
+            : row.isRequired = StartItemEnum.NOT_SETTING
+        if (row.code && (row.thirdInterfaceId || row.value)) {
+          if (row.id) { // 走修改接口
+            row.updateBy = this.userInfo.account
+            startConfigUpdate(row).then(res => {
+              this.$message({
+                type: 'success',
+                message: '修改成功'
+              })
+            })
+          } else { // 走新建接口
+            startConfig(row).then(res => {
+              this.$message({
+                type: 'success',
+                message: '创建成功'
+              })
+
+            })
+          }
+        } else {
+          this.$message({
+            type: 'warning',
+            message: 'code或启动类型不能为空！'
+          })
+        }
+        row.disabled = true
+        row.btnTxt = '编辑'
+      }
+          // this.tableData.forEach(item => item.disabled = false)
     },
     saveTag() {
       if (this.tags.length) {
         this.dialogVisible2 = false;
         if (this.tableData.length) {
-          if (this.tableData.every(item => Object.keys(item).includes('type') === true)) {
-            this.tableData = this.tags;
-          } else {
             this.tableData = this.tableData.concat(this.tags)
-          }
         } else {
           this.tableData = this.tags;
         }
@@ -304,37 +379,39 @@ export default {
     handleClose(tag) {
       this.tags.splice(this.tags.findIndex((item, index) => item.name === tag.name), 1);
     },
+    checkRepeat(inputValue) {
+     return this.tableData.some(tag => tag.name === inputValue)
+    },
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue.length > 0 && inputValue.length <= 100) {
         let index = parseInt(Math.random() * 5)
         if (inputValue) {
-          this.tags.push({
-            // "businessConfigId": 0,
-            // "code": "string",
+          if (this.checkRepeat(inputValue)) {
+            this.$message({
+              type: 'warning',
+              message: '启动项名称重复,请重新添加'
+            })
+          } else {
+            this.tags.push({
 
-            // "id": 0,
-            // "isRequired": 0,
-            // "isSetting": 0,
-            // "name": "string",
-            // "tenantId": 0,
-            // "thirdInterfaceId": 0,
-            // "type": 0,
-            // "updateBy": "string",
-            isUse: 0,
-            "createBy": this.userInfo.account,
-            businessConfigId: this.currentId,
-            code: "",
-            tenantId: this.tenantId,
-            thirdInterfaceId: null,
-            value: null,
-            name: this.inputValue,
-            isSetting: true,
-            isRequired: true,
-            type: this.color[index],
-            startType: '1',
-            disabled: true
-          });
+              isUse: 0,
+              "createBy": this.userInfo.account,
+              updateBy: this.userInfo.account,
+              businessConfigId: this.currentId,
+              code: "",
+              tenantId: this.tenantId,
+              thirdInterfaceId: null,
+              value: null,
+              name: this.inputValue,
+              isSetting: true,
+              isRequired: true,
+              type: this.color[index],
+              startType: '1',
+              disabled: true,
+              btnTxt: '编辑'
+            });
+          }
         }
         this.inputValue = '';
       } else {
