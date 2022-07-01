@@ -115,7 +115,7 @@
 
 <script>
 import WorkflowTable from './component/WorkflowTable.vue'
-import DraftsTable from './component/draftsTable.vue'
+import DraftsTable from './component/DraftsTable.vue'
 import { getDeployCount, getTaskCountStatistic } from '@/api/unit/api.js'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
@@ -185,7 +185,6 @@ export default {
     },
     changeAction(value) {
       this.activeName = value
-      // this.$refs[value].getTableData()
       this.$refs.workflow.fetchWorkflows()
     },
     getDeployCountList() {
