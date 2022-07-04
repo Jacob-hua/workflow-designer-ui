@@ -222,7 +222,7 @@ export default {
   position: relative;
   display: inline-block;
   width: 312px;
-  height: 186px;
+  /*height: 67px;*/
   background-color: #f5f7f9;
   /* border: 1px solid #0066cc; */
 }

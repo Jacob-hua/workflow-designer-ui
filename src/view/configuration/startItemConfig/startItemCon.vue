@@ -202,16 +202,23 @@ export default {
       }
     },
     deleteRow(row) {
-      startConfigDelete({
-        id: row.id,
-        tenantId: this.tenantId
-      }).then(res => {
-        if (this.processFlag) {
-          this.tableData.splice(this.tableData.findIndex(item => item.id === row.id), 1)
-          if (row.id) {
-            this.deleteIds.push(row.id)
+      if(row.id) {
+        startConfigDelete({
+          id: row.id,
+          tenantId: this.tenantId
+        }).then(res => {
+
+          if (this.processFlag) {
+            if (row.id) {
+              this.deleteIds.push(row.id)
+            }
           }
-        }
+        })
+      }
+      this.tableData.splice(this.tableData.findIndex(item => item.id === row.id), 1)
+      this.$message({
+        type: 'success',
+        message: '删除成功'
       })
     },
     write(data) {
@@ -280,7 +287,7 @@ export default {
 
     },
     handleNodeClick(data) {
-      this.processFlag = false
+      this.processFlag = true
       this.currentId = data.id
       this.businessConfigId = data.id
       selectProcessStartConfigList(data.id, +this.tenantId).then(res => {
@@ -289,6 +296,9 @@ export default {
           item.startType = item.startType + ''
           item.isSetting = !!item.isSetting
           item.isRequired = !!item.isRequired
+        })
+        res.result.forEach(item => {
+          item['btnTxt'] = '编辑'
         })
         this.tableFlag = true
         this.tableData = res.result

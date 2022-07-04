@@ -181,7 +181,7 @@ export default {
           "tenantId":this.tenantId,
           "type":"industry",
           "parentId":data.id,
-          "ascription":data.code
+          "ascription":this.data[0].code
         })
         // this.showinput = false
         // const newChild = { "id": id++,  "code":this.nodeCode, "tenantId": this.tenantId,  "createBy": this.userInfo.account,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
