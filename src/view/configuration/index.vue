@@ -137,6 +137,7 @@
   
   .configuration {
     padding: 20px;
+    height: 90.7vh;
   }
   
   .home-main {

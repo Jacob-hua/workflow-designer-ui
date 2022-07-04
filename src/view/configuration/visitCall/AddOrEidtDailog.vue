@@ -455,7 +455,6 @@ export default {
 .container {
   padding: 0 15px 0 10px;
   width: 60%;
-  height: 600px;
   overflow-y: auto;
 }
 .container .cardBox {
