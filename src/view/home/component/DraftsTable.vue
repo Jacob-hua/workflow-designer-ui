@@ -18,7 +18,7 @@
               type="text"
               size="small"
               class="button1"
-              v-role="{ id: 'HomeLook', type: 'button', business: business }"
+              v-role="{ id: 'HomeLook', type: 'button', business: row.business }"
             >
               编辑
             </el-button>
@@ -26,7 +26,7 @@
               @click.native.prevent="onDeleteWorkflow(row)"
               type="text"
               size="small"
-              v-role="{ id: 'HomeDelete', type: 'button', business: business }"
+              v-role="{ id: 'HomeDelete', type: 'button', business: row.business }"
             >
               删除
             </el-button>

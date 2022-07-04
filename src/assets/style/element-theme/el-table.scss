@@ -1,0 +1,50 @@
+$table-bg-color: #212739 !default;
+$table-color: #ffffff !default;
+$table-header-bg-color: #212739 !default;
+$table-tr-even-bg-color: #212739 !default;
+$table-tr-odd-bg-color: #1b1e2d !default;
+$table-tr-hover-bg-color: #0e1f3e !default;
+
+.el-table {
+  background-color: $table-bg-color;
+  color: $table-color;
+  font-size: 14px;
+  line-height: 20px;
+
+  ::before {
+    background-color: $table-bg-color;
+  }
+
+  tbody {
+    tr:hover > td {
+      background-color: $table-tr-hover-bg-color !important;
+    }
+  }
+
+  thead {
+    color: $table-color;
+  }
+
+  th.el-table__cell {
+    background-color: $table-header-bg-color;
+  }
+
+  td.el-table__cell,
+  th.el-table__cell.is-leaf {
+    border-bottom: 0;
+  }
+
+  tr:nth-of-type(even) {
+    background-color: $table-tr-even-bg-color;
+  }
+
+  tr:nth-of-type(odd) {
+    background-color: $table-tr-odd-bg-color;
+  }
+}
+
+.el-table--border::after,
+.el-table--group::after,
+.el-table::before {
+  background-color: transparent;
+}
