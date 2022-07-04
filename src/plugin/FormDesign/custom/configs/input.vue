@@ -84,6 +84,9 @@
           <i class="el-icon-remove-outline close-icon" />
         </div>
       </div>
+    <el-form-item label="系统变量">
+      <el-input class="input" placeholder="$符号+变量名" v-model="props.variable"></el-input>
+    </el-form-item>
     <div style="margin-left: 20px;">
       <el-button
         style="padding-bottom: 0"
