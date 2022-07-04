@@ -345,7 +345,6 @@
             createBy: this.userInfo.account
           }).then((res) => {
             _this.$refs.detailsDiolog.dialogVisible2 = true
-            // this.$nextTick(() => {
             _this.formData = res.result
             let arr = []
             res.result.versions.forEach((item,index) => {
@@ -358,8 +357,6 @@
             _this.$refs.detailsDiolog.value = res.result.childIds[0]
             _this.$refs.detailsDiolog.getAllBusinessConfig(res.result)
           })
-
-        // })
       },
       editForm(item) {
         this.addForm2(item)

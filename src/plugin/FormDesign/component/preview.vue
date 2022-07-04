@@ -179,13 +179,31 @@ export default {
     processVariable({
       processInstanceId: '18d5241d-f856-11ec-a9d6-ba48737afcba'
     }).then(res => {
+      let flag = false
+      this.metaDataList.forEach(meta => {
+        if (meta.columns) {
+          flag =  true
+          meta.columns.forEach(item => {
+            item.list.forEach(col => {
+              if (col.variable.includes('$')) {
+                let character  = col.variable.split('$')[1]
+                this.form[col.id] = (res.result)[character]
+              }
+            })
+          })
+
+        }
+      })
+      if (flag) {
+        return
+      }
       let sysVar = this.metaDataList.filter(item => item.variable)
-        sysVar.forEach(sys=> {
-          if (sys.variable.includes('$')) {
-            let character  = sys.variable.split('$')[1]
-            this.form[sys.id] = (res.result)[character]
-          }
-        })
+      sysVar.forEach(sys=> {
+        if (sys.variable.includes('$')) {
+          let character  = sys.variable.split('$')[1]
+          this.form[sys.id] = (res.result)[character]
+        }
+      })
 
     })
   },
