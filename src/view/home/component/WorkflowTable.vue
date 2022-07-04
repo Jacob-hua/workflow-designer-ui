@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="home-table-main">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData">
         <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>
         <el-table-column prop="name" label="名称" width="180" align="center"> </el-table-column>
         <el-table-column prop="docName" label="流程文件" align="center">
@@ -165,14 +165,6 @@ export default {
   color: #007edb;
 }
 
-::v-deep .el-table .el-table__cell {
-  padding: 8px 0px;
-}
-
-::v-deep .el-table th.el-table__cell {
-  padding: 16px 0px;
-  background-color: #f5f7f9;
-}
 .home-table-page {
   text-align: right;
   padding: 20px 0px;

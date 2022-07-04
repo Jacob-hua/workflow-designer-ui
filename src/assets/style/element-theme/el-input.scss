@@ -1,0 +1,21 @@
+$input-inner-color: #ffffff !default;
+$input-inner-bg-color: #212739 !default;
+$input-inner-border-color: #333333 !default;
+$input-active-border-color: #999999 !default;
+$input-placeholder-color: #666666 !default;
+
+.el-input {
+  :focus {
+    border-color: $input-active-border-color;
+  }
+
+  ::placeholder {
+    color: $input-placeholder-color;
+  }
+}
+
+.el-input__inner {
+  background-color: $input-inner-bg-color;
+  border: 1px solid $input-inner-border-color;
+  color: $input-inner-color;
+}

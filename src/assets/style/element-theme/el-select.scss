@@ -1,0 +1,43 @@
+$select-active-border-color: #999999 !default;
+$select-option-bg-color: #212739 !default;
+$select-option-active-color: #ffffff !default;
+$select-option-active-bg-color: #009efb !default;
+
+.el-select {
+  background-color: transparent;
+
+  .el-input__inner:focus {
+    border-color: $select-active-border-color;
+  }
+}
+
+.el-range-editor.is-active,
+.el-range-editor.is-active:hover,
+.el-select .el-input.is-focus .el-input__inner {
+  border-color: $select-active-border-color;
+}
+
+.el-select-dropdown {
+  border: 1px solid $select-active-border-color;
+}
+
+.el-select-dropdown__list {
+  background-color: $select-option-bg-color;
+}
+
+.el-select-dropdown__item {
+  background-color: $select-option-bg-color;
+}
+
+.el-select-dropdown__item.selected {
+  background-color: $select-option-active-bg-color;
+  color: $select-option-active-color;
+  font-size: 14px;
+  font-weight: 400px;
+}
+
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+  background-color: $select-option-active-bg-color;
+  color: $select-option-active-color;
+}

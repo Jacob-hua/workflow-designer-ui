@@ -197,10 +197,6 @@ export default {
     getManyData() {
       this.getDataNumber()
       this.getDeployCountList()
-      this.$nextTick(() => {
-        this.$refs.workflow.fetchWorkflows()
-        this.$refs.drafts.getTableData()
-      })
     },
     getDataNumber() {
       getTaskCountStatistic({
@@ -313,12 +309,6 @@ export default {
   font-size: 14px;
   color: #000000;
   margin-right: 20px;
-}
-
-::v-deep .el-date-editor {
-  border: 1px solid #000000;
-  color: #000000;
-  font-size: 20px;
 }
 
 .home-main {

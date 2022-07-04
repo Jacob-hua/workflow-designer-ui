@@ -1,0 +1,57 @@
+$pagination-bg-color: #070f24 !default;
+$pagination-disabled-color: #859ba8 !default;
+$pagination-prev-color: #009efb !default;
+$pagination-next-color: #009efb !default;
+$pagination-number-color: #666666 !default;
+$pagination-number-font-size: 12px !default;
+$pagination-number-active-color: #ffffff !default;
+$pagination-number-active-bg-color: #009efb !default;
+
+.el-pagination {
+  background-color: $pagination-bg-color;
+
+  button:disabled {
+    background-color: $pagination-bg-color;
+    color: $pagination-disabled-color;
+  }
+
+  .btn-prev {
+    background-color: $pagination-bg-color;
+    color: $pagination-prev-color;
+  }
+
+  .btn-next {
+    background-color: $pagination-bg-color;
+    color: $pagination-next-color;
+  }
+}
+
+.el-pagination button,
+.el-pagination {
+  span:not([class*='suffix']) {
+    color: $pagination-number-color;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+.el-pager {
+  li {
+    background-color: $pagination-bg-color;
+    color: $pagination-number-color;
+    min-width: 28px;
+    font-size: $pagination-number-font-size;
+    margin: 0 7px 0 7px;
+  }
+
+  li.active {
+    background-color: $pagination-number-active-bg-color;
+    color: $pagination-number-active-color;
+    border-radius: 50%;
+  }
+}
+
+.el-pagination__editor.el-input .el-input__inner {
+  background-color: transparent;
+  border: 1px $pagination-number-color solid;
+}
