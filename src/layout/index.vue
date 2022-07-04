@@ -12,7 +12,7 @@
           </el-menu>
         </el-aside>
         <el-main>
-          <div class="header-color">
+          <div class="header">
             <div class="userinfo" v-if="!status">
               <span class="userInfoName">{{ userInfo.name }}</span>
               <span class="exitClss" @click="exitProject()">退出</span>
@@ -104,22 +104,30 @@ body {
   height: 100%;
 }
 
-.sider-logo {
-  height: 175px;
-  background-color: $logo-bg-color;
-  color: #ffffff;
-  font-size: 20px;
-  line-height: 215px;
-  padding-left: 20px;
-  font-weight: 700;
-}
-
-.header-color {
+.header {
   height: 48px;
   line-height: 48px;
   font-size: 16px;
   background-color: $header-bg-color;
   padding: 0px 10px;
+}
+
+.el-aside {
+  display: flex;
+  flex-direction: column;
+  background-color: $menu-bg-color;
+}
+
+.sider-logo {
+  width: 240px;
+  height: 288px;
+  color: #ffffff;
+  background-color: $logo-bg-color;
+  border-radius: 0px 30px 30px 0px;
+  font-size: 16px;
+  line-height: 20px;
+  padding-left: 20px;
+  font-weight: 400;
 }
 
 .el-main {
@@ -130,6 +138,7 @@ body {
 }
 
 .el-menu {
+  flex-grow: 1;
   background-color: $menu-bg-color;
   border-right: 0;
 
@@ -140,6 +149,31 @@ body {
   .is-active {
     color: #ffffff;
     background-color: $menu-active-bg-color;
+
+    // TODO: 此处菜单选中的上下圆角需要下面的代码支撑
+    // ::after {
+    //   content: '';
+    //   display: block;
+    //   position: absolute;
+    //   right: 0;
+    //   bottom: 100%;
+    //   border-bottom-right-radius: 30px;
+    //   width: 30px;
+    //   height: 30px;
+    //   box-shadow: 0.49rem 0.49rem $menu-active-bg-color;
+    // }
+
+    // ::before {
+    //   content: '';
+    //   display: block;
+    //   position: absolute;
+    //   right: 0;
+    //   top: 100%;
+    //   border-top-right-radius: 30px;
+    //   width: 30px;
+    //   height: 30px;
+    //   box-shadow: 0.49rem -0.49rem $menu-active-bg-color;
+    // }
   }
 }
 

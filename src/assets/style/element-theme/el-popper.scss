@@ -1,0 +1,5 @@
+$popper-triangle-color: #212739 !default;
+
+.el-popper[x-placement^='bottom'] .popper__arrow::after {
+  border-bottom-color: $popper-triangle-color;
+}

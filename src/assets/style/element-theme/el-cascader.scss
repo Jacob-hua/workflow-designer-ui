@@ -1,0 +1,32 @@
+$cascader-active-border-color: #999999 !default;
+$cascader-option-bg-color: #212739 !default;
+$cascader-option-active-color: #ffffff !default;
+$cascader-option-active-bg-color: #009efb !default;
+$cascader-option-selectable-color: #009efb !default;
+
+.el-cascader {
+  background-color: transparent;
+}
+
+.el-cascader .el-input .el-input__inner:focus,
+.el-cascader .el-input.is-focus .el-input__inner {
+  border-color: $cascader-active-border-color;
+}
+
+.el-cascader__dropdown {
+  border: 1px solid $cascader-active-border-color;
+  background-color: $cascader-option-bg-color;
+}
+
+.el-cascader-node {
+  &:not(.is-disabled):focus,
+  &:not(.is-disabled):hover {
+    color: $cascader-option-active-color !important;
+    background-color: $cascader-option-active-bg-color;
+    font-weight: 400px;
+  }
+}
+
+.el-cascader-node.is-selectable.in-checked-path {
+  color: $cascader-option-selectable-color;
+}
