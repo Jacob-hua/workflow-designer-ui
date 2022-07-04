@@ -32,7 +32,6 @@
 </template>
 <script>
 import { postHistoryProcessCountStatistic } from '@/api/historyWorkflow.js'
-import { getFirstDay, getLastDay } from '@/assets/js/unit.js'
 import { mapState } from 'vuex'
 import { currentMonthRangeFormat } from '@/util/date.js'
 
@@ -48,7 +47,7 @@ export default {
         currentMonthCompleteProcessCount: 0,
       },
       projectValue: '',
-      business: ''
+      business: '',
     }
   },
   computed: {

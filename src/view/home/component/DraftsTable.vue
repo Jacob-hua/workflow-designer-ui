@@ -2,34 +2,33 @@
   <div>
     <div class="home-table-main">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>
-        <el-table-column prop="name" label="名称" width="180" align="center"> </el-table-column>
+        <el-table-column type="index" label="序号" align="center"> </el-table-column>
+        <el-table-column prop="deployName" label="名称" align="center"> </el-table-column>
         <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
-            <span class="fileStyle">{{ scope.row.docName }}</span>
+            <span class="fileStyle">{{ scope.row.docName }}.bpmn</span>
           </template>
         </el-table-column>
         <el-table-column prop="createBy" label="创建人" align="center"> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" align="center"> </el-table-column>
-        <el-table-column prop="count" label="已部署次数" align="center"> </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
+        <el-table-column prop="name" label="操作" align="center">
+          <template slot-scope="{ row }">
             <el-button
-              @click="onDeploy(scope.row)"
+              @click.native.prevent="onEditWorkflow(row)"
               type="text"
               size="small"
               class="button1"
-              v-role="{ id: 'HomeDeploy', type: 'button', business: searchForm.business }"
+              v-role="{ id: 'HomeLook', type: 'button', business: business }"
             >
-              部署
+              编辑
             </el-button>
             <el-button
-              @click="onDetails(scope.row)"
+              @click.native.prevent="onDeleteWorkflow(row)"
               type="text"
               size="small"
-              v-role="{ id: 'HomeLook', type: 'button', business: searchForm.business }"
+              v-role="{ id: 'HomeDelete', type: 'button', business: business }"
             >
-              查看
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -46,35 +45,23 @@
       >
       </el-pagination>
     </div>
-    <deploy-confirmation
-      :visible.sync="deployConfirmationVisible"
-      :ascription="workflow.ascription"
-      :business="workflow.business"
-      @submit="onConfirmationSubmit"
-    />
     <deploy-options
       :visible.sync="deployOptionsVisible"
       :workflow="workflow"
       @deploySuccess="onDeploySuccess"
       @saveSuccess="onSaveSuccess"
     />
-    <deploy-cabin-detail :visible.sync="deployCabinDetailVisible" :workflow="workflow" />
   </div>
 </template>
 
 <script>
-import { postProcessDesignServicePage } from '@/api/unit/api.js'
+import { getProcessDraftList, deleteDraft } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
-import DeployConfirmation from './DeployConfirmation.vue'
-import DeployCabinDetail from './DeployCabinDetail.vue'
 import DeployOptions from './DeployOptions.vue'
 
 export default {
-  components: {
-    DeployConfirmation,
-    DeployCabinDetail,
-    DeployOptions,
-  },
+  name: 'DraftsTable',
+  components: { DeployOptions },
   props: {
     searchForm: {
       type: Object,
@@ -85,13 +72,11 @@ export default {
   data() {
     return {
       deployOptionsVisible: false,
-      deployConfirmationVisible: false,
-      deployCabinDetailVisible: false,
       pageInfo: {
         page: 1,
         limit: 10,
         total: 0,
-        status: 'enabled',
+        order: 'desc',
       },
       tableData: [],
       workflow: {},
@@ -104,10 +89,6 @@ export default {
     this.fetchWorkflows()
   },
   methods: {
-    onConfirmationSubmit(workflow) {
-      this.workflow = { ...this.workflow, ...workflow }
-      this.deployOptionsVisible = true
-    },
     onDeploySuccess() {
       this.getManyData()
     },
@@ -115,7 +96,7 @@ export default {
       this.getManyData()
     },
     async fetchWorkflows() {
-      const { errorInfo, result } = await postProcessDesignServicePage({
+      const { errorInfo, result } = await getProcessDraftList({
         ...this.pageInfo,
         tenantId: this.tenantId,
         createBy: this.userInfo.account,
@@ -128,28 +109,46 @@ export default {
         this.$message.error(errorInfo.errorMsg)
         return
       }
-      this.tableData = result.list
-      this.pageInfo.total = result.total
-      this.$emit('totalChange', result.total, 'WorkflowTableNum')
-    },
-    onPageSizeChange(limit) {
-      this.pageInfo.limit = limit
-      this.fetchWorkflows()
-    },
-    onPageChange(page) {
-      this.pageInfo.page = page
-      this.fetchWorkflows()
+      this.tableData = result.dataList
+      this.pageInfo.total = +result.count
+      this.$emit('totalChange', result.count, 'draftsTableNum')
     },
     getManyData() {
       this.$emit('getManyData')
     },
-    onDeploy(row) {
-      this.workflow = { ...row }
-      this.deployConfirmationVisible = true
+    onPageSizeChange(val) {
+      this.pageInfo.limit = val
+      this.fetchWorkflows()
     },
-    onDetails(row) {
-      this.workflow = { ...row }
-      this.deployCabinDetailVisible = true
+    onPageChange(val) {
+      this.pageInfo.page = val
+      this.fetchWorkflows()
+    },
+    async onDeleteWorkflow(workflow) {
+      try {
+        await this.$confirm('从草稿箱删除草稿不可恢复, 请确认是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        })
+        const { errorInfo } = await deleteDraft(workflow.id)
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.updatePageNum()
+        this.$message.success('删除成功!')
+        this.fetchWorkflows()
+      } catch (error) {}
+    },
+    updatePageNum() {
+      const totalPage = Math.ceil((this.pageInfo.total - 1) / this.pageInfo.limit)
+      this.pageInfo.page =
+        this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page
+      this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page
+    },
+    onEditWorkflow(workflow) {
+      this.workflow = { ...workflow }
     },
   },
 }
@@ -168,10 +167,9 @@ export default {
 ::v-deep .el-table .el-table__cell {
   padding: 8px 0px;
 }
-
 ::v-deep .el-table th.el-table__cell {
-  padding: 16px 0px;
   background-color: #f5f7f9;
+  padding: 16px 0px;
 }
 .home-table-page {
   text-align: right;

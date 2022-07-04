@@ -23,10 +23,11 @@
             ></el-cascader>
           </el-col>
         </el-form-item>
-        <el-form-item label="部署类型" prop="systemType" v-if="options.length > 0">
+        <el-form-item label="部署类型" prop="systemType" v-if="systemTypeOptions.length > 0">
           <el-col :span="24">
             <el-select v-model="formData.systemType" placeholder="请选择部署类型">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              <el-option v-for="{ value, label } in systemTypeOptions" :key="value" :label="label" :value="value">
+              </el-option>
             </el-select>
           </el-col>
         </el-form-item>
@@ -41,33 +42,33 @@
         <el-button @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
-    <deploy-options v-if="deployOptionsVisible" :visible.sync="deployOptionsVisible" :workflow="formData" v-on="$listeners" />
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import DeployOptions from './DeployOptions.vue'
 
 export default {
-  components: { DeployOptions },
   name: 'DeployConfirmation',
   props: {
     visible: {
       type: Boolean,
       default: false,
     },
-    workflow: {
-      type: Object,
-      required: true,
-      default: () => ({}),
+    ascription: {
+      type: String,
+      default: '',
+    },
+    business: {
+      type: String,
+      default: '',
     },
   },
   data() {
     return {
       formData: {
-        ascription: '',
-        business: '',
+        ascription: this.ascription,
+        business: this.business,
         systemType: '',
         deployName: '',
       },
@@ -91,50 +92,44 @@ export default {
           },
         ],
       },
-      options: [],
-      deployOptionsVisible: false,
     }
   },
   watch: {
-    workflow: {
-      immediate: true,
-      handler(workflow) {
-        this.formData = { ...this.formData, ...workflow }
-        this.changeOptions()
-      },
+    business(business) {
+      this.formData.business = business
+    },
+    ascription(ascription) {
+      this.formData.ascription = ascription
     },
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
     ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
+    systemTypeOptions() {
+      let systemOption = this.rootOrganizationChildren(this.formData.ascription).filter((item) => {
+        return item.value === this.formData.business
+      })
+      return systemOption[0]?.children || []
+    },
   },
   methods: {
     onSubmit() {
       this.$refs.formData &&
         this.$refs.formData.validate((validate) => {
           if (validate) {
-            this.$emit('submit')
-            this.$emit('update:visible', false)
-            this.deployOptionsVisible = true
-          } else {
-            return
+            this.$emit('submit', { ...this.formData })
+            this.onClose()
           }
         })
     },
     onCancel() {
       this.$emit('cancel')
-      this.$emit('update:visible', false)
+      this.onClose()
     },
-    changeOptions() {
-      let manyValue = this.rootOrganizationChildren(this.formData.ascription)
-      let systemOption = manyValue.filter((item) => {
-        return item.value === this.formData.business
-      })
-      this.options = systemOption[0]?.children || []
-      // if (systemOption.length > 0) {
-      //   this.options = systemOption[0].children || []
-      // }
+    onClose() {
+      this.$refs.formData && this.$refs.formData.resetFields()
+      this.$emit('update:visible', false)
     },
   },
 }

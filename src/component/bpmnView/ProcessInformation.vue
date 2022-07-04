@@ -2,19 +2,19 @@
   <div>
     <div class="ProcessInformation-title">
       <div class="title-item" v-for="({ label, value }, index) in processDisplayInfo" :key="index">
-        <span>{{ label }}</span
-        >:
+        <span>{{ label }}</span>
+        :
         <span>{{ value }}</span>
       </div>
     </div>
     <div class="ProcessInformation-bpmn">
-      <bpmn-editor
+      <bpmn-canvas
         :pelatteVisible="false"
         :headerVisible="false"
         :linterToggle="false"
         :xml="xml"
         :selectedChanged="onSelectedChange"
-        @loaded="onBpmnLoaded"
+        @loaded="onCanvasLoaded"
       />
     </div>
   </div>
@@ -34,11 +34,11 @@ export default {
     },
   },
   methods: {
-    onBpmnLoaded() {
-      this.$emit('loaded')
+    onCanvasLoaded(iBpmn) {
+      this.$emit('loaded', iBpmn)
     },
-    onSelectedChange(shape) {
-      this.$emit('selectedShape', shape)
+    onSelectedChange(shape, iBpmn) {
+      this.$emit('selectedShape', shape, iBpmn)
     },
   },
 }

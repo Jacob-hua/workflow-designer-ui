@@ -1,3 +1,7 @@
+@Library('shared-library@demo') _
+def postRequest = new org.devops.postToElasticsearch()
+def quality = new org.devops.sonarQualityScanner()
+
 pipeline {
     agent any
     environment {
@@ -5,6 +9,13 @@ pipeline {
 		def workspace = pwd()
 		namespace="workflow"
 		Branch="${env.gitlabTargetBranch}"
+		starttime = getDateFormat()
+		BUILD_USER = getBuildUser()
+		project="workflow engine platform"
+		gitURL="http://192.100.30.115:9000/job_workflow_platform/workflow-designer-ui.git"
+		environment="dev"
+		applicationType="webfront"
+		isStandalone="yes"
 	}
 	stages {
 		stage('Clean'){
@@ -18,7 +29,7 @@ pipeline {
 			steps {
 				echo "1.Clone Stage"
 				dir('workflow-designer-ui'){
-					git branch: 'develop', credentialsId: 'lulongchao', url: 'http://192.100.30.115:9000/job_workflow_platform/workflow-designer-ui.git'
+					git branch: 'develop', credentialsId: 'lulongchao', url: "${gitURL}"
 					script {
 						build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 						commit_message = sh(returnStdout: true, script: 'git log --pretty=format:"[%cn] - %s - %b" -1 |  grep -v See | sed "/^\\$/d" ').trim()
@@ -121,6 +132,52 @@ pipeline {
         }
 	}
 	post {
+       always {
+           script {
+               println "Push deploy message to ELK"
+               projectId = "com.siact.product.jwp:workflow-design-ui"
+				try {
+					metricValue = quality.GetQualityStatus(projectId,'bugs,coverage,tests,vulnerabilities')
+					coverageRate = quality.GetMetricValue(metricValue,"coverage")
+					unitTestNumber = quality.GetMetricValue(metricValue,"tests")
+					bugs = quality.GetMetricValue(metricValue,"bugs")
+					vulnerabilities = quality.GetMetricValue(metricValue,"vulnerabilities")
+				} catch (err){
+					coverageRate = 0
+					unitTestNumber = 0
+					bugs = 0 
+					vulnerabilities = 0
+				} 
+               endtime = getDateFormat()
+               duration = getDurationTime starttime,endtime
+               body = """
+               {
+                    "triggerBy": "${BUILD_USER}",
+                    "project": "${project}",
+                    "git": "${gitURL}",
+                    "branch": "${Branch}",
+                    "environment": "${environment}",
+                    "status": "${currentBuild.currentResult}",
+                    "buildNumer": "${BUILD_ID}",
+                    "contact": "${BUILD_USER}",
+                    "jenkinsJobName": "${JOB_NAME}",
+                    "jenkinsJobURL": "${BUILD_URL}",
+                    "jenkinsJobStartTime": "${starttime}",
+                    "jenkinsJobEndTime": "${endtime}",
+                    "duration": "${duration}s",
+                    "applicationType": "${applicationType}",
+                    "isStandalone": "${isStandalone}",
+                    "quality":{
+                        "unitest-coverage-rate":"${coverageRate}%",
+                        "unitest-number": ${unitTestNumber},
+                        "bugs":${bugs},
+                        "security-issue":${vulnerabilities}
+                    } 	
+                }
+				"""
+				result = postRequest.sendPostRequest(body,"dev")
+            }
+        }
         success {
             script {
 				if ( "${Branch}" == 'null' ) {
