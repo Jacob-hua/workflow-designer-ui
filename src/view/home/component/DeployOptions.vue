@@ -120,6 +120,11 @@ export default {
       ]
     },
   },
+  watch: {
+    workflow() {
+      this.fetchFormList()
+    },
+  },
   methods: {
     onCancel() {
       this.$emit('cancel')

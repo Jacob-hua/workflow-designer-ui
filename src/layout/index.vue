@@ -3,30 +3,19 @@
     <el-container>
       <el-container>
         <el-aside width="260px">
-          <div class="Logo">
-            流程引擎工作台
-          </div>
-          <el-menu :default-active="$route.name"
-                   class="el-menu-vertical-demo"
-                   router
-                   @open="handleOpen"
-                   @close="handleClose"
-                   v-if="!status">
-            <el-menu-item :index="item.menuRoute"
-                          v-for="(item, index) in menuList"
-                          :key="index">
+          <div class="sider-logo">流程引擎工作台</div>
+          <el-menu :default-active="$route.name" router @open="handleOpen" @close="handleClose" v-if="!status">
+            <el-menu-item :index="item.menuRoute" v-for="(item, index) in menuList" :key="index">
               <i class="el-icon-location"></i>
               <span>{{ menuListNameMapping[item.menuRoute] }}</span>
             </el-menu-item>
           </el-menu>
         </el-aside>
         <el-main>
-          <div class="loginHeader">
-            <div class="userinfo"
-                 v-if="!status">
+          <div class="header-color">
+            <div class="userinfo" v-if="!status">
               <span class="userInfoName">{{ userInfo.name }}</span>
-              <span class="exitClss"
-                    @click="exitProject()">退出</span>
+              <span class="exitClss" @click="exitProject()">退出</span>
             </div>
           </div>
           <router-view></router-view>
@@ -70,8 +59,7 @@ export default {
   },
   created() {
     let userInfo = sessionStorage.getItem('loginData')
-    this.status =
-      sessionStorage.getItem('status') === CONSTANT.LOGIN_FROM_WORKFLOW_ITSELF
+    this.status = sessionStorage.getItem('status') === CONSTANT.LOGIN_FROM_WORKFLOW_ITSELF
     if (userInfo) {
       this.updateUserInfo({
         userInfo: JSON.parse(userInfo),
@@ -90,7 +78,7 @@ export default {
         return item.menuRoute === this.$route.name
       })
       if (findRole.length === 0) {
-        this.$router.push({name: this.menuList[0].menuRoute})
+        this.$router.push({ name: this.menuList[0].menuRoute })
       }
     } else {
       this.$router.push('/')
@@ -108,51 +96,55 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-::v-deep .el-header {
-  background-color: #b3c0d1;
-  color: #333;
-  text-align: center;
-  /* height: 10vh !important; */
+<style lang="scss" scoped>
+body {
+  overflow: hidden;
+  margin: 0;
+  box-sizing: border-box;
+  height: 100%;
 }
 
-.Logo {
+.sider-logo {
   height: 175px;
-  background-color: #666666;
-  color: white;
-  /* background-color: white; */
-  /* color: black; */
+  background-color: $logo-bg-color;
+  color: #ffffff;
   font-size: 20px;
   line-height: 215px;
   padding-left: 20px;
-  /* text-align: center; */
   font-weight: 700;
 }
 
-.el-aside {
-  /* background-color: #D3DCE6; */
-  color: #333;
-  text-align: left;
-  height: 100vh;
-  width: 100%;
-}
-
-.loginHeader {
+.header-color {
   height: 48px;
   line-height: 48px;
   font-size: 16px;
-  background-color: #999999;
+  background-color: $header-bg-color;
   padding: 0px 10px;
 }
 
 .el-main {
-  /* background-color: #E9EEF3; */
   color: #333;
   text-align: left;
-  height: 100vh;
-  /* padding: 0px; */
-  width: 100%;
-  padding: 0px 0px;
+  height: 100%;
+  padding: 0;
+}
+
+.el-menu {
+  background-color: $menu-bg-color;
+  border-right: 0;
+
+  :hover {
+    background-color: $menu-active-bg-color;
+  }
+
+  .is-active {
+    color: #ffffff;
+    background-color: $menu-active-bg-color;
+  }
+}
+
+.el-menu-item {
+  color: $menu-color;
 }
 
 ::v-deep .el-submenu__title i {
