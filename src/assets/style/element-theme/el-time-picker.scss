@@ -5,4 +5,5 @@ $el-timer-active-color: #409EFF;
 
 .el-time-spinner__wrapper.is-arrow .el-time-spinner__item:hover:not(.disabled):not(.active) {
   background-color: $el-timer-active-color;
+  color: #fff;
 }
