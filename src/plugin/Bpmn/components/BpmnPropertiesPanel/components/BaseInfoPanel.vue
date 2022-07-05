@@ -3,7 +3,7 @@
     <el-form :model="baseInfoForm"
              label-position="right"
              label-width="80px">
-      <el-form-item label="名称">
+      <el-form-item label="流程名称">
         <el-input v-model="baseInfoForm.name"
                   clearable></el-input>
       </el-form-item>

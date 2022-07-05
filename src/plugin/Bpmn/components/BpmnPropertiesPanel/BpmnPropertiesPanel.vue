@@ -83,12 +83,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .wrapper {
   width: 500px;
   overflow: auto;
-}
-::v-deep .el-collapse {
-  width: 100%;
 }
 </style>
