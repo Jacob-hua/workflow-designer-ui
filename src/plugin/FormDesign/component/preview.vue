@@ -212,9 +212,6 @@ export default {
 }
 </script>
 <style scoped>
->>> .el-upload--picture-card {
-  background-color: unset;
-}
 .preview-board{
   border: 1px dashed #ccc
 }

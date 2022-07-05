@@ -13,9 +13,9 @@
       <div class="PublicForm-title-input">
         <el-button type="primary" @click="getManyData()">查询</el-button>
       </div>
-      <div class="PublicForm-title-button">
-        <el-button type="primary" @click="addForm()">新建表单</el-button>
-      </div>
+    </div>
+    <div class="PublicForm-title-button">
+      <div class="boxBtn" @click="addForm()">新建表单</div>
     </div>
     <div class="home-main">
       <div class="home-main-tab">
@@ -232,6 +232,18 @@
 </script>
 
 <style scoped="scoped">
+.boxBtn {
+  font-size: 14px;
+  color: #009EFB;
+  width: 100px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border: 1px solid #009EFB;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 20px;
+}
   /deep/ .el-input__inner {
     border: 1px solid black;
   }
@@ -251,8 +263,10 @@
     margin-left: 40px;
   }
   .PublicForm-title-button {
-    display: inline-block;
-    margin-left: 40px;
+    /*display: inline-block;*/
+    /*margin-left: 40px;*/
+    display: flex;
+    justify-content: right;
   }
   .home-main {
     margin-top: 40px;
@@ -263,6 +277,7 @@
   }
   
   .home-main-tab-item {
+    color: #9F9FA0;
     display: inline-block;
     height: 60px;
     width: 200px;
@@ -270,12 +285,13 @@
     text-align: center;
     font-size: 14px;
     cursor: pointer;
-    border: 1px solid #cccccc;
   }
   
   .active {
     background-color: #030303;
     color: white;
+    font-weight: 600;
+    border-top: 2px solid #176CF4;
   }
   
   .home-table {
@@ -296,7 +312,8 @@
   .card-title {
     height: 30px;
     line-height: 30px;
-    background-color: #e9e9e9;
+    background-color: #212739;
+    color: #fff;
     padding: 0px 20px;
   }
   .card-title .title {
@@ -304,7 +321,7 @@
   }
   .card-title .detailWord {
     float: right;
-    color: #7b68cf;
+    color: #0DD5EF;
     font-size: 14px;
     cursor: pointer;
   }
@@ -321,6 +338,7 @@
     display: inline-block;
     width: 90px;
     vertical-align: top;
+    color: #999999;
   }
   .card-main-item .value {
     width: 220px;
@@ -329,5 +347,6 @@
     white-space: nowrap;
     display: inline-block;
     vertical-align: top;
+    color: #fff;
   }
 </style>
