@@ -17,7 +17,6 @@ body{
 .d-logo-wrapper{
   position: relative;
   height: 42px;
-  background: #ffffff;
   border-bottom: 1px solid #f1e8e8;
   box-sizing: border-box;
 }
@@ -94,7 +93,6 @@ body{
   border: 1px solid #f1e8e8;
   border-top: none;
   border-left: none;
-  background: #ffffff;
 }
 .action-bar .el-button{
   font-size: 18px;
