@@ -260,11 +260,7 @@
    /deep/ .dialogVisible1 .el-dialog__header .el-dialog__title {
      font-size: 14px;
    }
-   
-   /deep/ .dialogVisible1 .el-dialog__header {
-     background-color: #e4e4e4;
-     border-bottom: 1px solid #000000;
-   }
+
   
   .from-item {
     display: flex;
@@ -304,12 +300,8 @@
   /deep/ .dialogVisible2 .el-dialog__header .el-dialog__title {
     font-size: 14px;
   }
-  
-  /deep/ .dialogVisible2 .el-dialog__header {
-    background-color: #e4e4e4;
-    border-bottom: 1px solid #000000;
-  }
-  
+
+
   .detail-title {
     /* display: flex; */
     margin-top: 20px;

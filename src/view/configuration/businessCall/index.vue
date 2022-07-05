@@ -163,6 +163,9 @@ export default {
 </script>
 
 <style scoped="scoped">
+>>> .el-icon-s-order,  .el-icon-edit-outline, .el-icon-delete{
+  color: #fff !important;
+}
 >>> .el-popover {
   min-width: unset !important;
   background-color: rgb(242,242,242);
