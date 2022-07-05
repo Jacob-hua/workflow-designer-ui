@@ -1,0 +1,31 @@
+$dialog-bg-color: #1b1e2d !default;
+$dialog-header-border-color: #333333 !default;
+$dialog-title-color: #ffffff !default;
+$dialog-close-color: #8d9fc4 !default;
+
+.el-dialog {
+  background-color: $dialog-bg-color;
+}
+
+.el-dialog__title {
+  color: $dialog-title-color;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.el-dialog__header {
+  border-bottom: 1px solid $dialog-header-border-color;
+  padding: 18px 24px;
+}
+
+.el-dialog__headerbtn {
+  .el-dialog__close {
+    color: $dialog-close-color;
+  }
+}
+
+.el-dialog__footer {
+  text-align: center;
+  padding: 10px 20px 55px 20px;
+}
