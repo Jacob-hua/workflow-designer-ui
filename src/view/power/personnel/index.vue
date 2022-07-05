@@ -165,6 +165,6 @@
   }
   
   .personnel-right-table /deep/ .el-table th.el-table__cell {
-    background-color: #f5f7f9;
+    /*background-color: #f5f7f9;*/
   }
 </style>

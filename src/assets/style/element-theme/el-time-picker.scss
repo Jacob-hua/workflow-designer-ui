@@ -1,0 +1,8 @@
+$el-timer-active-color: #409EFF;
+.el-time-spinner {
+  background-color: $el-input-number-bg-color;
+}
+
+.el-time-spinner__wrapper.is-arrow .el-time-spinner__item:hover:not(.disabled):not(.active) {
+  background-color: $el-timer-active-color;
+}

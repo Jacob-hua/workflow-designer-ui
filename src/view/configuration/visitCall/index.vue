@@ -357,7 +357,7 @@ button {
 
 /deep/ .el-table th.el-table__cell {
   padding: 16px 0px;
-  background-color: #f5f7f9;
+  /*background-color: #f5f7f9;*/
 }
 
 .home-table-page {
