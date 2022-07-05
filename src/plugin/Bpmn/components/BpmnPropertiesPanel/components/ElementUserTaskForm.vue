@@ -1,19 +1,18 @@
 <template>
   <div>
-    <el-form label-position="right"
-             label-width="80px"
-             :model="userTaskForm">
+    <el-form label-position="right" label-width="80px" :model="userTaskForm">
       <el-form-item label="处理用户">
         <el-row>
           <el-col :span="18">
-            <el-input v-if="userTaskForm.customAssignee"
-                      v-model="userTaskForm.assignee" />
-            <el-cascader v-else
-                         v-model="userTaskForm.assignee"
-                         :options="userGroupOptions"
-                         :props="userCascaderProps"
-                         :show-all-levels="false"
-                         clearable>
+            <el-input v-if="userTaskForm.customAssignee" v-model="userTaskForm.assignee" />
+            <el-cascader
+              v-else
+              v-model="userTaskForm.assignee"
+              :options="userGroupOptions"
+              :props="userCascaderProps"
+              :show-all-levels="false"
+              clearable
+            >
             </el-cascader>
           </el-col>
           <el-col :span="6">
@@ -24,14 +23,15 @@
       <el-form-item label="候选用户">
         <el-row>
           <el-col :span="18">
-            <el-input v-if="userTaskForm.customCandidate"
-                      v-model="userTaskForm.candidateUsers" />
-            <el-cascader v-else
-                         v-model="userTaskForm.candidateUsers"
-                         :options="userGroupOptions"
-                         :props="candidateUsersCascaderProps"
-                         :show-all-levels="false"
-                         clearable>
+            <el-input v-if="userTaskForm.customCandidate" v-model="userTaskForm.candidateUsers" />
+            <el-cascader
+              v-else
+              v-model="userTaskForm.candidateUsers"
+              :options="userGroupOptions"
+              :props="candidateUsersCascaderProps"
+              :show-all-levels="false"
+              clearable
+            >
             </el-cascader>
           </el-col>
           <el-col :span="6">
@@ -42,14 +42,15 @@
       <el-form-item label="候选分组">
         <el-row>
           <el-col :span="18">
-            <el-input v-if="userTaskForm.customCandidateGroup"
-                      v-model="userTaskForm.candidateGroups" />
-            <el-cascader v-else
-                         v-model="userTaskForm.candidateGroups"
-                         :options="userGroupOptions"
-                         :show-all-levels="false"
-                         :props="candidateCascaderProps"
-                         clearable>
+            <el-input v-if="userTaskForm.customCandidateGroup" v-model="userTaskForm.candidateGroups" />
+            <el-cascader
+              v-else
+              v-model="userTaskForm.candidateGroups"
+              :options="userGroupOptions"
+              :show-all-levels="false"
+              :props="candidateCascaderProps"
+              clearable
+            >
             </el-cascader>
           </el-col>
           <el-col :span="6">
@@ -63,11 +64,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import {
-  deepCopy,
-  deepEquals,
-  emptyPropertiesObject,
-} from '../../../utils/object'
+import { deepCopy, deepEquals, emptyPropertiesObject } from '../../../utils/object'
 
 export default {
   name: 'ElementUserTaskForm',
@@ -92,7 +89,7 @@ export default {
       candidateCascaderProps: {
         emitPath: false,
         multiple: true,
-      }
+      },
     }
   },
   computed: {
@@ -133,5 +130,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import '../index.scss';
+
+.el-checkbox {
+  padding-left: 6px;
+}
 </style>

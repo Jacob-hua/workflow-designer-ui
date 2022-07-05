@@ -1,36 +1,28 @@
 <template>
   <div>
-    <el-form label-position="right"
-             label-width="80px">
+    <el-form label-position="right" label-width="80px">
       <el-form-item label="回路特性">
-        <el-select v-model="instanceForm.loopCharacteristics" 
-                   clearable>
-          <el-option v-for="({label, value}, index) in loopCharacteristicsOptions"
-                     :key="index"
-                     :label="label"
-                     :value="value" />
+        <el-select v-model="instanceForm.loopCharacteristics" clearable>
+          <el-option
+            v-for="({ label, value }, index) in loopCharacteristicsOptions"
+            :key="index"
+            :label="label"
+            :value="value"
+          />
         </el-select>
       </el-form-item>
       <template v-if="isNotStandardLoopInstance">
-        <el-form-item label="循环基数"
-                      key="loopCardinality">
-          <el-input v-model="instanceForm.loopCardinality"
-                    clearable />
+        <el-form-item label="循环基数" key="loopCardinality">
+          <el-input v-model="instanceForm.loopCardinality" clearable />
         </el-form-item>
-        <el-form-item label="集合"
-                      key="collection">
-          <el-input v-model="instanceForm.collection"
-                    clearable />
+        <el-form-item label="集合" key="collection">
+          <el-input v-model="instanceForm.collection" clearable />
         </el-form-item>
-        <el-form-item label="元素变量"
-                      key="elementVariable">
-          <el-input v-model="instanceForm.elementVariable"
-                    clearable />
+        <el-form-item label="元素变量" key="elementVariable">
+          <el-input v-model="instanceForm.elementVariable" clearable />
         </el-form-item>
-        <el-form-item label="完成条件"
-                      key="completionCondition">
-          <el-input v-model="instanceForm.completionCondition"
-                    clearable />
+        <el-form-item label="完成条件" key="completionCondition">
+          <el-input v-model="instanceForm.completionCondition" clearable />
         </el-form-item>
       </template>
     </el-form>
@@ -39,11 +31,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import {
-  deepCopy,
-  deepEquals,
-  emptyPropertiesObject,
-} from '../../../utils/object'
+import { deepCopy, deepEquals, emptyPropertiesObject } from '../../../utils/object'
 
 export default {
   name: 'MultiInstancePanel',
@@ -56,10 +44,7 @@ export default {
     ...mapState('bpmn/config', ['loopCharacteristicsOptions']),
     ...mapState('bpmn/panel', ['multiInstance']),
     isNotStandardLoopInstance() {
-      return (
-        this.instanceForm.loopCharacteristics &&
-        this.instanceForm.loopCharacteristics !== 'StandardLoop'
-      )
+      return this.instanceForm.loopCharacteristics && this.instanceForm.loopCharacteristics !== 'StandardLoop'
     },
   },
   watch: {
@@ -70,10 +55,7 @@ export default {
       deep: true,
       immediate: true,
       handler(value) {
-        if (
-          emptyPropertiesObject(value) ||
-          deepEquals(value, this.multiInstance)
-        ) {
+        if (emptyPropertiesObject(value) || deepEquals(value, this.multiInstance)) {
           return
         }
         this.updateMultiInstance({ newMultiInstance: deepCopy(value) })
@@ -89,5 +71,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import '../index.scss';
+
 </style>

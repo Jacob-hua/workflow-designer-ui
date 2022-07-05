@@ -85,7 +85,7 @@ export default {
 
 <style lang="scss" scoped>
 .wrapper {
-  width: 500px;
+  width: 550px;
   overflow: auto;
 }
 </style>

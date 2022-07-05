@@ -1,11 +1,8 @@
 <template>
   <div>
-    <el-form :model="baseInfoForm"
-             label-position="right"
-             label-width="80px">
+    <el-form :model="baseInfoForm" label-position="right" label-width="80px">
       <el-form-item label="流程名称">
-        <el-input v-model="baseInfoForm.name"
-                  clearable></el-input>
+        <el-input v-model="baseInfoForm.name" clearable></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -49,5 +46,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>
