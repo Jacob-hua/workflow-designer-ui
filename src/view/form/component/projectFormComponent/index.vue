@@ -338,9 +338,6 @@ export default {
 .guid >>> .el-input {
   width: 320px;
 }
->>> .el-form-item__content {
-  display: flex;
-}
 /deep/ .dialogVisible1 .el-dialog__body {
   padding: 16px 180px 0px 100px;
 }
@@ -356,9 +353,12 @@ export default {
 
 
 .from-item {
-  display: flex;
   margin-bottom: 20px;
   text-align: center;
+}
+.from-item >>> .el-form-item {
+ display: flex;
+  width: 600px;
 }
 
 .from-item > span {

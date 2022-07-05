@@ -13,7 +13,9 @@
         </el-select>
       </div>
       <br>
-      <el-button type="primary" class="buttonTab" v-if="activeName === 'first'" @click="showDiolog" v-role="{ id: 'VisitCallAdd', type: 'button', business: business }">新增第三方接口</el-button>
+      <div class="btnContainer">
+        <div  class="buttonTab" v-if="activeName === 'first'" @click="showDiolog" v-role="{ id: 'VisitCallAdd', type: 'button', business: business }">新增第三方接口</div>
+      </div>
       <div class="home-table">
         <visitCall v-if="activeName === 'first' && permissionRole" ref="first" @editTable="editTable()" @deleteTable="deleteTable()" :business="business"></visitCall>
         <businessCall v-if="activeName === 'second' && permissionRole" ref="second"></businessCall>
@@ -130,9 +132,22 @@
 </script>
 
 <style scoped="scoped">
-  
+  .btnContainer {
+    width: 100%;
+    display: flex;
+    justify-content: right;
+  }
   .buttonTab {
+    cursor: pointer;
+    font-size: 14px;
+    color: #009EFB;
     margin: 15px 0;
+    width: 138px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: 1px solid #009EFB;
+    border-radius: 4px
   }
   
   .configuration {
@@ -150,6 +165,7 @@
   }
   
   .home-main-tab-item {
+    color: #9F9FA0;
     display: inline-block;
     height: 60px;
     width: 200px;
@@ -157,12 +173,13 @@
     text-align: center;
     font-size: 14px;
     cursor: pointer;
-    border: 1px solid #cccccc;
   }
   
   .active {
     background-color: #030303;
     color: white;
+    font-weight: 600;
+    border-top: 2px solid #176CF4;
   }
   
   .projectHeader {

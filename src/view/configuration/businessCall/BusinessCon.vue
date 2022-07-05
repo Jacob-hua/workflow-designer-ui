@@ -101,7 +101,6 @@ export default {
     this.data[0].createBy = this.userInfo.account
   },
   methods: {
-
     businessConfigWithTreeCreate(params) {
       let _this = this
       businessConfigWithTreeCreate(params).then(res => {
@@ -232,6 +231,19 @@ export default {
 </script>
 
 <style scoped>
+>>> .el-tree-node__content:hover, .el-upload-list__item:hover {
+  background-color: unset !important;
+}
+
+>>> .el-tree-node:focus > .el-tree-node__content {
+  background-color: unset !important;
+}
+>>> .custom-tree-node:hover  {
+  background-color: unset !important;
+}
+.el-tree .is-current > .el-tree-node__content .custom-tree-node {
+  background-color: unset !important; ;
+}
 >>> .el-tree-node__content {
   padding-left: 0 !important;
 }

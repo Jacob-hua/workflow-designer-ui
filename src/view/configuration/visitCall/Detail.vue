@@ -153,10 +153,6 @@ export default {
 /deep/ .is-active {
   color: #fff;
 }
-/deep/ .el-dialog__header {
-  background-color: #e4e4e4;
-  border-bottom: 1px solid #000000;
-}
 /deep/ .el-form-item {
   width: 80%;
   margin-right: 30px;
@@ -206,8 +202,7 @@ export default {
   padding: 10px 0 10px 10px;
   box-sizing: border-box;
   border-radius: 0px;
-  background-color: rgb(255, 255, 255);
-  border: 1px solid rgb(204, 204, 204);
+  border: 1px solid #333333;
 }
 p {
   white-space: nowrap;
