@@ -1,13 +1,13 @@
-$el-input-number-bg-color: #212739 !default;
-$el-input-number-icon-color: #fff !default;
-$el-input-number-icon-hover-color: #009EFB !default;
+$input-number-bg-color: #212739 !default;
+$input-number-icon-color: #fff !default;
+$input-number-icon-hover-color: #009EFB !default;
 
 .el-input-number--medium .el-input-number__decrease, .el-input-number--medium .el-input-number__increase {
-  background-color: $el-input-number-bg-color;
+  background-color: $input-number-bg-color;
 }
 [class^="el-icon-plus"], [class^="el-icon-minus"] {
-  color: $el-input-number-icon-color;
+  color: $input-number-icon-color;
 }
 [class^="el-icon-"]:hover {
-  color: $el-input-number-icon-hover-color;
+  color: $input-number-icon-hover-color;
 }
