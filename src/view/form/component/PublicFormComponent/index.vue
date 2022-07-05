@@ -177,11 +177,6 @@
     height: 40px;
     line-height: 40px;
   }
-  
-  /deep/ .el-input__inner {
-    color: black;
-  }
-  
   /deep/ .el-dialog__footer {
     text-align: center;
   }
