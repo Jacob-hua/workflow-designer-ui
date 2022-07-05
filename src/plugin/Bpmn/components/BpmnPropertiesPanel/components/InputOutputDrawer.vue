@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-drawer :title="title" :visible="visible" @close="onCloseDrawer" append-to-body direction="rtl">
-      <el-form :model="parameterForm" :rules="parameterFormRules" ref="parameterForm">
+      <el-form :model="parameterForm" :rules="parameterFormRules" ref="parameterForm" label-width="80px">
         <el-form-item label="变量名" prop="name">
           <el-input v-model="parameterForm.name" />
         </el-form-item>
@@ -76,11 +76,11 @@
             </el-col>
           </el-row>
         </template>
-        <el-form-item>
-          <el-button @click="onParameterFormCancel">取消</el-button>
-          <el-button type="primary" @click="onParameterFormSubmit">保存</el-button>
-        </el-form-item>
       </el-form>
+      <div class="form-footer">
+        <el-button type="primary" @click="onParameterFormSubmit">保存</el-button>
+        <el-button class="cancel" @click="onParameterFormCancel">取消</el-button>
+      </div>
     </el-drawer>
   </div>
 </template>
@@ -195,8 +195,30 @@ export default {
 }
 </script>
 
-<style scoped>
-.el-row {
-  margin-bottom: 16px;
+<style lang="scss" scoped>
+@import '../index.scss';
+
+.el-select {
+  width: 100%;
+}
+
+.form-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 50px 0;
+
+  & > button {
+    width: 84px;
+    height: 34px;
+    padding: 0;
+    text-align: center;
+    color: $form-footer-button-color;
+  }
+
+  .cancel {
+    background-color: $form-footer-cancel-button-bg-color;
+    border-color: $form-footer-cancel-button-bg-color;
+  }
 }
 </style>
