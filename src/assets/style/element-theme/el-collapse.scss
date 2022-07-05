@@ -25,3 +25,7 @@ $collapse-header-color: #ffffff !default;
   background-color: $collapse-bg-color;
   border-color: $collapse-bg-color;
 }
+
+.el-collapse-item__content {
+  padding-bottom: 20px;
+}
