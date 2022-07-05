@@ -40,26 +40,28 @@
           </el-form-item>
         </template>
         <template v-if="variableTypeIs('list')">
-          <el-row>
+          <div class="title-wrapper">
+            <div class="title-mark"></div>
             <span> 列表值 </span>
-            <el-button size="small" @click="onAddListValue">添加</el-button>
-          </el-row>
+            <el-button type="primary" @click="onAddListValue">添加</el-button>
+          </div>
           <el-form-item v-for="(_, index) in parameterForm.listValues" :key="index">
             <el-row :gutter="5">
               <el-col :span="20">
                 <el-input v-model="parameterForm.listValues[index]" />
               </el-col>
               <el-col :span="4">
-                <el-button @click="onRemoveListValue(index)">删除</el-button>
+                <el-button type="primary" @click="onRemoveListValue(index)">删除</el-button>
               </el-col>
             </el-row>
           </el-form-item>
         </template>
         <template v-if="variableTypeIs('map')">
-          <el-row>
+          <div class="title-wrapper">
+            <div class="title-mark"></div>
             <span> 键值对 </span>
-            <el-button size="small" @click="onAddMapValue">添加</el-button>
-          </el-row>
+            <el-button type="primary" @click="onAddMapValue">添加</el-button>
+          </div>
           <el-row v-if="mapValuesIsNotEmpty">
             <el-col :span="10">键</el-col>
             <el-col :span="10">值</el-col>
