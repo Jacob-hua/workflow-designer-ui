@@ -161,7 +161,7 @@
     padding: 16px 180px 0px 100px;
   } */
   
-  /deep/ .dialogVisible2 .el-dialog__header .el-dialog__title {
+  >>> .dialogVisible2 .el-dialog__header .el-dialog__title {
     font-size: 14px;
   }
 
@@ -177,7 +177,7 @@
     height: 40px;
     line-height: 40px;
   }
-  /deep/ .el-dialog__footer {
+  >>> .el-dialog__footer {
     text-align: center;
   }
   
