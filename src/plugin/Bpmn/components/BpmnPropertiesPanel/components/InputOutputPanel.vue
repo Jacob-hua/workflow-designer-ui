@@ -1,40 +1,32 @@
 <template>
   <div>
-    <section v-for="({title, type, parameters}, index) in parameterTypes"
-             :key="index">
-      <div>
-        <span><i class="el-icon-menu"></i>{{title}}</span>
-        <el-button size="mini"
-                   type="primary"
-                   icon="el-icon-plus"
-                   @click="onAddParameter(type)">新建参数</el-button>
+    <section v-for="({ title, type, parameters }, index) in parameterTypes" :key="index">
+      <div class="title-wrapper">
+        <div class="title-mark"></div>
+        <span>{{ title }}</span>
+        <el-button type="primary" @click="onAddParameter(type)">新建参数</el-button>
       </div>
       <el-table :data="parameters">
-        <el-table-column prop="name"
-                         label="变量名" />
-        <el-table-column prop="type"
-                         label="变量类型"
-                         :formatter="variableTypeLabel" />
-        <el-table-column label="操作"
-                         width="90px">
+        <el-table-column prop="name" label="变量名" />
+        <el-table-column prop="type" label="变量类型" :formatter="variableTypeLabel" />
+        <el-table-column label="操作" width="90px">
           <template slot-scope="{ $index }">
-            <el-button size="mini"
-                       type="text"
-                       @click="onEditParameter(type, $index)">编辑</el-button>
+            <el-button size="mini" type="text" @click="onEditParameter(type, $index)">编辑</el-button>
             <el-divider direction="vertical" />
-            <el-button size="mini"
-                       type="text"
-                       style="color: #ff4d4f"
-                       @click="onRemoveParameter(type, $index)">移除</el-button>
+            <el-button size="mini" type="text" style="color: #ff4d4f" @click="onRemoveParameter(type, $index)"
+              >移除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
     </section>
-    <input-output-drawer :title="drawerTitle"
-                         :parameter="parameter"
-                         :visible="drawerVisible"
-                         :onClose="onDrawerClose"
-                         :onSubmit="onDrawerSubmit" />
+    <input-output-drawer
+      :title="drawerTitle"
+      :parameter="parameter"
+      :visible="drawerVisible"
+      :onClose="onDrawerClose"
+      :onSubmit="onDrawerSubmit"
+    />
   </div>
 </template>
 
@@ -87,10 +79,7 @@ export default {
   },
   computed: {
     ...mapState('bpmn/panel', ['inputParameters', 'outputParameters']),
-    ...mapGetters('bpmn/panel', [
-      'findInputParameterByIndex',
-      'findOutputParameterByIndex',
-    ]),
+    ...mapGetters('bpmn/panel', ['findInputParameterByIndex', 'findOutputParameterByIndex']),
     ...mapGetters('bpmn/config', ['variableTypeLabel']),
     parameterTypes() {
       const parameters = {
@@ -179,5 +168,6 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import '../index.scss';
 </style>
