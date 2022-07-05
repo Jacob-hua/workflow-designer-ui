@@ -114,19 +114,6 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .addProject .el-dialog__body {
-  padding: 16px 180px 0px 100px;
-}
-
-::v-deep .addProject .el-dialog__header .el-dialog__title {
-  font-size: 14px;
-}
-
-::v-deep .addProject .el-dialog__header {
-  background-color: #e4e4e4;
-  border-bottom: 1px solid #000000;
-}
-
 .from-item {
   display: flex;
   margin-bottom: 20px;
