@@ -1,0 +1,31 @@
+$title-color: #999999 !default;
+
+.title-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: $title-color;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  margin-bottom: 10px;
+
+  .title-mark {
+    display: inline-block;
+    width: 2px;
+    height: 16px;
+    background: $button-submit-bg-color;
+    margin-right: 6px;
+  }
+
+  & > button {
+    width: 80px;
+    height: 24px;
+    background: transparent;
+    margin-left: 8px;
+    font-size: 12px;
+    text-align: center;
+    padding: 0;
+    color: $button-submit-bg-color;
+  }
+}

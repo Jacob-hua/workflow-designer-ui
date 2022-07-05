@@ -5,7 +5,7 @@
       <span> 执行监听器 </span>
       <el-button type="primary" @click="onAddListener">添加监听器</el-button>
     </div>
-    <el-table :data="listeners" size="mini" border>
+    <el-table :data="listeners">
       <el-table-column label="序号" width="50px" type="index" />
       <el-table-column label="事件类型" min-width="80px" show-overflow-tooltip prop="event" :formatter="eventLabel" />
       <el-table-column
@@ -17,9 +17,9 @@
       />
       <el-table-column label="操作" width="90px">
         <template slot-scope="{ $index }">
-          <el-button size="mini" type="text" @click="onEditListener($index)">编辑</el-button>
+          <el-button type="text" @click="onEditListener($index)">编辑</el-button>
           <el-divider direction="vertical" />
-          <el-button size="mini" type="text" style="color: #ff4d4f" @click="onRemoveListener($index)">移除</el-button>
+          <el-button type="text" @click="onRemoveListener($index)">移除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -97,35 +97,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$title-color: #999999 !default;
-
-.title-wrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  color: $title-color;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  margin-bottom: 10px;
-
-  .title-mark {
-    display: inline-block;
-    width: 2px;
-    height: 16px;
-    background: $button-submit-bg-color;
-    margin-right: 6px;
-  }
-
-  & > button {
-    width: 80px;
-    height: 24px;
-    background: transparent;
-    margin-left: 8px;
-    font-size: 12px;
-    text-align: center;
-    padding: 0;
-    color: $button-submit-bg-color;
-  }
-}
+@import '../index.scss';
 </style>
