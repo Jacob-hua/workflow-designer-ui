@@ -172,7 +172,6 @@ export default {
             body: '', //POST请求参数 eg: {\"id\":\"${id}\",\"name\":\"${name}\"}
             dataParse: '', //解析配置
             isUse: 1, // 是否使用 1 使用 0禁用 2删除
-
             createTime: '', //创建时间
             createBy: '', //创建人
             tenantId: '', //租户id
