@@ -1,0 +1,10 @@
+$el-popover-bg-color: #212739;
+$el-popover-text-color: #fff;
+.el-popover {
+  background-color: $el-popover-bg-color;
+  color: $el-popover-text-color;
+}
+
+.el-icon-s-order,  .el-icon-edit-outline, .el-icon-delete{
+ color: $el-popover-text-color !important;
+}

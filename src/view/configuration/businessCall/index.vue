@@ -198,18 +198,20 @@ export default {
   height: 186px;
   margin-bottom: 10px;
   border: 1px solid #0066cc;
-  background-color: #f5f7f9;
+  background: #212739;
   border-radius: 5px;
   font-size: 14px;
   padding: 10px 20px;
   display: inline-block;
   margin-right: 40px;
+  color: #fff;
 }
 
 .businessCall-main-list-add .el-icon-plus {
   font-size: 40px;
   /* color: #e4e4e4; */
   color: #1d89ff;
+
 }
 .businessCall-main-list-add:hover {
   background-color: rgba(0,0,255,.3);
@@ -222,9 +224,8 @@ export default {
   position: relative;
   display: inline-block;
   width: 312px;
-  /*height: 67px;*/
-  background-color: #f5f7f9;
-  /* border: 1px solid #0066cc; */
+  background: #212739;
+  height: 67px;
 }
 
 .card-main label {

@@ -416,7 +416,6 @@ export default {
 
 <style scoped>
 /deep/ .el-dialog__header {
-  background-color: #e4e4e4;
   border-bottom: 1px solid #000000;
 }
 /deep/ .el-form-item {
@@ -424,10 +423,18 @@ export default {
   margin-right: 30px;
 }
 /deep/ .jsonViewer .jv-code {
-  background-color: rgb(204, 204, 204);
+  background-color: #212739;
   width: 600px;
   height: 600px;
   overflow-y: auto;
+  color: #fff;
+}
+
+>>>.jv-container.jv-light .jv-key {
+  color: #fff;
+}
+>>> .jv-container.jv-light .jv-item.jv-object {
+  color: #fff;
 }
 .parse {
  margin-left: 40%;
@@ -460,7 +467,6 @@ export default {
   padding: 10px 0 10px 10px;
   box-sizing: border-box;
   border-radius: 0px;
-  background-color: rgb(255, 255, 255);
   border: 1px solid rgb(204, 204, 204);
 }
 p {
