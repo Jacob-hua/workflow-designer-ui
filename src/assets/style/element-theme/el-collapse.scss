@@ -1,0 +1,27 @@
+$collapse-bg-color: #1b1e2d !default;
+$collapse-border-color: #333333 !default;
+$collapse-header-color: #ffffff !default;
+
+.el-collapse {
+  background-color: $collapse-bg-color;
+  border-color: $collapse-bg-color;
+}
+
+.el-collapse-item {
+  background-color: $collapse-bg-color;
+
+  .is-active {
+    background-color: $collapse-bg-color;
+  }
+}
+
+.el-collapse-item__header {
+  background-color: $collapse-bg-color;
+  border-color: $collapse-border-color;
+  color: $collapse-header-color;
+}
+
+.el-collapse-item__wrap {
+  background-color: $collapse-bg-color;
+  border-color: $collapse-bg-color;
+}
