@@ -10,8 +10,10 @@
           <div><label>项目类型:</label> <span>{{item.typeName}}</span></div>
           <div><label>创建时间:</label> <span>{{item.createTime}}</span></div>
         </div>
-        <el-button @click="showSartDailog(item.id, item)" class="config" v-role="{ id: 'StartItemConfigAdd', type: 'button', business: business }">配置</el-button>
-        <el-button @click="lookDetail(item.id)" v-role="{ id: 'StartItemConfigLook', type: 'button', business: business }">查看</el-button>
+        <div class="btnBox">
+          <div class="btn" @click="showSartDailog(item.id, item)" v-role="{ id: 'StartItemConfigAdd', type: 'button', business: business }">配置</div>
+          <div class="btn" @click="lookDetail(item.id)" v-role="{ id: 'StartItemConfigLook', type: 'button', business: business }">查看</div>
+        </div>
       </div>
     </div>
     <div v-if="itemconFlag">
@@ -117,6 +119,23 @@ export default {
 </script>
 
 <style scoped>
+.btnBox {
+  display: flex;
+  justify-content: right;
+  margin-top: 29px;
+}
+
+.btn {
+  width: 68px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  border: 1px solid #009EFB;
+  border-radius: 4px;
+  color: #009EFB;
+  margin-left: 10px;
+  cursor: pointer;
+}
   .config {
     margin-left: 30px;
     margin-right: 40px;
@@ -142,12 +161,13 @@ export default {
     flex-wrap: wrap;
   }
   .businessCall-main-list-card {
+    color: #fff;
     position: relative;
     line-height: 40px;
     width: 312px;
     height: 186px;
     border: 1px solid #0066cc;
-    background-color: #f5f7f9;
+    background: #212739;
     border-radius: 5px;
     font-size: 14px;
     padding: 10px 20px;

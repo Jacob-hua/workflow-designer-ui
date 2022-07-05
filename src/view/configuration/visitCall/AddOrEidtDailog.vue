@@ -429,7 +429,9 @@ export default {
   overflow-y: auto;
   color: #fff;
 }
-
+>>> .el-divider {
+  background-color: #333333;
+}
 >>>.jv-container.jv-light .jv-key {
   color: #fff;
 }
@@ -467,7 +469,7 @@ export default {
   padding: 10px 0 10px 10px;
   box-sizing: border-box;
   border-radius: 0px;
-  border: 1px solid rgb(204, 204, 204);
+  border: 1px solid #333333;
 }
 p {
   white-space: nowrap;

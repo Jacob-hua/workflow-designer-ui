@@ -17,9 +17,9 @@
             :type="tag.type">
           {{ tag.name }}
         </el-tag>
-        <div style="display: flex">
+        <div style="display: flex; margin-top: 15px">
           <el-input v-model="inputValue"></el-input>
-          <el-button @click="handleInputConfirm" type="primary">新增</el-button>
+          <div class="addDefine" @click="handleInputConfirm" type="primary">新增</div>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -41,7 +41,7 @@
         <div class="start_right">
           <p>自定义启动项</p>
           <div v-if="!tableData.length" class="tip_content">当前未配置自定义启动项</div>
-          <el-button v-if="footFlag" @click="showSelf">自定义</el-button>
+          <div class="selfDefine" v-if="footFlag" @click="showSelf">自定义</div>
 <!--          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary"-->
 <!--                     v-role="{ id: 'StartItemConfigEdit', type: 'button', business: business }">编辑-->
 <!--          </el-button>-->
@@ -439,11 +439,31 @@ export default {
 </script>
 
 <style scoped>
->>> .el-dialog__header {
-  background-color: #e4e4e4;
-  border-bottom: 1px solid #000000;
+.addDefine {
+  cursor: pointer;
+  width: 78px;
+  height: 32px;
+  margin-left: 10px;
+  line-height: 32px;
+  margin-top: 3px;
+  text-align: center;
+  border: 1px solid #009EFB;
+  border-radius: 4px;
+  color: #009EFB;
+  /*margin-top: 10px;*/
 }
-
+.selfDefine {
+  margin-bottom: 20px;
+  cursor: pointer;
+  width: 98px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  border: 1px solid #009EFB;
+  border-radius: 4px;
+  color: #009EFB;
+  margin-top: 10px;
+}
 #item >>> .el-input {
   width: 420px;
 }
@@ -466,7 +486,7 @@ export default {
   color: blue;
   box-sizing: border-box;
   border-radius: 4px;
-  background-color: rgb(242, 242, 242);
+  background-color: #212739;
 }
 
 .start_container {
