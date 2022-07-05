@@ -30,7 +30,6 @@
           </div>
         </div>
         <div class="fromEdit">
-<!--          <formBpmnEdit v-if="dialogVisible2" ref="formbpmn" :key="formBpmnEditKey"></formBpmnEdit>-->
           <preview :itemList="itemList"  :formConf="formConf" v-if="dialogVisible2"></preview>
         </div>
       </div>
@@ -51,13 +50,6 @@
             </el-option>
           </el-select>
         </div>
-        <!-- <div class="from-item">
-          <span>能源系统</span>
-          <el-select v-model="postData.systemType" placeholder="请选择能源系统">
-            <el-option v-for="item in options3" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </div> -->
         <div class="from-item">
           <span>表单名称</span>
           <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
@@ -146,12 +138,6 @@
         previewVisible:false,
         dialogVisible2: false,
         dialogVisible1: false,
-        // formData: {
-        //   numberCode: '',
-        //   name: '',
-        //   createName: '',
-        //   createTime: ''
-        // },
         options: [],
         formBpmnEditKey: 0,
         value: '',
@@ -253,11 +239,11 @@
 
 <style scoped="scoped">
   
-  /deep/ .dialogVisible1 .el-dialog__body {
+  >>> .dialogVisible1 .el-dialog__body {
      padding: 16px 180px 0px 100px;
    }
    
-   /deep/ .dialogVisible1 .el-dialog__header .el-dialog__title {
+   >>> .dialogVisible1 .el-dialog__header .el-dialog__title {
      font-size: 14px;
    }
 
@@ -274,11 +260,11 @@
     line-height: 40px;
   }
   
-  /deep/ .el-input__inner {
+  >>> .el-input__inner {
     color: black;
   }
   
-  /deep/ .el-dialog__footer {
+  >>> .el-dialog__footer {
     text-align: center;
   }
   
@@ -297,12 +283,11 @@
     display: inline-block;
   }
   
-  /deep/ .dialogVisible2 .el-dialog__header .el-dialog__title {
+  >>> .dialogVisible2 .el-dialog__header .el-dialog__title {
     font-size: 14px;
   }
 
   .detail-title {
-    /* display: flex; */
     margin-top: 20px;
     padding-bottom: 40px;
     border-bottom: 1px solid #CCCCCC;
@@ -329,6 +314,8 @@
   }
   
   .fromEdit {
+    overflow-x: hidden;
+    overflow-y: auto;
     height: 660px;
     margin-top: 20px;
   }

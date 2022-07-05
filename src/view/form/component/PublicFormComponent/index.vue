@@ -57,7 +57,6 @@
         this.dialogVisible2 = true
       },
       addEnableForm() {
-        
         if (!this.postData.name) {
           this.$message.error('请填写表单名称')
           return
