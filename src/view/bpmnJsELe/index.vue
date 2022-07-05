@@ -1,8 +1,6 @@
 <template>
   <div class="bpmnEle">
-    <bpmn-editor :id="projectData.code"
-                 :name="projectData.name"
-                 :xml="projectData.content" />
+    <bpmn-editor :id="projectData.code" :name="projectData.name" :xml="projectData.content" />
     <bpmn-properties-panel />
   </div>
 </template>
@@ -45,7 +43,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['tenantId'])
+    ...mapState(['tenantId']),
   },
   mounted() {
     // 定义请求用户组的方法
@@ -63,11 +61,7 @@ export default {
   },
   methods: {
     ...mapActions('bpmn/config', ['dispatchRequestUserGroup']),
-    ...mapMutations('bpmn/config', [
-      'updateRequestUserGroupFunc',
-      'updateRequestUserFunc',
-      'updateGenerateIdFunc',
-    ]),
+    ...mapMutations('bpmn/config', ['updateRequestUserGroupFunc', 'updateRequestUserFunc', 'updateGenerateIdFunc']),
     async fetchUserGroup(params) {
       try {
         const { errorInfo, result } = await getSystemGroupTree(params)
@@ -107,7 +101,7 @@ export default {
       } catch (error) {
         return
       }
-    }
+    },
   },
 }
 </script>
