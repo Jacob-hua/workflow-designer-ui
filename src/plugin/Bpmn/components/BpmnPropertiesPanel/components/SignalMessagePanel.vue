@@ -2,101 +2,59 @@
   <div>
     <div>
       <span><i class="el-icon-menu"></i>消息列表</span>
-      <el-button size="mini"
-                 type="primary"
-                 icon="el-icon-plus"
-                 @click="onCreateMessage">创建新消息</el-button>
+      <el-button size="mini" type="primary" icon="el-icon-plus" @click="onCreateMessage">创建新消息</el-button>
     </div>
-    <el-table :data="messages"
-              size="mini"
-              border>
-      <el-table-column type="index"
-                       label="序号"
-                       width="60px" />
-      <el-table-column label="消息ID"
-                       prop="id"
-                       max-width="300px"
-                       show-overflow-tooltip />
-      <el-table-column label="消息名称"
-                       prop="name"
-                       max-width="300px"
-                       show-overflow-tooltip />
-      <el-table-column label="操作"
-                       width="90px">
+    <el-table :data="messages" size="mini" border>
+      <el-table-column type="index" label="序号" width="60px" />
+      <el-table-column label="消息ID" prop="id" max-width="300px" show-overflow-tooltip />
+      <el-table-column label="消息名称" prop="name" max-width="300px" show-overflow-tooltip />
+      <el-table-column label="操作" width="90px">
         <template slot-scope="{ $index }">
-          <el-button size="mini"
-                     type="text"
-                     @click="onEditMessage($index)">编辑</el-button>
+          <el-button size="mini" type="text" @click="onEditMessage($index)">编辑</el-button>
           <el-divider direction="vertical" />
-          <el-button size="mini"
-                     type="text"
-                     style="color: #ff4d4f"
-                     @click="onRemoveMessage($index)">移除</el-button>
+          <el-button size="mini" type="text" style="color: #ff4d4f" @click="onRemoveMessage($index)">移除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <div>
       <span><i class="el-icon-menu"></i>信号列表</span>
-      <el-button size="mini"
-                 type="primary"
-                 icon="el-icon-plus"
-                 @click="onCreateSignal">创建新信号</el-button>
+      <el-button size="mini" type="primary" icon="el-icon-plus" @click="onCreateSignal">创建新信号</el-button>
     </div>
-    <el-table :data="signals"
-              size="mini"
-              border>
-      <el-table-column type="index"
-                       label="序号"
-                       width="60px" />
-      <el-table-column label="信号ID"
-                       prop="id"
-                       max-width="300px"
-                       show-overflow-tooltip />
-      <el-table-column label="信号名称"
-                       prop="name"
-                       max-width="300px"
-                       show-overflow-tooltip />
-      <el-table-column label="操作"
-                       width="90px">
+    <el-table :data="signals" size="mini" border>
+      <el-table-column type="index" label="序号" width="60px" />
+      <el-table-column label="信号ID" prop="id" max-width="300px" show-overflow-tooltip />
+      <el-table-column label="信号名称" prop="name" max-width="300px" show-overflow-tooltip />
+      <el-table-column label="操作" width="90px">
         <template slot-scope="{ $index }">
-          <el-button size="mini"
-                     type="text"
-                     @click="onEditSignal($index)">编辑</el-button>
+          <el-button size="mini" type="text" @click="onEditSignal($index)">编辑</el-button>
           <el-divider direction="vertical" />
-          <el-button size="mini"
-                     type="text"
-                     style="color: #ff4d4f"
-                     @click="onRemoveSignal($index)">移除</el-button>
+          <el-button size="mini" type="text" style="color: #ff4d4f" @click="onRemoveSignal($index)">移除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog :visible.sync="modalVisible"
-               :title="modalInfo.title"
-               :close-on-click-modal="false"
-               :destroy-on-close="true"
-               width="400px"
-               append-to-body>
-      <el-form :model="modalForm"
-               ref="modalForm"
-               size="mini"
-               label-width="90px"
-               @submit.native.prevent>
-        <el-form-item v-for="({label, rules, name}, index) in modalForm"
-                      :key="index"
-                      :label="label"
-                      :rules="rules"
-                      :prop="name">
-          <el-input v-model="modalForm[name].value"
-                    clearable />
+    <el-dialog
+      :visible.sync="modalVisible"
+      :title="modalInfo.title"
+      :close-on-click-modal="false"
+      :destroy-on-close="true"
+      width="400px"
+      append-to-body
+    >
+      <el-form :model="modalForm" ref="modalForm" size="mini" label-width="90px" @submit.native.prevent>
+        <el-form-item
+          v-for="({ label, rules, name }, index) in modalForm"
+          :key="index"
+          :label="label"
+          :rules="rules"
+          :prop="name"
+        >
+          <el-input v-model="modalForm[name].value" clearable />
         </el-form-item>
       </el-form>
       <template slot="footer">
-        <el-button size="mini"
-                   @click="onModalFormCancel">取 消</el-button>
-        <el-button size="mini"
-                   type="primary"
-                   @click="onModalFormSubmit">保 存</el-button>
+        <el-button size="mini" @click="onModalFormCancel">取 消</el-button>
+        <el-button size="mini" type="primary" @click="onModalFormSubmit">保 存</el-button>
       </template>
     </el-dialog>
   </div>
@@ -269,5 +227,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>
