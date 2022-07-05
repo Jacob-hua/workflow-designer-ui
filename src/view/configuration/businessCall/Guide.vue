@@ -109,10 +109,7 @@ export default {
 </script>
 
 <style scoped>
-/deep/ .el-dialog__header {
-  background-color: #e4e4e4;
-  border-bottom: 1px solid #000000;
-}
+
 /deep/ .el-form-item {
   width: 80%;
 }
