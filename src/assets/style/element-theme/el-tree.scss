@@ -1,0 +1,16 @@
+$tree-active-color: #009EFB;
+$tree-text-color: #fff;
+.el-tree {
+  background-color: unset;
+}
+
+.el-tree-node__content:hover, .el-upload-list__item:hover {
+  background-color: $tree-active-color;
+}
+
+.el-tree-node:focus > .el-tree-node__content {
+  background-color: $tree-active-color !important;
+}
+.el-tree-node__content {
+  color: $tree-text-color;
+}
