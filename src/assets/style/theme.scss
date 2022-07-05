@@ -7,3 +7,13 @@ $logo-bg-color: #162d5a;
 $menu-bg-color: #0e1f3e;
 $menu-color: #6e7e88;
 $menu-active-bg-color: #070f24;
+
+$border-color: #666666;
+$button-color: #ffffff;
+$button-disabled-color: #c0c4cc;
+
+$dialog-bg-color: #1b1e2d;
+
+svg[data-element-id] {
+  background-color: $dialog-bg-color;
+}
