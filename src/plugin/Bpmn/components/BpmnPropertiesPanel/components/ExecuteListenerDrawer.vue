@@ -1,182 +1,138 @@
 <template>
   <div>
-    <el-drawer :title="title"
-               :visible="visible"
-               @close="onCloseDrawer"
-               append-to-body
-               direction="rtl">
-      <el-form :model="listenerForm"
-               :rules="listenerFormRules"
-               ref="listenerForm">
-        <el-form-item label="事件类型"
-                      prop="event">
+    <el-drawer :title="title" :visible="visible" @close="onCloseDrawer" append-to-body direction="rtl">
+      <el-form :model="listenerForm" :rules="listenerFormRules" ref="listenerForm" label-width="100px">
+        <el-form-item label="事件类型" prop="event">
           <el-select v-model="listenerForm.event">
-            <el-option v-for="({label, value}, index) in eventOptions"
-                       :key="index"
-                       :label="label"
-                       :value="value"></el-option>
+            <el-option
+              v-for="({ label, value }, index) in eventOptions"
+              :key="index"
+              :label="label"
+              :value="value"
+            ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="监听器类型"
-                      prop="listenerType">
+        <el-form-item label="监听器类型" prop="listenerType">
           <el-select v-model="listenerForm.listenerType">
-            <el-option v-for="({label, value}, index) in listenerTypeOptions"
-                       :key="index"
-                       :label="label"
-                       :value="value"></el-option>
+            <el-option
+              v-for="({ label, value }, index) in listenerTypeOptions"
+              :key="index"
+              :label="label"
+              :value="value"
+            ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="listenerTypeIs('class')"
-                      label="Java类"
-                      prop="class">
+        <el-form-item v-if="listenerTypeIs('class')" label="Java类" prop="class">
           <el-input v-model="listenerForm.class" />
         </el-form-item>
-        <el-form-item v-if="listenerTypeIs('expression')"
-                      label="表达式"
-                      prop="expression">
+        <el-form-item v-if="listenerTypeIs('expression')" label="表达式" prop="expression">
           <el-input v-model="listenerForm.expression" />
         </el-form-item>
-        <el-form-item v-if="listenerTypeIs('delegateExpression')"
-                      label="代理表达式"
-                      prop="delegateExpression">
+        <el-form-item v-if="listenerTypeIs('delegateExpression')" label="代理表达式" prop="delegateExpression">
           <el-input v-model="listenerForm.delegateExpression" />
         </el-form-item>
         <template v-if="listenerTypeIs('script')">
-          <el-form-item label="脚本类型"
-                        prop="scriptType">
+          <el-form-item label="脚本类型" prop="scriptType">
             <el-select v-model="listenerForm.scriptType">
-              <el-option v-for="({label, value}, index) in scriptTypeOptions"
-                         :key="index"
-                         :label="label"
-                         :value="value" />
+              <el-option
+                v-for="({ label, value }, index) in scriptTypeOptions"
+                :key="index"
+                :label="label"
+                :value="value"
+              />
             </el-select>
           </el-form-item>
-          <el-form-item label="脚本格式"
-                        prop="scriptFormat">
+          <el-form-item label="脚本格式" prop="scriptFormat">
             <el-input v-model="listenerForm.scriptFormat" />
           </el-form-item>
-          <el-form-item v-if="scriptTypeIs('inline')"
-                        label="脚本内容"
-                        prop="scriptValue">
+          <el-form-item v-if="scriptTypeIs('inline')" label="脚本内容" prop="scriptValue">
             <el-input v-model="listenerForm.scriptValue" />
           </el-form-item>
-          <el-form-item v-if="scriptTypeIs('outside')"
-                        label="资源地址"
-                        prop="scriptResource">
+          <el-form-item v-if="scriptTypeIs('outside')" label="资源地址" prop="scriptResource">
             <el-input v-model="listenerForm.scriptResource" />
           </el-form-item>
         </template>
         <template v-if="eventIs('timeout')">
-          <el-form-item label="定时器类型"
-                        prop="timerType">
+          <el-form-item label="定时器类型" prop="timerType">
             <el-select v-model="listenerForm.timerType">
-              <el-option v-for="({label, value}, index) in timerTypeOptions"
-                         :key="index"
-                         :label="label"
-                         :value="value"></el-option>
+              <el-option
+                v-for="({ label, value }, index) in timerTypeOptions"
+                :key="index"
+                :label="label"
+                :value="value"
+              ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="timerTypeIsNotNull()"
-                        label="定时器"
-                        prop="timer">
+          <el-form-item v-if="timerTypeIsNotNull()" label="定时器" prop="timer">
             <el-input v-model="listenerForm.timer" />
           </el-form-item>
         </template>
         <template>
-          <div>
+          <div class="title-wrapper">
+            <div class="title-mark"></div>
             <span>注入字段</span>
-            <el-button size="mini"
-                       type="primary"
-                       @click="onAddField">添加字段</el-button>
+            <el-button type="primary" @click="onAddField">添加字段</el-button>
           </div>
-          <el-table :data="listenerForm.fields"
-                    size="mini"
-                    max-height="240"
-                    border
-                    fit
-                    style="flex: none">
-            <el-table-column label="序号"
-                             width="50px"
-                             type="index" />
-            <el-table-column label="字段名称"
-                             min-width="100px"
-                             prop="name" />
-            <el-table-column label="字段类型"
-                             min-width="80px"
-                             show-overflow-tooltip
-                             prop="fieldType"
-                             :formatter="fieldTypeLabel" />
-            <el-table-column label="字段值"
-                             min-width="100px"
-                             show-overflow-tooltip
-                             prop="value" />
-            <el-table-column label="操作"
-                             width="100px">
+          <el-table :data="listenerForm.fields" max-height="240">
+            <el-table-column label="序号" width="50px" type="index" />
+            <el-table-column label="字段名称" min-width="100px" prop="name" />
+            <el-table-column
+              label="字段类型"
+              min-width="80px"
+              show-overflow-tooltip
+              prop="fieldType"
+              :formatter="fieldTypeLabel"
+            />
+            <el-table-column label="字段值" min-width="100px" show-overflow-tooltip prop="value" />
+            <el-table-column label="操作" width="100px">
               <template slot-scope="{ $index }">
-                <el-button size="mini"
-                           type="text"
-                           @click="onEditField($index)">编辑</el-button>
+                <el-button size="mini" type="text" @click="onEditField($index)">编辑</el-button>
                 <el-divider direction="vertical" />
-                <el-button size="mini"
-                           type="text"
-                           style="color: #ff4d4f"
-                           @click="onRemoveField($index)">移除</el-button>
+                <el-button size="mini" type="text" style="color: #ff4d4f" @click="onRemoveField($index)"
+                  >移除</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
         </template>
-        <el-form-item>
-          <el-button @click="onListenerFormCancel">取消</el-button>
-          <el-button type="primary"
-                     @click="onListenerFormSubmit">保存</el-button>
-        </el-form-item>
       </el-form>
+      <div class="form-footer">
+        <el-button type="primary" @click="onListenerFormSubmit">保存</el-button>
+        <el-button class="cancel" @click="onListenerFormCancel">取消</el-button>
+      </div>
     </el-drawer>
-    <el-dialog title="字段配置"
-               :visible.sync="fieldModalVisible"
-               @close="onCloseFieldModal"
-               width="600px"
-               append-to-body
-               destroy-on-close>
-      <el-form :model="fieldForm"
-               :rules="fieldFormRules"
-               size="mini"
-               label-width="96px"
-               ref="fieldForm"
-               style="height: 136px">
-        <el-form-item label="字段名称"
-                      prop="name">
-          <el-input v-model="fieldForm.name"
-                    clearable />
+    <el-dialog
+      title="字段配置"
+      :visible.sync="fieldModalVisible"
+      @close="onCloseFieldModal"
+      width="600px"
+      append-to-body
+      destroy-on-close
+    >
+      <el-form :model="fieldForm" :rules="fieldFormRules" label-width="100px" ref="fieldForm" style="height: 136px">
+        <el-form-item label="字段名称" prop="name">
+          <el-input v-model="fieldForm.name" clearable />
         </el-form-item>
-        <el-form-item label="字段类型"
-                      prop="fieldType">
+        <el-form-item label="字段类型" prop="fieldType">
           <el-select v-model="fieldForm.fieldType">
-            <el-option v-for="({label, value}, index) in fieldTypeOptions"
-                       :key="index"
-                       :label="label"
-                       :value="value" />
+            <el-option
+              v-for="({ label, value }, index) in fieldTypeOptions"
+              :key="index"
+              :label="label"
+              :value="value"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="fieldTypeIs('string')"
-                      label="字段值"
-                      prop="value">
-          <el-input v-model="fieldForm.value"
-                    clearable />
+        <el-form-item v-if="fieldTypeIs('string')" label="字段值" prop="value">
+          <el-input v-model="fieldForm.value" clearable />
         </el-form-item>
-        <el-form-item v-if="fieldTypeIs('expression')"
-                      label="表达式"
-                      prop="value">
-          <el-input v-model="fieldForm.value"
-                    clearable />
+        <el-form-item v-if="fieldTypeIs('expression')" label="表达式" prop="value">
+          <el-input v-model="fieldForm.value" clearable />
         </el-form-item>
       </el-form>
       <template slot="footer">
-        <el-button size="mini"
-                   @click="onFieldFormCancel">取 消</el-button>
-        <el-button size="mini"
-                   type="primary"
-                   @click="onFieldFormSubmit">确 定</el-button>
+        <el-button type="primary" @click="onFieldFormSubmit">确 定</el-button>
+        <el-button @click="onFieldFormCancel">取 消</el-button>
       </template>
     </el-dialog>
   </div>
@@ -259,32 +215,20 @@ export default {
       return this.listenerForm['event'] && this.listenerForm['event'] === event
     },
     listenerTypeIs(listenerType) {
-      return (
-        this.listenerForm['listenerType'] &&
-        this.listenerForm['listenerType'] === listenerType
-      )
+      return this.listenerForm['listenerType'] && this.listenerForm['listenerType'] === listenerType
     },
     scriptTypeIs(scriptType) {
-      return (
-        this.listenerForm['scriptType'] &&
-        this.listenerForm['scriptType'] === scriptType
-      )
+      return this.listenerForm['scriptType'] && this.listenerForm['scriptType'] === scriptType
     },
     fieldTypeIs(fieldType) {
-      return (
-        this.fieldForm['fieldType'] && this.fieldForm['fieldType'] === fieldType
-      )
+      return this.fieldForm['fieldType'] && this.fieldForm['fieldType'] === fieldType
     },
     timerTypeIsNotNull() {
-      return (
-        this.listenerForm['timerType'] &&
-        this.listenerForm['timerType'] !== 'null'
-      )
+      return this.listenerForm['timerType'] && this.listenerForm['timerType'] !== 'null'
     },
     onCloseDrawer() {
       this.onClose()
-      this.$refs.listenerForm['resetFields'] &&
-        this.$refs.listenerForm['resetFields']()
+      this.$refs.listenerForm['resetFields'] && this.$refs.listenerForm['resetFields']()
     },
     onListenerFormCancel() {
       this.onCloseDrawer()
@@ -326,19 +270,13 @@ export default {
             // 所以此处拷贝this.fieldForm为新的对象，再向listenerForm中添加，保证不受到this.fieldForm的影响
             this.listenerForm['fields'].push(deepCopy(this.fieldForm))
           } else {
-            this.listenerForm['fields'].splice(
-              this.editFieldIndex,
-              1,
-              deepCopy(this.fieldForm)
-            )
+            this.listenerForm['fields'].splice(this.editFieldIndex, 1, deepCopy(this.fieldForm))
           }
           this.onCloseFieldModal()
         })
     },
     onEditField(index) {
-      this.fieldForm =
-        this.listenerForm['fields'] &&
-        deepCopy(this.listenerForm['fields'][index])
+      this.fieldForm = this.listenerForm['fields'] && deepCopy(this.listenerForm['fields'][index])
       this.editFieldIndex = index
       this.fieldModalVisible = true
     },
@@ -351,5 +289,26 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import '../index.scss';
+
+.form-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 50px 0;
+
+  & > button {
+    width: 84px;
+    height: 34px;
+    padding: 0;
+    text-align: center;
+    color: $form-footer-button-color;
+  }
+
+  .cancel {
+    background-color: $form-footer-cancel-button-bg-color;
+    border-color: $form-footer-cancel-button-bg-color;
+  }
+}
 </style>

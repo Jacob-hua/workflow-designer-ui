@@ -1,0 +1,9 @@
+$form-item-height: 32px;
+
+.el-form-item {
+  height: $form-item-height;
+
+  & > .el-form-item__content {
+    height: $form-item-height;
+  }
+}

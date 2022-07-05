@@ -2,6 +2,10 @@ $title-color: #999999 !default;
 $form-footer-button-color: #ffffff !default;
 $form-footer-cancel-button-bg-color: #6e7e88 !default;
 
+.el-select {
+  width: 100%;
+}
+
 .title-wrapper {
   display: flex;
   flex-direction: row;
