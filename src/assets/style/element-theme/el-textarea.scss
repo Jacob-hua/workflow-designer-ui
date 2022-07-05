@@ -4,3 +4,6 @@ $textarea-text-color: #fff;
   background-color: $textarea-bg-color;
   color: $textarea-text-color;
 }
+.el-textarea.is-disabled .el-textarea__inner {
+  background-color: unset;
+}
