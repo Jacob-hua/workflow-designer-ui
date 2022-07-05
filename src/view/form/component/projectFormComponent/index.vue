@@ -5,7 +5,6 @@
         <el-form ref="form" :rules="rules" :model="postData">
           <div class="from-item">
             <el-form-item label="应用项目" prop="ascription">
-
               <el-select disabled="true" v-model="postData.ascription">
                 <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
               </el-select>
@@ -29,14 +28,13 @@
             </el-form-item>
           </div>
         </el-form>
-
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="nextDiolog()" type="primary">下一步</el-button>
         <el-button @click="dialogVisible1 = false">取消</el-button>
       </span>
     </el-dialog>
-    <el-dialog :title="title" :visible.sync="dialogVisible2" width="95%" height="100%" custom-class="dialogVisible2">
+    <el-dialog :title="title" :visible.sync="dialogVisible2" width="97%" height="100%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
           <div class="title-item">

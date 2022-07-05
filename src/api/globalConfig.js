@@ -10,6 +10,9 @@ import { get, post, deletefn, put } from "./unit/request";
 //       }
 //     }
 
+
+export const processVariable = (params) => get(`/execute/processVariable`, params);
+
 export const businessConfigWithTreeCreate = (params) => post("/config/businessConfig/businessConfigWithTree/create", params);
 
 // 获取 节点字典

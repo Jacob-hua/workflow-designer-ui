@@ -13,7 +13,7 @@ import {editor} from "./items/editor";
 import {colorPicker} from "./items/colorPicker";
 import {cascader} from "./items/cascader";
 import {upload} from "./items/upload";
-import {dialogList} from "./items/dialogList";
+// import {dialogList} from "./items/dialogList";
 
 import {button} from "./items/button";
 import {divider} from "./items/divider";
@@ -26,7 +26,7 @@ import {barCode} from "./items/barCode";
 
 export  const formItems = [
   input,select,radio,checkbox,Switch,inputNumber,textarea,slider
-  ,rate,date,time,editor,colorPicker,cascader,upload,dialogList,barCode
+  ,rate,date,time,editor,colorPicker,cascader,upload,barCode
 ];
 export  const assistFormItems = [button,divider,alert,link,text];
 export  const layoutFormItems = [row];
