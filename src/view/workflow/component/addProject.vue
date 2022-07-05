@@ -31,7 +31,7 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
+    <span slot="footer">
       <el-button type="primary" @click="onSubmit">下一步</el-button>
       <el-button @click="onCancel">取 消</el-button>
     </span>
@@ -113,7 +113,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .from-item {
   display: flex;
   margin-bottom: 20px;
