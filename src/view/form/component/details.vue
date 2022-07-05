@@ -301,7 +301,6 @@
     font-size: 14px;
   }
 
-
   .detail-title {
     /* display: flex; */
     margin-top: 20px;
