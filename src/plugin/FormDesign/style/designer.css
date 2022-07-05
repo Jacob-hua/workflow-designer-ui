@@ -17,7 +17,6 @@ body{
 .d-logo-wrapper{
   position: relative;
   height: 42px;
-  background: #ffffff;
   border-bottom: 1px solid #f1e8e8;
   box-sizing: border-box;
 }
@@ -58,20 +57,22 @@ body{
 }
 .components-body {
   padding: 8px 10px;
-  background: #f4f6fc;
+  /*background: #f4f6fc;*/
+  background: #212739;;
   font-size: 12px;
   margin-left: 5px;
   padding-top: 5px;
   cursor: move;
   border: 1px solid #409eff;
   border-radius: 3px;
+  color: #fff;
 }
 .components-body:hover {
   border: 1px dashed #f56c6c;
   color: #f56c6c;
 }
 .center-board {
-  height: 100vh;
+  height: 68vh;
   width: auto;
   margin: 0 350px 0 260px;
   box-sizing: border-box;
@@ -94,7 +95,6 @@ body{
   border: 1px solid #f1e8e8;
   border-top: none;
   border-left: none;
-  background: #ffffff;
 }
 .action-bar .el-button{
   font-size: 18px;
@@ -175,3 +175,17 @@ body{
   border-left: 3px solid #409eff;
   background:#ecf5ff
 } */
+.el-input-number--small .el-input-number__decrease, .el-input-number--small .el-input-number__increase {
+  background-color: #212739;
+}
+
+.el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+  background-color: unset;
+  border-color: #009EFB;
+}
+
+.el-checkbox__inner::after {
+  border: 1px solid #009EFB;
+  border-left: 0;
+  border-top: 0;
+}

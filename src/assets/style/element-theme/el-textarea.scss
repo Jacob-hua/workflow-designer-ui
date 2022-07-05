@@ -1,5 +1,6 @@
-
+$textarea-bg-color: #212739;
+$textarea-text-color: #fff;
 .el-textarea__inner {
-  background-color: $el-input-number-bg-color;
-  color: $el-input-number-icon-color;
+  background-color: $textarea-bg-color;
+  color: $textarea-text-color;
 }
