@@ -40,6 +40,7 @@
           </el-form-item>
         </template>
         <template v-if="variableTypeIs('list')">
+          <div class="divider"></div>
           <div class="title-wrapper">
             <div class="title-mark"></div>
             <span> 列表值 </span>
@@ -57,16 +58,19 @@
           </el-form-item>
         </template>
         <template v-if="variableTypeIs('map')">
+          <div class="divider"></div>
           <div class="title-wrapper">
             <div class="title-mark"></div>
             <span> 键值对 </span>
             <el-button type="primary" @click="onAddMapValue">添加</el-button>
           </div>
           <el-row v-if="mapValuesIsNotEmpty">
-            <el-col :span="10">键</el-col>
-            <el-col :span="10">值</el-col>
+            <div class="key-value-title">
+              <el-col :span="10">键</el-col>
+              <el-col :span="10">值</el-col>
+            </div>
           </el-row>
-          <el-row v-for="(_, index) in parameterForm.mapValues" :key="index">
+          <div class="key-value-wrapper" v-for="(_, index) in parameterForm.mapValues" :key="index">
             <el-col :span="10">
               <el-input v-model="parameterForm.mapValues[index].key" />
             </el-col>
@@ -74,9 +78,9 @@
               <el-input v-model="parameterForm.mapValues[index].value" />
             </el-col>
             <el-col :span="4">
-              <el-button @click="onRemoveMapValue(index)">删除</el-button>
+              <el-button type="primary" @click="onRemoveMapValue(index)">删除</el-button>
             </el-col>
-          </el-row>
+          </div>
         </template>
       </el-form>
       <div class="form-footer">
@@ -218,5 +222,18 @@ export default {
     background-color: $form-footer-cancel-button-bg-color;
     border-color: $form-footer-cancel-button-bg-color;
   }
+}
+
+.key-value-title {
+  color: $title-color;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.key-value-wrapper {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: row;
 }
 </style>

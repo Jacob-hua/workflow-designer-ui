@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="input-output-wrapper">
     <section v-for="({ title, type, parameters }, index) in parameterTypes" :key="index">
       <div class="title-wrapper">
         <div class="title-mark"></div>
@@ -170,4 +170,10 @@ export default {
 
 <style lang="scss" scoped>
 @import '../index.scss';
+
+.input-output-wrapper {
+  & > section {
+    margin-bottom: 20px;
+  }
+}
 </style>

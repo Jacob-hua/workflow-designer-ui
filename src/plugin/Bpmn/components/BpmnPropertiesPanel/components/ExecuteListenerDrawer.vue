@@ -67,6 +67,7 @@
             <el-input v-model="listenerForm.timer" />
           </el-form-item>
         </template>
+        <div class="divider"></div>
         <template>
           <div class="title-wrapper">
             <div class="title-mark"></div>
@@ -74,17 +75,11 @@
             <el-button type="primary" @click="onAddField">添加字段</el-button>
           </div>
           <el-table :data="listenerForm.fields" max-height="240">
-            <el-table-column label="序号" width="50px" type="index" />
-            <el-table-column label="字段名称" min-width="100px" prop="name" />
-            <el-table-column
-              label="字段类型"
-              min-width="80px"
-              show-overflow-tooltip
-              prop="fieldType"
-              :formatter="fieldTypeLabel"
-            />
-            <el-table-column label="字段值" min-width="100px" show-overflow-tooltip prop="value" />
-            <el-table-column label="操作" width="100px">
+            <el-table-column label="序号" type="index" />
+            <el-table-column label="字段名称" prop="name" />
+            <el-table-column label="字段类型" show-overflow-tooltip prop="fieldType" :formatter="fieldTypeLabel" />
+            <el-table-column label="字段值" show-overflow-tooltip prop="value" />
+            <el-table-column label="操作">
               <template slot-scope="{ $index }">
                 <el-button size="mini" type="text" @click="onEditField($index)">编辑</el-button>
                 <el-divider direction="vertical" />
@@ -105,7 +100,6 @@
       title="字段配置"
       :visible.sync="fieldModalVisible"
       @close="onCloseFieldModal"
-      width="600px"
       append-to-body
       destroy-on-close
     >
@@ -131,8 +125,10 @@
         </el-form-item>
       </el-form>
       <template slot="footer">
-        <el-button type="primary" @click="onFieldFormSubmit">确 定</el-button>
-        <el-button @click="onFieldFormCancel">取 消</el-button>
+        <div class="form-footer">
+          <el-button type="primary" @click="onFieldFormSubmit">确 定</el-button>
+          <el-button class="cancel" @click="onFieldFormCancel">取 消</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>

@@ -2,6 +2,8 @@ $title-color: #999999 !default;
 $form-footer-button-color: #ffffff !default;
 $form-footer-cancel-button-bg-color: #6e7e88 !default;
 
+$panel-table-color: #999999 !default;
+
 .el-select {
   width: 100%;
 }
@@ -34,4 +36,15 @@ $form-footer-cancel-button-bg-color: #6e7e88 !default;
     padding: 0;
     color: $button-submit-bg-color;
   }
+}
+
+.el-table {
+  color: $panel-table-color;
+}
+
+.divider {
+  height: 1px;
+  width: 100%;
+  margin: 42px 0 20px 0;
+  background: $border-color;
 }
