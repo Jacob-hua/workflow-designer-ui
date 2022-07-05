@@ -361,11 +361,11 @@ export default {
   width: 600px;
 }
 
-.from-item > span {
-  width: 100px;
-  height: 40px;
-  line-height: 40px;
-}
+  .from-item > span {
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+  }
 
 >>> .form-Main .el-input__inner {
   border-color: #C0C4CC;
