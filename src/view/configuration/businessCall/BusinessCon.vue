@@ -235,10 +235,6 @@ export default {
 >>> .el-tree-node__content {
   padding-left: 0 !important;
 }
->>> .el-dialog__header {
-  background-color: #e4e4e4;
-  border-bottom: 1px solid #000000;
-}
 >>> .el-input--mini {
   width: 150px;
 }
