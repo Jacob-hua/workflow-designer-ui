@@ -5,6 +5,13 @@
     padding: 30px 100px 30px 100px;
   }
 
+  .el-dialog__footer {
+    :first-child {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
   .el-select {
     width: 100%;
   }
