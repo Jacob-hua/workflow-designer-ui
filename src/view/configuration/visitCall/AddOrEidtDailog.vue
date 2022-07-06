@@ -95,11 +95,11 @@
 
       </div>
 
-      <span slot="footer" class="dialog-footer">
-        <el-button  @click=" dialogVisible = false; $emit('showAddOrEidtDailog','','pre')">上一步</el-button>
-        <el-button  @click="saveOrEdite">保存</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
-     </span>
+      <div slot="footer" class="dialog-footer">
+        <div class="next"  @click=" dialogVisible = false; $emit('showAddOrEidtDailog','','pre')">上一步</div>
+        <div class="next"  @click="saveOrEdite">保存</div>
+        <div class="cancel"  @click="dialogVisible = false">取 消</div>
+     </div>
     </el-dialog>
 
     <el-dialog
@@ -116,10 +116,10 @@
           <el-input v-model="typeForm.typeName"></el-input>
         </el-form-item>
       </el-form>
-       <span slot="footer" class="dialog-footer">
-          <el-button  @click="saveApi">保存</el-button>
-          <el-button @click="dialogVisible2 = false">取 消</el-button>
-       </span>
+       <div slot="footer" class="dialog-footer">
+          <div class="next"  @click="saveApi">保存</div>
+          <div class="cancel" @click="dialogVisible2 = false">取 消</div>
+       </div>
     </el-dialog>
   </div>
 
@@ -414,13 +414,16 @@ export default {
 }
 </script>
 
-<style scoped>
-/deep/ .el-dialog__header {
-  border-bottom: 1px solid #000000;
+<style scoped lang="scss">
+.next {
+  @include primaryBtn;
 }
-/deep/ .el-form-item {
-  width: 40%;
-  margin-right: 30px;
+.cancel {
+  @include cancelBtn;
+}
+.dialog-footer {
+  display: flex;
+  justify-content: center;
 }
 /deep/ .jsonViewer .jv-code {
   background-color: #212739;
