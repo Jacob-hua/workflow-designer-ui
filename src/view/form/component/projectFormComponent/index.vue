@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-dialog title="表单" :visible.sync="dialogVisible1" width="35%" custom-class="dialogVisible1">
+    <el-dialog title="表单" :visible.sync="dialogVisible1" width="35%">
       <div class="guid">
-        <el-form ref="form" :rules="rules" :model="postData">
+        <el-form ref="form" label-width="80px" label-position="right" :rules="rules" :model="postData">
           <div class="from-item">
             <el-form-item label="应用项目" prop="ascription">
               <el-select disabled="true" v-model="postData.ascription">
@@ -328,67 +328,13 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
->>> .el-cascader {
-  width: 320px;
+<style scoped  lang="scss">
+.el-dialog__body {
+  padding: 30px 80px;
 }
-.guid >>> .el-select {
-  width: 320px;
+.el-select, .el-cascader {
+  width: 100%;
 }
-.guid >>> .el-input {
-  width: 320px;
-}
-/deep/ .dialogVisible1 .el-dialog__body {
-  padding: 16px 180px 0px 100px;
-}
-
-/deep/ .dialogVisible1 .el-dialog__header .el-dialog__title {
-  font-size: 14px;
-}
-
-
-/deep/ .dialogVisible2 .el-dialog__header .el-dialog__title {
-  font-size: 14px;
-}
-
-
-.from-item {
-  margin-bottom: 20px;
-  text-align: center;
-}
-.from-item >>> .el-form-item {
- display: flex;
-  width: 600px;
-}
-
-  .from-item > span {
-    width: 100px;
-    height: 40px;
-    line-height: 40px;
-  }
-
->>> .form-Main .el-input__inner {
-  border-color: #C0C4CC;
-}
-
->>> .form-Main .el-input__inner:focus {
-  outline: none;
-  border-color: #1890ff;
-}
-
-/deep/ . .el-input__inner {
-  color: black;
-}
-
-/deep/ .el-dialog__footer {
-  text-align: center;
-}
-
-.form-title {
-  border-bottom: 1px solid #CCCCCC;
-  /*margin-bottom: 40px;*/
-}
-
 .title-item {
   display: inline-block;
   margin-bottom: 20px;
@@ -402,20 +348,6 @@ export default {
   display: inline-block;
 }
 
-/deep/ .dialogVisible2 .form-title .el-input.is-disabled .el-input__inner {
-  color: black;
-  width: 180px;
-  height: 43px;
-  line-height: 43px;
-  padding: 0px 10px;
-}
-
-/deep/ .dialogVisible2 .form-title .el-input__inner {
-  width: 180px;
-  height: 43px;
-  line-height: 43px;
-  padding: 0px 10px;
-}
 
 .marginLeft40 {
   margin-left: 70px;

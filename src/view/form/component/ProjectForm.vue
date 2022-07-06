@@ -376,17 +376,9 @@
   }
 </script>
 
-<style scoped="scoped">
+<style scoped lang="scss">
 .boxBtn {
-  font-size: 14px;
-  color: #009EFB;
-  width: 100px;
-  height: 30px;
-  line-height: 30px;
-  text-align: center;
-  border: 1px solid #009EFB;
-  border-radius: 4px;
-  cursor: pointer;
+@include createOrRerenfece
 
 }
 .search {
@@ -401,20 +393,8 @@
 
 }
 .reset {
-  color: #fff;
-  width: 79px;
-  height: 34px;
-  line-height: 34px;
-  text-align: center;
-  background: #0DD5EF;
-  border-radius: 4px;
-  cursor: pointer;
-
-
+  @include resetBtn
 }
-  /deep/  .el-input__inner {
-    border: 1px solid black;
-  }
 
   .PublicForm-title {}
 
