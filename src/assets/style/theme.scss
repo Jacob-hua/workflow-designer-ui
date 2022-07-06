@@ -49,6 +49,8 @@ svg[data-element-id] {
   font-size: 14px;
   line-height: 34px;
   color: #fff;
+  padding: 0;
+  border-color: #009EFB;
   background: #009EFB;
   margin-right: 14px;
   border-radius: 4px;
@@ -63,7 +65,8 @@ svg[data-element-id] {
   height: 34px;
   font-size: 14px;
   line-height: 34px;
-  color: #fff;
+  color: #fff;  padding: 0;
+  border-color: #6E7E88;
   background: #6E7E88;
   border-radius: 4px;
   cursor: pointer;
