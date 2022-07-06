@@ -5,7 +5,7 @@
       <div class="PublicForm-title">
       </div>
       <div class="datePick">
-        <el-select style="width: 220px" v-model="projectCode">
+        <el-select style="margin-right: 15px"  v-model="projectCode">
           <el-option v-for="{id, label, value} in rootOrganizations"
                      :key="id"
                      :label="label"
