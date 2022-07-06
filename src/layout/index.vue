@@ -1,9 +1,22 @@
 <template>
   <div>
     <el-container>
+      <el-header class="header">
+        <div v-if="!status" class="user-info">
+          <span>{{ userInfo.name }}</span>
+          <span @click="exitProject()">退出</span>
+        </div>
+      </el-header>
       <el-container>
-        <el-aside width="260px">
-          <div class="sider-logo">流程引擎工作台</div>
+        <el-aside>
+          <div class="aside-logo">
+            <img :src="require('../assets/image/common/logo.png')" />
+            <div class="describe">
+              流程引擎工作台
+              <div class="divider"></div>
+              <span>Workflow Engine Platform</span>
+            </div>
+          </div>
           <el-menu :default-active="$route.name" router @open="handleOpen" @close="handleClose" v-if="!status">
             <el-menu-item :index="item.menuRoute" v-for="(item, index) in menuList" :key="index">
               <i class="el-icon-location"></i>
@@ -12,12 +25,6 @@
           </el-menu>
         </el-aside>
         <el-main>
-          <div class="header">
-            <div class="userinfo" v-if="!status">
-              <span class="userInfoName">{{ userInfo.name }}</span>
-              <span class="exitClss" @click="exitProject()">退出</span>
-            </div>
-          </div>
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -97,6 +104,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$header-height: 48px;
+$aside-width: 240px;
+$aside-logo-height: 288px;
+
 body {
   overflow: hidden;
   margin: 0;
@@ -105,42 +116,79 @@ body {
 }
 
 .header {
-  height: 48px;
-  line-height: 48px;
+  height: $header-height !important;
+  line-height: $header-height;
   font-size: 16px;
   background-color: $header-bg-color;
-  padding: 0px 10px;
+  padding: 0px 26px;
+
+  .user-info {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+
+    :last-child {
+      margin-left: 12px;
+    }
+  }
 }
 
 .el-aside {
+  width: $aside-width !important;
   display: flex;
   flex-direction: column;
   background-color: $menu-bg-color;
 }
 
-.sider-logo {
-  width: 240px;
-  height: 288px;
+.aside-logo {
+  width: $aside-width;
+  height: $aside-logo-height;
   color: #ffffff;
   background-color: $logo-bg-color;
   border-radius: 0px 30px 30px 0px;
-  font-size: 16px;
-  line-height: 20px;
-  padding-left: 20px;
-  font-weight: 400;
-}
+  position: absolute;
+  top: 0px;
 
-.el-main {
-  color: #333;
-  text-align: left;
-  height: 100%;
-  padding: 0;
+  img {
+    width: 168px;
+    padding: 57px 0px 60px 30px;
+  }
+
+  .describe {
+    margin: 0px 41px;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 400;
+
+    .divider {
+      width: 100%;
+      height: 2px;
+      background: #ffffff;
+      margin: 8px 0px;
+    }
+
+    span {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 20px;
+    }
+  }
 }
 
 .el-menu {
   flex-grow: 1;
   background-color: $menu-bg-color;
   border-right: 0;
+  position: absolute;
+  top: $aside-logo-height;
+  width: $aside-width;
+  padding-top: 26px;
 
   :hover {
     background-color: $menu-active-bg-color;
@@ -150,30 +198,29 @@ body {
     color: #ffffff;
     background-color: $menu-active-bg-color;
 
-    // TODO: 此处菜单选中的上下圆角需要下面的代码支撑
-    // ::after {
-    //   content: '';
-    //   display: block;
-    //   position: absolute;
-    //   right: 0;
-    //   bottom: 100%;
-    //   border-bottom-right-radius: 30px;
-    //   width: 30px;
-    //   height: 30px;
-    //   box-shadow: 0.49rem 0.49rem $menu-active-bg-color;
-    // }
+    ::after {
+      content: '';
+      display: block;
+      position: absolute;
+      right: 0;
+      bottom: 100%;
+      border-bottom-right-radius: 30px;
+      width: 30px;
+      height: 30px;
+      box-shadow: 0.49rem 0.49rem $menu-active-bg-color;
+    }
 
-    // ::before {
-    //   content: '';
-    //   display: block;
-    //   position: absolute;
-    //   right: 0;
-    //   top: 100%;
-    //   border-top-right-radius: 30px;
-    //   width: 30px;
-    //   height: 30px;
-    //   box-shadow: 0.49rem -0.49rem $menu-active-bg-color;
-    // }
+    ::before {
+      content: '';
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      border-top-right-radius: 30px;
+      width: 30px;
+      height: 30px;
+      box-shadow: 0.49rem -0.49rem $menu-active-bg-color;
+    }
   }
 }
 
@@ -181,23 +228,10 @@ body {
   color: $menu-color;
 }
 
-::v-deep .el-submenu__title i {
-  margin-top: -4px;
-}
-::v-deep .el-menu-item-group__title {
-  display: none;
-}
-
-.userinfo {
-  float: right;
-}
-
-.exitClss {
-  display: inline-block;
-  width: 40px;
-  text-align: center;
-  font-size: 14px;
-  color: white;
-  cursor: pointer;
+.el-main {
+  color: #333;
+  text-align: left;
+  height: 100%;
+  padding: 0;
 }
 </style>

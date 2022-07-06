@@ -98,7 +98,7 @@ export default {
 .background {
   height: 100%;
   width: 100%;
-  background-image: url('~@/assets/background.gif');
+  background-image: url('~@/assets/image/common/background.gif');
   background-size: 100% 100%;
   position: fixed;
 }

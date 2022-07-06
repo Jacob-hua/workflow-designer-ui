@@ -3,11 +3,11 @@
     <div class="editor-wrapper">
       <bpmnJsELe :projectData="projectData" v-if="visible"></bpmnJsELe>
     </div>
-    <span slot="footer">
-      <el-button type="primary" @click="onPublish">发布</el-button>
-      <el-button @click="onSave">保存</el-button>
-      <el-button @click="onCancel">取消</el-button>
-    </span>
+    <div slot="footer">
+      <el-button class="publish" @click="onPublish">发布</el-button>
+      <el-button class="save" @click="onSave">保存</el-button>
+      <el-button class="cancel" @click="onCancel">取消</el-button>
+    </div>
   </el-dialog>
 </template>
 
@@ -146,5 +146,17 @@ export default {
 <style scoped lang="scss">
 .editor-wrapper {
   height: 100%;
+}
+
+.publish {
+  @include primaryBtn;
+}
+
+.save {
+  @include primaryBtn;
+}
+
+.cancel {
+  @include cancelBtn;
 }
 </style>
