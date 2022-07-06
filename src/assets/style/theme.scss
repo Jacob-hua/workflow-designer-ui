@@ -19,3 +19,25 @@ $dialog-bg-color: #1b1e2d;
 svg[data-element-id] {
   background-color: $dialog-bg-color;
 }
+
+@mixin createOrRerenfece {
+  font-size: 14px;
+  color: #009EFB;
+  width: 100px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border: 1px solid #009EFB;
+  border-radius: 4px;
+  cursor: pointer;
+}
+@mixin resetBtn {
+  color: #fff;
+  width: 79px;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+  background: #0DD5EF;
+  border-radius: 4px;
+  cursor: pointer;
+}

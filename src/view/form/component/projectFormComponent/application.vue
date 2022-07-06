@@ -11,21 +11,19 @@
                  v-for="(item, index) in formList"
                  :key="index">
               <div class="processList-item-word">
-                <label>表单名称:</label>
+                <p>表单名称:</p>
                 <span>{{ item.name }}</span>
               </div>
               <div class="processList-item-word">
-                <label>创建人:</label>
+                <p>创建人:</p>
                 <span>{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
               </div>
               <div class="processList-item-word">
-                <label>创建时间:</label>
+                <p>创建时间:</p>
                 <span>{{ item.createTime }}</span>
               </div>
               <div class="processList-item-button">
-                <el-button type="primary"
-                           plain
-                           @click="open(item)">关联</el-button>
+                <div class="refence" @click="open(item)">关联</div>
               </div>
             </div>
           </div>
@@ -243,19 +241,24 @@ export default {
 .diologMain {
   display: flex;
 }
+.refence {
+  color: #0DD5EF;
+  padding-top: 15px;
+  padding-left: 180px;
+}
 .container {
   padding-left: 80px;
 }
 .diologMain-left {
   flex: 2;
-  background-color: #f3f3f3;
+  /*background-color: #f3f3f3;*/
   text-align: center;
   height: 695px;
 }
 
 .diologMain-right {
   flex: 8;
-  background-color: #f3f3f3;
+  /*background-color: #f3f3f3;*/
   margin-left: 20px;
   height: 695px;
   padding: 0px 20px;
@@ -303,13 +306,22 @@ export default {
 .processList-item {
   width: 290px;
   height: 178px;
-  background-color: #e4e4e4;
+  background-color: #212739;
   padding: 20px 0px 0px 20px;
   position: relative;
   margin-right: 20px;
   display: inline-block;
   margin-top: 30px;
 }
+.processList-item p {
+  display: inline-block;
+  color:  #999999;
+  width: 80px;
+  margin-right: 15px;
+}
+.processList-item span {
+   color:  #fff;
+ }
 
 .processList-item-detail {
   position: absolute;
@@ -322,7 +334,6 @@ export default {
 .processList-item-word {
   font-size: 14px;
   color: #000000;
-  margin-bottom: 20px;
 }
 
 .processList-item-button {
