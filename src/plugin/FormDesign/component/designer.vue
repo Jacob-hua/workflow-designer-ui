@@ -219,7 +219,7 @@ export default {
   },
   computed:{
     infoShow() {
-      return this.list.length<1;
+      return this.list.length < 1;
     },
     //  初始化 form表单 数据结构
     code() {
