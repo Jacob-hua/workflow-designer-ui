@@ -25,21 +25,21 @@
       </div>
 
       <div class="PublicForm-title-input">
-        <div class="search" @click="getManyData()">查询</div>
+        <el-button class="search" @click="getManyData()">查询</el-button>
       </div>
       <div class="PublicForm-title-input">
-        <div class="reset" @click="reset()" type="primary">重置</div>
+        <el-button class="reset" @click="reset()" type="primary">重置</el-button>
       </div>
     </div>
     <div>
       <div class="PublicForm-title-button">
-        <div class="boxBtn" @click="application()" v-role="{ id: 'FromUse', type: 'button', business: projectCode }">
+        <el-button class="boxBtn" @click="application()" v-role="{ id: 'FromUse', type: 'button', business: projectCode }">
           关联表单
-        </div>
+        </el-button>
       </div>
       <div class="PublicForm-title-button">
-        <div class="boxBtn" @click="addForm()" v-role="{ id: 'FromAdd', type: 'button', business: projectCode }">新建表单
-        </div>
+        <el-button class="boxBtn" @click="addForm()" v-role="{ id: 'FromAdd', type: 'button', business: projectCode }">新建表单
+        </el-button>
       </div>
     </div>
     <div class="home-main">
@@ -397,14 +397,7 @@ export default {
 }
 
 .search {
-  width: 79px;
-  height: 34px;
-  line-height: 34px;
-  text-align: center;
-  background: #009EFB;
-  border-radius: 4px;
-  color: #fff;
-  cursor: pointer;
+ @include primaryBtn;
 
 }
 
