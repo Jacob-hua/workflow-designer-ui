@@ -29,10 +29,10 @@
           </div>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="nextDiolog()" type="primary">下一步</el-button>
-        <el-button @click="dialogVisible1 = false">取消</el-button>
-      </span>
+      <div slot="footer" class="dialog-footer">
+        <div class="next" @click="nextDiolog()" type="primary">下一步</div>
+        <div class="cancel" @click="dialogVisible1 = false">取消</div>
+      </div>
     </el-dialog>
     <el-dialog :title="title" :visible.sync="dialogVisible2" width="97%" height="100%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
@@ -59,11 +59,11 @@
           <form-designer ref="formDesigner"></form-designer>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addEnableForm()">发布</el-button>
-        <el-button @click="addDraftForm()">保存</el-button>
-        <el-button @click="dialogVisible2 = false">取消</el-button>
-      </span>
+      <div slot="footer" class="dialog-footer">
+        <div class="next" type="primary" @click="addEnableForm()">发布</div>
+        <div class="next" @click="addDraftForm()">保存</div>
+        <div class="cancel" @click="dialogVisible2 = false">取消</div>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -329,6 +329,16 @@ export default {
 </script>
 
 <style scoped  lang="scss">
+.next {
+  @include infoPrimaryBtn
+}
+.cancel {
+  @include infoCancelBtn
+}
+.dialog-footer {
+  display: flex;
+  justify-content: center;
+}
 .el-dialog__body {
   padding: 30px 80px;
 }

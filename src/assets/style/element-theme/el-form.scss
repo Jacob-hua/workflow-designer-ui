@@ -1,13 +1,4 @@
-$form-item-height: 40px !default;
 $form-item-label-color: #ffffff !default;
-
-.el-form-item {
-  height: $form-item-height;
-
-  & > .el-form-item__content {
-    height: $form-item-height;
-  }
-}
 
 .el-form-item__label {
   color: $form-item-label-color;
