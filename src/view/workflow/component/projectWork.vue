@@ -1,96 +1,85 @@
 <template>
-  <div class="PublicForm">
-    <div class="projectHeader">
-      <el-select v-model="searchForm.ascription">
-        <el-option
-          v-for="{ id, label, value } in rootOrganizations"
-          :key="id"
-          :label="label"
-          :value="value"
-        ></el-option>
-      </el-select>
+  <div>
+    <div class="search-wrapper">
+      <el-form :inline="true">
+        <el-form-item label="项目选择">
+          <el-select v-model="searchForm.ascription">
+            <el-option
+              v-for="{ id, label, value } in rootOrganizations"
+              :key="id"
+              :label="label"
+              :value="value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="业务选择">
+          <el-cascader
+            v-model="searchForm.business"
+            :key="searchForm.ascription"
+            :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
+            :props="cascaderProps"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="时间选择 ">
+          <el-date-picker
+            v-model="searchForm.valueDate"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="——"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :default-time="['00:00:00', '23:59:59']"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="工作流">
+          <el-input v-model="searchForm.name" placeholder="请输入工作流名称"></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="button-wrapper">
+        <el-button class="search-button" @click="refreshWorkFlowRecord">查询</el-button>
+        <el-button class="reset-button" @click="onReset">重置</el-button>
+      </div>
     </div>
-    <div class="PublicForm-title">
-      <div class="PublicForm-title-option">
-        <el-cascader
-          v-model="searchForm.business"
-          :key="searchForm.ascription"
-          :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
-          :props="cascaderProps"
-        ></el-cascader>
-      </div>
-      <div class="datePick">
-        <span class="datePickTitle">编辑时间</span>
-        <el-date-picker
-          v-model="searchForm.valueDate"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="——"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
-        >
-        </el-date-picker>
-      </div>
-      <div class="PublicForm-title-input">
-        <el-input v-model="searchForm.name" placeholder="请输入工作流名称"></el-input>
-      </div>
-      <div class="PublicForm-title-input">
-        <el-button type="primary" @click="refreshWorkFlowRecord">查询</el-button>
-      </div>
-      <div class="PublicForm-title-input">
-        <el-button type="primary" @click="onReset">重置</el-button>
-      </div>
-      <div class="PublicForm-title-button">
+    <div class="content-wrapper">
+      <div class="tool-wrapper">
         <el-button
           type="primary"
           @click="onAddProject"
           v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }"
-          >新建工作流</el-button
         >
-      </div>
-      <div class="PublicForm-title-button">
+          新建工作流
+        </el-button>
         <el-button
           type="primary"
           @click="onQuoteBpmnShow"
           v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }"
-          >关联工作流</el-button
         >
+          关联工作流
+        </el-button>
       </div>
-    </div>
-    <div class="home-main">
-      <div class="home-main-tab">
-        <span
-          class="home-main-tab-item"
-          :class="activeName === 'enabled,disabled' ? 'active' : ''"
-          @click="onChangeActiveName('enabled,disabled')"
-          >工作流({{ processCount }})</span
-        >
-        <span
-          class="home-main-tab-item"
-          :class="activeName === 'drafted' ? 'active' : ''"
-          @click="onChangeActiveName('drafted')"
-          >草稿箱（{{ draftProcessCount }}）</span
-        >
-      </div>
-      <div class="home-table">
-        <projectTable
-          v-if="activeName === 'enabled,disabled'"
-          :business="projectValue"
-          :searchForm="searchFormData"
-          @lookBpmnShow="onLookBpmnShow"
-          @deleteRow="onProjectDeleteRow"
-        ></projectTable>
-        <draftTable
-          v-if="activeName === 'drafted'"
-          :business="projectValue"
-          :searchForm="searchFormData"
-          @draftTableEdit="onDraftTableEdit"
-          @deleteRow="onDraftDeleteRow"
-        ></draftTable>
-      </div>
+      <el-tabs v-model="activeName" type="border-card" @tab-click="onChangeActiveName">
+        <el-tab-pane name="enabled,disabled">
+          <span slot="label">工作流({{ processCount }})</span>
+          <projectTable
+            :business="projectValue"
+            :searchForm="searchFormData"
+            @lookBpmnShow="onLookBpmnShow"
+            @deleteRow="onProjectDeleteRow"
+          ></projectTable>
+        </el-tab-pane>
+        <el-tab-pane name="drafted">
+          <span slot="label">草稿箱({{ draftProcessCount }})</span>
+          <draftTable
+            :business="projectValue"
+            :searchForm="searchFormData"
+            @draftTableEdit="onDraftTableEdit"
+            @deleteRow="onDraftDeleteRow"
+          ></draftTable>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <addProject :visible="addProjectVisible" @close="onAddProjectClose" @submit="onAddProjectSubmit"></addProject>
     <addBpmn
@@ -254,8 +243,7 @@ export default {
       this.setProjectData(row)
       this.addBpmnVisible = true
     },
-    onChangeActiveName(value) {
-      this.activeName = value
+    onChangeActiveName() {
       this.refreshWorkFlowRecord()
     },
     onProjectDeleteRow() {
@@ -298,99 +286,31 @@ export default {
 }
 </script>
 
-<style scoped>
-.checkPro {
-  border: 1px solid #0066cc !important;
+<style scoped lang="scss">
+.search-wrapper {
+  @include searchForm;
+
+  .button-wrapper {
+    display: flex;
+    flex-direction: row;
+
+    .search-button {
+      @include primaryBtn;
+    }
+
+    .reset-button {
+      @include resetBtn;
+    }
+  }
 }
 
-.projectList {
-  padding: 0px 0px 20px 0px;
-  border-bottom: 1px solid #eeeeee;
-  margin-bottom: 20px;
-}
+.content-wrapper {
+  margin-top: 40px;
 
-.projectList-item {
-  position: relative;
-  font-size: 18px;
-  width: 260px;
-  height: 100px;
-  line-height: 100px;
-  display: inline-block;
-  border: 1px solid #cccccc;
-  margin-right: 20px;
-  padding: 0px 20px;
-}
+  @include contentTab;
 
-.projectList-item-word {
-  vertical-align: super;
-  display: inline-block;
-  margin-left: 15px;
-}
-
-.item-icon {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-.projectHeader {
-  display: inline-block;
-  margin: 0px 0px 20px 0px;
-}
-
-.datePick {
-  display: inline-block;
-}
-
-.datePickTitle {
-  display: inline-block;
-  font-size: 14px;
-  margin-right: 20px;
-}
-
-.PublicForm-title-option {
-  display: inline-block;
-  margin-right: 40px;
-}
-
-.PublicForm-title-input {
-  display: inline-block;
-  margin-left: 40px;
-}
-
-.PublicForm-title-button {
-  display: inline-block;
-  margin-left: 40px;
-}
-
-.home-main {
-  margin-top: 20px;
-}
-
-.home-main-tab {
-  display: flex;
-}
-
-.home-main-tab-item {
-  display: inline-block;
-  height: 60px;
-  width: 200px;
-  line-height: 60px;
-  text-align: center;
-  font-size: 14px;
-  cursor: pointer;
-  border: 1px solid #cccccc;
-}
-
-.active {
-  background-color: #030303;
-  color: white;
-}
-
-.home-table {
-  height: 786px;
-  border: 1px solid #666666;
-  margin-bottom: 40px;
-  padding: 20px 20px;
+  .tool-wrapper {
+    float: right;
+  }
 }
 </style>

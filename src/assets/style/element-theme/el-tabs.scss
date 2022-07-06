@@ -24,6 +24,7 @@ $tabs-content-bg-color: #1b1e2d !default;
 
       .el-tabs__nav {
         height: 100%;
+        padding: 0 1px;
       }
     }
 
@@ -45,5 +46,9 @@ $tabs-content-bg-color: #1b1e2d !default;
       background-color: $tabs-header-item-active-bg-color;
       color: $tabs-header-item-active-color;
     }
+  }
+
+  & > .el-tabs__content {
+    padding: 50px 40px;
   }
 }

@@ -5,6 +5,10 @@ $date-picker-border-color: #999999 !default;
   & > .el-range-input {
     background-color: transparent;
   }
+
+  .el-range-separator {
+    width: auto;
+  }
 }
 
 .el-picker-panel {
