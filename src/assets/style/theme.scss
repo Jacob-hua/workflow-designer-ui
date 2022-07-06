@@ -21,6 +21,7 @@ svg[data-element-id] {
 }
 
 @mixin primaryPlainBtn {
+  display: flex;
   font-size: 14px;
   color: #009EFB;
   width: 100px;
@@ -32,9 +33,12 @@ svg[data-element-id] {
   background-color: transparent;
   border-radius: 4px;
   cursor: pointer;
+  justify-content: center;
+  align-items: center;
 }
 
 @mixin resetBtn {
+  display: flex;
   color: #fff;
   width: 79px;
   height: 34px;
@@ -45,9 +49,12 @@ svg[data-element-id] {
   background: #0DD5EF;
   border-radius: 4px;
   cursor: pointer;
+  justify-content: center;
+  align-items: center;
 }
 
 @mixin primaryBtn {
+  display: flex;
   width: 84px;
   height: 34px;
   font-size: 14px;
@@ -59,6 +66,8 @@ svg[data-element-id] {
   margin-right: 14px;
   border-radius: 4px;
   cursor: pointer;
+  justify-content: center;
+  align-items: center;
   &:hover {
     background-color: #007DC7;
     border-color: #007DC7;
@@ -66,6 +75,7 @@ svg[data-element-id] {
 }
 
 @mixin cancelBtn {
+  display: flex;
   width: 84px;
   height: 34px;
   font-size: 14px;
@@ -76,4 +86,6 @@ svg[data-element-id] {
   background: #6E7E88;
   border-radius: 4px;
   cursor: pointer;
+  justify-content: center;
+  align-items: center;
 }
