@@ -6,8 +6,8 @@
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
           start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
-      </div>
         <span class="datePickTitle">表单</span> <el-input style="width: 260px" v-model="input" placeholder="请输入内容"></el-input>
+      </div>
       <div class="PublicForm-title-input">
         <el-button class="primary" type="primary" @click="getManyData()">查询</el-button>
       </div>
@@ -175,7 +175,7 @@
       
       addForm(item) {
         if (item) {
-            this.$refs.PublicFormDiolog.dialogVisible2 = true
+          this.$refs.PublicFormDiolog.dialogVisible2 = true
           let content = JSON.parse(item.content)
           this.$nextTick(() => {
             this.$refs.PublicFormDiolog.$refs.formDesigner.designList =  content.list
@@ -248,6 +248,7 @@
 
   .datePick {
     display: inline-block;
+    margin-top: 15px;
   }
   .datePickTitle {
     width: 56px;
