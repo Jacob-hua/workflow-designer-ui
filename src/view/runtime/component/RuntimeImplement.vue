@@ -310,7 +310,6 @@ export default {
           tenantId: this.tenantId,
           ascription: this.workflow.ascription,
           business: this.workflow.business,
-          createBy: '',
           numberCode: '',
           name: '',
           docName: docName,
