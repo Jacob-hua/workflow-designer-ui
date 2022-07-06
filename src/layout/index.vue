@@ -126,7 +126,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: end;
+    justify-content: flex-end;
     align-items: center;
     color: #ffffff;
     font-size: 14px;
