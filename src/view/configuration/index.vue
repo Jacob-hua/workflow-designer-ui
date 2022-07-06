@@ -131,7 +131,7 @@
   }
 </script>
 
-<style scoped="scoped">
+<style scoped>
   .btnContainer {
     width: 100%;
     display: flex;
@@ -186,8 +186,5 @@
     display: inline-block;
     margin: 15px 0px 15px 0px;
   }
-  
-  .projectHeader /deep/ .el-input__inner {
-    border: 1px solid black;
-  }
+
 </style>

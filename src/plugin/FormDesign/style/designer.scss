@@ -1,4 +1,5 @@
-$selectedColor: #e6f2ff;
+//$selectedColor: #e6f2ff;
+$selectedColor: #0e1f3e;
 $lighterBlue: #409EFF;
 .drawing-board {
   height: 100%;
@@ -113,6 +114,7 @@ $lighterBlue: #409EFF;
   &:hover {
     & > .el-form-item{
       background: #ebeef5;
+      //background: #0e1f3e ;
     }
     & > .drawing-item-copy, & > .drawing-item-delete{
       display: initial;
@@ -156,7 +158,8 @@ $lighterBlue: #409EFF;
 .drawing-item, .drawing-form-item{
   &:hover {
     & > .el-form-item{
-      background: #ebeef5;
+      //background: red;
+      background: #0e1f3e;
     }
     & > .drawing-item-copy, & > .drawing-item-delete{
       display: initial;

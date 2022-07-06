@@ -313,7 +313,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 button {
   font-size: 14px;
   margin-left: 10px;
@@ -350,16 +350,6 @@ button {
 .fileStyle {
   color: #007edb;
 }
-
-/deep/ .el-table .el-table__cell {
-  padding: 8px 0px;
-}
-
-/deep/ .el-table th.el-table__cell {
-  padding: 16px 0px;
-  /*background-color: #f5f7f9;*/
-}
-
 .home-table-page {
   text-align: right;
   padding: 20px 0px;

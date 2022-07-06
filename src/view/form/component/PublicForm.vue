@@ -231,7 +231,7 @@
   }
 </script>
 
-<style scoped="scoped">
+<style scoped>
 .boxBtn {
   font-size: 14px;
   color: #009EFB;
@@ -244,12 +244,7 @@
   cursor: pointer;
   margin-right: 20px;
 }
-  /deep/ .el-input__inner {
-    border: 1px solid black;
-  }
-  .PublicForm-title {
-    
-  }
+
   .datePick {
     display: inline-block;
   }
@@ -263,8 +258,6 @@
     margin-left: 40px;
   }
   .PublicForm-title-button {
-    /*display: inline-block;*/
-    /*margin-left: 40px;*/
     display: flex;
     justify-content: right;
   }

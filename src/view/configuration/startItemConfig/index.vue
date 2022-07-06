@@ -178,7 +178,6 @@ export default {
 
   .businessCall-main-list-add .el-icon-plus {
     font-size: 40px;
-    /* color: #e4e4e4; */
     color: #1d89ff;
   }
   .businessCall-main-list-add:hover {
@@ -194,6 +193,5 @@ export default {
     width: 312px;
     height: 186px;
     background-color: #f5f7f9;
-    /* border: 1px solid #0066cc; */
   }
 </style>

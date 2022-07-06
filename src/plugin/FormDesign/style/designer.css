@@ -109,14 +109,12 @@ body{
 .center-scrollbar {
   height: calc(100vh - 342px);
   overflow: hidden;
-  /*border-left: 1px solid #f1e8e8;*/
-  /*border-right: 1px solid #f1e8e8;*/
   box-sizing: border-box;
 }
-
 .center-board-row {
   padding: 10px 12px 0px 12px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 .center-board-row .el-form {
   height: calc(100vh - 69px);

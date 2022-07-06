@@ -432,13 +432,13 @@ export default {
   overflow-y: auto;
   color: #fff;
 }
->>> .el-divider {
+/deep/ .el-divider {
   background-color: #333333;
 }
->>>.jv-container.jv-light .jv-key {
+/deep/ .jv-container.jv-light .jv-key {
   color: #fff;
 }
->>> .jv-container.jv-light .jv-item.jv-object {
+/deep/ .jv-container.jv-light .jv-item.jv-object {
   color: #fff;
 }
 .parse {

@@ -2,16 +2,16 @@
   <!--中间面板-->
   <div class="center-board" >
     <div class="action-bar">
-      <el-button icon="el-icon-view" type="text" @click="preview">
+      <el-button class="reset" icon="el-icon-view" type="text" @click="preview">
         预览
       </el-button>
-      <el-button icon="el-icon-tickets" type="text" @click="viewJSON">
+      <el-button class="mainBtn" icon="el-icon-tickets" type="text" @click="viewJSON">
         JSON
       </el-button>
 <!--      <el-button icon="el-icon-s-tools" type="text" @click="setting">-->
 <!--        设置-->
 <!--      </el-button>-->
-      <el-button class="delete-btn" icon="el-icon-delete-solid" type="text" @click="clear">
+      <el-button class="delete-btn mainBtn" icon="el-icon-delete-solid" type="text" @click="clear">
         清空
       </el-button>
     </div>
@@ -237,20 +237,31 @@ export default {
 }
 
 </script>
-<style  scoped>
+<style  scoped lang="scss">
+.action-bar {
+  display: flex;
+  justify-content: right;
+}
+.reset {
+  margin-right: 10px;
+  @include resetBtn
+}
+.mainBtn {
+  @include primaryBtn
+}
 .el-rate{
   display:inline-block;
 }
->>> .CodeMirror {
+/deep/ .CodeMirror {
   height: 600px !important;
 }
-.center-scrollbar >>> .el-scrollbar__bar.is-horizontal {
+.center-scrollbar /deep/ .el-scrollbar__bar.is-horizontal {
   display: none;
 }
-.center-scrollbar >>> .el-scrollbar__wrap{
+.center-scrollbar /deep/ .el-scrollbar__wrap{
   overflow-x: hidden;
 }
-.empty-info >>> .el-empty__description p{
+.empty-info /deep/ .el-empty__description p{
   color: #fff;
   font-size:16px;
 }
