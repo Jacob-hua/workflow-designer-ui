@@ -232,6 +232,6 @@ body {
   color: #333;
   text-align: left;
   height: 100%;
-  padding: 0;
+  padding: 40px 20px 0px 20px;
 }
 </style>

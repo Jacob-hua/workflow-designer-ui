@@ -1,13 +1,10 @@
 <template>
   <div class="work-home">
-    <el-tabs v-model="activeName"
-             @tab-click="handleClick">
-      <el-tab-pane label="项目流程"
-                   name="second">
+    <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
+      <el-tab-pane label="项目流程" name="second">
         <projectWork></projectWork>
       </el-tab-pane>
-      <el-tab-pane label="公共流程"
-                   name="first">
+      <el-tab-pane label="公共流程" name="first">
         <publicWork></publicWork>
       </el-tab-pane>
     </el-tabs>
