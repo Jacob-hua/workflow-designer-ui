@@ -33,6 +33,9 @@ $tabs-content-bg-color: #1b1e2d !default;
       color: $tabs-header-item-color;
       font-size: 18px;
       line-height: 56px;
+      text-align: center;
+      height: 101%;
+      width: 180px;
     }
 
     .el-tabs__item.is-active {
