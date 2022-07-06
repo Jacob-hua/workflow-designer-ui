@@ -71,6 +71,7 @@ export default {
 .container {
   padding-left: 20px;
   padding-right: 20px;
+  height: 100vh;
 }
 
 .container .history_head {

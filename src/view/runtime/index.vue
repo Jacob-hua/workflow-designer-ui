@@ -397,6 +397,7 @@ export default {
 <style scoped lang="scss">
 .runtime {
   margin: 20px;
+  height: 100vh;
 }
 
 .runtime-filter {
