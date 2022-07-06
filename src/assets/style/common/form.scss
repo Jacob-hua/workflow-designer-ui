@@ -1,0 +1,25 @@
+@mixin searchForm {
+  $input-width: 180px;
+
+  display: flex;
+
+  .el-form-item {
+    margin-right: 40px;
+
+    .el-select {
+      width: $input-width;
+    }
+
+    .el-cascader {
+      width: $input-width;
+    }
+
+    .el-input {
+      width: $input-width;
+    }
+
+    .el-date-editor {
+      width: $input-width + 80px;
+    }
+  }
+}
