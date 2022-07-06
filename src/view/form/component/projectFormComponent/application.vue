@@ -57,10 +57,10 @@
               </el-form>
 
             </div>
-            <span slot="footer" class="dialog-footer">
-        <el-button @click="onSure()" type="primary">确定</el-button>
-        <el-button @click="dialogVisible = false">取消</el-button>
-      </span>
+            <div slot="footer" class="dialog-footer">
+        <div class="next" @click="onSure()" type="primary">确定</div>
+        <div class="cancel" @click="dialogVisible = false">取消</div>
+      </div>
           </el-dialog>
           <div class="process-page">
             <el-pagination @size-change="handleSizeChange"
@@ -238,7 +238,17 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
+<style scoped lang="scss">
+.next {
+  @include infoPrimaryBtn
+}
+.cancel {
+  @include infoCancelBtn
+}
+.dialog-footer {
+  display: flex;
+  justify-content: center;
+}
 .diologMain {
   display: flex;
 }

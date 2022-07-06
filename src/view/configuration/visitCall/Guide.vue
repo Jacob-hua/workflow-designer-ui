@@ -18,8 +18,8 @@
         </el-form>
     </span>
     <span slot="footer" class="dialog-footer">
-      <el-button  @click=" next()">下一步</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <div  class="next"  @click=" next()">下一步</div>
+      <div class="cancel" @click="dialogVisible = false">取 消</div>
   </span>
   </el-dialog>
 </template>
@@ -67,5 +67,15 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  .next {
+    @include infoPrimaryBtn
+  }
+  .cancel {
+    @include infoCancelBtn
+  }
+  .dialog-footer {
+    display: flex;
+    justify-content: center;
+  }
 </style>

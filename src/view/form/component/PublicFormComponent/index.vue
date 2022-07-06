@@ -16,11 +16,11 @@
           <form-designer ref="formDesigner"></form-designer>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addEnableForm()">发布</el-button>
-        <el-button @click="addDraftForm()">保存</el-button>
-        <el-button @click="dialogVisible2 = false">取消</el-button>
-      </span>
+      <div slot="footer" class="dialog-footer">
+        <div class="next" type="primary" @click="addEnableForm()">发布</div>
+        <div class="next" @click="addDraftForm()">保存</div>
+        <div class="cancel" @click="dialogVisible2 = false">取消</div>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -155,16 +155,17 @@
   }
 </script>
 
-<style scoped="scoped">
-/*  /deep/ .dialogVisible2 .el-dialog__body {
-    padding: 16px 180px 0px 100px;
-  } */
-  
-  >>> .dialogVisible2 .el-dialog__header .el-dialog__title {
-    font-size: 14px;
-  }
-
-  
+<style scoped lang="scss">
+.next {
+  @include infoPrimaryBtn
+}
+.cancel {
+  @include infoCancelBtn
+}
+.dialog-footer {
+  display: flex;
+  justify-content: center;
+}
   .from-item {
     display: flex;
     margin-bottom: 20px;
@@ -176,9 +177,7 @@
     height: 40px;
     line-height: 40px;
   }
-  >>> .el-dialog__footer {
-    text-align: center;
-  }
+
   
   .form-title {
     border-bottom: 1px solid #CCCCCC;
@@ -200,7 +199,6 @@
   .form-Main {
     height: 630px;
   }
-  
   #form {
     height: 100%;
     background-color: aliceblue;
