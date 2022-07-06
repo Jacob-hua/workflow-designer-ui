@@ -10,7 +10,7 @@
       <el-container>
         <el-aside>
           <div class="aside-logo">
-            <img :src="require('../assets/logo.png')" />
+            <img :src="require('../assets/image/common/logo.png')" />
             <div class="describe">
               流程引擎工作台
               <div class="divider"></div>
