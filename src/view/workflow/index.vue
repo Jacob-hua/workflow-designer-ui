@@ -30,15 +30,4 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-.work-home {
-  padding: 0px 25px;
-}
-::v-deep .el-tabs__item {
-  width: 200px;
-  height: 60px;
-  line-height: 70px;
-  text-align: center;
-  font-size: 16px;
-}
-</style>
+<style scoped lang="scss"></style>
