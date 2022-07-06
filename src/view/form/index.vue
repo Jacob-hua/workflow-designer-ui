@@ -1,6 +1,6 @@
 <template>
   <div class="form-home">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName" type="border-card"  @tab-click="handleClick">
       <el-tab-pane label="项目表单" name="second">
         <ProjectForm v-if="activeName === 'second'"></ProjectForm>
       </el-tab-pane>
@@ -32,14 +32,4 @@
 </script>
 
 <style scoped lang="scss">
-  .form-home {
-    padding: 0px 25px;
-  }
-  /deep/ .el-tabs__item {
-    width: 200px;
-    height: 60px;
-    line-height: 70px;
-    text-align: center;
-    font-size: 16px;
-  }
 </style>
