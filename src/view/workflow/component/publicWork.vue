@@ -214,10 +214,6 @@ export default {
 </script>
 
 <style scoped="scoped">
-.PublicForm-title ::v-deep .el-input__inner {
-  border: 1px solid black;
-}
-
 .checkPro {
   border: 1px solid #0066cc !important;
 }
@@ -365,14 +361,6 @@ export default {
   color: #007edb;
 }
 
-::v-deep .el-table .el-table__cell {
-  padding: 8px 0px;
-}
-
-::v-deep .el-table th.el-table__cell {
-  padding: 16px 0px;
-  background-color: #f5f7f9;
-}
 .home-table-page {
   text-align: right;
   padding: 20px 0px;
