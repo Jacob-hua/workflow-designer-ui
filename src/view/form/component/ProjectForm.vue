@@ -392,13 +392,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/ .el-dialog {
+  @include formDialog;
+}
 .boxBtn {
   @include primaryPlainBtn;
 }
 
 .search {
  @include primaryBtn;
-
 }
 
 .reset {

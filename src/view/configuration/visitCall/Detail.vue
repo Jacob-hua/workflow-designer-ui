@@ -146,7 +146,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /deep/ .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
   background-color: #000;
 }

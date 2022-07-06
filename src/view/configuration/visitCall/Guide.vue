@@ -6,7 +6,7 @@
       v-if="dialogVisible"
       width="30%"
       append-to-body
-      >
+  >
     <span>
         <el-form ref="form" :rules="rules" :model="form" label-width="80px">
           <el-form-item prop="source" label="资源名称">
@@ -18,7 +18,7 @@
         </el-form>
     </span>
     <span slot="footer" class="dialog-footer">
-      <div  class="next"  @click=" next()">下一步</div>
+      <div class="next" @click=" next()">下一步</div>
       <div class="cancel" @click="dialogVisible = false">取 消</div>
   </span>
   </el-dialog>
@@ -27,7 +27,7 @@
 <script>
 export default {
   name: "Guide",
-  props:{
+  props: {
     business: {
       type: String,
       default: ''
@@ -37,10 +37,10 @@ export default {
     return {
       rules: {
         source: [
-          { required: true, message: '请输入资源名称', trigger: 'blur' }
+          {required: true, message: '请输入资源名称', trigger: 'blur'}
         ],
         sourceMark: [
-          { required: true, message: '请输入资源标识', trigger: 'blur' }
+          {required: true, message: '请输入资源标识', trigger: 'blur'}
         ],
       },
       dialogVisible: false,
@@ -51,31 +51,33 @@ export default {
       editFlag: false
     }
   },
-   methods: {
-      next() {
-        this.$refs['form'].validate((valid) => {
-          if (valid) {
-            this.dialogVisible = false;
-            this.$emit('showAddDialog',this.form, this.editFlag)
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      }
-   }
+  methods: {
+    next() {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.dialogVisible = false;
+          this.$emit('showAddDialog', this.form, this.editFlag)
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    }
+  }
 }
 </script>
 
 <style scoped lang="scss">
-  .next {
-    @include primaryBtn;
-  }
-  .cancel {
-    @include cancelBtn;
-  }
-  .dialog-footer {
-    display: flex;
-    justify-content: center;
-  }
+/deep/ .el-dialog {
+  @include formDialog;
+}
+
+.next {
+  @include primaryBtn;
+}
+
+.cancel {
+  @include cancelBtn;
+}
+
 </style>

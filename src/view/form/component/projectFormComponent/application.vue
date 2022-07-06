@@ -239,15 +239,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/ .el-dialog {
+  @include formDialog;
+}
 .next {
   @include primaryBtn;
 }
 .cancel {
   @include cancelBtn;
-}
-.dialog-footer {
-  display: flex;
-  justify-content: center;
 }
 .diologMain {
   display: flex;

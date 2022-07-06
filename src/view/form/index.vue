@@ -31,7 +31,7 @@
   }
 </script>
 
-<style scoped="scoped">
+<style scoped lang="scss">
   .form-home {
     padding: 0px 25px;
   }

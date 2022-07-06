@@ -237,17 +237,7 @@
   }
 </script>
 
-<style scoped="scoped">
-  
-  >>> .dialogVisible1 .el-dialog__body {
-     padding: 16px 180px 0px 100px;
-   }
-   
-   >>> .dialogVisible1 .el-dialog__header .el-dialog__title {
-     font-size: 14px;
-   }
-
-  
+<style scoped lang="scss">
   .from-item {
     display: flex;
     margin-bottom: 20px;
@@ -259,15 +249,6 @@
     height: 40px;
     line-height: 40px;
   }
-  
-  >>> .el-input__inner {
-    color: black;
-  }
-  
-  >>> .el-dialog__footer {
-    text-align: center;
-  }
-  
   .form-title {
     border-bottom: 1px solid #CCCCCC;
     margin-bottom: 40px;
@@ -282,11 +263,6 @@
   .title-item-main {
     display: inline-block;
   }
-  
-  >>> .dialogVisible2 .el-dialog__header .el-dialog__title {
-    font-size: 14px;
-  }
-
   .detail-title {
     margin-top: 20px;
     padding-bottom: 40px;

@@ -130,10 +130,6 @@
 
       </div>
       <span slot="footer" class="dialog-footer">
-<!--        <div v-if="footFlag">-->
-<!--           <el-button @click="saveStart">保 存</el-button>-->
-<!--           <el-button @click="dialogVisible = false">取 消</el-button>-->
-<!--        </div>-->
       </span>
     </el-dialog>
   </div>
@@ -438,7 +434,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .addDefine {
   cursor: pointer;
   width: 78px;
@@ -450,7 +446,6 @@ export default {
   border: 1px solid #009EFB;
   border-radius: 4px;
   color: #009EFB;
-  /*margin-top: 10px;*/
 }
 .selfDefine {
   margin-bottom: 20px;
@@ -464,11 +459,11 @@ export default {
   color: #009EFB;
   margin-top: 10px;
 }
-#item >>> .el-input {
+#item /deep/ .el-input {
   width: 420px;
 }
 
->>> .el-tag {
+/deep/ .el-tag {
   margin-right: 10px;
   margin-top: 5px;
 }
@@ -515,29 +510,29 @@ export default {
   border: 1px solid rgb(204, 204, 204);
 }
 
-.tree >>> .el-tree-node {
+.tree /deep/ .el-tree-node {
   position: relative;
   padding-left: 0;
 }
 
-.tree >>> .el-tree-node__children {
+.tree /deep/ .el-tree-node__children {
   padding-left: 26px;
   padding-top: 20px;
 }
 
-.tree >>> .el-tree-node :last-child:before {
+.tree /deep/ .el-tree-node :last-child:before {
   height: 12px;
 }
 
-.tree >>> .el-tree > .el-tree-node:before {
+.tree /deep/ .el-tree > .el-tree-node:before {
   border-left: none;
 }
 
-.tree-container >>> .el-tree > .el-tree-node:after {
+.tree-container /deep/ .el-tree > .el-tree-node:after {
   border-top: none;
 }
 
-.tree >>> .el-tree-node:before {
+.tree /deep/ .el-tree-node:before {
   content: '';
   left: -4px;
   position: absolute;
@@ -550,7 +545,7 @@ export default {
   width: 1px;
 }
 
-.tree >>> .el-tree-node:after {
+.tree /deep/ .el-tree-node:after {
   content: '';
   left: -4px;
   position: absolute;
