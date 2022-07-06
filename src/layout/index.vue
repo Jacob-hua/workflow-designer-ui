@@ -2,7 +2,7 @@
   <div>
     <el-container>
       <el-header class="header">
-        <div class="userinfo" v-if="!status">
+        <div v-if="!status" class="user-info">
           <span>{{ userInfo.name }}</span>
           <span @click="exitProject()">退出</span>
         </div>
@@ -10,6 +10,7 @@
       <el-container>
         <el-aside>
           <div class="aside-logo">
+            <img :src="require('../assets/logo.png')" />
             <div class="describe">
               流程引擎工作台
               <div class="divider"></div>
@@ -119,7 +120,23 @@ body {
   line-height: $header-height;
   font-size: 16px;
   background-color: $header-bg-color;
-  padding: 0px 10px;
+  padding: 0px 26px;
+
+  .user-info {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+
+    :last-child {
+      margin-left: 12px;
+    }
+  }
 }
 
 .el-aside {
@@ -138,8 +155,13 @@ body {
   position: absolute;
   top: 0px;
 
+  img {
+    width: 168px;
+    padding: 57px 0px 60px 30px;
+  }
+
   .describe {
-    margin: 161px 41px 0px 41px;
+    margin: 0px 41px;
     font-size: 16px;
     line-height: 20px;
     font-weight: 400;
@@ -211,9 +233,5 @@ body {
   text-align: left;
   height: 100%;
   padding: 0;
-}
-
-.userinfo {
-  float: right;
 }
 </style>
