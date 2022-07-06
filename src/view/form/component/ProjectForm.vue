@@ -507,10 +507,10 @@ export default {
 }
 
 .active {
-  background-color: #030303;
-  color: white;
-  font-weight: 600;
-  border-top: 2px solid #176CF4;
+    background-color: #030303;
+    color: white;
+    font-weight: 600;
+    border-top: 2px solid #176CF4;
 }
 
 .home-table {
