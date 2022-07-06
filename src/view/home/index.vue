@@ -4,11 +4,11 @@
       <div class="projectSelect">
         <el-select v-model="searchForm.ascription">
           <el-option
-            v-for="{ id, label, value } in rootOrganizations"
-            :key="id"
-            :label="label"
-            :value="value"
-          ></el-option>
+              v-for="{ id, label, value } in rootOrganizations"
+              :key="id"
+              :label="label"
+              :value="value"
+            ></el-option>
         </el-select>
       </div>
       <div class="businessSelect">
