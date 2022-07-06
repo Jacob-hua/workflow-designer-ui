@@ -31,10 +31,10 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <span slot="footer">
+    <div slot="footer">
       <el-button class="submit" @click="onSubmit">下一步</el-button>
       <el-button class="cancel" @click="onCancel">取 消</el-button>
-    </span>
+    </div>
   </el-dialog>
 </template>
 
