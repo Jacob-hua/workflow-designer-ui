@@ -162,6 +162,7 @@ export default {
 .home-table-main {
   padding: 10px;
   border: 1px solid #666666;
+
 }
 
 .fileStyle {
@@ -172,10 +173,6 @@ export default {
   padding: 8px 0px;
 }
 
-/deep/ .el-table th.el-table__cell {
-  padding: 16px 0px;
-  background-color: #f5f7f9;
-}
 
 .home-table-page {
   text-align: right;

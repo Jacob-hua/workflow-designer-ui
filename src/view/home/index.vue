@@ -227,6 +227,7 @@ export default {
   padding-left: 20px;
   padding-top: 20px;
   padding-right: 20px;
+  height: 100vh;
 }
 
 .home-filter ::v-deep .el-select .el-input__inner {
