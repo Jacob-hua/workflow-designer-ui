@@ -111,9 +111,6 @@
 </template>
 
 <script>
-// import {
-//   format
-// } from '@/assets/js/unit.js'
 import projectFormDiolog from './projectFormComponent/index.vue'
 import detailsDiologForm from './details.vue'
 import application from './projectFormComponent/application.vue'
