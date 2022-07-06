@@ -40,7 +40,7 @@
             @deleteItem="handlerItemDelete"/>
         </draggable>
           <div v-show="infoShow" class="empty-info">
-            <el-empty description="从左侧拖拽添加控件"></el-empty>
+            <el-empty image="no_data.png" description="从左侧拖拽添加控件"></el-empty>
           </div>
           
         </el-form>
@@ -251,7 +251,7 @@ export default {
   overflow-x: hidden;
 }
 .empty-info >>> .el-empty__description p{
-  color: #ccb1ea;
+  color: #fff;
   font-size:16px;
 }
 </style>
