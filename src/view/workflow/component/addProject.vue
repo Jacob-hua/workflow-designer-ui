@@ -32,8 +32,8 @@
       </el-form-item>
     </el-form>
     <span slot="footer">
-      <el-button type="primary" @click="onSubmit">下一步</el-button>
-      <el-button @click="onCancel">取 消</el-button>
+      <el-button class="submit" @click="onSubmit">下一步</el-button>
+      <el-button class="cancel" @click="onCancel">取 消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -114,5 +114,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '../index.scss'
+@import '../index.scss';
+
+.submit {
+  @include primaryBtn;
+}
+
+.cancel {
+  @include cancelBtn;
+}
 </style>
