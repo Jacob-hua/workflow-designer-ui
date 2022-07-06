@@ -1,82 +1,70 @@
 <template>
   <div class="bpmnView">
-    <div class="bpmnView-title"
-         v-if="valueType === 'project'">
+    <div class="bpmnView-title" v-if="valueType === 'project'">
       <div class="title-item">
-        <span class="title-item-label">
-          项目
-        </span>
+        <span class="title-item-label"> 项目 </span>
         <div class="title-item-main">
-          <el-select v-model="projectData.ascription"
-                     disabled>
-            <el-option v-for="{id, label, value} in rootOrganizations"
-                       :key="id"
-                       :label="label"
-                       :value="value"></el-option>
+          <el-select v-model="projectData.ascription" disabled>
+            <el-option
+              v-for="{ id, label, value } in rootOrganizations"
+              :key="id"
+              :label="label"
+              :value="value"
+            ></el-option>
           </el-select>
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label">
-          业务类型
-        </span>
+        <span class="title-item-label"> 业务类型 </span>
         <div class="title-item-main">
-          <el-cascader v-model="projectData.business"
-                       disabled
-                       :key="projectData.ascription"
-                       :options="rootOrganizationChildren(projectData.ascription)"></el-cascader>
+          <el-cascader
+            v-model="projectData.business"
+            disabled
+            :key="projectData.ascription"
+            :options="rootOrganizationChildren(projectData.ascription)"
+          ></el-cascader>
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label">
-          流程编码
-        </span>
+        <span class="title-item-label"> 流程编码 </span>
         <div class="title-item-main">
-          <el-input v-model="projectData.numberCode"
-                    placeholder=""
-                    :disabled="true"></el-input>
+          <el-input v-model="projectData.numberCode" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
       <div class="title-item">
-        <span class="title-item-label">
-          流程名称
-        </span>
-        <el-tooltip class="item"
-                    effect="dark"
-                    :content="projectData.name"
-                    placement="top-start">
+        <span class="title-item-label"> 流程名称 </span>
+        <el-tooltip class="item" effect="dark" :content="projectData.name" placement="top-start">
           <div class="title-item-main">
-            <el-input v-model="projectData.name"
-                      placeholder=""
-                      :disabled="true"></el-input>
+            <el-input v-model="projectData.name" placeholder="" :disabled="true"></el-input>
           </div>
         </el-tooltip>
       </div>
       <div class="title-item">
-        <span class="title-item-label">
-          创建时间
-        </span>
+        <span class="title-item-label"> 创建时间 </span>
         <div class="title-item-main">
-          <el-input v-model="projectData.createTime"
-                    placeholder=""
-                    :disabled="true"></el-input>
+          <el-input v-model="projectData.createTime" placeholder="" :disabled="true"></el-input>
         </div>
       </div>
     </div>
-    <div class="bpmnView-title"
-         v-if="valueType === 'public'">
+    <div class="bpmnView-title" v-if="valueType === 'public'">
       <div class="bpmnView-title-public">
-        <span class="bpmnView-title-public-label">流程编码:</span><span class="bpmnView-title-public-value">{{projectData.numberCode}}</span>
-        <span class="bpmnView-title-public-label">流程名称:</span><span class="bpmnView-title-public-value">{{projectData.name}}</span>
-        <span class="bpmnView-title-public-label">创建时间:</span><span class="bpmnView-title-public-value">{{projectData.createTime}}</span>
+        <span class="bpmnView-title-public-label">流程编码:</span
+        ><span class="bpmnView-title-public-value">{{ projectData.numberCode }}</span>
+        <span class="bpmnView-title-public-label">流程名称:</span
+        ><span class="bpmnView-title-public-value">{{ projectData.name }}</span>
+        <span class="bpmnView-title-public-label">创建时间:</span
+        ><span class="bpmnView-title-public-value">{{ projectData.createTime }}</span>
       </div>
     </div>
     <div class="bpmnView-process">
       <span class="bpmn-Main-title">BPMN流程</span>
-      <bpmn-editor key="processInfomation" :pelatteVisible="false"
-                   :headerVisible="false"
-                   :linterToggle="false"
-                   :xml="projectData.content" />
+      <bpmn-editor
+        key="processInfomation"
+        :pelatteVisible="false"
+        :headerVisible="false"
+        :linterToggle="false"
+        :xml="projectData.content"
+      />
     </div>
   </div>
 </template>

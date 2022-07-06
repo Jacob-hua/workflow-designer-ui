@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="新建工作流" :visible="visible" @close="onClose" width="35%" custom-class="addProject">
+  <el-dialog title="新建工作流" :visible="visible" @close="onClose">
     <el-form label-position="right" label-width="80px" ref="formData" :model="formData" :rules="formRules">
       <el-form-item label="应用项目" prop="ascription">
         <el-col :span="24">
@@ -113,16 +113,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.from-item {
-  display: flex;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.from-item > span {
-  width: 100px;
-  height: 40px;
-  line-height: 40px;
-}
+<style scoped lang="scss">
+@import '../index.scss'
 </style>

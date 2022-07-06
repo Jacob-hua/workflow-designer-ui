@@ -1,16 +1,10 @@
 <template>
-  <el-dialog :title="title"
-             :visible="visible"
-             width="90%"
-             @close="onClose">
-    <div class="visible-main">
-      <bpmnJsELe :projectData="projectData"
-                 v-if="visible"></bpmnJsELe>
+  <el-dialog :title="title" :visible="visible" @close="onClose" fullscreen>
+    <div class="editor-wrapper">
+      <bpmnJsELe :projectData="projectData" v-if="visible"></bpmnJsELe>
     </div>
-    <span slot="footer"
-          class="dialog-footer">
-      <el-button type="primary"
-                 @click="onPublish">发布</el-button>
+    <span slot="footer">
+      <el-button type="primary" @click="onPublish">发布</el-button>
       <el-button @click="onSave">保存</el-button>
       <el-button @click="onCancel">取消</el-button>
     </span>
@@ -18,11 +12,7 @@
 </template>
 
 <script>
-import {
-  updateWorkFlow,
-  createWorkFlow,
-  publishWorkflow,
-} from '@/api/managerWorkflow'
+import { updateWorkFlow, createWorkFlow, publishWorkflow } from '@/api/managerWorkflow'
 import bpmnJsELe from '@/view/bpmnJsELe/index.vue'
 import { mapState } from 'vuex'
 
@@ -95,7 +85,7 @@ export default {
         if (this.projectData.id) {
           promise = updateWorkFlow(this.processFormData)
         } else {
-        // 如果projectData不存在id，则走发布的流程（）
+          // 如果projectData不存在id，则走发布的流程（）
           promise = publishWorkflow(this.processFormData)
         }
         const { errorInfo } = await Promise.resolve(promise)
@@ -153,8 +143,8 @@ export default {
 }
 </script>
 
-<style scoped>
-.visible-main {
-  height: 80vh;
+<style scoped lang="scss">
+.editor-wrapper {
+  height: 100%;
 }
 </style>
