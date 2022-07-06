@@ -1,0 +1,15 @@
+@mixin formDialog {
+  width: 580px;
+
+  .el-dialog__body {
+    padding: 30px 100px 30px 100px;
+  }
+
+  .el-select {
+    width: 100%;
+  }
+
+  .el-cascader {
+    width: 100%;
+  }
+}
