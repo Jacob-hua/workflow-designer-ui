@@ -187,7 +187,12 @@ export default {
             item.list.forEach(col => {
               if (col.variable.includes('$')) {
                 let character  = col.variable.split('$')[1]
-                this.form[col.id] = (res.result)[character]
+                if (this.form.id === character) {
+                  this.form[col.id] = (res.result)[character]
+                }
+                // else {
+                //   this.form[character] = (res.result)[character]
+                // }
               }
             })
           })
