@@ -181,7 +181,6 @@ export default {
         currentData: {},
         ascription: 'public',
         business: '',
-        createBy: '',
         numberCode: '',
         name: '',
         docName: '',

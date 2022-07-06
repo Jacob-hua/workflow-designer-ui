@@ -163,7 +163,6 @@ export default {
           tenantId: this.tenantId,
           ascription: 'public',
           business: '',
-          createBy: '',
           numberCode: '',
           name: '',
           docName: docName,
