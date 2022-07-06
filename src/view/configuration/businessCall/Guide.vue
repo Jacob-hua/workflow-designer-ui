@@ -109,10 +109,10 @@ export default {
 
 <style scoped lang="scss">
 .next {
-  @include infoPrimaryBtn
+  @include primaryBtn;
 }
 .cancel {
-  @include infoCancelBtn
+  @include cancelBtn;
 }
 .dialog-footer {
   display: flex;
