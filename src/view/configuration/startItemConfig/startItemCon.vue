@@ -23,8 +23,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveTag">保 存</el-button>
-        <el-button @click="dialogVisible2= false">取 消</el-button>
+        <el-button class="savebtn" type="primary" @click="saveTag">保 存</el-button>
+        <el-button class="cancelbtn" @click="dialogVisible2= false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -435,6 +435,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.savebtn {
+  @include primaryBtn;
+}
+.cancelbtn {
+  @include cancelBtn;
+}
 .addDefine {
   cursor: pointer;
   width: 78px;
