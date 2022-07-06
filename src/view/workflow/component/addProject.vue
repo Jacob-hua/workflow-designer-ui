@@ -114,7 +114,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '../index.scss';
+/deep/ .el-dialog {
+  @include formDialog;
+}
 
 .submit {
   @include primaryBtn;
