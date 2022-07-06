@@ -87,6 +87,7 @@
       </el-button>
     </div>
     </div>
+
     <div v-show='props.dataType ==="dynamic"'>
       <el-form-item label="第三方API">
         <el-select v-model="interFace"
@@ -103,6 +104,9 @@
           <div>{{variable}}</div>
           <el-input v-model="variableOption[index][variable]" ></el-input>
         </div>
+      </el-form-item>
+      <el-form-item label="系统变量">
+        <el-input class="input" placeholder="$符号+变量名" v-model="props.variable"></el-input>
       </el-form-item>
     </div>
   </div>

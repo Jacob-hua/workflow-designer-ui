@@ -5,24 +5,25 @@
       <div class="PublicForm-title">
       </div>
       <div class="datePick">
-        <el-select style="margin-right: 15px" v-model="projectCode">
+       <span class="text">项目选择</span><el-select v-model="projectCode">
           <el-option v-for="{id, label, value} in rootOrganizations"
                      :key="id"
                      :label="label"
                      :value="value"></el-option>
         </el-select>
-        <el-cascader v-model="projectValue"
+        <span class="text">业务选择</span> <el-cascader v-model="projectValue"
                      :key="projectCode"
                      :options="rootOrganizationChildrenAndAll(projectCode)"
                      :props='cascaderProps'></el-cascader>
-        <span class="datePickTitle">创建时间</span>
+        <span class="text">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
                         start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
+<!--        <div class="PublicForm-title-input">-->
+          <span class="text">表单</span> <el-input style="width: 260px" v-model="input" placeholder="请输入表单名称或编号"></el-input>
+<!--        </div>-->
       </div>
-      <div class="PublicForm-title-input">
-        <el-input v-model="input" placeholder="请输入表单名称或编号"></el-input>
-      </div>
+
 
       <div class="PublicForm-title-input">
         <el-button class="search" @click="getManyData()">查询</el-button>
@@ -392,6 +393,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.text {
+  width: 56px;
+  height: 14px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #FFFFFF;
+  line-height: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
 /deep/ .el-dialog {
   @include formDialog;
 }

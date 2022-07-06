@@ -7,11 +7,9 @@
           start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
       </div>
+        <span class="datePickTitle">表单</span> <el-input style="width: 260px" v-model="input" placeholder="请输入内容"></el-input>
       <div class="PublicForm-title-input">
-        <el-input v-model="input" placeholder="请输入内容"></el-input>
-      </div>
-      <div class="PublicForm-title-input">
-        <el-button type="primary" @click="getManyData()">查询</el-button>
+        <el-button class="primary" type="primary" @click="getManyData()">查询</el-button>
       </div>
     </div>
     <div class="PublicForm-title-button">
@@ -231,7 +229,10 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.primary {
+  @include primaryBtn;
+}
 .boxBtn {
   font-size: 14px;
   color: #009EFB;
@@ -249,9 +250,14 @@
     display: inline-block;
   }
   .datePickTitle {
-    display: inline-block;
+    width: 56px;
+    height: 14px;
     font-size: 14px;
-    margin-right: 20px;
+    font-weight: 400;
+    color: #FFFFFF;
+    line-height: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
   }
   .PublicForm-title-input {
     display: inline-block;
