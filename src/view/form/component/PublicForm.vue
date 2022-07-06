@@ -305,7 +305,7 @@
     border: 1px solid #666666;
     min-height: 170px;
     display: inline-block;
-    width: 334px;
+    width: 330px;
     margin-right: 40px;
     margin-bottom: 40px;
   }
