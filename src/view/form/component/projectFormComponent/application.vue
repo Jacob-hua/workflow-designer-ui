@@ -29,8 +29,9 @@
           </div>
           <el-dialog title="表单" :visible.sync="dialogVisibleModal" width="35%" custom-class="dialogVisible1" append-to-body>
             <div class="container">
-              <el-form ref="form" :rules="rules" :model="postData">
-                <el-form-item style="margin-left: 12px" label="应用项目" prop="ascription">
+              <el-form ref="form" :rules="rules" label-width="80px" label-position="right"
+                       :model="postData">
+                <el-form-item label="应用项目" prop="ascription">
                   <el-select v-model="postData.ascription">
                     <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
                   </el-select>
@@ -246,45 +247,21 @@ export default {
   padding-top: 15px;
   padding-left: 180px;
 }
-.container {
-  padding-left: 80px;
-}
 .diologMain-left {
   flex: 2;
-  /*background-color: #f3f3f3;*/
   text-align: center;
   height: 695px;
 }
 
 .diologMain-right {
   flex: 8;
-  /*background-color: #f3f3f3;*/
   margin-left: 20px;
   height: 695px;
   padding: 0px 20px;
 }
->>> .el-select {
-  width: 300px;
-}
->>> .el-input {
-  width: 300px;
-}
->>> .from-item {
-  margin-left: 15px;
-  margin-top: 20px;
-}
->>> .el-input__inner {
-  margin-left: 10px;
-}
-
-.diologMain-left /deep/ .el-input .el-input__inner {
-  border-radius: 20px;
-}
-
 .energyList {
   margin-top: 30px;
 }
-
 .energyList-item {
   width: 220px;
   height: 44px;
@@ -293,16 +270,13 @@ export default {
   margin: 0 auto;
   cursor: pointer;
 }
-
 .checkPro {
   border-color: #0066cc;
   color: #0066cc;
 }
-
 .processList {
   height: 600px;
 }
-
 .processList-item {
   width: 290px;
   height: 178px;
@@ -322,7 +296,6 @@ export default {
 .processList-item span {
    color:  #fff;
  }
-
 .processList-item-detail {
   position: absolute;
   right: 20px;
@@ -335,17 +308,9 @@ export default {
   font-size: 14px;
   color: #000000;
 }
-
 .processList-item-button {
   text-align: center;
 }
-
-.processList-item-button /deep/ .el-button {
-  height: 30px;
-  line-height: 30px;
-  padding: 0px 20px;
-}
-
 .process-page {
   text-align: right;
   margin-top: 20px;

@@ -110,10 +110,4 @@ export default {
 
 <style scoped>
 
->>> .el-form-item {
-  width: 80%;
-}
->>> .el-select {
-  width: 350px;
-}
 </style>

@@ -68,7 +68,4 @@ export default {
 </script>
 
 <style scoped>
-  /deep/ .el-form-item {
-    width: 80%;
-  }
 </style>
