@@ -1,5 +1,5 @@
 <template>
-  <div class="bpmnEle">
+  <div class="bpmn-wrapper">
     <bpmn-editor :id="projectData.code" :name="projectData.name" :xml="projectData.content" />
     <bpmn-properties-panel />
   </div>
@@ -106,8 +106,8 @@ export default {
 }
 </script>
 
-<style scoped>
-.bpmnEle {
+<style scoped lang="scss">
+.bpmn-wrapper {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
