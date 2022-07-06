@@ -172,7 +172,16 @@ pipeline {
                         "unitest-number": ${unitTestNumber},
                         "bugs":${bugs},
                         "security-issue":${vulnerabilities}
-                    } 	
+                    } 
+					"deployment":{
+                        “hostName”:"k8s.isact.com",
+                        "IP":"192.100.30.188",
+                        "platform":"K8S"
+                        "deploymentAccount":"root",
+                        "applicationType": "front-end",
+                        "onCloud":"no",
+                        "operationSystem":"Docker"
+                    }	
                 }
 				"""
 				result = postRequest.sendPostRequest(body,"dev")
