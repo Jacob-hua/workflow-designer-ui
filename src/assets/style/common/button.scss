@@ -18,7 +18,7 @@
 
 @mixin resetBtn {
   display: flex;
-  color: #fff;
+  color: #fff !important;
   width: 79px;
   height: 34px;
   padding: 0;
@@ -38,7 +38,7 @@
   height: 34px;
   font-size: 14px;
   line-height: 34px;
-  color: #fff;
+  color: #fff !important;
   padding: 0;
   border-color: #009EFB;
   background: #009EFB;

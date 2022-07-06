@@ -14,7 +14,7 @@
             <div class="describe">
               流程引擎工作台
               <div class="divider"></div>
-              <span>Workflow Engine Platform</span>
+              <span>Workflow Engine Platform</span>S
             </div>
           </div>
           <el-menu :default-active="$route.name" router @open="handleOpen" @close="handleClose" v-if="!status">
