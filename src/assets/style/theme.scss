@@ -20,7 +20,7 @@ svg[data-element-id] {
   background-color: $dialog-bg-color;
 }
 
-@mixin primaryBtn {
+@mixin primaryPlainBtn {
   font-size: 14px;
   color: #009EFB;
   width: 100px;
@@ -31,6 +31,7 @@ svg[data-element-id] {
   border-radius: 4px;
   cursor: pointer;
 }
+
 @mixin resetBtn {
   color: #fff;
   width: 79px;
@@ -42,7 +43,7 @@ svg[data-element-id] {
   cursor: pointer;
 }
 
-@mixin infoPrimaryBtn {
+@mixin primaryBtn {
   width: 84px;
   height: 34px;
   font-size: 14px;
@@ -52,8 +53,12 @@ svg[data-element-id] {
   margin-right: 14px;
   border-radius: 4px;
   cursor: pointer;
+  &:hover {
+    background-color: #007DC7;
+  }
 }
-@mixin infoCancelBtn {
+
+@mixin cancelBtn {
   width: 84px;
   height: 34px;
   font-size: 14px;
