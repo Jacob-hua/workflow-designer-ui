@@ -378,8 +378,7 @@
 
 <style scoped lang="scss">
 .boxBtn {
-@include createOrRerenfece
-
+  @include primaryBtn
 }
 .search {
   width: 79px;
