@@ -1,5 +1,6 @@
 $tooltip-bg-color: #212739 !default;
-$tooltip-border-color: #999999 !default; 
+$tooltip-border-color: #999999 !default;
+$tooltip-color: #ffffff !default;
 
 .el-tooltip:focus:hover,
 .el-tooltip:focus:not(.focusing) {
@@ -95,6 +96,7 @@ $tooltip-border-color: #999999 !default;
 .el-tooltip__popper.is-light {
   background: $tooltip-bg-color;
   border: 1px solid $tooltip-border-color;
+  color: $tooltip-color;
 }
 .el-tooltip__popper.is-light[x-placement^='top'] .popper__arrow {
   border-top-color: $tooltip-border-color;
