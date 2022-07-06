@@ -111,9 +111,6 @@
 </template>
 
 <script>
-// import {
-//   format
-// } from '@/assets/js/unit.js'
 import projectFormDiolog from './projectFormComponent/index.vue'
 import detailsDiologForm from './details.vue'
 import application from './projectFormComponent/application.vue'
@@ -507,10 +504,10 @@ export default {
 }
 
 .active {
-  background-color: #030303;
-  color: white;
-  font-weight: 600;
-  border-top: 2px solid #176CF4;
+    background-color: #030303;
+    color: white;
+    font-weight: 600;
+    border-top: 2px solid #176CF4;
 }
 
 .home-table {
