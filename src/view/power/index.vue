@@ -86,9 +86,9 @@
   }
 </script>
 
-<style scoped="scoped">
-  .power {
-    padding: 20px 30px;
+<style scoped lang="scss">
+  /deep/ .el-tabs__content {
+    padding: 30px 40px;
   }
   .projectHeader {
     display: inline-block;
