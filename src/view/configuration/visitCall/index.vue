@@ -314,6 +314,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 button {
   font-size: 14px;
   margin-left: 10px;
