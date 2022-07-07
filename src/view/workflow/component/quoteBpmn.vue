@@ -83,7 +83,7 @@ export default {
           status: 'enabled',
           ascription: 'public',
           business: this.business,
-          createBy: this.userInfo.name,
+          createBy: this.userInfo.account,
           name: this.input,
           startTime: this.valueDate[0],
           endTime: this.valueDate[1],
