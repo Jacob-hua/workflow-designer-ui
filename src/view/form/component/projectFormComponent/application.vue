@@ -222,6 +222,8 @@ export default {
     open(item) {
       this.currentData = item
       this.dialogVisibleModal = true
+      this.postData.name = ''
+      this.postData.business = ''
     },
     changEnergy(value) {
       this.getData.systemType = value
