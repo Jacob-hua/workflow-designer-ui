@@ -342,10 +342,6 @@ button {
   font-weight: 400;
   font-style: normal
 }
-.home-table-main {
-  padding: 10px;
-  border: 1px solid #666666;
-}
 
 .fileStyle {
   color: #007edb;
