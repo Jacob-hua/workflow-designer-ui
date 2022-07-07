@@ -24,9 +24,11 @@
             </el-menu-item>
           </el-menu>
         </el-aside>
-        <el-main>
-          <router-view></router-view>
-        </el-main>
+        <div class="main">
+          <el-main>
+            <router-view></router-view>
+          </el-main>
+        </div>
       </el-container>
     </el-container>
   </div>
@@ -227,12 +229,17 @@ $aside-logo-height: 288px;
   color: $menu-color;
 }
 
-.el-main {
-  padding: 40px 20px 0px 20px;
-  overflow: auto;
-
-  & > div:first-child {
-    height: 100vh;
+.main {
+  width: 100%;
+  
+  ::-webkit-scrollbar {
+    display: none;
   }
+}
+
+.el-main {
+  padding: 40px 20px;
+  overflow: auto;
+  height: calc(100vh - 40px);
 }
 </style>
