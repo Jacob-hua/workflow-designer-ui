@@ -194,6 +194,7 @@ export default {
       }
       if(this.postData.id) {
         formData.append('sourceId', this.postData.sourceId)
+        formData.append('id', this.postData.id)
       }
       formData.append('name', this.postData.name)
       formData.append('docName', this.postData.name + '.json')
