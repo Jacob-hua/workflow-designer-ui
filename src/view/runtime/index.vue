@@ -62,63 +62,59 @@
         </div>
       </div>
     </div>
-    <div class="runtime-check">
-      <el-radio-group v-model="searchForm.taskType" @change="onTaskTypeChange">
-        <el-radio v-for="({ label, display }, index) in taskTypeRadios" :key="index" :label="label">
-          {{ display }}
-        </el-radio>
-      </el-radio-group>
-    </div>
-    <div class="runtime-table">
-      <div class="home-table-main">
-        <el-table :data="newTasks">
-          <el-table-column type="index" label="序号" align="center"> </el-table-column>
-          <el-table-column prop="processDeployName" label="名称" align="center" show-overflow-tooltip="" />
-          <el-table-column prop="displayEnergyType" label="部署类型" align="center" />
-          <el-table-column prop="starter" label="发起人" align="center" />
-          <el-table-column prop="startTime" label="发起时间" align="center" />
-          <el-table-column label="执行进程" align="center" min-width="250">
-            <template slot-scope="{ row }">
-              <el-steps :active="row.displayTrackList.length" align-center process-status="success">
-                <el-step
-                  v-for="({ title, className, taskName }, index) in row.displayTrackList"
-                  icon="el-icon-edit"
-                  :key="index"
-                  :title="taskName"
-                  :description="title"
-                  :class="className"
-                ></el-step>
-              </el-steps>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center">
-            <template slot-scope="{ row }">
-              <el-button v-if="row.canExecute" @click.native.prevent="onExecute(row)" type="text" size="small">
-                执行
-              </el-button>
-              <el-button
-                @click.native.prevent="onDetail(row)"
-                type="text"
-                size="small"
-                v-role="{ id: 'RunTimeLook', type: 'button', business: searchForm.ascription }"
-              >
-                查看
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <div class="home-table-page">
-        <el-pagination
-          :current-page.sync="pageInfo.page"
-          :page-size.sync="pageInfo.limit"
-          :total="pageInfo.total"
-          @current-change="onPageChange"
-          @size-change="onPageSizeChange"
-          layout="prev, pager, next, jumper"
-        >
-        </el-pagination>
-      </div>
+    <div class="content-wrapper">
+      <el-tabs v-model="searchForm.taskType" type="border-card" @tab-click="onTaskTypeChange">
+        <el-tab-pane v-for="({ label, display }, index) in taskTypeRadios" :key="index" :name="label">
+          <span slot="label">{{ display }}</span>
+          <div>
+            <el-table :data="newTasks">
+              <el-table-column type="index" label="序号" align="center"> </el-table-column>
+              <el-table-column prop="processDeployName" label="名称" align="center" show-overflow-tooltip="" />
+              <el-table-column prop="displayEnergyType" label="部署类型" align="center" />
+              <el-table-column prop="starter" label="发起人" align="center" />
+              <el-table-column prop="startTime" label="发起时间" align="center" />
+              <el-table-column label="执行进程" align="center" min-width="250">
+                <template slot-scope="{ row }">
+                  <el-steps :active="row.displayTrackList.length" align-center process-status="success">
+                    <el-step
+                      v-for="({ title, className, taskName }, index) in row.displayTrackList"
+                      icon="el-icon-edit"
+                      :key="index"
+                      :title="taskName"
+                      :description="title"
+                      :class="className"
+                    ></el-step>
+                  </el-steps>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" align="center">
+                <template slot-scope="{ row }">
+                  <el-button v-if="row.canExecute" @click.native.prevent="onExecute(row)" type="text" size="small">
+                    执行
+                  </el-button>
+                  <el-button
+                    @click.native.prevent="onDetail(row)"
+                    type="text"
+                    size="small"
+                    v-role="{ id: 'RunTimeLook', type: 'button', business: searchForm.ascription }"
+                  >
+                    查看
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-pagination
+              :current-page.sync="pageInfo.page"
+              :page-size.sync="pageInfo.limit"
+              :total="pageInfo.total"
+              @current-change="onPageChange"
+              @size-change="onPageSizeChange"
+              layout="prev, pager, next, jumper"
+            >
+            </el-pagination>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <runtime-add
       :dialogVisible="runtimeAddVisible"
@@ -200,15 +196,15 @@ export default {
         },
         hang: {
           title: '挂起',
-          className: 'tableStepHang',
+          className: 'table-step-hang',
         },
         rejected: {
           title: '驳回',
-          className: 'tableStepDeleted',
+          className: 'table-step-rejected',
         },
         deleted: {
           title: '删除',
-          className: 'tableStepDeleted',
+          className: 'table-step-rejected',
         },
       },
     }
@@ -404,6 +400,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import './index.scss';
+
 .search-wrapper {
   height: 106px;
   background-color: $card-bg-color;
@@ -493,96 +491,12 @@ export default {
   }
 }
 
-.runtime-check {
-  margin-top: 40px;
-}
-
-.runtime-table {
-  padding: 10px;
-  border: 1px solid #666666;
+.content-wrapper {
   margin-top: 20px;
 }
 
-.runtime-table .home-table-page {
+.el-pagination {
   text-align: right;
-  padding: 20px 0px;
-}
-
-.disableStyle {
-  cursor: not-allowed;
-  color: gray;
-}
-
-/deep/ .el-table {
-  .el-steps {
-    position: relative;
-    line-height: 23px;
-    top: 0px;
-
-    .tableStepOnly {
-      .el-step__icon {
-        background-color: #0066cc !important;
-      }
-    }
-
-    .tableStepDeleted {
-      .el-step__icon {
-        background-color: red !important;
-      }
-    }
-
-    .tableStepHang {
-      .el-step__icon {
-        background-color: green !important;
-      }
-    }
-
-    .el-step__head.is-finish {
-      .el-step__icon {
-        background-color: #66ccff;
-      }
-
-      .el-step__line {
-        height: 2px;
-        border-color: #66ccff;
-      }
-    }
-
-    .el-step__head {
-      margin-top: 20px;
-    }
-
-    .el-step__icon-inner {
-      display: none;
-    }
-
-    .el-step__line {
-      height: 2px;
-    }
-
-    .el-step__icon {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: #cccccc;
-    }
-
-    .el-step__line-inner {
-      border-width: 1px !important;
-      margin-top: 0px;
-    }
-
-    .el-step__title {
-      color: #858585 !important;
-      font-size: 12px;
-    }
-
-    .el-step__description {
-      font-size: 12px;
-      position: absolute;
-      top: 5px;
-      width: 100%;
-    }
-  }
+  padding: 34px 0;
 }
 </style>
