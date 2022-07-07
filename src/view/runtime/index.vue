@@ -1,118 +1,120 @@
 <template>
-  <div class="runtime">
-    <div class="runtime-filter">
-      <div class="projectSelect marginRight20">
-        <el-select v-model="searchForm.ascription">
-          <el-option
-            v-for="{ id, label, value } in rootOrganizations"
-            :key="id"
-            :label="label"
-            :value="value"
-          ></el-option>
-        </el-select>
-      </div>
-      <div class="businessSelect marginRight20">
-        <el-cascader
-          v-model="searchForm.business"
-          :key="searchForm.ascription"
-          :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
-          :props="cascaderProps"
-          @change="onBusinessChange"
-        ></el-cascader>
-      </div>
-      <div class="datePick">
-        <span class="datePickTitle">时间</span>
-        <el-date-picker
-          v-model="searchForm.valueDate"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="——"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
-          :clearable="false"
-          @change="onTimeRangeChange"
-        >
-        </el-date-picker>
-      </div>
+  <div>
+    <div class="search-wrapper">
+      <el-form inline>
+        <el-form-item label="选择项目">
+          <el-select v-model="searchForm.ascription">
+            <el-option
+              v-for="{ id, label, value } in rootOrganizations"
+              :key="id"
+              :label="label"
+              :value="value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="选择业务">
+          <el-cascader
+            v-model="searchForm.business"
+            :key="searchForm.ascription"
+            :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
+            :props="cascaderProps"
+            @change="onBusinessChange"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="发起时间">
+          <el-date-picker
+            v-model="searchForm.valueDate"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="——"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :default-time="['00:00:00', '23:59:59']"
+            :clearable="false"
+            @change="onTimeRangeChange"
+          >
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
     </div>
-    <div class="runtime-home">
-      <div class="runtime-home-title">
-        <div class="data" v-for="({ label, value }, index) in workflowStatistics" :key="index">
-          <div class="title">
-            <b class="value">{{ value }}</b>
+    <div class="statistics-wrapper">
+      <div>
+        <div class="data-wrapper" v-for="({ label, value, icon }, index) in workflowStatistics" :key="index">
+          <div class="icon">
+            <img :src="icon" />
           </div>
-          <div class="titLabel">{{ label }}</div>
+          <div class="title">
+            {{ value }}
+          </div>
+          <div class="label">
+            {{ label }}
+          </div>
         </div>
       </div>
-      <div class="runtime-home-button" v-role="{ id: 'RunTimeAdd', type: 'button', business: searchForm.ascription }">
-        <div class="button1" :class="searchForm.ascription ? '' : 'disableStyle'" @click="onAddTicket">
-          <div class="title">
-            <i class="el-icon-circle-plus"></i>
+      <div v-role="{ id: 'RunTimeAdd', type: 'button', business: searchForm.ascription }">
+        <div class="data-wrapper" @click="onAddTicket">
+          <div class="icon">
+            <img :src="require('../../assets/image/runtime/create.svg')" />
           </div>
-          <div class="titLabel">创建工单</div>
+          <div class="label">创建工单</div>
         </div>
       </div>
     </div>
-    <div class="runtime-check">
-      <el-radio-group v-model="searchForm.taskType" @change="onTaskTypeChange">
-        <el-radio v-for="({ label, display }, index) in taskTypeRadios" :key="index" :label="label">
-          {{ display }}
-        </el-radio>
-      </el-radio-group>
-    </div>
-    <div class="runtime-table">
-      <div class="home-table-main">
-        <el-table :data="newTasks">
-          <el-table-column type="index" label="序号" align="center"> </el-table-column>
-          <el-table-column prop="processDeployName" label="名称" align="center" show-overflow-tooltip="" />
-          <el-table-column prop="displayEnergyType" label="部署类型" align="center" />
-          <el-table-column prop="starter" label="发起人" align="center" />
-          <el-table-column prop="startTime" label="发起时间" align="center" />
-          <el-table-column label="执行进程" align="center" min-width="250">
-            <template slot-scope="{ row }">
-              <el-steps :active="row.displayTrackList.length" align-center process-status="success">
-                <el-step
-                  v-for="({ title, className, taskName }, index) in row.displayTrackList"
-                  icon="el-icon-edit"
-                  :key="index"
-                  :title="taskName"
-                  :description="title"
-                  :class="className"
-                ></el-step>
-              </el-steps>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center">
-            <template slot-scope="{ row }">
-              <el-button v-if="row.canExecute" @click.native.prevent="onExecute(row)" type="text" size="small">
-                执行
-              </el-button>
-              <el-button
-                @click.native.prevent="onDetail(row)"
-                type="text"
-                size="small"
-                v-role="{ id: 'RunTimeLook', type: 'button', business: searchForm.ascription }"
-              >
-                查看
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <div class="home-table-page">
-        <el-pagination
-          :current-page.sync="pageInfo.page"
-          :page-size.sync="pageInfo.limit"
-          :total="pageInfo.total"
-          @current-change="onPageChange"
-          @size-change="onPageSizeChange"
-          layout="prev, pager, next, jumper"
-        >
-        </el-pagination>
-      </div>
+    <div class="content-wrapper">
+      <el-tabs v-model="searchForm.taskType" type="border-card" @tab-click="onTaskTypeChange">
+        <el-tab-pane v-for="({ label, display }, index) in taskTypeRadios" :key="index" :name="label">
+          <span slot="label">{{ display }}</span>
+          <div>
+            <el-table :data="newTasks">
+              <el-table-column type="index" label="序号" align="center"> </el-table-column>
+              <el-table-column prop="processDeployName" label="名称" align="center" show-overflow-tooltip="" />
+              <el-table-column prop="displayEnergyType" label="部署类型" align="center" />
+              <el-table-column prop="starter" label="发起人" align="center" />
+              <el-table-column prop="startTime" label="发起时间" align="center" />
+              <el-table-column label="执行进程" align="center" min-width="250">
+                <template slot-scope="{ row }">
+                  <el-steps :active="row.displayTrackList.length" align-center process-status="success">
+                    <el-step
+                      v-for="({ title, className, taskName }, index) in row.displayTrackList"
+                      icon="el-icon-edit"
+                      :key="index"
+                      :title="taskName"
+                      :description="title"
+                      :class="className"
+                    ></el-step>
+                  </el-steps>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" align="center">
+                <template slot-scope="{ row }">
+                  <el-button v-if="row.canExecute" @click.native.prevent="onExecute(row)" type="text" size="small">
+                    执行
+                  </el-button>
+                  <el-button
+                    @click.native.prevent="onDetail(row)"
+                    type="text"
+                    size="small"
+                    v-role="{ id: 'RunTimeLook', type: 'button', business: searchForm.ascription }"
+                  >
+                    查看
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-pagination
+              :current-page.sync="pageInfo.page"
+              :page-size.sync="pageInfo.limit"
+              :total="pageInfo.total"
+              @current-change="onPageChange"
+              @size-change="onPageSizeChange"
+              layout="prev, pager, next, jumper"
+            >
+            </el-pagination>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <runtime-add
       :dialogVisible="runtimeAddVisible"
@@ -194,15 +196,15 @@ export default {
         },
         hang: {
           title: '挂起',
-          className: 'tableStepHang',
+          className: 'table-step-hang',
         },
         rejected: {
           title: '驳回',
-          className: 'tableStepDeleted',
+          className: 'table-step-rejected',
         },
         deleted: {
           title: '删除',
-          className: 'tableStepDeleted',
+          className: 'table-step-rejected',
         },
       },
     }
@@ -214,14 +216,17 @@ export default {
     workflowStatistics() {
       return [
         {
+          icon: require('../../assets/image/runtime/executed.svg'),
           label: '执行工作流总数',
           value: this.workflowCounts.executionTotalProcessCount,
         },
         {
+          icon: require('../../assets/image/runtime/executing.svg'),
           label: '执行中',
           value: this.workflowCounts.executionInProcessCount,
         },
         {
+          icon: require('../../assets/image/runtime/completed.svg'),
           label: '已完成数量',
           value: this.workflowCounts.executionCompleteCount,
         },
@@ -395,179 +400,103 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.runtime {
-  margin: 20px;
-  height: 100vh;
+@import './index.scss';
+
+.search-wrapper {
+  height: 106px;
+  background-color: $card-bg-color;
+
+  @include searchForm;
+
+  .el-form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 43px;
+  }
+
+  .el-form-item {
+    margin-bottom: 0;
+  }
 }
 
-.runtime-filter {
+.statistics-wrapper {
   display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+  width: 100%;
+
+  & > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background-color: $card-bg-color;
+    color: $font-color;
+
+    img {
+      width: 32px;
+      height: 34px;
+    }
+
+    .data-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      line-height: 24px;
+      font-weight: 400;
+      padding: 28px 0px;
+    }
+
+    .title {
+      margin-top: 16px;
+    }
+
+    .label {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+      color: #6e7e88;
+      margin-top: 10px;
+    }
+
+    .icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #d4fdd9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &:first-child {
+      margin-right: 20px;
+      flex-grow: 3;
+    }
+
+    &:last-child {
+      margin-left: 20px;
+      flex-grow: 1;
+
+      .data-wrapper {
+        cursor: pointer;
+      }
+
+      .icon {
+        background-color: #009efb;
+      }
+    }
+  }
 }
 
-.runtime-filter ::v-deep .el-select .el-input__inner {
-  border: 1px solid #000;
-}
-
-.runtime-filter ::v-deep .el-cascader .el-input__inner {
-  border: 1px solid #000;
-}
-
-.marginRight20 {
-  margin-right: 20px;
-}
-
-.button1 {
-  cursor: pointer;
-}
-
-.datePickTitle {
-  font-size: 14px;
-  color: #000000;
-  margin-right: 20px;
-}
-
-.datePick ::v-deep .el-date-editor {
-  border: 1px solid #000000;
-}
-
-.runtime-home {
-  margin-top: 40px;
-  display: flex;
-}
-
-.runtime-home-title {
-  width: 1286px;
-  height: 142px;
-  background-color: #f2f2f2;
-  display: flex;
-}
-
-.runtime-home-title .data {
-  flex: 1;
-  text-align: center;
-}
-
-.runtime-home-title .data .title {
-  font-size: 36px;
-  height: 100px;
-  line-height: 100px;
-}
-
-.runtime-home-button {
-  width: 368px;
-  height: 142px;
-  background-color: #f2f2f2;
-  margin-left: 20px;
-  display: flex;
-}
-
-.runtime-home-button > div {
-  flex: 1;
-  text-align: center;
-  padding: 20px 0px;
-}
-
-.runtime-home-button .title {
-  font-size: 36px;
-  height: 80px;
-  line-height: 80px;
-}
-
-.titLabel {
-  font-size: 14px;
-}
-
-.runtime-check {
-  margin-top: 40px;
-}
-
-.runtime-table {
-  padding: 10px;
-  border: 1px solid #666666;
+.content-wrapper {
   margin-top: 20px;
 }
 
-.runtime-table .home-table-page {
+.el-pagination {
   text-align: right;
-  padding: 20px 0px;
-}
-
-.disableStyle {
-  cursor: not-allowed;
-  color: gray;
-}
-
-/deep/ .el-table {
-  .el-steps {
-    position: relative;
-    line-height: 23px;
-    top: 0px;
-
-    .tableStepOnly {
-      .el-step__icon {
-        background-color: #0066cc !important;
-      }
-    }
-
-    .tableStepDeleted {
-      .el-step__icon {
-        background-color: red !important;
-      }
-    }
-
-    .tableStepHang {
-      .el-step__icon {
-        background-color: green !important;
-      }
-    }
-
-    .el-step__head.is-finish {
-      .el-step__icon {
-        background-color: #66ccff;
-      }
-
-      .el-step__line {
-        height: 2px;
-        border-color: #66ccff;
-      }
-    }
-
-    .el-step__head {
-      margin-top: 20px;
-    }
-
-    .el-step__icon-inner {
-      display: none;
-    }
-
-    .el-step__line {
-      height: 2px;
-    }
-
-    .el-step__icon {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: #cccccc;
-    }
-
-    .el-step__line-inner {
-      border-width: 1px !important;
-      margin-top: 0px;
-    }
-
-    .el-step__title {
-      color: #858585 !important;
-      font-size: 12px;
-    }
-
-    .el-step__description {
-      // color: white ;
-      font-size: 12px;
-      position: absolute;
-      top: 5px;
-      width: 100%;
-    }
-  }
+  padding: 34px 0;
 }
 </style>

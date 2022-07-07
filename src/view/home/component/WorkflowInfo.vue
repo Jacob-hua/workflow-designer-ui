@@ -1,40 +1,36 @@
 <template>
   <div>
-    <div class="dialogVisible2-left">
-      <div class="bpmn-Main">
-        <ProcessInformation
-          :processDisplayInfo="processDisplayInfo"
-          :xml="xml"
-          @loaded="onLoaded"
-          @selectedShape="onSelectedShape"
-        />
-      </div>
-      <div class="bpmn-configure">
-        <div class="bpmn-configure-basic">
-          <div class="bpmn-configure-title">工单分配</div>
-          <div class="bpmn-configure-Main">
-            <div class="bpmn-configure-Main-item">
-              <span>名<span style="visibility: hidden">占位</span>称</span>: <span>{{ taskInfo.name }}</span>
-            </div>
-            <div class="bpmn-configure-Main-item">
-              <span>绑定岗位</span>: <span>{{ taskInfo.group }}</span>
-            </div>
-            <div class="bpmn-configure-Main-item">
-              <span>绑定人员</span>: <span>{{ taskInfo.assignee }}</span>
-            </div>
+    <ProcessInformation
+      :processDisplayInfo="processDisplayInfo"
+      :xml="xml"
+      @loaded="onLoaded"
+      @selectedShape="onSelectedShape"
+    />
+    <div class="ticket-wrapper">
+      <div class="ticket-info">
+        <div class="title">工单分配</div>
+        <div class="content-wrapper info">
+          <div>
+            <span>名称:</span><span>{{ taskInfo.name }}</span>
+          </div>
+          <div>
+            <span>绑定岗位:</span><span>{{ taskInfo.group }}</span>
+          </div>
+          <div>
+            <span>绑定人员:</span><span>{{ taskInfo.assignee }}</span>
           </div>
         </div>
-        <div class="bpmn-configure-form">
-          <div class="bpmn-configure-title">工单分配-表单内容</div>
-          <div class="bpmn-configure-Main">
-            <div v-if="formShow">
-              <span class="formRemove" v-if="canRemoveForm" @click="onRemoveForm">移除表单</span>
-              <div class="formShowForm">
-                <preview :itemList="formContent.fields" :formConf="formContent.config"></preview>
-              </div>
+      </div>
+      <div class="ticket-form">
+        <div class="title">工单分配-表单内容</div>
+        <div class="content-wrapper form">
+          <div v-if="formShow">
+            <span v-if="canRemoveForm" @click="onRemoveForm">移除表单</span>
+            <div>
+              <preview :itemList="formContent.fields" :formConf="formContent.config"></preview>
             </div>
-            <span v-else class="noneForm"> 当前未关联表单 </span>
           </div>
+          <span v-else> 当前未关联表单 </span>
         </div>
       </div>
     </div>
@@ -175,113 +171,51 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-::v-deep .el-dialog__body {
-  max-height: 90vh;
-  word-break: normal;
-}
-.details-header {
-  margin-top: 20px;
-}
-.inputSelect {
-  margin-right: 20px;
-  display: inline-block;
-  margin-left: 20px;
-}
-.inputSelect /deep/ .el-input__inner {
-  width: 180px;
-  height: 43px;
-  line-height: 43px;
-  padding: 0px 10px;
-  border: 1px solid black;
-}
-.frequency {
-  color: #0066cc;
-  font-weight: 700;
-}
-.detail-list {
-  margin-top: 30px;
-  /* display: flex; */
-  width: 1312px;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  /* height: 200px; */
-  overflow: auto;
-  white-space: nowrap;
-}
-.detail-list::-webkit-scrollbar {
-  width: 0px;
-  /* height: 2px; */
-}
-.detail-list-item {
-  position: relative;
-  display: inline-block;
-  width: 290px;
-  height: 165px;
-  border: 1px solid black;
-  padding: 20px 20px;
-  margin-right: 40px;
-}
-.detailsWord {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #0066cc;
-  cursor: pointer;
-}
-
-.detail-list-item .item-item {
-  line-height: 35px;
-  color: black;
-}
-
-::v-deep .el-dialog__footer {
-  text-align: center;
-}
-
-.bpmn-configure {
+<style scoped lang="scss">
+.ticket-wrapper {
   display: flex;
+  color: $font-color;
+
+  .title {
+    line-height: 40px;
+  }
+
+  .content-wrapper {
+    height: 200px;
+    padding: 20px 10px;
+    overflow: auto;
+    border: 1px solid $border-color;
+  }
 }
 
-.noneForm {
-  display: inline-block;
-  height: 160px;
-  width: 100%;
-  text-align: center;
-  line-height: 160px;
-}
-
-.details-footer-height {
-  height: 248px;
-}
-
-.bpmn-configure-title {
-  height: 40px;
-  line-height: 40px;
-}
-
-.bpmn-configure-basic {
+.ticket-info {
   flex: 1;
 }
 
-.bpmn-configure-form {
+.ticket-form {
   flex: 3;
   margin-left: 20px;
 }
 
-.bpmn-configure-Main {
-  height: 200px;
-  border: 1px solid #000000;
-  padding: 20px 10px;
-  overflow: auto;
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+
+  & > div {
+    font-size: 14px;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  & > div > span:first-child {
+    text-align: end;
+    width: 60px;
+    margin-right: 20px;
+  }
 }
 
-.bpmn-configure-Main-item {
-  margin-bottom: 20px;
-  color: black;
-}
-
-.formShowForm {
-  position: relative;
+.form {
 }
 </style>

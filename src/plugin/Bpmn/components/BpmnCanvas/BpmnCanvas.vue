@@ -88,6 +88,7 @@ export default {
   },
   methods: {
     initBpmn() {
+      this.iBpmn.paletteVisible(this.paletteVisible)
       this.iBpmn.attachTo(this.$refs.containers)
       if (!this.xml) {
         this.iBpmn.createEmptyDiagram(this.name, this.newBaseInfo).then(() => {

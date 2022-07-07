@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-dialog title="新建执行" width="66%" :visible="dialogVisible" @close="onClose">
-      <div class="diolog-main">
-        <div class="diolog-main-left">
+    <el-dialog title="新建执行" :visible="dialogVisible" @close="onClose">
+      <div class="content-wrapper">
+        <div>
           <div class="system-list">
             <el-tree
               :data="rootOrganizationChildren(projectCode)"
@@ -11,7 +11,7 @@
             ></el-tree>
           </div>
         </div>
-        <div class="diolog-main-right">
+        <div>
           <div class="process-list">
             <div class="process-list-item" v-for="(process, index) in processList" :key="index">
               <div class="process-list-item-detail" @click="detailsShow(process)">
@@ -34,17 +34,15 @@
               </div>
             </div>
           </div>
-          <div class="process-page">
-            <el-pagination
-              @size-change="onSizeChange"
-              @current-change="onCurrentChange"
-              :current-page.sync="getData.page"
-              :page-size="getData.limit"
-              layout="prev, pager, next, jumper"
-              :total="getData.total"
-            >
-            </el-pagination>
-          </div>
+          <el-pagination
+            @size-change="onSizeChange"
+            @current-change="onCurrentChange"
+            :current-page.sync="getData.page"
+            :page-size="getData.limit"
+            layout="prev, pager, next, jumper"
+            :total="getData.total"
+          >
+          </el-pagination>
         </div>
       </div>
     </el-dialog>
@@ -85,7 +83,7 @@ export default {
         type: 'energy-1',
         order: 'desc',
         page: 1,
-        limit: 9,
+        limit: 4,
         total: 1,
       },
       createTicketVisible: false,
@@ -147,50 +145,21 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-.diolog-main {
+<style scoped lang="scss">
+.content-wrapper {
   display: flex;
-}
 
-.diolog-main-left {
-  flex: 2;
-  background-color: #f3f3f3;
-  text-align: center;
-  height: 695px;
-}
+  & > div:first-child {
+    flex: 1;
+  }
 
-.diolog-main-right {
-  flex: 8;
-  background-color: #f3f3f3;
-  margin-left: 20px;
-  height: 695px;
-  padding: 0px 20px;
-}
-
-.diolog-main-left /deep/ .el-input {
-  width: 220px;
-}
-
-.diolog-main-left /deep/ .el-input .el-input__inner {
-  border-radius: 20px;
+  & > div:last-child {
+    flex: 3;
+  }
 }
 
 .system-list {
   margin-top: 30px;
-}
-
-::v-deep .el-tree {
-  background: transparent;
-  font-size: 15px;
-}
-
-.system-list-item {
-  width: 220px;
-  height: 44px;
-  line-height: 44px;
-  border: 1px solid #000000;
-  margin: 0 auto;
-  cursor: pointer;
 }
 
 .check-pro {
@@ -199,7 +168,7 @@ export default {
 }
 
 .process-list {
-  height: 624px;
+  height: 500px;
 }
 
 .process-list-item {
@@ -235,11 +204,5 @@ export default {
   height: 30px;
   line-height: 30px;
   padding: 0px 20px;
-}
-
-.process-page {
-  text-align: right;
-  margin-top: 20px;
-  margin-right: 20px;
 }
 </style>

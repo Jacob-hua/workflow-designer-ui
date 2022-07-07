@@ -257,7 +257,7 @@ export default {
     flex-direction: row;
     justify-content: space-around;
     background-color: $card-bg-color;
-    color: #ffffff;
+    color: $font-color;
 
     img {
       width: 32px;

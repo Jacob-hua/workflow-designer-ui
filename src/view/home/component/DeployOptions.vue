@@ -1,44 +1,46 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible="visible" @close="onCancel" width="90%" custom-class="dialogVisible2">
-      <div class="dialogVisible2-left">
-        <workflow-info
-          :form="formContent"
-          :xml="workflow.content"
-          :workflow="workflow"
-          :processDisplayInfo="processDisplayInfo"
-          canRemoveForm
-          @canvasLoaded="onCanvasLoaded"
-        />
-      </div>
-      <div class="dialogVisible2-right">
-        <div class="dialogVisible2-right-title">表单筛选</div>
-        <div class="dialogVisible2-right-search">
-          <el-input v-model="formName" placeholder="请输入内容" @keyup.native.enter="fetchFormList"></el-input>
+    <el-dialog title="部署工作流" :visible="visible" @close="onCancel" fullscreen>
+      <div class="deploy-wrapper">
+        <div>
+          <workflow-info
+            :form="formContent"
+            :xml="workflow.content"
+            :workflow="workflow"
+            :processDisplayInfo="processDisplayInfo"
+            canRemoveForm
+            @canvasLoaded="onCanvasLoaded"
+          />
         </div>
-        <div class="formList">
-          <div
-            class="listItem"
-            v-for="{ id, version, name, formContent: { list: fields, config }, docName } in formList"
-            :key="id"
-          >
-            <span class="listItem-title" :title="name">{{ name }}</span>
-            <div class="listItem-V1">
-              {{ version }}
-            </div>
-            <div class="listItem-button">
-              <el-popover placement="right" width="400" trigger="click">
-                <preview :itemList="fields" :formConf="config"></preview>
-                <el-button type="text" size="small" class="listItem-button1" slot="reference"> 查看 </el-button>
-              </el-popover>
-              <el-button
-                type="text"
-                size="small"
-                class="listItem-button2"
-                @click="onLinked({ id, docName, fields, config })"
-              >
-                关联
-              </el-button>
+        <div>
+          <div>表单筛选</div>
+          <div>
+            <el-input v-model="formName" placeholder="请输入内容" @keyup.native.enter="fetchFormList"></el-input>
+          </div>
+          <div>
+            <div
+              class="listItem"
+              v-for="{ id, version, name, formContent: { list: fields, config }, docName } in formList"
+              :key="id"
+            >
+              <span class="listItem-title" :title="name">{{ name }}</span>
+              <div class="listItem-V1">
+                {{ version }}
+              </div>
+              <div class="listItem-button">
+                <el-popover placement="right" width="400" trigger="click">
+                  <preview :itemList="fields" :formConf="config"></preview>
+                  <el-button type="text" size="small" class="listItem-button1" slot="reference"> 查看 </el-button>
+                </el-popover>
+                <el-button
+                  type="text"
+                  size="small"
+                  class="listItem-button2"
+                  @click="onLinked({ id, docName, fields, config })"
+                >
+                  关联
+                </el-button>
+              </div>
             </div>
           </div>
         </div>
@@ -254,130 +256,19 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-::v-deep .dialogVisible1 .el-dialog__body {
-  padding: 16px 180px 0px 100px;
-}
-
-::v-deep .dialogVisible1 .el-dialog__header .el-dialog__title {
-  font-size: 14px;
-}
-
-::v-deep .dialogVisible1 .el-dialog__header {
-  background-color: #e4e4e4;
-  border-bottom: 1px solid #000000;
-}
-
-.from-item {
+<style scoped lang="scss">
+.deploy-wrapper {
   display: flex;
-  margin-bottom: 20px;
-  text-align: center;
-}
+  flex-direction: row;
 
-.from-item > span {
-  width: 100px;
-  height: 40px;
-  line-height: 40px;
-}
+  & > div:first-child {
+    flex-grow: 2;
+  }
 
-::v-deep .el-input__inner {
-  color: black;
-}
-
-::v-deep .el-dialog__footer {
-  text-align: center;
-}
-
-::v-deep .dialogVisible2 .el-dialog__header .el-dialog__title {
-  font-size: 14px;
-}
-
-::v-deep .dialogVisible2 .el-dialog__header {
-  background-color: #e4e4e4;
-  border-bottom: 1px solid #000000;
-}
-
-::v-deep .dialogVisible2 .el-dialog__body {
-  display: flex;
-  height: 994px;
-  max-height: 86vh;
-}
-
-::v-deep .dialogVisible2 .dialogVisible2-left {
-  flex: 3;
-  padding: 10px 20px 0px 40px;
-}
-
-.bpmn-configure {
-  display: flex;
-}
-
-.noneForm {
-  display: inline-block;
-  height: 160px;
-  width: 100%;
-  text-align: center;
-  line-height: 160px;
-}
-
-.bpmn-configure-title {
-  height: 40px;
-  line-height: 40px;
-}
-
-.bpmn-configure-basic {
-  flex: 1;
-}
-
-.bpmn-configure-Main {
-  height: 200px;
-  border: 1px solid #000000;
-  padding: 20px 10px;
-  overflow: auto;
-  position: relative;
-}
-
-.bpmn-configure-Main-item {
-  margin-bottom: 20px;
-  color: black;
-}
-
-.bpmn-configure-form {
-  flex: 3;
-  margin-left: 20px;
-}
-
-::v-deep .dialogVisible2 .dialogVisible2-right {
-  /* flex: 1; */
-  border-left: 1px solid #cccccc;
-  padding: 0px 0px 0px 30px;
-  box-sizing: border-box;
-  width: 375px;
-}
-
-.dialogVisible2-right-title {
-  color: black;
-  margin-bottom: 20px;
-}
-
-.dialogVisible2-right-search {
-  margin-bottom: 30px;
-}
-
-.dialogVisible2-right-search ::v-deep .el-input__inner {
-  border-radius: 20px;
-  border-color: black;
-  color: #000000;
-}
-
-.formList {
-  height: 690px;
-  overflow: auto;
-}
-
-::v-deep .formList::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
+  & > div:last-child {
+    flex-grow: 1;
+    color: $font-color;
+  }
 }
 
 .listItem {
@@ -394,7 +285,6 @@ export default {
   height: 46px;
   display: inline-block;
   line-height: 46px;
-  color: black;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
