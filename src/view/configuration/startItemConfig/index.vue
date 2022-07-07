@@ -164,7 +164,7 @@ export default {
     color: #fff;
     position: relative;
     line-height: 40px;
-    width: 312px;
+    width: 300px;
     height: 186px;
     border: 1px solid #0066cc;
     background: #212739;

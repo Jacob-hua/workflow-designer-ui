@@ -14,8 +14,8 @@
         <i class="el-icon-share"></i>
         <span class="personnel-header-word">权限详情</span>
         <div class="personnel-header-button">
-          <el-button type="primary" plain icon="el-icon-search" @click="seeHandle()" v-role="{ id: 'PowerLook', type: 'button', business: business }">查看</el-button>
-          <el-button type="primary" plain icon="el-icon-s-finance" @click="editHandle()" v-role="{ id: 'PowerLook', type: 'button', business: business }">编辑</el-button>
+          <el-button class="primary" type="primary"  icon="el-icon-search" @click="seeHandle()" v-role="{ id: 'PowerLook', type: 'button', business: business }">查看</el-button>
+          <el-button class="primary" type="primary"  icon="el-icon-s-finance" @click="editHandle()" v-role="{ id: 'PowerLook', type: 'button', business: business }">编辑</el-button>
         </div>
       </div>
       <div class="personnel-right-main">
@@ -163,7 +163,13 @@
   }
 </script>
 
-<style scoped="scoped">
+<style scoped lang="scss">
+
+  .primary {
+    @include primaryBtn;
+    position: relative;
+    top: -40px;
+  }
   .personnel {
     display: flex;
     margin-left: 20px;
@@ -184,9 +190,12 @@
     border-bottom: 1px solid #CCCCCC;
     color: black;
   }
-
+  .el-icon-share {
+    color: #fff;
+  }
   .personnel-header-word {
     margin-left: 20px;
+    color: #fff;
   }
 
   .personnel-right {
@@ -203,7 +212,8 @@
   }
   
   .personnel-header-button {
-    float: right;
+     display: flex;
+    justify-content: flex-end;
   }
   
   .personnel-right-main {
@@ -223,7 +233,7 @@
     left: 110px;
   }
   .roleTitle {
-    color: #0066cc;
+    color: #fff;
     font-weight: 700;
     margin-bottom: 20px;
     display: inline-block;

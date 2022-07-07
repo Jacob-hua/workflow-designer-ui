@@ -402,7 +402,7 @@ export default {
   margin-left: 10px;
 }
 
-/deep/ .el-input {
+.projectHeader /deep/ .el-input {
   width: 180px;
 }
 

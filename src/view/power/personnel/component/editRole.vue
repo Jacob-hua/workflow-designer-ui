@@ -2,7 +2,7 @@
   <el-dialog title="权限授予" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
     <div class="dialogHeader">
       <span>人员信息</span>
-      <el-button type="primary" plain @click="grant()" v-if="type !== 'edit'">授权</el-button>
+      <el-button class="plain" type="primary" @click="grant()" v-if="type !== 'edit'">授权</el-button>
     </div>
     <div class="dialogPeople">
       <div>
@@ -27,14 +27,10 @@
 <!--        </div>-->
       </div>
       <div>
-        <label>当前角色</label>
+        <label style="margin-right: 11px">当前角色</label>
         <div class="item2" v-for="(item, index) in detailData.currentGroup" :key="index">
-          <span class="UserItem">{{ item }}</span>
+          <el-input :value="item" disabled></el-input>
         </div>
-        <!-- <div class="item2">
-          <el-input placeholder="请输入内容" v-model="input" :disabled="true">
-          </el-input>
-        </div> -->
       </div>
     </div>
     <div class="dialogRole">
@@ -65,8 +61,8 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer" v-if="type === 'edit'">
-      <el-button type="primary" @click="award">授予</el-button>
-      <el-button @click="handleClose">取消</el-button>
+      <el-button class="save" type="primary" @click="award">授予</el-button>
+      <el-button class="cancel" @click="handleClose">取消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -176,6 +172,7 @@
         this.$emit('handleClose')
       },
       changeRole(code) {
+        debugger
         this.checkRole = code
       },
       grant() {
@@ -226,7 +223,28 @@
   }
 </script>
 
-<style scoped="scoped">
+<style scoped lang="scss">
+/deep/.el-checkbox__input.is-disabled .el-checkbox__inner {
+  background-color: #333;
+  border-color: #333;
+}
+/deep/ .el-checkbox__input.is-disabled + span.el-checkbox__label {
+  color: #666666;
+  cursor: not-allowed;
+}
+/deep/ .el-checkbox__input.is-checked + .el-checkbox__label {
+  color: #fff;
+}
+.save {
+  @include primaryBtn;
+}
+.cancel {
+  @include cancelBtn
+}
+
+.plain {
+  @include primaryPlainBtn;
+}
   .dialogHeader {
     border-left: 3px solid #108cee;
     padding-left: 20px;
@@ -244,6 +262,9 @@
   .dialogPeople .item {
     display: inline-block;
     width: 400px;
+  }
+  /deep/ .el-input {
+    width: 220px;
   }
 
   .item /deep/ .el-input {
@@ -272,7 +293,7 @@
     width: 220px;
     margin-left: 10px;
     height: 40px;
-    background-color: #F5F7FA;
+    /*background-color: #F5F7FA;*/
     border: 1px solid;
     border-color: #E4E7ED;
     cursor: not-allowed;
@@ -309,7 +330,6 @@
   .RoleList {
     margin-bottom: 20px;
     padding: 30px 20px;
-    background-color: #f2f2f2;
   }
 
   .RoleList .el-checkbox__input {
@@ -318,7 +338,7 @@
   }
 
   .roleTitle {
-    color: #0066cc;
+    color: #fff;
     font-weight: 700;
     margin-bottom: 20px;
     display: inline-block;

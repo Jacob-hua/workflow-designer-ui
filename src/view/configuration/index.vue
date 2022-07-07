@@ -2,12 +2,15 @@
   <div class="configuration">
     <el-tabs v-model="activeName" type="border-card"  @tab-click="handleClick">
       <el-tab-pane label="访问配置" name="first">
-        <div class="projectHeader" v-if="activeName === 'first'">-->
+                <div class="selectBox">
                   <el-select v-model="business" placeholder="请选择">
                     <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code">
                     </el-option>
                   </el-select>
                 </div>
+        <div style="display: flex; justify-content: flex-end">
+          <div  class="buttonTab" v-if="activeName === 'first'" @click="showDiolog" v-role="{ id: 'VisitCallAdd', type: 'button', business: business }">新增第三方接口</div>
+        </div>
         <visitCall v-if="activeName === 'first' && permissionRole" ref="first" @editTable="editTable()" @deleteTable="deleteTable()" :business="business"></visitCall>
         <permission v-if="!permissionRole"></permission>
       </el-tab-pane>
