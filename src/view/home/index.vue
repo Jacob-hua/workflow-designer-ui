@@ -1,41 +1,42 @@
 <template>
-  <div class="home">
-    <div class="home-filter">
-      <div class="projectSelect">
-        <el-select v-model="searchForm.ascription">
-          <el-option
+  <div>
+    <div class="search-wrapper">
+      <el-form :inline="true">
+        <el-form-item label="项目选择">
+          <el-select v-model="searchForm.ascription">
+            <el-option
               v-for="{ id, label, value } in rootOrganizations"
               :key="id"
               :label="label"
               :value="value"
             ></el-option>
-        </el-select>
-      </div>
-      <div class="businessSelect">
-        <el-cascader
-          style="margin-right: 10px"
-          v-model="searchForm.business"
-          :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
-          :props="cascaderProps"
-          clearable
-        ></el-cascader>
-      </div>
-      <div class="datePick">
-        <span class="datePickTitle">时间</span>
-        <el-date-picker
-          v-model="searchForm.valueDate"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="——"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
-          :clearable="false"
-        >
-        </el-date-picker>
-      </div>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="业务选择">
+          <el-cascader
+            style="margin-right: 10px"
+            v-model="searchForm.business"
+            :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
+            :props="cascaderProps"
+            clearable
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker
+            v-model="searchForm.valueDate"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="——"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :default-time="['00:00:00', '23:59:59']"
+            :clearable="false"
+          >
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
     </div>
     <div class="home-header">
       <div class="data1">
@@ -222,19 +223,23 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-.home {
-  padding-left: 20px;
-  padding-top: 20px;
-  padding-right: 20px;
-  height: 100vh;
-}
+<style scoped lang="scss">
+.search-wrapper {
+  height: 106px;
+  background-color: $card-bg-color;
 
-.home-filter ::v-deep .el-select .el-input__inner {
-  border: 1px solid #000;
-}
-.home-filter ::v-deep .el-cascader .el-input__inner {
-  border: 1px solid #000;
+  @include searchForm;
+
+  .el-form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 43px;
+  }
+
+  .el-form-item {
+    margin-bottom: 0;
+  }
 }
 
 .home-header {
@@ -291,11 +296,6 @@ export default {
   flex: 1;
   text-align: center;
   padding: 20px 0px;
-}
-
-.home-filter {
-  margin-bottom: 20px;
-  display: flex;
 }
 
 .projectSelect {
