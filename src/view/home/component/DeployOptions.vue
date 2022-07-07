@@ -45,16 +45,16 @@
           </div>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer">
         <el-button
-          type="primary"
+          class="deploy-button"
           @click="onDeploy"
           v-role="{ id: 'HomeDeploy', type: 'button', business: workflow.business }"
         >
           部署
         </el-button>
-        <el-button @click="onSave">保存</el-button>
-        <el-button @click="onCancel">取消</el-button>
+        <el-button class="save-button" @click="onSave">保存</el-button>
+        <el-button class="cancel-button" @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -269,6 +269,18 @@ export default {
     flex-grow: 1;
     color: $font-color;
   }
+}
+
+.deploy-button {
+  @include primaryBtn;
+}
+
+.save-button {
+  @include primaryBtn;
+}
+
+.cancel-button {
+  @include cancelBtn;
 }
 
 .listItem {
