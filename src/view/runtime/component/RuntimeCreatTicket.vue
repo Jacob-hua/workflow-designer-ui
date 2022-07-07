@@ -19,11 +19,11 @@
           </el-form-item>
         </el-form>
         <div v-if="isEmptyConfig" class="dialog-message">创建的执行会进入执行列表并开始执行流程,是否继续？</div>
-        <div slot="footer">
-          <el-button type="primary" :loading="isSubmiting" @click="onSubmit">立即创建</el-button>
-          <el-button @click="onCancel">取消</el-button>
-        </div>
       </div>
+      <span slot="footer">
+        <el-button class="submit-button" :loading="isSubmiting" @click="onSubmit">立即创建</el-button>
+        <el-button class="cancel-button" @click="onCancel">取消</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -189,9 +189,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .dialog-message {
   margin: 20px 20px;
   font-size: 14px;
+  color: $font-color;
+}
+
+.submit-button {
+  @include primaryBtn;
+}
+
+.cancel-button {
+  @include cancelBtn;
 }
 </style>
