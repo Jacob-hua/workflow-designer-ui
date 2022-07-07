@@ -3,13 +3,13 @@
     <el-dialog title="新建执行" :visible="dialogVisible" @close="onClose">
       <div class="content-wrapper">
         <div>
-          <div class="system-list">
+          <el-card header="项目选择">
             <el-tree
               :data="rootOrganizationChildren(projectCode)"
               :props="defaultProps"
               @node-click="handleNodeClick"
             ></el-tree>
-          </div>
+          </el-card>
         </div>
         <div>
           <div class="process-list">

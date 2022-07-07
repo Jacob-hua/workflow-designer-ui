@@ -56,7 +56,7 @@
           </div>
         </div>
         <div class="Implement-right">
-          <div style="margin-top: 20px; margin-bottom: 10px">表单内容</div>
+          <div>表单内容</div>
           <div class="Implement-right-form">
             <preview
               :itemList="formContant.list"

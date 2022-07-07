@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="executors.length == 0">
-      <span style="color: #0066cc">后续任务未指定执行人，请选择执行人</span>
+      <span>后续任务未指定执行人，请选择执行人</span>
       <div class="confirm" @click="onConfirmation">选择执行人</div>
     </div>
     <div v-else>

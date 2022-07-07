@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div v-if="hang" class="HangStyle">
-      <span style="color: #0066cc">当前流程已被挂起，如需将继续执行流程，请进行认证操作</span>
+    <div v-if="hang" class="hang">
+      <span>当前流程已被挂起，如需将继续执行流程，请进行认证操作</span>
       <div class="confirm" @click="onConfirmation">重新激活</div>
     </div>
-    <div v-else class="HangStyle">
-      <span style="color: #0066cc">当前流程正常运行，如需将流程挂起，请进行认证操作</span>
+    <div v-else class="hang">
+      <span>当前流程正常运行，如需将流程挂起，请进行认证操作</span>
       <div class="confirm" @click="onConfirmation">挂起确认</div>
     </div>
     <runtime-confirmation :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
@@ -66,7 +66,7 @@ export default {
 </script>
 
 <style scoped>
-.HangStyle {
+.hang {
   text-align: center;
   margin-top: 50px;
 }
