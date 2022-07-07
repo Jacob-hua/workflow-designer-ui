@@ -92,7 +92,6 @@
             break;
         }
         if(this.postData.id) {
-          formData.append('id', this.postData.id)
           formData.append('sourceId', this.postData.sourceId)
         }
         formData.append('name', this.postData.name)
