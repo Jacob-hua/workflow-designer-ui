@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <ProcessInformation
       :processDisplayInfo="processDisplayInfo"
       :xml="xml"
@@ -172,6 +172,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
 .ticket-wrapper {
   display: flex;
   color: $font-color;

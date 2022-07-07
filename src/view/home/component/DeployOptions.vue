@@ -12,34 +12,25 @@
             @canvasLoaded="onCanvasLoaded"
           />
         </div>
-        <div>
-          <div>表单筛选</div>
-          <div>
+        <div class="form-list-wrapper">
+          <div class="title">表单筛选</div>
+          <div class="search-form">
             <el-input v-model="formName" placeholder="请输入内容" @keyup.native.enter="fetchFormList"></el-input>
           </div>
-          <div>
-            <div
-              class="listItem"
-              v-for="{ id, version, name, formContent: { list: fields, config }, docName } in formList"
-              :key="id"
-            >
-              <span class="listItem-title" :title="name">{{ name }}</span>
-              <div class="listItem-V1">
-                {{ version }}
+          <div class="content-wrapper">
+            <div v-for="{ id, version, name, formContent: { list: fields, config }, docName } in formList" :key="id">
+              <div class="info">
+                <div>{{ name }}</div>
+                <div>
+                  {{ version }}
+                </div>
               </div>
-              <div class="listItem-button">
+              <div class="operations">
                 <el-popover placement="right" width="400" trigger="click">
                   <preview :itemList="fields" :formConf="config"></preview>
-                  <el-button type="text" size="small" class="listItem-button1" slot="reference"> 查看 </el-button>
+                  <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover>
-                <el-button
-                  type="text"
-                  size="small"
-                  class="listItem-button2"
-                  @click="onLinked({ id, docName, fields, config })"
-                >
-                  关联
-                </el-button>
+                <span class="link-button" @click="onLinked({ id, docName, fields, config })"> 关联 </span>
               </div>
             </div>
           </div>
@@ -262,13 +253,72 @@ export default {
   flex-direction: row;
 
   & > div:first-child {
-    flex-grow: 2;
+    flex-grow: 1;
   }
 
   & > div:last-child {
-    flex-grow: 1;
     color: $font-color;
   }
+}
+
+.form-list-wrapper {
+  width: 468px;
+  height: 680px;
+  padding: 0 38px;
+
+  .title {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+  }
+
+  .search-form {
+    margin-top: 25px;
+  }
+
+  .content-wrapper {
+    height: 650px;
+    overflow: scroll;
+    margin: 10px 0;
+
+    & > div {
+      border: 1px solid $border-color;
+      background-color: $card-bg-color-1;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 20px;
+      font-size: 14px;
+
+      .info {
+        display: flex;
+        flex-direction: row;
+        color: #999999;
+
+        & > div:first-child {
+          width: 150px;
+        }
+      }
+
+      .operations {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+  }
+}
+
+.preview-button {
+  margin-right: 20px;
+  color: #0199f3;
+  cursor: pointer;
+}
+
+.link-button {
+  color: #0dd5ef;
+  cursor: pointer;
 }
 
 .deploy-button {
@@ -281,69 +331,5 @@ export default {
 
 .cancel-button {
   @include cancelBtn;
-}
-
-.listItem {
-  display: flex;
-  border: 1px solid #666666;
-  margin-bottom: 20px;
-  height: 46px;
-}
-
-.listItem .listItem-title {
-  width: 120px;
-  margin-left: 10px;
-  text-align: left;
-  height: 46px;
-  display: inline-block;
-  line-height: 46px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.listItem .listItem-V1 ::v-deep .el-input__inner {
-  width: 60px;
-  border: none;
-  height: 35px;
-  margin-top: 5px;
-  padding: 0px;
-  line-height: 35px;
-  background-color: transparent;
-}
-
-.listItem .listItem-V1 ::v-deep .el-input__icon {
-  line-height: 20px;
-  color: black;
-}
-
-.listItem .listItem-button {
-  text-align: left;
-  line-height: 46px;
-  margin-left: 60px;
-  color: #0368cd;
-}
-
-.listItem .listItem-button1 {
-  color: #0368cd;
-  font-size: 14px;
-  margin-right: 10px;
-}
-
-.listItem .listItem-button2 {
-  color: #0368cd;
-  font-size: 14px;
-}
-
-.formShowForm {
-  position: relative;
-}
-
-.formRemove {
-  position: absolute;
-  right: 10px;
-  top: 2px;
-  z-index: 9;
-  cursor: pointer;
 }
 </style>
