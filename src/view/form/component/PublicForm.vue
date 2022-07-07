@@ -184,7 +184,7 @@
             this.$refs.PublicFormDiolog.$refs.formDesigner.formConfig = content.config
             this.$refs.PublicFormDiolog.postData = {
               ascriptionName: '',
-              ascName: item.business,
+              ascName: this.$getMappingName(item.business) ,
               ...item
             }
           })
