@@ -294,7 +294,7 @@
     margin-left: 10px;
     height: 40px;
     /*background-color: #F5F7FA;*/
-    border: 1px solid;
+    border: 1px solid ;
     border-color: #E4E7ED;
     cursor: not-allowed;
     border-radius: 4px;
@@ -306,7 +306,7 @@
 
   .peopleRole {
     margin-top: 30px;
-    border-top: 1px solid #f5f5f5;
+    border-top: 1px solid #333333;
     padding-top: 20px;
     display: flex;
   }
@@ -322,7 +322,7 @@
 
   .RoleMain {
     height: 400px;
-    border: 1px solid #000000;
+    border: 1px solid #333333;
     padding: 20px;
     overflow: auto;
   }
@@ -345,7 +345,7 @@
   }
 
   .role-item {
-    border-top: 1px solid #d6d6d6;
+    border-top: 1px solid #333333;
     margin-top: 20px;
     padding-top: 15px;
   }
