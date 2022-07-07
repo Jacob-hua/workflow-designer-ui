@@ -12,8 +12,8 @@
           <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formDatas.count }}</span> </div>
           
          <div class="detail-title-item-button">
-           <el-button type="primary" @click="editForm()" v-role="{ id: 'FromEdit', type: 'button', business: business }">编辑</el-button>
-           <el-button type="primary" @click="deleteRow()" v-if="quote == 'delete'" v-role="{ id: 'FromDelete', type: 'button', business: business }">删除</el-button>
+           <el-button class="primary" type="primary" @click="editForm()" v-role="{ id: 'FromEdit', type: 'button', business: business }">编辑</el-button>
+           <el-button class="primary" type="primary" @click="deleteRow()" v-if="quote == 'delete'" v-role="{ id: 'FromDelete', type: 'button', business: business }">删除</el-button>
          </div>
           
         </div>
@@ -238,6 +238,9 @@
 </script>
 
 <style scoped lang="scss">
+.primary {
+  @include primaryBtn;
+}
   .from-item {
     display: flex;
     margin-bottom: 20px;
@@ -280,8 +283,9 @@
   }
   
   .detail-title-item-button {
-    margin-top: -10px;
-    float: right;
+    margin-top: -60px;
+    display: flex;
+    justify-content: flex-end;
   }
   
   .optionV {

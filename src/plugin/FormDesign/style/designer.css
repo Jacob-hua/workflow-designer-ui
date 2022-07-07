@@ -12,7 +12,7 @@ body{
   position: absolute;
   left: 0;
   top: 0;
-  height: 100vh;
+  /*height: 100vh;*/
 }
 .d-logo-wrapper{
   position: relative;
