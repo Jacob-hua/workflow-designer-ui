@@ -1,9 +1,10 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible="visible" @close="onCancel">
+    <el-dialog title="部署工作流" top="1vh" :visible="visible" @close="onCancel">
       <workflow-info :workflow="workflow" :xml="workflow.processResource" :processDisplayInfo="processDisplayInfo" />
       <span slot="footer">
         <el-button
+          class="remove-button"
           @click="deleteDeployment()"
           v-role="{ id: 'HomeDelete', type: 'button', business: workflow.business }"
         >
@@ -126,4 +127,8 @@ export default {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.remove-button {
+  @include cancelBtn;
+}
+</style>
