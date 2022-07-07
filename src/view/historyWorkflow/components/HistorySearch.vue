@@ -1,30 +1,40 @@
 <template>
-  <div class="history_head">
-    <el-select v-model="projectValue">
-      <el-option v-for="{ id, label, value } in rootOrganizations" :key="id" :label="label" :value="value"></el-option>
-    </el-select>
-    <el-cascader
-      v-model="business"
-      :options="rootOrganizationChildrenAndAll(projectValue)"
-      :props="cascaderProps"
-    ></el-cascader>
-    <div class="history_date">
-      <span class="datePickTitle">创建时间</span>
-      <el-date-picker
-        v-model="valueDate"
-        type="daterange"
-        align="right"
-        unlink-panels
-        range-separator="——"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        value-format="yyyy-MM-dd hh:mm:ss"
-        :default-time="['00:00:00', '23:59:59']"
-      >
-      </el-date-picker>
-      <el-button @click="$emit('searchHistory', valueDate, projectValue)" style="margin-left: 15px" type="primary"
-        >查询</el-button
-      >
+  <div class="search-wrapper">
+    <el-form inline>
+      <el-form-item label="选择项目">
+        <el-select v-model="projectValue">
+          <el-option
+            v-for="{ id, label, value } in rootOrganizations"
+            :key="id"
+            :label="label"
+            :value="value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="选择业务">
+        <el-cascader
+          v-model="business"
+          :options="rootOrganizationChildrenAndAll(projectValue)"
+          :props="cascaderProps"
+        ></el-cascader>
+      </el-form-item>
+      <el-form-item label="创建时间">
+        <el-date-picker
+          v-model="valueDate"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="——"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd hh:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
+        >
+        </el-date-picker>
+      </el-form-item>
+    </el-form>
+    <div class="button-wrapper">
+      <el-button @click="$emit('searchHistory', valueDate, projectValue)" class="search-button"> 查询 </el-button>
     </div>
   </div>
 </template>
@@ -43,7 +53,7 @@ export default {
       business: '',
       projectOption: [],
       systemOption: [],
-    };
+    }
   },
   computed: {
     ...mapState('account', ['tenantId', 'currentOrganization']),
@@ -53,19 +63,19 @@ export default {
   watch: {
     projectValue(val) {
       if (val === this.currentOrganization) {
-        return;
+        return
       }
-      this.updateCurrentOrganization({ currentOrganization: val });
+      this.updateCurrentOrganization({ currentOrganization: val })
     },
     currentOrganization: {
       immediate: true,
       handler(val) {
-        this.projectValue = val;
-      }
-    }
+        this.projectValue = val
+      },
+    },
   },
   mounted() {
-     // this.dispatchRefreshOrganization();
+    // this.dispatchRefreshOrganization();
   },
   methods: {
     ...mapMutations('account', ['updateCurrentOrganization']),
@@ -74,14 +84,31 @@ export default {
 }
 </script>
 
-<style scoped>
-.container .history_head {
-  display: flex;
-  padding-top: 15px;
-}
-.history_head .datePickTitle {
-  margin-right: 10px;
-  font-size: 14px;
-  font-weight: 400;
+<style scoped lang="scss">
+.search-wrapper {
+  height: 106px;
+  background-color: $card-bg-color;
+
+  @include searchForm;
+
+  .el-form {
+    display: flex;
+    align-items: center;
+    padding: 0 43px;
+  }
+
+  .el-form-item {
+    margin-bottom: 0;
+  }
+
+  .button-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .search-button {
+      @include primaryBtn;
+    }
+  }
 }
 </style>
