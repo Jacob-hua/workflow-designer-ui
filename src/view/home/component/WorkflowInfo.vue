@@ -30,7 +30,7 @@
           <div v-if="formShow">
             <preview :itemList="formContent.fields" :formConf="formContent.config"></preview>
           </div>
-          <span v-else> 当前未关联表单 </span>
+          <div v-else class="empty-data">当前未关联表单</div>
         </div>
       </div>
     </div>
@@ -194,7 +194,7 @@ export default {
 
 .ticket-info {
   flex: 1;
-  margin: 20px 0px 0px 20px;
+  margin-top: 20px;
 }
 
 .ticket-form {
@@ -220,10 +220,22 @@ export default {
     width: 60px;
     margin-right: 20px;
   }
+
+  & > div > span:last-child {
+    text-align: start;
+    color: $font-color;
+  }
 }
 
 .form {
   padding: 20px 0px !important;
+
+  .empty-data {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .remove-button {
