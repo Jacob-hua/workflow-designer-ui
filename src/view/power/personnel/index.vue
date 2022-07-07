@@ -140,13 +140,14 @@
     padding-right: 20px;
     height: 650px;
     flex: 4;
-    border: 1px solid #cccccc;
+    /*border: 1px solid #cccccc;*/
+    border: 1px solid #333333
   }
 
   .personnel-header {
     line-height: 60px;
     font-size: 16px;
-    border-bottom: 1px solid #CCCCCC;
+    /*border-bottom: 1px solid #CCCCCC;*/
     color: black;
   }
 
@@ -159,7 +160,8 @@
     flex: 6;
     /* padding-left: 20px; */
     /* padding-right: 20px; */
-    border: 1px solid #cccccc;
+    /*border: 1px solid #cccccc;*/
+    border: 1px solid #333333;
     margin-left: 40px;
     margin-right: 40px;
   }
