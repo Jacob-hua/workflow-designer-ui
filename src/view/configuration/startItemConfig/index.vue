@@ -119,6 +119,11 @@ export default {
 </script>
 
 <style scoped>
+
+label {
+  color: #999999;
+}
+
 .btnBox {
   display: flex;
   justify-content: right;

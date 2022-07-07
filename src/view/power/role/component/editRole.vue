@@ -217,13 +217,13 @@
 
   .dialogGroup {
     padding-top: 20px;
-    border-top: 1px solid #f5f5f5;
+    border-top: 1px solid #333333;
     color: #fff;
   }
 
   .userGroup {
     height: 200px;
-    border: 1px solid #000000;
+    border: 1px solid #333333;
     padding: 20px 20px;
     margin-top: 20px;
     display: flex;
@@ -254,7 +254,7 @@
   .left-group {
     width: 100%;
     height: 411px;
-    border: 1px solid #000000;
+    border: 1px solid #333333;
     margin-top: 20px;
     padding: 10px 10px 0px 10px;
     overflow: auto;
@@ -293,7 +293,7 @@
   }
 
   .role-item {
-    border-top: 1px solid #d6d6d6;
+    border-top: 1px solid #333333;
     margin-top: 20px;
     padding-top: 15px;
   }

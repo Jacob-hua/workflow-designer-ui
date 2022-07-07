@@ -160,7 +160,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+label {
+  color: #999999;
+}
 /deep/ .el-icon-s-order,  .el-icon-edit-outline, .el-icon-delete{
   color: #fff !important;
 }
