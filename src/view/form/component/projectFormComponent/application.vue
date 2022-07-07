@@ -286,6 +286,7 @@ export default {
 }
 .processList {
   height: 600px;
+  overflow-y: auto;
 }
 .processList-item {
   width: 290px;
