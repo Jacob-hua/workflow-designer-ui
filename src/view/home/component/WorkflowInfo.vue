@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <ProcessInformation
       :processDisplayInfo="processDisplayInfo"
       :xml="xml"
@@ -11,7 +11,7 @@
         <div class="title">工单分配</div>
         <div class="content-wrapper info">
           <div>
-            <span>名称:</span><span>{{ taskInfo.name }}</span>
+            <span>节点名称:</span><span>{{ taskInfo.name }}</span>
           </div>
           <div>
             <span>绑定岗位:</span><span>{{ taskInfo.group }}</span>
@@ -22,15 +22,15 @@
         </div>
       </div>
       <div class="ticket-form">
-        <div class="title">工单分配-表单内容</div>
+        <div class="title">
+          <div>工单分配-表单内容</div>
+          <el-button class="remove-button" v-if="formShow && canRemoveForm" @click="onRemoveForm">移除表单</el-button>
+        </div>
         <div class="content-wrapper form">
           <div v-if="formShow">
-            <span v-if="canRemoveForm" @click="onRemoveForm">移除表单</span>
-            <div>
-              <preview :itemList="formContent.fields" :formConf="formContent.config"></preview>
-            </div>
+            <preview :itemList="formContent.fields" :formConf="formContent.config"></preview>
           </div>
-          <span v-else> 当前未关联表单 </span>
+          <div v-else class="empty-data">当前未关联表单</div>
         </div>
       </div>
     </div>
@@ -172,17 +172,26 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
 .ticket-wrapper {
   display: flex;
   color: $font-color;
 
   .title {
     line-height: 40px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .content-wrapper {
     height: 200px;
-    padding: 20px 10px;
+    padding: 2px 30px;
     overflow: auto;
     border: 1px solid $border-color;
   }
@@ -190,21 +199,23 @@ export default {
 
 .ticket-info {
   flex: 1;
+  margin-top: 20px;
 }
 
 .ticket-form {
   flex: 3;
-  margin-left: 20px;
+  margin: 20px 0px 0px 20px;
 }
 
 .info {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  color: #999999;
 
   & > div {
     font-size: 14px;
-    margin-top: 12px;
+    margin-top: 26px;
     display: flex;
     flex-direction: row;
   }
@@ -214,8 +225,25 @@ export default {
     width: 60px;
     margin-right: 20px;
   }
+
+  & > div > span:last-child {
+    text-align: start;
+    color: $font-color;
+  }
 }
 
 .form {
+  padding: 20px 0px !important;
+
+  .empty-data {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.remove-button {
+  @include resetBtn;
 }
 </style>

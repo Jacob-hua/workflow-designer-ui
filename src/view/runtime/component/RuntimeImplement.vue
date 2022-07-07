@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="执行工作流" :visible="visible" width="90%" @close="onDialogClose">
+    <el-dialog title="执行工作流" :visible="visible" fullscreen @close="onDialogClose">
       <div class="Implement">
         <div class="Implement-left">
           <ProcessInformation
@@ -56,7 +56,7 @@
           </div>
         </div>
         <div class="Implement-right">
-          <div style="margin-top: 20px; margin-bottom: 10px">表单内容</div>
+          <div>表单内容</div>
           <div class="Implement-right-form">
             <preview
               :itemList="formContant.list"
