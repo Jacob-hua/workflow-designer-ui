@@ -38,37 +38,52 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="home-header">
-      <div class="data1">
-        <div>
-          <div class="title">{{ deployedWorkflowContents }}</div>
-          <div class="titLabel">已部署工作流</div>
-        </div>
-        <div>
-          <div class="title">{{ WorkflowTableNum }}</div>
-          <div class="titLabel">可部署工作流</div>
-        </div>
-      </div>
-      <div class="data2">
-        <div>
-          <div class="title">{{ workflowContents.executionTotalProcessCount }}</div>
-          <div class="titLabel">执行工作流总数</div>
-        </div>
-        <div>
-          <div class="title">{{ workflowContents.executionInProcessCount }}</div>
-          <div class="titLabel">执行中</div>
-        </div>
-        <div>
-          <div class="title">{{ workflowContents.executionCompleteCount }}</div>
-          <div class="titLabel">已完成数量</div>
-        </div>
-      </div>
-      <div class="data3">
-        <div @click="gotoWorkflow">
-          <div class="title">
-            <i class="el-icon-circle-plus"></i>
+    <div class="statistics-wrapper">
+      <div>
+        <div class="data-wrapper">
+          <div class="icon">
+            <img :src="require('../../assets/image/home/deployed.svg')" />
           </div>
-          <div class="titLabel">新建工作流</div>
+          <div class="title">{{ deployedWorkflowContents }}</div>
+          <div class="label">已部署工作流</div>
+        </div>
+        <div class="data-wrapper">
+          <div class="icon">
+            <img :src="require('../../assets/image/home/started.svg')" />
+          </div>
+          <div class="title">{{ WorkflowTableNum }}</div>
+          <div class="label">可部署工作流</div>
+        </div>
+      </div>
+      <div>
+        <div class="data-wrapper">
+          <div class="icon">
+            <img :src="require('../../assets/image/home/executed.svg')" />
+          </div>
+          <div class="title">{{ workflowContents.executionTotalProcessCount }}</div>
+          <div class="label">执行工作流总数</div>
+        </div>
+        <div class="data-wrapper">
+          <div class="icon">
+            <img :src="require('../../assets/image/home/executing.svg')" />
+          </div>
+          <div class="title">{{ workflowContents.executionInProcessCount }}</div>
+          <div class="label">执行中</div>
+        </div>
+        <div class="data-wrapper">
+          <div class="icon">
+            <img :src="require('../../assets/image/home/completed.svg')" />
+          </div>
+          <div class="title">{{ workflowContents.executionCompleteCount }}</div>
+          <div class="label">已完成数量</div>
+        </div>
+      </div>
+      <div>
+        <div class="data-wrapper" @click="gotoWorkflow">
+          <div class="icon">
+            <img :src="require('../../assets/image/home/create.svg')" />
+          </div>
+          <div class="label">新建工作流</div>
         </div>
       </div>
     </div>
@@ -242,60 +257,83 @@ export default {
   }
 }
 
-.home-header {
+.statistics-wrapper {
   display: flex;
-}
+  flex-direction: row;
+  margin-top: 20px;
+  width: 100%;
 
-.data1 {
-  width: 400px;
-  height: 160px;
-  background-color: #f2f2f2;
-  margin-right: 10px;
-  display: flex;
-}
+  & > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background-color: $card-bg-color;
+    color: #ffffff;
 
-.data1 > div {
-  flex: 1;
-  text-align: center;
-  padding: 20px 0px;
-}
+    img {
+      width: 32px;
+      height: 34px;
+    }
 
-.title {
-  font-size: 36px;
-  height: 100px;
-  line-height: 100px;
-}
+    .data-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      line-height: 24px;
+      font-weight: 400;
+      padding: 28px 0px;
+    }
 
-.titLabel {
-  font-size: 14px;
-}
+    .title {
+      margin-top: 16px;
+    }
 
-.data2 {
-  width: 875px;
-  height: 160px;
-  background-color: #f2f2f2;
-  margin-right: 20px;
-  display: flex;
-}
+    .label {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+      color: #6e7e88;
+      margin-top: 10px;
+    }
 
-.data2 > div {
-  flex: 1;
-  text-align: center;
-  padding: 20px 0px;
-}
+    .icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #d4fdd9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-.data3 {
-  width: 368px;
-  height: 160px;
-  background-color: #f2f2f2;
-  display: flex;
-  cursor: pointer;
-}
+    &:first-child {
+      margin-right: 20px;
+      flex-grow: 2;
 
-.data3 > div {
-  flex: 1;
-  text-align: center;
-  padding: 20px 0px;
+      .icon {
+        background-color: #d1ebfb;
+      }
+    }
+
+    &:nth-child(2) {
+      flex-grow: 3;
+    }
+
+    &:last-child {
+      margin-left: 20px;
+      flex-grow: 1;
+
+      .data-wrapper {
+        cursor: pointer;
+      }
+
+      .icon {
+        background-color: #009efb;
+      }
+    }
+  }
 }
 
 .projectSelect {
