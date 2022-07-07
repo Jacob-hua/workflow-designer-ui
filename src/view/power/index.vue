@@ -7,21 +7,16 @@
       </el-select>
     </div>
     <div class="power-body">
-      <div class="power-body-header">
-        <div class="powerList-item">
-          <i class="el-icon-s-custom"></i>
-          <span class="powerList-item-word" :class="classChange('Personnel')" @click="changePower('Personnel')">人员权限</span>
-        </div>
-        <div class="powerList-item powerList-item-border">
-          <i class="el-icon-s-home"></i>
-          <span class="powerList-item-word" :class="classChange('Role')" @click="changePower('Role')">角色权限</span>
-        </div>
-      </div>
-      <div class="power-body-main">
-        <personel v-if="power === 'Personnel' && permissionRole" :business="projectCode"></personel>
-        <role v-if="power === 'Role' && permissionRole" :business="projectCode"></role>
-        <permission v-if="!permissionRole"></permission>
-      </div>
+      <el-tabs v-model="power" type="border-card"  @tab-click="changePower">
+        <el-tab-pane label="人员权限" name="Personnel">
+          <personel v-if="power === 'Personnel' && permissionRole" :business="projectCode"></personel>-->
+          <permission v-if="!permissionRole"></permission>-->
+        </el-tab-pane>
+        <el-tab-pane label="角色权限" name="Role">
+          <role v-if="power === 'Role' && permissionRole" :business="projectCode"></role>-->
+          <permission v-if="!permissionRole"></permission>-->
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
@@ -61,8 +56,8 @@
         this.projectCode = this.projectOption[0].code
         this.changePower('Personnel')
       },
-      changePower(value) {
-        this.power = value
+      changePower() {
+        // this.power = value
         let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
         let proJectRole = permissions.filter((item) => {
           return item.projectCode === this.projectCode

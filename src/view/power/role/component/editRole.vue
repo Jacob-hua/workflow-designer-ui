@@ -3,7 +3,7 @@
     <div class="dialogTitle">
       <label>用户组</label>
       <el-input v-model="currentNodeName" placeholder="请输入内容" :disabled="true"></el-input>
-      <el-button type="primary" plain @click="grant()" v-if="type !== 'edit'" style="float: right;">编辑</el-button>
+      <el-button class="plain" type="primary" @click="grant()" v-if="type !== 'edit'" style="float: right;">编辑</el-button>
     </div>
     <div class="dialogGroup">
       <label>用户组详情</label>
@@ -61,8 +61,8 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer" v-if="type === 'edit'">
-      <el-button type="primary" @click="award">保存</el-button>
-      <el-button @click="handleClose">取消</el-button>
+      <el-button class="save" type="primary" @click="award">保存</el-button>
+      <el-button class="cancel" @click="handleClose">取消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -193,11 +193,21 @@
   }
 </script>
 
-<style scoped="scoped">
+<style scoped lang="scss">
+.save {
+  @include primaryBtn;
+}
+.cancel {
+  @include cancelBtn;
+}
+.plain {
+  margin-top: 5px;
+  @include primaryPlainBtn;
+}
   .dialogTitle {
     padding-top: 0px;
     padding-bottom: 20px;
-    color: black;
+    color: #fff;
   }
 
   .dialogTitle /deep/ .el-input {
@@ -208,7 +218,7 @@
   .dialogGroup {
     padding-top: 20px;
     border-top: 1px solid #f5f5f5;
-    color: black;
+    color: #fff;
   }
 
   .userGroup {
@@ -216,22 +226,24 @@
     border: 1px solid #000000;
     padding: 20px 20px;
     margin-top: 20px;
+    display: flex;
   }
 
   .userGroup-item {
+    @include primaryPlainBtn;
     width: 118px;
     height: 42px;
-    display: inline-block;
-    line-height: 42px;
-    text-align: center;
-    border: 1px solid #cccccc;
+    //display: inline-block;
+    //line-height: 42px;
+    //text-align: center;
+    //border: 1px solid #cccccc;
     margin-right: 20px;
   }
 
   .dialogMain {
     display: flex;
     margin-top: 20px;
-    color: black;
+    color: #fff;
   }
 
   .dialogMain-left {
@@ -266,7 +278,6 @@
   .RoleList {
     margin-bottom: 20px;
     padding: 30px 20px;
-    background-color: #f2f2f2;
   }
 
   .RoleList .el-checkbox__input {
@@ -275,7 +286,7 @@
   }
 
   .roleTitle {
-    color: #0066cc;
+    color: #fff;
     font-weight: 700;
     margin-bottom: 20px;
     display: inline-block;

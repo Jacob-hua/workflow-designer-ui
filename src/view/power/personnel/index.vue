@@ -125,7 +125,10 @@
   }
 </script>
 
-<style scoped="scoped">
+<style scoped>
+  .el-icon-share {
+    color: #fff;
+  }
   .personnel {
     display: flex;
     margin-left: 20px;
@@ -149,6 +152,7 @@
 
   .personnel-header-word {
     margin-left: 20px;
+    color: #fff;
   }
 
   .personnel-right {
