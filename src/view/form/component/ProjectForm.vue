@@ -342,7 +342,7 @@ export default {
         this.$refs.projectFormDiolog.postData = {
           ...item,
           ascriptionName: '',
-          ascName: item.business,
+          ascName: this.$getMappingName(item.business) ,
         }
       })
     },
