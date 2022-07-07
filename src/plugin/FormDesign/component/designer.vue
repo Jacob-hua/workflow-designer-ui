@@ -40,7 +40,7 @@
             @deleteItem="handlerItemDelete"/>
         </draggable>
           <div v-show="infoShow" class="empty-info">
-            <el-empty image="no_data.png" description="从左侧拖拽添加控件"></el-empty>
+            <el-empty :image="imgPath" description="从左侧拖拽添加控件"></el-empty>
           </div>
           
         </el-form>
@@ -95,6 +95,7 @@ export default {
   },
   data() {
     return {
+      imgPath: require('../../../assets/no_data.png'),
       formConf:formConf,
       activeItem:{},
       lastActiveItem:{},
