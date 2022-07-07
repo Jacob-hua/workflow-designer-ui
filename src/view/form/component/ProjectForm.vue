@@ -19,7 +19,7 @@
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
                         start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
-          <span class="text">表单</span> <el-input style="width: 230px" v-model="input" placeholder="请输入表单名称或编号"></el-input>
+          <span class="text">表单</span> <el-input v-model="input" placeholder="请输入表单名称或编号"></el-input>
       </div>
 
 
@@ -397,6 +397,12 @@ export default {
   line-height: 20px;
   margin-right: 10px;
   margin-left: 10px;
+}
+/deep/ .el-input {
+  width: 180px;
+}
+/deep/ .el-date-editor {
+  width: 260px;
 }
 /deep/ .el-dialog {
   @include formDialog;
