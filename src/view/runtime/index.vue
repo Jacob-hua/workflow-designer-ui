@@ -1,58 +1,64 @@
 <template>
-  <div class="runtime">
-    <div class="runtime-filter">
-      <div class="projectSelect marginRight20">
-        <el-select v-model="searchForm.ascription">
-          <el-option
-            v-for="{ id, label, value } in rootOrganizations"
-            :key="id"
-            :label="label"
-            :value="value"
-          ></el-option>
-        </el-select>
-      </div>
-      <div class="businessSelect marginRight20">
-        <el-cascader
-          v-model="searchForm.business"
-          :key="searchForm.ascription"
-          :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
-          :props="cascaderProps"
-          @change="onBusinessChange"
-        ></el-cascader>
-      </div>
-      <div class="datePick">
-        <span class="datePickTitle">时间</span>
-        <el-date-picker
-          v-model="searchForm.valueDate"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="——"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
-          :clearable="false"
-          @change="onTimeRangeChange"
-        >
-        </el-date-picker>
-      </div>
+  <div>
+    <div class="search-wrapper">
+      <el-form inline>
+        <el-form-item label="选择项目">
+          <el-select v-model="searchForm.ascription">
+            <el-option
+              v-for="{ id, label, value } in rootOrganizations"
+              :key="id"
+              :label="label"
+              :value="value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="选择业务">
+          <el-cascader
+            v-model="searchForm.business"
+            :key="searchForm.ascription"
+            :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
+            :props="cascaderProps"
+            @change="onBusinessChange"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="发起时间">
+          <el-date-picker
+            v-model="searchForm.valueDate"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="——"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :default-time="['00:00:00', '23:59:59']"
+            :clearable="false"
+            @change="onTimeRangeChange"
+          >
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
     </div>
-    <div class="runtime-home">
-      <div class="runtime-home-title">
-        <div class="data" v-for="({ label, value }, index) in workflowStatistics" :key="index">
-          <div class="title">
-            <b class="value">{{ value }}</b>
+    <div class="statistics-wrapper">
+      <div>
+        <div class="data-wrapper" v-for="({ label, value, icon }, index) in workflowStatistics" :key="index">
+          <div class="icon">
+            <img :src="icon" />
           </div>
-          <div class="titLabel">{{ label }}</div>
+          <div class="title">
+            {{ value }}
+          </div>
+          <div class="label">
+            {{ label }}
+          </div>
         </div>
       </div>
-      <div class="runtime-home-button" v-role="{ id: 'RunTimeAdd', type: 'button', business: searchForm.ascription }">
-        <div class="button1" :class="searchForm.ascription ? '' : 'disableStyle'" @click="onAddTicket">
-          <div class="title">
-            <i class="el-icon-circle-plus"></i>
+      <div v-role="{ id: 'RunTimeAdd', type: 'button', business: searchForm.ascription }">
+        <div class="data-wrapper" @click="onAddTicket">
+          <div class="icon">
+            <img :src="require('../../assets/image/runtime/create.svg')" />
           </div>
-          <div class="titLabel">创建工单</div>
+          <div class="label">创建工单</div>
         </div>
       </div>
     </div>
@@ -214,14 +220,17 @@ export default {
     workflowStatistics() {
       return [
         {
+          icon: require('../../assets/image/runtime/executed.svg'),
           label: '执行工作流总数',
           value: this.workflowCounts.executionTotalProcessCount,
         },
         {
+          icon: require('../../assets/image/runtime/executing.svg'),
           label: '执行中',
           value: this.workflowCounts.executionInProcessCount,
         },
         {
+          icon: require('../../assets/image/runtime/completed.svg'),
           label: '已完成数量',
           value: this.workflowCounts.executionCompleteCount,
         },
@@ -395,86 +404,93 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.runtime {
-  margin: 20px;
-  height: 100vh;
+.search-wrapper {
+  height: 106px;
+  background-color: $card-bg-color;
+
+  @include searchForm;
+
+  .el-form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 43px;
+  }
+
+  .el-form-item {
+    margin-bottom: 0;
+  }
 }
 
-.runtime-filter {
+.statistics-wrapper {
   display: flex;
-}
+  flex-direction: row;
+  margin-top: 20px;
+  width: 100%;
 
-.runtime-filter ::v-deep .el-select .el-input__inner {
-  border: 1px solid #000;
-}
+  & > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background-color: $card-bg-color;
+    color: $font-color;
 
-.runtime-filter ::v-deep .el-cascader .el-input__inner {
-  border: 1px solid #000;
-}
+    img {
+      width: 32px;
+      height: 34px;
+    }
 
-.marginRight20 {
-  margin-right: 20px;
-}
+    .data-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      line-height: 24px;
+      font-weight: 400;
+      padding: 28px 0px;
+    }
 
-.button1 {
-  cursor: pointer;
-}
+    .title {
+      margin-top: 16px;
+    }
 
-.datePickTitle {
-  font-size: 14px;
-  color: #000000;
-  margin-right: 20px;
-}
+    .label {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+      color: #6e7e88;
+      margin-top: 10px;
+    }
 
-.datePick ::v-deep .el-date-editor {
-  border: 1px solid #000000;
-}
+    .icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #d4fdd9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-.runtime-home {
-  margin-top: 40px;
-  display: flex;
-}
+    &:first-child {
+      margin-right: 20px;
+      flex-grow: 3;
+    }
 
-.runtime-home-title {
-  width: 1286px;
-  height: 142px;
-  background-color: #f2f2f2;
-  display: flex;
-}
+    &:last-child {
+      margin-left: 20px;
+      flex-grow: 1;
 
-.runtime-home-title .data {
-  flex: 1;
-  text-align: center;
-}
+      .data-wrapper {
+        cursor: pointer;
+      }
 
-.runtime-home-title .data .title {
-  font-size: 36px;
-  height: 100px;
-  line-height: 100px;
-}
-
-.runtime-home-button {
-  width: 368px;
-  height: 142px;
-  background-color: #f2f2f2;
-  margin-left: 20px;
-  display: flex;
-}
-
-.runtime-home-button > div {
-  flex: 1;
-  text-align: center;
-  padding: 20px 0px;
-}
-
-.runtime-home-button .title {
-  font-size: 36px;
-  height: 80px;
-  line-height: 80px;
-}
-
-.titLabel {
-  font-size: 14px;
+      .icon {
+        background-color: #009efb;
+      }
+    }
+  }
 }
 
 .runtime-check {
@@ -562,7 +578,6 @@ export default {
     }
 
     .el-step__description {
-      // color: white ;
       font-size: 12px;
       position: absolute;
       top: 5px;
