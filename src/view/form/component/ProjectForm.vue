@@ -5,13 +5,15 @@
       <div class="PublicForm-title">
       </div>
       <div class="datePick">
-       <span class="text">项目选择</span><el-select v-model="projectCode">
+        <span class="text">项目选择</span>
+        <el-select v-model="projectCode">
           <el-option v-for="{id, label, value} in rootOrganizations"
                      :key="id"
                      :label="label"
                      :value="value"></el-option>
         </el-select>
-        <span class="text">业务选择</span> <el-cascader v-model="projectValue"
+        <span class="text">业务选择</span>
+        <el-cascader v-model="projectValue"
                      :key="projectCode"
                      :options="rootOrganizationChildrenAndAll(projectCode)"
                      :props='cascaderProps'></el-cascader>
@@ -19,7 +21,8 @@
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
                         start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
         </el-date-picker>
-          <span class="text">表单</span> <el-input v-model="input" placeholder="请输入表单名称或编号"></el-input>
+        <span class="text">表单</span>
+        <el-input v-model="input" placeholder="请输入表单名称或编号"></el-input>
       </div>
 
 
@@ -32,24 +35,21 @@
     </div>
     <div>
       <div class="PublicForm-title-button">
-        <el-button class="boxBtn" @click="application()" v-role="{ id: 'FromUse', type: 'button', business: projectCode }">
+        <el-button class="boxBtn" @click="application()"
+                   v-role="{ id: 'FromUse', type: 'button', business: projectCode }">
           关联表单
         </el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button class="boxBtn" @click="addForm()" v-role="{ id: 'FromAdd', type: 'button', business: projectCode }">新建表单
+        <el-button class="boxBtn" @click="addForm()" v-role="{ id: 'FromAdd', type: 'button', business: projectCode }">
+          新建表单
         </el-button>
       </div>
     </div>
-    <div class="home-main">
-      <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''"
-              @click="changeActiveName('enabled')">可用表单（{{ getDataFirst.total }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''"
-              @click="changeActiveName('drafted')">草稿箱（{{ getDataSecond.total }}）</span>
-      </div>
-      <div class="home-table">
-        <div v-if="activeName === 'enabled'">
+    <div class="content-wrapper">
+      <el-tabs type="border-card" v-model="activeName" @tab-click="changeActiveName">
+        <el-tab-pane name="enabled">
+          <span slot="label">可用表单({{ getDataFirst.total }})</span>
           <div class="home-table-card" v-for="(item, index) in formListFirst" :key="index">
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
@@ -75,8 +75,9 @@
               </div>
             </div>
           </div>
-        </div>
-        <div v-if="activeName === 'drafted'">
+        </el-tab-pane>
+        <el-tab-pane name="drafted">
+          <span slot="label">草稿箱({{ getDataSecond.total }})</span>
           <div class="home-table-card" v-for="(item, index) in formListSecond" :key="index">
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
@@ -97,8 +98,8 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"
                        :projectOption="projectOption" :systemOption="systemOption"
@@ -299,8 +300,7 @@ export default {
       }
     },
 
-    changeActiveName(value) {
-      this.activeName = value
+    changeActiveName() {
       this.getManyData()
     },
 
@@ -388,6 +388,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/ .el-tabs__content {
+  padding: 50px 20px;
+}
 .text {
   width: 56px;
   height: 14px;
@@ -398,21 +401,25 @@ export default {
   margin-right: 10px;
   margin-left: 10px;
 }
+
 /deep/ .el-input {
   width: 180px;
 }
+
 /deep/ .el-date-editor {
   width: 260px;
 }
+
 /deep/ .el-dialog {
   @include formDialog;
 }
+
 .boxBtn {
   @include primaryPlainBtn;
 }
 
 .search {
- @include primaryBtn;
+  @include primaryBtn;
 }
 
 .reset {
@@ -490,30 +497,10 @@ export default {
   margin-top: 15px;
 }
 
-.home-main {
-  margin-top: 20px;
-}
-
-.home-main-tab {
-  display: flex;
-}
-
-.home-main-tab-item {
-  color: #9F9FA0;
-  display: inline-block;
-  height: 60px;
-  width: 200px;
-  line-height: 60px;
-  text-align: center;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.active {
-    background-color: #030303;
-    color: white;
-    font-weight: 600;
-    border-top: 2px solid #176CF4;
+.content-wrapper {
+  min-height: 100vh;
+  margin-top: 40px;
+  @include contentTab;
 }
 
 .home-table {

@@ -15,17 +15,15 @@
     <div class="PublicForm-title-button">
       <div class="boxBtn" @click="addForm()">新建表单</div>
     </div>
-    <div class="home-main">
-      <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'enabled' ? 'active' : ''" @click="changeActiveName('enabled')">可用表单（{{ getDataFirst.total }}）</span>
-        <span class="home-main-tab-item" :class="activeName === 'drafted' ? 'active' : ''" @click="changeActiveName('drafted')">草稿箱（{{ getDataSecond.total }}）</span>
-      </div>
-      <div class="home-table">
-        <div v-if="activeName === 'enabled'">
+    <div class="content-wrapper">
+      <el-tabs type="border-card" v-model="activeName" @tab-click="changeActiveName">
+        <el-tab-pane name="enabled">
+          <span slot="label">可用表单({{ getDataFirst.total }})</span>
           <div class="home-table-card" v-for="(item, index) in formListFirst" :key="index">
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
-              <span class="detailWord" @click="detailsDiolog(item)">详情</span>
+              <span class="detailWord" @click="detailsDiolog(item)"
+                    v-role="{ id: 'FromLook', type: 'button', business: projectCode }">详情</span>
             </div>
             <div class="card-main">
               <div class="card-main-item">
@@ -40,10 +38,15 @@
                 <span class="label">创建时间:</span>
                 <span class="value">{{ item.createTime }}</span>
               </div>
+              <div class="card-main-item">
+                <span class="label">发布次数:</span>
+                <span class="value">{{ item.count }}</span>
+              </div>
             </div>
           </div>
-        </div>
-        <div v-if="activeName === 'drafted'">
+        </el-tab-pane>
+        <el-tab-pane name="drafted">
+          <span slot="label">草稿箱({{ getDataSecond.total }})</span>
           <div class="home-table-card" v-for="(item, index) in formListSecond" :key="index">
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
@@ -56,7 +59,7 @@
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
-                <span class="value">{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
+                <span class="value">{{ item.createBy }}</span>
               </div>
               <div class="card-main-item">
                 <span class="label">创建时间:</span>
@@ -64,8 +67,8 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <PublicFormDiolog ref="PublicFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></PublicFormDiolog>
     <detailsDiolog ref="detailsDiolog" :formDatas="formData" @editForm="editForm" :status="activeName" ascription="public"></detailsDiolog>
@@ -162,8 +165,7 @@
         }
       },
       
-      changeActiveName(value) {
-        this.activeName = value
+      changeActiveName() {
         this.getManyData()
       },
       
@@ -230,6 +232,15 @@
 </script>
 
 <style scoped lang="scss">
+
+/deep/ .el-tabs__content {
+  padding: 50px 20px;
+}
+.content-wrapper {
+  min-height: 100vh;
+  margin-top: 40px;
+  @include contentTab;
+}
 .primary {
   @include primaryBtn;
 }

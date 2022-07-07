@@ -1,29 +1,25 @@
 <template>
   <div class="configuration">
-    <div class="home-main">
-      <div class="home-main-tab">
-        <span class="home-main-tab-item" :class="activeName === 'first' ? 'active' : ''" @click="changeActiveName('first')">访问配置</span>
-        <span class="home-main-tab-item" :class="activeName === 'second' ? 'active' : ''" @click="changeActiveName('second')">业务配置</span>
-        <span class="home-main-tab-item" :class="activeName === 'third' ? 'active' : ''" @click="changeActiveName('third')">启动项配置</span>
-      </div>
-      <div class="projectHeader" v-if="activeName === 'first'">
-        <el-select v-model="business" placeholder="请选择">
-          <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code">
-          </el-option>
-        </el-select>
-      </div>
-      <br>
-      <div class="btnContainer">
-        <div  class="buttonTab" v-if="activeName === 'first'" @click="showDiolog" v-role="{ id: 'VisitCallAdd', type: 'button', business: business }">新增第三方接口</div>
-      </div>
-      <div class="home-table">
+    <el-tabs v-model="activeName" type="border-card"  @tab-click="handleClick">
+      <el-tab-pane label="访问配置" name="first">
+        <div class="projectHeader" v-if="activeName === 'first'">-->
+                  <el-select v-model="business" placeholder="请选择">
+                    <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code">
+                    </el-option>
+                  </el-select>
+                </div>
         <visitCall v-if="activeName === 'first' && permissionRole" ref="first" @editTable="editTable()" @deleteTable="deleteTable()" :business="business"></visitCall>
+        <permission v-if="!permissionRole"></permission>
+      </el-tab-pane>
+      <el-tab-pane label="业务配置" name="second">
         <businessCall v-if="activeName === 'second' && permissionRole" ref="second"></businessCall>
+        <permission v-if="!permissionRole"></permission>
+      </el-tab-pane>
+      <el-tab-pane label="启动项配置" name="third">
         <StartItemConfig v-if="activeName === 'third' && permissionRole" ref="third" />
         <permission v-if="!permissionRole"></permission>
-      </div>
-    </div>
-
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
