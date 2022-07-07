@@ -57,7 +57,6 @@
         this.changePower('Personnel')
       },
       changePower() {
-        // this.power = value
         let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
         let proJectRole = permissions.filter((item) => {
           return item.projectCode === this.projectCode
