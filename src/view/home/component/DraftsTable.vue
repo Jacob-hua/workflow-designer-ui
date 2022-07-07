@@ -143,6 +143,7 @@ export default {
     },
     onEditWorkflow(workflow) {
       this.workflow = { ...workflow }
+      this.deployOptionsVisible = true
     },
   },
 }
