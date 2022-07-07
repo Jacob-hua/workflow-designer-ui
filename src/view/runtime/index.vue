@@ -405,6 +405,7 @@ export default {
 .search-wrapper {
   height: 106px;
   background-color: $card-bg-color;
+  border-radius: 6px;
 
   @include searchForm;
 
@@ -432,6 +433,7 @@ export default {
     justify-content: space-around;
     background-color: $card-bg-color;
     color: $font-color;
+    border-radius: 6px;
 
     img {
       width: 32px;
