@@ -1,54 +1,50 @@
 <template>
   <div>
-    <div class="home-table-main">
-      <el-table :data="listData" style="width: 100%">
-        <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>
-        <el-table-column prop="name" label="名称" width="180" align="center"> </el-table-column>
-        <el-table-column prop="docName" label="流程文件" align="center">
-          <template slot-scope="scope">
-            <span class="fileStyle">{{ scope.row.name + '.bpmn' }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createBy" label="创建人" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.createBy == -1 ? '系统' : scope.row.createBy }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="编辑时间" align="center"> </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button
-              @click.native.prevent="draftTableEdit(scope.row)"
-              v-role="{ id: 'WorkflowEdit', type: 'button', business: business }"
-              type="text"
-              size="small"
-              class="button1"
-            >
-              编辑
-            </el-button>
-            <el-button
-              @click.native.prevent="onDeleteRow(scope.row)"
-              v-role="{ id: 'WorkflowDelete', type: 'button', business: business }"
-              type="text"
-              size="small"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="home-table-page">
-      <el-pagination
-        @size-change="onPageSizeChange"
-        @current-change="onPageChange"
-        :current-page="pageInfo.page"
-        :page-size="pageInfo.limit"
-        layout="prev, pager, next, jumper"
-        :total="pageInfo.total"
-      >
-      </el-pagination>
-    </div>
+    <el-table :data="listData" style="width: 100%">
+      <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>
+      <el-table-column prop="name" label="名称" width="180" align="center"> </el-table-column>
+      <el-table-column prop="docName" label="流程文件" align="center">
+        <template slot-scope="scope">
+          <span class="fileStyle">{{ scope.row.name + '.bpmn' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createBy" label="创建人" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.createBy == -1 ? '系统' : scope.row.createBy }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createTime" label="编辑时间" align="center"> </el-table-column>
+      <el-table-column label="操作" align="center">
+        <template slot-scope="scope">
+          <el-button
+            @click.native.prevent="draftTableEdit(scope.row)"
+            v-role="{ id: 'WorkflowEdit', type: 'button', business: business }"
+            type="text"
+            size="small"
+            class="button1"
+          >
+            编辑
+          </el-button>
+          <el-button
+            @click.native.prevent="onDeleteRow(scope.row)"
+            v-role="{ id: 'WorkflowDelete', type: 'button', business: business }"
+            type="text"
+            size="small"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      @size-change="onPageSizeChange"
+      @current-change="onPageChange"
+      :current-page="pageInfo.page"
+      :page-size="pageInfo.limit"
+      layout="prev, pager, next, jumper"
+      :total="pageInfo.total"
+    >
+    </el-pagination>
   </div>
 </template>
 
@@ -154,21 +150,13 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-.home-table-main {
-  padding: 10px;
-  border: 1px solid #666666;
+<style scoped lang="scss">
+.el-pagination {
+  text-align: right;
+  padding: 34px 0;
 }
 
 .fileStyle {
   color: #007edb;
-}
-
-.home-table-page {
-  text-align: right;
-  padding: 20px 0px;
-}
-.button1 {
-  margin-right: 50px;
 }
 </style>

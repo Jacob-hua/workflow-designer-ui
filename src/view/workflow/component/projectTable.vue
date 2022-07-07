@@ -1,60 +1,55 @@
 <template>
   <div>
-    <div class="home-table-main">
-      <el-table :data="listData">
-        <el-table-column type="index" label="序号" width="180"> </el-table-column>
-        <el-table-column prop="name" label="名称" width="180"> </el-table-column>
-        <el-table-column prop="docName" label="流程文件">
-          <template slot-scope="scope">
-            <span class="fileStyle">{{ scope.row.docName }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createBy" label="创建人"> </el-table-column>
-        <el-table-column prop="createTime" label="编辑时间"> </el-table-column>
-        <el-table-column prop="displayStatus" label="状态">
-          <template slot-scope="scope">
-            <span class="status" :class="scope.row.status === 'enabled' ? '' : 'statusFalse'">{{
-              scope.row.displayStatus
-            }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          v-role="{ id: ['WorkflowLook', 'WorkflowDelete'], type: 'contain', business: business }"
-        >
-          <template slot-scope="scope">
-            <el-button
-              @click.native.prevent="lookBpmnShow(scope.row)"
-              v-role="{ id: 'WorkflowLook', type: 'button', business: business }"
-              type="text"
-              size="small"
-              class="button1"
-            >
-              查看
-            </el-button>
-            <el-button
-              @click.native.prevent="onDeleteRow(scope.row)"
-              v-role="{ id: 'WorkflowDelete', type: 'button', business: business }"
-              type="text"
-              size="small"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="home-table-page">
-      <el-pagination
-        @size-change="onSizeChange"
-        @current-change="onPageChange"
-        :current-page="pageInfo.page"
-        :page-size="pageInfo.limit"
-        layout="prev, pager, next, jumper"
-        :total="pageInfo.total"
+    <el-table :data="listData">
+      <el-table-column type="index" label="序号" width="180"> </el-table-column>
+      <el-table-column prop="name" label="名称" width="180"> </el-table-column>
+      <el-table-column prop="docName" label="流程文件">
+        <template slot-scope="scope">
+          <span class="file">{{ scope.row.docName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createBy" label="创建人"> </el-table-column>
+      <el-table-column prop="createTime" label="编辑时间"> </el-table-column>
+      <el-table-column prop="displayStatus" label="状态">
+        <template slot-scope="scope">
+          <span class="status" :class="scope.row.status === 'enabled' ? '' : 'status-failed'">{{
+            scope.row.displayStatus
+          }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        v-role="{ id: ['WorkflowLook', 'WorkflowDelete'], type: 'contain', business: business }"
       >
-      </el-pagination>
-    </div>
+        <template slot-scope="scope">
+          <el-button
+            @click.native.prevent="lookBpmnShow(scope.row)"
+            v-role="{ id: 'WorkflowLook', type: 'button', business: business }"
+            type="text"
+            size="small"
+          >
+            查看
+          </el-button>
+          <el-button
+            @click.native.prevent="onDeleteRow(scope.row)"
+            v-role="{ id: 'WorkflowDelete', type: 'button', business: business }"
+            type="text"
+            size="small"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      @size-change="onSizeChange"
+      @current-change="onPageChange"
+      :current-page="pageInfo.page"
+      :page-size="pageInfo.limit"
+      layout="prev, pager, next, jumper"
+      :total="pageInfo.total"
+    >
+    </el-pagination>
   </div>
 </template>
 
@@ -166,22 +161,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.home-table-main {
-  padding: 10px;
-  border: 1px solid #666666;
+.el-pagination {
+  text-align: right;
+  padding: 34px 0;
 }
 
-.fileStyle {
+.file {
   color: #007edb;
 }
 
-.home-table-page {
-  text-align: right;
-  padding: 20px 0px;
-}
-.button1 {
-  margin-right: 50px;
-}
 .status {
   width: 90px;
   height: 30px;
@@ -191,7 +179,7 @@ export default {
   text-align: center;
   line-height: 30px;
 }
-.statusFalse {
+.status-failed {
   background-color: #ff9900;
 }
 </style>
