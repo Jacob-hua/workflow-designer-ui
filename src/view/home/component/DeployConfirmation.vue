@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible="visible" width="35%" @close="onCancel">
+    <el-dialog title="部署工作流" :visible="visible" @close="onCancel">
       <el-form label-position="right" label-width="80px" ref="formData" :rules="formRules" :model="formData">
         <el-form-item label="应用项目" prop="ascription">
           <el-col :span="24">
@@ -38,8 +38,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button @click="onSubmit" type="primary">下一步</el-button>
-        <el-button @click="onCancel">取消</el-button>
+        <el-button class="submit" @click="onSubmit">下一步</el-button>
+        <el-button class="cancel" @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -135,4 +135,16 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped lang="scss">
+/deep/ .el-dialog {
+  @include formDialog;
+}
+
+.submit {
+  @include primaryBtn;
+}
+
+.cancel {
+  @include cancelBtn;
+}
+</style>

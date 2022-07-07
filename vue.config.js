@@ -19,6 +19,10 @@ module.exports = {
     },
   },
   chainWebpack: (config) => {
+    config.plugin('html').tap((args) => {
+      args[0].title = '流程引擎工作台'
+      return args
+    })
     config.module
       .rule('bpmnlint')
       .test(/\.bpmnlintrc$/)

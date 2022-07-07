@@ -1,0 +1,71 @@
+$step-item-color: #39c449;
+$step-hang-item-color: #ffbc34;
+$step-rejected-color: red;
+
+/deep/ .el-steps {
+  position: relative;
+  line-height: 23px;
+  top: 0px;
+
+  .table-step-rejected {
+    .el-step__description {
+      color: $step-rejected-color;
+    }
+
+    .el-step__icon {
+      background-color: $step-rejected-color !important;
+    }
+  }
+
+  .table-step-hang {
+    .el-step__description {
+      color: $step-hang-item-color;
+    }
+
+    .el-step__icon {
+      background-color: $step-hang-item-color !important;
+    }
+  }
+
+  .el-step__head.is-finish {
+    .el-step__icon {
+      background-color: $step-item-color;
+    }
+
+    .el-step__line {
+      height: 2px;
+      border-color: $step-item-color;
+    }
+  }
+
+  .el-step__head {
+    margin-top: 20px;
+  }
+
+  .el-step__icon-inner {
+    display: none;
+  }
+
+  .el-step__line {
+    height: 2px;
+  }
+
+  .el-step__icon {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .el-step__title {
+    color: $font-color !important;
+    font-size: 12px;
+  }
+
+  .el-step__description {
+    font-size: 12px;
+    position: absolute;
+    top: 5px;
+    width: 100%;
+    color: $step-item-color;
+  }
+}

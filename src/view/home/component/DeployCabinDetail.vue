@@ -162,11 +162,7 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-::v-deep .el-dialog__body {
-  max-height: 90vh;
-  word-break: normal;
-}
+<style scoped lang="scss">
 .details-header {
   margin-top: 20px;
 }
