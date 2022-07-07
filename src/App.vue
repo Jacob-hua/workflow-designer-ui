@@ -22,8 +22,20 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+html {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  margin: 0;
+  box-sizing: border-box;
+  height: 100%;
+}
+
 #app {
+  height: 100%;
   box-sizing: border-box;
   background-color: $theme-bg-color;
 }
