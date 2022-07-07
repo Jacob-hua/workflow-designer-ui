@@ -95,7 +95,7 @@ export default {
   },
   data() {
     return {
-      imgPath: require('../../../assets/no_data.png'),
+      imgPath: require('../../../assets/image/common/no_data.png'),
       formConf:formConf,
       activeItem:{},
       lastActiveItem:{},
