@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible="visible" width="70%" @close="onCancel" custom-class="dialogVisible1">
+    <el-dialog title="部署工作流" :visible="visible" @close="onCancel">
       <workflow-info :workflow="workflow" :xml="workflow.processResource" :processDisplayInfo="processDisplayInfo" />
       <span slot="footer" class="dialog-footer">
         <el-button
