@@ -34,7 +34,7 @@
         <div class="cancel" @click="dialogVisible1 = false">取消</div>
       </div>
     </el-dialog>
-    <el-dialog :title="title" :visible.sync="dialogVisible2" width="97%" height="100%" custom-class="dialogVisible2">
+    <el-dialog :title="title" :visible.sync="dialogVisible2" width="100%" height="100%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
           <div class="title-item">
