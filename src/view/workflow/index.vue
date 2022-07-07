@@ -1,10 +1,10 @@
 <template>
-  <div class="work-home">
-    <el-tabs v-model="activeName" type="border-card">
-      <el-tab-pane label="项目流程" name="second">
+  <div>
+    <el-tabs type="border-card">
+      <el-tab-pane label="项目流程">
         <project-work></project-work>
       </el-tab-pane>
-      <el-tab-pane label="公共流程" name="first">
+      <el-tab-pane label="公共流程">
         <public-work></public-work>
       </el-tab-pane>
     </el-tabs>
@@ -20,11 +20,6 @@ export default {
   components: {
     PublicWork,
     ProjectWork,
-  },
-  data() {
-    return {
-      activeName: 'second',
-    }
   },
 }
 </script>

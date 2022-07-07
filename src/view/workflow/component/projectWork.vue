@@ -46,14 +46,14 @@
     <div class="content-wrapper">
       <div class="tool-wrapper">
         <el-button
-          type="primary"
+          class="create-button"
           @click="onAddProject"
           v-role="{ id: 'WorkflowAdd', type: 'button', business: projectValue }"
         >
           新建工作流
         </el-button>
         <el-button
-          type="primary"
+          class="quote-button"
           @click="onQuoteBpmnShow"
           v-role="{ id: 'WorkflowUse', type: 'button', business: projectValue }"
         >
@@ -311,6 +311,17 @@ export default {
 
   .tool-wrapper {
     float: right;
+    position: relative;
+    z-index: 99;
+    display: flex;
+  }
+
+  .create-button {
+    @include primaryPlainBtn;
+  }
+
+  .quote-button {
+    @include primaryPlainBtn;
   }
 }
 </style>

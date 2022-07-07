@@ -108,13 +108,6 @@ $header-height: 48px;
 $aside-width: 240px;
 $aside-logo-height: 288px;
 
-body {
-  overflow: hidden;
-  margin: 0;
-  box-sizing: border-box;
-  height: 100%;
-}
-
 .header {
   height: $header-height !important;
   line-height: $header-height;
@@ -140,6 +133,7 @@ body {
 }
 
 .el-aside {
+  height: 100vh;
   width: $aside-width !important;
   display: flex;
   flex-direction: column;
@@ -194,6 +188,11 @@ body {
     background-color: $menu-active-bg-color;
   }
 
+  .el-menu-item {
+    color: $menu-color;
+    font-size: 16px;
+  }
+
   .is-active {
     color: #ffffff;
     background-color: $menu-active-bg-color;
@@ -229,9 +228,11 @@ body {
 }
 
 .el-main {
-  color: #333;
-  text-align: left;
-  height: 100%;
   padding: 40px 20px 0px 20px;
+  overflow: auto;
+
+  & > div:first-child {
+    height: 100vh;
+  }
 }
 </style>
