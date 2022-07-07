@@ -88,6 +88,7 @@ export default {
 .search-wrapper {
   height: 106px;
   background-color: $card-bg-color;
+  border-radius: 6px;
 
   @include searchForm;
 
