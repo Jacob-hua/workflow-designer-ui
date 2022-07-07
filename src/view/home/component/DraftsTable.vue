@@ -1,49 +1,45 @@
 <template>
   <div>
-    <div>
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column type="index" label="序号" align="center"> </el-table-column>
-        <el-table-column prop="deployName" label="名称" align="center"> </el-table-column>
-        <el-table-column prop="docName" label="流程文件" align="center">
-          <template slot-scope="scope">
-            <span class="file">{{ scope.row.docName }}.bpmn</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createBy" label="创建人" align="center"> </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" align="center"> </el-table-column>
-        <el-table-column prop="name" label="操作" align="center">
-          <template slot-scope="{ row }">
-            <el-button
-              @click.native.prevent="onEditWorkflow(row)"
-              type="text"
-              size="small"
-              v-role="{ id: 'HomeLook', type: 'button', business: row.business }"
-            >
-              编辑
-            </el-button>
-            <el-button
-              @click.native.prevent="onDeleteWorkflow(row)"
-              type="text"
-              size="small"
-              v-role="{ id: 'HomeDelete', type: 'button', business: row.business }"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="home-table-page">
-      <el-pagination
-        @size-change="onPageSizeChange"
-        @current-change="onPageChange"
-        :current-page="pageInfo.page"
-        :page-size="pageInfo.limit"
-        layout="prev, pager, next, jumper"
-        :total="pageInfo.total"
-      >
-      </el-pagination>
-    </div>
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column type="index" label="序号" align="center"> </el-table-column>
+      <el-table-column prop="deployName" label="名称" align="center"> </el-table-column>
+      <el-table-column prop="docName" label="流程文件" align="center">
+        <template slot-scope="scope">
+          <span class="file">{{ scope.row.docName }}.bpmn</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createBy" label="创建人" align="center"> </el-table-column>
+      <el-table-column prop="createTime" label="创建时间" align="center"> </el-table-column>
+      <el-table-column prop="name" label="操作" align="center">
+        <template slot-scope="{ row }">
+          <el-button
+            @click.native.prevent="onEditWorkflow(row)"
+            type="text"
+            size="small"
+            v-role="{ id: 'HomeLook', type: 'button', business: row.business }"
+          >
+            编辑
+          </el-button>
+          <el-button
+            @click.native.prevent="onDeleteWorkflow(row)"
+            type="text"
+            size="small"
+            v-role="{ id: 'HomeDelete', type: 'button', business: row.business }"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      @size-change="onPageSizeChange"
+      @current-change="onPageChange"
+      :current-page="pageInfo.page"
+      :page-size="pageInfo.limit"
+      layout="prev, pager, next, jumper"
+      :total="pageInfo.total"
+    >
+    </el-pagination>
     <deploy-options
       :visible.sync="deployOptionsVisible"
       :workflow="workflow"
@@ -153,12 +149,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.file {
-  color: #007edb;
+.el-pagination {
+  text-align: right;
+  padding: 34px 0;
 }
 
-.home-table-page {
-  text-align: right;
-  padding: 20px 0px;
+.file {
+  color: #007edb;
 }
 </style>
