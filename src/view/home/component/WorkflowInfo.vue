@@ -200,7 +200,7 @@ export default {
 .info {
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
 
   & > div {
     font-size: 14px;
