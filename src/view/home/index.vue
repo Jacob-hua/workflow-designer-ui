@@ -87,39 +87,29 @@
         </div>
       </div>
     </div>
-    <div class="home-main">
-      <div class="home-main-tab">
-        <span
-          class="home-main-tab-item"
-          :class="activeName === 'workflow' ? 'active' : ''"
-          @click="changeAction('workflow')"
-        >
-          工作流（{{ WorkflowTableNum }}）
-        </span>
-        <span
-          class="home-main-tab-item"
-          :class="activeName === 'drafts' ? 'active' : ''"
-          @click="changeAction('drafts')"
-        >
-          草稿箱（{{ draftsTableNum }}）
-        </span>
-      </div>
-      <div class="home-table">
-        <workflow-table
-          v-show="activeName === 'workflow'"
-          :searchForm="searchForm"
-          @totalChange="totalChange"
-          ref="workflow"
-          @getManyData="getManyData()"
-        ></workflow-table>
-        <drafts-table
-          v-show="activeName === 'drafts'"
-          :searchForm="searchForm"
-          @totalChange="totalChange"
-          ref="drafts"
-          @getManyData="getManyData()"
-        ></drafts-table>
-      </div>
+    <div class="content-wrapper">
+      <el-tabs v-model="activeName" type="border-card" @tab-click="changeAction">
+        <el-tab-pane name="workflow">
+          <span slot="label"> 工作流({{ WorkflowTableNum }}) </span>
+          <workflow-table
+            v-show="activeName === 'workflow'"
+            :searchForm="searchForm"
+            @totalChange="totalChange"
+            ref="workflow"
+            @getManyData="getManyData()"
+          ></workflow-table>
+        </el-tab-pane>
+        <el-tab-pane name="drafts">
+          <span slot="label"> 草稿箱({{ draftsTableNum }}) </span>
+          <drafts-table
+            v-show="activeName === 'drafts'"
+            :searchForm="searchForm"
+            @totalChange="totalChange"
+            ref="drafts"
+            @getManyData="getManyData()"
+          ></drafts-table>
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
@@ -194,8 +184,7 @@ export default {
     totalChange(value, key) {
       this[key] = value
     },
-    changeAction(value) {
-      this.activeName = value
+    changeAction() {
       this.$refs.workflow.fetchWorkflows()
     },
     getDeployCountList() {
@@ -336,41 +325,7 @@ export default {
   }
 }
 
-.projectSelect {
-  margin-right: 20px;
-}
-
-.businessSelect {
-  margin-right: 40px;
-}
-
-.datePickTitle {
-  font-size: 14px;
-  color: #000000;
-  margin-right: 20px;
-}
-
-.home-main {
-  margin-top: 40px;
-}
-
-.home-main-tab {
-  display: flex;
-}
-
-.home-main-tab-item {
-  display: inline-block;
-  height: 60px;
-  width: 200px;
-  line-height: 60px;
-  text-align: center;
-  font-size: 14px;
-  cursor: pointer;
-  border: 1px solid #cccccc;
-}
-
-.active {
-  background-color: #030303;
-  color: white;
+.content-wrapper {
+  margin-top: 20px;
 }
 </style>

@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="home-table-main">
+    <div>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号" align="center"> </el-table-column>
         <el-table-column prop="deployName" label="名称" align="center"> </el-table-column>
         <el-table-column prop="docName" label="流程文件" align="center">
           <template slot-scope="scope">
-            <span class="fileStyle">{{ scope.row.docName }}.bpmn</span>
+            <span class="file">{{ scope.row.docName }}.bpmn</span>
           </template>
         </el-table-column>
         <el-table-column prop="createBy" label="创建人" align="center"> </el-table-column>
@@ -17,7 +17,6 @@
               @click.native.prevent="onEditWorkflow(row)"
               type="text"
               size="small"
-              class="button1"
               v-role="{ id: 'HomeLook', type: 'button', business: row.business }"
             >
               编辑
@@ -143,8 +142,7 @@ export default {
     },
     updatePageNum() {
       const totalPage = Math.ceil((this.pageInfo.total - 1) / this.pageInfo.limit)
-      this.pageInfo.page =
-        this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page
+      this.pageInfo.page = this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page
       this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page
     },
     onEditWorkflow(workflow) {
@@ -154,28 +152,13 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-.home-table-main {
-  padding: 10px;
-  border: 1px solid #666666;
-}
-
-.fileStyle {
+<style scoped lang="scss">
+.file {
   color: #007edb;
 }
 
-::v-deep .el-table .el-table__cell {
-  padding: 8px 0px;
-}
-::v-deep .el-table th.el-table__cell {
-  background-color: #f5f7f9;
-  padding: 16px 0px;
-}
 .home-table-page {
   text-align: right;
   padding: 20px 0px;
-}
-.button1 {
-  margin-right: 50px;
 }
 </style>
