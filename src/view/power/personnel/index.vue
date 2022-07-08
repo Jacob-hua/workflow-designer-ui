@@ -126,6 +126,9 @@
 </script>
 
 <style scoped>
+>>>   label {
+color: #fff;
+}
   .el-icon-share {
     color: #fff;
   }

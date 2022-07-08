@@ -3,6 +3,9 @@
     <el-dialog title="关联"
                :visible="dialogVisible"
                width="70%"
+               fullscreen
+               custom-class="dialogVisibleEdit"
+               top="1vh"
                :before-close="handleClose">
       <div class="diologMain">
         <div class="diologMain-right">
@@ -197,6 +200,12 @@ export default {
           var file1 = new File([_this.currentData.content], 'test.form', {
             type: 'text/xml',
           })
+          if(this.postData.id) {
+            formData.append('sourceId', this.postData.sourceId)
+            if (this.postData.status !== 'enabled') {
+              formData.append('id', this.postData.id)
+            }
+          }
           let formData = new FormData()
           formData.append('name', this.postData.name)
           formData.append('docName', this.postData.name + '.form')
@@ -240,6 +249,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/ .dialogVisibleEdit {
+  width: 100% !important;
+}
 /deep/ .el-dialog {
   @include formDialog;
 }

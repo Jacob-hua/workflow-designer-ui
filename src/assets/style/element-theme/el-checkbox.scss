@@ -1,10 +1,21 @@
 .el-checkbox__input.is-disabled .el-checkbox__inner {
+  background-color: #333 !important;
+  border-color: #333 !important;
+}
+.el-checkbox__input.is-disabled + span.el-checkbox__label {
+  color: #666666;
+  cursor: not-allowed;
+}
+.el-checkbox__input.is-disabled .el-checkbox__inner {
   background-color: #333;
   border-color: #333;
 }
 .el-checkbox__input.is-disabled + span.el-checkbox__label {
   color: #666666;
   cursor: not-allowed;
+}
+ .el-checkbox__input.is-checked + .el-checkbox__label {
+  color: #fff;
 }
 .el-checkbox__inner {
   background-color: transparent;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="表单详情" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog title="表单详情" :visible.sync="dialogVisible2" fullscreen top="1vh" width="90%" custom-class="dialogVisibleEdit">
       <div class="dialogVisible2-main">
         <div class="detail-title">
           <div class="detail-title-item"> <span class="detail-title-item-label">表单编码:</span> <span>{{ formDatas.numberCode }}</span> </div>
@@ -10,7 +10,6 @@
           <div class="detail-title-item"> <span class="detail-title-item-label">创建人:</span> <span>{{ formDatas.createBy }}</span> </div>
           <div class="detail-title-item"> <span class="detail-title-item-label">创建时间:</span> <span>{{ formDatas.createTime }}</span> </div>
           <div class="detail-title-item" v-if="quote == 'delete'"> <span class="detail-title-item-label">发布次数:</span> <span>{{ formDatas.count }}</span> </div>
-          
          <div class="detail-title-item-button">
            <el-button class="primary" type="primary" @click="editForm()" v-role="{ id: 'FromEdit', type: 'button', business: business }">编辑</el-button>
            <el-button class="primary" type="primary" @click="deleteRow()" v-if="quote == 'delete'" v-role="{ id: 'FromDelete', type: 'button', business: business }">删除</el-button>
@@ -238,6 +237,9 @@
 </script>
 
 <style scoped lang="scss">
+/deep/ .dialogVisibleEdit {
+  width: 100% !important;
+}
 .primary {
   @include primaryBtn;
 }
@@ -283,7 +285,7 @@
   }
   
   .detail-title-item-button {
-    margin-top: -60px;
+    margin-top: -30px;
     display: flex;
     justify-content: flex-end;
   }
