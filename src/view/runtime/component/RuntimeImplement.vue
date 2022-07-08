@@ -15,9 +15,10 @@
               :name="value"
               :key="index"
             >
-              <div v-if="!roleBoolean">无权限</div>
-              <div v-else-if="actions.length === 0">无信息</div>
-              <component v-else :is="name" v-on="events" v-bind="props" />
+              <!-- <div v-if="!roleBoolean">无权限</div>
+              <div v-else-if="actions.length === 0">无信息</div> -->
+              <!-- <component v-else :is="name" v-on="events" v-bind="props" /> -->
+              <component :is="name" v-on="events" v-bind="props" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -476,6 +477,8 @@ export default {
 
 .action-wrapper {
   @include contentTab;
+
+  margin-top: 30px;
 }
 
 .Implement-right-form {
