@@ -3,6 +3,9 @@
     <el-dialog title="关联"
                :visible="dialogVisible"
                width="70%"
+               fullscreen
+               custom-class="dialogVisibleEdit"
+               top="1vh"
                :before-close="handleClose">
       <div class="diologMain">
         <div class="diologMain-right">
@@ -246,6 +249,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/ .dialogVisibleEdit {
+  width: 100% !important;
+}
 /deep/ .el-dialog {
   @include formDialog;
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="表单" :visible.sync="dialogVisible1" width="35%">
+    <el-dialog title="表单" :visible.sync="dialogVisible1" >
       <div class="guid">
         <el-form ref="form" label-width="80px" label-position="right" :rules="rules" :model="postData">
           <div class="from-item">
@@ -34,7 +34,7 @@
         <div class="cancel" @click="dialogVisible1 = false">取消</div>
       </div>
     </el-dialog>
-    <el-dialog :title="title" :visible.sync="dialogVisible2" width="100%" height="100%" custom-class="dialogVisible2">
+    <el-dialog :title="title" :visible.sync="dialogVisible2" fullscreen top="1vh" custom-class="dialogVisibleEdit">
       <div class="dialogVisible2-main">
         <div class="form-title">
           <div class="title-item">
@@ -340,6 +340,9 @@ export default {
 }
 .cancel {
   @include cancelBtn;
+}
+/deep/.dialogVisibleEdit {
+  width: 100% !important;
 }
 .dialog-footer {
   display: flex;
