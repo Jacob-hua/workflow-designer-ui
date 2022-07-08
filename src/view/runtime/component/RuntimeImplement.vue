@@ -482,9 +482,8 @@ export default {
 }
 
 .action-wrapper {
-  @include contentTab;
-
   margin-top: 30px;
+  @include runtimeContentTab;
 }
 
 .form-title {

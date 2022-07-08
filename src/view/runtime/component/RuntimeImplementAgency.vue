@@ -1,27 +1,21 @@
 <template>
-  <div class="container">
-    <div class="peopleList">
-      <div v-for="({ assignee, candidateUsers = [], taskId }, index) in agency" :key="index">
-        <span v-show="assignee"> {{ assignee }}: </span>
-        <div class="peopleList-item" v-for="userName in candidateUsers" :key="userName">
-          {{ userName }}
+  <div>
+    <div class="container">
+      <div class="agency" v-for="({ assignee, candidateUsers = [], taskId }, index) in agency" :key="index">
+        <div v-show="assignee">{{ assignee }}:</div>
+        <div class="info" v-if="assignee === userInfo.account && candidateUsers.length > 0">
+          <div>
+            <div class="user" v-for="userName in candidateUsers" :key="userName">
+              {{ userName }}
+            </div>
+          </div>
+          <el-button @click="onEditAgency(taskId, candidateUsers)">编辑</el-button>
         </div>
-        <span
-          v-if="assignee === userInfo.account && candidateUsers.length > 0"
-          class="addCirculate"
-          @click="onEditAgency(taskId, candidateUsers)"
-        >
-          编辑
-        </span>
-        <div v-else-if="candidateUsers.length === 0" style="display: inline-block">
-          <span>暂无代办</span>
-          <span
-            class="addCirculate"
-            @click="onAddAgency(taskId)"
-            v-if="assignee === userInfo.account && candidateUsers.length == 0"
-          >
-            点击添加
-          </span>
+        <div class="empty" v-else-if="candidateUsers.length === 0">
+          <div>暂无代办</div>
+          <el-button @click="onAddAgency(taskId)" v-if="assignee === userInfo.account && candidateUsers.length == 0">
+            添加
+          </el-button>
         </div>
       </div>
     </div>
@@ -100,25 +94,60 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.peopleList {
-  margin-top: 15px;
+.container {
+  height: 180px;
+  overflow: scroll;
 }
 
-.peopleList-item {
-  display: inline-block;
-  width: 96px;
-  height: 32px;
-  line-height: 32px;
+.agency {
+  display: flex;
+  flex-direction: row;
+  margin-top: 12px;
+  color: $font-color;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  align-items: center;
+
+  & > div:first-child {
+    color: $font-color-1;
+  }
+
+  button {
+    @include primaryBtn;
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  padding: 0 20px;
+
+  & > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.user {
+  width: 80px;
+  height: 25px;
+  line-height: 25px;
+  margin-right: 20px;
   text-align: center;
-  border: 1px solid #108cee;
-  border-radius: 5px;
-  margin-left: 20px;
+  border: 1px solid $button-submit-bg-color;
+  border-radius: 4px;
 }
 
-.addCirculate {
-  margin-left: 10px;
-  display: inline-block;
-  color: #5b5091;
-  cursor: pointer;
+.empty {
+  display: flex;
+  flex-direction: row;
+  padding: 0 20px;
+  align-items: center;
+
+  button {
+    margin-left: 20px;
+  }
 }
 </style>
