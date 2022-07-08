@@ -173,9 +173,11 @@ export default {
 .process-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, 346px);
+  grid-template-rows: 229px;
   row-gap: 20px;
   column-gap: 20px;
   padding: 22px;
+  height: 720px;
 }
 
 .process {
