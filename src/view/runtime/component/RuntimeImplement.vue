@@ -36,9 +36,9 @@
         </div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="onCancel">取 消</el-button>
-      <el-button type="primary" @click="onExecute" :disabled="hang">执 行</el-button>
+    <span slot="footer">
+      <el-button class="submit-button" @click="onExecute" :disabled="hang">执 行</el-button>
+      <el-button class="cancel-button" @click="onCancel">取 消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -500,5 +500,13 @@ export default {
   background: $card-bg-color-1;
   border: 1px solid $border-color-1;
   border-radius: 8px;
+}
+
+.submit-button {
+  @include primaryBtn;
+}
+
+.cancel-button {
+  @include cancelBtn;
 }
 </style>
