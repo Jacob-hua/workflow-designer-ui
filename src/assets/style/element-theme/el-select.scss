@@ -41,3 +41,6 @@ $select-option-active-bg-color: #009efb !default;
   background-color: $select-option-active-bg-color;
   color: $select-option-active-color;
 }
+.el-select-dropdown {
+   background-color: unset;
+}

@@ -38,8 +38,9 @@
                           :value="apiItem.type">
                       </el-option>
                     </el-select>
+                    <p @click="addApiType" style="color: rgb(26, 136, 255); font-size: 14px; cursor: pointer ">未找到类型点击添加</p>
                   </el-form-item>
-                  <p @click="addApiType" style="color: rgb(26, 136, 255); font-size: 14px">未找到类型点击添加</p>
+
                   <el-form-item label="请求类型" prop="method" :rules="[{ required: true, trigger: ['blur', 'change'], message: '请选择请求类型' }]">
                     <el-select v-model="item.method" placeholder="请选择api类型">
                       <el-option
@@ -424,6 +425,12 @@ export default {
 .dialog-footer {
   display: flex;
   justify-content: center;
+}
+.el-form-item {
+  margin-right: 20px;
+}
+.el-select {
+  width: 215px;
 }
 /deep/ .jsonViewer .jv-code {
   background-color: #212739;

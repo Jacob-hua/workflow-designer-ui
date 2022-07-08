@@ -3,7 +3,6 @@
       title="第三方接口配置"
       :visible.sync="dialogVisible"
       width="65%"
-      fullscreen
       append-to-body
   >
     <el-form  ref="form" label-width="80px">
@@ -63,14 +62,14 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="请求头">
-                <el-input v-model="item.headers"></el-input>
+                <el-input disabled v-model="item.headers"></el-input>
               </el-form-item>
               <div class="params" v-for="(config,idx) in item.configParams" :key="idx">
                 <el-form-item label="参数key">
-                  <el-input v-model="config.key"></el-input>
+                  <el-input disabled v-model="config.key"></el-input>
                 </el-form-item>
                 <el-form-item label="参数value">
-                  <el-input v-model="config.value"></el-input>
+                  <el-input disabled v-model="config.value"></el-input>
                 </el-form-item>
               </div>
             </el-tab-pane>
@@ -83,10 +82,10 @@
         <div class="jsonViewer">
           <div v-for="(par,idx) in currentPars" :key="idx" class="params">
             <el-form-item label="参数key">
-              <el-input v-model="par.key"></el-input>
+              <el-input disabled v-model="par.key"></el-input>
             </el-form-item>
             <el-form-item label="参数value">
-              <el-input v-model="par.value"></el-input>
+              <el-input disabled v-model="par.value"></el-input>
             </el-form-item>
         </div>
         </div>
@@ -148,15 +147,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/deep/ .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
-  background-color: #000;
-}
-/deep/ .is-active {
-  color: #fff;
-}
+
+
 /deep/ .el-form-item {
   width: 80%;
   margin-right: 30px;
+}
+.el-select {
+  width: 356px;
 }
 .top {
   display: flex;

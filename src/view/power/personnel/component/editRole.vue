@@ -33,32 +33,32 @@
         </div>
       </div>
     </div>
-    <div class="dialogRole">
-      <div class="peopleRole">
-        <div class="peopleRole-item" @click="changeRole(key)" :class=" checkRole == key ? 'checkRole' : ''" v-for="(item, key) in detailData.map">
-          <span>{{ key }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="RoleMain">
-      <div v-for="(item, index) in detailData.map[checkRole]" :key="index" class="RoleList">
-        <div>
-          <label class="roleTitle">应用菜单权限</label><br>
-          <el-checkbox :label="item.id" v-model="item.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'"
-            :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
-        </div>
-        <div class="role-item">
-          <label class="roleTitle">操作权限</label><br>
-          <div v-for="(item1, index1) in item.children" :key="index1" style="display: inline-block;margin-right: 20px;">
-            <el-checkbox :label="item1.id" v-model="item1.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !=='edit'"
-              :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{ item1.name }}</el-checkbox>
-            <div v-if="item1.children.length > 0" style="margin-top: 20px;margin-bottom: 20px;margin-left: 20px;">
-              <el-checkbox :label="item2.id" v-model="item2.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'"
-                :true-label="0" v-for="(item2, index2) in item1.children" :key="index2" :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}</el-checkbox>
+    <div class="content-wrapper">
+      <el-tabs type="border-card" v-model="activeName" @tab-click="changeRole">
+        <el-tab-pane v-for="(item, key) in detailData.map" :name="key">
+          <span slot="label">{{key}}</span>
+          <div class="RoleMain">
+            <div v-for="(item, index) in detailData.map[checkRole]" :key="index" class="RoleList">
+              <div>
+                <label class="roleTitle">应用菜单权限</label><br>
+                <el-checkbox :label="item.id" v-model="item.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'"
+                             :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}</el-checkbox>
+              </div>
+              <div class="role-item">
+                <label class="roleTitle">操作权限</label><br>
+                <div v-for="(item1, index1) in item.children" :key="index1" style="display: inline-block;margin-right: 20px;">
+                  <el-checkbox :label="item1.id" v-model="item1.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !=='edit'"
+                               :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{ item1.name }}</el-checkbox>
+                  <div v-if="item1.children.length > 0" style="margin-top: 20px;margin-bottom: 20px;margin-left: 20px;">
+                    <el-checkbox :label="item2.id" v-model="item2.flag" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'"
+                                 :true-label="0" v-for="(item2, index2) in item1.children" :key="index2" :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}</el-checkbox>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <span slot="footer" class="dialog-footer" v-if="type === 'edit'">
       <el-button class="save" type="primary" @click="award">授予</el-button>
@@ -86,6 +86,7 @@
     },
     data() {
       return {
+        activeName: '',
         detailData: {
           id: '',
           name: '',
@@ -124,6 +125,13 @@
           ]
         }]
       }
+    },
+    watch: {
+      "detailData.map": {
+        handler() {
+          this.activeName = Object.keys(this.detailData.map)[0]
+        }
+    }
     },
     methods: {
       award() {
@@ -171,9 +179,8 @@
       handleClose() {
         this.$emit('handleClose')
       },
-      changeRole(code) {
-        debugger
-        this.checkRole = code
+      changeRole() {
+        this.checkRole = this.activeName
       },
       grant() {
         this.type = 'edit'
@@ -224,7 +231,11 @@
 </script>
 
 <style scoped lang="scss">
-
+.content-wrapper {
+  min-height: 100vh;
+  margin-top: 40px;
+  @include contentTab;
+}
 .save {
   @include primaryBtn;
 }
