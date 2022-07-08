@@ -109,9 +109,6 @@ export default {
       this.getData.type = energyType
       this.getProcessList()
     },
-    systemListItemClass(value) {
-      return this.getData.type === value ? 'check-pro' : ''
-    },
     onClose() {
       this.$emit('close')
     },
@@ -208,11 +205,6 @@ export default {
       height: 28px;
     }
   }
-}
-
-.check-pro {
-  border-color: #0066cc;
-  color: #0066cc;
 }
 
 .el-pagination {
