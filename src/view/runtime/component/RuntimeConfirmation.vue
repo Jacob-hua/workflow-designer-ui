@@ -2,11 +2,11 @@
   <div>
     <el-dialog append-to-body :title="title" :visible="visible" @close="onCancel">
       <div>
-        <el-form ref="form" :model="form" label-width="40px">
-          <el-form-item label="账号">
+        <el-form ref="form" :model="form" :rules="formRules" label-width="80px">
+          <el-form-item label="账号" prop="usernmae">
             <el-input v-model="form.username" @keyup.native.enter="onSubmit" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="密码">
+          <el-form-item label="密码" prop="password">
             <el-input v-model="form.password" show-password @keyup.native.enter="onSubmit"></el-input>
           </el-form-item>
         </el-form>
@@ -43,6 +43,10 @@ export default {
         username: '',
         password: '',
       },
+      formRules: {
+        username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+      },
     }
   },
   created() {
@@ -54,10 +58,16 @@ export default {
       this.$emit('cancel')
     },
     onSubmit() {
-      postVerifyUser(this.form).then(({ errorInfo }) => {
-        this.$emit('validate', !errorInfo.errorCode)
-        this.$emit('update:visible', false)
-      })
+      this.$refs.rejectForm['validate'] &&
+        this.$refs.rejectForm.validate((valid) => {
+          if (!valid) {
+            return
+          }
+          postVerifyUser(this.form).then(({ errorInfo }) => {
+            this.$emit('validate', !errorInfo.errorCode)
+            this.$emit('update:visible', false)
+          })
+        })
     },
   },
 }
