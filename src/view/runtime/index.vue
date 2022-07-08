@@ -385,7 +385,7 @@ export default {
           business: this.searchForm.business,
           startTime: this.searchForm.valueDate[0],
           endTime: this.searchForm.valueDate[1],
-          projectCode: this.searchForm.ascription,
+          ascription: this.searchForm.ascription,
           tenantId: this.tenantId,
         })
         if (errorInfo.errorCode) {

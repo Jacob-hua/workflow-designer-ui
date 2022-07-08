@@ -1,0 +1,19 @@
+$card-border-color: #333333 !default;
+$card-header-color: #ffffff !default;
+$card-header-bg-color: #212739 !default;
+$card-body-bg-color: #1b1e2d !default;
+
+.el-card {
+  background-color: transparent;
+  border: 1px solid $card-border-color;
+}
+
+.el-card__header {
+  background-color: $card-header-bg-color;
+  border-color: $card-border-color;
+  color: $card-header-color;
+}
+
+.el-card__body {
+  background-color: $card-body-bg-color;
+}

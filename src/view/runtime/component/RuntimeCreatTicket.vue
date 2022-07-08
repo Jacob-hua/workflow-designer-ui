@@ -190,6 +190,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/ .el-dialog {
+  height: auto;
+}
+
 .dialog-message {
   margin: 20px 20px;
   font-size: 14px;

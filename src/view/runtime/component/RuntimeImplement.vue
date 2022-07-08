@@ -1,80 +1,47 @@
 <template>
-  <div>
-    <el-dialog title="执行工作流" :visible="visible" fullscreen @close="onDialogClose">
-      <div class="Implement">
-        <div class="Implement-left">
-          <ProcessInformation
-            :xml="workflow.processDeployResource"
-            :processDisplayInfo="processDisplayInfo"
-            @loaded="onLoaded"
-          ></ProcessInformation>
-          <div class="function-list" v-if="actions.length > 0">
-            <span
-              class="function-item"
-              v-for="({ label, value }, index) in actions"
+  <el-dialog title="执行工作流" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
+    <div class="container">
+      <div>
+        <ProcessInformation
+          :xml="workflow.processDeployResource"
+          :processDisplayInfo="processDisplayInfo"
+          @loaded="onLoaded"
+        ></ProcessInformation>
+        <div class="action-wrapper">
+          <el-tabs v-model="activeAction" type="border-card" @tab-click="onSelectAction">
+            <el-tab-pane
+              v-for="({ label, value, component: { name, events, props } }, index) in actions"
+              :label="label"
+              :name="value"
               :key="index"
-              @click="onSelectAction(value)"
-              :class="functionCheck === value ? 'function-check' : ''"
             >
-              {{ label }}
-            </span>
-          </div>
-          <div class="function-main" :class="actions.length === 0 ? 'noData' : ''">
-            <div v-if="!roleBoolean" class="heightFunction">无权限</div>
-            <div v-else-if="actions.length === 0" class="heightFunction">无信息</div>
-            <div v-else>
-              <div v-if="functionCheck === 'Agency'">
-                <runtime-implement-agency :workflow="workflow" @completed="onAgencyCompleted" />
-              </div>
-              <div v-if="functionCheck === 'Circulate'">
-                <runtime-implement-circulate :workflow="workflow" @completed="onAgencyCompleted" />
-              </div>
-              <div v-if="functionCheck === 'Signature'">
-                <runtime-implement-signature :workflow="workflow" @completed="onAgencyCompleted" />
-              </div>
-              <div v-if="functionCheck === 'Hang'">
-                <runtime-implement-hang :workflow="workflow" @completed="onAgencyCompleted" />
-              </div>
-              <div v-if="functionCheck === 'Reject'">
-                <runtime-implement-reject
-                  :workflow="workflow"
-                  @completed="onAgencyCompleted"
-                  @rejectSuccess="onRejectSuccess"
-                />
-              </div>
-              <div v-if="functionCheck === 'Terminate'">
-                <runtime-implement-termination
-                  :workflow="workflow"
-                  @completed="onAgencyCompleted"
-                  @terminateSuccess="onRejectSuccess"
-                />
-              </div>
-              <div v-if="functionCheck === 'NoExecutor'">
-                <runtime-implement-executor :workflow="workflow" @selectExecutor="onSelectExecutor" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="Implement-right">
-          <div>表单内容</div>
-          <div class="Implement-right-form">
-            <preview
-              :itemList="formContant.list"
-              :formConf="formContant.config"
-              :uploadFun="uploadFile.bind(this)"
-              :downloadFun="downloadFile.bind(this)"
-              v-if="formShow"
-              ref="preview"
-            ></preview>
-          </div>
+              <!-- <div v-if="!roleBoolean">无权限</div>
+              <div v-else-if="actions.length === 0">无信息</div> -->
+              <!-- <component v-else :is="name" v-on="events" v-bind="props" /> -->
+              <component :is="name" v-on="events" v-bind="props" />
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer" style="text-align: center">
-        <el-button @click="onCancel">取 消</el-button>
-        <el-button type="primary" @click="onExecute" :disabled="hang">执 行</el-button>
-      </span>
-    </el-dialog>
-  </div>
+      <div>
+        <div>表单内容</div>
+        <div class="Implement-right-form">
+          <preview
+            :itemList="formContant.list"
+            :formConf="formContant.config"
+            :uploadFun="uploadFile.bind(this)"
+            :downloadFun="downloadFile.bind(this)"
+            v-if="formShow"
+            ref="preview"
+          ></preview>
+        </div>
+      </div>
+    </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="onCancel">取 消</el-button>
+      <el-button type="primary" @click="onExecute" :disabled="hang">执 行</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>
@@ -122,38 +89,103 @@ export default {
   data() {
     return {
       workflow: {},
-      functionCheck: '',
       formContant: {},
       formShow: false,
       roleBoolean: true,
+      activeAction: 'Agency',
       actionsConfig: {
         Agency: {
           label: '代办',
           value: 'Agency',
+          component: ({ workflow, onAgencyCompleted }) => ({
+            name: 'RuntimeImplementAgency',
+            props: {
+              workflow,
+            },
+            events: {
+              completed: onAgencyCompleted,
+            },
+          }),
         },
         Circulate: {
           label: '传阅',
           value: 'Circulate',
+          component: ({ workflow, onAgencyCompleted }) => ({
+            name: 'RuntimeImplementCirculate',
+            props: {
+              workflow,
+            },
+            events: {
+              completed: onAgencyCompleted,
+            },
+          }),
         },
         Signature: {
           label: '加减签',
           value: 'Signature',
+          component: ({ workflow, onAgencyCompleted }) => ({
+            name: 'RuntimeImplementSignature',
+            props: {
+              workflow,
+            },
+            events: {
+              completed: onAgencyCompleted,
+            },
+          }),
         },
         Hang: {
           label: '挂起',
           value: 'Hang',
+          component: ({ workflow, onAgencyCompleted }) => ({
+            name: 'RuntimeImplementHang',
+            props: {
+              workflow,
+            },
+            events: {
+              completed: onAgencyCompleted,
+            },
+          }),
         },
         Reject: {
           label: '驳回',
           value: 'Reject',
+          component: ({ workflow, onAgencyCompleted, onRejectSuccess }) => ({
+            name: 'RuntimeImplementReject',
+            props: {
+              workflow,
+            },
+            events: {
+              completed: onAgencyCompleted,
+              rejectSuccess: onRejectSuccess,
+            },
+          }),
         },
         Terminate: {
           label: '终止',
           value: 'Terminate',
+          component: ({ workflow, onAgencyCompleted, onRejectSuccess }) => ({
+            name: 'RuntimeImplementTermination',
+            props: {
+              workflow,
+            },
+            events: {
+              completed: onAgencyCompleted,
+              terminateSuccess: onRejectSuccess,
+            },
+          }),
         },
         NoExecutor: {
-          label: '指定后续执行人',
+          label: '指定执行人',
           value: 'NoExecutor',
+          component: ({ workflow, onSelectExecutor }) => ({
+            name: 'RuntimeImplementExecutor',
+            props: {
+              workflow,
+            },
+            events: {
+              selectExecutor: onSelectExecutor,
+            },
+          }),
         },
       },
       curExecuteShape: undefined,
@@ -177,7 +209,17 @@ export default {
         temps.push(this.actionsConfig['NoExecutor'])
       }
       const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
-      return actions.map((action) => this.actionsConfig[action]).concat(temps)
+      return actions
+        .map((action) => {
+          const component = this.actionsConfig[action]['component']({
+            workflow: this.workflow,
+            onAgencyCompleted: this.onAgencyCompleted,
+            onRejectSuccess: this.onRejectSuccess,
+            onSelectExecutor: this.onSelectExecutor,
+          })
+          return { ...this.actionsConfig[action], component }
+        })
+        .concat(temps)
     },
     processDisplayInfo() {
       return [
@@ -230,7 +272,7 @@ export default {
       this.$set(this.workflow, 'executors', value)
     },
     onSelectAction(value) {
-      this.functionCheck = value
+      console.log('ddddd', value);
       let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
       let proJectRole =
         permissions.filter((item) => {
@@ -419,183 +461,27 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-::v-deep .el-dialog__body {
-  max-height: 90vh;
-}
-
-.Implement {
+<style scoped lang="scss">
+.container {
   display: flex;
+
+  & > div:first-child {
+    flex: 3;
+  }
+
+  & > div:last-child {
+    flex: 1;
+  }
 }
 
-.Implement-left {
-  flex: 6;
-}
+.action-wrapper {
+  @include contentTab;
 
-.Implement-right {
-  padding-left: 20px;
-  border-left: 1px solid #eeeeee;
-  margin-left: 20px;
-  flex: 2;
-}
-
-.function-list {
-  margin-top: 20px;
-  position: relative;
-}
-
-.function-item {
-  width: 120px;
-  height: 48px;
-  display: inline-block;
-  text-align: center;
-  background-color: #b2b2ff;
-  line-height: 48px;
-  border: 1px solid #474794;
-  cursor: pointer;
-}
-
-.function-check {
-  background-color: #0055ff;
-  color: #b2b2ff;
-}
-
-.function-see {
-  position: absolute;
-  right: 10px;
-  top: 5px;
-  color: #0055ff;
-  cursor: pointer;
-}
-
-.function-main {
-  height: 181px;
-  border: 1px solid #000000;
-  padding: 10px 20px;
-  position: relative;
-  color: #000000;
-}
-
-.heightFunction {
-  line-height: 141px;
-  text-align: center;
-  display: block;
-}
-
-.noPeopleList {
-  line-height: 181px;
-  text-align: center;
-  color: #5b5091;
-}
-
-.peopleList {
-  margin-top: 15px;
-}
-
-.peopleList-item {
-  display: inline-block;
-  width: 96px;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
-  border: 1px solid #108cee;
-  border-radius: 5px;
-  margin-left: 20px;
-}
-
-.peopleList-item-defail {
-  width: 96px;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
-  border: 1px solid #666666;
-  background-color: #f5f5f5;
-  border-radius: 5px;
-  margin-right: 20px;
-}
-
-.editButton {
-  position: absolute;
-  right: 20px;
-  top: 10px;
-  color: #4d478e;
-  cursor: pointer;
-}
-
-.HangStyle {
-  text-align: center;
-  margin-top: 50px;
-}
-
-.confirm {
-  cursor: pointer;
-  color: rgb(255, 76, 0);
-  margin-top: 20px;
-}
-
-.rejectData {
-  margin-top: 20px;
-}
-
-.rejectName {
-  margin-top: 10px;
-}
-
-.rejectWord {
-  display: inline-block;
-  margin-top: 20px;
-  color: #0066cc;
-  margin-right: 15px;
-}
-
-.rejectResult {
-  display: inline-block;
-  border: 1px solid #0066cc;
-  text-align: center;
-  height: 36px;
-  line-height: 36px;
-  width: 120px;
-  border-radius: 5px;
-  color: #0066cc;
-}
-
-.bpmn-configure-basic {
-  flex: 1;
-}
-
-.bpmn-configure-title {
-  height: 40px;
-  line-height: 40px;
-}
-
-.bpmn-configure-Main {
-  height: 250px;
-  border: 1px solid #000000;
-  padding: 20px 10px;
-  overflow: auto;
-  position: relative;
-}
-
-.bpmn-configure-Main-item {
-  margin-bottom: 20px;
-  color: black;
+  margin-top: 30px;
 }
 
 .Implement-right-form {
-  height: 768px;
-  border: 1px solid #000000;
-  overflow: auto;
-  padding: 20px 20px 20px 0px;
-}
-
-.addCirculate {
-  margin-left: 10px;
-  display: inline-block;
-  color: #5b5091;
-  cursor: pointer;
-}
-
-.noData {
-  margin-top: 68px;
+  height: 700px;
+  overflow: scroll;
 }
 </style>
