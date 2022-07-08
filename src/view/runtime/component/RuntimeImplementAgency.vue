@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="container">
-      <div class="agency" v-for="({ assignee, candidateUsers = [], taskId }, index) in agency" :key="index">
+      <div class="content" v-for="({ assignee, candidateUsers = [], taskId }, index) in agency" :key="index">
         <div v-show="assignee">{{ assignee }}:</div>
         <div class="info" v-if="assignee === userInfo.account && candidateUsers.length > 0">
           <div>
@@ -94,60 +94,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.container {
-  height: 180px;
-  overflow: scroll;
-}
+@import '../index.scss';
 
-.agency {
-  display: flex;
-  flex-direction: row;
-  margin-top: 12px;
-  color: $font-color;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 400;
-  align-items: center;
+@include container;
 
-  & > div:first-child {
-    color: $font-color-1;
-  }
-
-  button {
-    @include primaryBtn;
-  }
-}
-
-.info {
-  display: flex;
-  flex-direction: row;
-  padding: 0 20px;
-
-  & > div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-.user {
-  width: 80px;
-  height: 25px;
-  line-height: 25px;
-  margin-right: 20px;
-  text-align: center;
-  border: 1px solid $button-submit-bg-color;
-  border-radius: 4px;
-}
-
-.empty {
-  display: flex;
-  flex-direction: row;
-  padding: 0 20px;
-  align-items: center;
-
-  button {
-    margin-left: 20px;
-  }
-}
+@include userContent;
 </style>
