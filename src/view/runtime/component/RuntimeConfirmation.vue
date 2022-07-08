@@ -58,8 +58,8 @@ export default {
       this.$emit('cancel')
     },
     onSubmit() {
-      this.$refs.rejectForm['validate'] &&
-        this.$refs.rejectForm.validate((valid) => {
+      this.$refs.form['validate'] &&
+        this.$refs.form.validate((valid) => {
           if (!valid) {
             return
           }
