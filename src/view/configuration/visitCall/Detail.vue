@@ -3,6 +3,7 @@
       title="第三方接口配置"
       :visible.sync="dialogVisible"
       width="65%"
+      fullscreen
       append-to-body
   >
     <el-form  ref="form" label-width="80px">
