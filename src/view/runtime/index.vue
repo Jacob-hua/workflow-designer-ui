@@ -2,7 +2,7 @@
   <div>
     <div class="search-wrapper">
       <el-form inline>
-        <el-form-item label="选择项目">
+        <el-form-item label="项目">
           <el-select v-model="searchForm.ascription">
             <el-option
               v-for="{ id, label, value } in rootOrganizations"
@@ -12,7 +12,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="选择业务">
+        <el-form-item label="业务">
           <el-cascader
             v-model="searchForm.business"
             :key="searchForm.ascription"

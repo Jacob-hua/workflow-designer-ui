@@ -1,15 +1,13 @@
 <template>
   <el-dialog title="查看流程信息" top="1vh" :visible="visible" @close="onClose">
-    <div>
+    <div class="container">
       <ProcessInformation
         :xml="workflow.processDeployResource"
         :processDisplayInfo="processDisplayInfo"
       ></ProcessInformation>
-    </div>
-    <div style="position: relative">
-      <div style="margin: 20px 0px 10px 0px; font-weight: 700">工作流执行详情</div>
-      <div class="processDetail">
-        <div class="block">
+      <div>
+        <div class="title">工作流执行详情</div>
+        <div class="process-content">
           <el-timeline>
             <el-timeline-item
               :timestamp="taskName"
@@ -163,28 +161,38 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-.processDetail {
-  border: 1px solid #000000;
-  height: 300px;
+<style scoped lang="scss">
+.container {
+  display: flex;
+  flex-direction: column;
+
+  & > div:last-child {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.title {
+  margin: 38px 0 20px 0;
+  font-size: 14px;
+  color: $font-color;
+}
+
+.process-content {
+  height: 260px;
   overflow: auto;
   padding: 10px 10px;
 }
 
-::v-deep .el-dialog__body {
-  max-height: 97vh;
+/deep/ .el-timeline-item__tail {
+  border-left: 2px solid #39c449;
 }
 
-::v-deep .el-timeline-item__tail {
-  border-left: 2px solid #7fbcff;
-}
-
-::v-deep .el-timeline-item__node {
-  background-color: #7fbcff;
+/deep/ .el-timeline-item__node {
+  background-color: #39c449;
 }
 
 .contant {
-  background-color: #f2f2f2;
   line-height: 54px;
   padding: 0px 20px 0px 20px;
   position: relative;

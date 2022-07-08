@@ -1,20 +1,23 @@
 <template>
-  <el-dialog title="查看" :visible="visible" width="70%" custom-class="dialogVisible" @close="close">
-    <div class="dialogVisible-main">
-      <bpmnView ref="bpmnView" :valueType="valueType" :projectData="projectData" @edit="onEdit"></bpmnView>
+  <el-dialog title="查看" :visible="visible" width="70%" @close="close">
+    <div>
+      <bpmnView :valueType="valueType" :projectData="projectData" @edit="onEdit"></bpmnView>
     </div>
-    <span slot="footer" class="dialog-footer">
+    <span slot="footer">
       <el-button
+        class="editor-button"
         @click="onEdit"
-        type="primary"
         v-role="{ id: 'WorkflowEdit', type: 'button', business: projectData.business }"
-        >编辑</el-button
       >
+        编辑
+      </el-button>
       <el-button
+        class="status-button"
         @click="onDeactivate"
         v-role="{ id: 'WorkflowStart', type: 'button', business: projectData.business }"
-        >{{ statusButtonLabel }}</el-button
       >
+        {{ statusButtonLabel }}
+      </el-button>
     </span>
   </el-dialog>
 </template>
@@ -89,4 +92,12 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped lang="scss">
+.editor-button {
+  @include primaryBtn;
+}
+
+.status-button {
+  @include resetBtn;
+}
+</style>

@@ -1,7 +1,7 @@
 <template>
   <div class="search-wrapper">
     <el-form inline>
-      <el-form-item label="选择项目">
+      <el-form-item label="项目">
         <el-select v-model="projectValue">
           <el-option
             v-for="{ id, label, value } in rootOrganizations"
@@ -11,14 +11,14 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="选择业务">
+      <el-form-item label="业务">
         <el-cascader
           v-model="business"
           :options="rootOrganizationChildrenAndAll(projectValue)"
           :props="cascaderProps"
         ></el-cascader>
       </el-form-item>
-      <el-form-item label="创建时间">
+      <el-form-item label="发起时间">
         <el-date-picker
           v-model="valueDate"
           type="daterange"

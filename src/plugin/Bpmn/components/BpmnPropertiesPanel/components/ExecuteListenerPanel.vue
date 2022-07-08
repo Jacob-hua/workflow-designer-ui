@@ -18,7 +18,6 @@
       <el-table-column label="操作" width="90px">
         <template slot-scope="{ $index }">
           <el-button type="text" @click="onEditListener($index)">编辑</el-button>
-          <el-divider direction="vertical" />
           <el-button type="text" @click="onRemoveListener($index)">移除</el-button>
         </template>
       </el-table-column>
