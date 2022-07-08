@@ -2,7 +2,7 @@
   <div>
     <el-dialog title="表单" :visible.sync="dialogVisible1" width="35%">
       <div class="guid">
-        <el-form ref="form" label-width="80px" label-position="right" :rules="rules" :del="postData">
+        <el-form ref="form" label-width="80px" label-position="right" :rules="rules" :model="postData">
           <div class="from-item">
             <el-form-item label="应用项目" prop="ascription">
               <el-select disabled="true" v-model="postData.ascription">
