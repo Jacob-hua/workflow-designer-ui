@@ -181,12 +181,6 @@ export default {
           "parentId":data.id,
           "ascription":this.data[0].code
         })
-        // this.showinput = false
-        // const newChild = { "id": id++,  "code":this.nodeCode, "tenantId": this.tenantId,  "createBy": this.userInfo.account,  "type": 'industry',   "active": "Y", "name": this.inptVal, "children": [] };
-        // if (!this.currentNode.children) {
-        //   this.$set(this.currentNode, 'children', []);
-        // }
-        // this.currentNode.children.push(newChild);
       })
 
     },
@@ -207,7 +201,6 @@ export default {
       })
     },
     remove(node, data) {
-     // this.clearRedisBusinessConfigCode(data)
       deleteBusinessConfig({
         id: parseInt(data.id),
         projectCode: this.data[0].code,
@@ -251,7 +244,9 @@ export default {
 .el-tree .is-current > .el-tree-node__content .custom-tree-node {
   background-color: unset !important; ;
 }
-
+/deep/ .el-input--mini {
+  width: 150px;
+}
 @include tree;
 
 .btn {

@@ -224,17 +224,7 @@
 </script>
 
 <style scoped lang="scss">
-/deep/.el-checkbox__input.is-disabled .el-checkbox__inner {
-  background-color: #333;
-  border-color: #333;
-}
-/deep/ .el-checkbox__input.is-disabled + span.el-checkbox__label {
-  color: #666666;
-  cursor: not-allowed;
-}
-/deep/ .el-checkbox__input.is-checked + .el-checkbox__label {
-  color: #fff;
-}
+
 .save {
   @include primaryBtn;
 }
