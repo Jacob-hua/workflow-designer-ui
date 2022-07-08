@@ -5,52 +5,52 @@
         :xml="workflow.processDeployResource"
         :processDisplayInfo="processDisplayInfo"
       ></ProcessInformation>
-    </div>
-    <div style="position: relative">
-      <div style="margin: 20px 0px 10px 0px; font-weight: 700">工作流执行详情</div>
-      <div class="processDetail">
-        <div class="block">
-          <el-timeline>
-            <el-timeline-item
-              :timestamp="taskName"
-              placement="top"
-              v-for="({ taskName, formDataList, endTime, status, commentList }, index) in trackList"
-              :key="index"
-            >
-              <div class="contant">
-                <div
-                  v-for="({ formContent, status: formStatus, assignee: formAssignee }, index1) in formDataList"
-                  :key="index1"
-                >
-                  <div v-if="formContent" class="form">
-                    <preview
-                      :itemList="formContent.list"
-                      :formConf="formContent.config"
-                      :downloadFun="downloadFile.bind(this)"
-                    ></preview>
-                  </div>
-                  <div v-if="formStatus === 'completed'">
-                    <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
-                    <span class="word1">{{ formAssignee }} <span>(执行)</span></span>
-                    <span class="dataYear">{{ endTime }}</span>
-                  </div>
-                  <div v-if="status === 'rejected'">
-                    <div v-for="({ comments, assignee: commentAssignee }, index1) in commentList" :key="index1">
-                      <div v-for="({ message }, index2) in comments" :key="index2">
-                        <i class="el-icon-warning-outline success"></i>
-                        <span class="word1">{{ message }}</span>
-                      </div>
-                      <div>
-                        <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
-                        <span class="word1">{{ commentAssignee }} <span style="color: red">(驳回)</span> </span>
-                        <span class="dataYear">{{ endTime }}</span>
+      <div>
+        <div>工作流执行详情</div>
+        <div class="processDetail">
+          <div class="block">
+            <el-timeline>
+              <el-timeline-item
+                :timestamp="taskName"
+                placement="top"
+                v-for="({ taskName, formDataList, endTime, status, commentList }, index) in trackList"
+                :key="index"
+              >
+                <div class="contant">
+                  <div
+                    v-for="({ formContent, status: formStatus, assignee: formAssignee }, index1) in formDataList"
+                    :key="index1"
+                  >
+                    <div v-if="formContent" class="form">
+                      <preview
+                        :itemList="formContent.list"
+                        :formConf="formContent.config"
+                        :downloadFun="downloadFile.bind(this)"
+                      ></preview>
+                    </div>
+                    <div v-if="formStatus === 'completed'">
+                      <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
+                      <span class="word1">{{ formAssignee }} <span>(执行)</span></span>
+                      <span class="dataYear">{{ endTime }}</span>
+                    </div>
+                    <div v-if="status === 'rejected'">
+                      <div v-for="({ comments, assignee: commentAssignee }, index1) in commentList" :key="index1">
+                        <div v-for="({ message }, index2) in comments" :key="index2">
+                          <i class="el-icon-warning-outline success"></i>
+                          <span class="word1">{{ message }}</span>
+                        </div>
+                        <div>
+                          <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
+                          <span class="word1">{{ commentAssignee }} <span style="color: red">(驳回)</span> </span>
+                          <span class="dataYear">{{ endTime }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </el-timeline-item>
-          </el-timeline>
+              </el-timeline-item>
+            </el-timeline>
+          </div>
         </div>
       </div>
     </div>
@@ -163,7 +163,7 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
+<style scoped lang="scss">
 .processDetail {
   border: 1px solid #000000;
   height: 300px;
@@ -171,20 +171,15 @@ export default {
   padding: 10px 10px;
 }
 
-::v-deep .el-dialog__body {
-  max-height: 97vh;
+/deep/ .el-timeline-item__tail {
+  border-left: 2px solid #39c449;
 }
 
-::v-deep .el-timeline-item__tail {
-  border-left: 2px solid #7fbcff;
-}
-
-::v-deep .el-timeline-item__node {
-  background-color: #7fbcff;
+/deep/ .el-timeline-item__node {
+  background-color: #39c449;
 }
 
 .contant {
-  background-color: #f2f2f2;
   line-height: 54px;
   padding: 0px 20px 0px 20px;
   position: relative;
