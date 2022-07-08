@@ -8,7 +8,7 @@
           @loaded="onLoaded"
         ></ProcessInformation>
         <div class="action-wrapper">
-          <el-tabs type="border-card" @tab-click="onSelectAction">
+          <el-tabs v-model="activeAction" type="border-card" @tab-click="onSelectAction">
             <el-tab-pane
               v-for="({ label, value, component: { name, events, props } }, index) in actions"
               :label="label"
@@ -92,6 +92,7 @@ export default {
       formContant: {},
       formShow: false,
       roleBoolean: true,
+      activeAction: 'Agency',
       actionsConfig: {
         Agency: {
           label: '代办',
@@ -174,7 +175,7 @@ export default {
           }),
         },
         NoExecutor: {
-          label: '指定后续执行人',
+          label: '指定执行人',
           value: 'NoExecutor',
           component: ({ workflow, onSelectExecutor }) => ({
             name: 'RuntimeImplementExecutor',
@@ -254,9 +255,6 @@ export default {
     await this.fetchProcessNodeInfo()
   },
   methods: {
-    getTabLabel(value) {
-      return this.actionsConfig[value]?.label
-    },
     onAgencyCompleted() {
       this.fetchExecuteDetail()
     },
@@ -274,6 +272,7 @@ export default {
       this.$set(this.workflow, 'executors', value)
     },
     onSelectAction(value) {
+      console.log('ddddd', value);
       let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
       let proJectRole =
         permissions.filter((item) => {
