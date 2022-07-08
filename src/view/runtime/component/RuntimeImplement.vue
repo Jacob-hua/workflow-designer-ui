@@ -256,7 +256,9 @@ export default {
   },
   watch: {
     actions(actions) {
-      this.activeAction = actions[0].value
+      if (!this.activeAction) {
+        this.activeAction = actions[0].value
+      }
     },
   },
   async mounted() {
