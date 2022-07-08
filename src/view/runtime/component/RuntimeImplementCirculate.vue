@@ -1,24 +1,19 @@
 <template>
   <div>
-    <div class="peopleList-title">指定传阅人员:</div>
-    <div class="peopleList">
-      <div v-for="({ assignee, circulations, taskId }, index) in circulate" :key="index">
-        <span v-show="assignee"> {{ assignee }}: </span>
-        <div class="peopleList-item" v-for="userName in circulations[0].unitList" :key="userName">
-          {{ userName }}
+    <div class="container">
+      <div class="content" v-for="({ assignee, circulations, taskId }, index) in circulate" :key="index">
+        <div v-show="assignee">{{ assignee }}:</div>
+        <div class="info" v-if="assignee === userInfo.account && circulations[0].unitList.length > 0">
+          <div>
+            <div class="user" v-for="userName in circulations[0].unitList" :key="userName">
+              {{ userName }}
+            </div>
+          </div>
+          <el-button @click="onEditCirculate(taskId, circulations)"> 编辑 </el-button>
         </div>
-        <span
-          class="addCirculate"
-          @click="onEditCirculate(taskId, circulations)"
-          v-if="assignee === userInfo.account && circulations[0].unitList.length > 0"
-        >
-          编辑
-        </span>
-        <div v-else-if="circulations[0].unitList.length == 0" style="display: inline-block">
-          <span>暂无传阅</span>
-          <span class="addCirculate" @click="onAddCirculate(taskId)" v-if="assignee === userInfo.account">
-            点击添加
-          </span>
+        <div class="empty" v-else-if="circulations[0].unitList.length == 0">
+          <div>暂无传阅</div>
+          <el-button @click="onAddCirculate(taskId)" v-if="assignee === userInfo.account"> 添加 </el-button>
         </div>
       </div>
     </div>
@@ -100,26 +95,10 @@ export default {
 }
 </script>
 
-<style scoped>
-.peopleList {
-  margin-top: 15px;
-}
+<style scoped lang="scss">
+@import '../index.scss';
 
-.peopleList-item {
-  display: inline-block;
-  width: 96px;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
-  border: 1px solid #108cee;
-  border-radius: 5px;
-  margin-left: 20px;
-}
+@include container;
 
-.addCirculate {
-  margin-left: 10px;
-  display: inline-block;
-  color: #5b5091;
-  cursor: pointer;
-}
+@include userContent;
 </style>

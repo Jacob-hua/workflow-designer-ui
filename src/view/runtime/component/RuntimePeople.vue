@@ -1,30 +1,35 @@
 <template>
-  <el-dialog :title="title" :visible="visible" :before-close="onCancel" @open="onOpen" width="70%" append-to-body>
-    <div class="people">
-      <div>
-        <span>组织结构</span>
-      </div>
-      <div class="people-main">
-        <div class="people-main-left">
-          <el-tree
-            :data="treeData"
-            node-key="groupId"
-            :current-node-key="currentKey"
-            @current-change="onTreeSelectedChange"
-            :highlight-current="true"
-            :props="{ label: 'groupName', children: 'children' }"
-          ></el-tree>
+  <el-dialog
+    :title="title"
+    :visible="visible"
+    :before-close="onCancel"
+    @open="onOpen"
+    top="1vh"
+    fullscreen
+    append-to-body
+  >
+    <div class="container">
+      <div class="organization-wrapper">
+        <div>
+          <el-card header="组织结构">
+            <el-tree
+              :data="treeData"
+              node-key="groupId"
+              :current-node-key="currentKey"
+              @current-change="onTreeSelectedChange"
+              :highlight-current="true"
+              :props="{ label: 'groupName', children: 'children' }"
+            ></el-tree>
+          </el-card>
         </div>
-        <div class="people-main-right">
-          <div class="people-main-right-search">
+        <div>
+          <div class="user-select-wrapper">
             <el-input
               v-model="userName"
               placeholder="请输入姓名搜索人员"
               prefix-icon="el-icon-search"
               @keyup.enter.native="getPeopleList"
             ></el-input>
-          </div>
-          <div class="people-main-right-table">
             <el-table
               ref="multipleTable"
               :data="tableData"
@@ -40,8 +45,6 @@
               <el-table-column prop="userId" label="账号" show-overflow-tooltip align="center"> </el-table-column>
               <el-table-column prop="email" label="邮箱" show-overflow-tooltip align="center"> </el-table-column>
             </el-table>
-          </div>
-          <div class="people-main-right-page">
             <el-pagination
               @current-change="fetchPeopleList"
               :current-page.sync="getData.page"
@@ -53,20 +56,18 @@
           </div>
         </div>
       </div>
-      <div>
-        <span>指定人员</span>
-      </div>
-      <div class="people-footer">
-        <div class="peopleList">
-          <div class="peopleList-item" v-for="(item, index) in multipleSelection" :key="index">
+      <div class="user-wrapper">
+        <div class="title">已选择人员</div>
+        <div class="users">
+          <div class="users-item" v-for="(item, index) in multipleSelection" :key="index">
             {{ item.userId }} <i class="el-icon-remove-outline" @click="onDeletePeople(index)"></i>
           </div>
         </div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="onCancel"> 取 消 </el-button>
-      <el-button type="primary" @click="onSubmit">确 定</el-button>
+    <span slot="footer">
+      <el-button class="submit-button" @click="onSubmit">确 定</el-button>
+      <el-button class="cancel-button" @click="onCancel"> 取 消 </el-button>
     </span>
   </el-dialog>
 </template>
@@ -103,7 +104,7 @@ export default {
         groupId: '',
         name: '',
         tenantId: this.tenantId,
-        limit: 5,
+        limit: 10,
         page: 1,
         total: 1,
       },
@@ -214,77 +215,93 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-.people-main {
+<style scoped lang="scss">
+.el-card {
+  height: 100%;
+}
+
+.submit-button {
+  @include primaryBtn;
+}
+
+.cancel-button {
+  @include cancelBtn;
+}
+
+.container {
   display: flex;
+  flex-direction: column;
+
+  & > div:first-child {
+    flex: 1;
+    margin-bottom: 20px;
+  }
 }
 
-.people-main-left {
-  flex: 3;
-  height: 480px;
-  background-color: #f3f3f3;
-  overflow: auto;
-  padding: 20px 10px;
+.organization-wrapper {
+  display: flex;
+  flex-direction: row;
+
+  & > div:first-child {
+    width: 350px;
+  }
+
+  & > div:last-child {
+    flex: 1;
+  }
 }
 
-::v-deep .el-tree {
-  background-color: transparent;
-}
-
-::v-deep .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
-  background-color: #c2f5f5;
-}
-
-.people-main-right {
-  flex: 7;
-  height: 480px;
-  background-color: #f3f3f3;
-  margin-left: 10px;
-  padding: 20px 10px;
-}
-
-.people-main-right-search /deep/ .el-input .el-input__inner {
-  border-radius: 40px;
-  border: 1px solid #000000;
-  color: black;
-}
-
-::v-deep .el-tabs__item {
-  padding: 0px 23px 0px 0px;
-}
-
-.people-main-right-page {
-  margin-top: 20px;
-  text-align: right;
-}
-
-.people-footer {
-  height: 180px;
-  background-color: #f3f3f3;
+.user-select-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px;
+  border: 1px solid $border-color-1;
+  border-radius: 4px;
   padding: 20px;
-  color: black;
+  box-sizing: border-box;
+
+  .el-table {
+    margin-top: 20px;
+  }
+
+  .el-pagination {
+    text-align: right;
+    padding-top: 20px;
+  }
 }
 
-.peopleList {
+.user-wrapper {
+  height: 150px;
+  border: 1px solid $border-color-1;
+  border-radius: 4px;
+
+  .title {
+    color: $font-color;
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 400;
+    padding: 18px 20px;
+    border-bottom: 1px solid $border-color-1;
+    background: $card-bg-color-1;
+  }
+}
+
+.users {
   display: flex;
   margin-top: 15px;
+  color: $font-color;
+  padding: 18px 20px;
 }
 
-.peopleList-item {
-  width: 96px;
-  height: 32px;
-  line-height: 32px;
+.users-item {
+  width: 100px;
+  height: 25px;
+  line-height: 25px;
   text-align: center;
-  border: 1px solid #108cee;
+  border: 1px solid $button-submit-bg-color;
   border-radius: 5px;
   margin-right: 20px;
-}
-.people-footer .el-icon-remove-outline {
-  color: #2f9aef;
-  font-size: 16px;
-}
-
-.people-main-right-table {
-  margin-top: 40px;
+  cursor: pointer;
 }
 </style>

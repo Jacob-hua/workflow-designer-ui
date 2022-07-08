@@ -1,22 +1,23 @@
 <template>
-  <el-dialog title="驳回" :visible="visible" width="70%" @close="onCancel" append-to-body>
-     <processData
-        ref="processData"
-        v-if="visible"
-        @selection="onSelectedChanged"
-        :BpmnContant="workflow.processDeployResource"
-        :taskKey="workflow.taskKey"
-        :processInstanceId="workflow.processInstanceId"
-      ></processData>
-    <div>
-      <div class="rejectWord">驳回原因（必填）</div>
-      <div>
-        <el-input type="textarea" :rows="4" placeholder="请输入内容" v-model="rejectReason"> </el-input>
-      </div>
+  <el-dialog title="驳回" :visible="visible" width="70%" top="5vh" @close="onCancel" append-to-body>
+    <processData
+      ref="processData"
+      v-if="visible"
+      @selection="onSelectedChanged"
+      :BpmnContant="workflow.processDeployResource"
+      :taskKey="workflow.taskKey"
+      :processInstanceId="workflow.processInstanceId"
+    ></processData>
+    <div class="reason-wrapper">
+      <el-form ref="rejectForm" :model="rejectForm" :rules="rejectRules">
+        <el-form-item label="驳回原因" prop="rejectReason">
+          <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="rejectForm.rejectReason" />
+        </el-form-item>
+      </el-form>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="onCancel">取 消</el-button>
-      <el-button type="primary" @click="onSubmit">确 定</el-button>
+    <span slot="footer">
+      <el-button class="submit-button" @click="onSubmit">确 定</el-button>
+      <el-button class="cancel-button" @click="onCancel">取 消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -27,7 +28,7 @@ import processData from './processData.vue'
 export default {
   name: 'RuntimeRejectConfirmation',
   components: {
-    processData
+    processData,
   },
   props: {
     visible: {
@@ -41,8 +42,13 @@ export default {
   },
   data() {
     return {
-      rejectReason: '',
+      rejectForm: {
+        rejectReason: '',
+      },
       taskKey: '',
+      rejectRules: {
+        rejectReason: [{ required: true, message: '请输入驳回原因', trigger: 'blur' }],
+      },
     }
   },
   methods: {
@@ -51,11 +57,17 @@ export default {
       this.$emit('cancel')
     },
     onSubmit() {
-      this.$emit('submit', {
-        rejectReason: this.rejectReason,
-        taskKey: this.taskKey,
-      })
-      this.$emit('update:visible', false)
+      this.$refs.rejectForm['validate'] &&
+        this.$refs.rejectForm.validate((valid) => {
+          if (!valid) {
+            return
+          }
+          this.$emit('submit', {
+            rejectReason: this.rejectForm.rejectReason,
+            taskKey: this.taskKey,
+          })
+          this.$emit('update:visible', false)
+        })
     },
     onSelectedChanged(taskKey) {
       this.taskKey = taskKey
@@ -64,8 +76,17 @@ export default {
 }
 </script>
 
-<style scoped>
-.rejectWord {
-  margin: 20px 0px;
+<style scoped lang="scss">
+.reason-wrapper {
+  height: 150px;
+  margin-top: 12px;
+}
+
+.submit-button {
+  @include primaryBtn;
+}
+
+.cancel-button {
+  @include cancelBtn;
 }
 </style>

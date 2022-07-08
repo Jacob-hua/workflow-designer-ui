@@ -1,14 +1,16 @@
 <template>
   <div>
-    <div v-if="hang" class="hang">
-      <span>当前流程已被挂起，如需将继续执行流程，请进行认证操作</span>
-      <div class="confirm" @click="onConfirmation">重新激活</div>
+    <div class="container">
+      <div v-if="hang">
+        <div>当前流程已被挂起，如需将继续执行流程，请进行认证操作</div>
+        <el-button @click="onConfirmation('确认激活')">重新激活</el-button>
+      </div>
+      <div v-else>
+        <div>当前流程正常运行，如需将流程挂起，请进行认证操作</div>
+        <el-button @click="onConfirmation('确认挂起')">挂起</el-button>
+      </div>
     </div>
-    <div v-else class="hang">
-      <span>当前流程正常运行，如需将流程挂起，请进行认证操作</span>
-      <div class="confirm" @click="onConfirmation">挂起确认</div>
-    </div>
-    <runtime-confirmation :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
+    <runtime-confirmation :title="confirmationTitle" :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
   </div>
 </template>
 
@@ -30,6 +32,7 @@ export default {
   data() {
     return {
       confirmationVisible: false,
+      confirmationTitle: '',
     }
   },
   computed: {
@@ -38,8 +41,9 @@ export default {
     },
   },
   methods: {
-    onConfirmation() {
+    onConfirmation(title) {
       this.confirmationVisible = true
+      this.confirmationTitle = title
     },
     onConfirmationValidate(validate) {
       if (!validate) {
@@ -65,15 +69,21 @@ export default {
 }
 </script>
 
-<style scoped>
-.hang {
-  text-align: center;
-  margin-top: 50px;
-}
+<style scoped lang="scss">
+@import '../index.scss';
 
-.confirm {
-  cursor: pointer;
-  color: rgb(255, 76, 0);
-  margin-top: 20px;
+@include container;
+
+.container > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    margin-top: 20px;
+    @include dangerPlainBtn;
+  }
 }
 </style>

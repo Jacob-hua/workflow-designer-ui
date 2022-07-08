@@ -7,7 +7,7 @@
           :processDisplayInfo="processDisplayInfo"
           @loaded="onLoaded"
         ></ProcessInformation>
-        <div class="action-wrapper">
+        <div class="action-wrapper" v-if="activeAction">
           <el-tabs v-model="activeAction" type="border-card" @tab-click="onSelectAction">
             <el-tab-pane
               v-for="({ label, value, component: { name, events, props } }, index) in actions"
@@ -15,17 +15,21 @@
               :name="value"
               :key="index"
             >
-              <!-- <div v-if="!roleBoolean">无权限</div>
-              <div v-else-if="actions.length === 0">无信息</div> -->
-              <!-- <component v-else :is="name" v-on="events" v-bind="props" /> -->
-              <component :is="name" v-on="events" v-bind="props" />
+              <div class="pane-container" v-if="!roleBoolean">
+                <img :src="require('../../../assets/image/runtime/no-power.svg')" />
+                <div>无权限</div>
+              </div>
+              <component v-else :is="name" v-on="events" v-bind="props" />
             </el-tab-pane>
           </el-tabs>
         </div>
+        <div class="no-action" v-else>
+          <img :src="require('../../../assets/image/common/no_data.png')" />
+        </div>
       </div>
       <div>
-        <div>表单内容</div>
-        <div class="Implement-right-form">
+        <div class="form-title">表单内容</div>
+        <div class="form-preview">
           <preview
             :itemList="formContant.list"
             :formConf="formContant.config"
@@ -37,9 +41,9 @@
         </div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="onCancel">取 消</el-button>
-      <el-button type="primary" @click="onExecute" :disabled="hang">执 行</el-button>
+    <span slot="footer">
+      <el-button class="submit-button" @click="onExecute" :disabled="hang">执 行</el-button>
+      <el-button class="cancel-button" @click="onCancel">取 消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -92,7 +96,7 @@ export default {
       formContant: {},
       formShow: false,
       roleBoolean: true,
-      activeAction: 'Agency',
+      activeAction: undefined,
       actionsConfig: {
         Agency: {
           label: '代办',
@@ -206,20 +210,20 @@ export default {
       }
       const temps = []
       if (this.noExecutor) {
-        temps.push(this.actionsConfig['NoExecutor'])
+        temps.push(makeComponent.call(this, 'NoExecutor'))
       }
       const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
-      return actions
-        .map((action) => {
-          const component = this.actionsConfig[action]['component']({
-            workflow: this.workflow,
-            onAgencyCompleted: this.onAgencyCompleted,
-            onRejectSuccess: this.onRejectSuccess,
-            onSelectExecutor: this.onSelectExecutor,
-          })
-          return { ...this.actionsConfig[action], component }
+      return actions.map(makeComponent.bind(this)).concat(temps)
+
+      function makeComponent(action) {
+        const component = this.actionsConfig[action].component({
+          workflow: this.workflow,
+          onAgencyCompleted: this.onAgencyCompleted,
+          onRejectSuccess: this.onRejectSuccess,
+          onSelectExecutor: this.onSelectExecutor,
         })
-        .concat(temps)
+        return { ...this.actionsConfig[action], component }
+      }
     },
     processDisplayInfo() {
       return [
@@ -250,6 +254,13 @@ export default {
       ]
     },
   },
+  watch: {
+    actions(actions) {
+      if (!this.activeAction) {
+        this.activeAction = actions[0].value
+      }
+    },
+  },
   async mounted() {
     await this.fetchExecuteDetail()
     await this.fetchProcessNodeInfo()
@@ -271,23 +282,25 @@ export default {
     onSelectExecutor(value) {
       this.$set(this.workflow, 'executors', value)
     },
-    onSelectAction(value) {
-      console.log('ddddd', value);
+    onSelectAction() {
       let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
       let proJectRole =
         permissions.filter((item) => {
           return item.projectCode === this.workflow.ascription
         })[0]?.permissionSet || []
       let findEle = proJectRole.findIndex((item) => {
-        return item.frontRoute === 'RunTime' + value
+        return item.frontRoute === 'RunTime' + this.activeAction
       })
-      if (findEle === -1 && value !== 'NoExecutor') {
+      if (findEle === -1 && this.activeAction !== 'NoExecutor') {
         this.roleBoolean = false
       } else {
         this.roleBoolean = true
       }
     },
     onLoaded() {
+      if (!this.workflow.trackList) {
+        return
+      }
       const completedTaskList = this.workflow.trackList
         .filter(({ taskKey }) => taskKey !== this.workflow.taskKey)
         .map(({ taskKey }) => taskKey)
@@ -462,6 +475,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '../index.scss';
+
+@include paneContainer;
+
 .container {
   display: flex;
 
@@ -471,17 +488,46 @@ export default {
 
   & > div:last-child {
     flex: 1;
+    padding: 0px 20px;
   }
 }
 
 .action-wrapper {
-  @include contentTab;
-
   margin-top: 30px;
+  @include runtimeContentTab;
 }
 
-.Implement-right-form {
-  height: 700px;
+.no-action {
+  border: 1px solid $border-color-1;
+  margin-top: 30px;
+  height: 270px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-title {
+  color: $font-color;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.form-preview {
+  height: 685px;
   overflow: scroll;
+  margin-top: 15px;
+  background: $card-bg-color-1;
+  border: 1px solid $border-color-1;
+  border-radius: 8px;
+  padding: 12px 0px;
+}
+
+.submit-button {
+  @include primaryBtn;
+}
+
+.cancel-button {
+  @include cancelBtn;
 }
 </style>

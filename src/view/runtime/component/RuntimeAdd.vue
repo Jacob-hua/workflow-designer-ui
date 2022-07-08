@@ -156,7 +156,7 @@ export default {
   & > div:last-child {
     flex: 1;
     margin-left: 12px;
-    border: 1px solid $border-color;
+    border: 1px solid $border-color-1;
     height: 100%;
     border-radius: 6px;
   }

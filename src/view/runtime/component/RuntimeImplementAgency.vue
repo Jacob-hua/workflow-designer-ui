@@ -1,28 +1,21 @@
 <template>
   <div>
-    <div class="peopleList-title">指定代办人员:</div>
-    <div class="peopleList">
-      <div v-for="({ assignee, candidateUsers = [], taskId }, index) in agency" :key="index">
-        <span v-show="assignee"> {{ assignee }}: </span>
-        <div class="peopleList-item" v-for="userName in candidateUsers" :key="userName">
-          {{ userName }}
+    <div class="container">
+      <div class="content" v-for="({ assignee, candidateUsers = [], taskId }, index) in agency" :key="index">
+        <div v-show="assignee">{{ assignee }}:</div>
+        <div class="info" v-if="assignee === userInfo.account && candidateUsers.length > 0">
+          <div>
+            <div class="user" v-for="userName in candidateUsers" :key="userName">
+              {{ userName }}
+            </div>
+          </div>
+          <el-button @click="onEditAgency(taskId, candidateUsers)">编辑</el-button>
         </div>
-        <span
-          v-if="assignee === userInfo.account && candidateUsers.length > 0"
-          class="addCirculate"
-          @click="onEditAgency(taskId, candidateUsers)"
-        >
-          编辑
-        </span>
-        <div v-else-if="candidateUsers.length === 0" style="display: inline-block">
-          <span>暂无代办</span>
-          <span
-            class="addCirculate"
-            @click="onAddAgency(taskId)"
-            v-if="assignee === userInfo.account && candidateUsers.length == 0"
-          >
-            点击添加
-          </span>
+        <div class="empty" v-else-if="candidateUsers.length === 0">
+          <div>暂无代办</div>
+          <el-button @click="onAddAgency(taskId)" v-if="assignee === userInfo.account && candidateUsers.length == 0">
+            添加
+          </el-button>
         </div>
       </div>
     </div>
@@ -100,26 +93,10 @@ export default {
 }
 </script>
 
-<style scoped>
-.peopleList {
-  margin-top: 15px;
-}
+<style scoped lang="scss">
+@import '../index.scss';
 
-.peopleList-item {
-  display: inline-block;
-  width: 96px;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
-  border: 1px solid #108cee;
-  border-radius: 5px;
-  margin-left: 20px;
-}
+@include container;
 
-.addCirculate {
-  margin-left: 10px;
-  display: inline-block;
-  color: #5b5091;
-  cursor: pointer;
-}
+@include userContent;
 </style>
