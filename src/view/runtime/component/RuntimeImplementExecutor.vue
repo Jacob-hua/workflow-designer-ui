@@ -1,14 +1,20 @@
 <template>
   <div>
-    <div v-if="executors.length == 0">
-      <span>后续任务未指定执行人，请选择执行人</span>
-      <div class="confirm" @click="onConfirmation">选择执行人</div>
-    </div>
-    <div v-else>
-      <div class="peopleList-item" v-for="{ userId } in executors" :key="userId">
-        {{ userId }}
+    <div class="container">
+      <div class="content">
+        <div class="empty" v-if="executors.length == 0">
+          <span>后续任务未指定执行人，请选择执行人</span>
+          <el-button @click="onConfirmation">选择执行人</el-button>
+        </div>
+        <div class="info" v-else>
+          <div>
+            <div class="user" v-for="{ userId } in executors" :key="userId">
+              {{ userId }}
+            </div>
+          </div>
+          <el-button @click="onEditExecutor"> 编辑 </el-button>
+        </div>
       </div>
-      <span class="addCirculate" @click="onEditExecutor"> 编辑 </span>
     </div>
     <runtime-people
       :visible.sync="runtimePeopleVisible"
@@ -57,4 +63,10 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped lang="scss">
+@import '../index.scss';
+
+@include container;
+
+@include userContent;
+</style>
