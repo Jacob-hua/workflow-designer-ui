@@ -486,7 +486,7 @@ export default {
 }
 
 .tit {
-  color: #1d89ff;
+  color: #fff;
 }
 
 .tip_content {
@@ -512,9 +512,6 @@ export default {
   border: 1px solid rgb(204, 204, 204);
 }
 
-.start_right p {
-  color: #000;
-}
 
 .start_right button {
   margin-top: 20px;
