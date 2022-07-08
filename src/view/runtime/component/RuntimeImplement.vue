@@ -7,7 +7,7 @@
           :processDisplayInfo="processDisplayInfo"
           @loaded="onLoaded"
         ></ProcessInformation>
-        <div class="action-wrapper">
+        <div class="action-wrapper" v-if="activeAction">
           <el-tabs v-model="activeAction" type="border-card" @tab-click="onSelectAction">
             <el-tab-pane
               v-for="({ label, value, component: { name, events, props } }, index) in actions"
@@ -15,10 +15,9 @@
               :name="value"
               :key="index"
             >
-              <!-- <div v-if="!roleBoolean">无权限</div>
-              <div v-else-if="actions.length === 0">无信息</div> -->
-              <!-- <component v-else :is="name" v-on="events" v-bind="props" /> -->
-              <component :is="name" v-on="events" v-bind="props" />
+              <div v-if="!roleBoolean">无权限</div>
+              <div v-else-if="actions.length === 0">无信息</div>
+              <component v-else :is="name" v-on="events" v-bind="props" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -92,7 +91,7 @@ export default {
       formContant: {},
       formShow: false,
       roleBoolean: true,
-      activeAction: 'Agency',
+      activeAction: undefined,
       actionsConfig: {
         Agency: {
           label: '代办',
@@ -206,20 +205,20 @@ export default {
       }
       const temps = []
       if (this.noExecutor) {
-        temps.push(this.actionsConfig['NoExecutor'])
+        temps.push(makeComponent.call(this, 'NoExecutor'))
       }
       const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
-      return actions
-        .map((action) => {
-          const component = this.actionsConfig[action]['component']({
-            workflow: this.workflow,
-            onAgencyCompleted: this.onAgencyCompleted,
-            onRejectSuccess: this.onRejectSuccess,
-            onSelectExecutor: this.onSelectExecutor,
-          })
-          return { ...this.actionsConfig[action], component }
+      return actions.map(makeComponent.bind(this)).concat(temps)
+
+      function makeComponent(action) {
+        const component = this.actionsConfig[action].component({
+          workflow: this.workflow,
+          onAgencyCompleted: this.onAgencyCompleted,
+          onRejectSuccess: this.onRejectSuccess,
+          onSelectExecutor: this.onSelectExecutor,
         })
-        .concat(temps)
+        return { ...this.actionsConfig[action], component }
+      }
     },
     processDisplayInfo() {
       return [
@@ -250,6 +249,11 @@ export default {
       ]
     },
   },
+  watch: {
+    actions(actions) {
+      this.activeAction = actions[0].value
+    },
+  },
   async mounted() {
     await this.fetchExecuteDetail()
     await this.fetchProcessNodeInfo()
@@ -271,23 +275,25 @@ export default {
     onSelectExecutor(value) {
       this.$set(this.workflow, 'executors', value)
     },
-    onSelectAction(value) {
-      console.log('ddddd', value);
+    onSelectAction() {
       let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
       let proJectRole =
         permissions.filter((item) => {
           return item.projectCode === this.workflow.ascription
         })[0]?.permissionSet || []
       let findEle = proJectRole.findIndex((item) => {
-        return item.frontRoute === 'RunTime' + value
+        return item.frontRoute === 'RunTime' + this.activeAction
       })
-      if (findEle === -1 && value !== 'NoExecutor') {
+      if (findEle === -1 && this.activeAction !== 'NoExecutor') {
         this.roleBoolean = false
       } else {
         this.roleBoolean = true
       }
     },
     onLoaded() {
+      if (!this.workflow.trackList) {
+        return
+      }
       const completedTaskList = this.workflow.trackList
         .filter(({ taskKey }) => taskKey !== this.workflow.taskKey)
         .map(({ taskKey }) => taskKey)
