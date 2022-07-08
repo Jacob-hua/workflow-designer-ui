@@ -88,9 +88,9 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
+<style scoped lang="scss">
 .bpmnView-title {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid $border-color-1;
   margin-bottom: 40px;
   display: flex;
   flex-direction: row;
@@ -128,15 +128,6 @@ export default {
   margin-right: 20px;
 }
 
-::v-deep .el-input.is-disabled .el-input__inner {
-  color: black;
-  width: 180px;
-  height: 43px;
-  line-height: 43px;
-  padding: 0px 10px;
-  background-color: #f2f2f2;
-}
-
 ::v-deep .el-input__inner {
   width: 180px;
   height: 43px;
@@ -147,21 +138,17 @@ export default {
 
 .bpmnView-process {
   height: 400px;
-  border: 1px solid black;
+  border: 1px solid $border-color-1;
   position: relative;
 }
 
 .bpmn-Main-title {
   position: absolute;
   font-weight: 700;
-  color: black;
+  color: $font-color;
   font-size: 13px;
   top: 10px;
   left: 10px;
-}
-
-.my-process-designer__canvas {
-  height: 100%;
 }
 
 ::v-deep .djs-palette {
@@ -170,44 +157,5 @@ export default {
 
 ::v-deep .djs-context-pad {
   display: none;
-}
-
-.bpmn-configure {
-  display: flex;
-}
-
-.noneForm {
-  display: inline-block;
-  height: 160px;
-  width: 100%;
-  text-align: center;
-  line-height: 160px;
-}
-
-.bpmn-configure-title {
-  height: 40px;
-  line-height: 40px;
-}
-
-.bpmn-configure-basic {
-  flex: 1;
-}
-
-.bpmn-configure-Main {
-  height: 200px;
-  border: 1px solid #000000;
-  padding: 20px 10px;
-  overflow: auto;
-  position: relative;
-}
-
-.bpmn-configure-Main-item {
-  margin-bottom: 20px;
-  color: black;
-}
-
-.bpmn-configure-form {
-  flex: 3;
-  margin-left: 20px;
 }
 </style>
