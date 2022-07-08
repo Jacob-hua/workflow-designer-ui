@@ -1,36 +1,34 @@
 <template>
   <div>
-    <el-dialog title="新建执行" :visible="dialogVisible" @close="onClose">
+    <el-dialog title="新建执行" top="1vh" fullscreen :visible="dialogVisible" @close="onClose">
       <div class="content-wrapper">
         <div>
-          <div class="system-list">
+          <el-card header="项目选择">
             <el-tree
               :data="rootOrganizationChildren(projectCode)"
               :props="defaultProps"
               @node-click="handleNodeClick"
             ></el-tree>
-          </div>
+          </el-card>
         </div>
         <div>
           <div class="process-list">
-            <div class="process-list-item" v-for="(process, index) in processList" :key="index">
-              <div class="process-list-item-detail" @click="detailsShow(process)">
-                <span>详情</span>
+            <div class="process" v-for="(process, index) in processList" :key="index">
+              <div class="process-info">
+                <div>部署名称:</div>
+                <div>{{ process.deployName }}</div>
               </div>
-              <div class="process-list-item-word">
-                <label>部署名称:</label>
-                <span>{{ process.deployName }}</span>
+              <div class="process-info">
+                <div>部署人:</div>
+                <div>{{ process.user }}</div>
               </div>
-              <div class="process-list-item-word">
-                <label>部署人:</label>
-                <span>{{ process.user }}</span>
+              <div class="process-info">
+                <div>部署时间:</div>
+                <div>{{ process.createTime }}</div>
               </div>
-              <div class="process-list-item-word">
-                <label> 部署时间:</label>
-                <span>{{ process.createTime }}</span>
-              </div>
-              <div class="process-list-item-button">
-                <el-button type="primary" plain @click="createTicket(process)">创建</el-button>
+              <div class="button-wrapper">
+                <el-button plain @click="createTicket(process)">创建</el-button>
+                <el-button @click="detailsShow(process)">详情</el-button>
               </div>
             </div>
           </div>
@@ -83,7 +81,7 @@ export default {
         type: 'energy-1',
         order: 'desc',
         page: 1,
-        limit: 4,
+        limit: 12,
         total: 1,
       },
       createTicketVisible: false,
@@ -110,9 +108,6 @@ export default {
     changSystem(energyType) {
       this.getData.type = energyType
       this.getProcessList()
-    },
-    systemListItemClass(value) {
-      return this.getData.type === value ? 'check-pro' : ''
     },
     onClose() {
       this.$emit('close')
@@ -146,63 +141,74 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.el-card {
+  height: 100%;
+}
+
 .content-wrapper {
   display: flex;
+  height: 100%;
 
   & > div:first-child {
-    flex: 1;
+    width: 278px;
   }
 
   & > div:last-child {
-    flex: 3;
+    flex: 1;
+    margin-left: 12px;
+    border: 1px solid $border-color;
+    height: 100%;
+    border-radius: 6px;
   }
 }
 
-.system-list {
-  margin-top: 30px;
-}
-
-.check-pro {
-  border-color: #0066cc;
-  color: #0066cc;
-}
-
 .process-list {
-  height: 500px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 370px);
+  grid-template-rows: 229px;
+  row-gap: 20px;
+  column-gap: 20px;
+  padding: 20px;
+  height: 720px;
 }
 
-.process-list-item {
-  width: 290px;
-  height: 178px;
-  background-color: #e4e4e4;
-  padding: 20px 0px 0px 20px;
-  position: relative;
+.process {
+  width: 370px;
+  background-color: $card-bg-color-1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+
+  .process-info {
+    display: flex;
+    margin: 30px 30px 0px 32px;
+
+    & > div:first-child {
+      width: 60px;
+    }
+
+    & > div:last-child {
+      margin-left: 30px;
+      color: $font-color;
+    }
+  }
+
+  .button-wrapper {
+    margin: 30px 30px 24px 0px;
+    text-align: end;
+    display: flex;
+    justify-content: flex-end;
+
+    & > button {
+      @include primaryPlainBtn;
+      width: 68px;
+      height: 28px;
+    }
+  }
+}
+
+.el-pagination {
+  text-align: right;
   margin-right: 20px;
-  display: inline-block;
-  margin-top: 30px;
-}
-
-.process-list-item-detail {
-  position: absolute;
-  right: 20px;
-  top: 10px;
-  color: #1890ff;
-  cursor: pointer;
-}
-
-.process-list-item-word {
-  font-size: 14px;
-  color: #000000;
-  margin-bottom: 20px;
-}
-
-.process-list-item-button {
-  text-align: center;
-}
-
-.process-list-item-button /deep/ .el-button {
-  height: 30px;
-  line-height: 30px;
-  padding: 0px 20px;
 }
 </style>

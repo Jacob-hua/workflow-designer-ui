@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog append-to-body width="30%" :title="title" :visible="visible" @close="onCancel">
+    <el-dialog append-to-body :title="title" :visible="visible" @close="onCancel">
       <div class="runtimeConfirmation">
         <div class="title">{{ message }}</div>
         <el-form ref="form" :model="form" label-width="40px">

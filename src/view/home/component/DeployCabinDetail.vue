@@ -1,13 +1,11 @@
 <template>
   <div>
-    <el-dialog title="查看工作流" :visible="visible" width="70%" @close="onCancel" custom-class="dialogVisible1">
-      <div>
+    <el-dialog title="查看工作流" top="1vh" :visible="visible" @close="onCancel">
+      <div class="container">
         <ProcessInformation :processDisplayInfo="processDisplayInfo" :xml="workflow.content" />
-      </div>
-      <div class="details-footer-height">
-        <div class="details-header">
+        <div class="search-wrapper">
           <span>部署类型</span>
-          <span class="inputSelect">
+          <span>
             <el-cascader
               v-if="systemTypeOptions.length === 0"
               v-model="business"
@@ -18,32 +16,34 @@
               <el-option v-for="{ value, label } in systemTypeOptions" :key="value" :label="label" :value="value" />
             </el-select>
           </span>
-          <span class="frequency"> 已部署次数: {{ deployNumber }} </span>
+          <span> 已部署次数: {{ deployNumber }} </span>
         </div>
-        <div class="detail-list">
-          <div style="line-height: 194px; width: 100%; text-align: center" v-if="!deployments.length">暂无数据</div>
-          <div v-else>
+        <div class="detail-wrapper">
+          <div v-if="!deployments.length">暂无数据</div>
+          <div v-else class="details">
             <div
+              class="detail"
               v-for="({ id, deployName, createBy, createTime, displayStatus }, index) in deployments"
               :key="id"
-              class="detail-list-item"
             >
-              <span class="detailsWord" @click="onClickDetail(index)">详情</span>
-              <div class="item-item">
-                <span>部署名称:</span>
-                <span>{{ deployName }}</span>
-              </div>
-              <div class="item-item">
-                <span>部署人:</span>
-                <span>{{ createBy }}</span>
-              </div>
-              <div class="item-item">
-                <span>部署时间:</span>
-                <span>{{ createTime }}</span>
-              </div>
-              <div class="item-item">
-                <span>状态:</span>
-                <span>{{ displayStatus }}</span>
+              <div class="detail-button" @click="onClickDetail(index)">详情</div>
+              <div>
+                <div class="info">
+                  <span>部署名称:</span>
+                  <span>{{ deployName }}</span>
+                </div>
+                <div class="info">
+                  <span>部署人:</span>
+                  <span>{{ createBy }}</span>
+                </div>
+                <div class="info">
+                  <span>部署时间:</span>
+                  <span>{{ createTime }}</span>
+                </div>
+                <div class="info">
+                  <span>状态:</span>
+                  <span>{{ displayStatus }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -163,114 +163,60 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.details-header {
-  margin-top: 20px;
-}
-.inputSelect {
-  margin-right: 20px;
-  display: inline-block;
-  margin-left: 20px;
-}
-.inputSelect /deep/ .el-input__inner {
-  width: 180px;
-  height: 43px;
-  line-height: 43px;
-  padding: 0px 10px;
-  border: 1px solid black;
-}
-.frequency {
-  color: #0066cc;
-  font-weight: 700;
-}
-.detail-list {
-  margin-top: 30px;
-  /* display: flex; */
-  width: 1312px;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  /* height: 200px; */
-  overflow: auto;
-  white-space: nowrap;
-}
-.detail-list::-webkit-scrollbar {
-  width: 0px;
-  /* height: 2px; */
-}
-.detail-list-item {
-  position: relative;
-  display: inline-block;
-  width: 290px;
-  height: 165px;
-  border: 1px solid black;
-  padding: 20px 20px;
-  margin-right: 40px;
-}
-.detailsWord {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #0066cc;
-  cursor: pointer;
-}
-
-.detail-list-item .item-item {
-  line-height: 35px;
-  color: black;
-}
-
-::v-deep .el-dialog__footer {
-  text-align: center;
-}
-
-.bpmn-configure {
+.container {
   display: flex;
+  flex-direction: column;
 }
 
-.noneForm {
-  display: inline-block;
-  height: 160px;
-  width: 100%;
-  text-align: center;
-  line-height: 160px;
+.search-wrapper {
+  color: $font-color;
+  padding: 30px 0;
+  font-size: 12px;
+
+  & > span:first-child {
+    margin-right: 20px;
+  }
+
+  & > span:last-child {
+    margin-left: 20px;
+  }
 }
 
-.details-footer-height {
-  height: 248px;
-}
-
-.bpmn-configure-title {
-  height: 40px;
-  line-height: 40px;
-}
-
-.bpmn-configure-basic {
-  flex: 1;
-}
-
-.bpmn-configure-form {
-  flex: 3;
-  margin-left: 20px;
-}
-
-.bpmn-configure-Main {
-  height: 200px;
-  border: 1px solid #000000;
-  padding: 20px 10px;
+.detail-wrapper {
   overflow: auto;
-}
+  height: 240px;
 
-.bpmn-configure-Main-item {
-  margin-bottom: 20px;
-  color: black;
-}
+  .details {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 270px);
+    row-gap: 20px;
+    column-gap: 20px;
+    padding: 20px 30px;
+  }
 
-.formShowForm {
-  position: relative;
-}
+  .detail {
+    background-color: #212739;
+    color: $font-color;
+    font-size: 14px;
+    padding: 10px;
 
-.formRemove {
-  position: absolute;
-  right: 10px;
-  top: 10px;
+    .info {
+      display: flex;
+      padding: 5px 0;
+      & > span:first-child {
+        width: 65px;
+        text-align: end;
+      }
+      & > span:last-child {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  .detail-button {
+    float: right;
+    cursor: pointer;
+    color: $button-submit-bg-color;
+  }
 }
 </style>
