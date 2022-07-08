@@ -169,7 +169,7 @@ label {
     color: #fff;
     position: relative;
     line-height: 40px;
-    width: 300px;
+    width: 292px;
     height: 186px;
     border: 1px solid #0066cc;
     background: #212739;

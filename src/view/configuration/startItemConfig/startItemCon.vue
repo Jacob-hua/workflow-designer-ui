@@ -114,7 +114,6 @@
               </template>
             </el-table-column>
             <el-table-column
-                width="100"
                 align="center"
                 v-if="processFlag"
                 prop=""
@@ -515,51 +514,5 @@ export default {
   height: 600px;
   border: 1px solid rgb(204, 204, 204);
 }
-
-.tree /deep/ .el-tree-node {
-  position: relative;
-  padding-left: 0;
-}
-
-.tree /deep/ .el-tree-node__children {
-  padding-left: 26px;
-  padding-top: 20px;
-}
-
-.tree /deep/ .el-tree-node :last-child:before {
-  height: 12px;
-}
-
-.tree /deep/ .el-tree > .el-tree-node:before {
-  border-left: none;
-}
-
-.tree-container /deep/ .el-tree > .el-tree-node:after {
-  border-top: none;
-}
-
-.tree /deep/ .el-tree-node:before {
-  content: '';
-  left: -4px;
-  position: absolute;
-  right: auto;
-  border-width: 2px;
-  border-left: 2px dashed #5abcde;
-  bottom: 0px;
-  height: 100%;
-  top: 0px;
-  width: 1px;
-}
-
-.tree /deep/ .el-tree-node:after {
-  content: '';
-  left: -4px;
-  position: absolute;
-  right: auto;
-  border-width: 2px;
-  border-top: 2px dashed #5abcde;
-  height: 20px;
-  top: 12px;
-  width: 30px;
-}
+@include tree;
 </style>
