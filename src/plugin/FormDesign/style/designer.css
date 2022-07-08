@@ -45,7 +45,8 @@ body{
   padding-bottom: 20px;
 }
 .components-list {
-  padding: 8px;
+  /*padding: 8px;*/
+  padding-right: 20px;
   box-sizing: border-box;
   height: 100%;
 }
