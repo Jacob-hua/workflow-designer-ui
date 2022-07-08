@@ -8,49 +8,47 @@
       <div>
         <div class="title">工作流执行详情</div>
         <div class="process-content">
-          <div class="block">
-            <el-timeline>
-              <el-timeline-item
-                :timestamp="taskName"
-                placement="top"
-                v-for="({ taskName, formDataList, endTime, status, commentList }, index) in trackList"
-                :key="index"
-              >
-                <div class="contant">
-                  <div
-                    v-for="({ formContent, status: formStatus, assignee: formAssignee }, index1) in formDataList"
-                    :key="index1"
-                  >
-                    <div v-if="formContent" class="form">
-                      <preview
-                        :itemList="formContent.list"
-                        :formConf="formContent.config"
-                        :downloadFun="downloadFile.bind(this)"
-                      ></preview>
-                    </div>
-                    <div v-if="formStatus === 'completed'">
-                      <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
-                      <span class="word1">{{ formAssignee }} <span>(执行)</span></span>
-                      <span class="dataYear">{{ endTime }}</span>
-                    </div>
-                    <div v-if="status === 'rejected'">
-                      <div v-for="({ comments, assignee: commentAssignee }, index1) in commentList" :key="index1">
-                        <div v-for="({ message }, index2) in comments" :key="index2">
-                          <i class="el-icon-warning-outline success"></i>
-                          <span class="word1">{{ message }}</span>
-                        </div>
-                        <div>
-                          <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
-                          <span class="word1">{{ commentAssignee }} <span style="color: red">(驳回)</span> </span>
-                          <span class="dataYear">{{ endTime }}</span>
-                        </div>
+          <el-timeline>
+            <el-timeline-item
+              :timestamp="taskName"
+              placement="top"
+              v-for="({ taskName, formDataList, endTime, status, commentList }, index) in trackList"
+              :key="index"
+            >
+              <div class="contant">
+                <div
+                  v-for="({ formContent, status: formStatus, assignee: formAssignee }, index1) in formDataList"
+                  :key="index1"
+                >
+                  <div v-if="formContent" class="form">
+                    <preview
+                      :itemList="formContent.list"
+                      :formConf="formContent.config"
+                      :downloadFun="downloadFile.bind(this)"
+                    ></preview>
+                  </div>
+                  <div v-if="formStatus === 'completed'">
+                    <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
+                    <span class="word1">{{ formAssignee }} <span>(执行)</span></span>
+                    <span class="dataYear">{{ endTime }}</span>
+                  </div>
+                  <div v-if="status === 'rejected'">
+                    <div v-for="({ comments, assignee: commentAssignee }, index1) in commentList" :key="index1">
+                      <div v-for="({ message }, index2) in comments" :key="index2">
+                        <i class="el-icon-warning-outline success"></i>
+                        <span class="word1">{{ message }}</span>
+                      </div>
+                      <div>
+                        <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
+                        <span class="word1">{{ commentAssignee }} <span style="color: red">(驳回)</span> </span>
+                        <span class="dataYear">{{ endTime }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </el-timeline-item>
-            </el-timeline>
-          </div>
+              </div>
+            </el-timeline-item>
+          </el-timeline>
         </div>
       </div>
     </div>
