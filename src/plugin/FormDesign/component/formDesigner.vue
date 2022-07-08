@@ -198,6 +198,9 @@ export default {
 
 </script>
 <style scoped>
+.components-title {
+  color: #fff;
+}
 .container{
   padding:0px
 }

@@ -28,9 +28,9 @@
     </el-tree>
     <div v-if="!editFlag" class="preview"><el-tree class="tree" default-expand-all :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree></div>
     <span slot="footer" class="dialog-footer">
-      <el-button v-if="editFlag && !edit"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
-      <el-button v-if="showBtn && btnTxt === '预览'"  @click="preview">{{btnTxt}}</el-button>
-      <el-button v-if="showBtn"  @click="exit">取 消</el-button>
+      <el-button class="next" v-if="editFlag && !edit"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
+      <el-button  class="next" v-if="showBtn && btnTxt === '预览'"  @click="preview">{{btnTxt}}</el-button>
+      <el-button  class="cancel" v-if="showBtn"  @click="exit">取 消</el-button>
   </span>
   </el-dialog>
 </template>
@@ -154,7 +154,6 @@ export default {
               type: 'success',
               message: '保存成功'
             })
-          
             _this.$parent.getBusinessConfigBasicList()
           })
         }
@@ -230,72 +229,31 @@ export default {
 }
 </script>
 
-<style scoped>
->>> .el-tree-node__content:hover, .el-upload-list__item:hover {
+<style scoped lang="scss">
+
+.next {
+  @include primaryBtn;
+}
+.cancel {
+  @include cancelBtn;
+}
+
+/deep/ .el-tree-node__content:hover, .el-upload-list__item:hover {
   background-color: unset !important;
 }
 
->>> .el-tree-node:focus > .el-tree-node__content {
+/deep/ .el-tree-node:focus > .el-tree-node__content {
   background-color: unset !important;
 }
->>> .custom-tree-node:hover  {
+/deep/ .custom-tree-node:hover  {
   background-color: unset !important;
 }
 .el-tree .is-current > .el-tree-node__content .custom-tree-node {
   background-color: unset !important; ;
 }
->>> .el-tree-node__content {
-  padding-left: 0 !important;
-}
->>> .el-input--mini {
-  width: 150px;
-}
-.tree >>> .el-tree-node {
-  position: relative;
-  padding-left: 0 ;
-}
 
-.tree >>> .el-tree-node__children {
-  padding-left: 26px;
-  padding-top: 20px;
-}
+@include tree;
 
-.tree >>> .el-tree-node :last-child:before {
-  height: 12px;
-}
-
-.tree >>> .el-tree > .el-tree-node:before {
-  border-left: none;
-}
-
-.tree-container >>> .el-tree > .el-tree-node:after {
-  border-top: none;
-}
-
-.tree >>> .el-tree-node:before {
-  content: '';
-  left: -4px;
-  position: absolute;
-  right: auto;
-  border-width: 1px;
-  border-left: 1px dashed #5abcde;
-  bottom: 0px;
-  height: 100%;
-  top: 0px;
-  width: 1px;
-}
-
-.tree >>> .el-tree-node:after {
-  content: '';
-  left: -4px;
-  position: absolute;
-  right: auto;
-  border-width: 1px;
-  border-top: 1px dashed #5abcde;
-  height: 20px;
-  top:12px;
-  width: 30px ;
-}
 .btn {
   position: relative;
   left: 90%;
