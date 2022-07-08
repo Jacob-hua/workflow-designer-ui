@@ -35,7 +35,7 @@
     </div>
     <div class="content-wrapper">
       <el-tabs type="border-card" v-model="activeName" @tab-click="changeRole">
-        <el-tab-pane v-for="(item, key) in detailData.map" :name="key">
+        <el-tab-pane v-for="(item, key) in detailData.map" :key="Math.random()" :name="key">
           <span slot="label">{{key}}</span>
           <div class="RoleMain">
             <div v-for="(item, index) in detailData.map[checkRole]" :key="index" class="RoleList">
