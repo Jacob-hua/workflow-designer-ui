@@ -97,6 +97,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding-bottom: 14px;
+  color: $font-color;
 }
 
 .title-item {
