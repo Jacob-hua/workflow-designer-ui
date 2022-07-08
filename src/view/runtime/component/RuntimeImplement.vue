@@ -23,8 +23,8 @@
         </div>
       </div>
       <div>
-        <div>表单内容</div>
-        <div class="Implement-right-form">
+        <div class="form-title">表单内容</div>
+        <div class="form-preview">
           <preview
             :itemList="formContant.list"
             :formConf="formContant.config"
@@ -477,6 +477,7 @@ export default {
 
   & > div:last-child {
     flex: 1;
+    padding: 0px 20px;
   }
 }
 
@@ -486,8 +487,19 @@ export default {
   margin-top: 30px;
 }
 
-.Implement-right-form {
+.form-title {
+  color: $font-color;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.form-preview {
   height: 700px;
   overflow: scroll;
+  margin-top: 15px;
+  background: $card-bg-color-1;
+  border: 1px solid $border-color-1;
+  border-radius: 8px;
 }
 </style>
