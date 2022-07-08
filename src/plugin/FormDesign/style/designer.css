@@ -17,7 +17,7 @@ body{
 .d-logo-wrapper{
   position: relative;
   height: 42px;
-  border-bottom: 1px solid #f1e8e8;
+  border-bottom: 1px solid #333333;
   box-sizing: border-box;
 }
 .d-logo{
@@ -93,7 +93,7 @@ body{
   text-align: right;
   padding: 0 15px;
   box-sizing: border-box;;
-  border: 1px solid #f1e8e8;
+  border: 1px solid #333333;
   border-top: none;
   border-left: none;
 }
