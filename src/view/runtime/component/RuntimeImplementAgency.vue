@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <div class="peopleList-title">指定代办人员:</div>
+  <div class="container">
     <div class="peopleList">
       <div v-for="({ assignee, candidateUsers = [], taskId }, index) in agency" :key="index">
         <span v-show="assignee"> {{ assignee }}: </span>
@@ -100,7 +99,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .peopleList {
   margin-top: 15px;
 }

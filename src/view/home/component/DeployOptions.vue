@@ -258,6 +258,7 @@ export default {
 
   & > div:last-child {
     color: $font-color;
+    width: 510px;
   }
 }
 
