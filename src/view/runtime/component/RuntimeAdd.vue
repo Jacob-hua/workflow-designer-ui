@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="新建执行" top="1vh" :visible="dialogVisible" @close="onClose">
+    <el-dialog title="新建执行" top="1vh" fullscreen :visible="dialogVisible" @close="onClose">
       <div class="content-wrapper">
         <div>
           <el-card header="项目选择">
@@ -81,7 +81,7 @@ export default {
         type: 'energy-1',
         order: 'desc',
         page: 1,
-        limit: 9,
+        limit: 12,
         total: 1,
       },
       createTicketVisible: false,
@@ -148,11 +148,6 @@ export default {
   height: 100%;
 }
 
-/deep/ .el-dialog {
-  width: 1476px;
-  height: 100%;
-}
-
 .content-wrapper {
   display: flex;
   height: 100%;
@@ -172,16 +167,16 @@ export default {
 
 .process-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 346px);
+  grid-template-columns: repeat(auto-fill, 370px);
   grid-template-rows: 229px;
   row-gap: 20px;
   column-gap: 20px;
-  padding: 22px;
+  padding: 20px;
   height: 720px;
 }
 
 .process {
-  width: 346px;
+  width: 370px;
   background-color: $card-bg-color-1;
   display: flex;
   flex-direction: column;
