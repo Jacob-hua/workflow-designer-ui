@@ -15,11 +15,16 @@
               :name="value"
               :key="index"
             >
-              <div v-if="!roleBoolean">无权限</div>
-              <div v-else-if="actions.length === 0">无信息</div>
+              <div class="pane-container" v-if="!roleBoolean">
+                <img :src="require('../../../assets/image/runtime/no-power.svg')" />
+                <div>无权限</div>
+              </div>
               <component v-else :is="name" v-on="events" v-bind="props" />
             </el-tab-pane>
           </el-tabs>
+        </div>
+        <div class="no-action" v-else>
+          <img :src="require('../../../assets/image/common/no_data.png')" />
         </div>
       </div>
       <div>
@@ -468,6 +473,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '../index.scss';
+
+@include paneContainer;
+
 .container {
   display: flex;
 
@@ -486,6 +495,15 @@ export default {
   @include runtimeContentTab;
 }
 
+.no-action {
+  border: 1px solid $border-color-1;
+  margin-top: 30px;
+  height: 270px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .form-title {
   color: $font-color;
   font-size: 14px;
@@ -494,12 +512,13 @@ export default {
 }
 
 .form-preview {
-  height: 700px;
+  height: 685px;
   overflow: scroll;
   margin-top: 15px;
   background: $card-bg-color-1;
   border: 1px solid $border-color-1;
   border-radius: 8px;
+  padding: 12px 0px;
 }
 
 .submit-button {

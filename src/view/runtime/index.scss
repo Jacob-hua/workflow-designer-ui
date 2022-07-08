@@ -9,6 +9,25 @@ $step-rejected-color: red;
   }
 }
 
+@mixin paneContainer {
+  .pane-container {
+    height: 180px;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 48px;
+    }
+
+    div {
+      margin-top: 2px;
+    }
+  }
+}
+
 @mixin userContent {
   .content {
     display: flex;
