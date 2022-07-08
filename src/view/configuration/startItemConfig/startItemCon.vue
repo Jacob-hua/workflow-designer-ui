@@ -42,9 +42,9 @@
           <p>自定义启动项</p>
           <div v-if="!tableData.length" class="tip_content">当前未配置自定义启动项</div>
           <div class="selfDefine" v-if="footFlag" @click="showSelf">自定义</div>
-<!--          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary"-->
-<!--                     v-role="{ id: 'StartItemConfigEdit', type: 'button', business: business }">编辑-->
-<!--          </el-button>-->
+          <!--          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary"-->
+          <!--                     v-role="{ id: 'StartItemConfigEdit', type: 'button', business: business }">编辑-->
+          <!--          </el-button>-->
           <el-table
               v-if="tableFlag && tableData.length > 0"
               :data="tableData"
@@ -121,7 +121,8 @@
               <template slot-scope="scope">
                 <span @click='deleteRow(scope.row)' style="color: #1d89ff; cursor: pointer; margin-right: 5px;"
                       v-role="{ id: 'StartItemConfigDelete', type: 'button', business: business }">删除</span>
-                <span @click="editTable(scope.row, scope.row.btnTxt)" style="color: #1d89ff; cursor: pointer" v-if="btnFlag && tableData.length">{{scope.row.btnTxt}}</span>
+                <span @click="editTable(scope.row, scope.row.btnTxt)" style="color: #1d89ff; cursor: pointer"
+                      v-if="btnFlag && tableData.length">{{ scope.row.btnTxt }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -135,7 +136,14 @@
 </template>
 
 <script>
-import {getThirdInterfaceList, selectProcessStartConfigList, startConfig, checkIsReferenced, startConfigUpdate, startConfigDelete} from "@/api/globalConfig";
+import {
+  getThirdInterfaceList,
+  selectProcessStartConfigList,
+  startConfig,
+  checkIsReferenced,
+  startConfigUpdate,
+  startConfigDelete
+} from "@/api/globalConfig";
 
 import FormTypeEnum from "@/enum/FormTypeEnum";
 import StartItemEnum from "@/enum/StartItemEnum";
@@ -197,7 +205,7 @@ export default {
       }
     },
     deleteRow(row) {
-      if(row.id) {
+      if (row.id) {
         startConfigDelete({
           id: row.id,
           tenantId: this.tenantId
@@ -306,7 +314,7 @@ export default {
         ascription: this.data[0].code,
         startConfigId: data.id,
         tenantId: data.tenantId
-      }).then(res =>{
+      }).then(res => {
         if (res.result) {
           this.$message({
             type: 'warning',
@@ -315,8 +323,8 @@ export default {
         }
       })
     },
-    editTable(row,txt) {
-      if (row.btnTxt ==='编辑' && row.id) {
+    editTable(row, txt) {
+      if (row.btnTxt === '编辑' && row.id) {
         this.checkIsReferenced(row)
       }
       row.btnTxt = '保存'
@@ -359,13 +367,13 @@ export default {
         row.isSetting = !!row.isSetting
         row.isRequired = !!row.isRequired
       }
-          // this.tableData.forEach(item => item.disabled = false)
+      // this.tableData.forEach(item => item.disabled = false)
     },
     saveTag() {
       if (this.tags.length) {
         this.dialogVisible2 = false;
         if (this.tableData.length) {
-            this.tableData = this.tableData.concat(this.tags)
+          this.tableData = this.tableData.concat(this.tags)
         } else {
           this.tableData = this.tags;
         }
@@ -387,7 +395,7 @@ export default {
       this.tags.splice(this.tags.findIndex((item, index) => item.name === tag.name), 1);
     },
     checkRepeat(inputValue) {
-     return this.tableData.some(tag => tag.name === inputValue)
+      return this.tableData.some(tag => tag.name === inputValue)
     },
     handleInputConfirm() {
       let inputValue = this.inputValue;
@@ -437,9 +445,11 @@ export default {
 .savebtn {
   @include primaryBtn;
 }
+
 .cancelbtn {
   @include cancelBtn;
 }
+
 .addDefine {
   cursor: pointer;
   width: 78px;
@@ -452,6 +462,7 @@ export default {
   border-radius: 4px;
   color: #009EFB;
 }
+
 .selfDefine {
   margin-bottom: 20px;
   cursor: pointer;
@@ -464,6 +475,7 @@ export default {
   color: #009EFB;
   margin-top: 10px;
 }
+
 #item /deep/ .el-input {
   width: 420px;
 }
@@ -514,5 +526,6 @@ export default {
   height: 600px;
   border: 1px solid rgb(204, 204, 204);
 }
+
 @include tree;
 </style>

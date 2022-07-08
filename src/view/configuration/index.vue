@@ -1,6 +1,6 @@
 <template>
   <div class="configuration">
-    <el-tabs v-model="activeName" type="border-card"  @tab-click="handleClick">
+    <el-tabs v-model="activeName" type="border-card" >
       <el-tab-pane label="访问配置" name="first">
                 <div class="selectBox">
                   <el-select v-model="business" placeholder="请选择">
