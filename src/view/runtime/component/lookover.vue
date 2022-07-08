@@ -1,13 +1,13 @@
 <template>
   <el-dialog title="查看流程信息" top="1vh" :visible="visible" @close="onClose">
-    <div>
+    <div class="container">
       <ProcessInformation
         :xml="workflow.processDeployResource"
         :processDisplayInfo="processDisplayInfo"
       ></ProcessInformation>
       <div>
-        <div>工作流执行详情</div>
-        <div class="processDetail">
+        <div class="title">工作流执行详情</div>
+        <div class="process-content">
           <div class="block">
             <el-timeline>
               <el-timeline-item
@@ -164,9 +164,24 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.processDetail {
-  border: 1px solid #000000;
-  height: 300px;
+.container {
+  display: flex;
+  flex-direction: column;
+
+  & > div:last-child {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.title {
+  margin: 38px 0 20px 0;
+  font-size: 14px;
+  color: $font-color;
+}
+
+.process-content {
+  height: 260px;
   overflow: auto;
   padding: 10px 10px;
 }
