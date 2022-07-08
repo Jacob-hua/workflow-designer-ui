@@ -197,6 +197,12 @@ export default {
           var file1 = new File([_this.currentData.content], 'test.form', {
             type: 'text/xml',
           })
+          if(this.postData.id) {
+            formData.append('sourceId', this.postData.sourceId)
+            if (this.postData.status !== 'enabled') {
+              formData.append('id', this.postData.id)
+            }
+          }
           let formData = new FormData()
           formData.append('name', this.postData.name)
           formData.append('docName', this.postData.name + '.form')
