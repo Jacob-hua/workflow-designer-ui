@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     deleteBusinessConfig(row) {
-      this.$confirm('此操作将删除整个业务配置节点,是否继续?').then(() => {
+      this.$confirm('此操作将删除整个业务配置节点,是否继续?', '提示').then(() => {
         deleteBusinessConfig({
           id: parseInt(row.id),
           projectCode: row.code,
