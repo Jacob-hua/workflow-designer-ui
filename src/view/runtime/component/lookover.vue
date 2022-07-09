@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="查看流程信息" top="1vh" :visible="visible" @close="onClose">
+  <el-dialog title="工单详情" top="1vh" :visible="visible" @close="onClose">
     <div class="container">
       <ProcessInformation
         :xml="workflow.processDeployResource"
