@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="表单" :visible.sync="dialogVisible1" >
+    <el-dialog :title="title" :visible.sync="dialogVisible1" >
       <div class="guid">
         <el-form ref="form" label-width="80px" label-position="right" :rules="rules" :model="postData">
           <div class="from-item">
@@ -86,7 +86,7 @@ export default {
     },
     title: {
       type: String,
-      default: '新增表单'
+      default: '新建表单'
     },
     projectOption: {
       type: Array,
@@ -110,6 +110,7 @@ export default {
   },
   data() {
     return {
+      title: '新建表单',
       rules: {
         ascription: [
           { required: true, message: '请输入资源名称', trigger: 'blur' }

@@ -104,7 +104,7 @@
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"
                        :projectOption="projectOption" :systemOption="systemOption"
                        :sysProps="sysProps"></projectFormDiolog>
-    <detailsDiologForm tileText="新建表单" ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete"
+    <detailsDiologForm tileText="编辑表单" ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete"
                        :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
     <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode"
                  :projectValue="projectValue" @close="close()"></application>
@@ -337,6 +337,7 @@ export default {
       let content = JSON.parse(item.content)
       this.$refs.projectFormDiolog.dialogVisible2 = true
       this.$nextTick(() => {
+        this.$refs.projectFormDiolog.title = tileText
         this.$refs.projectFormDiolog.$refs.formDesigner.designList = content.list
         this.$refs.projectFormDiolog.$refs.formDesigner.formConfig = content.config
         this.$refs.projectFormDiolog.postData = {
