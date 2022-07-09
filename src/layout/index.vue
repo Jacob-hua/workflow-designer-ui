@@ -4,7 +4,7 @@
       <el-header class="header">
         <div v-if="!status" class="user-info">
           <span>{{ userInfo.name }}</span>
-          <span @click="exitProject()">退出</span>
+          <img :src="require('../assets/image/header/quit.svg')" @click="exitProject()" />
         </div>
       </el-header>
       <el-container>
@@ -129,7 +129,8 @@ $aside-logo-height: 288px;
     line-height: 20px;
 
     :last-child {
-      margin-left: 12px;
+      margin-left: 42px;
+      width: 14px;
     }
   }
 }
