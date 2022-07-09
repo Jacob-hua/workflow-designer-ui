@@ -75,6 +75,19 @@ export default {
       type: String,
       required: true,
     },
+    detailFunc: {
+      type: Function,
+      default: async (processInstanceId, assignee) => {
+        const { errorInfo, result } = await getExecuteDetail({
+          processInstanceId,
+          assignee,
+        })
+        if (errorInfo.errorCode) {
+          return
+        }
+        return result
+      },
+    },
   },
   data() {
     return {
@@ -147,15 +160,8 @@ export default {
     },
     async fetchExecuteDetail() {
       try {
-        const { errorInfo, result } = await getExecuteDetail({
-          processInstanceId: this.processInstanceId,
-          assignee: this.userInfo.account,
-        })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
-        this.workflow = { ...result }
+        const result = await Promise.resolve(this.detailFunc(this.processInstanceId, this.userInfo.account))
+        this.workflow = result ?? {}
       } catch (error) {}
     },
   },

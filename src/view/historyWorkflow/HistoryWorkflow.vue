@@ -3,7 +3,11 @@
     <HistorySearch @searchHistory="searchHistory" ref="searchHistory" />
     <HistoryHeadContent ref="historyHeadContent" />
     <HistoryTable @showDetail="showDetail" ref="historyTable" />
-    <lookover v-if="lookoverVisible" :visible.sync="lookoverVisible" :processInstanceId="processInstanceId" />
+    <lookover
+      v-if="lookoverVisible"
+      :visible.sync="lookoverVisible"
+      :processInstanceId="processInstanceId"
+    />
   </div>
 </template>
 <script>
@@ -11,6 +15,7 @@ import HistorySearch from '@/view/historyWorkflow/components/HistorySearch.vue'
 import HistoryHeadContent from '@/view/historyWorkflow/components/HistoryHeadContent.vue'
 import HistoryTable from '@/view/historyWorkflow/components/HistoryTable.vue'
 import Lookover from '@/view/runtime/component/lookover.vue'
+import { getHistoryTaskDetail } from '@/api/historyWorkflow.js'
 
 export default {
   name: 'HistoryWorkflow',
@@ -50,6 +55,16 @@ export default {
     showDetail(row) {
       this.lookoverVisible = true
       this.processInstanceId = row.processInstanceId
+    },
+    async fetchHistoryTaskDetail(processInstanceId, assignee) {
+      const { errorInfo, result } = await getHistoryTaskDetail({
+        processInstanceId,
+        assignee,
+      })
+      if (errorInfo.errorCode) {
+        return
+      }
+      return result
     },
   },
 }
