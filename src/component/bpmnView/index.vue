@@ -138,7 +138,7 @@ export default {
 }
 
 .bpmnView-process {
-  height: 400px;
+  height: 600px;
   border: 1px solid $border-color-1;
   position: relative;
 }
