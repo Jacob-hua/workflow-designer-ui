@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="权限修改" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+  <el-dialog title="权限修改" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" fullscreen top="1vh">
     <div class="dialogTitle">
       <label>用户组</label>
       <el-input v-model="currentNodeName" placeholder="请输入内容" :disabled="true"></el-input>
