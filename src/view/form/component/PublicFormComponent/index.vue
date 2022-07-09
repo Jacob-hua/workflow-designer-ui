@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="新建表单" :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog title="编辑表单" fullscreen :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
           <div class="title-item">
