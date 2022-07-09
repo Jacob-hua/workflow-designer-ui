@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="驳回" :visible="visible" width="70%" top="5vh" @close="onCancel" append-to-body>
+  <el-dialog title="驳回确认" :visible="visible" width="70%" top="5vh" @close="onCancel" append-to-body>
     <processData
       ref="processData"
       v-if="visible"

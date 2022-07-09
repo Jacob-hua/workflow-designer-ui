@@ -3,11 +3,11 @@
     <div class="container">
       <div v-if="hang">
         <div>当前流程已被挂起，如需将继续执行流程，请进行认证操作</div>
-        <el-button @click="onConfirmation('确认激活')">重新激活</el-button>
+        <el-button @click="onConfirmation('激活确认')">重新激活</el-button>
       </div>
       <div v-else>
         <div>当前流程正常运行，如需将流程挂起，请进行认证操作</div>
-        <el-button @click="onConfirmation('确认挂起')">挂起</el-button>
+        <el-button @click="onConfirmation('挂起确认')">挂起</el-button>
       </div>
     </div>
     <runtime-confirmation :title="confirmationTitle" :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
