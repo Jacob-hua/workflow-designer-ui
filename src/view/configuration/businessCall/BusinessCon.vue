@@ -28,9 +28,9 @@
     </el-tree>
     <div v-if="!editFlag" class="preview"><el-tree class="tree" default-expand-all :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree></div>
     <span slot="footer" class="dialog-footer">
-      <el-button class="next" v-if="editFlag && !edit"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>
+<!--      <el-button class="next" v-if="editFlag && !edit"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>-->
       <el-button  class="next" v-if="showBtn && btnTxt === '预览'"  @click="preview">{{btnTxt}}</el-button>
-      <el-button  class="cancel" v-if="showBtn"  @click="exit">取 消</el-button>
+      <el-button  class="cancel" v-if="showBtn"  @click="exit">退出</el-button>
   </span>
   </el-dialog>
 </template>
@@ -106,8 +106,6 @@ export default {
       businessConfigWithTreeCreate(params).then(res => {
         console.log(res)
         if (res.result.parentId === '-1' ) {
-          // res.result.busId =  res.result.id
-          // _this.data[0] = res.result
           _this.$set(_this.data, 0, res.result)
         } else {
           if (!this.currentNode.children) {
