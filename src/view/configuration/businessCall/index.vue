@@ -179,7 +179,7 @@ label {
   background-color: #009EFB;
 }
 .businessCall {
-  padding: 20px 0px;
+
 }
 .businessCall-main-title {
 

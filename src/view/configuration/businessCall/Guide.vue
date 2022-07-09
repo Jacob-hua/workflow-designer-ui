@@ -7,7 +7,7 @@
       append-to-body
   >
     <span>
-        <el-form ref="form" :model="form"  :rules="rules" label-width="80px">
+        <el-form ref="form" :model="form"  :rules="rules" label-width="84px">
           <el-form-item prop="name" label="项目名称">
             <el-input v-model="form.name"></el-input>
           </el-form-item>

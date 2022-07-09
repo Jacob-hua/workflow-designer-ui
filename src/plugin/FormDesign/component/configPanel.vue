@@ -70,8 +70,11 @@ export default {
   }
 }
 </script>
-<style scoped>
-.field-box >>> .el-scrollbar__wrap{
+<style scoped lang="scss">
+/deep/ .el-tabs__content {
+  padding: 10px 50px !important;
+}
+.field-box /deep/ .el-scrollbar__wrap{
   overflow-x: hidden;
 }
 </style>

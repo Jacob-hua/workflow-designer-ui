@@ -432,6 +432,9 @@ export default {
 .el-select {
   width: 215px;
 }
+/deep/ .jv-container.jv-light .jv-item.jv-array {
+  color: #fff;
+}
 /deep/ .jsonViewer .jv-code {
   background-color: #212739;
   width: 600px;
