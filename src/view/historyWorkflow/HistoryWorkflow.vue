@@ -3,14 +3,14 @@
     <HistorySearch @searchHistory="searchHistory" ref="searchHistory" />
     <HistoryHeadContent ref="historyHeadContent" />
     <HistoryTable @showDetail="showDetail" ref="historyTable" />
-    <LookOver ref="lookover" />
+    <lookover v-if="lookoverVisible" :visible.sync="lookoverVisible" :processInstanceId="processInstanceId" />
   </div>
 </template>
 <script>
 import HistorySearch from '@/view/historyWorkflow/components/HistorySearch.vue'
 import HistoryHeadContent from '@/view/historyWorkflow/components/HistoryHeadContent.vue'
 import HistoryTable from '@/view/historyWorkflow/components/HistoryTable.vue'
-import LookOver from '@/view/historyWorkflow/components/Lookover.vue'
+import Lookover from '@/view/runtime/component/lookover.vue'
 
 export default {
   name: 'HistoryWorkflow',
@@ -18,10 +18,13 @@ export default {
     HistoryTable,
     HistorySearch,
     HistoryHeadContent,
-    LookOver,
+    Lookover,
   },
   data() {
-    return {}
+    return {
+      lookoverVisible: false,
+      processInstanceId: '',
+    }
   },
   mounted() {
     this.$nextTick(async () => {
@@ -45,15 +48,8 @@ export default {
     },
     // 获取任务历史列表
     showDetail(row) {
-      this.$refs.lookover.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.lookover.listData = row.taskList
-        this.$refs.lookover.$refs.ProcessInformation.postData = row
-        this.$refs.lookover.$refs.ProcessInformation.postData.ascription =
-          this.$refs.lookover.$refs.ProcessInformation.postData.businessMap.ascription
-        this.$refs.lookover.$refs.ProcessInformation.postData.business =
-          this.$refs.lookover.$refs.ProcessInformation.postData.businessMap.business
-      })
+      this.lookoverVisible = true
+      this.processInstanceId = row.processInstanceId
     },
   },
 }

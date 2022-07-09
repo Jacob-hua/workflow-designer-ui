@@ -138,6 +138,7 @@ export default {
   methods: {
     onClose() {
       this.$emit('close')
+      this.$emit('update:visible', false)
     },
     async downloadFile(result) {
       return await downloadTaskAttachmentFile({
