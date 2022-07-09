@@ -4,6 +4,8 @@
         title="第三方接口配置"
         :visible.sync="dialogVisible"
         width="80%"
+        fullscreen
+        top="1vh"
         append-to-body
     >
       <div style="display: flex">
