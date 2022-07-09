@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="查看" :visible="visible" width="70%" @close="close">
+  <el-dialog title="查看" :visible="visible" fullscreen @close="close">
     <div>
       <bpmnView :valueType="valueType" :projectData="projectData" @edit="onEdit"></bpmnView>
     </div>

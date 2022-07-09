@@ -8,10 +8,10 @@
     />
     <div class="ticket-wrapper">
       <div class="ticket-info">
-        <div class="title">工单分配</div>
+        <div class="title">任务信息</div>
         <div class="content-wrapper info">
           <div>
-            <span>节点名称:</span><span>{{ taskInfo.name }}</span>
+            <span>任务名称:</span><span>{{ taskInfo.name }}</span>
           </div>
           <div>
             <span>绑定岗位:</span><span>{{ taskInfo.group }}</span>
@@ -23,7 +23,7 @@
       </div>
       <div class="ticket-form">
         <div class="title">
-          <div>工单分配-表单内容</div>
+          <div>任务表单</div>
           <el-button class="remove-button" v-if="formShow && canRemoveForm" @click="onRemoveForm">移除表单</el-button>
         </div>
         <div class="content-wrapper form">
@@ -191,13 +191,13 @@ export default {
 
   .content-wrapper {
     height: 200px;
-    padding: 2px 30px;
+    padding: 20px 30px;
     overflow: auto;
     border: 1px solid $border-color;
   }
 }
 
-.ticket-info {
+ .ticket-info {
   flex: 1;
   margin-top: 20px;
 }
@@ -233,7 +233,6 @@ export default {
 }
 
 .form {
-  width: 1000px;
   padding: 20px 0px !important;
 
   .empty-data {

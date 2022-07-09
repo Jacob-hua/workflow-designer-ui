@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="查看工作流" top="1vh" :visible="visible" @close="onCancel">
+    <el-dialog title="查看工作流" fullscreen :visible="visible" @close="onCancel">
       <div class="container">
         <ProcessInformation :processDisplayInfo="processDisplayInfo" :xml="workflow.content" />
         <div class="search-wrapper">
