@@ -16,6 +16,23 @@
   align-items: center;
 }
 
+@mixin dangerPlainBtn {
+  display: flex;
+  font-size: 14px;
+  color: #FFAB00;
+  width: 100px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  padding: 0;
+  border: 1px solid #FFAB00;
+  background-color: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
 @mixin resetBtn {
   display: flex;
   color: #fff !important;

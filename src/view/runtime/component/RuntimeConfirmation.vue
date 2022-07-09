@@ -1,20 +1,19 @@
 <template>
   <div>
     <el-dialog append-to-body :title="title" :visible="visible" @close="onCancel">
-      <div class="runtimeConfirmation">
-        <div class="title">{{ message }}</div>
-        <el-form ref="form" :model="form" label-width="40px">
-          <el-form-item label="账号">
+      <div>
+        <el-form ref="form" :model="form" :rules="formRules" label-width="80px">
+          <el-form-item label="账号" prop="usernmae">
             <el-input v-model="form.username" @keyup.native.enter="onSubmit" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="密码">
+          <el-form-item label="密码" prop="password">
             <el-input v-model="form.password" show-password @keyup.native.enter="onSubmit"></el-input>
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="onCancel">取 消</el-button>
-        <el-button type="primary" @click="onSubmit">确 定</el-button>
+      <span slot="footer">
+        <el-button class="submit-button" @click="onSubmit">确 定</el-button>
+        <el-button class="cancel-button" @click="onCancel">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -34,10 +33,6 @@ export default {
       type: String,
       default: '确认标题',
     },
-    message: {
-      type: String,
-      default: '请输入用户名密码',
-    },
   },
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
@@ -47,6 +42,10 @@ export default {
       form: {
         username: '',
         password: '',
+      },
+      formRules: {
+        username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
       },
     }
   },
@@ -59,27 +58,31 @@ export default {
       this.$emit('cancel')
     },
     onSubmit() {
-      postVerifyUser(this.form).then(({ errorInfo }) => {
-        this.$emit('validate', !errorInfo.errorCode)
-        this.$emit('update:visible', false)
-      })
+      this.$refs.form['validate'] &&
+        this.$refs.form.validate((valid) => {
+          if (!valid) {
+            return
+          }
+          postVerifyUser(this.form).then(({ errorInfo }) => {
+            this.$emit('validate', !errorInfo.errorCode)
+            this.$emit('update:visible', false)
+          })
+        })
     },
   },
 }
 </script>
 
-<style scoped="scoped">
-.runtimeConfirmation {
-  padding: 0px 40px;
+<style scoped lang="scss">
+/deep/ .el-dialog {
+  @include formDialog;
 }
 
-.title {
-  text-align: center;
-  color: #ff3352;
-  margin: 20px 0px;
+.submit-button {
+  @include primaryBtn;
 }
 
-.rejectWord {
-  margin: 20px 0px;
+.cancel-button {
+  @include cancelBtn;
 }
 </style>

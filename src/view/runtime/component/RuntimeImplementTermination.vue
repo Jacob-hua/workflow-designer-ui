@@ -1,8 +1,10 @@
 <template>
   <div>
-    <div class="HangStyle">
-      <span style="color: #0066cc">当前流程正常运行，如需将流程终止，请进行认证操作</span>
-      <div class="confirm" @click="onConfirmation">终止确认</div>
+    <div class="container">
+      <div>
+        <div>当前流程正常运行，如需将流程终止，请进行认证操作</div>
+        <el-button @click="onConfirmation">终止确认</el-button>
+      </div>
     </div>
     <runtime-confirmation :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
     <runtime-terminate-confirmation
@@ -52,15 +54,21 @@ export default {
 }
 </script>
 
-<style scoped>
-.HangStyle {
-  text-align: center;
-  margin-top: 50px;
-}
+<style scoped lang="scss">
+@import '../index.scss';
 
-.confirm {
-  cursor: pointer;
-  color: rgb(255, 76, 0);
-  margin-top: 20px;
+@include container;
+
+.container > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    margin-top: 20px;
+    @include dangerPlainBtn;
+  }
 }
 </style>

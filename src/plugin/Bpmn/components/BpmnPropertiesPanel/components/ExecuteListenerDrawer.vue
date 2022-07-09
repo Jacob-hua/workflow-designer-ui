@@ -81,19 +81,16 @@
             <el-table-column label="字段值" show-overflow-tooltip prop="value" />
             <el-table-column label="操作">
               <template slot-scope="{ $index }">
-                <el-button size="mini" type="text" @click="onEditField($index)">编辑</el-button>
-                <el-divider direction="vertical" />
-                <el-button size="mini" type="text" style="color: #ff4d4f" @click="onRemoveField($index)"
-                  >移除</el-button
-                >
+                <el-button type="text" @click="onEditField($index)">编辑</el-button>
+                <el-button type="text" @click="onRemoveField($index)"> 移除 </el-button>
               </template>
             </el-table-column>
           </el-table>
         </template>
       </el-form>
       <div class="form-footer">
-        <el-button type="primary" @click="onListenerFormSubmit">保存</el-button>
-        <el-button class="cancel" @click="onListenerFormCancel">取消</el-button>
+        <el-button class="submit-button" @click="onListenerFormSubmit">保存</el-button>
+        <el-button class="cancel-button" @click="onListenerFormCancel">取消</el-button>
       </div>
     </el-drawer>
     <el-dialog
@@ -126,8 +123,8 @@
       </el-form>
       <template slot="footer">
         <div class="form-footer">
-          <el-button type="primary" @click="onFieldFormSubmit">确 定</el-button>
-          <el-button class="cancel" @click="onFieldFormCancel">取 消</el-button>
+          <el-button class="submit-button" @click="onFieldFormSubmit">确 定</el-button>
+          <el-button class="cancel-button" @click="onFieldFormCancel">取 消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -288,23 +285,22 @@ export default {
 <style lang="scss" scoped>
 @import '../index.scss';
 
+/deep/ .el-dialog {
+  @include formDialog;
+}
+
 .form-footer {
   display: flex;
   flex-direction: row;
   justify-content: center;
   padding: 50px 0;
+}
 
-  & > button {
-    width: 84px;
-    height: 34px;
-    padding: 0;
-    text-align: center;
-    color: $form-footer-button-color;
-  }
+.submit-button {
+  @include primaryBtn;
+}
 
-  .cancel {
-    background-color: $form-footer-cancel-button-bg-color;
-    border-color: $form-footer-cancel-button-bg-color;
-  }
+.cancel-button {
+  @include cancelBtn;
 }
 </style>

@@ -233,6 +233,7 @@ export default {
 }
 
 .form {
+  width: 1000px;
   padding: 20px 0px !important;
 
   .empty-data {

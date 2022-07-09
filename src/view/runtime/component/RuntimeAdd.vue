@@ -11,7 +11,7 @@
             ></el-tree>
           </el-card>
         </div>
-        <div>
+        <div v-if="processList && processList.length !== 0">
           <div class="process-list">
             <div class="process" v-for="(process, index) in processList" :key="index">
               <div class="process-info">
@@ -41,6 +41,9 @@
             :total="getData.total"
           >
           </el-pagination>
+        </div>
+        <div class="empty" v-else>
+          <img :src="require('../../../assets/image/common/no_data.png')" />
         </div>
       </div>
     </el-dialog>
@@ -156,7 +159,7 @@ export default {
   & > div:last-child {
     flex: 1;
     margin-left: 12px;
-    border: 1px solid $border-color;
+    border: 1px solid $border-color-1;
     height: 100%;
     border-radius: 6px;
   }
@@ -205,6 +208,12 @@ export default {
       height: 28px;
     }
   }
+}
+
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .el-pagination {
