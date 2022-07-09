@@ -26,8 +26,7 @@ export default {
   mounted() {
     this.$nextTick(async () => {
       await this.$refs.searchHistory.dispatchRefreshOrganization()
-      let projectValue = this.$refs.searchHistory.projectValue
-      let business = this.$refs.searchHistory.business
+      const { projectValue, business } = this.$refs.searchHistory.searchForm
       this.$refs.historyTable.projectValue = projectValue
       this.$refs.historyTable.business = business
 
@@ -38,7 +37,7 @@ export default {
     })
   },
   methods: {
-    searchHistory(dateRang, projectValue, business) {
+    searchHistory({ valueDate: dateRang, projectValue, business }) {
       this.$refs.historyTable.dateRang = dateRang
       this.$refs.historyTable.projectValue = projectValue
       this.$refs.historyTable.business = business

@@ -1,8 +1,8 @@
 <template>
   <div class="search-wrapper">
-    <el-form inline>
+    <el-form :model="searchForm" inline>
       <el-form-item label="项目">
-        <el-select v-model="projectValue">
+        <el-select v-model="searchForm.projectValue">
           <el-option
             v-for="{ id, label, value } in rootOrganizations"
             :key="id"
@@ -13,14 +13,14 @@
       </el-form-item>
       <el-form-item label="业务">
         <el-cascader
-          v-model="business"
-          :options="rootOrganizationChildrenAndAll(projectValue)"
+          v-model="searchForm.business"
+          :options="rootOrganizationChildrenAndAll(searchForm.projectValue)"
           :props="cascaderProps"
         ></el-cascader>
       </el-form-item>
       <el-form-item label="发起时间">
         <el-date-picker
-          v-model="valueDate"
+          v-model="searchForm.valueDate"
           type="daterange"
           align="right"
           unlink-panels
@@ -33,9 +33,6 @@
         </el-date-picker>
       </el-form-item>
     </el-form>
-    <div class="button-wrapper">
-      <el-button @click="$emit('searchHistory', valueDate, projectValue)" class="search-button"> 查询 </el-button>
-    </div>
   </div>
 </template>
 
@@ -48,11 +45,12 @@ export default {
   data() {
     const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
-      valueDate: [start, end],
-      projectValue: '',
-      business: '',
       projectOption: [],
-      systemOption: [],
+      searchForm: {
+        valueDate: [start, end],
+        projectValue: '',
+        business: '',
+      },
     }
   },
   computed: {
@@ -61,21 +59,24 @@ export default {
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
   },
   watch: {
-    projectValue(val) {
+    'searchForm.projectValue'(val) {
       if (val === this.currentOrganization) {
         return
       }
       this.updateCurrentOrganization({ currentOrganization: val })
     },
+    searchForm: {
+      deep: true,
+      handler(searchForm) {
+        this.$emit('searchHistory', searchForm)
+      },
+    },
     currentOrganization: {
       immediate: true,
       handler(val) {
-        this.projectValue = val
+        this.searchForm.projectValue = val
       },
     },
-  },
-  mounted() {
-    // this.dispatchRefreshOrganization();
   },
   methods: {
     ...mapMutations('account', ['updateCurrentOrganization']),
