@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="编辑表单" fullscreen :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
+    <el-dialog :title="tit" fullscreen :visible.sync="dialogVisible2" width="90%" custom-class="dialogVisible2">
       <div class="dialogVisible2-main">
         <div class="form-title">
           <div class="title-item">
@@ -8,7 +8,7 @@
               表单名称
             </span>
             <div class="title-item-main">
-              <el-input v-model="postData.name" placeholder=""></el-input>
+              <el-input v-model="postData.name" :disabled="tit!=='新建表单'" placeholder=""></el-input>
             </div>
           </div>
         </div>
@@ -41,6 +41,7 @@
     },
     data() {
       return {
+        tit: '新建表单',
         dialogVisible2: false,
         input: '',
         options: [],

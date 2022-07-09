@@ -104,7 +104,7 @@
     <projectFormDiolog ref="projectFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"
                        :projectOption="projectOption" :systemOption="systemOption"
                        :sysProps="sysProps"></projectFormDiolog>
-    <detailsDiologForm ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete"
+    <detailsDiologForm tileText="新建表单" ref="detailsDiolog" :formDatas="formData" @editForm="editForm" quote="delete"
                        :status="activeName" @deleteSuccsee="deleteSuccsee()"></detailsDiologForm>
     <application ref="application" :dialogVisible="dialogVisible" :projectCode="projectCode"
                  :projectValue="projectValue" @close="close()"></application>
@@ -333,7 +333,7 @@ export default {
       this.$refs.projectFormDiolog.postData.ascriptionName = this.ascriptionName
     },
 
-    addForm2(item) {
+    addForm2(item, tileText) {
       let content = JSON.parse(item.content)
       this.$refs.projectFormDiolog.dialogVisible2 = true
       this.$nextTick(() => {
@@ -371,8 +371,8 @@ export default {
         _this.$refs.detailsDiolog.getAllBusinessConfig(res.result)
       })
     },
-    editForm(item) {
-      this.addForm2(item)
+    editForm(item, tileText) {
+      this.addForm2(item, tileText)
     }
   },
   mounted() {

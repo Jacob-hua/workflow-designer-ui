@@ -71,6 +71,10 @@
   import {getAllBusinessConfig} from "@/api/globalConfig";
   export default {
     props:{
+      tileText: {
+        type: String,
+        default: ''
+      },
       quote: {
         type: String,
         default: 'quote'
@@ -209,7 +213,7 @@
         })
       },
       editForm() {
-        this.$emit('editForm', this.formDatas)
+        this.$emit('editForm', this.formDatas, this.tileText)
       },
       nextDiolog() {
         const xml  = this.$refs.formbpmn.importData();
