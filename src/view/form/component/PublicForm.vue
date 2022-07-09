@@ -71,7 +71,7 @@
       </el-tabs>
     </div>
     <PublicFormDiolog ref="PublicFormDiolog" @addSuccess="addSuccess()" :dataType="dataType"></PublicFormDiolog>
-    <detailsDiolog ref="detailsDiolog" :formDatas="formData" @editForm="editForm" :status="activeName" ascription="public"></detailsDiolog>
+    <detailsDiolog  tileText="编辑表单" ref="detailsDiolog" :formDatas="formData" @editForm="editForm" :status="activeName" ascription="public"></detailsDiolog>
   </div>
 </template>
 
@@ -175,11 +175,12 @@
         this.getManyData()
       },
       
-      addForm(item) {
+      addForm(item, tileText) {
         if (item) {
           this.$refs.PublicFormDiolog.dialogVisible2 = true
           let content = JSON.parse(item.content)
           this.$nextTick(() => {
+            this.$refs.PublicFormDiolog.tit = tileText
             this.$refs.PublicFormDiolog.$refs.formDesigner.designList =  content.list
             this.$refs.PublicFormDiolog.$refs.formDesigner.formConfig = content.config
             this.$refs.PublicFormDiolog.postData = {
@@ -216,8 +217,9 @@
           })
         })
       },
-      editForm(item) {
-        this.addForm(item)
+      editForm(item, tileText) {
+        debugger
+        this.addForm(item, tileText)
       }
     },
     components:{
