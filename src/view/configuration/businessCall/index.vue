@@ -73,19 +73,21 @@ export default {
   },
   methods: {
     deleteBusinessConfig(row) {
-      deleteBusinessConfig({
-        id: parseInt(row.id),
-        projectCode: row.code,
-        tenantId: this.tenantId,
-        updateBy: this.userInfo.account
-      }).then(res=> {
-        this.$message({
-          type: 'success',
-          message: '删除成功'
+      this.$confirm('此操作将删除整个业务配置节点,是否继续?').then(() => {
+        deleteBusinessConfig({
+          id: parseInt(row.id),
+          projectCode: row.code,
+          tenantId: this.tenantId,
+          updateBy: this.userInfo.account
+        }).then(res=> {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          this.getBusinessConfigBasicList()
         })
-        
-        this.getBusinessConfigBasicList()
       })
+
     },
     getDicDataByClassify() {
       getDicDataByClassify().then(res=> {
@@ -160,6 +162,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 label {
   color: #999999;
 }
@@ -233,7 +236,7 @@ label {
   padding: 70px 20px;
   position: relative;
   display: inline-block;
-  width: 312px;
+  width: 292px;
   background: #212739;
   height: 67px;
 }
