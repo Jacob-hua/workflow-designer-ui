@@ -80,8 +80,13 @@ export default {
   computed: {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
-  mounted() {
-    this.fetchWorkflows()
+  watch: {
+    searchForm: {
+      deep: true,
+      handler() {
+        this.fetchWorkflows()
+      },
+    },
   },
   methods: {
     onDeploySuccess() {

@@ -159,8 +159,9 @@ $aside-logo-height: 288px;
     line-height: 20px;
 
     :last-child {
-      margin-left: 42px;
-      width: 14px;
+      margin-left: 30px;
+      width: 18px;
+      cursor: pointer;
     }
   }
 }
