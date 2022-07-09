@@ -17,6 +17,7 @@
       </div>
     </div>
     <runtime-people
+      title="选择执行人"
       :visible.sync="runtimePeopleVisible"
       :selected="runtimePeopleSelected"
       @submit="onRuntimePeopleSubmit"
