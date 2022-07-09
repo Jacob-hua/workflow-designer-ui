@@ -76,61 +76,6 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-<!--        <div class="cardBox content-wrapper">-->
-<!--          <el-tabs v-model="editableTabsValue" type="card" @tab-click="handleClick">-->
-<!--            <el-tab-pane-->
-<!--                v-for="(item, index) in currentRow"-->
-<!--                :key="item.id"-->
-<!--                :label="item.name"-->
-<!--                :name="index+''"-->
-<!--            >-->
-<!--              <el-form-item label="api名称">-->
-<!--                <el-input v-model="item.name" disabled></el-input>-->
-<!--              </el-form-item>-->
-<!--              <el-form-item label="api标识">-->
-<!--                <el-input v-model="item.apiMark" disabled></el-input>-->
-<!--              </el-form-item>-->
-<!--              <el-form-item label="主机地址">-->
-<!--                <el-input v-model="item.host" disabled></el-input>-->
-<!--              </el-form-item>-->
-<!--              <el-form-item label="访问路径">-->
-<!--                <el-input v-model="item.path"  disabled></el-input>-->
-<!--              </el-form-item>-->
-<!--              <el-form-item label="api类型">-->
-<!--                <el-select v-model="item.type" disabled placeholder="请选择api类型">-->
-<!--                  <el-option-->
-<!--                      v-for="item in apiOptions"-->
-<!--                      :key="item.value"-->
-<!--                      :label="item.label"-->
-<!--                      :value="item.value">-->
-<!--                  </el-option>-->
-<!--                </el-select>-->
-<!--              </el-form-item>-->
-<!--              <el-form-item label="请求类型">-->
-<!--                <el-select v-model="item.method" disabled placeholder="请选择api类型">-->
-<!--                  <el-option-->
-<!--                      v-for="item in methodsOptions"-->
-<!--                      :key="item.value"-->
-<!--                      :label="item.label"-->
-<!--                      :value="item.value">-->
-<!--                  </el-option>-->
-<!--                </el-select>-->
-<!--              </el-form-item>-->
-<!--              <el-form-item label="请求头">-->
-<!--                <el-input disabled v-model="item.headers"></el-input>-->
-<!--              </el-form-item>-->
-<!--              <div class="params" v-for="(config,idx) in item.configParams" :key="idx">-->
-<!--                <el-form-item label="参数key">-->
-<!--                  <el-input disabled v-model="config.key"></el-input>-->
-<!--                </el-form-item>-->
-<!--                <el-form-item label="参数value">-->
-<!--                  <el-input disabled v-model="config.value"></el-input>-->
-<!--                </el-form-item>-->
-<!--              </div>-->
-<!--            </el-tab-pane>-->
-<!--          </el-tabs>-->
-<!--        </div>-->
-
       </div>
       <div class="cardBox">
         <p> 解析参数</p>
