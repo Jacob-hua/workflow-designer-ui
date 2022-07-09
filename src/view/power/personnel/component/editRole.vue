@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="权限授予" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+  <el-dialog title="权限授予" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" fullscreen top="1vh">
     <div class="dialogHeader">
       <span>人员信息</span>
       <el-button class="plain" type="primary" @click="grant()" v-if="type !== 'edit'">授权</el-button>
@@ -242,6 +242,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/ .content-wrapper {
+  min-height: unset !important;
+}
 .content-wrapper {
   min-height: 100vh;
   margin-top: 40px;
