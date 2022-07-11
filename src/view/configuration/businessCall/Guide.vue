@@ -12,7 +12,7 @@
             <el-input v-model="form.name"></el-input>
           </el-form-item>
            <el-form-item prop="type" label="项目类型">
-                  <el-select v-model="form.type" placeholder="请选择api类型">
+                  <el-select v-model="form.type" placeholder="请选择项目类型">
                     <el-option
                         v-for="item in projectOption"
                         :key="item.id"
@@ -88,7 +88,6 @@ export default {
           return false;
         }
       });
-
     },
     checkBusinessConfig() {
       checkBusinessConfig(this.form).then(res=> {

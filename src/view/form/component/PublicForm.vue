@@ -44,6 +44,7 @@
               </div>
             </div>
           </div>
+          <div class="noData" v-if="formListFirst.length === 0">暂无数据</div>
         </el-tab-pane>
         <el-tab-pane name="drafted">
           <span slot="label">草稿箱({{ getDataSecond.total }})</span>
@@ -67,6 +68,7 @@
               </div>
             </div>
           </div>
+          <div class="noData" v-if="formListSecond.length === 0">暂无数据</div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -237,6 +239,9 @@
 
 /deep/ .el-tabs__content {
   padding: 50px 20px;
+}
+.noData{
+  color: #fff;
 }
 .content-wrapper {
   min-height: 100vh;

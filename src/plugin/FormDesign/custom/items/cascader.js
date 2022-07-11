@@ -56,18 +56,6 @@ export let cascader = {
       }
     },
     options:[
-      {
-        value: 'zhinan',
-        label: '指南',
-        children: [{
-          value: 'shejiyuanze',
-          label: '设计原则',
-          children: [{
-            value: 'yizhi',
-            label: '一致'
-          }]
-        }]
-      }
     ]
   }
   

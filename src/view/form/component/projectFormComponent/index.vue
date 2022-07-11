@@ -113,10 +113,10 @@ export default {
       title: '新建表单',
       rules: {
         ascription: [
-          { required: true, message: '请输入资源名称', trigger: 'blur' }
+          { required: true, message: '请选择应用项目', trigger: 'blur' }
         ],
         business: [
-          { required: true, message: '请输入资源标识', trigger: 'change' }
+          { required: true, message: '请选择流程类型', trigger: 'change' }
         ],
         name: [
           { required: true, message: '请输入表单名称', trigger: 'blur' },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="关联"
+    <el-dialog title="关联表单"
                :visible="dialogVisible"
                width="70%"
                fullscreen
@@ -16,6 +16,10 @@
               <div class="processList-item-word">
                 <p>表单名称:</p>
                 <span>{{ item.name }}</span>
+              </div>
+              <div class="processList-item-word">
+                <p>版本:</p>
+                <span>{{item.version}}</span>
               </div>
               <div class="processList-item-word">
                 <p>创建人:</p>
