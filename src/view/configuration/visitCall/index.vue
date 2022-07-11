@@ -153,13 +153,15 @@ export default {
           }
           api.parseParams = []
           let obj= {key: '', value: ''}
-          let dataParse = JSON.parse(api.dataParse)
-          Object.keys(dataParse).forEach(keys => {
-            obj.key = keys
-            obj.value = dataParse[keys]
-          })
+          if (api.dataParse) {
+            let dataParse = JSON.parse(api.dataParse)
+            Object.keys(dataParse).forEach(keys => {
+              obj.key = keys
+              obj.value = dataParse[keys]
+            })
 
-          api.parseParams.push(obj)
+            api.parseParams.push(obj)
+          }
         })
         this.DetailFlag = true
         this.$nextTick(() => {
@@ -205,14 +207,17 @@ export default {
           }
           api.parseParams = []
           let obj= {key: '', value: ''}
-          let dataParse = JSON.parse(api.dataParse)
-           let dataArr = Object.keys(dataParse)
-          for (const keys of dataArr) {
-            api.parseParams.push({
-              key: keys,
-              value: dataParse[keys]
-            })
+          if (api.dataParse) {
+            let dataParse = JSON.parse(api.dataParse)
+            let dataArr = Object.keys(dataParse)
+            for (const keys of dataArr) {
+              api.parseParams.push({
+                key: keys,
+                value: dataParse[keys]
+              })
+            }
           }
+
         })
         this.$refs.AddOrEidtDailog.apiBoxList = res.result
       })
