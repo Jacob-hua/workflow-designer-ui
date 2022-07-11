@@ -208,8 +208,20 @@ export default {
       if (row.id) {
         startConfigDelete({
           id: row.id,
-          tenantId: this.tenantId
+          tenantId: this.tenantId,
+          ascription: this.businessData.code
         }).then(res => {
+          if (res.result) {
+            this.$message({
+              type: 'success',
+              message: res.result
+            })
+          } else  {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+          }
 
           if (this.processFlag) {
             if (row.id) {
@@ -218,11 +230,9 @@ export default {
           }
         })
       }
-      this.tableData.splice(this.tableData.findIndex(item => item.id === row.id), 1)
-      this.$message({
-        type: 'success',
-        message: '删除成功'
-      })
+      if (!res.result) {
+        this.tableData.splice(this.tableData.findIndex(item => item.id === row.id), 1)
+      }
     },
     write(data) {
       if (data.isRequired) {

@@ -25,18 +25,19 @@ function vModel(self, dataObject) {
     }
     //判断是否为上传组件
     if (self.conf.compType === 'upload') {
+
         if (self.conf.value.length) {
             dataObject.attrs['file-list'] = self.conf.value
         }
         dataObject.attrs['auto-upload'] = false // 文件手动上传
         dataObject.attrs['on-preview'] = async (file) => {
-            if (self.downloadFun) {
-                const result = await Promise.resolve(self.downloadFun(file))
-                if (!result) {
-                    return
+                if (self.downloadFun) {
+                    const result = await Promise.resolve(self.downloadFun(file))
+                    if (!result) {
+                        return
+                    }
+                    downloadFile(file.name, file.type, result)
                 }
-                downloadFile(file.name, file.type, result)
-            }
         }
         dataObject.attrs['on-remove'] = async (file, fileList) => {
             self.conf.value.splice(self.conf.value.findIndex(item => item.uid === file.uid), 1)
@@ -86,8 +87,8 @@ export default {
             this.conf.options = this.quoteOption
         }
         const confClone = jsonClone(this.conf);
-        const children = childrenItem(h, confClone);
 
+        const children = childrenItem(h, confClone);
         Object.keys(confClone).forEach(key => {
             const val = confClone[key]
             if (dataObject[key]) {

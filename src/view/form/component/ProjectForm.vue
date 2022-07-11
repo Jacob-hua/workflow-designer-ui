@@ -19,7 +19,7 @@
                      :props='cascaderProps'></el-cascader>
         <span class="text">创建时间</span>
         <el-date-picker v-model="valueDate" type="daterange" align="right" unlink-panels range-separator="——"
-                        start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false">
+                        start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" clearable>
         </el-date-picker>
         <span class="text">表单</span>
         <el-input v-model="input" placeholder="请输入表单名称或编号"></el-input>
@@ -75,6 +75,7 @@
               </div>
             </div>
           </div>
+          <div class="noData" v-if="formListFirst.length === 0">暂无数据</div>
         </el-tab-pane>
         <el-tab-pane name="drafted">
           <span slot="label">草稿箱({{ getDataSecond.total }})</span>
@@ -98,6 +99,7 @@
               </div>
             </div>
           </div>
+          <div class="noData" v-if="formListSecond.length === 0">暂无数据</div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -391,6 +393,9 @@ export default {
 <style scoped lang="scss">
 /deep/ .el-tabs__content {
   padding: 50px 20px;
+}
+.noData {
+  color: #fff;
 }
 .text {
   width: 56px;

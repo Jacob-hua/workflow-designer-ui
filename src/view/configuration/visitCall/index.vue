@@ -173,6 +173,7 @@ export default {
     },
     apiDetail(params) {
       apiDetail(params).then((res)=> {
+        this.$refs.AddOrEidtDailog.jsonData = {}
         res.result.forEach(api => {
           api.configParams = []
           if (api.method === ApiEnum.API_TYPE_POST) {

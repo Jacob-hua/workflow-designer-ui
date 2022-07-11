@@ -73,7 +73,23 @@ export default {
   },
   methods: {
     deleteBusinessConfig(row) {
-      this.$confirm('此操作将删除整个业务配置节点,是否继续?', '提示').then(() => {
+      this.$confirm('此操作将删除整个业务配置节点,是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        beforeClose: (action, instance, done) => { // 取消回车确认事件
+          if (action === 'confirm') {
+            (instance.$refs['confirm'].$el.onclick = function (e) {
+              e = e || window.event;
+              if (e.detail !== 0) {
+                done();
+              }
+            })();
+          } else {
+            done();
+          }
+        }
+      }).then(() => {
         deleteBusinessConfig({
           id: parseInt(row.id),
           projectCode: row.code,
@@ -87,7 +103,6 @@ export default {
           this.getBusinessConfigBasicList()
         })
       })
-
     },
     getDicDataByClassify() {
       getDicDataByClassify().then(res=> {
