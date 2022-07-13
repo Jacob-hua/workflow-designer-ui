@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form label-position="right" label-width="80px" :model="userTaskForm">
+    <el-form label-position="right" label-width="100px" :model="userTaskForm">
       <el-form-item label="处理用户">
         <el-row>
           <el-col :span="18">
@@ -63,11 +63,17 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { deepCopy, deepEquals, emptyPropertiesObject } from '../../../utils/object'
 
 export default {
   name: 'ElementUserTaskForm',
+  props: {
+    namespace: {
+      type: String,
+      required: true,
+      default: '',
+    },
+  },
   data() {
     return {
       userTaskForm: {},
@@ -93,9 +99,18 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn/config', ['userGroupOptions', 'userOptions']),
-    ...mapState('bpmn/panel', ['userTask']),
-    ...mapGetters('bpmn/config', ['findUserGroupChildren']),
+    userGroupOptions() {
+      return this.$store.state[this.namespace].config.userGroupOptions
+    },
+    userOptions() {
+      return this.$store.state[this.namespace].config.userOptions
+    },
+    userTask() {
+      return this.$store.state[this.namespace].panel.userTask
+    },
+    findUserGroupChildren() {
+      return this.$store.getters[`${this.namespace}/config/findUserGroupChildren`]
+    },
   },
   watch: {
     userTask(value) {
@@ -116,8 +131,24 @@ export default {
     this.userTaskForm = deepCopy(this.userTask)
   },
   methods: {
-    ...mapMutations('bpmn/panel', ['updateUserTask']),
-    ...mapActions('bpmn/config', ['dispatchRequestUser', 'userGroupLabel']),
+    updateUserTask(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateUserTask`,
+        ...payload,
+      })
+    },
+    dispatchRequestUser(payload) {
+      return this.$store.dispatch({
+        type: `${this.namespace}/config/dispatchRequestUser`,
+        ...payload,
+      })
+    },
+    userGroupLabel(payload) {
+      return this.$store.dispatch({
+        type: `${this.namespace}/config/userGroupLabel`,
+        ...payload,
+      })
+    },
     cascaderLazyLoad(node, resolve) {
       // 如果原来的结构中有子节点，则直接返回
       if (this.findUserGroupChildren(node)) {

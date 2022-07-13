@@ -21,6 +21,7 @@
       </el-table>
     </section>
     <input-output-drawer
+      :namespace="namespace"
       :title="drawerTitle"
       :parameter="parameter"
       :visible="drawerVisible"
@@ -31,12 +32,18 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
 import InputOutputDrawer from './InputOutputDrawer.vue'
 
 export default {
-  components: { InputOutputDrawer },
   name: 'InputOutputPanel',
+  components: { InputOutputDrawer },
+  props: {
+    namespace: {
+      type: String,
+      required: true,
+      default: '',
+    },
+  },
   data() {
     return {
       type: 'inputParameter',
@@ -78,9 +85,21 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn/panel', ['inputParameters', 'outputParameters']),
-    ...mapGetters('bpmn/panel', ['findInputParameterByIndex', 'findOutputParameterByIndex']),
-    ...mapGetters('bpmn/config', ['variableTypeLabel']),
+    inputParameters() {
+      return this.$store.state[this.namespace].panel.inputParameters
+    },
+    outputParameters() {
+      return this.$store.state[this.namespace].panel.outputParameters
+    },
+    findInputParameterByIndex() {
+      return this.$store.getters[`${this.namespace}/panel/findInputParameterByIndex`]
+    },
+    findOutputParameterByIndex() {
+      return this.$store.getters[`${this.namespace}/panel/findOutputParameterByIndex`]
+    },
+    variableTypeLabel() {
+      return this.$store.getters[`${this.namespace}/config/variableTypeLabel`]
+    },
     parameterTypes() {
       const parameters = {
         inputParameter: this.inputParameters,
@@ -127,14 +146,42 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('bpmn/panel', [
-      'addInputParameter',
-      'updateInputParameter',
-      'removeInputParameter',
-      'addOutputParameter',
-      'updateOutputParameter',
-      'removeOutputParameter',
-    ]),
+    addInputParameter(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/addInputParameter`,
+        ...payload,
+      })
+    },
+    updateInputParameter(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateInputParameter`,
+        ...payload,
+      })
+    },
+    removeInputParameter(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/removeInputParameter`,
+        ...payload,
+      })
+    },
+    addOutputParameter(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/addOutputParameter`,
+        ...payload,
+      })
+    },
+    updateOutputParameter(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateOutputParameter`,
+        ...payload,
+      })
+    },
+    removeOutputParameter(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/removeOutputParameter`,
+        ...payload,
+      })
+    },
     onEditParameter(type, index) {
       this.type = type
       this.editIndex = index

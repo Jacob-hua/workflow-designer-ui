@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form label-position="right" label-width="80px">
+    <el-form label-position="right" label-width="100px">
       <el-form-item label="回路特性">
         <el-select v-model="instanceForm.loopCharacteristics" clearable>
           <el-option
@@ -30,19 +30,29 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
 import { deepCopy, deepEquals, emptyPropertiesObject } from '../../../utils/object'
 
 export default {
   name: 'MultiInstancePanel',
+  props: {
+    namespace: {
+      type: String,
+      required: true,
+      default: '',
+    },
+  },
   data() {
     return {
       instanceForm: {},
     }
   },
   computed: {
-    ...mapState('bpmn/config', ['loopCharacteristicsOptions']),
-    ...mapState('bpmn/panel', ['multiInstance']),
+    loopCharacteristicsOptions() {
+      return this.$store.state[this.namespace].config.loopCharacteristicsOptions
+    },
+    multiInstance() {
+      return this.$store.state[this.namespace].panel.multiInstance
+    },
     isNotStandardLoopInstance() {
       return this.instanceForm.loopCharacteristics && this.instanceForm.loopCharacteristics !== 'StandardLoop'
     },
@@ -66,12 +76,16 @@ export default {
     this.instanceForm = { ...deepCopy(this.multiInstance) }
   },
   methods: {
-    ...mapMutations('bpmn/panel', ['updateMultiInstance']),
+    updateMultiInstance(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateMultiInstance`,
+        ...payload,
+      })
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
 @import '../index.scss';
-
 </style>

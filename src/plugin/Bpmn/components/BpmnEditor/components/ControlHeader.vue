@@ -43,12 +43,24 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import IBpmnModeler from '../../../IBpmnModeler'
 import { readFile, selectFile, downloadFile } from '../../../utils/file'
 import { curryFunction } from '../../../utils/function'
 
 export default {
   name: 'ControlHeader',
+  props: {
+    namespace: {
+      type: String,
+      required: true,
+      default: '',
+    },
+    iBpmnModeler: {
+      type: IBpmnModeler,
+      required: true,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       buttonSize: 'small',
@@ -67,29 +79,38 @@ export default {
     zoomRatio() {
       return Math.floor(this.defaultZoom * 10 * 10) + '%'
     },
-    ...mapState('bpmn/editor', ['undoable', 'redoable']),
+    undoable() {
+      return this.$store.state[this.namespace].editor.undoable
+    },
+    redoable() {
+      return this.$store.state[this.namespace].editor.redoable
+    },
   },
   methods: {
-    ...mapActions('bpmn/config', ['dispatchGenerateId']),
+    dispatchGenerateId() {
+      return this.$store.dispatch({
+        type: `${this.namespace}/config/dispatchGenerateId`,
+      })
+    },
     async openFile() {
       try {
         const newId = await this.dispatchGenerateId()
         const files = await selectFile(['.xml', '.bpmn'])
         const content = await readFile((reader) => reader.readAsText(files[0]))
-        this.$iBpmn.loadDiagram(content, { id: `process_${newId}` })
+        this.iBpmnModeler.loadDiagram(content, { id: `process_${newId}` })
       } catch (error) {
         this.$message.error('文件打开失败')
       }
     },
     async downloadAs(fileType) {
       try {
-        const fileName = this.$iBpmn.getRootShapeInfo().name
+        const fileName = this.iBpmnModeler.getRootShapeInfo().name
         const download = curryFunction(downloadFile)(fileName, fileType)
         if (['xml', 'bpmn'].includes(fileType)) {
-          const { xml } = await this.$iBpmn.saveXML()
+          const { xml } = await this.iBpmnModeler.saveXML()
           download(xml)
         } else if ('svg' === fileType) {
-          const { svg } = await this.$iBpmn.saveSVG()
+          const { svg } = await this.iBpmnModeler.saveSVG()
           download(svg)
         }
       } catch (error) {
@@ -99,10 +120,10 @@ export default {
     async previewAs(type) {
       try {
         if ('xml' === type) {
-          const { xml } = await this.$iBpmn.saveXML({ format: true })
+          const { xml } = await this.iBpmnModeler.saveXML({ format: true })
           this.previewModal.code = xml
         } else if ('json' === type) {
-          const { json } = await this.$iBpmn.saveJSON({ format: true })
+          const { json } = await this.iBpmnModeler.saveJSON({ format: true })
           this.previewModal.code = json
         }
         this.previewModal.language = type
@@ -118,7 +139,7 @@ export default {
         return
       }
       this.defaultZoom = newZoom
-      this.$iBpmn.canvasZoom(this.defaultZoom)
+      this.iBpmnModeler.canvasZoom(this.defaultZoom)
     },
     canvasZoomIn() {
       const newZoom = Math.floor(this.defaultZoom * 100 + this.zoomStep * 100) / 100
@@ -127,26 +148,31 @@ export default {
         return
       }
       this.defaultZoom = newZoom
-      this.$iBpmn.canvasZoom(this.defaultZoom)
+      this.iBpmnModeler.canvasZoom(this.defaultZoom)
     },
     canvasResetZoom() {
       this.defaultZoom = 1
-      this.$iBpmn.canvasZoom('fit-viewport', 'auto')
+      this.iBpmnModeler.canvasZoom('fit-viewport', 'auto')
     },
     operationUndo() {
-      this.$iBpmn.commandUndo()
+      this.iBpmnModeler.commandUndo()
     },
     operationRedo() {
-      this.$iBpmn.commandRedo()
+      this.iBpmnModeler.commandRedo()
     },
     repaint() {
-      this.$iBpmn.repaint()
+      this.iBpmnModeler.repaint()
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+$border-color: #666666;
+$border-color-1: #333333;
+$button-color: #ffffff;
+$button-disabled-color: #c0c4cc;
+
 .tool-wrapper {
   display: flex;
   flex-direction: row;
