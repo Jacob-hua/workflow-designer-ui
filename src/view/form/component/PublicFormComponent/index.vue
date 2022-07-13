@@ -80,12 +80,12 @@
         switch (this.dataType){
           case 'enabled':
             break;
-          case 'drafted':
+          case '':
             break;
           case 'enabled-edit':
             formData.append('sourceId', this.postData.sourceId)
             break;
-          case 'drafted-edit':
+          case '-edit':
             formData.append('id', this.postData.id)
             formData.append('sourceId', this.postData.sourceId)
             break;
@@ -122,12 +122,12 @@
         switch (this.dataType){
           case 'enabled':
             break;
-          case 'drafted':
+          case '':
             break;
           case 'enabled-edit':
             formData.append('sourceId', this.postData.sourceId)
             break;
-          case 'drafted-edit':
+          case '-edit':
             formData.append('id', this.postData.id)
             formData.append('sourceId', this.postData.sourceId)
             break;
@@ -143,7 +143,7 @@
         formData.append('ascription', 'public')
         formData.append('code', id)
         formData.append('business', '')
-        formData.append('status', 'drafted')
+        formData.append('status', '')
         formData.append('createBy', this.userInfo.account)
         formData.append('createName', 'admin')
         formData.append('tenantId', this.tenantId)

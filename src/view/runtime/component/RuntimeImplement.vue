@@ -399,6 +399,7 @@ export default {
       return result
     },
     async downloadFile({ url }) {
+      debugger
       const { errorInfo, result } = await downloadTaskAttachmentFile({
         attachmentId: url,
       })
