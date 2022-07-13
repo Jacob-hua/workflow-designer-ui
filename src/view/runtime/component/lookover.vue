@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="查看流程信息" top="1vh" :visible="visible" @close="onClose">
+  <el-dialog title="工单详情" top="1vh" fullscreen :visible="visible" @close="onClose">
     <div class="container">
       <ProcessInformation
         :xml="workflow.processDeployResource"
@@ -75,6 +75,19 @@ export default {
       type: String,
       required: true,
     },
+    detailFunc: {
+      type: Function,
+      default: async (processInstanceId, assignee) => {
+        const { errorInfo, result } = await getExecuteDetail({
+          processInstanceId,
+          assignee,
+        })
+        if (errorInfo.errorCode) {
+          return
+        }
+        return result
+      },
+    },
   },
   data() {
     return {
@@ -138,6 +151,7 @@ export default {
   methods: {
     onClose() {
       this.$emit('close')
+      this.$emit('update:visible', false)
     },
     async downloadFile(result) {
       return await downloadTaskAttachmentFile({
@@ -146,15 +160,8 @@ export default {
     },
     async fetchExecuteDetail() {
       try {
-        const { errorInfo, result } = await getExecuteDetail({
-          processInstanceId: this.processInstanceId,
-          assignee: this.userInfo.account,
-        })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
-        this.workflow = { ...result }
+        const result = await Promise.resolve(this.detailFunc(this.processInstanceId, this.userInfo.account))
+        this.workflow = result ?? {}
       } catch (error) {}
     },
   },

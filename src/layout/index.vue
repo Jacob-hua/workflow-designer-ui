@@ -4,7 +4,7 @@
       <el-header class="header">
         <div v-if="!status" class="user-info">
           <span>{{ userInfo.name }}</span>
-          <span @click="exitProject()">退出</span>
+          <img :src="require('../assets/image/header/quit.svg')" @click="exitProject()" />
         </div>
       </el-header>
       <el-container>
@@ -17,10 +17,10 @@
               <span>Workflow Engine Platform</span>
             </div>
           </div>
-          <el-menu :default-active="$route.name" router @open="handleOpen" @close="handleClose" v-if="!status">
+          <el-menu :default-active="$route.name" router v-if="!status" @select="onSelect">
             <el-menu-item :index="item.menuRoute" v-for="(item, index) in menuList" :key="index">
-              <i class="el-icon-location"></i>
-              <span>{{ menuListNameMapping[item.menuRoute] }}</span>
+              <img class="menu-icon" :src="getMenuIcon(item.menuRoute)" />
+              <span>{{ menuListNameMapping[item.menuRoute].label }}</span>
             </el-menu-item>
           </el-menu>
         </el-aside>
@@ -42,24 +42,44 @@ export default {
   data() {
     return {
       status: false,
+      activeMenu: '',
       menuList: [],
-      menuListMapping: {
-        Workflow: 'Workflow',
-        Form: 'Form',
-        Home: 'Home',
-        RunTime: 'RunTime',
-        History: 'History',
-        Configuration: 'Configuration',
-        Power: 'Power',
-      },
       menuListNameMapping: {
-        Workflow: '工作流管理',
-        Form: '表单管理',
-        Home: '工作流驾驶舱',
-        RunTime: '运行中工作流',
-        History: '历史工作流',
-        Configuration: '工作流全局配置',
-        Power: '权限管理',
+        Workflow: {
+          icon: require('../assets/image/menu/workflow.svg'),
+          activeIcon: require('../assets/image/menu/active/workflow.svg'),
+          label: '工作流管理',
+        },
+        Form: {
+          icon: require('../assets/image/menu/form.svg'),
+          activeIcon: require('../assets/image/menu/active/form.svg'),
+          label: '表单管理',
+        },
+        Home: {
+          icon: require('../assets/image/menu/cabin.svg'),
+          activeIcon: require('../assets/image/menu/active/cabin.svg'),
+          label: '工作流驾驶舱',
+        },
+        RunTime: {
+          icon: require('../assets/image/menu/runing.svg'),
+          activeIcon: require('../assets/image/menu/active/runing.svg'),
+          label: '运行中工作流',
+        },
+        History: {
+          icon: require('../assets/image/menu/history.svg'),
+          activeIcon: require('../assets/image/menu/active/history.svg'),
+          label: '历史工作流',
+        },
+        Configuration: {
+          icon: require('../assets/image/menu/glob-config.svg'),
+          activeIcon: require('../assets/image/menu/active/glob-config.svg'),
+          label: '工作流全局配置',
+        },
+        Power: {
+          icon: require('../assets/image/menu/power.svg'),
+          activeIcon: require('../assets/image/menu/active/power.svg'),
+          label: '权限管理',
+        },
       },
     }
   },
@@ -94,10 +114,20 @@ export default {
       this.$message.error('该账号无任何菜单访问权限')
     }
   },
+  mounted() {
+    this.activeMenu = this.$route.name
+  },
   methods: {
     ...mapMutations('account', ['updateUserInfo']),
-    handleOpen() {},
-    handleClose() {},
+    getMenuIcon(index) {
+      if (index === this.activeMenu) {
+        return this.menuListNameMapping[index].activeIcon
+      }
+      return this.menuListNameMapping[index].icon
+    },
+    onSelect(activeMenu) {
+      this.activeMenu = activeMenu
+    },
     exitProject() {
       this.$router.push('/')
     },
@@ -129,7 +159,9 @@ $aside-logo-height: 288px;
     line-height: 20px;
 
     :last-child {
-      margin-left: 12px;
+      margin-left: 30px;
+      width: 18px;
+      cursor: pointer;
     }
   }
 }
@@ -229,9 +261,14 @@ $aside-logo-height: 288px;
   color: $menu-color;
 }
 
+.menu-icon {
+  width: 18px;
+  margin-right: 12px;
+}
+
 .main {
   width: 100%;
-  
+
   ::-webkit-scrollbar {
     display: none;
   }

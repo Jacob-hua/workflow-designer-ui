@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="关联工作流" :visible="visible" top="5vh" width="70%" @close="close">
+    <el-dialog title="关联工作流" :visible="visible" top="5vh" fullscreen @close="close">
       <div>
         <el-table :data="tableData">
           <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>
@@ -123,7 +123,7 @@ export default {
 
 <style scoped lang="scss">
 /deep/ .el-table {
-  height: 600px;
+  height: calc(100vh - 250px);
 }
 
 .el-pagination {
