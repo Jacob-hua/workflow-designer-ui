@@ -60,6 +60,10 @@ export default {
       required: true,
       default: () => ({}),
     },
+    generateIdFunc: {
+      type: Function,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -87,14 +91,9 @@ export default {
     },
   },
   methods: {
-    dispatchGenerateId() {
-      return this.$store.dispatch({
-        type: `${this.namespace}/config/dispatchGenerateId`,
-      })
-    },
     async openFile() {
       try {
-        const newId = await this.dispatchGenerateId()
+        const newId = await Promise.resolve(this.generateIdFunc())
         const files = await selectFile(['.xml', '.bpmn'])
         const content = await readFile((reader) => reader.readAsText(files[0]))
         this.iBpmnModeler.loadDiagram(content, { id: `process_${newId}` })

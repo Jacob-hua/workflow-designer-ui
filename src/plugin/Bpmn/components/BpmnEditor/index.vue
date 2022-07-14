@@ -1,13 +1,17 @@
 <template>
   <div class="wrapper">
-    <control-header v-if="headerVisible" :iBpmnModeler="iBpmnModeler" :namespace="namespace" />
+    <control-header
+      v-if="headerVisible"
+      :iBpmnModeler="iBpmnModeler"
+      :namespace="namespace"
+      :generateIdFunc="generateIdFunc"
+    />
     <div class="containers" ref="containers"></div>
   </div>
 </template>
 
 <script>
 import ControlHeader from './components/ControlHeader.vue'
-// import { generateNamespace } from '../../utils/bridging-bpmn'
 import bridgingBpmn, { generateNamespace } from '../../utils/bridging-bpmn'
 import bridgingModuleFunc from './store'
 import IBpmnModeler from '../../IBpmnModeler'
@@ -41,7 +45,11 @@ export default {
     },
     selectedChanged: {
       type: Function,
-      default: () => () => {},
+      default: () => {},
+    },
+    generateIdFunc: {
+      type: Function,
+      default: () => {},
     },
   },
   data() {
