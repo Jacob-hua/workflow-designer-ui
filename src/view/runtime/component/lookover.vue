@@ -1,10 +1,7 @@
 <template>
   <el-dialog title="工单详情" top="1vh" fullscreen :visible="visible" @close="onClose">
     <div class="container">
-      <ProcessInformation
-        :xml="workflow.processDeployResource"
-        :processDisplayInfo="processDisplayInfo"
-      ></ProcessInformation>
+      <bpmn-info :xml="workflow.processDeployResource" :processDisplayInfo="processDisplayInfo" />
       <div>
         <div class="title">工作流执行详情</div>
         <div class="process-content">
@@ -56,14 +53,14 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
+import BpmnInfo from '@/component/BpmnInfo.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { getExecuteDetail, downloadTaskAttachmentFile } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    ProcessInformation,
+    BpmnInfo,
     preview,
   },
   props: {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :model="baseInfoForm" label-position="right" label-width="80px">
+    <el-form :model="baseInfoForm" label-position="right" label-width="100px">
       <el-form-item label="流程名称">
         <el-input v-model="baseInfoForm.name" clearable></el-input>
       </el-form-item>
@@ -9,18 +9,26 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
 import { deepCopy, deepEquals } from '../../../utils/object'
 
 export default {
   name: 'BaseInfo',
+  props: {
+    namespace: {
+      type: String,
+      required: true,
+      default: '',
+    },
+  },
   data() {
     return {
       baseInfoForm: {},
     }
   },
   computed: {
-    ...mapState('bpmn/panel', ['baseInfo']),
+    baseInfo() {
+      return this.$store.state[this.namespace].panel.baseInfo
+    },
   },
   watch: {
     baseInfo(value) {
@@ -41,7 +49,9 @@ export default {
     this.baseInfoForm = deepCopy(this.baseInfo)
   },
   methods: {
-    ...mapMutations('bpmn/panel', ['updateBaseInfo']),
+    updateBaseInfo(payload) {
+      this.$store.commit(`${this.namespace}/panel/updateBaseInfo`, payload)
+    },
   },
 }
 </script>

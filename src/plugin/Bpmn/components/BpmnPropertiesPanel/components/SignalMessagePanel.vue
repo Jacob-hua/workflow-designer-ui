@@ -61,8 +61,6 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
-
 function requiredRule(message) {
   function validator({ message }, { value }, callback) {
     if (!value) {
@@ -76,6 +74,13 @@ function requiredRule(message) {
 
 export default {
   name: 'SignalMessagePanel',
+  props: {
+    namespace: {
+      type: String,
+      required: true,
+      default: '',
+    },
+  },
   data() {
     return {
       modalVisible: false,
@@ -139,8 +144,18 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn/panel', ['messages', 'signals']),
-    ...mapGetters('bpmn/panel', ['findSignalByIndex', 'findMessageByIndex']),
+    messages() {
+      return this.$store.state[this.namespace].panel.messages
+    },
+    signals() {
+      return this.$store.state[this.namespace].panel.signals
+    },
+    findSignalByIndex() {
+      return this.$store.getters[`${this.namespace}/panel/findSignalByIndex`]
+    },
+    findMessageByIndex() {
+      return this.$store.getters[`${this.namespace}/panel/findMessageByIndex`]
+    },
     modalInfo() {
       return this.modalConfig[this.modalType] ?? {}
     },
@@ -164,14 +179,42 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('bpmn/panel', [
-      'addSignal',
-      'updateSignal',
-      'removeSignal',
-      'addMessage',
-      'updateMessage',
-      'removeMessage',
-    ]),
+    addSignal(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/addSignal`,
+        ...payload,
+      })
+    },
+    updateSignal(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateSignal`,
+        ...payload,
+      })
+    },
+    removeSignal(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/removeSignal`,
+        ...payload,
+      })
+    },
+    addMessage(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/addMessage`,
+        ...payload,
+      })
+    },
+    updateMessage(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateMessage`,
+        ...payload,
+      })
+    },
+    removeMessage(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/removeMessage`,
+        ...payload,
+      })
+    },
     onCreateMessage() {
       this.modalVisible = true
       this.modalType = 'message'

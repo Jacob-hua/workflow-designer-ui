@@ -3,6 +3,14 @@ $form-footer-button-color: #ffffff !default;
 $form-footer-cancel-button-bg-color: #6e7e88 !default;
 
 $panel-table-color: #999999 !default;
+$button-submit-bg-color: #009efb;
+$border-color: #666666;
+$border-color-1: #333333;
+$dialog-bg-color: #1b1e2d;
+
+svg[data-element-id] {
+  background-color: $dialog-bg-color;
+}
 
 .el-select {
   width: 100%;

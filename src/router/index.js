@@ -90,15 +90,6 @@ const routes = [
         hidden: true,
       },
       {
-        path: "/home/debugBpmn",
-        name: "debugBpmn",
-        component: () => import("@/view/debugBpmn"),
-        meta: {
-          title: "bpmn",
-          icon: "dashboard",
-        },
-      },
-      {
         path: "/home/designer",
         name: "designer",
         component: () => import("@/plugin/FormDesign/component/formDesigner"),
