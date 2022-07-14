@@ -1,3 +1,15 @@
+export const filterPublicFunction = (object, prefix) => {
+  const prototype = Object.getPrototypeOf(object)
+  return Object.getOwnPropertyNames(prototype).reduce((mappings, key) => {
+    const element = prototype[key]
+    if (typeof element === 'function' && key !== 'constructor' && key[0] !== '_') {
+      const newKey = (prefix ?? '') !== '' ? `${prefix}${key.slice(0, 1).toUpperCase() + key.slice(1)}` : key
+      mappings[newKey] = element.bind(object)
+    }
+    return mappings
+  }, {})
+}
+
 /**
  * 函数柯里化工具
  *
@@ -7,13 +19,13 @@
 export function curryFunction(fun) {
   return function curried(...args) {
     if (args.length >= fun.length) {
-      return fun.apply(this, args);
+      return fun.apply(this, args)
     } else {
       return function (...args1) {
-        return curried.apply(this, args.concat(args1));
-      };
+        return curried.apply(this, args.concat(args1))
+      }
     }
-  };
+  }
 }
 
 /**
@@ -24,42 +36,42 @@ export function curryFunction(fun) {
  * @returns
  */
 export function throttle(callback, delay) {
-  let lastExec = 0;
-  let timerId = 0;
-  let canceled = false;
+  let lastExec = 0
+  let timerId = 0
+  let canceled = false
 
   const wrapper = function (...args) {
     if (canceled) {
-      return;
+      return
     }
 
-    const elapsed = Date.now() - lastExec;
+    const elapsed = Date.now() - lastExec
 
     const exec = () => {
-      lastExec = Date.now();
-      callback.apply(this, args);
-    };
+      lastExec = Date.now()
+      callback.apply(this, args)
+    }
 
     if (timerId) {
-      clearTimeout(timerId);
-      timerId = 0;
+      clearTimeout(timerId)
+      timerId = 0
     }
 
     if (elapsed > delay) {
-      exec();
+      exec()
     } else {
-      timerId = setTimeout(exec, delay - elapsed);
+      timerId = setTimeout(exec, delay - elapsed)
     }
-  };
+  }
 
   wrapper.cancel = () => {
-    timerId && clearTimeout(timerId);
-    lastExec = 0;
-    timerId = 0;
-    canceled = true;
-  };
+    timerId && clearTimeout(timerId)
+    lastExec = 0
+    timerId = 0
+    canceled = true
+  }
 
-  return wrapper;
+  return wrapper
 }
 
 /**
@@ -69,16 +81,16 @@ export function throttle(callback, delay) {
  * @param {*} delay
  */
 export function debounce(callback, delay) {
-  let timerId = 0;
+  let timerId = 0
 
   return function (...args) {
     if (!timerId) {
-      callback.apply(this, args);
+      callback.apply(this, args)
     } else {
-      clearTimeout(timerId);
+      clearTimeout(timerId)
     }
     timerId = setTimeout(() => {
-      timerId = 0;
-    }, delay);
-  };
+      timerId = 0
+    }, delay)
+  }
 }

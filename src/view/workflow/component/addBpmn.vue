@@ -1,7 +1,7 @@
 <template>
   <el-dialog :title="title" :visible="visible" @close="onClose" fullscreen>
     <div class="editor-wrapper">
-      <bpmnJsELe :projectData="projectData" v-if="visible"></bpmnJsELe>
+      <bpmn-designer v-if="visible" :projectData="projectData" @loaded="onBpmnDesignerLoaded" />
     </div>
     <div slot="footer">
       <el-button class="publish" @click="onPublish">发布</el-button>
@@ -13,12 +13,12 @@
 
 <script>
 import { updateWorkFlow, createWorkFlow, publishWorkflow } from '@/api/managerWorkflow'
-import bpmnJsELe from '@/view/bpmnJsELe/index.vue'
+import BpmnDesigner from '@/component/BpmnDesigner.vue'
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    bpmnJsELe,
+    BpmnDesigner,
   },
   props: {
     projectData: {
@@ -34,6 +34,11 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      iBpmnModeler: {},
+    }
+  },
   computed: {
     ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
     title() {
@@ -41,7 +46,7 @@ export default {
     },
     processFormData() {
       // TODO: 此处的文件名和文件id应该以addProject.vue中设置的参数为主
-      const { name: processName, id: processId } = this.$iBpmn.getRootShapeInfo()
+      const { name: processName, id: processId } = this.iBpmnModeler.getRootShapeInfo()
       let processFormData = new FormData()
       if (this.projectData.id) {
         processFormData.set('id', this.projectData.id)
@@ -62,15 +67,19 @@ export default {
     },
   },
   methods: {
+    onBpmnDesignerLoaded(iBpmnModeler) {
+      this.iBpmnModeler = iBpmnModeler
+    },
     async onPublish() {
       try {
-        await this.$iBpmn.validate()
+        await this.iBpmnModeler.validate()
       } catch (error) {
+        console.log(error)
         this.$message.error('流程设计存在错误/警告')
         return
       }
       try {
-        const { xml } = await this.$iBpmn.saveXML({
+        const { xml } = await this.iBpmnModeler.saveXML({
           format: true,
         })
         this.processFormData.set(
@@ -106,13 +115,13 @@ export default {
     },
     async onSave() {
       try {
-        await this.$iBpmn.validate()
+        await this.iBpmnModeler.validate()
       } catch (error) {
         this.$message.error('流程设计存在错误/警告')
         return
       }
       try {
-        const { xml } = await this.$iBpmn.saveXML({
+        const { xml } = await this.iBpmnModeler.saveXML({
           format: true,
         })
         this.processFormData.set(

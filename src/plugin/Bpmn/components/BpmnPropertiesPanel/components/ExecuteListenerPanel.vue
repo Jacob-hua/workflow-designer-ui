@@ -24,6 +24,7 @@
     </el-table>
     <execute-listener-drawer
       title="执行监听器"
+      :namespace="namespace"
       :listener="listener"
       :visible="drawerVisible"
       :onClose="onDrawerClose"
@@ -33,12 +34,18 @@
 </template>
 
 <script>
-import { mapGetters, mapState, mapMutations } from 'vuex'
 import ExecuteListenerDrawer from './ExecuteListenerDrawer.vue'
 
 export default {
   name: 'ExecuteListenerPanel',
   components: { ExecuteListenerDrawer },
+  props: {
+    namespace: {
+      type: String,
+      required: true,
+      default: '',
+    },
+  },
   data() {
     return {
       drawerVisible: false,
@@ -59,12 +66,38 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn/panel', ['listeners']),
-    ...mapGetters('bpmn/config', ['eventLabel', 'listenerTypeLabel']),
-    ...mapGetters('bpmn/panel', ['findListenerByIndex']),
+    listeners() {
+      return this.$store.state[this.namespace].panel.listeners
+    },
+    eventLabel() {
+      return this.$store.getters[`${this.namespace}/config/eventLabel`]
+    },
+    listenerTypeLabel() {
+      return this.$store.getters[`${this.namespace}/config/listenerTypeLabel`]
+    },
+    findListenerByIndex() {
+      return this.$store.getters[`${this.namespace}/panel/findListenerByIndex`]
+    },
   },
   methods: {
-    ...mapMutations('bpmn/panel', ['updateListener', 'addListener', 'removeListener']),
+    updateListener(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateListener`,
+        ...payload,
+      })
+    },
+    addListener(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/addListener`,
+        ...payload,
+      })
+    },
+    removeListener(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/removeListener`,
+        ...payload,
+      })
+    },
     onEditListener(index) {
       this.editIndex = index
       this.listener = this.findListenerByIndex(index)

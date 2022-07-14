@@ -17,17 +17,13 @@ import 'element-ui/lib/theme-chalk/index.css'
 import JsonViewer from 'vue-json-viewer'
 
 import { Bpmn, FormPlugin } from './plugin'
-import { bpmnVuexPlugin } from './plugin/Bpmn'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(JsonViewer)
 Vue.use(FormPlugin)
-Vue.use(Bpmn, {
-  type: 'camunda',
-  lintActive: true,
-})
+Vue.use(Bpmn)
 
 import '@/directive/RoleDirective.js'
 
@@ -35,7 +31,6 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: stores,
-  plugins: [bpmnVuexPlugin],
 })
 new Vue({
   router,

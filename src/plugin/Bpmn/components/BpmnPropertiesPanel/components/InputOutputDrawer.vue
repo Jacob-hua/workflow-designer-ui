@@ -92,7 +92,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { deepCopy } from '../../../utils/object'
 
 function requiredRule(message) {
@@ -102,6 +101,11 @@ function requiredRule(message) {
 export default {
   name: 'InputOutputForm',
   props: {
+    namespace: {
+      type: String,
+      required: true,
+      default: '',
+    },
     parameter: {
       type: Object,
       default: () => ({}),
@@ -148,7 +152,12 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn/config', ['variableTypeOptions', 'scriptTypeOptions']),
+    variableTypeOptions() {
+      return this.$store.state[this.namespace].config.variableTypeOptions
+    },
+    scriptTypeOptions() {
+      return this.$store.state[this.namespace].config.scriptTypeOptions
+    },
     mapValuesIsNotEmpty() {
       return this.parameterForm.mapValues.length > 0
     },

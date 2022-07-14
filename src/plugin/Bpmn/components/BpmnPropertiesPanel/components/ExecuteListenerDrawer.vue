@@ -132,7 +132,6 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
 import { deepCopy } from '../../../utils/object'
 
 function requiredRule(message) {
@@ -142,6 +141,11 @@ function requiredRule(message) {
 export default {
   name: 'ExecuteListenerDrawer',
   props: {
+    namespace: {
+      type: String,
+      required: true,
+      default: '',
+    },
     listener: {
       type: Object,
       default: () => ({}),
@@ -189,14 +193,24 @@ export default {
     }
   },
   computed: {
-    ...mapState('bpmn/config', [
-      'listenerTypeOptions',
-      'eventOptions',
-      'scriptTypeOptions',
-      'timerTypeOptions',
-      'fieldTypeOptions',
-    ]),
-    ...mapGetters('bpmn/config', ['fieldTypeLabel']),
+    listenerTypeOptions() {
+      return this.$store.state[this.namespace].config.listenerTypeOptions
+    },
+    eventOptions() {
+      return this.$store.state[this.namespace].config.eventOptions
+    },
+    scriptTypeOptions() {
+      return this.$store.state[this.namespace].config.scriptTypeOptions
+    },
+    timerTypeOptions() {
+      return this.$store.state[this.namespace].config.timerTypeOptions
+    },
+    fieldTypeOptions() {
+      return this.$store.state[this.namespace].config.fieldTypeOptions
+    },
+    fieldTypeLabel() {
+      return this.$store.getters[`${this.namespace}/config/fieldTypeLabel`]
+    },
   },
   watch: {
     listener(value) {
@@ -285,9 +299,9 @@ export default {
 <style lang="scss" scoped>
 @import '../index.scss';
 
-/deep/ .el-dialog {
-  @include formDialog;
-}
+// /deep/ .el-dialog {
+//   @include formDialog;
+// }
 
 .form-footer {
   display: flex;
@@ -296,11 +310,11 @@ export default {
   padding: 50px 0;
 }
 
-.submit-button {
-  @include primaryBtn;
-}
+// .submit-button {
+//   @include primaryBtn;
+// }
 
-.cancel-button {
-  @include cancelBtn;
-}
+// .cancel-button {
+//   @include cancelBtn;
+// }
 </style>

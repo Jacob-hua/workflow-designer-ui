@@ -1,6 +1,6 @@
 <template>
   <div>
-    <element-user-task-form />
+    <element-user-task-form v-bind="$attrs" />
   </div>
 </template>
 
@@ -13,5 +13,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>
