@@ -1,7 +1,7 @@
 <template>
   <el-col>
     <el-row @mouseenter.native='move' @mouseleave.native='leave' class="rows" :gutter="model.gutter">
-      <i @click="addComponent(model)" v-show="iconFlag && index === firstIndex"
+      <i @click="addComponent(model)" v-show="iconFlag "
          class="copy el-icon-circle-plus-outline"></i>
       <i @click="delComponent(model)" v-show="iconFlag && index !== firstIndex"
          class="del el-icon-remove-outline"></i>
@@ -31,22 +31,24 @@ export default {
   },
   methods: {
     addComponent(model, position = '001') {
-      const clone = JSON.parse(JSON.stringify(model))
+      const clone = _.cloneDeep(model)
       const uId = "row_"+getSimpleId();
       clone.id = uId;
       clone._id = uId;
       clone.columns.map((column)=>{
         let itemList = [];
-        column.list.map((item,i)=>{
-          const cloneitem = JSON.parse(JSON.stringify(item))
-          const uId = "fd_"+getSimpleId();
-          cloneitem.id = uId;
-          cloneitem._id = uId;
-          itemList.push(cloneitem);
-        })
-        column.list = [];
-        column.list = itemList;
+        if (column.list.length) {
+          column.list.map((item)=>{
+            const cloneitem = _.cloneDeep(item)
+              cloneitem.id = `${cloneitem.id}_${getSimpleId()}`;
+              cloneitem._id = cloneitem.id;
+              itemList.push(cloneitem);
+          })
+          column.list = [];
+          column.list = itemList;
+        }
       })
+      console.log(clone)
       this.itemList.push(clone);
     },
     delComponent(data) {
@@ -79,7 +81,7 @@ export default {
 
 .copy {
   position: absolute;
-  right: 0;
+  right: 40px;
   top: -30px;
   cursor: pointer;
   font-size: 30px !important;
