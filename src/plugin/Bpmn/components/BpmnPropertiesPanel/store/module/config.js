@@ -161,8 +161,15 @@ const state = () => ({
   ],
   userGroupOptions: [],
   userOptions: [],
-  requestUserGroupFunc: () => {},
-  requestUserFunc: () => {},
+  requestUserGroupFunc: () => {
+    console.log('requestUserGroupFunc')
+  },
+  requestUserFunc: () => {
+    console.log('默认requestUserFunc')
+  },
+  generateIdFunc: () => {
+    console.log('默认generateIdFunc')
+  },
 })
 
 const getters = {
@@ -206,6 +213,7 @@ const mutations = {
     state.userGroupOptions = deepCopy(newUserGroupOptions)
   },
   updateRequestUserFunc(state, { newFunc = () => {} }) {
+    console.log('mutation RequestUserFunc', newFunc)
     state.requestUserFunc = newFunc
   },
   updateRequestUserGroupFunc(state, { newFunc = () => {} }) {

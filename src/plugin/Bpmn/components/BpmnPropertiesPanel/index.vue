@@ -43,6 +43,18 @@ export default {
       required: true,
       default: () => new IBpmnModeler(),
     },
+    fetchUserGroup: {
+      type: Function,
+      default: () => {},
+    },
+    fetchUser: {
+      type: Function,
+      default: () => {},
+    },
+    fetchId: {
+      type: Function,
+      default: () => {},
+    },
   },
   data() {
     const namespace = generateNamespace(this)
@@ -121,12 +133,57 @@ export default {
         this.unBridgingFunc = bridgingBpmn(this.$store, this.namespace, iBpmnModeler, bridgingModuleFunc)
       },
     },
+    fetchUserGroup: {
+      immediate: true,
+      handler(newFunc) {
+        this.updateRequestUserGroupFunc({ newFunc })
+      },
+    },
+    fetchUser: {
+      immediate: true,
+      handler(newFunc) {
+        console.log('设置RequestUserFunc', newFunc)
+        this.updateRequestUserFunc({ newFunc })
+      },
+    },
+    fetchId: {
+      immediate: true,
+      handler(newFunc) {
+        this.updateGenerateIdFunc({ newFunc })
+      },
+    },
   },
   beforeUpdate() {
     this.namespace = generateNamespace(this)
   },
   beforeDestroy() {
     this.unBridgingFunc()
+  },
+  methods: {
+    dispatchRequestUserGroup(payload) {
+      this.$store.dispatch({
+        type: `${this.namespace}/config/dispatchRequestUserGroup`,
+        ...payload,
+      })
+    },
+    updateRequestUserGroupFunc(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/config/updateRequestUserGroupFunc`,
+        ...payload,
+      })
+    },
+    updateRequestUserFunc(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/config/updateRequestUserFunc`,
+        ...payload,
+      })
+    },
+    updateGenerateIdFunc(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/config/updateGenerateIdFunc`,
+        ...payload,
+      })
+    },
   },
 }
 </script>

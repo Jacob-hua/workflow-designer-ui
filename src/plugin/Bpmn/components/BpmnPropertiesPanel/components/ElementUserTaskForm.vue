@@ -138,6 +138,7 @@ export default {
       })
     },
     dispatchRequestUser(payload) {
+      console.log('拉取用户');
       return this.$store.dispatch({
         type: `${this.namespace}/config/dispatchRequestUser`,
         ...payload,
@@ -155,7 +156,7 @@ export default {
         resolve()
         return
       }
-      this.dispatchRequestUser(node.value).then(resolve)
+      this.dispatchRequestUser(node).then(resolve)
     },
   },
 }

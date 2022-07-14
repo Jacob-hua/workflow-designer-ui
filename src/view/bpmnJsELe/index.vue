@@ -1,14 +1,21 @@
 <template>
   <div class="bpmn-wrapper">
-    <bpmn-editor :id="projectData.code" :name="projectData.name" :xml="projectData.content" />
-    <bpmn-properties-panel />
+    <bpmn-editor :id="projectData.code" :name="projectData.name" :xml="projectData.content" @loaded="onEditorLoaded" />
+    <bpmn-properties-panel
+      ref="propertiesPanel"
+      :iBpmnModeler="iBpmnModeler"
+      :fetchUserGroup="fetchUserGroup"
+      :fetchUser="fetchUser"
+      :fetchId="fetUUID"
+    />
   </div>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { getSystemGroupTree, postPersonUser } from '../../api/unit/api'
 import { getGlobalUUID } from '../../api/globalConfig'
+import IBpmnModeler from '../../plugin/Bpmn/IBpmnModeler'
 
 function groupTree2CascaderData(data) {
   if (Array.isArray(data)) {
@@ -42,26 +49,26 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return {
+      iBpmnModeler: new IBpmnModeler(),
+    }
+  },
   computed: {
     ...mapState(['tenantId']),
   },
   mounted() {
-    // 定义请求用户组的方法
-    this.updateRequestUserGroupFunc({ newFunc: this.fetchUserGroup })
-    // 定义请求用户的方法
-    this.updateRequestUserFunc({ newFunc: this.fetchUser })
-    // 定义ID生成器方法
-    this.updateGenerateIdFunc({ newFunc: this.fetUUID })
     // 触发请求用户组，也就是会在action中调用this.fetchUserGroup，
     // 并将数据同步到state
-    this.dispatchRequestUserGroup({
+    this.$refs.propertiesPanel.dispatchRequestUserGroup({
       projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
       displayType: 'tree',
     })
   },
   methods: {
-    ...mapActions('bpmn/config', ['dispatchRequestUserGroup']),
-    ...mapMutations('bpmn/config', ['updateRequestUserGroupFunc', 'updateRequestUserFunc', 'updateGenerateIdFunc']),
+    onEditorLoaded(iBpmnModeler) {
+      this.iBpmnModeler = iBpmnModeler
+    },
     async fetchUserGroup(params) {
       try {
         const { errorInfo, result } = await getSystemGroupTree(params)
@@ -73,10 +80,10 @@ export default {
         return []
       }
     },
-    async fetchUser(groupId) {
+    async fetchUser({ value }) {
       try {
         const { errorInfo, result } = await postPersonUser({
-          groupId,
+          groupId: value,
           limit: 999999,
           name: '',
           page: 1,
