@@ -5,7 +5,7 @@
         <template slot="title">
           {{ title }}
         </template>
-        <component :is="component" :namespace="namespace" />
+        <component :is="component" :namespace="namespace" :lazyLoadUser="lazyLoadUser" />
       </el-collapse-item>
     </el-collapse>
   </div>
@@ -43,15 +43,11 @@ export default {
       required: true,
       default: () => new IBpmnModeler(),
     },
-    fetchUserGroup: {
-      type: Function,
-      default: () => {},
+    userGroup: {
+      type: Array,
+      default: () => [],
     },
-    fetchUser: {
-      type: Function,
-      default: () => {},
-    },
-    fetchId: {
+    lazyLoadUser: {
       type: Function,
       default: () => {},
     },
@@ -133,24 +129,10 @@ export default {
         this.unBridgingFunc = bridgingBpmn(this.$store, this.namespace, iBpmnModeler, bridgingModuleFunc)
       },
     },
-    fetchUserGroup: {
-      immediate: true,
-      handler(newFunc) {
-        this.updateRequestUserGroupFunc({ newFunc })
-      },
-    },
-    fetchUser: {
-      immediate: true,
-      handler(newFunc) {
-        console.log('设置RequestUserFunc', newFunc)
-        this.updateRequestUserFunc({ newFunc })
-      },
-    },
-    fetchId: {
-      immediate: true,
-      handler(newFunc) {
-        this.updateGenerateIdFunc({ newFunc })
-      },
+    userGroup(userGroup) {
+      this.updateUserGroupOptions({
+        newUserGroupOptions: userGroup,
+      })
     },
   },
   beforeUpdate() {
@@ -160,27 +142,9 @@ export default {
     this.unBridgingFunc()
   },
   methods: {
-    dispatchRequestUserGroup(payload) {
-      this.$store.dispatch({
-        type: `${this.namespace}/config/dispatchRequestUserGroup`,
-        ...payload,
-      })
-    },
-    updateRequestUserGroupFunc(payload) {
+    updateUserGroupOptions(payload) {
       this.$store.commit({
-        type: `${this.namespace}/config/updateRequestUserGroupFunc`,
-        ...payload,
-      })
-    },
-    updateRequestUserFunc(payload) {
-      this.$store.commit({
-        type: `${this.namespace}/config/updateRequestUserFunc`,
-        ...payload,
-      })
-    },
-    updateGenerateIdFunc(payload) {
-      this.$store.commit({
-        type: `${this.namespace}/config/updateGenerateIdFunc`,
+        type: `${this.namespace}/config/updateUserGroupOptions`,
         ...payload,
       })
     },

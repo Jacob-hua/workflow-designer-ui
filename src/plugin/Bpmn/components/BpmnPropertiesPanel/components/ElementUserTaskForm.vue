@@ -73,6 +73,12 @@ export default {
       required: true,
       default: '',
     },
+    lazyLoadUser: {
+      type: Function,
+      default: () => {
+        console.log('默认执行')
+      },
+    },
   },
   data() {
     return {
@@ -137,26 +143,13 @@ export default {
         ...payload,
       })
     },
-    dispatchRequestUser(payload) {
-      console.log('拉取用户');
-      return this.$store.dispatch({
-        type: `${this.namespace}/config/dispatchRequestUser`,
-        ...payload,
-      })
-    },
-    userGroupLabel(payload) {
-      return this.$store.dispatch({
-        type: `${this.namespace}/config/userGroupLabel`,
-        ...payload,
-      })
-    },
     cascaderLazyLoad(node, resolve) {
       // 如果原来的结构中有子节点，则直接返回
       if (this.findUserGroupChildren(node)) {
         resolve()
         return
       }
-      this.dispatchRequestUser(node).then(resolve)
+      Promise.resolve(this.lazyLoadUser(node)).then(resolve)
     },
   },
 }

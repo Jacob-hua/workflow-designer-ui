@@ -4,9 +4,8 @@
     <bpmn-properties-panel
       ref="propertiesPanel"
       :iBpmnModeler="iBpmnModeler"
-      :fetchUserGroup="fetchUserGroup"
-      :fetchUser="fetchUser"
-      :fetchId="fetUUID"
+      :userGroup="userGroup"
+      :lazyLoadUser="fetchUser"
     />
   </div>
 </template>
@@ -52,17 +51,18 @@ export default {
   data() {
     return {
       iBpmnModeler: new IBpmnModeler(),
+      userGroup: [],
     }
   },
   computed: {
     ...mapState(['tenantId']),
   },
   mounted() {
-    // 触发请求用户组，也就是会在action中调用this.fetchUserGroup，
-    // 并将数据同步到state
-    this.$refs.propertiesPanel.dispatchRequestUserGroup({
+    this.fetchUserGroup({
       projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
       displayType: 'tree',
+    }).then((res) => {
+      this.userGroup = res
     })
   },
   methods: {

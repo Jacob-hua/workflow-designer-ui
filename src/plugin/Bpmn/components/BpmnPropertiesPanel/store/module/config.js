@@ -161,15 +161,6 @@ const state = () => ({
   ],
   userGroupOptions: [],
   userOptions: [],
-  requestUserGroupFunc: () => {
-    console.log('requestUserGroupFunc')
-  },
-  requestUserFunc: () => {
-    console.log('默认requestUserFunc')
-  },
-  generateIdFunc: () => {
-    console.log('默认generateIdFunc')
-  },
 })
 
 const getters = {
@@ -212,34 +203,9 @@ const mutations = {
   updateUserGroupOptions(state, { newUserGroupOptions = [] }) {
     state.userGroupOptions = deepCopy(newUserGroupOptions)
   },
-  updateRequestUserFunc(state, { newFunc = () => {} }) {
-    console.log('mutation RequestUserFunc', newFunc)
-    state.requestUserFunc = newFunc
-  },
-  updateRequestUserGroupFunc(state, { newFunc = () => {} }) {
-    state.requestUserGroupFunc = newFunc
-  },
-  updateGenerateIdFunc(state, { newFunc = () => {} }) {
-    state.generateIdFunc = newFunc
-  },
 }
 
-const actions = {
-  async dispatchRequestUser({ commit, state: { requestUserFunc } }, payload) {
-    const res = await Promise.resolve(requestUserFunc(payload))
-    commit('updateUserOptions', { newUserOptions: res })
-    return res
-  },
-  async dispatchRequestUserGroup({ commit, state: { requestUserGroupFunc } }, payload) {
-    const res = await Promise.resolve(requestUserGroupFunc(payload))
-    commit('updateUserGroupOptions', { newUserGroupOptions: res })
-    return res
-  },
-  async dispatchGenerateId({ state: { generateIdFunc } }, payload) {
-    const res = await Promise.resolve(generateIdFunc(payload))
-    return res ?? new Date().getTime().toString()
-  },
-}
+const actions = {}
 
 export default {
   namespaced: true,
