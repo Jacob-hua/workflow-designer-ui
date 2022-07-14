@@ -2,7 +2,7 @@
   <div>
     <el-dialog title="查看工作流" fullscreen :visible="visible" @close="onCancel">
       <div class="container">
-        <ProcessInformation :processDisplayInfo="processDisplayInfo" :xml="workflow.content" />
+        <bpmn-info :processDisplayInfo="processDisplayInfo" :xml="workflow.content" />
         <div class="search-wrapper">
           <span>部署类型</span>
           <span>
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView'
+import BpmnInfo from '@/component/BpmnInfo'
 import { mapGetters } from 'vuex'
 import { getDeployBasic } from '@/api/unit/api.js'
 import DeployDetail from './DeployDetail.vue'
@@ -63,7 +63,7 @@ import DeployDetail from './DeployDetail.vue'
 export default {
   name: 'DeployCabinDetail',
   components: {
-    ProcessInformation,
+    BpmnInfo,
     DeployDetail,
   },
   props: {

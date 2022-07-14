@@ -2,11 +2,7 @@
   <el-dialog title="执行工作流" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
     <div class="container">
       <div>
-        <ProcessInformation
-          :xml="workflow.processDeployResource"
-          :processDisplayInfo="processDisplayInfo"
-          @loaded="onLoaded"
-        ></ProcessInformation>
+        <bpmn-info :xml="workflow.processDeployResource" :processDisplayInfo="processDisplayInfo" @loaded="onLoaded" />
         <div class="action-wrapper" v-if="activeAction">
           <el-tabs v-model="activeAction" type="border-card" @tab-click="onSelectAction">
             <el-tab-pane
@@ -49,7 +45,7 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView'
+import BpmnInfo from '@/component/BpmnInfo'
 import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
 import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
 import RuntimeImplementSignature from './RuntimeImplementSignature.vue'
@@ -70,7 +66,7 @@ import { mapState } from 'vuex'
 
 export default {
   components: {
-    ProcessInformation,
+    BpmnInfo,
     preview,
     RuntimeImplementAgency,
     RuntimeImplementCirculate,

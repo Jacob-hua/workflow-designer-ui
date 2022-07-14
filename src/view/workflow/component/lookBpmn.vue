@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="查看" :visible="visible" fullscreen @close="close">
     <div>
-      <ProcessInformation :xml="projectData.content" :processDisplayInfo="processDisplayInfo"></ProcessInformation>
+      <bpmn-info :xml="projectData.content" :processDisplayInfo="processDisplayInfo" />
     </div>
     <span slot="footer">
       <el-button
@@ -23,14 +23,14 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView'
+import BpmnInfo from '@/component/BpmnInfo'
 import { updateWorkFlow } from '@/api/managerWorkflow'
 import { mapState } from 'vuex'
 
 export default {
   name: 'LookBpmn',
   components: {
-    ProcessInformation,
+    BpmnInfo,
   },
   props: {
     projectData: {

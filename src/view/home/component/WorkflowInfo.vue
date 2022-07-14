@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <ProcessInformation
+    <bpmn-info
       :processDisplayInfo="processDisplayInfo"
       :xml="xml"
       @loaded="onLoaded"
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView'
+import BpmnInfo from '@/component/BpmnInfo'
 import { designFormDesignServiceAll } from '@/api/unit/api.js'
 import preview from '@/plugin/FormDesign/component/preview'
 import { mapState } from 'vuex'
@@ -46,7 +46,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'WorkflowInfo',
   components: {
-    ProcessInformation,
+    BpmnInfo,
     preview,
   },
   props: {
