@@ -20,7 +20,7 @@
           <img :src="require('../../../assets/image/history/online-month.svg')" />
         </div>
         <div class="title">{{ headerNum.currentMonthAvgTime }}</div>
-        <div class="label">平均完成时长</div>
+        <div class="label">当月平均完成时长</div>
       </div>
     </div>
     <div>
@@ -43,7 +43,7 @@
           <img :src="require('../../../assets/image/history/online-day.svg')" />
         </div>
         <div class="title">{{ headerNum.currentDayAvgTime }}</div>
-        <div class="label">平均完成时长</div>
+        <div class="label">当日平均完成时长</div>
       </div>
     </div>
   </div>
