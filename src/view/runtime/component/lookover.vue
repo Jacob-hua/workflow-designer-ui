@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import BpmnInfo from '@/component/BpmnInfo'
+import BpmnInfo from '@/component/BpmnInfo.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { getExecuteDetail, downloadTaskAttachmentFile } from '@/api/unit/api.js'
 import { mapState } from 'vuex'

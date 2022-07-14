@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import BpmnInfo from '@/component/BpmnInfo'
+import BpmnInfo from '@/component/BpmnInfo.vue'
 import { updateWorkFlow } from '@/api/managerWorkflow'
 import { mapState } from 'vuex'
 

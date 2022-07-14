@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import BpmnInfo from '@/component/BpmnInfo'
+import BpmnInfo from '@/component/BpmnInfo.vue'
 import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
 import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
 import RuntimeImplementSignature from './RuntimeImplementSignature.vue'

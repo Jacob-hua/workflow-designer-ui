@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import BpmnInfo from '@/component/BpmnInfo'
+import BpmnInfo from '@/component/BpmnInfo.vue'
 import { mapGetters } from 'vuex'
 import { getDeployBasic } from '@/api/unit/api.js'
 import DeployDetail from './DeployDetail.vue'

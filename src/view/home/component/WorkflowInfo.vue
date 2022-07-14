@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import BpmnInfo from '@/component/BpmnInfo'
+import BpmnInfo from '@/component/BpmnInfo.vue'
 import { designFormDesignServiceAll } from '@/api/unit/api.js'
 import preview from '@/plugin/FormDesign/component/preview'
 import { mapState } from 'vuex'
