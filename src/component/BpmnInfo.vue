@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  name: 'ProcessInformation',
+  name: 'BpmnInfo',
   props: {
     xml: {
       type: String,

@@ -18,9 +18,9 @@
 
 <script>
 import { mapState } from 'vuex'
-import { getSystemGroupTree, postPersonUser } from '../../api/unit/api'
-import { getGlobalUUID } from '../../api/globalConfig'
-import IBpmnModeler from '../../plugin/Bpmn/IBpmnModeler'
+import { getSystemGroupTree, postPersonUser } from '../api/unit/api'
+import { getGlobalUUID } from '../api/globalConfig'
+import IBpmnModeler from '../plugin/Bpmn/IBpmnModeler'
 
 function groupTree2CascaderData(data) {
   if (Array.isArray(data)) {

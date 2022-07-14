@@ -13,12 +13,12 @@
 
 <script>
 import { updateWorkFlow, createWorkFlow, publishWorkflow } from '@/api/managerWorkflow'
-import bpmnDesigner from '@/component/bpmnDesigner'
+import BpmnDesigner from '@/component/BpmnDesigner.vue'
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    bpmnDesigner,
+    BpmnDesigner,
   },
   props: {
     projectData: {
