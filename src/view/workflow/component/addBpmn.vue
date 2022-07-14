@@ -13,7 +13,7 @@
 
 <script>
 import { updateWorkFlow, createWorkFlow, publishWorkflow } from '@/api/managerWorkflow'
-import bpmnJsELe from '@/view/bpmnJsELe/index.vue'
+import bpmnJsELe from '@/component/bpmnJsELe'
 import { mapState } from 'vuex'
 
 export default {

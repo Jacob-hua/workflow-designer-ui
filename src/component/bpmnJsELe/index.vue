@@ -1,6 +1,12 @@
 <template>
   <div class="bpmn-wrapper">
-    <bpmn-editor :id="projectData.code" :name="projectData.name" :xml="projectData.content" @loaded="onEditorLoaded" />
+    <bpmn-editor
+      :id="projectData.code"
+      :name="projectData.name"
+      :xml="projectData.content"
+      :generateIdFunc="fetchUUID"
+      @loaded="onEditorLoaded"
+    />
     <bpmn-properties-panel
       ref="propertiesPanel"
       :iBpmnModeler="iBpmnModeler"
@@ -98,7 +104,7 @@ export default {
         return []
       }
     },
-    async fetUUID() {
+    async fetchUUID() {
       try {
         const { errorInfo, result } = await getGlobalUUID()
         if (errorInfo.errorCode) {
