@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="查看" :visible="visible" fullscreen @close="close">
     <div>
-      <bpmnView :valueType="valueType" :projectData="projectData" @edit="onEdit"></bpmnView>
+      <ProcessInformation :xml="projectData.content" :processDisplayInfo="processDisplayInfo"></ProcessInformation>
     </div>
     <span slot="footer">
       <el-button
@@ -23,14 +23,14 @@
 </template>
 
 <script>
-import bpmnView from '@/component/bpmnView/index.vue'
+import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
 import { updateWorkFlow } from '@/api/managerWorkflow'
 import { mapState } from 'vuex'
 
 export default {
   name: 'LookBpmn',
   components: {
-    bpmnView,
+    ProcessInformation,
   },
   props: {
     projectData: {
@@ -41,15 +41,51 @@ export default {
       type: Boolean,
       default: false,
     },
-    valueType: {
-      type: String,
-      default: 'project',
-    },
   },
   computed: {
     ...mapState('account', ['userInfo', 'currentOrganization']),
     statusButtonLabel() {
       return this.projectData.status === 'enabled' ? '停用' : '启用'
+    },
+    processDisplayInfo() {
+      if (this.projectData.ascription === 'public') {
+        return [
+          {
+            label: '流程编码',
+            value: this.projectData.numberCode,
+          },
+          {
+            label: '流程名称',
+            value: this.projectData.name,
+          },
+          {
+            label: '创建时间',
+            value: this.projectData.createTime,
+          },
+        ]
+      }
+      return [
+        {
+          label: '项目',
+          value: this.$getMappingName(this.projectData.ascription),
+        },
+        {
+          label: '业务类型',
+          value: this.$getMappingName(this.projectData.business),
+        },
+        {
+          label: '流程编码',
+          value: this.projectData.numberCode,
+        },
+        {
+          label: '流程名称',
+          value: this.projectData.name,
+        },
+        {
+          label: '创建时间',
+          value: this.projectData.createTime,
+        },
+      ]
     },
   },
   methods: {

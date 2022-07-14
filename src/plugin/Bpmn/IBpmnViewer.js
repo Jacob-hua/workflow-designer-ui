@@ -75,6 +75,7 @@ class IBpmnViewer {
       if (warnings && warnings.length) {
         warnings.forEach(console.warn)
       }
+      this.canvasZoom('fit-viewport', 'auto')
     } catch (e) {
       console.error(`[Process Designer Warn]: ${e?.message || e}`)
     }

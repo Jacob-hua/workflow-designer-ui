@@ -75,9 +75,7 @@ export default {
     },
     lazyLoadUser: {
       type: Function,
-      default: () => {
-        console.log('默认执行')
-      },
+      default: () => {},
     },
   },
   data() {

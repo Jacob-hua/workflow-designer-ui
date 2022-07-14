@@ -8,10 +8,7 @@
       </div>
     </div>
     <div class="process-canvas">
-      <bpmn-canvas
-        :pelatteVisible="false"
-        :headerVisible="false"
-        :linterToggle="false"
+      <bpmn-viewer
         :xml="xml"
         :selectedChanged="onSelectedChange"
         @loaded="onCanvasLoaded"
