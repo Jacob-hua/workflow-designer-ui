@@ -10,8 +10,6 @@ Vue.prototype.$axios = axios
 Vue.prototype.$getMappingName = getMappingName
 Vue.prototype.$generateUUID = generateUUID
 
-import 'bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css'
-
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import JsonViewer from 'vue-json-viewer'

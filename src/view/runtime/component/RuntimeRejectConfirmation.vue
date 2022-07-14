@@ -1,13 +1,6 @@
 <template>
   <el-dialog title="驳回确认" :visible="visible" width="70%" top="5vh" @close="onCancel" append-to-body>
-    <processData
-      ref="processData"
-      v-if="visible"
-      @selection="onSelectedChanged"
-      :BpmnContant="workflow.processDeployResource"
-      :taskKey="workflow.taskKey"
-      :processInstanceId="workflow.processInstanceId"
-    ></processData>
+    <bpmn-info :xml="workflow.processDeployResource" @selectedShape="onSelectedChanged" />
     <div class="reason-wrapper">
       <el-form ref="rejectForm" :model="rejectForm" :rules="rejectRules">
         <el-form-item label="驳回原因" prop="rejectReason">
@@ -23,12 +16,12 @@
 </template>
 
 <script>
-import processData from './processData.vue'
+import BpmnInfo from '../../../component/BpmnInfo.vue'
 
 export default {
   name: 'RuntimeRejectConfirmation',
   components: {
-    processData,
+    BpmnInfo,
   },
   props: {
     visible: {
@@ -69,8 +62,11 @@ export default {
           this.$emit('update:visible', false)
         })
     },
-    onSelectedChanged(taskKey) {
-      this.taskKey = taskKey
+    onSelectedChanged(selectedShape) {
+      if (!selectedShape) {
+        return
+      }
+      this.taskKey = selectedShape.id
     },
   },
 }
