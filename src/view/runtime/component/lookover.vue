@@ -34,6 +34,13 @@
                     </div>
                     <span>{{ time }}</span>
                   </div>
+                  <div v-if="statusHas(status, 'hang')" class="execute-info">
+                    <div>
+                      <i class="el-icon-check warning"></i>
+                      <span>{{ formAssignee }} 挂起</span>
+                    </div>
+                    <span>{{ time }}</span>
+                  </div>
                   <div v-if="statusHas(status, 'rejected')">
                     <div v-for="({ comments, assignee: commentAssignee }, index) in commentList" :key="index">
                       <div v-for="({ message }, index) in comments" :key="index">
