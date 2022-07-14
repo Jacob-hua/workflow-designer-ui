@@ -216,8 +216,18 @@ export default {
       if (this.noExecutor) {
         temps.push(makeComponent.call(this, 'NoExecutor'))
       }
-      const actions = this.iBpmnViewer.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
+      let actions = this.iBpmnViewer.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
+      if (curTaskIsFirstTask.call(this)) {
+        actions = actions.filter((action) => action !== 'Reject')
+      }
       return actions.map(makeComponent.bind(this)).concat(temps)
+
+      function curTaskIsFirstTask() {
+        const curTaskIndex = this.iBpmnViewer
+          .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
+          .findIndex(({ id }) => id === this.workflow.taskKey)
+        return curTaskIndex === 0
+      }
 
       function makeComponent(action) {
         const component = this.actionsConfig[action].component({
