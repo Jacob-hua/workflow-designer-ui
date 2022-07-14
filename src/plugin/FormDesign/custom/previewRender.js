@@ -1,6 +1,5 @@
 import {isAttr, jsonClone} from '../utils';
 import childrenItem from './slot/index';
-import {remoteData} from './mixin';
 
 //先修改在这里,后续需要优化
 
@@ -18,26 +17,34 @@ function downloadFile(fileName, fileType, content, charset = "utf-8") {
     window.URL.revokeObjectURL(link.href);
 }
 
-function vModel(self, dataObject) {
+async function vModel(self, dataObject) {
     dataObject.props.value = self.value;
     dataObject.on.input = val => {
         self.$emit('input', val)
     }
     //判断是否为上传组件
     if (self.conf.compType === 'upload') {
-
         if (self.conf.value.length) {
+            if (self.conf.value[0].type.includes('image')) {
+                const result = await Promise.resolve(self.downloadFun({url: self.value[0].url}))
+                const blob = new Blob([result], {
+                    type: `${self.value[0].type};charset=utf-8`,
+                });
+                const fileReader = new FileReader()
+                fileReader.readAsDataURL(blob)
+                self.conf.value[0].url = fileReader.result
+            }
             dataObject.attrs['file-list'] = self.conf.value
         }
         dataObject.attrs['auto-upload'] = false // 文件手动上传
         dataObject.attrs['on-preview'] = async (file) => {
-                if (self.downloadFun) {
-                    const result = await Promise.resolve(self.downloadFun(file))
-                    if (!result) {
-                        return
-                    }
-                    downloadFile(file.name, file.type, result)
+            if (self.downloadFun) {
+                const result = await Promise.resolve(self.downloadFun(file))
+                if (!result) {
+                    return
                 }
+                downloadFile(file.name, file.type, result)
+            }
         }
         dataObject.attrs['on-remove'] = async (file, fileList) => {
             self.conf.value.splice(self.conf.value.findIndex(item => item.uid === file.uid), 1)
@@ -82,7 +89,6 @@ export default {
             style: {}
         }
         //远程获取数据
-        this.getRemoteData();
         if (this.quoteOption.length) {
             this.conf.options = this.quoteOption
         }
@@ -108,5 +114,4 @@ export default {
         return h(confClone.ele, dataObject, children)
     },
     props: ['conf', 'value', 'quoteOption', 'getFileList', 'uploadFun', 'downloadFun'],
-    mixins: [remoteData]
 }

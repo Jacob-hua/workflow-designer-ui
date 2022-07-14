@@ -105,9 +105,6 @@
           <el-input v-model="variableOption[index][variable]" ></el-input>
         </div>
       </el-form-item>
-      <el-form-item label="系统变量">
-        <el-input class="input" placeholder="$符号+变量名" v-model="props.variable"></el-input>
-      </el-form-item>
     </div>
   </div>
 </template>
@@ -192,22 +189,34 @@ export default {
         // 获取开闭所问题是不是
          this.currentDetail = res.result.filter(item => item.id === id)[0]
          this.variableArr = variableFactory(this.currentDetail)
+          console.log(this.variableArr)
          this.addThirdPartyApi( { id: this.currentDetail.id } )
         if (this.variableArr) {
           this.variableOption = this.variableArr.map(variable =>(
               {
-                [variable] : variable
+                [variable] :`#${variable}`
               }
           ))
         }
 
+
           this.itemList.forEach(item => {
-            if (item.id ===  this.props.id) {
-              item.requestConfig = this.currentDetail
-              item.relationMapping = this.variableOption
+            if (item.columns) {
+              item.columns.forEach(col => {
+                col.list.forEach(current => {
+                  if (current.id ===  this.props.id) {
+                    current.requestConfig = this.currentDetail
+                    current.relationMapping = this.variableOption
+                  }
+                })
+              })
+            } else {
+              if (item.id ===  this.props.id) {
+                item.requestConfig = this.currentDetail
+                item.relationMapping = this.variableOption
+              }
             }
           })
-
 
           // console.log(arr)
         // _this.executeFunction({api: this.currentDetail, relation: this.props.relation, value: ''}  )

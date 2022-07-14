@@ -17,9 +17,11 @@
         :expand-on-click-node="false"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span>{{ data.name }}
+        <span >{{ data.name }}
           <el-input size="mini" v-if="showinput && data.id === currentNode.id" v-model="nodeCode" placeholder="请输入项目code"></el-input>
-          <el-input size="mini" v-if="showinput && data.id === currentNode.id" @blur="(e) => onblur(node, data)" placeholder="请输入节点名称"  v-model="inptVal"></el-input></span>
+          <el-input size="mini" v-if="showinput && data.id === currentNode.id" placeholder="请输入节点名称"  v-model="inptVal"></el-input>
+          <span class="plain" @click="onblur(node, data)"  v-if="showinput && data.id === currentNode.id">确定</span>
+        </span>
         <span>
           <i v-if="editFlag && node.level < 3" @click="(e)=> append(data,node)" style="font-size: 20px !important; color: #409eff;margin-left: 10px" class="el-icon-circle-plus-outline"></i>
           <i v-if="data.id !==1 && data.parentId != -1" @click="remove(node, data)" style="font-size: 20px !important; color: red;margin-left: 10px" class="el-icon-remove-outline"></i>
@@ -162,25 +164,31 @@ export default {
 
     },
     onblur(node, data) {
-      checkCode({
-        tenantId: this.tenantId,
-        code: this.nodeCode,
-        projectCode: this.forms.code || this.data[0].code
-      }).then(res => {
-        if (res.errorInfo.errorMsg) {
-          return
-        }
-        this.businessConfigWithTreeCreate({
-          "code": this.nodeCode,
-          "name": this.inptVal,
-          "createBy":this.userInfo.account,
-          "tenantId":this.tenantId,
-          "type":"industry",
-          "parentId":data.id,
-          "ascription":this.data[0].code
+      if (this.nodeCode && this.inptVal) {
+        checkCode({
+          tenantId: this.tenantId,
+          code: this.nodeCode,
+          projectCode: this.forms.code || this.data[0].code
+        }).then(res => {
+          if (res.errorInfo.errorMsg) {
+            return
+          }
+          this.businessConfigWithTreeCreate({
+            "code": this.nodeCode,
+            "name": this.inptVal,
+            "createBy":this.userInfo.account,
+            "tenantId":this.tenantId,
+            "type":"industry",
+            "parentId":data.id,
+            "ascription":this.data[0].code
+          })
         })
-      })
-
+      } else {
+        this.$message({
+          type: 'warning',
+          message: 'code 或节点名称不能为空'
+        })
+      }
     },
     handleNodeClick(data) {
     },
@@ -221,6 +229,20 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.plain {
+  display: inline-block;
+  font-size: 14px;
+  color: #FFAB00;
+  width: 100px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  padding: 0;
+  border: 1px solid #FFAB00;
+  background-color: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
 .next {
   @include primaryBtn;

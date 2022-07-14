@@ -33,7 +33,7 @@ export let cascader = {
     dataType:'static',
     'china-area-data':false,
     //请求地址
-    action:'https://www.fastmock.site/mock/51715c0157535b99010bde55f2df33c8/formDesigner/api/cascaderOptions',
+    action:'',
     props:{
       //清空
       clearable:true,

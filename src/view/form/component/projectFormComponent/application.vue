@@ -305,8 +305,8 @@ export default {
   overflow-y: auto;
 }
 .processList-item {
-  width: 290px;
-  height: 178px;
+  width: 312px;
+  height: 224px;
   background-color: #212739;
   padding: 20px 0px 0px 20px;
   position: relative;

@@ -49,6 +49,5 @@ export let input = {
   //前缀
   prepend:'',
   //后缀
-  append:'',
-  variable: '',
+  append:''
 }

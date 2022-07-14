@@ -18,6 +18,8 @@
               v-if="element.compType === 'row'"
               :key="'row-'+index"
               :model="element"
+              :itemList="itemList"
+              :index = 'index'
               :quoteOption="quoteOption"
               :getFileList="getFileList"
               :uploadFun = 'uploadFun'
@@ -92,9 +94,15 @@ export default {
         formFields: 'metaDataList',
     }),
   ],
+  created(){
+   this.handlerInitDatas();
+  },
   computed:{
     metaDataList : function () {
       return this.itemList.map((fieldInfo) => {
+        if (fieldInfo.relationMapping && fieldInfo.relationMapping.length) {
+          fieldInfo.context = this.getContext()
+        }
         return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
             executeApi({
               apiMark: fieldInfo.requestConfig.apiMark,
@@ -167,49 +175,19 @@ export default {
           throw  new Error(e.toString())
         }
       },
+   async getContext() {
+     const { result } =  await processVariable({
+        processInstanceId: 'c4ace818-01a9-11ed-8113-b215cd163104'
+      })
+      return  result
+    },
     handlerAddRow:addRow,
     handlerDeleteRow:deleteRow,
     handlerBatchDeleteRow:batchDeleteRow,
     handlerInitDatas:datas,
   },
-  created(){
-    this.handlerInitDatas();
-  },
-  mounted() {
-    processVariable({
-      processInstanceId: '18d5241d-f856-11ec-a9d6-ba48737afcba'
-    }).then(res => {
-      let flag = false
-      this.metaDataList.forEach(meta => {
-        if (meta.columns) {
-          flag =  true
-          meta.columns.forEach(item => {
-            item.list.forEach(col => {
-              if (col.variable.includes('$')) {
-                let character  = col.variable.split('$')[1]
-                if (this.form.id === character) {
-                  this.form[col.id] = (res.result)[character]
-                }
-                // else {
-                //   this.form[character] = (res.result)[character]
-                // }
-              }
-            })
-          })
-        }
-      })
-      if (flag) {
-        return
-      }
-      let sysVar = this.metaDataList.filter(item => item.variable)
-      sysVar.forEach(sys=> {
-        if (sys.variable.includes('$')) {
-          let character  = sys.variable.split('$')[1]
-          this.form[sys.id] = (res.result)[character]
-        }
-      })
 
-    })
+  mounted() {
   },
   beforeCreate(){
   },
