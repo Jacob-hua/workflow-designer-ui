@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
+import ProcessInformation from '@/component/bpmnView'
 import { updateWorkFlow } from '@/api/managerWorkflow'
 import { mapState } from 'vuex'
 

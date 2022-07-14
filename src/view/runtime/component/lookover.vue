@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
+import ProcessInformation from '@/component/bpmnView'
 import preview from '@/plugin/FormDesign/component/preview'
 import { getExecuteDetail, downloadTaskAttachmentFile } from '@/api/unit/api.js'
 import { mapState } from 'vuex'

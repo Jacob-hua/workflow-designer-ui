@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
+import ProcessInformation from '@/component/bpmnView'
 import RuntimeImplementAgency from './RuntimeImplementAgency.vue'
 import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue'
 import RuntimeImplementSignature from './RuntimeImplementSignature.vue'

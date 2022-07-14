@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
+import ProcessInformation from '@/component/bpmnView'
 import { mapGetters } from 'vuex'
 import { getDeployBasic } from '@/api/unit/api.js'
 import DeployDetail from './DeployDetail.vue'

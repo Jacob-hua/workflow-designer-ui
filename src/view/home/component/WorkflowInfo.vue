@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import ProcessInformation from '@/component/bpmnView/ProcessInformation.vue'
+import ProcessInformation from '@/component/bpmnView'
 import { designFormDesignServiceAll } from '@/api/unit/api.js'
 import preview from '@/plugin/FormDesign/component/preview'
 import { mapState } from 'vuex'
@@ -197,7 +197,7 @@ export default {
   }
 }
 
- .ticket-info {
+.ticket-info {
   flex: 1;
   margin-top: 20px;
 }
