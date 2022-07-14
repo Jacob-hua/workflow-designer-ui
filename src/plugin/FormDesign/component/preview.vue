@@ -104,7 +104,6 @@ export default {
           fieldInfo.context = this.getContext()
         }
         return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
-          debugger
             executeApi({
               apiMark: fieldInfo.requestConfig.apiMark,
               sourceMark: fieldInfo.requestConfig.sourceMark,

@@ -1,8 +1,9 @@
 <template>
   <el-col>
     <el-row @mouseenter.native='move' @mouseleave.native='leave' class="rows" :gutter="model.gutter">
-      <i @click="addComponent(model)" v-show="iconFlag" style="" class="copy el-icon-circle-plus-outline"></i>
-      <i @click="delComponent(model)" v-show="iconFlag && index !== firstIndex" style=""
+      <i @click="addComponent(model)" v-show="iconFlag && index === firstIndex"
+         class="copy el-icon-circle-plus-outline"></i>
+      <i @click="delComponent(model)" v-show="iconFlag && index !== firstIndex"
          class="del el-icon-remove-outline"></i>
       <div class="drag-wrapper">
         <slot></slot>
@@ -12,6 +13,7 @@
 </template>
 <script>
 import _ from 'lodash'
+import {getSimpleId} from "@/plugin/FormDesign/utils/IdGenerate";
 
 export default {
   name: "previewRowItem",
@@ -28,10 +30,24 @@ export default {
     this.firstIndex = this.itemList.map(element => element.compType).indexOf('row')
   },
   methods: {
-    addComponent(data) {
-      data = _.cloneDeep(data)
-      data.id = data.id + 1
-      this.itemList.push(data)
+    addComponent(model, position = '001') {
+      const clone = JSON.parse(JSON.stringify(model))
+      const uId = "row_"+getSimpleId();
+      clone.id = uId;
+      clone._id = uId;
+      clone.columns.map((column)=>{
+        let itemList = [];
+        column.list.map((item,i)=>{
+          const cloneitem = JSON.parse(JSON.stringify(item))
+          const uId = "fd_"+getSimpleId();
+          cloneitem.id = uId;
+          cloneitem._id = uId;
+          itemList.push(cloneitem);
+        })
+        column.list = [];
+        column.list = itemList;
+      })
+      this.itemList.push(clone);
     },
     delComponent(data) {
       this.itemList.splice(this.itemList.findIndex((item) => item.id === data.id), 1)
@@ -63,7 +79,7 @@ export default {
 
 .copy {
   position: absolute;
-  right: 40px;
+  right: 0;
   top: -30px;
   cursor: pointer;
   font-size: 30px !important;

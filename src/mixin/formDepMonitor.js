@@ -88,26 +88,6 @@ function judgeValueFrom({ relationMapping = [] } ) {
 export function mixinExecuteFunction(fieldInfo, executeFunc = () => {
 }) {
     const newFieldInfo = {...fieldInfo}
-    let isHas = false
-    let cloInfo = {}
-    if (newFieldInfo.columns) {
-        debugger
-        cloInfo =  newFieldInfo.columns.reduce((cloInfo, currentInfo) => {
-            currentInfo.list.forEach(item => {
-                if (item.requestConfig) {
-                    isHas = true
-                    cloInfo = item
-                }
-            })
-            return cloInfo
-
-        })
-    }
-    if(isHas) {
-        let parameterHandlers = parameterHandlerFactory(cloInfo.requestConfig)
-        executeFunc(parameterHandlers(cloInfo.requestConfig), cloInfo)
-        return
-    }
     if (!newFieldInfo.requestConfig) {
         return newFieldInfo
     }
@@ -121,7 +101,6 @@ export function mixinExecuteFunction(fieldInfo, executeFunc = () => {
 
 
     const oldVariables = variables.reduce((oldVariables, variable) => ({...oldVariables, [variable]: ''}), {})
-
     if (newFieldInfo.relationMapping.length) {
         ContextOrFormLogic[judgeValueFrom(newFieldInfo)]({
             oldVariables,

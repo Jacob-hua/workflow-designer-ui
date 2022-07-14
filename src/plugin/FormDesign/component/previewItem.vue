@@ -45,6 +45,7 @@ export default {
   },
 
   render(h) {
+
     return layouts.colItem.call(this, h, this.eleConfig,this.value, this.quoteOption, this.getFileList, this.uploadFun, this.downloadFun)
   }
 }
