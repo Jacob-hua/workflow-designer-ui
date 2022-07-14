@@ -296,18 +296,6 @@ export default {
       this.runtimeAddVisible = false
       this.fetchNewTasks()
     },
-    detailsDiolog(row) {
-      this.$refs.lookover.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.lookover.$refs.ProcessInformation.postData = row
-        this.$refs.lookover.$refs.ProcessInformation.postData.deployName = row.processName
-        this.$refs.lookover.$refs.ProcessInformation.postData.version = row.starter
-        this.$refs.lookover.$refs.ProcessInformation.postData.createTime = row.startTime
-        this.$refs.lookover.$refs.ProcessInformation.postData.systemType = row.processDeployType
-        this.$refs.lookover.getListData(row.trackList)
-        this.$refs.lookover.$refs.ProcessInformation.createNewDiagram(row.content, row.taskKey)
-      })
-    },
     onAddTicket() {
       this.runtimeAddVisible = true
     },

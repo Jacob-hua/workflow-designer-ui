@@ -107,7 +107,11 @@ export default {
     this.initBpmn()
   },
   beforeUpdate() {
+    this.unBridgingFunc()
+  },
+  updated() {
     this.namespace = generateNamespace(this)
+    this.unBridgingFunc = bridgingBpmn(this.$store, this.namespace, this.iBpmnModeler, bridgingModuleFunc)
   },
   beforeDestroy() {
     this.unBridgingFunc()
