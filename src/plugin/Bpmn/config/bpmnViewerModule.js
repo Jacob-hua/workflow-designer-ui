@@ -1,4 +1,7 @@
 const moduleConfig = {
+  elementRegistry: {
+    prefix: 'elementRegistry',
+  },
   eventBus: {
     prefix: '',
   },

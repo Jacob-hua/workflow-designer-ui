@@ -11,7 +11,7 @@
       <bpmn-viewer
         :xml="xml"
         :selectedChanged="onSelectedChange"
-        @loaded="onCanvasLoaded"
+        @loaded="onBpmnViewerLoaded"
       />
     </div>
   </div>
@@ -31,11 +31,11 @@ export default {
     },
   },
   methods: {
-    onCanvasLoaded(iBpmn) {
-      this.$emit('loaded', iBpmn)
+    onBpmnViewerLoaded(iBpmnViewer) {
+      this.$emit('loaded', iBpmnViewer)
     },
-    onSelectedChange(shape, iBpmn) {
-      this.$emit('selectedShape', shape, iBpmn)
+    onSelectedChange(shape, iBpmnViewer) {
+      this.$emit('selectedShape', shape, iBpmnViewer)
     },
   },
 }

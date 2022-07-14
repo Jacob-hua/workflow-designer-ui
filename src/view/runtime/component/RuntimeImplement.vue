@@ -2,7 +2,11 @@
   <el-dialog title="执行工作流" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
     <div class="container">
       <div>
-        <bpmn-info :xml="workflow.processDeployResource" :processDisplayInfo="processDisplayInfo" @loaded="onLoaded" />
+        <bpmn-info
+          :xml="workflow.processDeployResource"
+          :processDisplayInfo="processDisplayInfo"
+          @loaded="onBpmnInfoLoaded"
+        />
         <div class="action-wrapper" v-if="activeAction">
           <el-tabs v-model="activeAction" type="border-card" @tab-click="onSelectAction">
             <el-tab-pane
@@ -190,6 +194,7 @@ export default {
       },
       curExecuteShape: undefined,
       noExecutor: false,
+      iBpmnViewer: {},
     }
   },
   computed: {
@@ -208,7 +213,7 @@ export default {
       if (this.noExecutor) {
         temps.push(makeComponent.call(this, 'NoExecutor'))
       }
-      const actions = this.$iBpmn.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
+      const actions = this.iBpmnViewer.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
       return actions.map(makeComponent.bind(this)).concat(temps)
 
       function makeComponent(action) {
@@ -253,7 +258,7 @@ export default {
   watch: {
     actions(actions) {
       if (!this.activeAction) {
-        this.activeAction = actions[0].value
+        this.activeAction = actions[0]?.value
       }
     },
   },
@@ -293,27 +298,28 @@ export default {
         this.roleBoolean = true
       }
     },
-    onLoaded() {
+    onBpmnInfoLoaded(iBpmnViewer) {
+      this.iBpmnViewer = iBpmnViewer
       if (!this.workflow.trackList) {
         return
       }
       const completedTaskList = this.workflow.trackList
         .filter(({ taskKey }) => taskKey !== this.workflow.taskKey)
         .map(({ taskKey }) => taskKey)
-      this.$iBpmn
+      iBpmnViewer
         .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
         .forEach((element) => {
           if (element.id === this.workflow.taskKey) {
-            this.$iBpmn.canvasAddMarker(element, 'svgOncomplete')
+            iBpmnViewer.canvasAddMarker(element, 'svgOncomplete')
             return
           }
           if (completedTaskList.includes(element.id)) {
-            this.$iBpmn.canvasAddMarker(element, 'svgComplete')
+            iBpmnViewer.canvasAddMarker(element, 'svgComplete')
             return
           }
-          this.$iBpmn.canvasAddMarker(element, 'svgIncomplete')
+          iBpmnViewer.canvasAddMarker(element, 'svgIncomplete')
         })
-      const value = this.$iBpmn.elementRegistryFind(({ id }) => id === this.workflow.taskKey)
+      const value = iBpmnViewer.elementRegistryFind(({ id }) => id === this.workflow.taskKey)
       this.curExecuteShape = value
       if (value) {
         this.fetchFormData(value.businessObject.formKey)

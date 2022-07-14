@@ -1,5 +1,6 @@
 import BpmnViewer from 'bpmn-js/lib/NavigatedViewer'
 import ImportModule from 'bpmn-js/lib/import'
+import ElementRegistry from 'diagram-js/lib/core/ElementRegistry'
 import X2JS from 'x2js'
 import { filterPublicFunction } from './utils/function'
 import { getShapType } from './enum/shapeType'
@@ -32,7 +33,7 @@ class IBpmnViewer {
     this.i18n = props.i18n
 
     this.#viewer = new BpmnViewer({
-      additionalModules: [custom, ImportModule],
+      additionalModules: [custom, ImportModule, ElementRegistry],
       moddleExtensions: config.extensions[this.type],
     })
 
@@ -62,6 +63,27 @@ class IBpmnViewer {
 
   getShapeInfo(element) {
     return element.businessObject ?? {}
+  }
+
+  getShapeInfoByType(element, type) {
+    const shapeProperties = this.getShapeInfo(element)
+    if (shapeProperties.$type === type) {
+      return shapeProperties
+    }
+    if (shapeProperties[type]) {
+      return shapeProperties[type]
+    }
+    const extensionElements = shapeProperties.extensionElements
+    if (!extensionElements) {
+      return
+    }
+    if (extensionElements.$type === type) {
+      return extensionElements
+    }
+    if (Array.isArray(extensionElements.values) && extensionElements.values.length > 0) {
+      return extensionElements.values.filter(({ $type }) => $type === type)
+    }
+    return
   }
 
   getShapeType(element) {

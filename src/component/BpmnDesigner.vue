@@ -74,6 +74,7 @@ export default {
   methods: {
     onEditorLoaded(iBpmnModeler) {
       this.iBpmnModeler = iBpmnModeler
+      this.$emit('loaded', iBpmnModeler)
     },
     async fetchUserGroup(params) {
       try {
