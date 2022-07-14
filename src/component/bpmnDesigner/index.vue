@@ -47,7 +47,7 @@ function users2CascaderData(data) {
 }
 
 export default {
-  name: 'bpmnEle',
+  name: 'bpmnDesigner',
   props: {
     projectData: {
       type: Object,

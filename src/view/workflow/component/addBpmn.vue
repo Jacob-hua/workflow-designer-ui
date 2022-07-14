@@ -1,7 +1,7 @@
 <template>
   <el-dialog :title="title" :visible="visible" @close="onClose" fullscreen>
     <div class="editor-wrapper">
-      <bpmnJsELe :projectData="projectData" v-if="visible"></bpmnJsELe>
+      <bpmn-designer :projectData="projectData" v-if="visible"></bpmn-designer>
     </div>
     <div slot="footer">
       <el-button class="publish" @click="onPublish">发布</el-button>
@@ -13,12 +13,12 @@
 
 <script>
 import { updateWorkFlow, createWorkFlow, publishWorkflow } from '@/api/managerWorkflow'
-import bpmnJsELe from '@/component/bpmnJsELe'
+import bpmnDesigner from '@/component/bpmnDesigner'
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    bpmnJsELe,
+    bpmnDesigner,
   },
   props: {
     projectData: {
