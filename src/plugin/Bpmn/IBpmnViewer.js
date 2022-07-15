@@ -20,6 +20,11 @@ const defaultIBpmnViewerProps = {
   type: 'camunda',
   i18n: zh,
   id: Date.now().toString(),
+  bpmnRenderer: {
+    defaultFillColor: 'white',
+    defaultStrokeColor: 'black',
+    defaultLabelColor: 'black',
+  },
 }
 
 class IBpmnViewer {
@@ -33,7 +38,11 @@ class IBpmnViewer {
     this.i18n = props.i18n
 
     this.#viewer = new BpmnViewer({
-      additionalModules: [custom, ImportModule, ElementRegistry],
+      bpmnRenderer: {
+        ...props.bpmnRenderer,
+      },
+      // additionalModules: [custom, ImportModule, ElementRegistry],
+      additionalModules: [ImportModule, ElementRegistry],
       moddleExtensions: config.extensions[this.type],
     })
 

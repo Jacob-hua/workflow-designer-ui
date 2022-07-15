@@ -51,6 +51,10 @@ export default {
       type: Function,
       default: () => {},
     },
+    prop: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     const defaultProp = {
@@ -146,7 +150,7 @@ export default {
   flex-direction: column;
 }
 .containers {
-  background-color: #ffffff;
+  background-color: $container-bg-color;
   width: 100%;
   height: 100%;
 }
