@@ -10,6 +10,13 @@
     <div class="process-canvas">
       <bpmn-viewer
         :xml="xml"
+        :prop="{
+          bpmnRenderer: {
+            defaultFillColor: 'none',
+            defaultStrokeColor: '#666666',
+            defaultLabelColor: '#666666',
+          },
+        }"
         :selectedChanged="onSelectedChange"
         @loaded="onBpmnViewerLoaded"
       />

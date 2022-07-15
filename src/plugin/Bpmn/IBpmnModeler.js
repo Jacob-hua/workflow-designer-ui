@@ -33,6 +33,11 @@ const defaultIBpmnProps = {
   lintActive: true,
   i18n: zh,
   id: Date.now().toString(),
+  bpmnRenderer: {
+    defaultFillColor: 'white',
+    defaultStrokeColor: 'black',
+    defaultLabelColor: 'black',
+  },
 }
 
 class IBpmnModeler {
@@ -47,8 +52,11 @@ class IBpmnModeler {
     this.i18n = props.i18n
 
     this.#modeler = new BpmnModeler({
+      bpmnRenderer: {
+        ...props.bpmnRenderer,
+      },
       additionalModules: [
-        custom,
+        // custom,
         lintModule,
         {
           translate: ['value', customTranslate(this.i18n)],

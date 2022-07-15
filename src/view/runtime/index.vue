@@ -304,7 +304,7 @@ export default {
     },
     onTaskSuccess() {
       this.runtimeImplementVisible = false
-      this.fetchNewTasks()
+      this.getAllApi()
     },
     async getAllApi() {
       await Promise.all([this.fetchDataNumber(), this.fetchNewTasks(), this.fetchAmount()])
