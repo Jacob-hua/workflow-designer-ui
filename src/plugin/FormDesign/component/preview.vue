@@ -19,6 +19,7 @@
               :key="'row-'+index"
               :model="element"
               :itemList="itemList"
+              @changeItemList = "changeItemList"
               :index = 'index'
               :quoteOption="quoteOption"
               :getFileList="getFileList"
@@ -68,6 +69,7 @@ import {datas,addRow,batchDeleteRow,deleteRow} from "../custom/formDraw";
 import formDepMonitorMixin, {mixinExecuteFunction} from "@/mixin/formDepMonitor";
 import {executeApi, processVariable} from "@/api/globalConfig";
 import _ from 'lodash'
+import {getSimpleId} from "@/plugin/FormDesign/utils/IdGenerate";
 
 export default {
   name:'preview',
@@ -123,6 +125,26 @@ export default {
     }
   },
   methods:{
+    changeItemList(model) {
+      const clone = _.cloneDeep(model)
+      const uId = "row_"+getSimpleId();
+      clone.id = uId;
+      clone._id = uId;
+      clone.columns.map((column)=>{
+        let itemList = [];
+        if (column.list.length) {
+          column.list.map((item)=>{
+            const cloneitem = _.cloneDeep(item)
+              cloneitem.id = `${cloneitem.id}_${getSimpleId()}`;
+              cloneitem._id = cloneitem.id;
+              itemList.push(cloneitem);
+          })
+          column.list = [];
+          column.list = itemList;
+        }
+      })
+      this.itemList.push(clone);
+    },
     deleteEmptyChildren(arr) {
       for (let i = 0; i < arr.length; i++) {
         const arrElement = arr[i];

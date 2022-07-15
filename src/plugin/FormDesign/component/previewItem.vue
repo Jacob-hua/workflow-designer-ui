@@ -6,9 +6,10 @@ const layouts = {
   colItem(h, element,value, quoteOption, getFileList, uploadFun, downloadFun) {
     let labelWidth = element.labelWidth ? `${element.labelWidth}px` : null
     const {valChange} = this.$listeners;
-    const rules = checkRules(element);
+    const rules = checkRules(element)
+    value = value ?? []
     return (
-        <el-col  style="padding-left: 7.5px; padding-right: 7.5px;">
+        <el-col  style="{padding-left: 7.5px; padding-right: 7.5px;">
           <el-form-item label={element.showLabel ? element.label : ''}
                         label-width={labelWidth}
                         prop={element.id}
