@@ -12,8 +12,6 @@
   </el-col>
 </template>
 <script>
-import _ from 'lodash'
-import {getSimpleId} from "@/plugin/FormDesign/utils/IdGenerate";
 
 export default {
   name: "previewRowItem",
@@ -30,26 +28,8 @@ export default {
     this.firstIndex = this.itemList.map(element => element.compType).indexOf('row')
   },
   methods: {
-    addComponent(model, position = '001') {
-      const clone = _.cloneDeep(model)
-      const uId = "row_"+getSimpleId();
-      clone.id = uId;
-      clone._id = uId;
-      clone.columns.map((column)=>{
-        let itemList = [];
-        if (column.list.length) {
-          column.list.map((item)=>{
-            const cloneitem = _.cloneDeep(item)
-              cloneitem.id = `${cloneitem.id}_${getSimpleId()}`;
-              cloneitem._id = cloneitem.id;
-              itemList.push(cloneitem);
-          })
-          column.list = [];
-          column.list = itemList;
-        }
-      })
-      console.log(clone)
-      this.itemList.push(clone);
+    addComponent(model) {
+      this.$emit('changeItemList', model)
     },
     delComponent(data) {
       this.itemList.splice(this.itemList.findIndex((item) => item.id === data.id), 1)
