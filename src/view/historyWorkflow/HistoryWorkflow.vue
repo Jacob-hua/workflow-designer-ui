@@ -169,8 +169,8 @@ export default {
     searchForm: {
       deep: true,
       handler() {
-        this.getHistoryTaskList(this.pageInfo)
-        this.getHeaderNum()
+        this.fetchHistoryTasks(this.pageInfo)
+        this.fetchHistoryStatistic()
       },
     },
     currentOrganization: {
@@ -196,26 +196,39 @@ export default {
       this.lookoverVisible = true
       this.processInstanceId = row.processInstanceId
     },
-    getHeaderNum() {
-      postHistoryProcessCountStatistic({
+    async fetchHistoryStatistic() {
+      const {
+        ascription,
+        business,
+        valueDate: [startTime, endTime],
+      } = this.searchForm
+      const { errorInfo, result } = await postHistoryProcessCountStatistic({
         assignee: this.userInfo.account,
-        ascription: this.searchForm.ascription,
-        business: this.searchForm.business,
-        startTime: this.searchForm.valueDate[0],
-        endTime: this.searchForm.valueDate[1],
         tenantId: this.tenantId,
-      }).then((res) => {
-        this.headerNum = res.result
+        ascription,
+        business,
+        startTime,
+        endTime,
       })
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      this.headerNum = result
     },
-    async getHistoryTaskList(pageInfo) {
+    async fetchHistoryTasks(pageInfo) {
+      const {
+        ascription,
+        business,
+        valueDate: [startTime, endTime],
+      } = this.searchForm
       const [{ errorInfo, result }] = await Promise.all([
         await listHistoryTask({
-          ascription: this.searchForm.ascription,
+          ascription,
           assignee: this.userInfo.account, // 执行人
-          business: this.searchForm.business,
-          endTime: this.searchForm.valueDate[1], // 结束时间
-          startTime: this.searchForm.valueDate[0], // 起始时间
+          business,
+          endTime, // 结束时间
+          startTime, // 起始时间
           order: 'desc', // 排序方式
           ...pageInfo,
           tenantId: this.tenantId, // 租户id
