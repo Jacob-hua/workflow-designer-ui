@@ -9,14 +9,11 @@
             <el-timeline-item
               :timestamp="taskName"
               placement="top"
-              v-for="({ taskName, formDataList, endTime, status, commentList }, index) in trackList"
-              :key="index"
+              v-for="{ taskName, formDataList, status, commentList, taskId } in trackList"
+              :key="taskId"
             >
               <div class="contant">
-                <div
-                  v-for="({ formContent, status: formStatus, assignee: formAssignee }, index1) in formDataList"
-                  :key="index1"
-                >
+                <div v-for="({ formContent, assignee: formAssignee, time }, index) in formDataList" :key="index">
                   <div v-if="formContent" class="form">
                     <preview
                       :itemList="formContent.list"
@@ -24,21 +21,38 @@
                       :downloadFun="downloadFile.bind(this)"
                     ></preview>
                   </div>
-                  <div v-if="formStatus === 'completed'">
-                    <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
-                    <span class="word1">{{ formAssignee }} <span>(执行)</span></span>
-                    <span class="dataYear">{{ endTime }}</span>
+                  <div v-if="statusHas(status, 'run')" class="execute-info">
+                    <div>
+                      <i class="el-icon-check executing"></i>
+                      <span>{{ formAssignee }} 执行中</span>
+                    </div>
                   </div>
-                  <div v-if="status === 'rejected'">
-                    <div v-for="({ comments, assignee: commentAssignee }, index1) in commentList" :key="index1">
-                      <div v-for="({ message }, index2) in comments" :key="index2">
-                        <i class="el-icon-warning-outline success"></i>
-                        <span class="word1">{{ message }}</span>
+                  <div v-if="statusHas(status, 'completed')" class="execute-info">
+                    <div>
+                      <i class="el-icon-check success"></i>
+                      <span>{{ formAssignee }} 执行</span>
+                    </div>
+                    <span>{{ time }}</span>
+                  </div>
+                  <div v-if="statusHas(status, 'hang')" class="execute-info">
+                    <div>
+                      <i class="el-icon-check warning"></i>
+                      <span>{{ formAssignee }} 挂起</span>
+                    </div>
+                    <span>{{ time }}</span>
+                  </div>
+                  <div v-if="statusHas(status, 'rejected')">
+                    <div v-for="({ comments, assignee: commentAssignee }, index) in commentList" :key="index">
+                      <div v-for="({ message }, index) in comments" :key="index">
+                        <i class="el-icon-warning-outline warning"></i>
+                        <span>{{ message }}</span>
                       </div>
-                      <div>
-                        <i class="el-icon-check" :class="endTime === '-' ? 'error' : 'success'"></i>
-                        <span class="word1">{{ commentAssignee }} <span style="color: red">(驳回)</span> </span>
-                        <span class="dataYear">{{ endTime }}</span>
+                      <div class="execute-info">
+                        <div>
+                          <i class="el-icon-close warning"></i>
+                          <span>{{ commentAssignee }} 驳回 </span>
+                        </div>
+                        <span>{{ time }}</span>
                       </div>
                     </div>
                   </div>
@@ -146,6 +160,9 @@ export default {
     this.fetchExecuteDetail()
   },
   methods: {
+    statusHas(status = '', target = '') {
+      return status.split(',').includes(target)
+    },
     onClose() {
       this.$emit('close')
       this.$emit('update:visible', false)
@@ -199,11 +216,20 @@ export default {
 .contant {
   line-height: 54px;
   padding: 0px 20px 0px 20px;
-  position: relative;
-}
+  background-color: $card-bg-color-1;
+  border: 1px solid $border-color-1;
+  border-radius: 8px;
+  color: $font-color;
 
-.contant .form {
-  padding-top: 20px;
+  .form {
+    padding-top: 20px;
+  }
+
+  .execute-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 .el-icon-check {
@@ -216,28 +242,29 @@ export default {
   margin-right: 20px;
 }
 
+.el-icon-close {
+  font-size: 20px;
+  margin-right: 20px;
+}
+
 .success {
   background-color: #009900;
   color: white;
   border-radius: 50%;
-  /* border: 1px solid #009900; */
   border: none;
 }
 
-.error {
-  background-color: #999999;
+.warning {
+  background-color: #FFAB00;
   color: white;
   border-radius: 50%;
   border: none;
 }
 
-.dataYear {
-  position: absolute;
-  right: 20px;
-}
-
-.dataMin {
-  position: absolute;
-  right: 20px;
+.executing {
+  background-color: #999999;
+  color: white;
+  border-radius: 50%;
+  border: none;
 }
 </style>

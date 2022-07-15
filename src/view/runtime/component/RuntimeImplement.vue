@@ -10,10 +10,10 @@
         <div class="action-wrapper" v-if="activeAction">
           <el-tabs v-model="activeAction" type="border-card" @tab-click="onSelectAction">
             <el-tab-pane
-              v-for="({ label, value, component: { name, events, props } }, index) in actions"
+              v-for="{ label, value, component: { name, events, props } } in actions"
               :label="label"
               :name="value"
-              :key="index"
+              :key="value"
             >
               <div class="pane-container" v-if="!roleBoolean">
                 <img :src="require('../../../assets/image/runtime/no-power.svg')" />
@@ -209,12 +209,25 @@ export default {
       if (!this.curExecuteShape) {
         return []
       }
+      if (this.hang) {
+        return [makeComponent.call(this, 'Hang')]
+      }
       const temps = []
       if (this.noExecutor) {
         temps.push(makeComponent.call(this, 'NoExecutor'))
       }
-      const actions = this.iBpmnViewer.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
+      let actions = this.iBpmnViewer.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
+      if (curTaskIsFirstTask.call(this)) {
+        actions = actions.filter((action) => action !== 'Reject')
+      }
       return actions.map(makeComponent.bind(this)).concat(temps)
+
+      function curTaskIsFirstTask() {
+        const curTaskIndex = this.iBpmnViewer
+          .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
+          .findIndex(({ id }) => id === this.workflow.taskKey)
+        return curTaskIndex === 0
+      }
 
       function makeComponent(action) {
         const component = this.actionsConfig[action].component({
@@ -332,7 +345,7 @@ export default {
         this.completeTask(this.formContant, formData)
         return
       }
-      if (this.noExecutor && !Array.isArray(this.workflow.executors) && this.workflow.executors.length === 0) {
+      if (this.noExecutor || !Array.isArray(this.workflow.executors) || this.workflow.executors.length === 0) {
         this.$message.error('后续执行人为空！')
         return
       }
