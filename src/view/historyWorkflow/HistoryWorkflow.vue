@@ -36,50 +36,13 @@
       </el-form>
     </div>
     <div class="statistics-wrapper">
-      <div>
-        <div class="data-wrapper">
+      <div v-for="(cardData, index) in statisticCards" :key="index">
+        <div class="data-wrapper" v-for="({ label, value, icon }, index) in cardData" :key="index">
           <div class="icon">
-            <img :src="require('../../assets/image/history/total-month.svg')" />
+            <img :src="icon" />
           </div>
-          <div class="title">{{ headerNum.currentMonthAccumulateProcessCount }}</div>
-          <div class="label">当月累计工作流</div>
-        </div>
-        <div class="data-wrapper">
-          <div class="icon">
-            <img :src="require('../../assets/image/history/completed-month.svg')" />
-          </div>
-          <div class="title">{{ headerNum.currentMonthCompleteProcessCount }}</div>
-          <div class="label">当月完成工作流</div>
-        </div>
-        <div class="data-wrapper">
-          <div class="icon">
-            <img :src="require('../../assets/image/history/online-month.svg')" />
-          </div>
-          <div class="title">{{ headerNum.currentMonthAvgTime }}</div>
-          <div class="label">当月平均完成时长</div>
-        </div>
-      </div>
-      <div>
-        <div class="data-wrapper">
-          <div class="icon">
-            <img :src="require('../../assets/image/history/total-day.svg')" />
-          </div>
-          <div class="title">{{ headerNum.currentDayAccumulateProcessCount }}</div>
-          <div class="label">当日累计工作流</div>
-        </div>
-        <div class="data-wrapper">
-          <div class="icon">
-            <img :src="require('../../assets/image/history/completed-day.svg')" />
-          </div>
-          <div class="title">{{ headerNum.currentDayCompleteProcessCount }}</div>
-          <div class="label">当日完成工作流</div>
-        </div>
-        <div class="data-wrapper">
-          <div class="icon">
-            <img :src="require('../../assets/image/history/online-day.svg')" />
-          </div>
-          <div class="title">{{ headerNum.currentDayAvgTime }}</div>
-          <div class="label">当日平均完成时长</div>
+          <div class="title">{{ value }}</div>
+          <div class="label">{{ label }}</div>
         </div>
       </div>
     </div>
@@ -158,6 +121,43 @@ export default {
     ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
     ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
+    statisticCards() {
+      const currentMonthStatistic = [
+        {
+          label: '当月累计工作流',
+          value: this.headerNum.currentMonthAccumulateProcessCount,
+          icon: require('../../assets/image/history/total-month.svg'),
+        },
+        {
+          label: '当月完成工作流',
+          value: this.headerNum.currentMonthCompleteProcessCount,
+          icon: require('../../assets/image/history/completed-month.svg'),
+        },
+        {
+          label: '当月平均完成时长',
+          value: this.headerNum.currentMonthAvgTime,
+          icon: require('../../assets/image/history/online-month.svg'),
+        },
+      ]
+      const currentDayStatistic = [
+        {
+          label: '当日累计工作流',
+          value: this.headerNum.currentDayAccumulateProcessCount,
+          icon: require('../../assets/image/history/total-day.svg'),
+        },
+        {
+          label: '当日完成工作流',
+          value: this.headerNum.currentDayCompleteProcessCount,
+          icon: require('../../assets/image/history/completed-day.svg'),
+        },
+        {
+          label: '当日平均完成时长',
+          value: this.headerNum.currentDayAvgTime,
+          icon: require('../../assets/image/history/online-day.svg'),
+        },
+      ]
+      return [currentMonthStatistic, currentDayStatistic]
+    },
   },
   watch: {
     'searchForm.ascription'(val) {
