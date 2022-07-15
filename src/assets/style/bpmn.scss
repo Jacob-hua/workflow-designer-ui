@@ -1,0 +1,40 @@
+$svg-bg-color: #1b1e2d;
+$palette-color: #606266;
+$palette-border-color: #333333;
+
+svg[data-element-id] {
+  background-color: $svg-bg-color;
+}
+
+svg.new-parent {
+  background: $svg-bg-color !important;
+}
+
+.bjsl-icon-error,
+.bjsl-button-error {
+  background-color: #ffab00;
+}
+
+.djs-context-pad .entry {
+  background-color: $svg-bg-color;
+  border: none;
+  box-shadow: none;
+}
+
+.djs-palette {
+  background-color: $svg-bg-color;
+  border-color: $palette-border-color;
+}
+
+.djs-palette .separator {
+  border-color: $palette-border-color;
+}
+
+.djs-palette .entry,
+.djs-palette .djs-palette-toggle {
+  color: $palette-color;
+}
+
+.djs-overlays {
+  background-color: red;
+}

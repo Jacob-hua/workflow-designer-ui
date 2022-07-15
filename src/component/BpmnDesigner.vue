@@ -5,6 +5,13 @@
       :name="projectData.name"
       :xml="projectData.content"
       :generateIdFunc="fetchUUID"
+      :prop="{
+        bpmnRenderer: {
+          defaultFillColor: 'none',
+          defaultStrokeColor: '#666666',
+          defaultLabelColor: '#666666',
+        },
+      }"
       @loaded="onEditorLoaded"
     />
     <bpmn-properties-panel

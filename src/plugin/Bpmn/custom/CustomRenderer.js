@@ -9,16 +9,15 @@ import { getLabel } from '../utils/labelUtil'
 
 const HIGH_PRIORITY = 1500
 
-var DEFAULT_FILL_OPACITY = 0.95,
-  HIGH_FILL_OPACITY = 0.35
+var DEFAULT_FILL_OPACITY = 0.95
 
 var RENDERER_IDS = new Ids()
 
 class CustomRenderer extends BaseRenderer {
-  constructor(eventBus, styles, bpmnRenderer, canvas, textRenderer, pathMap, config) {
+  constructor(eventBus, styles, canvas, textRenderer, pathMap, config) {
     super(eventBus, HIGH_PRIORITY)
+    console.log(config)
     this.styles = styles
-    this.bpmnRenderer = bpmnRenderer
     this.canvas = canvas
     this.textRenderer = textRenderer
     this.pathMap = pathMap
@@ -29,21 +28,6 @@ class CustomRenderer extends BaseRenderer {
     var defaultFillColor = config && config.defaultFillColor,
       defaultStrokeColor = config && config.defaultStrokeColor,
       defaultLabelColor = config && config.defaultLabelColor
-
-    function drawPath(parentGfx, d, attrs) {
-      attrs = computeStyle(attrs, ['no-fill'], {
-        strokeWidth: 2,
-        stroke: black,
-      })
-
-      var path = svgCreate('path')
-      svgAttr(path, { d: d })
-      svgAttr(path, attrs)
-
-      svgAppend(parentGfx, path)
-
-      return path
-    }
 
     function drawCircle(parentGfx, width, height, offset, attrs) {
       if (isObject(offset)) {
@@ -77,36 +61,6 @@ class CustomRenderer extends BaseRenderer {
       svgAppend(parentGfx, circle)
 
       return circle
-    }
-
-    function drawRect(parentGfx, width, height, r, offset, attrs) {
-      if (isObject(offset)) {
-        attrs = offset
-        offset = 0
-      }
-
-      offset = offset || 0
-
-      attrs = computeStyle(attrs, {
-        stroke: black,
-        strokeWidth: 2,
-        fill: 'white',
-      })
-
-      var rect = svgCreate('rect')
-      svgAttr(rect, {
-        x: offset,
-        y: offset,
-        width: width - offset * 2,
-        height: height - offset * 2,
-        rx: r,
-        ry: r,
-      })
-      svgAttr(rect, attrs)
-
-      svgAppend(parentGfx, rect)
-
-      return rect
     }
 
     function renderer(type) {
@@ -154,41 +108,6 @@ class CustomRenderer extends BaseRenderer {
       label: function (parentGfx, element) {
         return renderExternalLabel(parentGfx, element)
       },
-      'bpmn:TextAnnotation': function (parentGfx, element) {
-        var style = {
-          fill: 'none',
-          stroke: 'none',
-        }
-
-        var textElement = drawRect(parentGfx, element.width, element.height, 0, 0, style)
-
-        var textPathData = pathMap.getScaledPath('TEXT_ANNOTATION', {
-          xScaleFactor: 1,
-          yScaleFactor: 1,
-          containerWidth: element.width,
-          containerHeight: element.height,
-          position: {
-            mx: 0.0,
-            my: 0.0,
-          },
-        })
-
-        drawPath(parentGfx, textPathData, {
-          stroke: getStrokeColor(element, defaultStrokeColor),
-        })
-
-        var text = getSemantic(element).text || ''
-        renderLabel(parentGfx, text, {
-          box: element,
-          align: 'left-top',
-          padding: 5,
-          style: {
-            fill: getLabelColor(element, defaultLabelColor, defaultStrokeColor),
-          },
-        })
-
-        return textElement
-      },
     })
 
     function renderExternalLabel(parentGfx, element) {
@@ -232,8 +151,11 @@ class CustomRenderer extends BaseRenderer {
 
   drawShape(parentGfx, element) {
     var type = element.type
+    if (!Object.keys(this.handlers).includes(type)) {
+      return
+    }
     var h = this._renderer(type)
-
+    console.log(type)
     /* jshint -W040 */
     return h(parentGfx, element)
   }
@@ -338,6 +260,6 @@ class CustomRenderer extends BaseRenderer {
   }
 }
 
-CustomRenderer.$inject = ['eventBus', 'styles', 'bpmnRenderer', 'canvas', 'textRenderer', 'pathMap', 'config']
+CustomRenderer.$inject = ['eventBus', 'styles', 'canvas', 'textRenderer', 'pathMap', 'config']
 
 export default CustomRenderer
