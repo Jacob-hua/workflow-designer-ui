@@ -345,7 +345,7 @@ export default {
         this.completeTask(this.formContant, formData)
         return
       }
-      if (this.noExecutor || !Array.isArray(this.workflow.executors) || this.workflow.executors.length === 0) {
+      if (this.noExecutor && (!Array.isArray(this.workflow.executors) || this.workflow.executors.length === 0)) {
         this.$message.error('后续执行人为空！')
         return
       }
