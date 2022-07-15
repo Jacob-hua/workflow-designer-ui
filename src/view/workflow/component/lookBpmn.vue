@@ -3,7 +3,7 @@
     <div>
       <bpmn-info :xml="projectData.content" :processDisplayInfo="processDisplayInfo" />
     </div>
-    <span slot="footer">
+    <span slot="footer" v-if="!isPublicProject">
       <el-button
         class="editor-button"
         @click="onEdit"
@@ -44,11 +44,14 @@ export default {
   },
   computed: {
     ...mapState('account', ['userInfo', 'currentOrganization']),
+    isPublicProject() {
+      return this.projectData.ascription === 'public'
+    },
     statusButtonLabel() {
       return this.projectData.status === 'enabled' ? '停用' : '启用'
     },
     processDisplayInfo() {
-      if (this.projectData.ascription === 'public') {
+      if (this.isPublicProject) {
         return [
           {
             label: '流程编码',
