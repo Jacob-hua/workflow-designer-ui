@@ -1,6 +1,7 @@
 import BpmnViewer from 'bpmn-js/lib/NavigatedViewer'
 import ImportModule from 'bpmn-js/lib/import'
 import ElementRegistry from 'diagram-js/lib/core/ElementRegistry'
+import Modeling from 'bpmn-js/lib/features/modeling'
 import X2JS from 'x2js'
 import { filterPublicFunction } from './utils/function'
 import { getShapType } from './enum/shapeType'
@@ -42,7 +43,7 @@ class IBpmnViewer {
         ...props.bpmnRenderer,
       },
       // additionalModules: [custom, ImportModule, ElementRegistry],
-      additionalModules: [ImportModule, ElementRegistry],
+      additionalModules: [ImportModule, ElementRegistry, Modeling],
       moddleExtensions: config.extensions[this.type],
     })
 
@@ -59,6 +60,22 @@ class IBpmnViewer {
 
   detach() {
     this.#viewer.detach()
+  }
+
+  updateSelectedShapeProperties(payload = {}) {
+    if (!this.getSelectedShape()) {
+      const root = this.elementRegistryFind((elem) => elem.type === 'bpmn:Process')
+      this.updateShapeProperties(root, payload)
+      return
+    }
+    this.updateShapeProperties(this.getSelectedShape(), payload)
+  }
+
+  updateShapeProperties(shape, payload = {}) {
+    if (!shape) {
+      return
+    }
+    this.modelingUpdateProperties(shape, payload)
   }
 
   getSelectedShape() {
@@ -93,6 +110,10 @@ class IBpmnViewer {
       return extensionElements.values.filter(({ $type }) => $type === type)
     }
     return
+  }
+
+  getSelectedShapeInfoByType(type) {
+    return this.getShapeInfoByType(this.getSelectedShape(), type)
   }
 
   getShapeType(element) {

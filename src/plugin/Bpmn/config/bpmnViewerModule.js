@@ -1,4 +1,7 @@
 const moduleConfig = {
+  modeling: {
+    prefix: 'modeling',
+  },
   elementRegistry: {
     prefix: 'elementRegistry',
   },

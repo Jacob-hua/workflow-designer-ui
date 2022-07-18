@@ -174,6 +174,9 @@ export const downloadTaskAttachmentFile = (params) =>
     responseType: 'blob',
   })
 
+// 流程图详情
+export const postProcessResource = (params) => post('/execute/processResource', params)
+
 // 权限管理
 
 // 获取组树
