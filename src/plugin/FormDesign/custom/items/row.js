@@ -26,6 +26,8 @@ export let row = {
   justify:'start',
   align:'top',
   gutter:0,
+  controlFiled: '', // 控制栅格显示隐藏的字段
+       controlFiledVal: '',
   columns:[
     {
       index:0,
@@ -38,6 +40,4 @@ export let row = {
       list:[]
     }
   ],
-  
-  
 }

@@ -94,6 +94,7 @@
       </el-button>
     </div>
     </div>
+
     <div v-show='props.dataType ==="dynamic"'>
       <el-form-item label="第三方API">
         <el-select v-model="interFace"
