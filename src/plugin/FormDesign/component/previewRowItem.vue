@@ -1,6 +1,6 @@
 <template>
   <el-col>
-    <el-row @mouseenter.native='move' @mouseleave.native='leave' class="rows" :gutter="model.gutter">
+    <el-row v-if=" model.controlFiledFlag" @mouseenter.native='move' @mouseleave.native='leave' class="rows" :gutter="model.gutter">
       <i @click="addComponent(model)" v-show="iconFlag "
          class="copy el-icon-circle-plus-outline"></i>
       <i @click="delComponent(model)" v-show="iconFlag && index !== firstIndex"
@@ -16,7 +16,7 @@
 export default {
   name: "previewRowItem",
   components: {},
-  props: ['model', 'value', "itemList", 'index'],
+  props: ['model', 'value', "itemList", 'index', 'controlFiled'],
   data() {
     return {
       iconFlag: false,

@@ -220,7 +220,7 @@
         })
       },
       editForm(item, tileText) {
-        debugger
+
         this.addForm(item, tileText)
       }
     },

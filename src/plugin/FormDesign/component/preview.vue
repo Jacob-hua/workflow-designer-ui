@@ -12,8 +12,7 @@
           label-width="formConf.labelWidth + 'px'"
           @submit.native.prevent="submit"
         >
-          <template v-for="(element,index) in metaDataList"  >
-            <!-- <el-input v-model="element.id" placeholder=""></el-input> -->
+          <template v-for="(element, index) in metaDataList"  >
              <preview-row-item 
               v-if="element.compType === 'row'"
               :key="'row-'+index"
@@ -117,11 +116,25 @@ export default {
                 this.deleteEmptyChildren(options.result)
                 this.quoteOption = options.result
               } else { // 处理选择列表
-
               }
             })
         })
       })
+    }
+  },
+  watch: {
+    form: {
+      immediate: false,
+      deep: true,
+      handler(data) {
+        this.metaDataList.forEach(item => {
+          if ((item.compType === 'row' || item.compType === 'Switch')   && item.controlFiled && item.controlFiledVal) {
+            item.controlFiledFlag = String(data[item.controlFiled]) === item.controlFiledVal;
+          } else {
+           item.controlFiledFlag = true
+          }
+        })
+      }
     }
   },
   methods:{
