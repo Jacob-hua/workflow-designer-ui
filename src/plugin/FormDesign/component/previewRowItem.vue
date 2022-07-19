@@ -1,12 +1,12 @@
 <template>
   <el-col>
     <el-row v-if=" model.controlFiledFlag" @mouseenter.native='move' @mouseleave.native='leave' class="rows" :gutter="model.gutter">
-      <i @click="addComponent(model)" v-show="iconFlag "
+      <i @click="addComponent(model)" v-show="iconFlag"
          class="copy el-icon-circle-plus-outline"></i>
       <i @click="delComponent(model)" v-show="iconFlag && index !== firstIndex"
          class="del el-icon-remove-outline"></i>
       <div class="drag-wrapper">
-        <slot></slot>
+         <slot></slot>
       </div>
     </el-row>
   </el-col>
@@ -21,6 +21,16 @@ export default {
     return {
       iconFlag: false,
       firstIndex: null
+    }
+  },
+  watch: {
+    model: {
+      immediate: true,
+      deep: true,
+      handler(data) {
+        data.controlFiledFlag = data.controlFiledFlag?? true
+        data.controlFiledFlag = true
+      }
     }
   },
   computed: {},
