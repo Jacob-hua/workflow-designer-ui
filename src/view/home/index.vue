@@ -202,6 +202,8 @@ export default {
     getManyData() {
       this.getDataNumber()
       this.getDeployCountList()
+      this.$refs.workflow.fetchWorkflows()
+      this.$refs.drafts.fetchWorkflows()
     },
     getDataNumber() {
       getTaskCountStatistic({

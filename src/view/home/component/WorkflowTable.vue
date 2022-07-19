@@ -143,6 +143,7 @@ export default {
     },
     getManyData() {
       this.$emit('getManyData')
+      this.fetchWorkflows()
     },
     onDeploy(row) {
       this.workflow = { ...row }

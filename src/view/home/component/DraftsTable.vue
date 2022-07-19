@@ -115,6 +115,7 @@ export default {
     },
     getManyData() {
       this.$emit('getManyData')
+      this.fetchWorkflows()
     },
     onPageSizeChange(val) {
       this.pageInfo.limit = val
