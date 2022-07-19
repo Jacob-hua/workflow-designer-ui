@@ -1,17 +1,17 @@
 <template>
   <div>
     <el-table :data="tableData">
-      <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>
-      <el-table-column prop="name" label="名称" width="180" align="center"> </el-table-column>
-      <el-table-column prop="docName" label="流程文件" align="center">
+      <el-table-column type="index" label="序号" width="180"> </el-table-column>
+      <el-table-column prop="name" label="名称" width="180"> </el-table-column>
+      <el-table-column prop="docName" label="流程文件">
         <template slot-scope="scope">
           <span class="fileStyle">{{ scope.row.docName }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createBy" label="创建人" align="center"> </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" align="center"> </el-table-column>
-      <el-table-column prop="count" label="已部署次数" align="center"> </el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column prop="createBy" label="创建人"> </el-table-column>
+      <el-table-column prop="createTime" label="创建时间"> </el-table-column>
+      <el-table-column prop="count" label="已部署次数"> </el-table-column>
+      <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
             @click="onDeploy(scope.row)"
@@ -110,10 +110,11 @@ export default {
       this.deployOptionsVisible = true
     },
     onDeploySuccess() {
-      this.getManyData()
+      this.fetchWorkflows()
+      this.$emit('deploy')
     },
     onSaveSuccess() {
-      this.getManyData()
+      this.$emit('save')
     },
     async fetchWorkflows() {
       const { errorInfo, result } = await postProcessDesignServicePage({
@@ -131,7 +132,7 @@ export default {
       }
       this.tableData = result.list
       this.pageInfo.total = result.total
-      this.$emit('totalChange', result.total, 'WorkflowTableNum')
+      this.$emit('refreshTable', result.total)
     },
     onPageSizeChange(limit) {
       this.pageInfo.limit = limit
@@ -139,10 +140,6 @@ export default {
     },
     onPageChange(page) {
       this.pageInfo.page = page
-      this.fetchWorkflows()
-    },
-    getManyData() {
-      this.$emit('getManyData')
       this.fetchWorkflows()
     },
     onDeploy(row) {
