@@ -44,6 +44,11 @@ export default {
     title() {
       return this.projectData.id ? '编辑流程' : '新建流程'
     },
+  },
+  methods: {
+    onBpmnDesignerLoaded(iBpmnModeler) {
+      this.iBpmnModeler = iBpmnModeler
+    },
     processFormData() {
       // TODO: 此处的文件名和文件id应该以addProject.vue中设置的参数为主
       const { name: processName, id: processId } = this.iBpmnModeler.getRootShapeInfo()
@@ -65,11 +70,6 @@ export default {
       processFormData.set('tenantId', this.tenantId)
       return processFormData
     },
-  },
-  methods: {
-    onBpmnDesignerLoaded(iBpmnModeler) {
-      this.iBpmnModeler = iBpmnModeler
-    },
     async onPublish() {
       try {
         await this.iBpmnModeler.validate()
@@ -82,20 +82,21 @@ export default {
         const { xml } = await this.iBpmnModeler.saveXML({
           format: true,
         })
-        this.processFormData.set(
+        const processFormData = this.processFormData()
+        processFormData.set(
           'file',
-          new File([xml], this.processFormData.name + '.bpmn', {
+          new File([xml], processFormData.name + '.bpmn', {
             type: 'bpmn20-xml',
           })
         )
-        this.processFormData.set('status', 'enabled')
+        processFormData.set('status', 'enabled')
         let promise
         // 如果projectData存在id，则走修改的流程
         if (this.projectData.id) {
-          promise = updateWorkFlow(this.processFormData)
+          promise = updateWorkFlow(processFormData)
         } else {
           // 如果projectData不存在id，则走发布的流程（）
-          promise = publishWorkflow(this.processFormData)
+          promise = publishWorkflow(processFormData)
         }
         const { errorInfo } = await Promise.resolve(promise)
         if (errorInfo.errorCode) {
@@ -124,19 +125,20 @@ export default {
         const { xml } = await this.iBpmnModeler.saveXML({
           format: true,
         })
-        this.processFormData.set(
+        const processFormData = this.processFormData()
+        processFormData.set(
           'file',
-          new File([xml], this.processFormData.name + '.bpmn', {
+          new File([xml], processFormData.name + '.bpmn', {
             type: 'bpmn20-xml',
           })
         )
-        this.processFormData.set('status', 'drafted')
+        processFormData.set('status', 'drafted')
         let promise
         // 如果projectData存在id，则走修改的流程
         if (this.projectData.id) {
-          promise = updateWorkFlow(this.processFormData)
+          promise = updateWorkFlow(processFormData)
         } else {
-          promise = createWorkFlow(this.processFormData)
+          promise = createWorkFlow(processFormData)
         }
         const { errorInfo } = await Promise.resolve(promise)
         if (errorInfo.errorCode) {
