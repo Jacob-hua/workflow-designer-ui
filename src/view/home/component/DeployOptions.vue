@@ -10,6 +10,7 @@
             :processDisplayInfo="processDisplayInfo"
             canRemoveForm
             @canvasLoaded="onCanvasLoaded"
+            @selectedShape="onSelectedShape"
           />
         </div>
         <div class="form-list-wrapper">
@@ -30,7 +31,9 @@
                   <preview :itemList="fields" :formConf="config"></preview>
                   <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover>
-                <span class="link-button" @click="onLinked({ id, docName, fields, config })"> 关联 </span>
+                <span class="link-button" v-if="canLink" @click="onLinked({ id, docName, fields, config })">
+                  关联
+                </span>
               </div>
             </div>
           </div>
@@ -56,6 +59,7 @@ import WorkflowInfo from './WorkflowInfo.vue'
 import { postProcessDraft, putProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
 import preview from '@/plugin/FormDesign/component/preview'
 import { mapState } from 'vuex'
+import BpmnShapeType from '../../../plugin/Bpmn/enum/shapeType'
 
 export default {
   name: 'DeployOptions',
@@ -80,6 +84,7 @@ export default {
       formContent: {},
       formList: [],
       formName: '',
+      canLink: false,
     }
   },
   computed: {
@@ -137,6 +142,13 @@ export default {
         fields,
         config,
       }
+    },
+    onSelectedShape(element) {
+      if (!element || this.iBpmn.getShapeType(element) !== BpmnShapeType.USER_TASK) {
+        this.canLink = false
+        return
+      }
+      this.canLink = true
     },
     onCanvasLoaded(iBpmn) {
       this.iBpmn = iBpmn
