@@ -164,27 +164,27 @@ pipeline {
                     "jenkinsJobURL": "${BUILD_URL}",
                     "jenkinsJobStartTime": "${starttime}",
                     "jenkinsJobEndTime": "${endtime}",
-                    "duration": "${duration}s",
+                    "duration": ${duration},
                     "applicationType": "${applicationType}",
                     "isStandalone": "${isStandalone}",
                     "quality":{
-                        "unitest-coverage-rate":"${coverageRate}%",
+                        "unitest-coverage-rate": ${coverageRate},
                         "unitest-number": ${unitTestNumber},
-                        "bugs":${bugs},
-                        "security-issue":${vulnerabilities}
+                        "bugs": ${bugs},
+                        "security-issue": ${vulnerabilities}
                     } ,
 					"deployment":{
-                        "hostName":"k8s.isact.com",
-                        "IP":"192.100.30.188",
-                        "platform":"K8S",
-                        "deploymentAccount":"root",
-                        "applicationType": "front-end",
-                        "onCloud":"no",
-                        "operationSystem":"Docker"
+                        "hostName": "k8s.isact.com",
+                        "IP": "192.100.30.188",
+                        "platform": "K8S",
+                        "deploymentAccount": "root",
+                        "applicationType": "${applicationType}",
+                        "onCloud": "no",
+                        "operationSystem": "Docker"
                     }	
                 }
 				"""
-				result = postRequest.sendPostRequest(body,"dev")
+				result = postRequest.sendPostRequest(body,"${environment}")
             }
         }
         success {
