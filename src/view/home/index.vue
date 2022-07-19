@@ -186,8 +186,8 @@ export default {
     totalChange(value, key) {
       this[key] = value
     },
-    changeAction() {
-      this.$refs.workflow.fetchWorkflows()
+    changeAction(vnode) {
+      this.$refs[vnode.name]?.fetchWorkflows()
     },
     getDeployCountList() {
       getDeployCount({

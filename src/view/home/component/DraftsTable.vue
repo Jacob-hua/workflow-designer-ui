@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { getProcessDraftList, deleteDraft } from '@/api/unit/api.js'
+import { postDraftlist, deleteDraft } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
 import DeployOptions from './DeployOptions.vue'
 
@@ -97,7 +97,7 @@ export default {
       this.$emit('save')
     },
     async fetchWorkflows() {
-      const { errorInfo, result } = await getProcessDraftList({
+      const { errorInfo, result } = await postDraftlist({
         ...this.pageInfo,
         tenantId: this.tenantId,
         createBy: this.userInfo.account,
