@@ -178,6 +178,7 @@ export default {
       this.iBpmn.updateSelectedShapeId(`process_${newProcessId}`)
       const { xml } = await this.iBpmn.saveXML({ format: true })
       const { name: processName, id: processId } = this.iBpmn.getRootShapeInfo()
+      console.log(processId, newProcessId)
       const file = new File([xml], processName + '.bpmn', {
         type: 'bpmn20-xml',
       })
@@ -202,7 +203,7 @@ export default {
         this.$emit('deploySuccess')
         this.onClose()
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     async onSave() {

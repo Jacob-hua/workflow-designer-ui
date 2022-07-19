@@ -76,6 +76,7 @@ class IBpmnViewer {
       return
     }
     this.elementRegistryUpdateId(shape, id)
+    shape.businessObject.set('id', id)
   }
 
   updateSelectedShapeProperties(payload = {}) {
