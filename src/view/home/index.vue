@@ -94,9 +94,10 @@
           <workflow-table
             v-show="activeName === 'workflow'"
             :searchForm="searchForm"
-            @totalChange="totalChange"
             ref="workflow"
-            @getManyData="getManyData()"
+            @refreshTable="onWorkflowRefresh"
+            @deploy="onWorkflowDeploy"
+            @save="onWorkflowSave"
           ></workflow-table>
         </el-tab-pane>
         <el-tab-pane name="drafts">
@@ -104,9 +105,10 @@
           <drafts-table
             v-show="activeName === 'drafts'"
             :searchForm="searchForm"
-            @totalChange="totalChange"
             ref="drafts"
-            @getManyData="getManyData()"
+            @refreshTable="onDraftsRefresh"
+            @deploy="onDraftsDeploy"
+            @save="onDraftsSave"
           ></drafts-table>
         </el-tab-pane>
       </el-tabs>
@@ -199,11 +201,29 @@ export default {
         this.deployedWorkflowContents = res.result
       })
     },
+    onWorkflowRefresh(count) {
+      this.WorkflowTableNum = count
+    },
+    onDraftsRefresh(count) {
+      this.draftsTableNum = count
+    },
+    onWorkflowDeploy() {
+      this.getManyData()
+    },
+    onWorkflowSave() {
+      this.getManyData()
+      this.$refs.drafts.fetchWorkflows()
+    },
+    onDraftsDeploy() {
+      this.getManyData()
+      this.$refs.workflow.fetchWorkflows()
+    },
+    onDraftsSave() {
+      this.getManyData()
+    },
     getManyData() {
       this.getDataNumber()
       this.getDeployCountList()
-      this.$refs.workflow.fetchWorkflows()
-      this.$refs.drafts.fetchWorkflows()
     },
     getDataNumber() {
       getTaskCountStatistic({

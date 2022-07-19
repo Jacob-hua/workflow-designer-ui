@@ -1,16 +1,16 @@
 <template>
   <div>
     <el-table :data="tableData" style="width: 100%">
-      <el-table-column type="index" label="序号" align="center"> </el-table-column>
-      <el-table-column prop="deployName" label="名称" align="center"> </el-table-column>
-      <el-table-column prop="docName" label="流程文件" align="center">
+      <el-table-column type="index" label="序号"> </el-table-column>
+      <el-table-column prop="deployName" label="名称"> </el-table-column>
+      <el-table-column prop="docName" label="流程文件">
         <template slot-scope="scope">
-          <span class="file">{{ scope.row.docName }}.bpmn</span>
+          <span class="file">{{ scope.row.deployName }}.bpmn</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createBy" label="创建人" align="center"> </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" align="center"> </el-table-column>
-      <el-table-column prop="name" label="操作" align="center">
+      <el-table-column prop="createBy" label="创建人"> </el-table-column>
+      <el-table-column prop="createTime" label="创建时间"> </el-table-column>
+      <el-table-column prop="name" label="操作">
         <template slot-scope="{ row }">
           <el-button
             @click.native.prevent="onEditWorkflow(row)"
@@ -90,10 +90,11 @@ export default {
   },
   methods: {
     onDeploySuccess() {
-      this.getManyData()
+      this.$emit('deploy')
     },
     onSaveSuccess() {
-      this.getManyData()
+      this.fetchWorkflows()
+      this.$emit('save')
     },
     async fetchWorkflows() {
       const { errorInfo, result } = await getProcessDraftList({
@@ -111,11 +112,7 @@ export default {
       }
       this.tableData = result.dataList
       this.pageInfo.total = +result.count
-      this.$emit('totalChange', result.count, 'draftsTableNum')
-    },
-    getManyData() {
-      this.$emit('getManyData')
-      this.fetchWorkflows()
+      this.$emit('refreshTable', result.count)
     },
     onPageSizeChange(val) {
       this.pageInfo.limit = val
@@ -148,7 +145,7 @@ export default {
       this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page
     },
     onEditWorkflow(workflow) {
-      this.workflow = { ...workflow }
+      this.workflow = { ...workflow, status: 'drafted' }
       this.deployOptionsVisible = true
     },
   },
