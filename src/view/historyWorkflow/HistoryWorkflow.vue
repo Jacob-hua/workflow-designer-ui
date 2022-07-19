@@ -240,7 +240,7 @@ export default {
         return
       }
       this.tableData = result.dataList.map((row) => {
-        const displayAssignee = row.assigneeList?.join('') ?? ''
+        const displayAssignee = row.assigneeList?.join(' ') ?? ''
         return {
           ...row,
           displayProcessDeployType: this.$getMappingName(row.processDeployType),
