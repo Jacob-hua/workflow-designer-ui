@@ -175,7 +175,7 @@ export default {
     },
     async getXMLInfo() {
       const newProcessId = await this.$generateUUID()
-      this.iBpmn.updateSelectedShapeProperties({ id: `process_${newProcessId}` })
+      this.iBpmn.updateSelectedShapeId(`process_${newProcessId}`)
       const { xml } = await this.iBpmn.saveXML({ format: true })
       const { name: processName, id: processId } = this.iBpmn.getRootShapeInfo()
       const file = new File([xml], processName + '.bpmn', {
@@ -201,7 +201,9 @@ export default {
         this.$message.success('部署成功')
         this.$emit('deploySuccess')
         this.onClose()
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
     async onSave() {
       try {

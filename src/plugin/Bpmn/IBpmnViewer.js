@@ -62,6 +62,22 @@ class IBpmnViewer {
     this.#viewer.detach()
   }
 
+  updateSelectedShapeId(id) {
+    if (!this.getSelectedShape()) {
+      const root = this.elementRegistryFind((elem) => elem.type === 'bpmn:Process')
+      this.updateShapeId(root, id)
+      return
+    }
+    this.updateShapeId(this.getSelectedShape(), id)
+  }
+
+  updateShapeId(shape, id) {
+    if (!shape) {
+      return
+    }
+    this.elementRegistryUpdateId(shape, id)
+  }
+
   updateSelectedShapeProperties(payload = {}) {
     if (!this.getSelectedShape()) {
       const root = this.elementRegistryFind((elem) => elem.type === 'bpmn:Process')
@@ -85,6 +101,14 @@ class IBpmnViewer {
 
   getSelectedShapeType() {
     return this.getShapeType(this.getSelectedShape())
+  }
+
+  getRootShapeInfo() {
+    const root = this.elementRegistryFind((elem) => elem.type === 'bpmn:Process')
+    if (!root) {
+      return {}
+    }
+    return this.getShapeInfo(root)
   }
 
   getShapeInfo(element) {
