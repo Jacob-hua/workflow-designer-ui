@@ -101,7 +101,7 @@ export function mixinExecuteFunction(fieldInfo, executeFunc = () => {
 
 
     const oldVariables = variables.reduce((oldVariables, variable) => ({...oldVariables, [variable]: ''}), {})
-    if (newFieldInfo.relationMapping.length) {
+    if (newFieldInfo?.relationMapping?.length) {
         ContextOrFormLogic[judgeValueFrom(newFieldInfo)]({
             oldVariables,
             context: newFieldInfo.context,
