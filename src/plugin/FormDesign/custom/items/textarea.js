@@ -41,5 +41,6 @@ export let textarea = {
   value: '',
   rules:[],
   // 验证错误提示信息
-  ruleError: '该字段不能为空'
+  ruleError: '该字段不能为空',
+  relationField: '' // 文本框关联字段
 }
