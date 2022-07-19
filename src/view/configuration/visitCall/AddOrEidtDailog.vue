@@ -251,7 +251,7 @@ export default {
           body[config.key] = config.value
         })
         simulationRequest({
-          "body": JSON.stringify(body),
+          "body": body,
           "headers": api.headers,
           "method": api.method,
           "url": api.url
