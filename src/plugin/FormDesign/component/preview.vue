@@ -105,7 +105,7 @@ export default {
           fieldInfo.context = this.getContext()
         }
         return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
-          if (!fieldInfo.disabled) {
+          if (!fieldInfo.disabled && !this.formConf.disabled) {
             executeApi({
               apiMark: fieldInfo.requestConfig.apiMark,
               sourceMark: fieldInfo.requestConfig.sourceMark,

@@ -23,16 +23,16 @@ export default {
       firstIndex: null
     }
   },
-  watch: {
-    model: {
-      immediate: true,
-      deep: true,
-      handler(data) {
-        data.controlFiledFlag = data.controlFiledFlag?? true
-        data.controlFiledFlag = true
-      }
-    }
-  },
+  // watch: {
+  //   model: {
+  //     immediate: true,
+  //     deep: true,
+  //     handler(data) {
+  //       data.controlFiledFlag = data.controlFiledFlag?? true
+  //       data.controlFiledFlag = true
+  //     }
+  //   }
+  // },
   computed: {},
   mounted() {
     this.firstIndex = this.itemList.map(element => element.compType).indexOf('row')
