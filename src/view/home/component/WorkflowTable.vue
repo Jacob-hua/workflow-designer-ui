@@ -110,6 +110,7 @@ export default {
       this.deployOptionsVisible = true
     },
     onDeletedDeploy() {
+      this.fetchWorkflows()
       this.$emit('deleted')
     },
     onDeployed() {

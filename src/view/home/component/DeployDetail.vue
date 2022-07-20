@@ -89,26 +89,28 @@ export default {
       this.$emit('cancel')
       this.colse()
     },
-    onDeleteClick() {
-      this.$confirm('删除后不可恢复, 请确认是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      })
-        .then(() => {
-          getDeleteDeployment({
-            id: this.workflow.deployRecordId,
-            cascade: true,
-          }).then(() => {
-            this.$message({
-              type: 'success',
-              message: '删除成功!',
-            })
-            this.$emit('deleted')
-            this.colse()
-          })
+    async onDeleteClick() {
+      try {
+        await this.$confirm('删除后不可恢复, 请确认是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
         })
-        .catch(() => {})
+        const { errorInfo, result } = await getDeleteDeployment({
+          id: this.workflow.deployRecordId,
+          cascade: true,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.$message({
+          type: 'success',
+          message: '删除成功!',
+        })
+        this.$emit('deleted')
+        this.colse()
+      } catch (error) {}
     },
     colse() {
       this.$emit('update:visible', false)
