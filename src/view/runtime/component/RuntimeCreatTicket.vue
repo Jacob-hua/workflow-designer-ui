@@ -16,7 +16,7 @@
               <el-option v-for="{ value, label } in options[prop]" :key="value" :value="value" :label="label">
               </el-option>
             </el-select>
-            <el-date-picker v-else v-model="startForm[prop]" :placeholder="placeholder"></el-date-picker>
+            <el-date-picker v-if="isTime(type)" v-model="startForm[prop]" :placeholder="placeholder"></el-date-picker>
           </el-form-item>
         </el-form>
         <div v-if="isEmptyConfig" class="dialog-message">创建的执行会进入执行列表并开始执行流程,是否继续？</div>
@@ -82,6 +82,7 @@ export default {
           const placeholderPrefixs = {
             [FormTypeEnum.FORM_TYPE_INPUT]: '请输入',
             [FormTypeEnum.FORM_TYPE_SELECT]: '请选择',
+            [FormTypeEnum.FORM_TYPE_TIME]: '请输入'
           }
           const placeholder = placeholderPrefixs[startType] + name
           const fieldInfo = {
@@ -138,6 +139,9 @@ export default {
     },
     isSelecte(type) {
       return type === FormTypeEnum.FORM_TYPE_SELECT
+    },
+    isTime(type) {
+      return type === FormTypeEnum.FORM_TYPE_TIME
     },
     onCloseModal() {
       this.startConfigList = []
