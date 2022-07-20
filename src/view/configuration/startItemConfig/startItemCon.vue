@@ -31,6 +31,7 @@
         title="启动项配置"
         :visible.sync="dialogVisible"
         width="80%"
+        fullscreen
         append-to-body
     >
       <div class="start_container">
@@ -78,19 +79,30 @@
                   <el-option v-for="(item,index) in optionsList" :key="index" :label="item.name"
                              :value="item.id"></el-option>
                 </el-select>
+                <el-date-picker
+                    v-show="scope.row.startType === '3'"
+                    :disabled="scope.row.disabled"
+                    v-model="value1"
+                    type="date"
+                    value-format="yyyy-MM-dd hh:mm:ss"
+                    placeholder="选择日期">
+                </el-date-picker>
               </template>
             </el-table-column>
             <el-table-column
                 align="center"
                 prop=""
                 label="启动类型选择"
-                width="280">
+                width="420">
               <template slot-scope="scope">
                 <el-radio @change="radioChange" :disabled="scope.row.disabled" v-model="scope.row.startType" label="1">
                   输入框
                 </el-radio>
                 <el-radio @change="radioChange" :disabled="scope.row.disabled" v-model="scope.row.startType" label="2">
                   下拉框
+                </el-radio>
+                <el-radio @change="radioChange" :disabled="scope.row.disabled" v-model="scope.row.startType" label="3">
+                  日期时间
                 </el-radio>
               </template>
             </el-table-column>
