@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <bpmn-viewer
+    <h1 style="color: red">{{ xml }}</h1>
+    <!-- <bpmn-viewer
       :xml="xml"
       :prop="{
         bpmnRenderer: {
@@ -9,7 +10,7 @@
           defaultLabelColor: '#666666',
         },
       }"
-    />
+    /> -->
   </div>
 </template>
 
@@ -18,7 +19,7 @@ export default {
   name: 'WorkflowViewer',
   data() {
     return {
-      xml: '',
+      xml: 'xml',
     }
   },
   mounted() {

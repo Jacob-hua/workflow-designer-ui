@@ -212,7 +212,7 @@ export default {
           return
         }
         this.$message.success('部署成功')
-        this.$emit('deploySuccess')
+        this.$emit('deployed')
         this.onClose()
       } catch (error) {
         console.log(error)
@@ -234,7 +234,7 @@ export default {
             this.$message.success('保存成功')
           })
         }
-        this.$emit('saveSuccess')
+        this.$emit('saved')
         this.onClose()
       } catch (error) {}
     },

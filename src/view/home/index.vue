@@ -96,8 +96,9 @@
             :searchForm="searchForm"
             ref="workflow"
             @refreshTable="onWorkflowRefresh"
-            @deploy="onWorkflowDeploy"
-            @save="onWorkflowSave"
+            @deployed="onWorkflowDeployed"
+            @saved="onWorkflowSaved"
+            @delted="onWorkflowDeleted"
           ></workflow-table>
         </el-tab-pane>
         <el-tab-pane name="drafts">
@@ -107,8 +108,8 @@
             :searchForm="searchForm"
             ref="drafts"
             @refreshTable="onDraftsRefresh"
-            @deploy="onDraftsDeploy"
-            @save="onDraftsSave"
+            @deployed="onDraftsDeployed"
+            @saved="onDraftsSaved"
           ></drafts-table>
         </el-tab-pane>
       </el-tabs>
@@ -207,18 +208,21 @@ export default {
     onDraftsRefresh(count) {
       this.draftsTableNum = count
     },
-    onWorkflowDeploy() {
+    onWorkflowDeployed() {
       this.getManyData()
     },
-    onWorkflowSave() {
+    onWorkflowSaved() {
       this.getManyData()
       this.$refs.drafts.fetchWorkflows()
     },
-    onDraftsDeploy() {
+    onWorkflowDeleted() {
+      this.getManyData()
+    },
+    onDraftsDeployed() {
       this.getManyData()
       this.$refs.workflow.fetchWorkflows()
     },
-    onDraftsSave() {
+    onDraftsSaved() {
       this.getManyData()
     },
     getManyData() {

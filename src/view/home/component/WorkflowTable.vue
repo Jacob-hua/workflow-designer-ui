@@ -51,10 +51,10 @@
     <deploy-options
       :visible.sync="deployOptionsVisible"
       :workflow="workflow"
-      @deploySuccess="onDeploySuccess"
-      @saveSuccess="onSaveSuccess"
+      @deployed="onDeployed"
+      @saved="onSaved"
     />
-    <deploy-cabin-detail :visible.sync="deployCabinDetailVisible" :workflow="workflow" />
+    <deploy-cabin-detail :visible.sync="deployCabinDetailVisible" :workflow="workflow" @deleted="onDeletedDeploy" />
   </div>
 </template>
 
@@ -109,12 +109,15 @@ export default {
       this.workflow = { ...this.workflow, ...workflow }
       this.deployOptionsVisible = true
     },
-    onDeploySuccess() {
-      this.fetchWorkflows()
-      this.$emit('deploy')
+    onDeletedDeploy() {
+      this.$emit('deleted')
     },
-    onSaveSuccess() {
-      this.$emit('save')
+    onDeployed() {
+      this.fetchWorkflows()
+      this.$emit('deployed')
+    },
+    onSaved() {
+      this.$emit('saved')
     },
     async fetchWorkflows() {
       const { errorInfo, result } = await postProcessDesignServicePage({

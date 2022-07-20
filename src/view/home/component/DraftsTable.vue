@@ -43,8 +43,8 @@
     <deploy-options
       :visible.sync="deployOptionsVisible"
       :workflow="workflow"
-      @deploySuccess="onDeploySuccess"
-      @saveSuccess="onSaveSuccess"
+      @deployed="onDeployed"
+      @saved="onSaved"
     />
   </div>
 </template>
@@ -89,12 +89,12 @@ export default {
     },
   },
   methods: {
-    onDeploySuccess() {
-      this.$emit('deploy')
+    onDeployed() {
+      this.$emit('deployed')
     },
-    onSaveSuccess() {
+    onSaved() {
       this.fetchWorkflows()
-      this.$emit('save')
+      this.$emit('saved')
     },
     async fetchWorkflows() {
       const { errorInfo, result } = await postDraftlist({
