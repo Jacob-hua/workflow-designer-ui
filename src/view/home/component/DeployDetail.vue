@@ -5,7 +5,7 @@
       <span slot="footer">
         <el-button
           class="remove-button"
-          @click="deleteDeployment()"
+          @click="onDeleteClick"
           v-role="{ id: 'HomeDelete', type: 'button', business: workflow.business }"
         >
           删除
@@ -87,29 +87,33 @@ export default {
   methods: {
     onCancel() {
       this.$emit('cancel')
-      this.$emit('update:visible', false)
+      this.colse()
     },
-    deleteDeployment() {
-      this.$confirm('删除后不可恢复, 请确认是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      })
-        .then(() => {
-          getDeleteDeployment({
-            id: this.workflow.deployRecordId,
-            cascade: true,
-          }).then(() => {
-            this.$message({
-              type: 'success',
-              message: '删除成功!',
-            })
-            this.dialogVisible1 = false
-            this.dialogVisible2 = false
-            this.$emit('deleteSuccess')
-          })
+    async onDeleteClick() {
+      try {
+        await this.$confirm('删除后不可恢复, 请确认是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
         })
-        .catch(() => {})
+        const { errorInfo, result } = await getDeleteDeployment({
+          id: this.workflow.deployRecordId,
+          cascade: true,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.$message({
+          type: 'success',
+          message: '删除成功!',
+        })
+        this.$emit('deleted')
+        this.colse()
+      } catch (error) {}
+    },
+    colse() {
+      this.$emit('update:visible', false)
     },
     async fetchDeployedWorkflow() {
       try {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="查看工作流" fullscreen :visible="visible" @close="onCancel">
+    <el-dialog title="查看工作流" fullscreen :visible="visible" @close="onClose">
       <div class="container">
         <bpmn-info :processDisplayInfo="processDisplayInfo" :xml="workflow.content" />
         <div class="search-wrapper">
@@ -50,7 +50,7 @@
         </div>
       </div>
     </el-dialog>
-    <deploy-detail :visible.sync="deployDetailVisible" :deployedId="deployedId" />
+    <deploy-detail :visible.sync="deployDetailVisible" :deployedId="deployedId" @deleted="onDeletedDeploy" />
   </div>
 </template>
 
@@ -123,9 +123,13 @@ export default {
     },
   },
   methods: {
-    onCancel() {
+    onDeletedDeploy() {
+      this.fetchDeployDetails()
+      this.$emit('deleted')
+    },
+    onClose() {
       this.systemType = null
-      this.$emit('cancel')
+      this.$emit('cloase')
       this.$emit('update:visible', false)
     },
     onSystemTypeChange() {
