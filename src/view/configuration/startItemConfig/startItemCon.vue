@@ -82,7 +82,7 @@
                 <el-date-picker
                     v-show="scope.row.startType === '3'"
                     :disabled="scope.row.disabled"
-                    v-model="value1"
+                    v-model="scope.row.value"
                     type="date"
                     value-format="yyyy-MM-dd hh:mm:ss"
                     placeholder="选择日期">
