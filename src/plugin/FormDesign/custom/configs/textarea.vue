@@ -47,6 +47,9 @@
     <el-form-item label="默认值">
       <el-input class="input" v-model="props.value"></el-input>
     </el-form-item>
+    <el-form-item label="关联" >
+      <el-input v-model="props.relationField" placeholder="#本表单取, $跨任务取值"></el-input>
+    </el-form-item>
   </div>
 </template>
 <script>

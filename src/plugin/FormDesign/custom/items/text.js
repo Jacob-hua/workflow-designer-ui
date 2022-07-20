@@ -15,11 +15,12 @@ export let text = {
     show:true,
     text:'文本',
     align:'left',
-    color:'#000000',
+    color:'#fff',
     size:'14',
     bold:'400',
     // 控件左侧label内容
     showLabel:false,
-    labelWidth: '0'
+    labelWidth: '0',
+    relationField: '' // 文本框关联字段
   }
   

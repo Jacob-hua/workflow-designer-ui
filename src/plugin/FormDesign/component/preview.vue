@@ -72,7 +72,7 @@ import {getSimpleId} from "@/plugin/FormDesign/utils/IdGenerate";
 
 export default {
   name:'preview',
-  props:['itemList','formConf', 'uploadFun', 'downloadFun'],
+  props:['itemList','formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
   components:{
     previewItem,
     previewRowItem,
@@ -105,6 +105,7 @@ export default {
           fieldInfo.context = this.getContext()
         }
         return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
+          if (!fieldInfo.disabled && !this.formConf.disabled) {
             executeApi({
               apiMark: fieldInfo.requestConfig.apiMark,
               sourceMark: fieldInfo.requestConfig.sourceMark,
@@ -118,6 +119,7 @@ export default {
               } else { // 处理选择列表
               }
             })
+          }
         })
       })
     }
@@ -128,6 +130,25 @@ export default {
       deep: true,
       handler(data) {
         this.metaDataList.forEach(item => {
+          if ((item.compType === 'text' || item.compType === 'input' || item.compType === 'textarea') && item.relationField) {
+            if (item.relationField.trim().startsWith('#')) {
+              if (item.compType === 'text') {
+                item.text = data[item.relationField.split('#')[1]]
+              } else {
+                data[item.id] = data[item.relationField.split('#')[1]]
+              }
+
+            } else if(item.relationField.trim().startsWith('$')) {
+               this.getContext().then(res=> {
+                 if (item.compType === 'text') {
+                   item.text = res[item.relationField.split('$')[1]]
+                 } else {
+                   data[item.id] = res[item.relationField.split('$')[1]]
+                 }
+
+               })
+            }
+          }
           if ((item.compType === 'row' || item.compType === 'Switch')   && item.controlFiled && item.controlFiledVal) {
             item.controlFiledFlag = String(data[item.controlFiled]) === item.controlFiledVal;
           } else {
@@ -212,7 +233,8 @@ export default {
       },
    async getContext() {
      const { result } =  await processVariable({
-        processInstanceId: 'c4ace818-01a9-11ed-8113-b215cd163104'
+        // processInstanceId: 'c4ace818-01a9-11ed-8113-b215cd163104'
+          processInstanceId: this.processInstanceId ?? ''
       })
       return  result
     },
