@@ -31,6 +31,7 @@
         <div class="form-title">表单内容</div>
         <div class="form-preview">
           <preview
+            :processInstanceId="workflow.processInstanceId"
             :itemList="formContant.list"
             :formConf="formContant.config"
             :uploadFun="uploadFile.bind(this)"
