@@ -63,6 +63,30 @@ const state = () => ({
       value: 'outside',
     },
   ],
+  conditionTypeOpstions: [
+    {
+      label: '脚本',
+      value: 'script',
+    },
+    {
+      label: '表达式',
+      value: 'expression',
+    },
+    {
+      label: '无',
+      value: 'null',
+    },
+  ],
+  conditionScriptTypeOptions: [
+    {
+      label: '内联脚本',
+      value: 'inline',
+    },
+    {
+      label: '外部脚本',
+      value: 'external',
+    },
+  ],
   timerTypeOptions: [
     {
       label: '特定时间',
