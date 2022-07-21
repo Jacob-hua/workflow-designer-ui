@@ -25,6 +25,7 @@ import TimerPanel from './components/TimerPanel.vue'
 import ConditionPanel from './components/ConditionPanel.vue'
 import bridgingBpmn, { generateNamespace } from '../../utils/bridging-bpmn'
 import bridgingModuleFunc from './store'
+import shapeType from '../../enum/shapeType'
 
 export default {
   name: 'BpmnPropertiesPanel',
@@ -104,6 +105,9 @@ export default {
     shapeType() {
       return this.$store.state[this.namespace].panel.shapeType
     },
+    baseInfo() {
+      return this.$store.state[this.namespace].panel.baseInfo
+    },
     panels() {
       const elementPanels = {
         [BpmnShapeType.START_EVENT]: [this.baseInfoPanelInfo, this.executeListenerPanelInfo, this.inputOutputPanelInfo],
@@ -123,7 +127,10 @@ export default {
           this.actionButtonPanelInfo,
         ],
         [BpmnShapeType.EXCLUSIVE_GATEWAY]: [this.baseInfoPanelInfo, this.executeListenerPanelInfo],
-        [BpmnShapeType.SEQUENCE_FLOW]: [this.baseInfoPanelInfo, this.conditionPanelInfo],
+        [BpmnShapeType.SEQUENCE_FLOW]:
+          this.baseInfo.sourceRefType === shapeType.START_EVENT
+            ? [this.baseInfoPanelInfo]
+            : [this.baseInfoPanelInfo, this.conditionPanelInfo],
       }
       return elementPanels[this.shapeType] ?? [this.baseInfoPanelInfo]
     },
@@ -134,6 +141,11 @@ export default {
       handler(iBpmnModeler) {
         this.unBridgingFunc()
         this.unBridgingFunc = bridgingBpmn(this.$store, this.namespace, iBpmnModeler, bridgingModuleFunc)
+        this.updateBaseInfo({
+          newBaseInfo: {
+            name: this.iBpmnModeler.getRootShapeInfo().name,
+          },
+        })
       },
     },
     userGroup(userGroup) {
@@ -152,6 +164,12 @@ export default {
     updateUserGroupOptions(payload) {
       this.$store.commit({
         type: `${this.namespace}/config/updateUserGroupOptions`,
+        ...payload,
+      })
+    },
+    updateBaseInfo(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateBaseInfo`,
         ...payload,
       })
     },
