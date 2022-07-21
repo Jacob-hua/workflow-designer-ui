@@ -46,8 +46,7 @@ export default {
         [shapeType.INCLUSIVE_GATEWAY]: '相容网关',
         [shapeType.EVENT_BASE_GATEWAY]: '事件网关',
       }
-      const label = shapeLabelHandle[this.shapeType] ?? '流程'  
-      return `${label}名称`
+      return `${shapeLabelHandle[this.shapeType] ?? '流程'}名称`
     },
   },
   watch: {
