@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form :model="baseInfoForm" label-position="right" label-width="100px">
-      <el-form-item label="流程名称">
+      <el-form-item :label="nameLabel">
         <el-input v-model="baseInfoForm.name" clearable></el-input>
       </el-form-item>
     </el-form>
@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import shapeType from '../../../enum/shapeType'
 import { deepCopy, deepEquals } from '../../../utils/object'
 
 export default {
@@ -28,6 +29,25 @@ export default {
   computed: {
     baseInfo() {
       return this.$store.state[this.namespace].panel.baseInfo
+    },
+    shapeType() {
+      return this.$store.state[this.namespace].panel.shapeType
+    },
+    nameLabel() {
+      const shapeLabelHandle = {
+        [shapeType.START_EVENT]: '开始节点',
+        [shapeType.END_EVENT]: '结束节点',
+        [shapeType.SEQUENCE_FLOW]: '连接',
+        [shapeType.USER_TASK]: '用户任务',
+        [shapeType.TASK]: '任务',
+        [shapeType.COMPLEX_GATEWAY]: '复杂网关',
+        [shapeType.PARALLEL_GATEWAY]: '并联网关',
+        [shapeType.EXCLUSIVE_GATEWAY]: '互斥网关',
+        [shapeType.INCLUSIVE_GATEWAY]: '相容网关',
+        [shapeType.EVENT_BASE_GATEWAY]: '事件网关',
+      }
+      const label = shapeLabelHandle[this.shapeType] ?? '流程'  
+      return `${label}名称`
     },
   },
   watch: {
