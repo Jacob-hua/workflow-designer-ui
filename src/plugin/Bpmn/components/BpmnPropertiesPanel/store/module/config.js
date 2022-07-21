@@ -65,15 +65,15 @@ const state = () => ({
   ],
   timerTypeOptions: [
     {
-      label: '日期',
+      label: '特定时间',
       value: 'date',
     },
     {
-      label: '持续时长',
+      label: '延迟时间',
       value: 'duration',
     },
     {
-      label: '循环',
+      label: '循环时间',
       value: 'cycle',
     },
     {
