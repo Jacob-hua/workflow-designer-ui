@@ -141,6 +141,11 @@ export default {
       handler(iBpmnModeler) {
         this.unBridgingFunc()
         this.unBridgingFunc = bridgingBpmn(this.$store, this.namespace, iBpmnModeler, bridgingModuleFunc)
+        this.updateBaseInfo({
+          newBaseInfo: {
+            name: this.iBpmnModeler.getRootShapeInfo().name,
+          },
+        })
       },
     },
     userGroup(userGroup) {
@@ -159,6 +164,12 @@ export default {
     updateUserGroupOptions(payload) {
       this.$store.commit({
         type: `${this.namespace}/config/updateUserGroupOptions`,
+        ...payload,
+      })
+    },
+    updateBaseInfo(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateBaseInfo`,
         ...payload,
       })
     },
