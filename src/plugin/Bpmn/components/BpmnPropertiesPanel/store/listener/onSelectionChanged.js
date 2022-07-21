@@ -1,5 +1,5 @@
 import IBpmnModeler from '../../../../IBpmnModeler'
-import BpmnShapeType from '../../../../enum/shapeType'
+import BpmnShapeType, { getShapeType } from '../../../../enum/shapeType'
 import { typeAssert } from '../../../../utils/object'
 
 function listenersParameter2State(iBpmnModeler = new IBpmnModeler()) {
@@ -101,6 +101,8 @@ function baseInfoParameter2State(iBpmnModeler = new IBpmnModeler()) {
   const shapeInfo = iBpmnModeler.getSelectedShapeInfo()
   baseInfo.name = shapeInfo.name
   baseInfo.id = shapeInfo.id
+  shapeInfo.sourceRef && (baseInfo.sourceRefType = getShapeType(shapeInfo.sourceRef.$type))
+  shapeInfo.targetRef && (baseInfo.targetRefType = getShapeType(shapeInfo.targetRef.$type))
   return baseInfo
 }
 
