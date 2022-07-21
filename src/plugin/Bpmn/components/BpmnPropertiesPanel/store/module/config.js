@@ -21,6 +21,14 @@ const state = () => ({
   ],
   eventOptions: [
     {
+      label: '开始',
+      value: 'start',
+    },
+    {
+      label: '结束',
+      value: 'end',
+    },
+    {
       label: '创建',
       value: 'create',
     },

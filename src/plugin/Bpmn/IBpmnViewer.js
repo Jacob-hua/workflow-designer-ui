@@ -4,7 +4,7 @@ import ElementRegistry from 'diagram-js/lib/core/ElementRegistry'
 import Modeling from 'bpmn-js/lib/features/modeling'
 import X2JS from 'x2js'
 import { filterPublicFunction } from './utils/function'
-import { getShapType } from './enum/shapeType'
+import { getShapeType } from './enum/shapeType'
 
 import config from './config'
 import custom from './custom'
@@ -143,7 +143,7 @@ class IBpmnViewer {
 
   getShapeType(element) {
     const { $type, eventDefinitions = [] } = this.getShapeInfo(element)
-    return getShapType(eventDefinitions[0] ? `${$type}_${eventDefinitions[0].$type}` : `${$type}`)
+    return getShapeType(eventDefinitions[0] ? `${$type}_${eventDefinitions[0].$type}` : `${$type}`)
   }
 
   async loadDiagram(xml) {

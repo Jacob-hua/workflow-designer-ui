@@ -9,7 +9,7 @@ import zh from './i18n/zh'
 import defaultEmpty from './utils/defaultEmpty'
 
 import config from './config'
-import { getShapType } from './enum/shapeType'
+import { getShapeType } from './enum/shapeType'
 import custom from './custom'
 
 // bpmn左侧工具栏样式
@@ -170,7 +170,7 @@ class IBpmnModeler {
 
   getShapeType(element) {
     const { $type, eventDefinitions = [] } = this.getShapeInfo(element)
-    return getShapType(eventDefinitions[0] ? `${$type}_${eventDefinitions[0].$type}` : `${$type}`)
+    return getShapeType(eventDefinitions[0] ? `${$type}_${eventDefinitions[0].$type}` : `${$type}`)
   }
 
   updateSelectedShapeExtensions(extensions = {}) {

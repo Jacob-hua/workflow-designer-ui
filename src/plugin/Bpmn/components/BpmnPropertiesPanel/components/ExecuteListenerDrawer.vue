@@ -299,9 +299,9 @@ export default {
 <style lang="scss" scoped>
 @import '../index.scss';
 
-// /deep/ .el-dialog {
-//   @include formDialog;
-// }
+/deep/ .el-dialog {
+  @include formDialog;
+}
 
 .form-footer {
   display: flex;
@@ -310,11 +310,11 @@ export default {
   padding: 50px 0;
 }
 
-// .submit-button {
-//   @include primaryBtn;
-// }
+.submit-button {
+  @include primaryBtn;
+}
 
-// .cancel-button {
-//   @include cancelBtn;
-// }
+.cancel-button {
+  @include cancelBtn;
+}
 </style>

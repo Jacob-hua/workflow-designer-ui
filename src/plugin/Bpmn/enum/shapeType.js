@@ -28,9 +28,11 @@ const shapeType = {
   INCLUSIVE_GATEWAY: Symbol('bpmn:InclusiveGateway'),
   EVENT_BASE_GATEWAY: Symbol('bpmn:EventBasedGateway'),
   COMPLEX_GATEWAY: Symbol('bpmn:ComplexGateway'),
+
+  SEQUENCE_FLOW: Symbol('bpmn:SequenceFlow'),
 }
 
-export function getShapType(tag) {
+export function getShapeType(tag) {
   const shapTypes = {
     'bpmn:StartEvent': shapeType.START_EVENT,
     'bpmn:StartEvent_bpmn:MessageEventDefinition': shapeType.MESSAGE_START_EVENT,
@@ -58,6 +60,7 @@ export function getShapType(tag) {
     'bpmn:InclusiveGateway': shapeType.INCLUSIVE_GATEWAY,
     'bpmn:EventBasedGateway': shapeType.EVENT_BASE_GATEWAY,
     'bpmn:ComplexGateway': shapeType.COMPLEX_GATEWAY,
+    'bpmn:SequenceFlow': shapeType.SEQUENCE_FLOW,
   }
   return shapTypes[tag]
 }
