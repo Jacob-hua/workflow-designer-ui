@@ -22,6 +22,7 @@ import ElementTaskPanel from './components/ElementTaskPanel.vue'
 import MultiInstancePanel from './components/MultiInstancePanel.vue'
 import ActionButtonPanel from './components/ActionButtonPanel.vue'
 import TimerPanel from './components/TimerPanel.vue'
+import ConditionPanel from './components/ConditionPanel.vue'
 import bridgingBpmn, { generateNamespace } from '../../utils/bridging-bpmn'
 import bridgingModuleFunc from './store'
 
@@ -36,6 +37,7 @@ export default {
     MultiInstancePanel,
     ActionButtonPanel,
     TimerPanel,
+    ConditionPanel,
   },
   props: {
     iBpmnModeler: {
@@ -71,6 +73,10 @@ export default {
       timerPanelInfo: {
         title: '定时器',
         component: TimerPanel,
+      },
+      conditionPanelInfo: {
+        title: '条件',
+        component: ConditionPanel,
       },
       executeListenerPanelInfo: {
         title: '执行监听器',
@@ -117,6 +123,7 @@ export default {
           this.actionButtonPanelInfo,
         ],
         [BpmnShapeType.EXCLUSIVE_GATEWAY]: [this.baseInfoPanelInfo, this.executeListenerPanelInfo],
+        [BpmnShapeType.SEQUENCE_FLOW]: [this.baseInfoPanelInfo, this.conditionPanelInfo],
       }
       return elementPanels[this.shapeType] ?? [this.baseInfoPanelInfo]
     },

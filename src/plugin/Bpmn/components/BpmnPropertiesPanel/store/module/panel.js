@@ -8,6 +8,14 @@ const state = () => ({
     name: '',
   },
   timer: {},
+  condition: {
+    type: '',
+    expression: '',
+    scriptFormat: '',
+    scriptType: '',
+    scriptResource: '',
+    script: '',
+  },
   messages: [],
   signals: [],
   listeners: [],
@@ -170,6 +178,9 @@ const mutations = {
   },
   updateTimer(state, { newTimer }) {
     state.timer = deepCopy(newTimer)
+  },
+  updateCondition(state, { newCondition }) {
+    state.condition = deepCopy(newCondition)
   },
 }
 

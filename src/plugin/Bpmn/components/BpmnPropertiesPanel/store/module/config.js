@@ -63,17 +63,41 @@ const state = () => ({
       value: 'outside',
     },
   ],
+  conditionTypeOpstions: [
+    {
+      label: '脚本',
+      value: 'script',
+    },
+    {
+      label: '表达式',
+      value: 'expression',
+    },
+    {
+      label: '无',
+      value: 'null',
+    },
+  ],
+  conditionScriptTypeOptions: [
+    {
+      label: '内联脚本',
+      value: 'inline',
+    },
+    {
+      label: '外部脚本',
+      value: 'external',
+    },
+  ],
   timerTypeOptions: [
     {
-      label: '日期',
+      label: '特定时间',
       value: 'date',
     },
     {
-      label: '持续时长',
+      label: '延迟时间',
       value: 'duration',
     },
     {
-      label: '循环',
+      label: '循环时间',
       value: 'cycle',
     },
     {
