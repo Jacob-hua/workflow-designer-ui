@@ -415,14 +415,9 @@ export default {
       return result
     },
     async downloadFile({ url }) {
-      const { errorInfo, result } = await downloadTaskAttachmentFile({
+      return await downloadTaskAttachmentFile({
         attachmentId: url,
       })
-      if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
-      }
-      return result
     },
     async fetchProcessNodeInfo() {
       const { errorInfo, result } = await getProcessNodeInfo({

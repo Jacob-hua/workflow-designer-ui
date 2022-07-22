@@ -25,6 +25,10 @@ function multiInstance2State(element, iBpmnModeler = new IBpmnModeler()) {
     return state
   }
   state.loopCharacteristics = moddleElement.isSequential ? 'SequentialMultiInstance' : 'ParallelMultiInstance'
+  state.loopCardinality = moddleElement.loopCardinality?.body
+  state.completionCondition = moddleElement.completionCondition?.body
+  state.collection = moddleElement.collection
+  state.elementVariable = moddleElement.elementVariable
   return state
 }
 
