@@ -188,6 +188,7 @@ function timer2State(iBpmnModeler = new IBpmnModeler()) {
 }
 
 function onSelectionChangedListener(_, commit, iBpmnModeler = new IBpmnModeler()) {
+  console.log(iBpmnModeler.getSelectedShape())
   if (!iBpmnModeler.getSelectedShape()) {
     commit('initState')
     commit('refreshState', {

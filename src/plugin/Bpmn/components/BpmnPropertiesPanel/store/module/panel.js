@@ -202,6 +202,7 @@ const mutationsEffect = {
   updateMultiInstance: panelEffect.multiInstanceEffect,
   updateActions: panelEffect.actionsEffect,
   updateTimer: panelEffect.timerEffect,
+  updateCondition: panelEffect.conditionEffect,
 }
 
 const eventsListener = {

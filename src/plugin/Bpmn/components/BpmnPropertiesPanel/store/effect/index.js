@@ -6,6 +6,7 @@ import userTaskEffect from './userTaskEffect'
 import actionsEffect from './actionsEffect'
 import multiInstanceEffect from './multiInstanceEffect'
 import timerEffect from './timerEffect'
+import conditionEffect from './conditionEffect'
 
 export default {
   baseInfoEffect,
@@ -16,4 +17,5 @@ export default {
   actionsEffect,
   multiInstanceEffect,
   timerEffect,
+  conditionEffect,
 }
