@@ -71,6 +71,11 @@ class IBpmnViewer {
     this.updateShapeId(this.getSelectedShape(), id)
   }
 
+  updateRootShapeId(id) {
+    const root = this.elementRegistryFind((elem) => elem.type === 'bpmn:Process')
+    this.updateShapeId(root, id)
+  }
+
   updateShapeId(shape, id) {
     if (!shape) {
       return

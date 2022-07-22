@@ -187,6 +187,20 @@ function timer2State(iBpmnModeler = new IBpmnModeler()) {
   return state
 }
 
+function condition2State(iBpmnModeler = new IBpmnModeler()) {
+  // console.log(iBpmnModeler.getSelectedShape())
+  const state = {
+    type: 'null',
+    expression: '',
+    scriptFormat: '',
+    scriptType: '',
+    scriptResource: '',
+    script: '',
+  }
+
+  return state
+}
+
 function onSelectionChangedListener(_, commit, iBpmnModeler = new IBpmnModeler()) {
   if (!iBpmnModeler.getSelectedShape()) {
     commit('initState')
@@ -215,6 +229,8 @@ function onSelectionChangedListener(_, commit, iBpmnModeler = new IBpmnModeler()
 
   const timer = timer2State(iBpmnModeler)
 
+  const condition = condition2State(iBpmnModeler)
+
   commit('refreshState', {
     shapeType,
     baseInfo,
@@ -225,6 +241,7 @@ function onSelectionChangedListener(_, commit, iBpmnModeler = new IBpmnModeler()
     actions,
     multiInstance,
     timer,
+    condition,
   })
 }
 

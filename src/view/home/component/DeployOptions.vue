@@ -187,10 +187,9 @@ export default {
     },
     async getXMLInfo() {
       const newProcessId = await this.$generateUUID()
-      this.iBpmn.updateSelectedShapeId(`process_${newProcessId}`)
+      this.iBpmn.updateRootShapeId(`process_${newProcessId}`)
       const { xml } = await this.iBpmn.saveXML({ format: true })
       const { name: processName, id: processId } = this.iBpmn.getRootShapeInfo()
-      console.log(processId, newProcessId)
       const file = new File([xml], processName + '.bpmn', {
         type: 'bpmn20-xml',
       })
