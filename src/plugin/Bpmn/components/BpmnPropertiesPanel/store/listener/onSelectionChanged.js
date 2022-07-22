@@ -188,7 +188,6 @@ function timer2State(iBpmnModeler = new IBpmnModeler()) {
 }
 
 function condition2State(iBpmnModeler = new IBpmnModeler()) {
-  // console.log(iBpmnModeler.getSelectedShape())
   const state = {
     type: 'null',
     expression: '',
@@ -196,6 +195,21 @@ function condition2State(iBpmnModeler = new IBpmnModeler()) {
     scriptType: '',
     scriptResource: '',
     script: '',
+  }
+
+  const conditionExpression = iBpmnModeler.getSelectedShapeInfoByType('conditionExpression')
+  if (!conditionExpression) {
+    return state
+  }
+
+  if (conditionExpression.language) {
+    state.type = 'script'
+    state.scriptFormat = conditionExpression.language
+    conditionExpression.resource && (state.scriptResource = conditionExpression.resource)
+    conditionExpression.body && (state.script = conditionExpression.body)
+  } else {
+    state.type = 'expression'
+    state.expression = conditionExpression.body
   }
 
   return state

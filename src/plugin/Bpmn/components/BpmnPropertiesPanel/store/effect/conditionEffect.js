@@ -11,11 +11,12 @@ function conditionEffect({ condition }, iBpmnModeler = new IBpmnModeler()) {
     },
   }
 
-  iBpmnModeler.updateSelectedShapeProperties({
-    conditionExpression: iBpmnModeler.createBpmnModdleInstance('FormalExpression', {
-      ...computeProperties[condition.type],
-    }),
-  })
+  computeProperties[condition.type] &&
+    iBpmnModeler.updateSelectedShapeProperties({
+      conditionExpression: iBpmnModeler.createBpmnModdleInstance('FormalExpression', {
+        ...computeProperties[condition.type],
+      }),
+    })
 
   function handlerScript(condition) {
     const scriptAttrs = {
