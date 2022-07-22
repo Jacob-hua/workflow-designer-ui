@@ -72,7 +72,7 @@ export default {
       deep: true,
       immediate: true,
       handler(value) {
-        this.conditionForm = { ...value }
+        this.conditionForm = { ...this.conditionForm, ...deepCopy(value) }
       },
     },
     conditionForm: {

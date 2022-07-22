@@ -58,8 +58,12 @@ export default {
     },
   },
   watch: {
-    multiInstance(value) {
-      this.instanceForm = { ...this.instanceForm, ...deepCopy(value) }
+    multiInstance: {
+      deep: true,
+      immediate: true,
+      handler(value) {
+        this.instanceForm = { ...this.instanceForm, ...deepCopy(value) }
+      },
     },
     instanceForm: {
       deep: true,
