@@ -1,6 +1,6 @@
 <template>
   <el-col>
-    <el-row v-if=" model.controlFiledFlag" @mouseenter.native='move' @mouseleave.native='leave' class="rows" :gutter="model.gutter">
+    <el-row v-if="model.controlFiledFlag" @mouseenter.native='move' @mouseleave.native='leave' class="rows" :gutter="model.gutter">
       <i @click="addComponent(model)" v-show="iconFlag"
          class="copy el-icon-circle-plus-outline"></i>
       <i @click="delComponent(model)" v-show="iconFlag && index !== firstIndex"
@@ -23,18 +23,18 @@ export default {
       firstIndex: null
     }
   },
-  // watch: {
-  //   model: {
-  //     immediate: true,
-  //     deep: true,
-  //     handler(data) {
-  //       data.controlFiledFlag = data.controlFiledFlag?? true
-  //       data.controlFiledFlag = true
-  //     }
-  //   }
-  // },
+  watch: {
+    model: {
+      immediate: true,
+      deep: true,
+      handler(data) {
+        data.controlFiledFlag = true
+      }
+    }
+  },
   computed: {},
   mounted() {
+    console.log(this.model.controlFiledFlag =  true)
     this.firstIndex = this.itemList.map(element => element.compType).indexOf('row')
   },
   methods: {
