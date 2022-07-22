@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { deepCopy, deepEquals } from '../../../utils/object'
+import { deepCopy, deepEquals, emptyPropertiesObject } from '../../../utils/object'
 
 export default {
   name: 'ConditionPanel',
@@ -68,14 +68,18 @@ export default {
     },
   },
   watch: {
-    condition(value) {
-      this.conditionForm = { ...value }
+    condition: {
+      deep: true,
+      immediate: true,
+      handler(value) {
+        this.conditionForm = { ...value }
+      },
     },
     conditionForm: {
       deep: true,
       immediate: true,
       handler(value) {
-        if (deepEquals(value, this.condition)) {
+        if (emptyPropertiesObject(value) || deepEquals(value, this.condition)) {
           return
         }
         this.updateCondition({ newCondition: deepCopy(value) })
