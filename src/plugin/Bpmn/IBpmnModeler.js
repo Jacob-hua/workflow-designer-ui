@@ -238,11 +238,34 @@ class IBpmnModeler {
 
   async validate() {
     const valid = await this.linterLint()
-    if (Object.keys(valid).length === 0) {
-      return true
-    }
 
-    throw new Error(`This canvas has ${Object.keys(valid).length} errors`)
+    const validInfo = Object.keys(valid).reduce(reduceValidInfo, { error: [], warn: [] })
+
+    return validInfo
+
+    function reduceValidInfo(validInfo, key) {
+      if (!Array.isArray(valid[key])) {
+        validInfo.error.push(valid[key])
+        return validInfo
+      }
+
+      const categoryHandle = {
+        error: validInfo.error,
+        warning: validInfo.warn,
+        warn: validInfo.warn,
+      }
+
+      valid[key].forEach(({ category, id, message }) => {
+        categoryHandle[category] &&
+          categoryHandle[category].push({
+            key,
+            id,
+            message,
+            category,
+          })
+      })
+      return validInfo
+    }
   }
 
   async createEmptyDiagram(name = new Date().getTime(), properties) {
