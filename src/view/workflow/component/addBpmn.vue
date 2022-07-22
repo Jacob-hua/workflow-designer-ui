@@ -71,13 +71,12 @@ export default {
       return processFormData
     },
     async onPublish() {
-      try {
-        await this.iBpmnModeler.validate()
-      } catch (error) {
-        console.log(error)
+      const { error } = await this.iBpmnModeler.validate()
+      if (error.length > 0) {
         this.$message.error('流程设计存在错误/警告')
         return
       }
+      
       try {
         const { xml } = await this.iBpmnModeler.saveXML({
           format: true,
@@ -115,9 +114,8 @@ export default {
       this.$emit('close')
     },
     async onSave() {
-      try {
-        await this.iBpmnModeler.validate()
-      } catch (error) {
+      const { error } = await this.iBpmnModeler.validate()
+      if (error.length > 0) {
         this.$message.error('流程设计存在错误/警告')
         return
       }
