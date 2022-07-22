@@ -56,6 +56,13 @@
                       </div>
                     </div>
                   </div>
+                  <div v-if="undefineStatus(status)">
+                    <div>
+                      <i class="el-icon-check warning"></i>
+                      <span>{{ formAssignee }} 终止</span>
+                    </div>
+                    <span>{{ time }}</span>
+                  </div>
                 </div>
               </div>
             </el-timeline-item>
@@ -160,6 +167,9 @@ export default {
     this.fetchExecuteDetail()
   },
   methods: {
+    undefineStatus(status = '') {
+      return status.split(',').some((status) => status !== 'completed' && status !== 'run' && status !== 'rejected')
+    },
     statusHas(status = '', target = '') {
       return status.split(',').includes(target)
     },
@@ -255,7 +265,7 @@ export default {
 }
 
 .warning {
-  background-color: #FFAB00;
+  background-color: #ffab00;
   color: white;
   border-radius: 50%;
   border: none;
