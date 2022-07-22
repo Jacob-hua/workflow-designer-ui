@@ -13,7 +13,7 @@
           @submit.native.prevent="submit"
         >
           <template v-for="(element, index) in metaDataList"  >
-             <preview-row-item 
+             <preview-row-item
               v-if="element.compType === 'row'"
               :key="'row-'+index"
               :model="element"
@@ -44,7 +44,7 @@
             </preview-row-item>
             <!--item-->
             <el-col class="drag-col-wrapper" :key="index"   :span="element.span" v-else>
-              <preview-item 
+              <preview-item
                 :model="element"
                 v-model="form[element.id]"
                 :quoteOption="quoteOption"
@@ -102,7 +102,9 @@ export default {
     metaDataList : function () {
       return this.itemList.map((fieldInfo) => {
         if (fieldInfo.relationMapping && fieldInfo.relationMapping.length) {
-          fieldInfo.context = this.getContext()
+          if (!fieldInfo.disabled && !this.formConf.disabled) {
+            fieldInfo.context = this.getContext()
+          }
         }
         return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
           if (!fieldInfo.disabled && !this.formConf.disabled) {
@@ -137,7 +139,6 @@ export default {
               } else {
                 data[item.id] = data[item.relationField.split('#')[1]]
               }
-
             } else if(item.relationField.trim().startsWith('$')) {
                this.getContext().then(res=> {
                  if (item.compType === 'text') {
@@ -145,12 +146,12 @@ export default {
                  } else {
                    data[item.id] = res[item.relationField.split('$')[1]]
                  }
-
                })
             }
           }
-          if ((item.compType === 'row' || item.compType === 'Switch')   && item.controlFiled && item.controlFiledVal) {
+          if ((item.compType === 'row')   && item.controlFiled && item.controlFiledVal) {
             item.controlFiledFlag = String(data[item.controlFiled]) === item.controlFiledVal;
+            console.log(item.controlFiledFlag)
           } else {
            item.controlFiledFlag = true
           }
@@ -177,7 +178,7 @@ export default {
           column.list = itemList;
         }
       })
-      this.itemList.push(clone);
+      this.itemList.splice( this.itemList.findIndex((item) => item.id === model.id ), 0, clone)
     },
     deleteEmptyChildren(arr) {
       for (let i = 0; i < arr.length; i++) {
