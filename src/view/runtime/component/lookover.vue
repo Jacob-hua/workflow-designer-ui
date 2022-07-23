@@ -168,7 +168,7 @@ export default {
   },
   methods: {
     undefineStatus(status = '') {
-      return status.split(',').some((status) => status !== 'completed' && status !== 'run' && status !== 'rejected')
+      return status.split(',').some((status) => !['completed', 'run', 'rejected', 'hang'].includes(status))
     },
     statusHas(status = '', target = '') {
       return status.split(',').includes(target)
