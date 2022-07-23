@@ -68,12 +68,12 @@
           <span slot="label">{{ display }}</span>
           <div>
             <el-table :data="newTasks">
-              <el-table-column type="index" label="序号" align="center"> </el-table-column>
-              <el-table-column prop="processDeployName" label="名称" align="center" show-overflow-tooltip="" />
-              <el-table-column prop="displayEnergyType" label="部署类型" align="center" />
-              <el-table-column prop="starter" label="发起人" align="center" />
-              <el-table-column prop="startTime" label="发起时间" align="center" />
-              <el-table-column label="执行进程" align="center" min-width="250">
+              <el-table-column type="index" label="序号"> </el-table-column>
+              <el-table-column prop="processDeployName" label="名称" show-overflow-tooltip="" />
+              <el-table-column prop="displayEnergyType" label="部署类型" />
+              <el-table-column prop="starter" label="发起人" />
+              <el-table-column prop="startTime" label="发起时间" />
+              <el-table-column label="执行进程" min-width="250">
                 <template slot-scope="{ row }">
                   <el-steps :active="row.displayTrackList.length" align-center process-status="success">
                     <el-step
@@ -87,7 +87,7 @@
                   </el-steps>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" align="center">
+              <el-table-column label="操作">
                 <template slot-scope="{ row }">
                   <el-button v-if="row.canExecute" @click.native.prevent="onExecute(row)" type="text" size="small">
                     执行
