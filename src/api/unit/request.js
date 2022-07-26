@@ -95,8 +95,8 @@ export function get(url, params, config) {
   return service.get(url, { params, ...config })
 }
 
-export function post(url, params) {
-  return service.post(url, params)
+export function post(url, params, config) {
+  return service.post(url, params, config)
 }
 export function put(url, params) {
   return service.put(url, params)

@@ -137,7 +137,7 @@ export default {
 
 <style lang="scss" scoped>
 $header-height: 48px;
-$aside-width: 240px;
+$aside-width: 260px;
 $aside-logo-height: 288px;
 
 .header {
