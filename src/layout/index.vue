@@ -37,6 +37,7 @@
 <script>
 import CONSTANT from '@/constant'
 import { mapMutations, mapState } from 'vuex'
+import Cookies from 'js-cookie'
 
 export default {
   data() {
@@ -129,6 +130,8 @@ export default {
       this.activeMenu = activeMenu
     },
     exitProject() {
+      Cookies.remove('userInfo')
+      sessionStorage.clear()
       this.$router.push('/')
     },
   },
