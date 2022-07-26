@@ -1,44 +1,45 @@
 <template>
-  <div class="background body"
-       v-show="showHtml">
+  <div class="background body" v-show="showHtml">
     <div class="box">
       <h2>登录</h2>
       <form method="post">
         <div class="inputbox">
-          <input type="text"
-                 name="username"
-                 v-model="username"
-                 required=""
-                 oninvalid="setCustomValidity('请输入用户名');"
-                 @keyup.enter="login">
+          <input
+            type="text"
+            name="username"
+            v-model="username"
+            required=""
+            oninvalid="setCustomValidity('请输入用户名');"
+            @keyup.enter="login"
+          />
           <label>Username</label>
         </div>
 
         <div class="inputbox">
-          <input type="password"
-                 name="password"
-                 v-model="password"
-                 required=""
-                 oninvalid="setCustomValidity('请输入登陆密码');"
-                 @keyup.enter="login">
+          <input
+            type="password"
+            name="password"
+            v-model="password"
+            required=""
+            oninvalid="setCustomValidity('请输入登陆密码');"
+            @keyup.enter="login"
+          />
           <label>Password</label>
         </div>
 
-        <input type="button"
-               value="登录"
-               @click="login()">
+        <input type="button" value="登录" @click="login()" />
       </form>
     </div>
-
   </div>
 </template>
 
 <script>
 import CONSTANT from '@/constant'
 import { userLogin } from '@/api/unit/api.js'
-import { getAllBusinessConfig } from '@/api/globalConfig.js'
+import { getAllBusinessConfig, thirdAuth } from '@/api/globalConfig.js'
 import { mapMutations } from 'vuex'
 import { mapState } from 'vuex'
+import Cookies from 'js-cookie'
 
 export default {
   name: 'LoginPage',
@@ -53,14 +54,11 @@ export default {
     ...mapState('account', ['tenantId']),
   },
   created() {
-    if (this.$route.query.account) {
-      this.username = this.$route.query.account
-      this.password = this.$route.query.account
-      sessionStorage.setItem('status', CONSTANT.LOGIN_FROM_WORKFLOW_ITSELF)
-       this.login()
+    if (Cookies.get('userInfo')) {
+      this.thirdLogin()
     } else {
       sessionStorage.clear()
-      sessionStorage.setItem('mapping', '[]' )
+      sessionStorage.setItem('mapping', '[]')
       this.showHtml = true
     }
   },
@@ -73,22 +71,35 @@ export default {
       }).then((res) => {
         sessionStorage.setItem('loginData', JSON.stringify(res.result))
         this.getMapping()
-        if (this.$route.query.account) {
-          this.$router.push('/home/runTime')
-        } else {
-          this.$router.push('/home')
-        }
+        this.$router.push('/home')
+      })
+    },
+    thirdLogin() {
+      if (!Cookies.get('userInfo')) {
+        this.$message.error('登录失败')
+        return
+      }
+      const userInfo = JSON.parse(Cookies.get('userInfo'))
+      thirdAuth({
+        account: userInfo.account,
+        thirdToken: userInfo.mark,
+      }).then((res) => {
+        res.result.account = userInfo.account
+        res.result.name = userInfo.account
+        sessionStorage.setItem('loginData', JSON.stringify(res.result))
+        this.getMapping()
+        this.$router.push('/home')
       })
     },
     getMapping() {
       getAllBusinessConfig({
-        tenantId: this.tenantId
+        tenantId: this.tenantId,
       }).then((res) => {
         if (res) {
           sessionStorage.setItem('mapping', JSON.stringify(res.result || '[]'))
         }
       })
-    }
+    },
   },
 }
 </script>
