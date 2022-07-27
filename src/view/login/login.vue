@@ -54,9 +54,13 @@ export default {
     ...mapState('account', ['tenantId']),
   },
   created() {
+    console.log('before cookies')
+    console.log(Cookies.get('userInfo'))
     if (Cookies.get('userInfo')) {
+      console.log('cookies ====================')
       this.thirdLogin()
     } else {
+      console.log('not have cookies!!!!!!!!!!!!!')
       sessionStorage.clear()
       sessionStorage.setItem('mapping', '[]')
       this.showHtml = true
