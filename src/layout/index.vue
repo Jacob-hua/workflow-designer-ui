@@ -2,7 +2,7 @@
   <div>
     <el-container>
       <el-header class="header">
-        <div v-if="!status && thirdLogin" class="user-info">
+        <div v-if="!status && !thirdLogin" class="user-info">
           <span>{{ userInfo.name }}</span>
           <img :src="require('../assets/image/header/quit.svg')" @click="exitProject()" />
         </div>
