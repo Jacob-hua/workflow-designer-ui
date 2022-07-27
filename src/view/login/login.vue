@@ -1,7 +1,7 @@
 <template>
   <div class="background body" v-show="showHtml">
     <div class="box">
-      <h2>登录!!!!!!!!!!!!</h2>
+      <h2>登录</h2>
       <form method="post">
         <div class="inputbox">
           <input
@@ -54,16 +54,9 @@ export default {
     ...mapState('account', ['tenantId']),
   },
   created() {
-    console.log('before cookies')
-    setTimeout(() => {
-      console.log('ddddd', document.cookie)
-      console.log(Cookies.get('userInfo'))
-    })
     if (Cookies.get('userInfo')) {
-      console.log('cookies ====================')
       this.thirdLogin()
     } else {
-      console.log('not have cookies!!!!!!!!!!!!!')
       sessionStorage.clear()
       sessionStorage.setItem('mapping', '[]')
       this.showHtml = true
