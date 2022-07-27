@@ -41,6 +41,21 @@ import { mapMutations } from 'vuex'
 import { mapState } from 'vuex'
 import Cookies from 'js-cookie'
 
+export const getCookie = (cookieName) => {
+  if (document.cookie.length > 0) {
+    let c_start = document.cookie.indexOf(cookieName + '=')
+    if (c_start != -1) {
+      c_start = c_start + cookieName.length + 1
+      let c_end = document.cookie.indexOf(';', c_start)
+      if (c_end == -1) {
+        c_end = document.cookie.length
+      }
+      return unescape(document.cookie.substring(c_start, c_end))
+    }
+  }
+  return ''
+}
+
 export default {
   name: 'LoginPage',
   data() {
@@ -55,8 +70,11 @@ export default {
   },
   created() {
     console.log('before cookies')
-    console.log('ddddd', document.cookie)
-    console.log(Cookies.get('userInfo'))
+    setTimeout(() => {
+      console.log('ddddd', document.cookie)
+      console.log('sssss', getCookie('userInfo'))
+      console.log(Cookies.get('userInfo'))
+    })
     if (Cookies.get('userInfo')) {
       console.log('cookies ====================')
       this.thirdLogin()
