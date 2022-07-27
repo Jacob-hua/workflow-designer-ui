@@ -55,8 +55,10 @@ export default {
   },
   created() {
     console.log('before cookies')
-    console.log('ddddd', document.cookie)
-    console.log(Cookies.get('userInfo'))
+    setTimeout(() => {
+      console.log('ddddd', document.cookie)
+      console.log(Cookies.get('userInfo'))
+    })
     if (Cookies.get('userInfo')) {
       console.log('cookies ====================')
       this.thirdLogin()
