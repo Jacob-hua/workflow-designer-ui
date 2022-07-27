@@ -1,25 +1,29 @@
 const state = {
-  tenantId: "18",
+  thirdLogin: false,
+  tenantId: '18',
   userInfo: {},
-  currentOrganization: "",
-};
+  currentOrganization: '',
+}
 
-const getters = {};
+const getters = {}
 
 const mutations = {
+  updateThirdLogin(state, { thirdLogin }) {
+    state.thirdLogin = thirdLogin
+  },
   updateTenantId(state, { tenantId }) {
-    state.tenantId = tenantId;
+    state.tenantId = tenantId
   },
   updateUserInfo(state, { userInfo }) {
-    state.userInfo = userInfo;
-    state.tenantId = userInfo.tenants?.[0]?.id;
+    state.userInfo = userInfo
+    state.tenantId = userInfo.tenants?.[0]?.id
   },
   updateCurrentOrganization(state, { currentOrganization }) {
-    state.currentOrganization = currentOrganization;
+    state.currentOrganization = currentOrganization
   },
-};
+}
 
-const actions = {};
+const actions = {}
 
 export default {
   namespaced: true,
@@ -27,4 +31,4 @@ export default {
   getters,
   mutations,
   actions,
-};
+}

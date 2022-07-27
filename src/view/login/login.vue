@@ -63,7 +63,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('account', ['updateUserInfo']),
+    ...mapMutations('account', ['updateUserInfo', 'updateThirdLogin']),
     login() {
       userLogin({
         account: this.username,
@@ -89,6 +89,7 @@ export default {
         sessionStorage.setItem('loginData', JSON.stringify(res.result))
         this.getMapping()
         this.$router.push('/home')
+        this.updateThirdLogin({ thirdLogin: true })
       })
     },
     getMapping() {

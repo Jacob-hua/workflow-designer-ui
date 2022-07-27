@@ -2,7 +2,7 @@
   <div>
     <el-container>
       <el-header class="header">
-        <div v-if="!status" class="user-info">
+        <div v-if="!status && thirdLogin" class="user-info">
           <span>{{ userInfo.name }}</span>
           <img :src="require('../assets/image/header/quit.svg')" @click="exitProject()" />
         </div>
@@ -85,7 +85,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('account', ['userInfo']),
+    ...mapState('account', ['userInfo', 'thirdLogin']),
   },
   created() {
     let userInfo = sessionStorage.getItem('loginData')
@@ -141,7 +141,7 @@ export default {
 <style lang="scss" scoped>
 $header-height: 48px;
 $aside-width: 260px;
-$aside-logo-height: 288px;
+$aside-logo-height: 320px;
 
 .header {
   height: $header-height !important;
