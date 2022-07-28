@@ -73,12 +73,6 @@ const routes = [
     component: () => import('@/view/workflowViewer'),
     hidden: true,
   },
-  {
-    path: '/test',
-    name: 'Test',
-    component: () => import('@/view/test'),
-    hidden: true,
-  },
 ]
 
 const originalPush = VueRouter.prototype.push
@@ -106,13 +100,14 @@ router.beforeEach((to, from, next) => {
       next()
       return
     }
-    if (to.name === 'Test') {
-      next()
-      return
-    }
     let routerName = to.name
 
     let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'))
+
+    if (!menuProjectList) {
+      next('/home/noPermission')
+      return
+    }
 
     let menuList = menuProjectList.filter((item) => {
       return item.projectList.length > 0
