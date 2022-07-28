@@ -120,11 +120,11 @@ pipeline {
         stage('Check Deploy Status'){
             steps{
                 script{
-                    println "判断程序是否启动成功，等待1分钟"
-                    sleep(60)
-                    POD_STATUS = sh(returnStdout: true, script: '''sudo kubectl get pod -l app=${service} -n ${namespace} | awk 'NR!=1{print $3}' ''').trim()
-                    println "pod status: ${POD_STATUS}"
-                    if ( "${POD_STATUS}" != 'Running' ){
+                    println "判断程序是否启动成功，等待180S"
+                    sleep(180)
+                    POD_RESULT = sh(returnStdout: true, script: '''sudo kubectl get pod -l app=${service} -n ${namespace} | awk 'NR!=1{print $3}' | grep Running | wc -l ''').trim()
+                    println "pod status: ${POD_RESULT}"
+                    if ( "${POD_RESULT}" == '0' ){
                         error "This pod status not running!"
                     }
                 }
