@@ -19,8 +19,10 @@
           </div>
           <el-menu :default-active="$route.name" router v-if="!status" @select="onSelect">
             <el-menu-item :index="item.menuRoute" v-for="(item, index) in menuList" :key="index">
-              <img class="menu-icon" :src="getMenuIcon(item.menuRoute)" />
-              <span>{{ menuListNameMapping[item.menuRoute].label }}</span>
+              <div :class="thirdLogin ? 'third-menu' : ''">
+                <img class="menu-icon" :src="getMenuIcon(item.menuRoute)" />
+                <span>{{ menuListNameMapping[item.menuRoute].label }}</span>
+              </div>
             </el-menu-item>
           </el-menu>
         </el-aside>
@@ -267,6 +269,10 @@ $aside-logo-height: 320px;
 .menu-icon {
   width: 18px;
   margin-right: 12px;
+}
+
+.third-menu {
+  padding-left: 24px;
 }
 
 .main {
