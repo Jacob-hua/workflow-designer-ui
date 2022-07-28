@@ -54,20 +54,16 @@ export default {
     ...mapState('account', ['tenantId']),
   },
   created() {
-    console.log('before cookies')
-    console.log(Cookies.get('userInfo'))
     if (Cookies.get('userInfo')) {
-      console.log('cookies ====================')
       this.thirdLogin()
     } else {
-      console.log('not have cookies!!!!!!!!!!!!!')
       sessionStorage.clear()
       sessionStorage.setItem('mapping', '[]')
       this.showHtml = true
     }
   },
   methods: {
-    ...mapMutations('account', ['updateUserInfo']),
+    ...mapMutations('account', ['updateUserInfo', 'updateThirdLogin']),
     login() {
       userLogin({
         account: this.username,
@@ -93,6 +89,7 @@ export default {
         sessionStorage.setItem('loginData', JSON.stringify(res.result))
         this.getMapping()
         this.$router.push('/home')
+        this.updateThirdLogin({ thirdLogin: true })
       })
     },
     getMapping() {
