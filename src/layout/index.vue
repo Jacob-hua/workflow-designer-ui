@@ -272,7 +272,7 @@ $aside-logo-height: 320px;
 }
 
 .third-menu {
-  padding-left: 34px;
+  padding-left: 38px;
 }
 
 .main {
