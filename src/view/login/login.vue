@@ -1,7 +1,7 @@
 <template>
   <div class="background body" v-show="showHtml">
     <div class="box">
-      <h2>登录!!!!!!!!!!!</h2>
+      <h2>登录</h2>
       <form method="post">
         <div class="inputbox">
           <input
