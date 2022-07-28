@@ -44,6 +44,12 @@
     <el-form-item label="搜索">
       <el-switch v-model="props.filterable"></el-switch>
     </el-form-item>
+    <el-form-item label="允许创建">
+      <el-switch v-model="props.allowCreate"></el-switch>
+    </el-form-item>
+    <el-form-item label="默认首选项">
+      <el-switch v-model="props.defaultFirstOption"></el-switch>
+    </el-form-item>
     <el-form-item label="默认值">
       <el-input class="input"
         :value="setValue(props.value)"

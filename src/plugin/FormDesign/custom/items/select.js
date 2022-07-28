@@ -34,6 +34,10 @@ export let select = {
   disabled:false,
   //搜索
   filterable:false,
+  // 允许创建
+  allowCreate: false,
+  // 默认首选项
+  defaultFirstOption: false,
   
   //选项列表
   options:[{
