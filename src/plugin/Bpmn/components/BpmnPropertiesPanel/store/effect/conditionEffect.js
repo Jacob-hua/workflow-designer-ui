@@ -1,6 +1,11 @@
 import IBpmnModeler from '../../../../IBpmnModeler'
+import BpmnShapeType from '../../../../enum/shapeType'
+import { deepCopy } from '../../../../utils/object'
 
 function conditionEffect({ condition }, iBpmnModeler = new IBpmnModeler()) {
+  if (iBpmnModeler.getSelectedShapeType() !== BpmnShapeType.SEQUENCE_FLOW) {
+    return
+  }
   const computeProperties = {
     script: {
       language: condition.scriptFormat,
@@ -11,12 +16,15 @@ function conditionEffect({ condition }, iBpmnModeler = new IBpmnModeler()) {
     },
   }
 
-  computeProperties[condition.type] &&
+  if (computeProperties[condition.type]) {
     iBpmnModeler.updateSelectedShapeProperties({
       conditionExpression: iBpmnModeler.createBpmnModdleInstance('FormalExpression', {
         ...computeProperties[condition.type],
       }),
     })
+  } else {
+    delete iBpmnModeler.getSelectedShapeInfo().conditionExpression
+  }
 
   function handlerScript(condition) {
     const scriptAttrs = {

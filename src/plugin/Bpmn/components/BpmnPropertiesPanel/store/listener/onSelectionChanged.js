@@ -223,6 +223,7 @@ function onSelectionChangedListener(_, commit, iBpmnModeler = new IBpmnModeler()
         name: iBpmnModeler.getRootShapeInfo().name,
         id: iBpmnModeler.getRootShapeInfo().id,
       },
+      shapeType: '',
     })
     return
   }
