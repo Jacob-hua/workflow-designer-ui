@@ -1,6 +1,10 @@
 import IBpmnModeler from '../../../../IBpmnModeler'
+import BpmnShapeType from '../../../../enum/shapeType'
 
 function conditionEffect({ condition }, iBpmnModeler = new IBpmnModeler()) {
+  if (iBpmnModeler.getSelectedShapeType() !== BpmnShapeType.SEQUENCE_FLOW) {
+    return
+  }
   const computeProperties = {
     script: {
       language: condition.scriptFormat,
