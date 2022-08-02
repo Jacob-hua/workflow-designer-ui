@@ -109,6 +109,7 @@ export default {
         })
         const { errorInfo } = await deleteWorkflow({
           id: row.id,
+          tenantId: this.tenantId,
           updateBy: this.userInfo.account,
         })
         if (errorInfo.errorCode) {
