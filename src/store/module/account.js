@@ -1,6 +1,6 @@
 const state = {
   thirdLogin: false,
-  tenantId: '18',
+  tenantId: '',
   userInfo: {},
   currentOrganization: '',
 }
