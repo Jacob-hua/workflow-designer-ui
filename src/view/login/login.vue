@@ -70,8 +70,8 @@ export default {
         password: this.password,
       }).then((res) => {
         sessionStorage.setItem('loginData', JSON.stringify(res.result))
-        this.getMapping()
         res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
+        this.getMapping(res.result.tenants[0]?.id)
         this.$router.push('/home')
       })
     },
@@ -88,15 +88,15 @@ export default {
         res.result.account = userInfo.account
         res.result.name = userInfo.account
         sessionStorage.setItem('loginData', JSON.stringify(res.result))
-        this.getMapping()
         res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
+        this.getMapping(res.result.tenants[0]?.id)
         this.$router.push('/home')
         this.updateThirdLogin({ thirdLogin: true })
       })
     },
-    getMapping() {
+    getMapping(tenantId) {
       getAllBusinessConfig({
-        tenantId: this.tenantId,
+        tenantId,
       }).then((res) => {
         if (res) {
           sessionStorage.setItem('mapping', JSON.stringify(res.result || '[]'))
