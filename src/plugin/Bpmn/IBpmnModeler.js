@@ -56,7 +56,7 @@ class IBpmnModeler {
         ...props.bpmnRenderer,
       },
       additionalModules: [
-        // custom,
+        custom,
         lintModule,
         {
           translate: ['value', customTranslate(this.i18n)],
