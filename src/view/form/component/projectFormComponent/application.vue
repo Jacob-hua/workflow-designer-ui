@@ -66,7 +66,7 @@
             </div>
             <div slot="footer" class="dialog-footer">
         <div class="next" @click="onSure()" type="primary">确定</div>
-        <div class="cancel" @click="dialogVisible = false">取消</div>
+        <div class="cancel" @click="dialogVisibleModal = false">取消</div>
       </div>
           </el-dialog>
           <div class="process-page">
