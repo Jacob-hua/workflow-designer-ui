@@ -1,6 +1,6 @@
-import CustomRenderer from './CustomRenderer'
+import CustomPalette from './CustomPalette'
 
 export default {
-  __init__: ['customRenderer'],
-  customRenderer: ['type', CustomRenderer],
+  __init__: ['customPalette'],
+  customPalette: ['type', CustomPalette],
 }
