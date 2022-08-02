@@ -239,6 +239,10 @@ export default {
         this.$message.error(errorInfo.erroMsg)
         return
       }
+      if (!result?.dataList) {
+        this.tableData = []
+        return
+      }
       this.tableData = result.dataList.map((row) => {
         const displayAssignee = row.assigneeList?.join(' ') ?? ''
         return {
