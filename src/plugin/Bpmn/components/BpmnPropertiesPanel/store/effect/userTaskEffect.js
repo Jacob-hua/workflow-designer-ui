@@ -10,6 +10,9 @@ function userTaskEffect({ userTask }, iBpmnModeler = new IBpmnModeler()) {
     candidateUsers: userTask.candidateUsers,
     candidateGroups: userTask.candidateGroups,
   })
+  !userTask.assignee && (delete iBpmnModeler.getSelectedShapeInfo().assignee)
+  !userTask.candidateUsers && (delete iBpmnModeler.getSelectedShapeInfo().candidateUsers)
+  !userTask.candidateGroups && (delete iBpmnModeler.getSelectedShapeInfo().candidateGroups)
 }
 
 export default userTaskEffect
