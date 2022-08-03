@@ -323,6 +323,7 @@ export default {
     },
     addForm() {
       this.$refs.projectFormDiolog.dialogVisible1 = true
+      this.getProjectList()
       this.$refs.projectFormDiolog.postData = {
         ascriptionName: '',
         ascName: '',
