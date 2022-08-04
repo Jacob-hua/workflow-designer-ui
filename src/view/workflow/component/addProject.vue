@@ -33,7 +33,7 @@
     </el-form>
     <div slot="footer">
       <el-button class="submit" @click="onSubmit">下一步</el-button>
-      <el-button class="cancel" @click="onCancel">取 消</el-button>
+      <el-button class="cancel" @click="onClose">取 消</el-button>
     </div>
   </el-dialog>
 </template>
@@ -94,10 +94,7 @@ export default {
   methods: {
     onClose() {
       this.$emit('close')
-      this.$refs['formData'].resetFields()
-    },
-    onCancel() {
-      this.$emit('close')
+      this.$emit('update:visible', false)
       this.$refs['formData'].resetFields()
     },
     onSubmit() {

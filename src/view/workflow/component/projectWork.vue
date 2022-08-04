@@ -66,7 +66,7 @@
           <projectTable
             :business="projectValue"
             :searchForm="searchFormData"
-            @lookBpmnShow="onLookBpmnShow"
+            @lookBpmnShow="onProjectLookBpmnShow"
             @deleteRow="onProjectDeleteRow"
           ></projectTable>
         </el-tab-pane>
@@ -81,10 +81,10 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <addProject :visible="addProjectVisible" @close="onAddProjectClose" @submit="onAddProjectSubmit"></addProject>
+    <addProject :visible.sync="addProjectVisible" @submit="onAddProjectSubmit"></addProject>
     <addBpmn
       v-if="addBpmnVisible"
-      :visible="addBpmnVisible"
+      :visible.sync="addBpmnVisible"
       :projectData="projectData"
       @close="onAddBpmnClose"
       @submit="onAddBpmnSubmit"
@@ -103,6 +103,7 @@
       v-if="lookBpmnVisible"
       :projectData="projectData"
       :visible="lookBpmnVisible"
+      :footerVisible="lookBpmnFooterVisible"
       @close="onLookBpmnClose"
       @edit="onLookBpmnEdit"
     ></lookBpmn>
@@ -148,6 +149,7 @@ export default {
       addBpmnVisible: false,
       quoteBpmnVisible: false,
       lookBpmnVisible: false,
+      lookBpmnFooterVisible: true,
       activeName: 'enabled,disabled',
     }
   },
@@ -201,9 +203,6 @@ export default {
       }
       this.refreshWorkFlowRecord()
     },
-    onAddProjectClose() {
-      this.addProjectVisible = false
-    },
     onAddProjectSubmit(value) {
       this.addProjectVisible = false
       this.setProjectData(value)
@@ -225,9 +224,15 @@ export default {
       this.quoteBpmnVisible = false
       this.resetProjectData()
     },
+    onProjectLookBpmnShow(row) {
+      this.setProjectData(row)
+      this.lookBpmnVisible = true
+      this.lookBpmnFooterVisible = true
+    },
     onLookBpmnShow(row) {
       this.setProjectData(row)
       this.lookBpmnVisible = true
+      this.lookBpmnFooterVisible = false
     },
     onLookBpmnClose() {
       this.lookBpmnVisible = false
@@ -272,6 +277,8 @@ export default {
           ...this.searchForm,
           tenantId: this.tenantId,
           createBy: this.userInfo.account,
+          startTime: this.searchForm.valueDate[0],
+          endTime: this.searchForm.valueDate[1],
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
