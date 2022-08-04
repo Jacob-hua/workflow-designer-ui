@@ -38,7 +38,6 @@ export let select = {
   allowCreate: false,
   // 默认首选项
   defaultFirstOption: false,
-  
   //选项列表
   options:[{
     label: '选项一',

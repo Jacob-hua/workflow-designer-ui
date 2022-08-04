@@ -105,7 +105,7 @@
                      :value="id" />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="variableOption.length" label="关联">
+      <el-form-item v-if="variableOption.length" label="变量">
         <div v-for="(variable,index) in variableArr" :key="index">
           <div>{{variable}}</div>
           <el-input v-model="variableOption[index][variable]" ></el-input>
