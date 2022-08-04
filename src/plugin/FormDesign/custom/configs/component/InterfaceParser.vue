@@ -100,7 +100,19 @@ export default {
       if (!Array.isArray(result) || result.length === 0) {
         return
       }
-      this.requestConfig = result.find(({ id }) => id === interfaceId)
+      const { id, name, source, sourceMark, apiMark, method, parameter, body } = result.find(
+        ({ id }) => id === interfaceId
+      )
+      this.requestConfig = {
+        id,
+        name,
+        source,
+        sourceMark,
+        apiMark,
+        method,
+        parameter,
+        body,
+      }
       this.variables = (variableParser(this.requestConfig) ?? []).map((variable) => ({
         variable,
         sourceType: 'context',
@@ -122,7 +134,7 @@ export default {
     },
     onVariableChange() {
       this.$emit('variableChange', {
-        requestConfig: this.requestConfig,
+        ...this.requestConfig,
         variables: this.variables,
       })
     },

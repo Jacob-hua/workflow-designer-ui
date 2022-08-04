@@ -109,9 +109,8 @@ export default {
   },
   methods: {
     ...mapMutations('form', ['addThirdPartyApi']),
-    onVariableChange({ requestConfig, variables }) {
+    onVariableChange(requestConfig) {
       this.props.requestConfig = requestConfig
-      this.props.variables = variables
       this.addThirdPartyApi({ id: requestConfig.id })
     },
     handlerChangeLabel(val) {
