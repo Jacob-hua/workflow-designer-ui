@@ -12,6 +12,7 @@
               :itemList="itemList"
               :getFormId="getFormId"
               :props="activeItem"
+              :fieldOverviews="fieldOverviews"
               :is="item.content"
             ></component>
           </div>
