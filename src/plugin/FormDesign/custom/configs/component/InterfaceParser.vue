@@ -7,8 +7,8 @@
     </el-form-item>
     <el-row v-if="variables.length > 0" :gutter="24">
       <el-col :span="6"> 变量 </el-col>
-      <el-col :span="10"> 绑定变量 </el-col>
-      <el-col :span="8"> 来源 </el-col>
+      <el-col :span="10"> 关联 </el-col>
+      <el-col :span="8"> 类型 </el-col>
     </el-row>
     <div v-for="({ variable, sourceType }, index) in variables" :key="index">
       <el-row :gutter="24">
@@ -16,14 +16,10 @@
           <span>{{ variable }}</span>
         </el-col>
         <el-col :span="10">
-          <el-input
-            v-if="isContextSource(sourceType)"
-            v-model="variables[index]['source']"
-            @change="onVariableChange"
-          />
-          <el-select v-else v-model="variables[index]['source']">
+          <el-select v-if="isFormSource(sourceType)" v-model="variables[index]['source']">
             <el-option v-for="{ _id, label } in availableField" :key="_id" :label="label" :value="_id"></el-option>
           </el-select>
+          <el-input v-else v-model="variables[index]['source']" @change="onVariableChange" />
         </el-col>
         <el-col :span="8">
           <el-select v-model="variables[index]['sourceType']" @change="onSourceTypeChange(index)">
@@ -71,6 +67,11 @@ export default {
           label: '环境变量',
           value: 'context',
         },
+        {
+          id: 2,
+          label: '常量',
+          value: 'const',
+        },
       ],
       requestConfig: {},
       variables: [],
@@ -115,8 +116,8 @@ export default {
       }
       this.variables = (variableParser(this.requestConfig) ?? []).map((variable) => ({
         variable,
-        sourceType: 'context',
-        source: variable,
+        sourceType: 'const',
+        source: '',
       }))
       this.onVariableChange()
     },
@@ -126,8 +127,8 @@ export default {
   },
   methods: {
     ...mapActions('form', ['refreshApiList']),
-    isContextSource(sourceType) {
-      return sourceType && sourceType === 'context'
+    isFormSource(sourceType) {
+      return sourceType && sourceType === 'form'
     },
     onSourceTypeChange(index) {
       this.variables[index].source = ''

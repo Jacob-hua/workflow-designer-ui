@@ -120,7 +120,7 @@ export default {
       if (Array.isArray(val)) {
         return val.join(',')
       }
-      if (['string', 'number'].indexOf(val) > -1) {
+      if (['string', 'number'].includes(typeof val)) {
         return val
       }
       if (typeof val === 'boolean') {
