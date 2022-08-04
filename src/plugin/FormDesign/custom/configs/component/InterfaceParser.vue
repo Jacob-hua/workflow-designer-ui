@@ -59,8 +59,8 @@ export default {
       sourceTypeOptions: [
         {
           id: 0,
-          label: '表单',
-          value: 'form',
+          label: '常量',
+          value: 'const',
         },
         {
           id: 1,
@@ -69,8 +69,8 @@ export default {
         },
         {
           id: 2,
-          label: '常量',
-          value: 'const',
+          label: '表单',
+          value: 'form',
         },
       ],
       requestConfig: {},
@@ -86,6 +86,17 @@ export default {
     },
   },
   watch: {
+    currentField: {
+      immediate: true,
+      handler(currentField) {
+        if (!currentField || !currentField.requestConfig) {
+          return
+        }
+        this.requestConfig = currentField.requestConfig
+        this.variables = currentField.requestConfig.variables
+        this.interfaceId = currentField.requestConfig.id
+      },
+    },
     async interfaceId(interfaceId) {
       if (!interfaceId) {
         return

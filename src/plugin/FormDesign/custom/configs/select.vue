@@ -53,6 +53,9 @@
     <el-form-item label="默认值">
       <el-input class="input" :value="setValue(props.value)" placeholder="请输入默认值" @input="onValueInput" />
     </el-form-item>
+    <el-form-item label="关联">
+      <el-switch v-model="props.needDepend"></el-switch>
+    </el-form-item>
     <el-form-item label="选项配置">
       <el-radio-group v-model="props.dataType" @change="handlerChangeDataType">
         <el-radio-button label="static">静态数据</el-radio-button>
