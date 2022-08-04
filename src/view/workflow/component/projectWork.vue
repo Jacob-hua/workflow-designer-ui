@@ -66,7 +66,7 @@
           <projectTable
             :business="projectValue"
             :searchForm="searchFormData"
-            @lookBpmnShow="onLookBpmnShow"
+            @lookBpmnShow="onProjectLookBpmnShow"
             @deleteRow="onProjectDeleteRow"
           ></projectTable>
         </el-tab-pane>
@@ -81,10 +81,10 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <addProject :visible="addProjectVisible" @close="onAddProjectClose" @submit="onAddProjectSubmit"></addProject>
+    <addProject :visible.sync="addProjectVisible" @submit="onAddProjectSubmit"></addProject>
     <addBpmn
       v-if="addBpmnVisible"
-      :visible="addBpmnVisible"
+      :visible.sync="addBpmnVisible"
       :projectData="projectData"
       @close="onAddBpmnClose"
       @submit="onAddBpmnSubmit"
@@ -203,9 +203,6 @@ export default {
       }
       this.refreshWorkFlowRecord()
     },
-    onAddProjectClose() {
-      this.addProjectVisible = false
-    },
     onAddProjectSubmit(value) {
       this.addProjectVisible = false
       this.setProjectData(value)
@@ -226,6 +223,11 @@ export default {
     onQuoteBpmnClose() {
       this.quoteBpmnVisible = false
       this.resetProjectData()
+    },
+    onProjectLookBpmnShow(row) {
+      this.setProjectData(row)
+      this.lookBpmnVisible = true
+      this.lookBpmnFooterVisible = true
     },
     onLookBpmnShow(row) {
       this.setProjectData(row)

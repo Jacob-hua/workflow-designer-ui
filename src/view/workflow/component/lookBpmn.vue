@@ -125,11 +125,12 @@ export default {
       formData.set('file', file1)
       updateWorkFlow(formData).then(() => {
         this.$message.success(this.projectData.status === 'disabled' ? '启用成功' : '停用成功')
-        this.$emit('close')
+        this.close()
       })
     },
     close() {
       this.$emit('close')
+      this.$emit('update:visible', false)
     },
   },
 }
