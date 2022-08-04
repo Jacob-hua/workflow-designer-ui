@@ -46,7 +46,7 @@ import { apiDetail } from '@/api/globalConfig'
 import { variableFactory as variableParser } from '@/mixin/formDepMonitor'
 
 export default {
-  name: 'ApiParser',
+  name: 'InterfaceParser',
   props: {
     currentField: {
       type: Object,
