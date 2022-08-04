@@ -3,7 +3,7 @@
     <div>
       <bpmn-info :xml="projectData.content" :processDisplayInfo="processDisplayInfo" />
     </div>
-    <span slot="footer" v-if="!isPublicProject">
+    <span slot="footer" v-if="footerVisible">
       <el-button
         class="editor-button"
         @click="onEdit"
@@ -40,6 +40,10 @@ export default {
     visible: {
       type: Boolean,
       default: false,
+    },
+    footerVisible: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {

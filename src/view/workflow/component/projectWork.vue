@@ -103,6 +103,7 @@
       v-if="lookBpmnVisible"
       :projectData="projectData"
       :visible="lookBpmnVisible"
+      :footerVisible="lookBpmnFooterVisible"
       @close="onLookBpmnClose"
       @edit="onLookBpmnEdit"
     ></lookBpmn>
@@ -148,6 +149,7 @@ export default {
       addBpmnVisible: false,
       quoteBpmnVisible: false,
       lookBpmnVisible: false,
+      lookBpmnFooterVisible: true,
       activeName: 'enabled,disabled',
     }
   },
@@ -228,6 +230,7 @@ export default {
     onLookBpmnShow(row) {
       this.setProjectData(row)
       this.lookBpmnVisible = true
+      this.lookBpmnFooterVisible = false
     },
     onLookBpmnClose() {
       this.lookBpmnVisible = false
@@ -272,6 +275,8 @@ export default {
           ...this.searchForm,
           tenantId: this.tenantId,
           createBy: this.userInfo.account,
+          startTime: this.searchForm.valueDate[0],
+          endTime: this.searchForm.valueDate[1],
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
