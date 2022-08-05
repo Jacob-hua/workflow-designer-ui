@@ -34,7 +34,7 @@ import { mapState } from 'vuex'
 import { selectProcessStartConfigByCode, executeApi } from '../../../api/globalConfig'
 import { getStartProcess } from '../../../api/unit/api.js'
 import { FormTypeEnum } from '../../../enum'
-import formDepMonitorMixin, { mixinExecuteFunction } from '../../../mixin/formDepMonitor.js'
+import formDepMonitorMixin, { mixinRequestFunction } from '../../../mixin/formDepMonitor.js'
 
 export default {
   name: 'RuntimeCreatTicket',
@@ -82,7 +82,7 @@ export default {
           const placeholderPrefixs = {
             [FormTypeEnum.FORM_TYPE_INPUT]: '请输入',
             [FormTypeEnum.FORM_TYPE_SELECT]: '请选择',
-            [FormTypeEnum.FORM_TYPE_TIME]: '请输入'
+            [FormTypeEnum.FORM_TYPE_TIME]: '请输入',
           }
           const placeholder = placeholderPrefixs[startType] + name
           const fieldInfo = {
@@ -101,7 +101,7 @@ export default {
         })
         // 第三步给表单项混入执行函数，执行函数支持一个Hook，用于在当前字段依赖的字段发生变化时，执行相关操作
         .map((fieldInfo) => {
-          return mixinExecuteFunction(fieldInfo, (data, { requestConfig, prop }) => {
+          return mixinRequestFunction(fieldInfo, (data, { requestConfig, prop }) => {
             executeApi({
               apiMark: requestConfig.apiMark,
               sourceMark: requestConfig.sourceMark,

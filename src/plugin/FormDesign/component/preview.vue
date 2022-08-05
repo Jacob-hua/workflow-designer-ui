@@ -65,7 +65,7 @@ import previewRowItem from "./previewRowItem";
 import fancyDynamicTable from "../dynamic/fancyDynamicTable";
 import fancyDynamicTableItem from "../dynamic/fancyDynamicTableItem";
 import {datas,addRow,batchDeleteRow,deleteRow} from "../custom/formDraw";
-import formDepMonitorMixin, {mixinExecuteFunction, mixinDependFunction} from "@/mixin/formDepMonitor";
+import formDepMonitorMixin, {mixinRequestFunction, mixinDependFunction} from "@/mixin/formDepMonitor";
 import {executeApi, processVariable} from "@/api/globalConfig";
 import _ from 'lodash'
 import {getSimpleId} from "@/plugin/FormDesign/utils/IdGenerate";
@@ -106,7 +106,7 @@ export default {
             fieldInfo.context = this.getContext()
           }
         }
-        const newFieldInfo = mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
+        const newFieldInfo = mixinRequestFunction(fieldInfo, (data, fieldInfo) => {
           if (!fieldInfo.disabled && !this.formConf.disabled) {
             executeApi({
               apiMark: fieldInfo.requestConfig.apiMark,

@@ -125,7 +125,7 @@ export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
   return watchExecute(newFieldInfo, variableSpace, executeFunc)
 }
 
-export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
+export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
   const newFieldInfo = { ...fieldInfo }
   if (!newFieldInfo.requestConfig) {
     return newFieldInfo
@@ -145,9 +145,7 @@ export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
   const variableSpace = variables.reduce(
     (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
     {
-      context: {},
-      const: {},
-      form: {},
+      ...defaultVariableSpace,
     }
   )
 
