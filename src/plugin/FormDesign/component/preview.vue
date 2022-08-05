@@ -123,9 +123,9 @@ export default {
             })
           }
         })
-        return mixinDependFunction(newFieldInfo, (data) => {
+        return mixinDependFunction(newFieldInfo, (data, { id }) => {
           Object.keys(data).forEach((key) => {
-            this.form[key] = data[key]
+            this.form[id] = data[key]
           })
         })
       })
