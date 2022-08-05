@@ -36,6 +36,47 @@ export function parameterHandlerFactory({ method, parameter, body }) {
   }
 }
 
+const defaultVariableSpace = {
+  const: {},
+  context: {},
+  form: {},
+}
+
+function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
+  variableSpace = { ...defaultVariableSpace, ...variableSpace }
+  const depObj = buildDepObj(variableSpace)
+
+  const newFieldInfo = { ...fieldInfo }
+  newFieldInfo.executeFunc = (data) => {
+    const isDiffed = Object.keys(data)
+      .filter((key) => Object.keys(depObj).includes(key))
+      .reduce((isDiffed, key) => {
+        isDiffed = isDiffed || depObj[key] !== data[key]
+        depObj[key] = data[key]
+        return isDiffed
+      }, false)
+    if (isDiffed) {
+      executeFunc(variableMix(variableSpace, depObj), newFieldInfo)
+    }
+  }
+  return newFieldInfo
+
+  function buildDepObj(variableSpace) {
+    return Object.keys(variableSpace.form).reduce((depObj, fieldName) => ({ ...depObj, [fieldName]: '' }), {})
+  }
+
+  function variableMix(variableSpace, depObj) {
+    Object.keys(depObj).forEach((key) => {
+      variableSpace.form[key]['value'] = depObj[key]
+    })
+    const formVariables = Object.values(variableSpace.form).reduce(
+      (formVariables, { variable, value }) => ({ ...formVariables, [variable]: value }),
+      {}
+    )
+    return { ...variableSpace.const, ...variableSpace.context, ...formVariables }
+  }
+}
+
 export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
   const newFieldInfo = { ...fieldInfo }
   if (!newFieldInfo.requestConfig) {
@@ -61,21 +102,9 @@ export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
     form: {},
   })
 
-  const depObj = buildDepObj(variableSpace)
-
-  newFieldInfo.executeFunc = (data) => {
-    const isDiffed = Object.keys(data)
-      .filter((key) => Object.keys(depObj).includes(key))
-      .reduce((isDiffed, key) => {
-        isDiffed = isDiffed || depObj[key] !== data[key]
-        depObj[key] = data[key]
-        return isDiffed
-      }, false)
-    if (isDiffed) {
-      executeFunc(parameterHandler(variableMix(variableSpace, depObj)), newFieldInfo)
-    }
-  }
-  return newFieldInfo
+  return watchExecute(newFieldInfo, variableSpace, (variableObj, newFieldInfo) => {
+    executeFunc(parameterHandler(variableObj), newFieldInfo)
+  })
 
   function makeVariables(requestConfig = [], sourceType = 'form') {
     return (variableFactory(requestConfig) ?? []).map((variable) => ({
@@ -103,21 +132,6 @@ export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
     }
     classifier[sourceType]({ variable, source })
     return result
-  }
-
-  function buildDepObj(variableSpace) {
-    return Object.keys(variableSpace.form).reduce((depObj, fieldName) => ({ ...depObj, [fieldName]: '' }), {})
-  }
-
-  function variableMix(variableSpace, depObj) {
-    Object.keys(depObj).forEach((key) => {
-      variableSpace.form[key]['value'] = depObj[key]
-    })
-    const formVariables = Object.values(variableSpace.form).reduce(
-      (formVariables, { variable, value }) => ({ ...formVariables, [variable]: value }),
-      {}
-    )
-    return { ...variableSpace.const, ...variableSpace.context, ...formVariables }
   }
 }
 
