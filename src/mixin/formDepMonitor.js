@@ -1,10 +1,10 @@
 import { ApiEnum } from '../enum'
 
-const defaultVariableSpace = {
+const defaultVariableSpace = () => ({
   const: {},
   context: {},
   form: {},
-}
+})
 
 export function variableFactory({ method, parameter, body }) {
   const variablesHandlers = {
@@ -43,7 +43,7 @@ export function parameterHandlerFactory({ method, parameter, body }) {
 }
 
 export function variableClassify({ variable, sourceType, source }, variableSpace = {}) {
-  const result = { ...defaultVariableSpace, ...variableSpace }
+  const result = { ...defaultVariableSpace(), ...variableSpace }
   const classifier = {
     context: ({ variable, source }) => {
       result.context[variable] = (context = {}) => ({ [variable]: context[source] })
@@ -63,7 +63,7 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
 }
 
 export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
-  variableSpace = { ...defaultVariableSpace, ...variableSpace }
+  variableSpace = { ...defaultVariableSpace(), ...variableSpace }
 
   !fieldInfo.context && (fieldInfo.context = {})
 
@@ -142,7 +142,7 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
   const variableSpace = variables.reduce(
     (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
     {
-      ...defaultVariableSpace,
+      ...defaultVariableSpace(),
     }
   )
 
