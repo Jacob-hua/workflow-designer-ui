@@ -90,9 +90,6 @@
     </div>
     <icon-dialog v-model="props['suffix-icon']" :visible.sync="iconDialogVisible_suffix" />
     <icon-dialog v-model="props['prefix-icon']" :visible.sync="iconDialogVisible_prefix" />
-    <el-form-item label="关联">
-      <el-input v-model="props.relationField" placeholder="#本表单取, $跨任务取值"></el-input>
-    </el-form-item>
   </div>
 </template>
 <script>

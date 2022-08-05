@@ -77,6 +77,15 @@ export default {
     },
   },
   watch: {
+    currentField: {
+      immediate: true,
+      handler(currentField) {
+        if (!currentField || !currentField.dependValue) {
+          return
+        }
+        this.dependValue = currentField.dependValue
+      },
+    },
     dependValue: {
       deep: true,
       handler(dependValue) {
