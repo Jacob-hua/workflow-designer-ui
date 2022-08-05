@@ -36,84 +36,89 @@ export function parameterHandlerFactory({ method, parameter, body }) {
   }
 }
 
-const process_params_out = async ({
-  oldVariables = {},
-  context = () => {},
-  executeFunc = () => {},
-  parameterHandler = () => {},
-  newFieldInfo = {},
-}) => {
-  const contexts = await context
-  for (const variableKey in oldVariables) {
-    oldVariables[variableKey] = contexts[variableKey] ?? ''
-  }
-  await executeFunc(parameterHandler(oldVariables), newFieldInfo)
-}
-
-const process_params_inout = async ({ oldVariables = {}, context = () => {}, newFieldInfo = {} }) => {
-  const contexts = await context
-  let relationMap = newFieldInfo.relationMapping.reduce((relationMap, item) => ({ ...relationMap, ...item }), {})
-  for (const key in relationMap) {
-    if (relationMap[key].startsWith('$')) {
-      for (const variableKey in oldVariables) {
-        oldVariables[key] = contexts[key] ?? ''
-      }
-    }
-  }
-}
-const SourceFrom = {
-  ALL_FROM_OUT: 'judgeValueOut',
-  FROM_OUT_IN: 'middleValue',
-}
-
-const ContextOrFormLogic = {
-  [SourceFrom.ALL_FROM_OUT]: process_params_out,
-  [SourceFrom.FROM_OUT_IN]: process_params_inout,
-}
-
-function judgeValueFrom({ relationMapping = [] }) {
-  let relationMap = relationMapping.reduce((relationMap, item) => ({ ...relationMap, ...item }), {})
-  const judgeValueOut = Object.values(relationMap).every((item) => item.startsWith('$'))
-  return judgeValueOut ? 'judgeValueOut' : 'middleValue'
-}
-
 export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
   const newFieldInfo = { ...fieldInfo }
   if (!newFieldInfo.requestConfig) {
     return newFieldInfo
   }
 
-  const variables = variableFactory(newFieldInfo.requestConfig)
-  const parameterHandler = parameterHandlerFactory(newFieldInfo.requestConfig)
+  !newFieldInfo.context && (newFieldInfo.context = {})
+
+  let variables = newFieldInfo.requestConfig.variables
   if (!variables) {
+    variables = makeVariables(newFieldInfo.requestConfig)
+  }
+
+  const parameterHandler = parameterHandlerFactory(newFieldInfo.requestConfig)
+  if (!variables || variables.length === 0) {
     executeFunc(parameterHandler(), newFieldInfo)
     return newFieldInfo
   }
 
-  const oldVariables = variables.reduce((oldVariables, variable) => ({ ...oldVariables, [variable]: '' }), {})
-  if (newFieldInfo?.relationMapping?.length) {
-    ContextOrFormLogic[judgeValueFrom(newFieldInfo)]({
-      oldVariables,
-      context: newFieldInfo.context,
-      executeFunc,
-      parameterHandler,
-      newFieldInfo,
-    })
-  }
+  const variableSpace = variables.reduce(variableClassify, {
+    context: {},
+    const: {},
+    form: {},
+  })
+
+  const depObj = buildDepObj(variableSpace)
 
   newFieldInfo.executeFunc = (data) => {
     const isDiffed = Object.keys(data)
-      .filter((key) => variables.includes(key))
+      .filter((key) => Object.keys(depObj).includes(key))
       .reduce((isDiffed, key) => {
-        isDiffed = isDiffed || oldVariables[key] !== data[key]
-        oldVariables[key] = data[key]
+        isDiffed = isDiffed || depObj[key] !== data[key]
+        depObj[key] = data[key]
         return isDiffed
       }, false)
     if (isDiffed) {
-      executeFunc(parameterHandler(oldVariables), newFieldInfo)
+      executeFunc(parameterHandler(variableMix(variableSpace, depObj)), newFieldInfo)
     }
   }
   return newFieldInfo
+
+  function makeVariables(requestConfig = [], sourceType = 'form') {
+    return (variableFactory(requestConfig) ?? []).map((variable) => ({
+      variable,
+      sourceType,
+      source: variable,
+    }))
+  }
+
+  function variableClassify(variableSpace, { variable, sourceType, source }) {
+    const result = { context: {}, const: {}, form: {}, ...variableSpace }
+    const classifier = {
+      context: ({ variable, source }) => {
+        result.context[variable] = newFieldInfo.context[source]
+      },
+      const: ({ variable, source }) => {
+        result.const[variable] = source
+      },
+      form: ({ variable, source }) => {
+        result.form[source] = {
+          variable,
+          value: '',
+        }
+      },
+    }
+    classifier[sourceType]({ variable, source })
+    return result
+  }
+
+  function buildDepObj(variableSpace) {
+    return Object.keys(variableSpace.form).reduce((depObj, fieldName) => ({ ...depObj, [fieldName]: '' }), {})
+  }
+
+  function variableMix(variableSpace, depObj) {
+    Object.keys(depObj).forEach((key) => {
+      variableSpace.form[key]['value'] = depObj[key]
+    })
+    const formVariables = Object.values(variableSpace.form).reduce(
+      (formVariables, { variable, value }) => ({ ...formVariables, [variable]: value }),
+      {}
+    )
+    return { ...variableSpace.const, ...variableSpace.context, ...formVariables }
+  }
 }
 
 function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFields' }) {

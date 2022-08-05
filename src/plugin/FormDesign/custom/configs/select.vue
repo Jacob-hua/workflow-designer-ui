@@ -1,8 +1,5 @@
 <template>
   <div v-show="props.compType === 'select'">
-    <!-- <el-form-item label="字段名">
-      <el-input class="input" v-model="props"></el-input>
-    </el-form-item> -->
     <el-form-item label="字段">
       <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
         <el-input class="input" v-model="props.id" @change="handlerChangeId"></el-input>
@@ -14,9 +11,6 @@
     <el-form-item label="提示符">
       <el-input class="input" v-model="props.placeholder" placeholder="请输入提示符" />
     </el-form-item>
-    <!-- <el-form-item label="表单栅格">
-      <el-slider class="input" v-model="props.span" :max="24" :min="1" :marks="{12:''}"></el-slider>
-    </el-form-item> -->
     <el-form-item label="栅格间隔">
       <el-input-number v-model="props.gutter" :min="0"></el-input-number>
     </el-form-item>
@@ -53,9 +47,7 @@
     <el-form-item label="默认值">
       <el-input class="input" :value="setValue(props.value)" placeholder="请输入默认值" @input="onValueInput" />
     </el-form-item>
-    <el-form-item label="关联">
-      <el-switch v-model="props.needDepend"></el-switch>
-    </el-form-item>
+    <depend-value :currentField="props" :fieldOverviews="fieldOverviews" @dependChange="onDependChange" />
     <el-form-item label="选项配置">
       <el-radio-group v-model="props.dataType" @change="handlerChangeDataType">
         <el-radio-button label="static">静态数据</el-radio-button>
@@ -96,6 +88,7 @@ import draggable from 'vuedraggable'
 import { isNumberStr } from '../../utils/index'
 import { mapMutations } from 'vuex'
 import InterfaceParser from './component/InterfaceParser.vue'
+import DependValue from './component/DependValue.vue'
 
 export default {
   name: 'inputConfig',
@@ -103,6 +96,7 @@ export default {
   components: {
     draggable,
     InterfaceParser,
+    DependValue,
   },
   mixins: [changeId],
   data() {
@@ -112,6 +106,9 @@ export default {
   },
   methods: {
     ...mapMutations('form', ['addThirdPartyApi']),
+    onDependChange(dependValue) {
+      this.props.dependValue = dependValue
+    },
     onVariableChange(requestConfig) {
       this.props.requestConfig = requestConfig
       this.addThirdPartyApi({ id: requestConfig.id })

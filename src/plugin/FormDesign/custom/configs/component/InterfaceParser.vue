@@ -16,7 +16,7 @@
           <span>{{ variable }}</span>
         </el-col>
         <el-col :span="10">
-          <el-select v-if="isFormSource(sourceType)" v-model="variables[index]['source']">
+          <el-select v-if="isFormSource(sourceType)" v-model="variables[index]['source']" @change="onVariableChange">
             <el-option v-for="{ _id, label } in availableField" :key="_id" :label="label" :value="_id"></el-option>
           </el-select>
           <el-input v-else v-model="variables[index]['source']" @change="onVariableChange" />
