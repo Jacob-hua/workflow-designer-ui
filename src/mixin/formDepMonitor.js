@@ -1,5 +1,11 @@
 import { ApiEnum } from '../enum'
 
+const defaultVariableSpace = {
+  const: {},
+  context: {},
+  form: {},
+}
+
 export function variableFactory({ method, parameter, body }) {
   const variablesHandlers = {
     [ApiEnum.API_TYPE_GET]: extractVariables(parameter),
@@ -36,18 +42,35 @@ export function parameterHandlerFactory({ method, parameter, body }) {
   }
 }
 
-const defaultVariableSpace = {
-  const: {},
-  context: {},
-  form: {},
+export function variableClassify({ variable, sourceType, source }, variableSpace = {}) {
+  const result = { ...defaultVariableSpace, ...variableSpace }
+  const classifier = {
+    context: ({ variable, source }) => {
+      result.context[variable] = newFieldInfo.context[source]
+    },
+    const: ({ variable, source }) => {
+      result.const[variable] = source
+    },
+    form: ({ variable, source }) => {
+      result.form[source] = {
+        variable,
+        value: '',
+      }
+    },
+  }
+  classifier[sourceType]({ variable, source })
+  return result
 }
 
-function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
+export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
   variableSpace = { ...defaultVariableSpace, ...variableSpace }
   const depObj = buildDepObj(variableSpace)
 
   const newFieldInfo = { ...fieldInfo }
-  newFieldInfo.executeFunc = (data) => {
+  if (!newFieldInfo.executeFuncs) {
+    newFieldInfo.executeFuncs = []
+  }
+  newFieldInfo.executeFuncs.push((data) => {
     const isDiffed = Object.keys(data)
       .filter((key) => Object.keys(depObj).includes(key))
       .reduce((isDiffed, key) => {
@@ -58,7 +81,7 @@ function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
     if (isDiffed) {
       executeFunc(variableMix(variableSpace, depObj), newFieldInfo)
     }
-  }
+  })
   return newFieldInfo
 
   function buildDepObj(variableSpace) {
@@ -75,6 +98,20 @@ function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
     )
     return { ...variableSpace.const, ...variableSpace.context, ...formVariables }
   }
+}
+
+export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
+  const newFieldInfo = { ...fieldInfo }
+  if (!newFieldInfo.dependValue) {
+    return newFieldInfo
+  }
+
+  const variableSpace = variableClassify({
+    variable: newFieldInfo.id,
+    ...newFieldInfo.dependValue,
+  })
+
+  return watchExecute(newFieldInfo, variableSpace, executeFunc)
 }
 
 export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
@@ -96,11 +133,14 @@ export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
     return newFieldInfo
   }
 
-  const variableSpace = variables.reduce(variableClassify, {
-    context: {},
-    const: {},
-    form: {},
-  })
+  const variableSpace = variables.reduce(
+    (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
+    {
+      context: {},
+      const: {},
+      form: {},
+    }
+  )
 
   return watchExecute(newFieldInfo, variableSpace, (variableObj, newFieldInfo) => {
     executeFunc(parameterHandler(variableObj), newFieldInfo)
@@ -113,26 +153,6 @@ export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
       source: variable,
     }))
   }
-
-  function variableClassify(variableSpace, { variable, sourceType, source }) {
-    const result = { context: {}, const: {}, form: {}, ...variableSpace }
-    const classifier = {
-      context: ({ variable, source }) => {
-        result.context[variable] = newFieldInfo.context[source]
-      },
-      const: ({ variable, source }) => {
-        result.const[variable] = source
-      },
-      form: ({ variable, source }) => {
-        result.form[source] = {
-          variable,
-          value: '',
-        }
-      },
-    }
-    classifier[sourceType]({ variable, source })
-    return result
-  }
 }
 
 function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFields' }) {
@@ -143,9 +163,9 @@ function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFi
         immediate: true,
         deep: true,
         handler(data) {
-          const needExecutes = this[formFields]?.filter(({ executeFunc }) => executeFunc) ?? []
-          needExecutes.forEach(({ executeFunc }) => {
-            executeFunc({ ...data })
+          const needExecutes = this[formFields]?.filter(({ executeFuncs }) => executeFuncs) ?? []
+          needExecutes.forEach(({ executeFuncs }) => {
+            executeFuncs.forEach((execute) => execute({ ...data }))
           })
         },
       },
