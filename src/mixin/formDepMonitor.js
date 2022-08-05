@@ -65,19 +65,18 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
 export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
   variableSpace = { ...defaultVariableSpace, ...variableSpace }
 
-  const newFieldInfo = { ...fieldInfo }
-  !newFieldInfo.context && (newFieldInfo.context = {})
+  !fieldInfo.context && (fieldInfo.context = {})
 
   if (Object.keys(variableSpace.form).length === 0) {
-    executeFunc(variableMix(variableSpace), newFieldInfo)
-    return newFieldInfo
+    executeFunc(variableMix(variableSpace), fieldInfo)
+    return fieldInfo
   }
 
-  if (!newFieldInfo.executeFuncs) {
-    newFieldInfo.executeFuncs = []
+  if (!fieldInfo.executeFuncs) {
+    fieldInfo.executeFuncs = []
   }
   const depObj = buildDepObj(variableSpace)
-  newFieldInfo.executeFuncs.push((data) => {
+  fieldInfo.executeFuncs.push((data) => {
     const isDiffed = Object.keys(data)
       .filter((key) => Object.keys(depObj).includes(key))
       .reduce((isDiffed, key) => {
@@ -86,10 +85,10 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
         return isDiffed
       }, false)
     if (isDiffed) {
-      executeFunc(variableMix(variableSpace, depObj), newFieldInfo)
+      executeFunc(variableMix(variableSpace, depObj), fieldInfo)
     }
   })
-  return newFieldInfo
+  return fieldInfo
 
   function buildDepObj(variableSpace) {
     return Object.keys(variableSpace.form).reduce((depObj, fieldName) => ({ ...depObj, [fieldName]: '' }), {})
@@ -104,7 +103,7 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
       {}
     )
     const contextVariables = Object.values(variableSpace.context).reduce(
-      (contextVariables, contextFunc) => ({ ...contextVariables, ...contextFunc(newFieldInfo.context) }),
+      (contextVariables, contextFunc) => ({ ...contextVariables, ...contextFunc(fieldInfo.context) }),
       {}
     )
     return { ...variableSpace.const, ...contextVariables, ...formVariables }
@@ -112,34 +111,32 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
 }
 
 export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
-  const newFieldInfo = { ...fieldInfo }
-  if (!newFieldInfo.dependValue) {
-    return newFieldInfo
+  if (!fieldInfo.dependValue) {
+    return fieldInfo
   }
 
   const variableSpace = variableClassify({
-    variable: newFieldInfo.id,
-    ...newFieldInfo.dependValue,
+    variable: fieldInfo.id,
+    ...fieldInfo.dependValue,
   })
 
-  return watchExecute(newFieldInfo, variableSpace, executeFunc)
+  return watchExecute(fieldInfo, variableSpace, executeFunc)
 }
 
 export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
-  const newFieldInfo = { ...fieldInfo }
-  if (!newFieldInfo.requestConfig) {
-    return newFieldInfo
+  if (!fieldInfo.requestConfig) {
+    return fieldInfo
   }
 
-  let variables = newFieldInfo.requestConfig.variables
+  let variables = fieldInfo.requestConfig.variables
   if (!variables) {
-    variables = makeVariables(newFieldInfo.requestConfig)
+    variables = makeVariables(fieldInfo.requestConfig)
   }
 
-  const parameterHandler = parameterHandlerFactory(newFieldInfo.requestConfig)
+  const parameterHandler = parameterHandlerFactory(fieldInfo.requestConfig)
   if (!variables || variables.length === 0) {
-    executeFunc(parameterHandler(), newFieldInfo)
-    return newFieldInfo
+    executeFunc(parameterHandler(), fieldInfo)
+    return fieldInfo
   }
 
   const variableSpace = variables.reduce(
@@ -149,8 +146,8 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     }
   )
 
-  return watchExecute(newFieldInfo, variableSpace, (variableObj, newFieldInfo) => {
-    executeFunc(parameterHandler(variableObj), newFieldInfo)
+  return watchExecute(fieldInfo, variableSpace, (variableObj, fieldInfo) => {
+    executeFunc(parameterHandler(variableObj), fieldInfo)
   })
 
   function makeVariables(requestConfig = [], sourceType = 'form') {

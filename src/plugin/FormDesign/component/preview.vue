@@ -106,7 +106,7 @@ export default {
             fieldInfo.context = this.getContext()
           }
         }
-        const newFieldInfo = mixinRequestFunction(fieldInfo, (data, fieldInfo) => {
+        mixinRequestFunction(fieldInfo, (data, fieldInfo) => {
           if (!fieldInfo.disabled && !this.formConf.disabled) {
             executeApi({
               apiMark: fieldInfo.requestConfig.apiMark,
@@ -123,11 +123,12 @@ export default {
             })
           }
         })
-        return mixinDependFunction(newFieldInfo, (data, { id }) => {
+        mixinDependFunction(fieldInfo, (data, { id }) => {
           Object.keys(data).forEach((key) => {
             this.form[id] = data[key]
           })
         })
+        return fieldInfo
       })
     }
   },

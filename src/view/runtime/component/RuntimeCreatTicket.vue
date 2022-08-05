@@ -101,7 +101,7 @@ export default {
         })
         // 第三步给表单项混入执行函数，执行函数支持一个Hook，用于在当前字段依赖的字段发生变化时，执行相关操作
         .map((fieldInfo) => {
-          return mixinRequestFunction(fieldInfo, (data, { requestConfig, prop }) => {
+          mixinRequestFunction(fieldInfo, (data, { requestConfig, prop }) => {
             executeApi({
               apiMark: requestConfig.apiMark,
               sourceMark: requestConfig.sourceMark,
@@ -110,6 +110,7 @@ export default {
               this.$set(this.options, prop, options)
             })
           })
+          return fieldInfo
         })
       return formFields
     },
