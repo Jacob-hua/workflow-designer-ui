@@ -82,7 +82,7 @@ export default {
     ...mapState('form', ['interFaceOption']),
     ...mapGetters('form', ['findInterfaceById']),
     availableField() {
-      return this.fieldOverviews.filter(({ _id }) => _id !== this.currentField.id)
+      return this.fieldOverviews.filter(({ _id }) => _id !== this.currentField._id)
     },
   },
   watch: {

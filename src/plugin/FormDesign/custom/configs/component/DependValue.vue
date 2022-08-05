@@ -73,7 +73,7 @@ export default {
       return this.dependValue.sourceType && this.dependValue.sourceType === 'form'
     },
     availableField() {
-      return this.fieldOverviews.filter(({ _id }) => _id !== this.currentField.id)
+      return this.fieldOverviews.filter(({ _id }) => _id !== this.currentField._id)
     },
   },
   watch: {
