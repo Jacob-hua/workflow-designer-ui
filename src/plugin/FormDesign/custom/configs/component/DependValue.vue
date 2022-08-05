@@ -83,6 +83,15 @@ export default {
         this.$emit('dependChange', { ...dependValue })
       },
     },
+    'currentField.needDepend': {
+      handler(needDepend) {
+        if (needDepend) {
+          this.$emit('dependChange', { ...this.dependValue })
+        } else {
+          delete this.currentField.dependValue
+        }
+      },
+    },
   },
   methods: {
     onSourceTypeChange() {

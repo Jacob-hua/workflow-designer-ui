@@ -46,7 +46,7 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
   const result = { ...defaultVariableSpace, ...variableSpace }
   const classifier = {
     context: ({ variable, source }) => {
-      result.context[variable] = newFieldInfo.context[source]
+      result.context[variable] = (context = {}) => ({ [variable]: context[source] })
     },
     const: ({ variable, source }) => {
       result.const[variable] = source
@@ -64,12 +64,19 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
 
 export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
   variableSpace = { ...defaultVariableSpace, ...variableSpace }
-  const depObj = buildDepObj(variableSpace)
 
   const newFieldInfo = { ...fieldInfo }
+  !newFieldInfo.context && (newFieldInfo.context = {})
+
+  if (Object.keys(variableSpace.form).length === 0) {
+    executeFunc(variableMix(variableSpace), newFieldInfo)
+    return newFieldInfo
+  }
+
   if (!newFieldInfo.executeFuncs) {
     newFieldInfo.executeFuncs = []
   }
+  const depObj = buildDepObj(variableSpace)
   newFieldInfo.executeFuncs.push((data) => {
     const isDiffed = Object.keys(data)
       .filter((key) => Object.keys(depObj).includes(key))
@@ -88,7 +95,7 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
     return Object.keys(variableSpace.form).reduce((depObj, fieldName) => ({ ...depObj, [fieldName]: '' }), {})
   }
 
-  function variableMix(variableSpace, depObj) {
+  function variableMix(variableSpace, depObj = {}) {
     Object.keys(depObj).forEach((key) => {
       variableSpace.form[key]['value'] = depObj[key]
     })
@@ -96,7 +103,11 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
       (formVariables, { variable, value }) => ({ ...formVariables, [variable]: value }),
       {}
     )
-    return { ...variableSpace.const, ...variableSpace.context, ...formVariables }
+    const contextVariables = Object.values(variableSpace.context).reduce(
+      (contextVariables, contextFunc) => ({ ...contextVariables, ...contextFunc(newFieldInfo.context) }),
+      {}
+    )
+    return { ...variableSpace.const, ...contextVariables, ...formVariables }
   }
 }
 
@@ -119,8 +130,6 @@ export function mixinExecuteFunction(fieldInfo, executeFunc = () => {}) {
   if (!newFieldInfo.requestConfig) {
     return newFieldInfo
   }
-
-  !newFieldInfo.context && (newFieldInfo.context = {})
 
   let variables = newFieldInfo.requestConfig.variables
   if (!variables) {
