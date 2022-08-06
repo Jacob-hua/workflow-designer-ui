@@ -160,6 +160,7 @@ export default {
       item.value = isNumberStr(val) ? +val : val
     },
     addSelectItem() {
+      !this.props.options && (this.props.options = this.tempOptions)
       this.props.options.push({
         label: '',
         value: '',
