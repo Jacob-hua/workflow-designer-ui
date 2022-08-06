@@ -59,6 +59,7 @@
         @input="onDefaultValueInput"
       />
     </el-form-item>
+    <depend-value :currentField="props" :fieldOverviews="fieldOverviews" @dependChange="onDependChange" />
     <el-form-item label="选项配置">
       <el-radio-group v-model="props.dataType" @change="handlerChangeDataType">
         <el-radio-button label="static">静态数据</el-radio-button>
@@ -99,6 +100,7 @@ import draggable from 'vuedraggable'
 import { isNumberStr } from '../../utils/index'
 import { mapActions, mapMutations } from 'vuex'
 import InterfaceParser from './component/InterfaceParser.vue'
+import DependValue from './component/DependValue.vue'
 /**
  * input的配置项
  */
@@ -108,6 +110,7 @@ let vm = {
   components: {
     draggable,
     InterfaceParser,
+    DependValue,
   },
   mixins: [changeId],
   data() {
@@ -118,6 +121,9 @@ let vm = {
   methods: {
     ...mapActions('form', ['refreshApiList']),
     ...mapMutations('form', ['addThirdPartyApi']),
+    onDependChange(dependValue) {
+      this.props.dependValue = dependValue
+    },
     onVariableChange(requestConfig) {
       this.props.requestConfig = requestConfig
       this.addThirdPartyApi({ id: requestConfig.id })
