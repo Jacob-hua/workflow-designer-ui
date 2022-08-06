@@ -98,7 +98,7 @@
 import { changeId } from '../mixin'
 import draggable from 'vuedraggable'
 import { isNumberStr } from '../../utils/index'
-import { mapActions, mapMutations } from 'vuex'
+import { mapMutations } from 'vuex'
 import InterfaceParser from './component/InterfaceParser.vue'
 import DependValue from './component/DependValue.vue'
 /**
@@ -119,7 +119,6 @@ let vm = {
     }
   },
   methods: {
-    ...mapActions('form', ['refreshApiList']),
     ...mapMutations('form', ['addThirdPartyApi']),
     onDependChange(dependValue) {
       this.props.dependValue = dependValue
@@ -173,12 +172,12 @@ let vm = {
     },
     handlerChangeDataType(value) {
       if (value === 'static') {
+        delete this.props.requestConfig
         this.props.options = []
         this.props.options = this.tempOptions
       } else {
         this.tempOptions = this.props.options
         this.props.options = []
-        this.refreshApiList()
       }
     },
   },
