@@ -104,7 +104,7 @@ import DependValue from './component/DependValue.vue'
 /**
  * input的配置项
  */
-let vm = {
+export default {
   name: 'inputConfig',
   props: ['props', 'getFormId', 'fieldOverviews'],
   components: {
@@ -181,10 +181,7 @@ let vm = {
       }
     },
   },
-  mounted() {},
-  watch: {},
 }
-export default vm
 </script>
 <style lang="scss" scoped>
 .input {
