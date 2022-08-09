@@ -1,16 +1,10 @@
 <script>
 import { getSimpleId } from '@/plugin/FormDesign/utils/IdGenerate'
-
 import previewItem from '@/plugin/FormDesign/component/previewItem'
-
 import { processVariable } from '@/api/globalConfig'
-
 import formDepMonitorMixin from '@/mixin/formDepMonitor'
-
 import _ from 'lodash'
-
 import render from '../custom/previewRender'
-
 import checkRules from '../custom/rule'
 
 const copyComp = (comp = {}) => {
@@ -25,6 +19,26 @@ const copyComp = (comp = {}) => {
     }
   })
   return clone
+}
+
+function buildModel(model, meta) {
+  const result = { ...model }
+  if (meta.isCopy) {
+    result[meta.id] = []
+    let tempModel = {}
+    if (Array.isArray(meta.columns)) {
+      meta.columns.forEach(({ list }) => {
+        list.forEach((colMeta) => {
+          tempModel = buildModel(tempModel, colMeta)
+        })
+      })
+    }
+    result[meta.id].push(tempModel)
+    return result
+  }
+
+  result[meta.id] = meta.value
+  return result
 }
 
 function buildForm(h, metaList) {
@@ -109,9 +123,9 @@ export default {
         })
       )
     }
-
+    const form = this.itemList.reduce(buildModel, {})
     return {
-      form: {},
+      form,
       rules: {},
       quoteOption: [],
       fileList: [],
