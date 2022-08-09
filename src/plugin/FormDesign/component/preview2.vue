@@ -49,6 +49,8 @@ function buildRowContainer(h, metaData, valuePath) {
     return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath)}</el-row>
   }
 
+  valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
+
   const onCopy = (index) => {
     const cloneObj = _.cloneDeep(_.get(this.form, `${valuePath}[${index}]`))
     _.get(this.form, `${valuePath}`, []).splice(index, 0, cloneObj)
@@ -81,13 +83,13 @@ function buildRowContainer(h, metaData, valuePath) {
 }
 
 function buildFormItem(h, metaData, valuePath) {
-  valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
   if (metaData.compType === 'row') {
     return buildRowContainer.call(this, h, metaData, valuePath)
   }
 
-  const { valChange = () => {} } = this.$listeners
   const rules = checkRules(metaData)
+  valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
+
   return (
     <el-form-item
       label={metaData.showLabel ? metaData.label : ''}
@@ -98,12 +100,11 @@ function buildFormItem(h, metaData, valuePath) {
       <render
         key={metaData.id}
         conf={metaData}
-        value={metaData.value}
+        value={_.get(this.form, valuePath)}
         uploadFun={this.uploadFun}
         downloadFun={this.downloadFun}
         onInput={(event) => {
-          this.$set(metaData, 'value', event)
-          valChange(metaData.id, event)
+          _.set(this.form, valuePath, event)
         }}
       />
     </el-form-item>
@@ -154,7 +155,6 @@ export default {
         label-width={this.formConf.labelWidth + 'px'}
         nativeOnSubmit={this.submit}
       >
-        {/*buildRowItem(this, h, this.metaDataList)*/}
         {buildForm.call(this, h, this.metaDataList)}
       </el-form>
     )
