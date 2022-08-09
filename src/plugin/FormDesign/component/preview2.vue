@@ -18,7 +18,7 @@ const copyComp = (comp = {}) => {
       })
     }
   })
-  return clone
+   return clone
 }
 
 function buildModel(model, meta) {
