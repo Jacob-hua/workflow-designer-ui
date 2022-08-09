@@ -1,143 +1,112 @@
 <script>
+import { getSimpleId } from '@/plugin/FormDesign/utils/IdGenerate'
 
-import {getSimpleId} from "@/plugin/FormDesign/utils/IdGenerate";
+import previewItem from '@/plugin/FormDesign/component/previewItem'
 
-import previewItem from "@/plugin/FormDesign/component/previewItem";
+import { processVariable } from '@/api/globalConfig'
 
-import { executeApi, processVariable } from "@/api/globalConfig"
-
-import formDepMonitorMixin, {mixinExecuteFunction} from "@/mixin/formDepMonitor";
+import formDepMonitorMixin from '@/mixin/formDepMonitor'
 
 import _ from 'lodash'
 
-const copyComp = ( originList = [], comp = {}) => {
+import render from '../custom/previewRender'
+
+import checkRules from '../custom/rule'
+
+const copyComp = (comp = {}) => {
   const clone = _.cloneDeep(comp)
-  const uId = "row_"+getSimpleId();
-  clone.id = uId;
-  clone._id = uId;
-  clone.columns.forEach((columns)=>{
-    let itemList = [];
+  const uId = `${comp.compType}_${getSimpleId()}`
+  clone._id = uId
+  clone.columns.forEach((columns) => {
     if (columns.list.length) {
-      columns.list.forEach((item)=>{
-        const cloneChild = _.cloneDeep(item)
-        cloneChild.id = `${cloneChild.id}_${getSimpleId()}`;
-        cloneChild._id = cloneChild.id;
-        itemList.push(cloneChild);
+      columns.list.forEach((item) => {
+        item._id = `${item.compType}_${getSimpleId()}`
       })
-      columns.list = [];
-      columns.list = itemList;
     }
   })
-  // originList.splice( originList.findIndex((item) => item.id === comp.id ) + 1, 0, clone)
-  originList.push(clone)
+  return clone
 }
 
-const deleteComp = (originList = [], comp = {} ) => {
-  originList.splice(originList.findIndex((item) => item.id === comp.id), 1)
+function buildForm(h, metaList) {
+  return metaList.map((metaData) => buildFormItem.call(this, h, metaData, metaList))
 }
 
-const buildRows = (_this, h, element = {}) => {
-  return element.columns.map(column => (
-        <el-col span={column.span}>
-          <el-row>
-            <div className="drag-wrapper">
-              {
-                buildColumn?.(_this, h, column, element)
-              }
-            </div>
-          </el-row>
-        </el-col>
-  ))
+function buildCopyContainer(h, children, metaData, parent) {
+  return (
+    <div>
+      <i
+        v-show={this.iconFlag}
+        onClick={() => {
+          parent.push(copyComp(metaData))
+        }}
+        class="copy el-icon-circle-plus-outline"
+      ></i>
+      <i
+        v-show={this.iconFlag}
+        onClick={() => {
+          parent.splice(parent.findIndex((item) => item.id === metaData.id))
+        }}
+        class="del el-icon-remove-outline"
+      ></i>
+      {children}
+    </div>
+  )
 }
 
-const buildColumn = (_this, h, column = {}, parent) => {
-  return column.list.map(comp => {
-    if (comp.compType === 'row') {
-    return(
-        <el-row
-            class={comp.isCopy? 'rows': ''}
-            nativeOnMousemove={ comp.isCopy? _this.move: () => {} }
-            nativeOnMouseleave={ comp.isCopy? _this.leave: () => {} }
-        >
-          <i v-show={ _this.iconFlag && comp.isCopy } class="copy el-icon-circle-plus-outline"  onClick={() => {
-            copyComp?.(column.list ,comp)
-          }}></i>
-          <i v-show={ _this.iconFlag && comp.isCopy } class="del el-icon-remove-outline" onClick={() => {
-            deleteComp(column.list, comp)
-          }}></i>
+function buildFormItem(h, metaData, parent) {
+  if (metaData.compType === 'row') {
+    const columns = metaData.columns.map(({ list, span }) => {
+      const formItems = list.map((item) => buildFormItem.call(this, h, item, list))
+      return <el-col span={span}>{formItems}</el-col>
+    })
+    return (
+      <el-row
+        class={metaData.isCopy ? 'rows' : ''}
+        nativeOnMousemove={metaData.isCopy ? this.move : () => {}}
+        nativeOnMouseleave={metaData.isCopy ? this.leave : () => {}}
+      >
+        {metaData.isCopy ? buildCopyContainer.call(this, h, columns, metaData, parent) : columns}
+      </el-row>
+    )
+  }
 
-          {buildRows?.( _this, h, comp )}
-        </el-row>
-        )
-    } else {
-      return (
-          <previewItem
-              models={comp}
-              v-model={_this.form[comp.id]}
-              onvalChange={_this.handlerValChange}
-              quoteOption={_this.quoteOption}
-              getFileList={_this.getFileList}
-              uploadFun={_this.uploadFun}
-              downloadFun={_this.downloadFunc}
-          />
-      )
-    }
-  })
+  const { valChange } = this.$listeners
+  const rules = checkRules(metaData)
+  return (
+    <el-form-item
+      label={metaData.showLabel ? metaData.label : ''}
+      label-width={`${metaData.labelWidth}`}
+      prop={metaData.id}
+      rules={rules}
+    >
+      <render
+        key={metaData.id}
+        conf={metaData}
+        value={metaData.value}
+        uploadFun={this.uploadFun}
+        downloadFun={this.downloadFun}
+        onInput={(event) => {
+          this.$set(metaData, 'value', event)
+          valChange(metaData.id, event)
+        }}
+      />
+    </el-form-item>
+  )
 }
 
-const buildRowItem = (_this, h, metaDataList = []) => {
-  return metaDataList.map((element, index) => {
-    if (element.compType === 'row') {
-      return (
-          <el-row
-              class={element.isCopy? 'rows': ''}
-              nativeOnMousemove={ element.isCopy? _this.move: () => {} }
-              nativeOnMouseleave={ element.isCopy? _this.leave: () => {} }
-          >
-            <i v-show={ _this.iconFlag && element.isCopy  }
-                onClick={() => {
-                    copyComp?.(metaDataList ,element)
-                }}
-               class="copy el-icon-circle-plus-outline"></i>
-            <i v-show={(_this.iconFlag &&  element.isCopy)  }
-               onClick={() => {
-                  deleteComp(metaDataList, element)
-               }}
-               class="del el-icon-remove-outline"></i>
-          <div>
-            {
-              buildRows?.(_this, h, element)
-            }
-          </div>
-          </el-row>
-      )
-    } else {
-      return (
-          <previewItem
-              models={element}
-              v-model={_this.form[element.id]}
-              onvalChange={_this.handlerValChange}
-              quoteOption={_this.quoteOption}
-              getFileList={_this.getFileList}
-              uploadFun={_this.uploadFun}
-              downloadFun={_this.downloadFunc}
-          />
-      )
-    }
-  })
-}
 let mixin = []
+
 export default {
   name: 'preview',
   props: ['itemList', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
-  components: { previewItem },
+  components: { previewItem, render },
   data() {
     if (!this.formConf.disabled) {
       mixin.push(
-          formDepMonitorMixin({
-            formData: 'form',
-            formFields: 'metaDataList',
-          }),
+        formDepMonitorMixin({
+          formData: 'form',
+          formFields: 'metaDataList',
+        })
       )
     }
 
@@ -149,116 +118,41 @@ export default {
       file: {},
       iconFlag: false,
       delFlag: false,
-      metaDataList: []
+      metaDataList: [],
     }
   },
   created() {
-    let that = this
-    function calculation(fieldInfo) {
-      if (fieldInfo.compType === 'row') {
-        fieldInfo.columns = fieldInfo.columns.map(col => {
-          col.list = col.list.map(cl => calculation(cl))
-          return col
-        })
-        return fieldInfo
-      } else {
-        if (fieldInfo.relationMapping && fieldInfo.relationMapping.length) {
-          if (!fieldInfo.disabled && !that.formConf.disabled) {
-            fieldInfo.context = that.getContext()
-          }
-        }
-        return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
-          if (!fieldInfo.disabled && !that.formConf.disabled) {
-            executeApi({
-              apiMark: fieldInfo.requestConfig.apiMark,
-              sourceMark: fieldInfo.requestConfig.sourceMark,
-              data,
-            }).then(({result: options}) => {
-              if (fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox') {
-                that.quoteOption = options
-              } else if (fieldInfo.compType === 'cascader') { // 处理级联
-                that.deleteEmptyChildren(options.result)
-                that.quoteOption = options.result
-              } else { // 处理选择列表
-              }
-            })
-          }
-        })
-      }
-    }
-    this.metaDataList = this.itemList.map((fieldInfo) => calculation(fieldInfo)
-    )
+    this.metaDataList = this.itemList
   },
   mixins: mixin,
-  // computed: {
-  //   metaDataList: function () {
-  //     let that = this
-  //     function calculation(fieldInfo) {
-  //       if (fieldInfo.compType === 'row') {
-  //         fieldInfo.columns = fieldInfo.columns.map(col => {
-  //           col.list = col.list.map(cl => calculation(cl))
-  //           return col
-  //         })
-  //         return fieldInfo
-  //       } else {
-  //         if (fieldInfo.relationMapping && fieldInfo.relationMapping.length) {
-  //           if (!fieldInfo.disabled && !that.formConf.disabled) {
-  //             fieldInfo.context = that.getContext()
-  //           }
-  //         }
-  //         return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
-  //           if (!fieldInfo.disabled && !that.formConf.disabled) {
-  //             executeApi({
-  //               apiMark: fieldInfo.requestConfig.apiMark,
-  //               sourceMark: fieldInfo.requestConfig.sourceMark,
-  //               data,
-  //             }).then(({result: options}) => {
-  //               if (fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox') {
-  //                 that.quoteOption = options
-  //               } else if (fieldInfo.compType === 'cascader') { // 处理级联
-  //                 that.deleteEmptyChildren(options.result)
-  //                 that.quoteOption = options.result
-  //               } else { // 处理选择列表
-  //               }
-  //             })
-  //           }
-  //         })
-  //       }
-  //     }
-  //     return this.itemList.map((fieldInfo) => calculation(fieldInfo)
-  //     )
-  //   }
-  // },
   render(h) {
     return (
-        <el-form
-            rules={this.rules}
-            ref={this.formConf.formModel}
-            size={this.formConf.size}
-            model={this.form}
-            label-position={this.formConf.labelPosition}
-            disabled={this.formConf.disabled}
-            validate-on-rule-change={false}
-            label-width={this.formConf.labelWidth + 'px'}
-            nativeOnSubmit={this.submit}
-        >
-              {
-                buildRowItem?.(this, h, this.metaDataList)
-              }
-
-        </el-form>
+      <el-form
+        rules={this.rules}
+        ref={this.formConf.formModel}
+        size={this.formConf.size}
+        model={this.form}
+        label-position={this.formConf.labelPosition}
+        disabled={this.formConf.disabled}
+        validate-on-rule-change={false}
+        label-width={this.formConf.labelWidth + 'px'}
+        nativeOnSubmit={this.submit}
+      >
+        {/*buildRowItem(this, h, this.metaDataList)*/}
+        {buildForm.call(this, h, this.metaDataList)}
+      </el-form>
     )
   },
   methods: {
     move() {
-          this.iconFlag = true
+      this.iconFlag = true
     },
     leave() {
       this.iconFlag = false
     },
     async submit() {
-      this.itemList.forEach(metaData => {
-        Object.keys(this.form).forEach(form => {
+      this.itemList.forEach((metaData) => {
+        Object.keys(this.form).forEach((form) => {
           if (form === metaData.id) {
             metaData.value = this.form[form]
           }
@@ -266,34 +160,31 @@ export default {
       })
       try {
         await this.$refs[this.formConf.formModel].validate()
-        console.log(_.cloneDeep(
-            {
-              metaDataList: this.metaDataList,
-              formData: this.form
-            }
-        ))
-        return _.cloneDeep(
-            {
-              metaDataList: this.metaDataList,
-              formData: this.form
-            }
+        console.log(
+          _.cloneDeep({
+            metaDataList: this.metaDataList,
+            formData: this.form,
+          })
         )
+        return _.cloneDeep({
+          metaDataList: this.metaDataList,
+          formData: this.form,
+        })
       } catch (e) {
-        throw  new Error(e.toString())
+        throw new Error(e.toString())
       }
     },
     handlerValChange(key, origin) {
-      this.$set(this.form, key, origin);
+      this.$set(this.form, key, origin)
     },
     async getContext() {
-      const {result} = await processVariable({
+      const { result } = await processVariable({
         // processInstanceId: 'c4ace818-01a9-11ed-8113-b215cd163104'
-        processInstanceId: this.processInstanceId ?? ''
+        processInstanceId: this.processInstanceId ?? '',
       })
       return result
     },
-
-  }
+  },
 }
 </script>
 
