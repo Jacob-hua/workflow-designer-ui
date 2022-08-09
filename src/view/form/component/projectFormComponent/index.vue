@@ -5,7 +5,7 @@
         <el-form ref="form" label-width="80px" label-position="right" :rules="rules" :model="postData">
           <div class="from-item">
             <el-form-item label="应用项目" prop="ascription">
-              <el-select disabled="true" v-model="postData.ascription">
+              <el-select :disabled="true" v-model="postData.ascription">
                 <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
               </el-select>
             </el-form-item>
@@ -159,7 +159,9 @@ export default {
         if (valid) {
               this.dialogVisible1 = false
               this.dialogVisible2 = true
-              this.$refs.formDesigner.clear()
+                this.$nextTick(() => {
+                  this.$refs.formDesigner.clear()
+                })
         } else {
           console.log('error submit!!');
           return false;

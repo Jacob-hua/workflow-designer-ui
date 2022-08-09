@@ -23,7 +23,7 @@
             <div class="card-title">
               <span class="title">{{ item.numberCode }}</span>
               <span class="detailWord" @click="detailsDiolog(item)"
-                    v-role="{ id: 'FromLook', type: 'button', business: projectCode }">详情</span>
+                    v-role="{ id: 'FromLook', type: 'button'}">详情</span>
             </div>
             <div class="card-main">
               <div class="card-main-item">
