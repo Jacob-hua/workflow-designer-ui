@@ -70,7 +70,7 @@
                 align="center"
                 prop=""
                 label="启动类型"
-                width="180">
+                width="240">
               <template slot-scope="scope">
                 <el-input v-show="scope.row.startType ==='1'" :disabled="scope.row.disabled"
                           v-model="scope.row.value"></el-input>
