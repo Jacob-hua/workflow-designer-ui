@@ -62,8 +62,6 @@ const buildColumn = (_this, h, column = {}, parent) => {
         >
           <i v-show={_this.iconFlag && comp.isCopy } class="copy el-icon-circle-plus-outline"  onClick={() => {
             copyComp?.(column.list ,comp)
-            // clone.isCopy = false
-            // column.list.push(clone)
           }}></i>
           <i v-show={_this.iconFlag && comp.isCopy } class="del el-icon-remove-outline" onClick={() => {
             deleteComp(column.list, comp)
@@ -211,7 +209,7 @@ export default {
             nativeOnSubmit={this.submit}
         >
               {
-                buildRowItem?.(this, h, this.metaDataList)
+                buildRowItem?.(this, h, this.itemList)
               }
 
         </el-form>
