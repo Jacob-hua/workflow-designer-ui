@@ -38,10 +38,10 @@ export default {
   components: {
     render
   },
-  props: ['model','value', 'quoteOption', 'getFileList', 'downloadFun', 'uploadFun'],
+  props: ['models','value', 'quoteOption', 'getFileList', 'downloadFun', 'uploadFun'],
   data(){
     return {
-      eleConfig:this.model
+      eleConfig:this.models
     }
   },
 

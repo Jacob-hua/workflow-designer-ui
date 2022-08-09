@@ -38,7 +38,6 @@
                     :uploadFun = 'uploadFun'
                     :downloadFun = 'downloadFun'
                   />
-
                 </template>
               </el-col>
             </preview-row-item>

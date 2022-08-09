@@ -66,7 +66,7 @@ import designItem from './designItem'
 import {getSimpleId} from "../utils/IdGenerate";
 import {isLayout} from "../utils";
 import formConf from "../custom/formConf";
-import preview from "./preview";
+import preview from "./preview2";
 import {codemirror} from 'vue-codemirror';
 // 核心样式
 import 'codemirror/lib/codemirror.css';

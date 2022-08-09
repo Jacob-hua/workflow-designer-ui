@@ -11,6 +11,9 @@
     <el-form-item label="控制字段值">
       <el-input v-model= "props.controlFiledVal"  placeholder="请输入控制该栅格的字段名"></el-input>
     </el-form-item>
+    <el-form-item label="是否可复制">
+      <el-switch v-model= "props.isCopy"></el-switch>
+    </el-form-item>
       <div v-for="(item, index) in props.columns" :key="index" class="select-item">
         <div class="select-line-icon">
           <i class="el-icon-s-operation" />

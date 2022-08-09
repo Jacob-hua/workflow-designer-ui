@@ -21,7 +21,9 @@ export let row = {
   layout:'rowItem',
   // 是否可配置
   config: true,
-  //
+
+  // 是否可复制
+      isCopy: false,
   flex:'default',
   justify:'start',
   align:'top',
