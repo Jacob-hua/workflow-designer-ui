@@ -1,5 +1,4 @@
 <script>
-import { getSimpleId } from '@/plugin/FormDesign/utils/IdGenerate'
 import previewItem from '@/plugin/FormDesign/component/previewItem'
 import { processVariable } from '@/api/globalConfig'
 import formDepMonitorMixin from '@/mixin/formDepMonitor'
@@ -7,37 +6,30 @@ import _ from 'lodash'
 import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
-const copyComp = (comp = {}) => {
-  const clone = _.cloneDeep(comp)
-  const uId = `${comp.compType}_${getSimpleId()}`
-  clone._id = uId
-  clone.columns.forEach((columns) => {
-    if (columns.list.length) {
-      columns.list.forEach((item) => {
-        item._id = `${item.compType}_${getSimpleId()}`
-      })
-    }
-  })
-  return clone
-}
+function buildModel(model, metaData) {
+  let result = { ...model }
+  if (metaData.compType !== 'row') {
+    result[metaData.id] = metaData.value
+    return result
+  }
 
-function buildModel(model, meta) {
-  const result = { ...model }
-  if (meta.isCopy) {
-    result[meta.id] = []
+  if (metaData.isCopy) {
+    result[metaData.id] = []
     let tempModel = {}
-    if (Array.isArray(meta.columns)) {
-      meta.columns.forEach(({ list }) => {
+    if (Array.isArray(metaData.columns)) {
+      metaData.columns.forEach(({ list }) => {
         list.forEach((colMeta) => {
           tempModel = buildModel(tempModel, colMeta)
         })
       })
     }
-    result[meta.id].push(tempModel)
+    result[metaData.id].push(tempModel)
     return result
   }
 
-  result[meta.id] = meta.value
+  metaData.columns.forEach(({ list }) => {
+    list.forEach((item) => (result = buildModel(result, item)))
+  })
   return result
 }
 
@@ -56,8 +48,7 @@ function buildRowContainer(h, metaData, valuePath) {
   if (!metaData.isCopy) {
     return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath)}</el-row>
   }
-  const isMultipleShow = this.iconFlag
-  const multipleRows = _.get(this.form, valuePath, [])
+
   const onCopy = (index) => {
     const cloneObj = _.cloneDeep(_.get(this.form, `${valuePath}[${index}]`))
     _.get(this.form, `${valuePath}`, []).splice(index, 0, cloneObj)
@@ -68,6 +59,10 @@ function buildRowContainer(h, metaData, valuePath) {
     }
     _.get(this.form, `${valuePath}`, []).splice(index, 1)
   }
+
+  const isMultipleShow = this.iconFlag
+  const multipleRows = _.get(this.form, valuePath, [])
+
   return multipleRows.map((_, index) => {
     return (
       <el-row
