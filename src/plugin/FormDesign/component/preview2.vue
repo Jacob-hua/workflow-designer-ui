@@ -28,7 +28,8 @@ const copyComp = ( originList = [], comp = {}) => {
       columns.list = itemList;
     }
   })
-  originList.splice( originList.findIndex((item) => item.id === comp.id ) + 1, 0, clone)
+  // originList.splice( originList.findIndex((item) => item.id === comp.id ) + 1, 0, clone)
+  originList.push(clone)
 }
 
 const deleteComp = (originList = [], comp = {} ) => {
@@ -59,12 +60,12 @@ const buildColumn = (_this, h, column = {}, parent) => {
             nativeOnMousemove={comp.isCopy? _this.move: () => {} }
             nativeOnMouseleave={ comp.isCopy? _this.leave: () => {} }
         >
-          <i v-show={_this.iconFlag || comp.isCopy } class="copy el-icon-circle-plus-outline"  onClick={() => {
+          <i v-show={_this.iconFlag && comp.isCopy } class="copy el-icon-circle-plus-outline"  onClick={() => {
             copyComp?.(column.list ,comp)
             // clone.isCopy = false
             // column.list.push(clone)
           }}></i>
-          <i v-show={_this.iconFlag || comp.isCopy } class="del el-icon-remove-outline" onClick={() => {
+          <i v-show={_this.iconFlag && comp.isCopy } class="del el-icon-remove-outline" onClick={() => {
             deleteComp(column.list, comp)
           }}></i>
 
@@ -97,13 +98,13 @@ const buildRowItem = (_this, h, metaDataList = []) => {
               nativeOnMousemove={element.isCopy? _this.move: () => {} }
               nativeOnMouseleave={ element.isCopy? _this.leave: () => {} }
           >
-            <i v-show={_this.iconFlag || element.isCopy  }
+            <i v-show={_this.iconFlag && element.isCopy  }
                 onClick={() => {
                     copyComp?.(metaDataList ,element)
                   // clone.isCopy = false
                 }}
                class="copy el-icon-circle-plus-outline"></i>
-            <i v-show={(_this.iconFlag ||  element.isCopy)  }
+            <i v-show={(_this.iconFlag &&  element.isCopy)  }
                onClick={() => {
                   deleteComp(metaDataList, element)
                }}
@@ -134,7 +135,7 @@ let mixin = []
 export default {
   name: 'preview',
   props: ['itemList', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
-  comments: { previewItem },
+  components: { previewItem },
   data() {
     if (!this.formConf.disabled) {
       mixin.push(
