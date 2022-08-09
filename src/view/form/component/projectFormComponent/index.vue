@@ -110,7 +110,6 @@ export default {
   },
   data() {
     return {
-      title: '新建表单',
       rules: {
         ascription: [
           { required: true, message: '请选择应用项目', trigger: 'blur' }
