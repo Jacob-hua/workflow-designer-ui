@@ -42,48 +42,43 @@ function buildModel(model, meta) {
 }
 
 function buildForm(h, metaList) {
-  return metaList.map((metaData) => buildFormItem.call(this, h, metaData, metaList))
+  return metaList.map((metaData) => buildFormItem.call(this, h, metaData))
 }
 
-function buildCopyContainer(h, children, metaData, parent) {
+function buildRowContainer(h, metaData, valuePath) {
+  const columns = metaData.columns.map(({ list, span }) => {
+    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath))
+    return <el-col span={span}>{formItems}</el-col>
+  })
+  if (!metaData.isCopy) {
+    return <el-row>{columns}</el-row>
+  }
+  console.log({ ...this.form })
+  console.log('======', valuePath)
+  console.log('======', this.form[valuePath])
+  const isMultipleShow = this.iconFlag
   return (
-    <div>
-      <i
-        v-show={this.iconFlag}
-        onClick={() => {
-          parent.push(copyComp(metaData))
-        }}
-        class="copy el-icon-circle-plus-outline"
-      ></i>
-      <i
-        v-show={this.iconFlag}
-        onClick={() => {
-          parent.splice(parent.findIndex((item) => item.id === metaData.id))
-        }}
-        class="del el-icon-remove-outline"
-      ></i>
-      {children}
-    </div>
+    <el-row
+      class={metaData.isCopy ? 'rows' : ''}
+      nativeOnMousemove={metaData.isCopy ? this.move : () => {}}
+      nativeOnMouseleave={metaData.isCopy ? this.leave : () => {}}
+    >
+      <div>
+        <i v-show={isMultipleShow} onClick={() => {}} class="copy el-icon-circle-plus-outline"></i>
+        <i v-show={isMultipleShow} onClick={() => {}} class="del el-icon-remove-outline"></i>
+        {columns}
+      </div>
+    </el-row>
   )
 }
 
-function buildFormItem(h, metaData, parent) {
+function buildFormItem(h, metaData, valuePath) {
+  valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
   if (metaData.compType === 'row') {
-    const columns = metaData.columns.map(({ list, span }) => {
-      const formItems = list.map((item) => buildFormItem.call(this, h, item, list))
-      return <el-col span={span}>{formItems}</el-col>
-    })
-    return (
-      <el-row
-        class={metaData.isCopy ? 'rows' : ''}
-        nativeOnMousemove={metaData.isCopy ? this.move : () => {}}
-        nativeOnMouseleave={metaData.isCopy ? this.leave : () => {}}
-      >
-        {metaData.isCopy ? buildCopyContainer.call(this, h, columns, metaData, parent) : columns}
-      </el-row>
-    )
+    return buildRowContainer.call(this, h, metaData, valuePath)
   }
 
+  console.log('valuePath', valuePath)
   const { valChange } = this.$listeners
   const rules = checkRules(metaData)
   return (
