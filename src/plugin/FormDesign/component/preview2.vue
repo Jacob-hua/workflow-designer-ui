@@ -36,7 +36,7 @@ const deleteComp = (originList = [], comp = {} ) => {
   originList.splice(originList.findIndex((item) => item.id === comp.id), 1)
 }
 
-const buildRows = (_this, h, element = {}) => {
+const buildRows = (_this, h, element = {}) =>{
   return element.columns.map(column => (
         <el-col span={column.span}>
           <el-row>
@@ -101,7 +101,7 @@ const buildRowItem = (_this, h, metaDataList = []) => {
                class="copy el-icon-circle-plus-outline"></i>
             <i v-show={(_this.iconFlag &&  element.isCopy)  }
                onClick={() => {
-                  deleteComp(metaDataList, element)
+                  deleteComp?.(metaDataList, element)
                }}
                class="del el-icon-remove-outline"></i>
           <div>
@@ -190,45 +190,6 @@ export default {
     )
   },
   mixins: mixin,
-  // computed: {
-  //   metaDataList: function () {
-  //     let that = this
-  //     function calculation(fieldInfo) {
-  //       if (fieldInfo.compType === 'row') {
-  //         fieldInfo.columns = fieldInfo.columns.map(col => {
-  //           col.list = col.list.map(cl => calculation(cl))
-  //           return col
-  //         })
-  //         return fieldInfo
-  //       } else {
-  //         if (fieldInfo.relationMapping && fieldInfo.relationMapping.length) {
-  //           if (!fieldInfo.disabled && !that.formConf.disabled) {
-  //             fieldInfo.context = that.getContext()
-  //           }
-  //         }
-  //         return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
-  //           if (!fieldInfo.disabled && !that.formConf.disabled) {
-  //             executeApi({
-  //               apiMark: fieldInfo.requestConfig.apiMark,
-  //               sourceMark: fieldInfo.requestConfig.sourceMark,
-  //               data,
-  //             }).then(({result: options}) => {
-  //               if (fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox') {
-  //                 that.quoteOption = options
-  //               } else if (fieldInfo.compType === 'cascader') { // 处理级联
-  //                 that.deleteEmptyChildren(options.result)
-  //                 that.quoteOption = options.result
-  //               } else { // 处理选择列表
-  //               }
-  //             })
-  //           }
-  //         })
-  //       }
-  //     }
-  //     return this.itemList.map((fieldInfo) => calculation(fieldInfo)
-  //     )
-  //   }
-  // },
   render(h) {
     return (
         <el-form
@@ -242,6 +203,9 @@ export default {
             label-width={this.formConf.labelWidth + 'px'}
             nativeOnSubmit={this.submit}
         >
+          <el-button
+          onClick={this.submit}
+          >提交</el-button>
               {
                 buildRowItem?.(this, h, this.metaDataList)
               }
@@ -251,7 +215,7 @@ export default {
   },
   methods: {
     move() {
-          this.iconFlag = true
+      this.iconFlag = true
     },
     leave() {
       this.iconFlag = false
@@ -282,12 +246,14 @@ export default {
         throw  new Error(e.toString())
       }
     },
-    handlerValChange(key, origin) {
+    handlerValChange(key, origin, element) {
+      if (element.compType ==='select') {
+        this.form[key+'_property'] = element.options.find(option => option.value === origin)
+      }
       this.$set(this.form, key, origin);
     },
     async getContext() {
       const {result} = await processVariable({
-        // processInstanceId: 'c4ace818-01a9-11ed-8113-b215cd163104'
         processInstanceId: this.processInstanceId ?? ''
       })
       return result

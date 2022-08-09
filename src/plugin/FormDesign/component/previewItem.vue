@@ -27,7 +27,7 @@ const layouts = {
                 downloadFun= { downloadFun }
                 onInput={ event => {
                 this.$set(element,'value',event);
-                valChange(element.id,event);
+                valChange(element.id,event, element);
             }}/>
           </el-form-item>
         </el-col>
