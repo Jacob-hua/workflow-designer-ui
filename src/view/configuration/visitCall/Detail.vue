@@ -18,17 +18,17 @@
         </el-form-item>
         <div>
           <el-button @click="$emit('showAddOrEidtDailog',currentRow,'edit')" type="primary"
-                     v-role="{ id: 'VisitCallEdit', type: 'button', business: business }">编辑
+                     v-role="{ id: 'VisitCallEdit', type: 'button' }">编辑
           </el-button>
           <el-button @click="deleteApis()" type="primary"
-                     v-role="{ id: 'VisitCallDelete', type: 'button', business: business }">删除
+                     v-role="{ id: 'VisitCallDelete', type: 'button' }">删除
           </el-button>
         </div>
       </div>
       <div style="display: flex">
         <div class="container">
           <div class="content-wrapper">
-            <el-tabs type="border-card" v-model="activeName" @tab-click="changeRole">
+            <el-tabs type="border-card" >
               <el-tab-pane v-for="(item, index) in currentRow"
                            :key="item.id"
                            :name="index+''">
