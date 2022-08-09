@@ -52,7 +52,6 @@
                         :options="systemOption"
                         :props='sysProps'
                         clearable
-                        @change="onOptionClick"
                     ></el-cascader>
                   </el-form-item>
                 </div>
