@@ -18,7 +18,7 @@ const copyComp = (comp = {}) => {
       })
     }
   })
-   return clone
+  return clone
 }
 
 function buildModel(model, meta) {
@@ -45,31 +45,44 @@ function buildForm(h, metaList) {
   return metaList.map((metaData) => buildFormItem.call(this, h, metaData))
 }
 
-function buildRowContainer(h, metaData, valuePath) {
-  const columns = metaData.columns.map(({ list, span }) => {
+function buildColumnContainer(h, metaData, valuePath) {
+  return metaData.columns.map(({ list, span }) => {
     const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath))
     return <el-col span={span}>{formItems}</el-col>
   })
+}
+
+function buildRowContainer(h, metaData, valuePath) {
   if (!metaData.isCopy) {
-    return <el-row>{columns}</el-row>
+    return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath)}</el-row>
   }
-  console.log({ ...this.form })
-  console.log('======', valuePath)
-  console.log('======', this.form[valuePath])
   const isMultipleShow = this.iconFlag
-  return (
-    <el-row
-      class={metaData.isCopy ? 'rows' : ''}
-      nativeOnMousemove={metaData.isCopy ? this.move : () => {}}
-      nativeOnMouseleave={metaData.isCopy ? this.leave : () => {}}
-    >
-      <div>
-        <i v-show={isMultipleShow} onClick={() => {}} class="copy el-icon-circle-plus-outline"></i>
-        <i v-show={isMultipleShow} onClick={() => {}} class="del el-icon-remove-outline"></i>
-        {columns}
-      </div>
-    </el-row>
-  )
+  const multipleRows = _.get(this.form, valuePath, [])
+  const onCopy = (index) => {
+    const cloneObj = _.cloneDeep(_.get(this.form, `${valuePath}[${index}]`))
+    _.get(this.form, `${valuePath}`, []).splice(index, 0, cloneObj)
+  }
+  const onDelete = (index) => {
+    if (index === 0) {
+      return
+    }
+    _.get(this.form, `${valuePath}`, []).splice(index, 1)
+  }
+  return multipleRows.map((_, index) => {
+    return (
+      <el-row
+        class={metaData.isCopy ? 'rows' : ''}
+        nativeOnMousemove={metaData.isCopy ? this.move : () => {}}
+        nativeOnMouseleave={metaData.isCopy ? this.leave : () => {}}
+      >
+        <div>
+          <i v-show={isMultipleShow} onClick={() => onCopy(index)} class="copy el-icon-circle-plus-outline"></i>
+          <i v-show={isMultipleShow} onClick={() => onDelete(index)} class="del el-icon-remove-outline"></i>
+          {buildColumnContainer.call(this, h, metaData, `${valuePath}[${index}]`)}
+        </div>
+      </el-row>
+    )
+  })
 }
 
 function buildFormItem(h, metaData, valuePath) {
@@ -78,8 +91,7 @@ function buildFormItem(h, metaData, valuePath) {
     return buildRowContainer.call(this, h, metaData, valuePath)
   }
 
-  console.log('valuePath', valuePath)
-  const { valChange } = this.$listeners
+  const { valChange = () => {} } = this.$listeners
   const rules = checkRules(metaData)
   return (
     <el-form-item
