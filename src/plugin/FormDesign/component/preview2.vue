@@ -56,21 +56,19 @@ const buildColumn = (_this, h, column = {}, parent) => {
     return(
         <el-row
             class={comp.isCopy? 'rows': ''}
-            // class="rows"
-            nativeOnMousemove={comp.isCopy? _this.move: () => {} }
+            nativeOnMousemove={ comp.isCopy? _this.move: () => {} }
             nativeOnMouseleave={ comp.isCopy? _this.leave: () => {} }
         >
-          <i v-show={_this.iconFlag && comp.isCopy } class="copy el-icon-circle-plus-outline"  onClick={() => {
+          <i v-show={ _this.iconFlag && comp.isCopy } class="copy el-icon-circle-plus-outline"  onClick={() => {
             copyComp?.(column.list ,comp)
           }}></i>
-          <i v-show={_this.iconFlag && comp.isCopy } class="del el-icon-remove-outline" onClick={() => {
+          <i v-show={ _this.iconFlag && comp.isCopy } class="del el-icon-remove-outline" onClick={() => {
             deleteComp(column.list, comp)
           }}></i>
 
-          {buildRows?.(_this, h, comp)}
+          {buildRows?.( _this, h, comp )}
         </el-row>
         )
-    //   return buildRows?.(_this, h, comp)
     } else {
       return (
           <previewItem
@@ -93,13 +91,12 @@ const buildRowItem = (_this, h, metaDataList = []) => {
       return (
           <el-row
               class={element.isCopy? 'rows': ''}
-              nativeOnMousemove={element.isCopy? _this.move: () => {} }
+              nativeOnMousemove={ element.isCopy? _this.move: () => {} }
               nativeOnMouseleave={ element.isCopy? _this.leave: () => {} }
           >
-            <i v-show={_this.iconFlag && element.isCopy  }
+            <i v-show={ _this.iconFlag && element.isCopy  }
                 onClick={() => {
                     copyComp?.(metaDataList ,element)
-                  // clone.isCopy = false
                 }}
                class="copy el-icon-circle-plus-outline"></i>
             <i v-show={(_this.iconFlag &&  element.isCopy)  }
@@ -151,50 +148,87 @@ export default {
       fileList: [],
       file: {},
       iconFlag: false,
-      delFlag: false
+      delFlag: false,
+      metaDataList: []
     }
+  },
+  created() {
+    let that = this
+    function calculation(fieldInfo) {
+      if (fieldInfo.compType === 'row') {
+        fieldInfo.columns = fieldInfo.columns.map(col => {
+          col.list = col.list.map(cl => calculation(cl))
+          return col
+        })
+        return fieldInfo
+      } else {
+        if (fieldInfo.relationMapping && fieldInfo.relationMapping.length) {
+          if (!fieldInfo.disabled && !that.formConf.disabled) {
+            fieldInfo.context = that.getContext()
+          }
+        }
+        return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
+          if (!fieldInfo.disabled && !that.formConf.disabled) {
+            executeApi({
+              apiMark: fieldInfo.requestConfig.apiMark,
+              sourceMark: fieldInfo.requestConfig.sourceMark,
+              data,
+            }).then(({result: options}) => {
+              if (fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox') {
+                that.quoteOption = options
+              } else if (fieldInfo.compType === 'cascader') { // 处理级联
+                that.deleteEmptyChildren(options.result)
+                that.quoteOption = options.result
+              } else { // 处理选择列表
+              }
+            })
+          }
+        })
+      }
+    }
+    this.metaDataList = this.itemList.map((fieldInfo) => calculation(fieldInfo)
+    )
   },
   mixins: mixin,
-  computed: {
-    metaDataList: function () {
-      let that = this
-      function calculation(fieldInfo) {
-        if (fieldInfo.compType === 'row') {
-          fieldInfo.columns = fieldInfo.columns.map(col => {
-            col.list = col.list.map(cl => calculation(cl))
-            return col
-          })
-          return fieldInfo
-        } else {
-          if (fieldInfo.relationMapping && fieldInfo.relationMapping.length) {
-            if (!fieldInfo.disabled && !that.formConf.disabled) {
-              fieldInfo.context = that.getContext()
-            }
-          }
-          return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
-            if (!fieldInfo.disabled && !that.formConf.disabled) {
-              executeApi({
-                apiMark: fieldInfo.requestConfig.apiMark,
-                sourceMark: fieldInfo.requestConfig.sourceMark,
-                data,
-              }).then(({result: options}) => {
-                if (fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox') {
-                  that.quoteOption = options
-                } else if (fieldInfo.compType === 'cascader') { // 处理级联
-                  that.deleteEmptyChildren(options.result)
-                  that.quoteOption = options.result
-                } else { // 处理选择列表
-                }
-              })
-            }
-          })
-        }
-      }
-
-      return this.itemList.map((fieldInfo) => calculation(fieldInfo)
-      )
-    }
-  },
+  // computed: {
+  //   metaDataList: function () {
+  //     let that = this
+  //     function calculation(fieldInfo) {
+  //       if (fieldInfo.compType === 'row') {
+  //         fieldInfo.columns = fieldInfo.columns.map(col => {
+  //           col.list = col.list.map(cl => calculation(cl))
+  //           return col
+  //         })
+  //         return fieldInfo
+  //       } else {
+  //         if (fieldInfo.relationMapping && fieldInfo.relationMapping.length) {
+  //           if (!fieldInfo.disabled && !that.formConf.disabled) {
+  //             fieldInfo.context = that.getContext()
+  //           }
+  //         }
+  //         return mixinExecuteFunction(fieldInfo, (data, fieldInfo) => {
+  //           if (!fieldInfo.disabled && !that.formConf.disabled) {
+  //             executeApi({
+  //               apiMark: fieldInfo.requestConfig.apiMark,
+  //               sourceMark: fieldInfo.requestConfig.sourceMark,
+  //               data,
+  //             }).then(({result: options}) => {
+  //               if (fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox') {
+  //                 that.quoteOption = options
+  //               } else if (fieldInfo.compType === 'cascader') { // 处理级联
+  //                 that.deleteEmptyChildren(options.result)
+  //                 that.quoteOption = options.result
+  //               } else { // 处理选择列表
+  //               }
+  //             })
+  //           }
+  //         })
+  //       }
+  //     }
+  //     return this.itemList.map((fieldInfo) => calculation(fieldInfo)
+  //     )
+  //   }
+  // },
   render(h) {
     return (
         <el-form
@@ -209,7 +243,7 @@ export default {
             nativeOnSubmit={this.submit}
         >
               {
-                buildRowItem?.(this, h, this.itemList)
+                buildRowItem?.(this, h, this.metaDataList)
               }
 
         </el-form>

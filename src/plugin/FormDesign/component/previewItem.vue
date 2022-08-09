@@ -7,7 +7,9 @@ const layouts = {
     let labelWidth = element.labelWidth ? `${element.labelWidth}px` : null
     const {valChange} = this.$listeners;
     const rules = checkRules(element)
-    value = value ?? []
+    if (element.compType === 'checkbox') {
+      value = value ?? []
+    }
     return (
         <el-col  style="{padding-left: 7.5px; padding-right: 7.5px;">
           <el-form-item label={element.showLabel ? element.label : ''}
