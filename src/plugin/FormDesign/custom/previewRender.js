@@ -89,9 +89,9 @@ export default {
             style: {}
         }
         //远程获取数据
-        if (this.quoteOption.length) {
-            this.conf.options = this.quoteOption
-        }
+        // if (this.quoteOption.length) {
+        //     this.conf.options = this.quoteOption
+        // }
         const confClone = jsonClone(this.conf);
 
         const children = childrenItem(h, confClone);
