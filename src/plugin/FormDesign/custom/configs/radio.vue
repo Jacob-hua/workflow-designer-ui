@@ -59,7 +59,7 @@
         @input="onDefaultValueInput"
       />
     </el-form-item>
-    <depend-value :currentField="props" :fieldOverviews="fieldOverviews" @dependChange="onDependChange" />
+    <depend-value :currentField="props" @dependChange="onDependChange" />
     <el-form-item label="选项配置">
       <el-radio-group v-model="props.dataType" @change="handlerChangeDataType">
         <el-radio-button label="static">静态数据</el-radio-button>
@@ -86,12 +86,7 @@
         </el-button>
       </div>
     </div>
-    <interface-parser
-      v-if="props.dataType === 'dynamic'"
-      :currentField="props"
-      :fieldOverviews="fieldOverviews"
-      @variableChange="onVariableChange"
-    />
+    <interface-parser v-if="props.dataType === 'dynamic'" :currentField="props" @variableChange="onVariableChange" />
   </div>
 </template>
 <script>
@@ -106,7 +101,7 @@ import DependValue from './component/DependValue.vue'
  */
 export default {
   name: 'inputConfig',
-  props: ['props', 'getFormId', 'fieldOverviews'],
+  props: ['props', 'getFormId'],
   components: {
     draggable,
     InterfaceParser,

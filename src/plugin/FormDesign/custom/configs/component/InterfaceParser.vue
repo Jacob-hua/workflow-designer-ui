@@ -10,16 +10,13 @@
       <el-col :span="10"> 关联 </el-col>
       <el-col :span="8"> 类型 </el-col>
     </el-row>
-    <div v-for="({ variable, sourceType }, index) in variables" :key="index">
+    <div v-for="({ variable }, index) in variables" :key="index">
       <el-row :gutter="24">
         <el-col :span="6">
           <span>{{ variable }}</span>
         </el-col>
         <el-col :span="10">
-          <el-select v-if="isFormSource(sourceType)" v-model="variables[index]['source']" @change="onVariableChange">
-            <el-option v-for="{ _id, label } in availableField" :key="_id" :label="label" :value="_id"></el-option>
-          </el-select>
-          <el-input v-else v-model="variables[index]['source']" @change="onVariableChange" />
+          <el-input v-model="variables[index]['source']" @change="onVariableChange" />
         </el-col>
         <el-col :span="8">
           <el-select v-model="variables[index]['sourceType']" @change="onSourceTypeChange(index)">
@@ -47,10 +44,6 @@ export default {
     currentField: {
       type: Object,
       default: () => ({}),
-    },
-    fieldOverviews: {
-      type: Array,
-      default: () => [],
     },
   },
   data() {
@@ -81,9 +74,6 @@ export default {
     ...mapState('account', ['tenantId']),
     ...mapState('form', ['interFaceOption']),
     ...mapGetters('form', ['findInterfaceById']),
-    availableField() {
-      return this.fieldOverviews.filter(({ _id }) => _id !== this.currentField._id)
-    },
   },
   watch: {
     currentField: {
@@ -138,9 +128,6 @@ export default {
   },
   methods: {
     ...mapActions('form', ['refreshApiList']),
-    isFormSource(sourceType) {
-      return sourceType && sourceType === 'form'
-    },
     onSourceTypeChange(index) {
       this.variables[index].source = ''
     },

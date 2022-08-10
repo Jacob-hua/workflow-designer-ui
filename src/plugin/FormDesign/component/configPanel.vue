@@ -12,7 +12,6 @@
               :itemList="itemList"
               :getFormId="getFormId"
               :props="activeItem"
-              :fieldOverviews="fieldOverviews"
               :is="item.content"
             ></component>
           </div>
@@ -42,24 +41,6 @@ export default {
     itemList: {
       type: Array,
       default: () => [],
-    },
-  },
-  computed: {
-    fieldOverviews() {
-      const fieldOverviews = []
-      this.itemList.forEach(makeFieldOverview)
-      return fieldOverviews
-      
-      function makeFieldOverview({ _id, id, label, compType, columns = [] }) {
-        if (compType === 'row') {
-          for (let index = 0; index < columns.length; index++) {
-            const { list = [] } = columns[index]
-            list.forEach(makeFieldOverview)
-          }
-          return
-        }
-        fieldOverviews.push({ _id, id, label })
-      }
     },
   },
   created() {

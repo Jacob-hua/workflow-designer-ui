@@ -10,10 +10,7 @@
       </el-row>
       <el-row :gutter="24">
         <el-col :span="16">
-          <el-select v-if="isFormSource" v-model="dependValue.source">
-            <el-option v-for="{ _id, label } in availableField" :key="_id" :label="label" :value="_id"></el-option>
-          </el-select>
-          <el-input v-else v-model="dependValue.source" />
+          <el-input v-model="dependValue.source" />
         </el-col>
         <el-col :span="8">
           <el-select v-model="dependValue['sourceType']" @change="onSourceTypeChange">
@@ -37,10 +34,6 @@ export default {
     currentField: {
       type: Object,
       default: () => ({}),
-    },
-    fieldOverviews: {
-      type: Array,
-      default: () => [],
     },
   },
   data() {
@@ -67,14 +60,6 @@ export default {
         source: '',
       },
     }
-  },
-  computed: {
-    isFormSource() {
-      return this.dependValue.sourceType && this.dependValue.sourceType === 'form'
-    },
-    availableField() {
-      return this.fieldOverviews.filter(({ _id }) => _id !== this.currentField._id)
-    },
   },
   watch: {
     currentField: {
