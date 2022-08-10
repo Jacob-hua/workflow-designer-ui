@@ -137,7 +137,6 @@ export default {
   },
   methods: {
     showDetail(row) {
-      debugger;
       apiDetail({
         source: row.source,
         sourceMark: row.sourceMark,
@@ -188,7 +187,7 @@ export default {
         this.DetailFlag = true;
         this.$nextTick(() => {
           this.$refs.detail.dialogVisible = true;
-          this.$refs.detail.editableTabsValue = "0";
+          this.$refs.detail.activeName = res.result[0].id;
         });
         console.log(res.result);
         this.currentRow = res.result;
