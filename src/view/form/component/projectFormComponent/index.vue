@@ -195,6 +195,7 @@ export default {
           this.dialogVisible1 = false;
           this.dialogVisible2 = true;
           this.$nextTick(() => {
+            this.title = "新建表单";
             this.$refs.formDesigner.clear();
           });
         } else {
