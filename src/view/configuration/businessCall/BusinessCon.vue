@@ -79,7 +79,6 @@ export default {
       data:  [
         {
           "code": 1,
-          "label": '莱芜供热项目',
           "name": '',
           "active": "Y",
           "type": 'industry',

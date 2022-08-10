@@ -252,6 +252,7 @@ export default {
       }
     },
     radioChange(val) {
+      debugger
       if (val === FormTypeEnum.FORM_TYPE_SELECT) {
         getThirdInterfaceList({
           tenantId: this.tenantId,
