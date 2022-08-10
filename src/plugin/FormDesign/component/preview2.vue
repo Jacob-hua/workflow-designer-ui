@@ -187,8 +187,8 @@ export default {
       form,
       flatFields: [],
       rules: {},
-      quoteOption: [],
       iconFlag: false,
+      context: {},
     }
   },
   computed: {
@@ -196,6 +196,11 @@ export default {
       this.itemList.forEach((metaData) => mixinExecuteFunctions.call(this, metaData, this.flatFields))
       return this.itemList
     },
+  },
+  mounted() {
+    this.getContext().then((context) => {
+      this.context = context
+    })
   },
   mixins: [
     formDepMonitorMixin({
