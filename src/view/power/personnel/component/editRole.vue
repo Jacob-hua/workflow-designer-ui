@@ -266,6 +266,7 @@ export default {
 .dialogHeader {
   border-left: 3px solid #108cee;
   padding-left: 20px;
+  color: #fff;
 }
 
 .dialogHeader /deep/ .el-button {
