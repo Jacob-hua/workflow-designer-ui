@@ -1,8 +1,5 @@
 <template>
   <div v-show="props.compType === 'checkbox'">
-    <!-- <el-form-item label="字段名">
-      <el-input class="input" v-model="props"></el-input>
-    </el-form-item> -->
     <el-form-item label="字段">
       <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
         <el-input class="input" v-model="props.id" @change="handlerChangeId"></el-input>
@@ -12,16 +9,13 @@
       <el-input class="input" v-model="props.label"></el-input>
     </el-form-item>
     <el-form-item label="提示符">
-      <el-input class="input" v-model="props.placeholder" placeholder="请输入提示符"/>
+      <el-input class="input" v-model="props.placeholder" placeholder="请输入提示符" />
     </el-form-item>
-    <!-- <el-form-item label="表单栅格">
-      <el-slider class="input" v-model="props.span" :max="24" :min="1" :marks="{12:''}"></el-slider>
-    </el-form-item> -->
     <el-form-item label="栅格间隔">
-      <el-input-number v-model="props.gutter"  :min="0"></el-input-number>
+      <el-input-number v-model="props.gutter" :min="0"></el-input-number>
     </el-form-item>
     <el-form-item label="标签宽度">
-      <el-input-number v-model="props.labelWidth"  :min="1" :max="200"></el-input-number>
+      <el-input-number v-model="props.labelWidth" :min="1" :max="200"></el-input-number>
     </el-form-item>
     <el-form-item label="显示标签">
       <el-switch v-model="props.showLabel" @change="handlerChangeLabel"></el-switch>
@@ -33,10 +27,10 @@
       <el-switch v-model="props.vertical"></el-switch>
     </el-form-item>
     <el-form-item label="最小数量">
-      <el-input-number v-model="props.min"  :min="1" ></el-input-number>
+      <el-input-number v-model="props.min" :min="1"></el-input-number>
     </el-form-item>
     <el-form-item label="最大数量">
-      <el-input-number v-model="props.max"  :min="1" ></el-input-number>
+      <el-input-number v-model="props.max" :min="1"></el-input-number>
     </el-form-item>
     <el-form-item label="选项样式">
       <el-radio-group v-model="props.optionType">
@@ -47,7 +41,7 @@
     <el-form-item label="显示边框">
       <el-switch v-model="props.border"></el-switch>
     </el-form-item>
-    <el-form-item label="选项尺寸" v-show="props.border||props.optionType ==='button'">
+    <el-form-item label="选项尺寸" v-show="props.border || props.optionType === 'button'">
       <el-radio-group v-model="props.size">
         <el-radio-button label="medium">正常</el-radio-button>
         <el-radio-button label="small">略小</el-radio-button>
@@ -58,140 +52,81 @@
       <el-switch v-model="props.disabled" @change="handlerChangeDisStatus('disabled')"></el-switch>
     </el-form-item>
     <el-form-item label="默认值">
-      <el-input class="input"
+      <el-input
+        class="input"
         :value="setDefaultValue(props.value)"
         placeholder="请输入默认值"
         @input="onDefaultValueInput"
       />
     </el-form-item>
-    <el-form-item label="数据类型">
+    <depend-value :currentField="props" :fieldOverviews="fieldOverviews" @dependChange="onDependChange" />
+    <el-form-item label="选项配置">
       <el-radio-group v-model="props.dataType" @change="handlerChangeDataType">
         <el-radio-button label="static">静态数据</el-radio-button>
         <el-radio-button label="dynamic">动态数据</el-radio-button>
       </el-radio-group>
     </el-form-item>
-    <div v-show='props.dataType ==="static"'>
     <el-divider>选项</el-divider>
+    <div v-show="props.dataType === 'static'">
       <draggable :list="props.options" handle=".option-drag">
         <div v-for="(item, index) in props.options" :key="index" class="select-item">
           <div class="select-line-icon option-drag">
             <i class="el-icon-s-operation" />
           </div>
           <el-input v-model="item.label" placeholder="选项名" size="small" />
-          <el-input
-            placeholder="选项值"
-            size="small"
-            :value="item.value"
-            @input="setOptionValue(item, $event)"
-          />
+          <el-input placeholder="选项值" size="small" :value="item.value" @input="setOptionValue(item, $event)" />
           <div class="close-btn select-line-icon" @click="props.options.splice(index, 1)">
             <i class="el-icon-remove-outline" />
           </div>
         </div>
       </draggable>
-    <div style="margin-left: 20px;">
-      <el-button
-        style="padding-bottom: 0"
-        icon="el-icon-circle-plus-outline"
-        type="text"
-        @click="addSelectItem"
-      >
-        添加选项
-      </el-button>
+      <div style="margin-left: 20px">
+        <el-button style="padding-bottom: 0" icon="el-icon-circle-plus-outline" type="text" @click="addSelectItem">
+          添加选项
+        </el-button>
+      </div>
     </div>
-    </div>
-    <div v-show='props.dataType ==="dynamic"'>
-      <el-form-item label="第三方API">
-        <el-select v-model="interFace"
-                   clearable>
-          <el-option  v-for="({ name, id, source, sourceMark }, index) in interFaceOption"
-                      @click.native="onClickOption(id,source, sourceMark)"
-                      :key="index"
-                      :label="name"
-                      :value="id" />
-        </el-select>
-      </el-form-item>
-      <el-form-item v-if="variableOption.length" label="关联">
-        <div v-for="(variable,index) in variableArr" :key="index">
-          <div>{{variable}}</div>
-          <el-input v-model="variableOption[index][variable]" ></el-input>
-        </div>
-      </el-form-item>
-    </div>
+    <interface-parser
+      v-if="props.dataType === 'dynamic'"
+      :currentField="props"
+      :fieldOverviews="fieldOverviews"
+      @variableChange="onVariableChange"
+    />
   </div>
 </template>
 <script>
-import {changeId} from '../mixin'
-import draggable from "vuedraggable";
+import { changeId } from '../mixin'
+import draggable from 'vuedraggable'
 import { isNumberStr } from '../../utils/index'
-import {mapActions, mapMutations, mapState} from "vuex";
-import {apiDetail} from "@/api/globalConfig";
-import {variableFactory} from "@/mixin/formDepMonitor";
+import { mapMutations } from 'vuex'
+import InterfaceParser from './component/InterfaceParser.vue'
+import DependValue from './component/DependValue.vue'
 /**
  * input的配置项
  */
-let vm = {
-  name:"checkboxConfig",
-  props:['props','getFormId', 'itemList'],
-  components:{
-    draggable
+export default {
+  name: 'checkboxConfig',
+  props: ['props', 'getFormId', 'fieldOverviews'],
+  components: {
+    draggable,
+    InterfaceParser,
+    DependValue,
   },
-  mixins:[changeId],
-  data(){
-    return {
-      currentDetail: {},
-      variableOption: [],
-      variableArr: [],
-      interFace: ''
-    }
-  },
-  computed: {
-    ...mapState('account', ['tenantId', 'currentOrganization']),
-    ...mapState('form',['interFaceOption', 'dynamicOption'])
-  },
-  methods:{
-    ...mapActions('form',['refreshApiList', 'executeFunction']),
-    ...mapMutations('form',['addThirdPartyApi']),
-    onClickOption(id,source, sourceMark) {
-      let _this = this
-      apiDetail({
-        source: source,
-        sourceMark: sourceMark,
-        tenantId: this.tenantId
-      }).then((res)=> {
-        // 获取开闭所问题是不是
-        this.currentDetail = res.result.filter(item => item.id === id)[0]
-        this.variableArr = variableFactory(this.currentDetail)
-        this.addThirdPartyApi( { id: this.currentDetail.id } )
-        if (this.variableArr) {
-          this.variableOption = this.variableArr.map(variable =>(
-              {
-                [variable] : variable
-              }
-          ))
-        }
-
-        this.itemList.forEach(item => {
-          if (item.id ===  this.props.id) {
-            item.requestConfig = this.currentDetail
-            item.relationMapping = this.variableOption
-          }
-        })
-
-
-        // console.log(arr)
-        // _this.executeFunction({api: this.currentDetail, relation: this.props.relation, value: ''}  )
-        // this.addThirdPartyApi( { id: this.currentDetail.id } )
-      })
+  mixins: [changeId],
+  methods: {
+    ...mapMutations('form', ['addThirdPartyApi']),
+    onDependChange(dependValue) {
+      this.props.dependValue = dependValue
     },
-    handlerChangeLabel(val){
-      this.props.labelWidth = val?'80':'1'
+    onVariableChange(requestConfig) {
+      this.props.requestConfig = requestConfig
+      this.addThirdPartyApi({ id: requestConfig.id })
     },
-    handlerChangeDisStatus(val){
+    handlerChangeLabel(val) {
+      this.props.labelWidth = val ? '80' : '1'
+    },
+    handlerChangeDisStatus(val) {
       this.props.readOnly = !val
-    },
-    handlerChangeReadStatus(val){
-      this.props.disabled = !val
     },
     setDefaultValue(val) {
       if (Array.isArray(val)) {
@@ -211,52 +146,41 @@ let vm = {
         this.$set(
           this.props,
           'value',
-          str.split(',').map(val => (isNumberStr(val) ? +val : val))
+          str.split(',').map((val) => (isNumberStr(val) ? +val : val))
         )
       } else if (['true', 'false'].indexOf(str) > -1) {
         // 布尔
         this.$set(this.props, 'value', JSON.parse(str))
       } else {
         // 字符串和数字
-        this.$set(
-          this.props,
-          'value',
-          isNumberStr(str) ? +str : str
-        )
+        this.$set(this.props, 'value', isNumberStr(str) ? +str : str)
       }
     },
-    setOptionValue(item,val){
+    setOptionValue(item, val) {
       item.value = isNumberStr(val) ? +val : val
     },
-    addSelectItem(){
+    addSelectItem() {
+      !this.props.options && (this.props.options = this.tempOptions)
       this.props.options.push({
         label: '',
-        value: ''
+        value: '',
       })
     },
-    multipleChange(val){
-    //   this.$set(this.props, 'value', val ? [] : '')
-    },
-    handlerChangeDataType(value){
-      if(value === 'static'){
-        this.props.options = [];
-        this.props.options = this.tempOptions;
-      }else{
-        this.tempOptions = this.props.options;
-        this.props.options = [];
-        this.refreshApiList()
+    handlerChangeDataType(value) {
+      if (value === 'static') {
+        delete this.props.requestConfig
+        this.props.options = []
+        this.props.options = this.tempOptions
+      } else {
+        this.tempOptions = this.props.options
+        this.props.options = []
       }
-    }
+    },
   },
-  mounted(){
-  },
-  watch: {
-  }
 }
-export default vm;
 </script>
 <style lang="scss" scoped>
-.input{
-  width:75%
+.input {
+  width: 75%;
 }
 </style>
