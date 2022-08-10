@@ -41,7 +41,7 @@
     <el-form-item label="默认值">
       <el-input class="input" v-model="props.value"></el-input>
     </el-form-item>
-    <depend-value :currentField="props" :fieldOverviews="fieldOverviews" @dependChange="onDependChange" />
+    <depend-value :currentField="props" @dependChange="onDependChange" />
   </div>
 </template>
 <script>
@@ -50,7 +50,7 @@ import DependValue from './component/DependValue.vue'
 
 export default {
   name: 'inputConfig',
-  props: ['props', 'getFormId', 'fieldOverviews'],
+  props: ['props', 'getFormId'],
   components: { DependValue },
   mixins: [changeId],
   methods: {
