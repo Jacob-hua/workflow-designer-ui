@@ -7,7 +7,9 @@ const layouts = {
     let labelWidth = element.labelWidth ? `${element.labelWidth}px` : null
     const {valChange} = this.$listeners;
     const rules = checkRules(element)
-    value = value ?? []
+    if (element.compType === 'checkbox') {
+      value = value ?? []
+    }
     return (
         <el-col  style="{padding-left: 7.5px; padding-right: 7.5px;">
           <el-form-item label={element.showLabel ? element.label : ''}
@@ -25,7 +27,7 @@ const layouts = {
                 downloadFun= { downloadFun }
                 onInput={ event => {
                 this.$set(element,'value',event);
-                valChange(element.id,event);
+                valChange(element.id,event, element);
             }}/>
           </el-form-item>
         </el-col>
@@ -38,10 +40,10 @@ export default {
   components: {
     render
   },
-  props: ['model','value', 'quoteOption', 'getFileList', 'downloadFun', 'uploadFun'],
+  props: ['models','value', 'quoteOption', 'getFileList', 'downloadFun', 'uploadFun'],
   data(){
     return {
-      eleConfig:this.model
+      eleConfig:this.models
     }
   },
 

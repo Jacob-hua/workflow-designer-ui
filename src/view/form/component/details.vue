@@ -64,7 +64,7 @@
 
 <script>
   import formBpmnEdit from './formBpmnEdit.vue'
-  import preview from "@/plugin/FormDesign/component/preview";
+  import preview from "@/plugin/FormDesign/component/preview2";
   import { postFormDesignRecordFormDesignRecordInfo, deleteFormDesignService, postFormDesignServiceRealiseProcessData } from '@/api/unit/api.js'
   import Preview from "@/plugin/FormDesign/component/preview";
   import { mapState } from 'vuex'

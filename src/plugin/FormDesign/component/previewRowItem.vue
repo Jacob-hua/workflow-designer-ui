@@ -12,10 +12,10 @@
   </el-col>
 </template>
 <script>
-
+import previewItem from "@/plugin/FormDesign/component/previewItem";
 export default {
   name: "previewRowItem",
-  components: {},
+  components: {previewItem},
   props: ['model', 'value', "itemList", 'index', 'controlFiled'],
   data() {
     return {
@@ -34,7 +34,6 @@ export default {
   },
   computed: {},
   mounted() {
-    console.log(this.model.controlFiledFlag =  true)
     this.firstIndex = this.itemList.map(element => element.compType).indexOf('row')
   },
   methods: {

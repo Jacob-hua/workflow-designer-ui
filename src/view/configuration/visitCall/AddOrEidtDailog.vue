@@ -68,7 +68,7 @@
                   <el-form-item label="参数value">
                     <el-input v-model="params.value"></el-input>
                   </el-form-item>
-                  <i @click="deleteParams( index,indexs)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
+                  <i @click="deleteParams( index,indexs)" v-if="indexs!== 0" class="el-icon-remove-outline"></i>
                 </div>
                 <el-button @click="excuteParse(item)" class="parse" type="primary">模拟请求</el-button>
                 <el-divider></el-divider>
@@ -82,7 +82,7 @@
                   <el-form-item label="参数value">
                     <el-input v-model="parse.value"></el-input>
                   </el-form-item>
-                  <i @click="deleteParseParams( index,idxs)" v-if="idx!== 0" class="el-icon-remove-outline"></i>
+                  <i @click="deleteParseParams( index,idxs)" v-if="idxs!== 0" class="el-icon-remove-outline"></i>
                 </div>
 
               </div>
