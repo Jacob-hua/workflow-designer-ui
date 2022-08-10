@@ -143,7 +143,7 @@
         formData.append('ascription', 'public')
         formData.append('code', id)
         formData.append('business', '')
-        formData.append('status', 'public')
+        formData.append('status', 'drafted')
         formData.append('createBy', this.userInfo.account)
         formData.append('createName', 'admin')
         formData.append('tenantId', this.tenantId)
