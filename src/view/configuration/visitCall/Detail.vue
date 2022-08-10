@@ -42,7 +42,7 @@
               <el-tab-pane
                 v-for="(item, index) in currentRow"
                 :key="item.id"
-                :name="item.id"
+                :name="String(index)"
               >
                 <span slot="label">{{ item.name }}</span>
                 <el-form-item label="api名称">
@@ -137,7 +137,7 @@ export default {
       currentPars: [],
       activeName: "",
       form: {},
-      editableTabsValue: "1",
+      editableTabsValue: "0",
       methodsOptions: [
         {
           value: "1",
@@ -172,7 +172,6 @@ export default {
     },
   },
   mounted() {
-    this.editableTabsValue = "0";
     this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
   },
 };
