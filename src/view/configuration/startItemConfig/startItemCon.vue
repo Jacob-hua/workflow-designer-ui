@@ -1,20 +1,9 @@
 <template>
   <div>
-    <el-dialog
-        title="自定义启动"
-        :visible.sync="dialogVisible2"
-        v-if="dialogVisible2"
-        width="30%"
-        append-to-body
-    >
+    <el-dialog title="自定义启动" :visible.sync="dialogVisible2" v-if="dialogVisible2" width="30%" append-to-body>
       <div id="item">
         <p class="tit">自定义启动项</p>
-        <el-tag
-            v-for="tag in tags"
-            :key="tag.name"
-            closable
-            @close="handleClose(tag)"
-            :type="tag.type">
+        <el-tag v-for="tag in tags" :key="tag.name" closable @close="handleClose(tag)" :type="tag.type">
           {{ tag.name }}
         </el-tag>
         <div style="display: flex; margin-top: 15px">
@@ -24,20 +13,14 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button class="savebtn" type="primary" @click="saveTag">保 存</el-button>
-        <el-button class="cancelbtn" @click="dialogVisible2= false">取 消</el-button>
+        <el-button class="cancelbtn" @click="dialogVisible2 = false">取 消</el-button>
       </span>
     </el-dialog>
-    <el-dialog
-        title="启动项配置"
-        :visible.sync="dialogVisible"
-        width="80%"
-        fullscreen
-        append-to-body
-    >
+    <el-dialog title="启动项配置" :visible.sync="dialogVisible" width="80%" fullscreen append-to-body>
       <div class="start_container">
         <div class="start_left">
-          <el-tree @node-click="handleNodeClick" class="tree" default-expand-all :data="data"
-                   :props="defaultProps"></el-tree>
+          <el-tree @node-click="handleNodeClick" class="tree" default-expand-all :data="data" :props="defaultProps">
+          </el-tree>
         </div>
         <div class="start_right">
           <p>自定义启动项</p>
@@ -46,54 +29,30 @@
           <!--          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary"-->
           <!--                     v-role="{ id: 'StartItemConfigEdit', type: 'button', business: business }">编辑-->
           <!--          </el-button>-->
-          <el-table
-              v-if="tableFlag && tableData.length > 0"
-              :data="tableData"
-              style="width: 100%">
-            <el-table-column
-                align="center"
-                prop="name"
-                label="启动项"
-                width="180">
+          <el-table v-if="tableFlag && tableData.length > 0" :data="tableData" style="width: 100%">
+            <el-table-column align="center" prop="name" label="启动项" width="180">
             </el-table-column>
-            <el-table-column
-                align="center"
-                prop=""
-                label="Code"
-                width="180">
+            <el-table-column align="center" prop="" label="Code" width="180">
               <template slot-scope="scope">
-                <el-input @blur="codeChange(scope.row.code)" :disabled="scope.row.disabled"
-                          v-model="scope.row.code"></el-input>
+                <el-input @blur="codeChange(scope.row.code)" :disabled="scope.row.disabled" v-model="scope.row.code">
+                </el-input>
               </template>
             </el-table-column>
-            <el-table-column
-                align="center"
-                prop=""
-                label="启动类型"
-                width="240">
+            <el-table-column align="center" prop="" label="启动类型" width="240">
               <template slot-scope="scope">
-                <el-input v-show="scope.row.startType ==='1'" :disabled="scope.row.disabled"
-                          v-model="scope.row.value"></el-input>
+                <el-input v-show="scope.row.startType === '1'" :disabled="scope.row.disabled" v-model="scope.row.value">
+                </el-input>
                 <el-select v-show="scope.row.startType === '2'" :disabled="scope.row.disabled"
-                           v-model="scope.row.thirdInterfaceId">
-                  <el-option v-for="(item,index) in optionsList" :key="index" :label="item.name"
-                             :value="item.id"></el-option>
+                  v-model="scope.row.thirdInterfaceId">
+                  <el-option v-for="(item, index) in optionsList" :key="index" :label="item.name" :value="item.id">
+                  </el-option>
                 </el-select>
-                <el-date-picker
-                    v-show="scope.row.startType === '3'"
-                    :disabled="scope.row.disabled"
-                    v-model="scope.row.value"
-                    type="date"
-                    value-format="yyyy-MM-dd hh:mm:ss"
-                    placeholder="选择日期">
+                <el-date-picker v-show="scope.row.startType === '3'" :disabled="scope.row.disabled"
+                  v-model="scope.row.value" type="date" value-format="yyyy-MM-dd hh:mm:ss" placeholder="选择日期">
                 </el-date-picker>
               </template>
             </el-table-column>
-            <el-table-column
-                align="center"
-                prop=""
-                label="启动类型选择"
-                width="420">
+            <el-table-column align="center" prop="" label="启动类型选择" width="420">
               <template slot-scope="scope">
                 <el-radio @change="radioChange" :disabled="scope.row.disabled" v-model="scope.row.startType" label="1">
                   输入框
@@ -106,35 +65,23 @@
                 </el-radio>
               </template>
             </el-table-column>
-            <el-table-column
-                align="center"
-                prop=""
-                label="配置"
-                width="100">
+            <el-table-column align="center" prop="" label="配置" width="100">
               <template slot-scope="scope">
                 <el-checkbox :disabled="scope.row.disabled" v-model="scope.row.isSetting"></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column
-                align="center"
-                width="100"
-                prop=""
-                label="必填">
+            <el-table-column align="center" width="100" prop="" label="必填">
               <template slot-scope="scope">
-                <el-checkbox @change="write(scope.row)" :disabled="scope.row.disabled"
-                             v-model="scope.row.isRequired"></el-checkbox>
+                <el-checkbox @change="write(scope.row)" :disabled="scope.row.disabled" v-model="scope.row.isRequired">
+                </el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column
-                align="center"
-                v-if="processFlag"
-                prop=""
-                label="操作">
+            <el-table-column align="center" v-if="processFlag" prop="" label="操作">
               <template slot-scope="scope">
                 <span @click='deleteRow(scope.row)' style="color: #1d89ff; cursor: pointer; margin-right: 5px;"
-                      v-role="{ id: 'StartItemConfigDelete', type: 'button', business: business }">删除</span>
+                  v-role="{ id: 'StartItemConfigDelete', type: 'button', business: business }">删除</span>
                 <span @click="editTable(scope.row, scope.row.btnTxt)" style="color: #1d89ff; cursor: pointer"
-                      v-if="btnFlag && tableData.length">{{ scope.row.btnTxt }}</span>
+                  v-if="btnFlag && tableData.length">{{ scope.row.btnTxt }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -159,7 +106,7 @@ import {
 
 import FormTypeEnum from "@/enum/FormTypeEnum";
 import StartItemEnum from "@/enum/StartItemEnum";
-import {mapState} from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: "startItemCon",
@@ -182,7 +129,7 @@ export default {
       inputValue: '',
       businessConfigId: '',
       tags: [],
-      color: ['', 'success', 'info', 'warning', 'danger'],
+      color: ['', '#d4fdd9', '#ffe5af', 'warning', 'danger'],
       dialogVisible: false,
       dialogVisible2: false,
       data: [],
@@ -228,7 +175,7 @@ export default {
               type: 'success',
               message: res.result
             })
-          } else  {
+          } else {
             this.$message({
               type: 'success',
               message: '删除成功'
@@ -264,12 +211,12 @@ export default {
     formatData(data) {
       data.forEach(item => {
         item.isSetting ?
-            item.isSetting = StartItemEnum.SURE_SETTING
-            : item.isSetting = StartItemEnum.NOT_SETTING
+          item.isSetting = StartItemEnum.SURE_SETTING
+          : item.isSetting = StartItemEnum.NOT_SETTING
 
         item.isRequired ?
-            item.isRequired = StartItemEnum.SURE_REQUIRED
-            : item.isRequired = StartItemEnum.NOT_SETTING
+          item.isRequired = StartItemEnum.SURE_REQUIRED
+          : item.isRequired = StartItemEnum.NOT_SETTING
 
         item.startType = +item.startType
       })
@@ -354,12 +301,12 @@ export default {
       row.disabled = false
       if (txt === '保存') {
         row.isSetting ?
-            row.isSetting = StartItemEnum.SURE_SETTING
-            : row.isSetting = StartItemEnum.NOT_SETTING
+          row.isSetting = StartItemEnum.SURE_SETTING
+          : row.isSetting = StartItemEnum.NOT_SETTING
 
         row.isRequired ?
-            row.isRequired = StartItemEnum.SURE_REQUIRED
-            : row.isRequired = StartItemEnum.NOT_SETTING
+          row.isRequired = StartItemEnum.SURE_REQUIRED
+          : row.isRequired = StartItemEnum.NOT_SETTING
         if (row.code && (row.thirdInterfaceId || row.value)) {
           if (row.id) { // 走修改接口
             row.updateBy = this.userInfo.account
