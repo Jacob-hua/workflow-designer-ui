@@ -422,7 +422,7 @@ export default {
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue.length > 0 && inputValue.length <= 100) {
-        let index = parseInt(Math.random() * 4)
+        let index = parseInt(Math.random() * 5)
         if (inputValue) {
           if (this.checkRepeat(inputValue)) {
             this.$message({
@@ -556,11 +556,11 @@ export default {
 .bg2 {
  background: #FFE5AF
 }
-.bg4 {
+.bg3 {
  background: #CCCCCC
 }
 
-.bg5 {
+.bg4 {
  background: #D3ECEF
 }
 
