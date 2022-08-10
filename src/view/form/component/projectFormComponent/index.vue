@@ -70,7 +70,6 @@
 
 <script>
 import formbpmn from '../formBpmn.vue'
-// import formComponent from '@/plugin/formComponent/index.vue'
 import {postFormDesignService, putFormDesignService, postFormDesignServiceRealiseProcessData} from '@/api/unit/api.js'
 import {
   FormEditor
