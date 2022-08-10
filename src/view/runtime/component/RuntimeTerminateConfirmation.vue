@@ -7,8 +7,8 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="onCancel">取 消</el-button>
       <el-button type="primary" @click="onSubmit">确 定</el-button>
+      <el-button @click="onCancel">取 消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -40,4 +40,5 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+</style>
