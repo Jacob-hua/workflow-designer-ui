@@ -37,12 +37,12 @@
             <el-tabs
               type="border-card"
               @tab-click="handleClick"
-              v-model="activeName"
+              v-model="editableTabsValue"
             >
               <el-tab-pane
                 v-for="(item, index) in currentRow"
                 :key="item.id"
-                :name="item.id"
+                :name="String(index)"
               >
                 <span slot="label">{{ item.name }}</span>
                 <el-form-item label="api名称">
@@ -137,7 +137,7 @@ export default {
       currentPars: [],
       activeName: "",
       form: {},
-      editableTabsValue: "1",
+      editableTabsValue: "0",
       methodsOptions: [
         {
           value: "1",
@@ -155,7 +155,6 @@ export default {
   },
   methods: {
     handleClick(e) {
-      console.log(this.activeName);
       this.editableTabsValue = e.index;
       this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
       console.log(this.currentPars);
@@ -173,7 +172,6 @@ export default {
     },
   },
   mounted() {
-    this.activeName = this.currentRow[0].id;
     this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
   },
 };
