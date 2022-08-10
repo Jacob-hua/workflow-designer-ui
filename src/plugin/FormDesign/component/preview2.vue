@@ -1,10 +1,31 @@
 <script>
 import previewItem from '@/plugin/FormDesign/component/previewItem'
 import { processVariable } from '@/api/globalConfig'
-import formDepMonitorMixin from '@/mixin/formDepMonitor'
+import formDepMonitorMixin, { mixinRequestFunction, mixinDependFunction } from '@/mixin/formDepMonitor'
 import _ from 'lodash'
 import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
+
+function mixinExecuteFunctions(metaData) {
+  if (metaData.compType !== 'row') {
+    mixinRequestFunction(metaData, (data, fiedlInfo) => {})
+    mixinDependFunction(metaData, (data, fieldInfo) => {})
+    return
+  }
+
+  if (metaData.isCopy) {
+    if (Array.isArray(metaData.columns)) {
+      metaData.columns.forEach(({ list }) => {
+        list.forEach((colMeta) => mixinExecuteFunctions(colMeta))
+      })
+    }
+    return
+  }
+
+  metaData.columns.forEach(({ list }) => {
+    list.forEach((colMeta) => mixinExecuteFunctions(colMeta))
+  })
+}
 
 function buildModel(model, metaData) {
   let result = { ...model }
@@ -135,11 +156,13 @@ export default {
       file: {},
       iconFlag: false,
       delFlag: false,
-      metaDataList: [],
     }
   },
-  created() {
-    this.metaDataList = this.itemList
+  computed: {
+    metaDataList() {
+      this.itemList.forEach(mixinExecuteFunctions)
+      return this.itemList
+    },
   },
   mixins: mixin,
   render(h) {
@@ -148,9 +171,9 @@ export default {
         rules={this.rules}
         ref={this.formConf.formModel}
         size={this.formConf.size}
-          props={{
-            model: this.form
-          }}
+        props={{
+          model: this.form,
+        }}
         label-position={this.formConf.labelPosition}
         disabled={this.formConf.disabled}
         validate-on-rule-change={false}
@@ -178,12 +201,6 @@ export default {
       })
       try {
         await this.$refs[this.formConf.formModel].validate()
-        console.log(
-          _.cloneDeep({
-            metaDataList: this.metaDataList,
-            formData: this.form,
-          })
-        )
         return _.cloneDeep({
           metaDataList: this.metaDataList,
           formData: this.form,
@@ -197,7 +214,6 @@ export default {
     },
     async getContext() {
       const { result } = await processVariable({
-        // processInstanceId: 'c4ace818-01a9-11ed-8113-b215cd163104'
         processInstanceId: this.processInstanceId ?? '',
       })
       return result
