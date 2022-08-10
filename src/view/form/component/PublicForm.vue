@@ -229,6 +229,7 @@ export default {
     addForm(item, tileText) {
       if (typeof item === "boolean") {
         this.$refs.PublicFormDiolog.tit = tileText;
+        this.$refs.PublicFormDiolog.postData.name = "";
       } else {
         this.$refs.PublicFormDiolog.dialogVisible2 = true;
         let content = JSON.parse(item.content);
