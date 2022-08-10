@@ -45,6 +45,7 @@ function handleDependChange(data, fieldInfo) {
 }
 
 function mixinExecuteFunctions(metaData, flatFields = []) {
+  metaData.context = this.context
   if (metaData.compType !== 'row') {
     mixinRequestFunction(metaData, handleRequestDependChange.bind(this))
     mixinDependFunction(metaData, handleDependChange.bind(this))
