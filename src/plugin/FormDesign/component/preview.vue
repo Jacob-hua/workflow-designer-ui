@@ -58,18 +58,11 @@ function mixinExecuteFunctions(metaData, flatFields = []) {
     mixinDependFunction(metaData, handleDependChange.bind(this))
   }
 
-  if (metaData.isCopy) {
-    if (Array.isArray(metaData.columns)) {
-      metaData.columns.forEach(({ list }) => {
-        list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta, flatFields))
-      })
-    }
-    return
+  if (Array.isArray(metaData.columns)) {
+    metaData.columns.forEach(({ list }) => {
+      list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta, flatFields))
+    })
   }
-
-  metaData.columns.forEach(({ list }) => {
-    list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta, flatFields))
-  })
 }
 
 function buildModel(model, metaData) {
