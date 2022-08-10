@@ -9,21 +9,23 @@ import checkRules from '../custom/rule'
 function mixinExecuteFunctions(metaData) {
   if (metaData.compType !== 'row') {
     mixinRequestFunction(metaData, (data, fiedlInfo) => {})
-    mixinDependFunction(metaData, (data, fieldInfo) => {})
+    mixinDependFunction(metaData, (data, fieldInfo) => {
+      this.form[fieldInfo.id] = data[fieldInfo.id]
+    })
     return
   }
 
   if (metaData.isCopy) {
     if (Array.isArray(metaData.columns)) {
       metaData.columns.forEach(({ list }) => {
-        list.forEach((colMeta) => mixinExecuteFunctions(colMeta))
+        list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta))
       })
     }
     return
   }
 
   metaData.columns.forEach(({ list }) => {
-    list.forEach((colMeta) => mixinExecuteFunctions(colMeta))
+    list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta))
   })
 }
 
@@ -132,7 +134,7 @@ function buildFormItem(h, metaData, valuePath) {
   )
 }
 
-let mixin = []
+let mixins = []
 
 export default {
   name: 'preview',
@@ -140,7 +142,7 @@ export default {
   components: { previewItem, render },
   data() {
     if (!this.formConf.disabled) {
-      mixin.push(
+      mixins.push(
         formDepMonitorMixin({
           formData: 'form',
           formFields: 'metaDataList',
@@ -160,11 +162,16 @@ export default {
   },
   computed: {
     metaDataList() {
-      this.itemList.forEach(mixinExecuteFunctions)
+      this.itemList.forEach(mixinExecuteFunctions.bind(this))
       return this.itemList
     },
   },
-  mixins: mixin,
+  mixins: [
+    formDepMonitorMixin({
+      formData: 'form',
+      formFields: 'metaDataList',
+    }),
+  ],
   render(h) {
     return (
       <el-form

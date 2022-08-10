@@ -1,4 +1,5 @@
 import { ApiEnum } from '../enum'
+import _ from 'lodash'
 
 const defaultVariableSpace = () => ({
   const: {},
@@ -75,38 +76,24 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
   if (!fieldInfo.executeFuncs) {
     fieldInfo.executeFuncs = []
   }
-  const { depObj } = buildDepObj(variableSpace)
+
   fieldInfo.executeFuncs.push((data) => {
-    const isDiffed = Object.keys(data)
-      .filter((key) => Object.keys(depObj).includes(key))
-      .reduce((isDiffed, key) => {
-        isDiffed = isDiffed || depObj[key] !== data[key]
-        depObj[key] = data[key]
-        return isDiffed
-      }, false)
-    if (isDiffed) {
-      executeFunc(variableMix(variableSpace, depObj), fieldInfo)
+    if (diffeDepObj(variableSpace.form, data)) {
+      executeFunc(variableMix(variableSpace), fieldInfo)
     }
   })
   return fieldInfo
 
-  function buildDepObj(variableSpace) {
-    return Object.keys(variableSpace.form).reduce(
-      ({ depObj }, fieldId) => {
-        return {
-          depObj: { ...depObj, [fieldId]: '' },
-        }
-      },
-      {
-        depObj: {},
-      }
-    )
+  function diffeDepObj(dependObj, data) {
+    return Object.keys(dependObj).reduce((isDiffe, dependValuePath) => {
+      const dependValue = _.get(data, dependValuePath)
+      isDiffe = isDiffe || dependValue !== dependObj[dependValuePath].value
+      dependObj[dependValuePath].value = dependValue
+      return isDiffe
+    }, false)
   }
 
-  function variableMix(variableSpace, depObj = {}) {
-    Object.keys(depObj).forEach((key) => {
-      variableSpace.form[key]['value'] = depObj[key]
-    })
+  function variableMix(variableSpace) {
     const formVariables = Object.values(variableSpace.form).reduce(
       (formVariables, { variable, value }) => ({ ...formVariables, [variable]: value }),
       {}
