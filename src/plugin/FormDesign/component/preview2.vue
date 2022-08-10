@@ -1,17 +1,55 @@
 <script>
 import previewItem from '@/plugin/FormDesign/component/previewItem'
-import { processVariable } from '@/api/globalConfig'
+import { executeApi, processVariable } from '@/api/globalConfig'
 import formDepMonitorMixin, { mixinRequestFunction, mixinDependFunction } from '@/mixin/formDepMonitor'
 import _ from 'lodash'
 import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
+function handleRequestDependChange(data, fieldInfo) {
+  // if (fieldInfo.disabled || this.formConf.disabled) {
+  //   return
+  // }
+  // executeApi({
+  //   apiMark: fieldInfo.requestConfig.apiMark,
+  //   sourceMark: fieldInfo.requestConfig.sourceMark,
+  //   data,
+  // }).then(({ result: options }) => {
+  //   if (fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox') {
+  //     this.quoteOption = options
+  //   } else if (fieldInfo.compType === 'cascader') {
+  //     // 处理级联
+  //     this.deleteEmptyChildren(options.result)
+  //     this.quoteOption = options.result
+  //   } else {
+  //     // 处理选择列表
+  //   }
+  // })
+}
+
+function handleDependChange(data, fieldInfo) {
+  if (!fieldInfo.dependValue.withLabel) {
+    this.form[fieldInfo.id] = data[fieldInfo.id]
+    return
+  }
+
+  const sourceKeys = (fieldInfo.dependValue.source ?? '').split('.')
+  const sourceField = this.flatFields.find(({ id }) => id === sourceKeys[sourceKeys.length - 1])
+  if (sourceField.compType === 'checkbox') {
+    this.form[fieldInfo.id] = sourceField.options
+      .filter(({ value }) => data[fieldInfo.id].includes(value))
+      .map(({ label }) => label)
+      .join(', ')
+    return
+  }
+
+  this.form[fieldInfo.id] = sourceField.options.find(({ value }) => value === data[fieldInfo.id])?.label
+}
+
 function mixinExecuteFunctions(metaData, flatFields = []) {
   if (metaData.compType !== 'row') {
-    mixinRequestFunction(metaData, (data, fiedlInfo) => {})
-    mixinDependFunction(metaData, (data, fieldInfo) => {
-      this.form[fieldInfo.id] = data[fieldInfo.id]
-    })
+    mixinRequestFunction(metaData, handleRequestDependChange.bind(this))
+    mixinDependFunction(metaData, handleDependChange.bind(this))
     flatFields.push(metaData)
     return
   }
@@ -55,10 +93,6 @@ function buildModel(model, metaData) {
     list.forEach((item) => (result = buildModel(result, item)))
   })
   return result
-}
-
-function buildForm(h, metaList) {
-  return metaList.map((metaData) => buildFormItem.call(this, h, metaData))
 }
 
 function buildColumnContainer(h, metaData, valuePath) {
@@ -177,7 +211,7 @@ export default {
         label-width={this.formConf.labelWidth + 'px'}
         nativeOnSubmit={this.submit}
       >
-        {buildForm.call(this, h, this.metaDataList)}
+        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData))}
       </el-form>
     )
   },

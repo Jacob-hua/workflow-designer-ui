@@ -1,29 +1,33 @@
 <template>
   <div>
-    <el-dialog title="关联表单"
-               :visible="dialogVisible"
-               width="70%"
-               fullscreen
-               custom-class="dialogVisibleEdit"
-               top="1vh"
-               :before-close="handleClose">
+    <el-dialog
+      title="关联表单"
+      :visible="dialogVisible"
+      width="70%"
+      fullscreen
+      custom-class="dialogVisibleEdit"
+      top="1vh"
+      :before-close="handleClose"
+    >
       <div class="diologMain">
         <div class="diologMain-right">
           <div class="processList">
-            <div class="processList-item"
-                 v-for="(item, index) in formList"
-                 :key="index">
+            <div
+              class="processList-item"
+              v-for="(item, index) in formList"
+              :key="index"
+            >
               <div class="processList-item-word">
                 <p>表单名称:</p>
                 <span>{{ item.name }}</span>
               </div>
               <div class="processList-item-word">
                 <p>版本:</p>
-                <span>{{item.version}}</span>
+                <span>{{ item.version }}</span>
               </div>
               <div class="processList-item-word">
                 <p>创建人:</p>
-                <span>{{ item.createBy == -1 ? '系统' : item.createBy }}</span>
+                <span>{{ item.createBy == -1 ? "系统" : item.createBy }}</span>
               </div>
               <div class="processList-item-word">
                 <p>创建时间:</p>
@@ -34,47 +38,67 @@
               </div>
             </div>
           </div>
-          <el-dialog title="表单" :visible.sync="dialogVisibleModal" width="35%" custom-class="dialogVisible1" append-to-body>
+          <el-dialog
+            title="表单"
+            :visible.sync="dialogVisibleModal"
+            width="35%"
+            custom-class="dialogVisible1"
+            append-to-body
+          >
             <div class="container">
-              <el-form ref="form" :rules="rules" label-width="80px" label-position="right"
-                       :model="postData">
+              <el-form
+                ref="form"
+                :rules="rules"
+                label-width="80px"
+                label-position="right"
+                :model="postData"
+              >
                 <el-form-item label="应用项目" prop="ascription">
                   <el-select v-model="postData.ascription">
-                    <el-option v-for="item in projectOption" :key="item.id" :label="item.name" :value="item.code"></el-option>
+                    <el-option
+                      v-for="item in projectOption"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.code"
+                    ></el-option>
                   </el-select>
                 </el-form-item>
 
                 <div class="from-item">
-                  <el-form-item label="流程类型"  prop="business">
+                  <el-form-item label="流程类型" prop="business">
                     <el-cascader
-                        ref="cascader"
-                        v-model="postData.business"
-                        :options="systemOption"
-                        :props='sysProps'
-                        clearable
+                      ref="cascader"
+                      v-model="postData.business"
+                      :options="systemOption"
+                      :props="sysProps"
+                      clearable
                     ></el-cascader>
                   </el-form-item>
                 </div>
                 <div class="from-item">
-                  <el-form-item label="表单名称"  prop="name">
-                    <el-input v-model="postData.name" placeholder="请输入表单名称"></el-input>
+                  <el-form-item label="表单名称" prop="name">
+                    <el-input
+                      v-model="postData.name"
+                      placeholder="请输入表单名称"
+                    ></el-input>
                   </el-form-item>
                 </div>
               </el-form>
-
             </div>
             <div slot="footer" class="dialog-footer">
-        <div class="next" @click="onSure()" type="primary">确定</div>
-        <div class="cancel" @click="dialogVisibleModal = false">取消</div>
-      </div>
+              <div class="next" @click="onSure()" type="primary">确定</div>
+              <div class="cancel" @click="dialogVisibleModal = false">取消</div>
+            </div>
           </el-dialog>
           <div class="process-page">
-            <el-pagination @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange"
-                           :current-page.sync="getData.page"
-                           :page-size="getData.limit"
-                           layout="prev, pager, next, jumper"
-                           :total="getData.total">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page.sync="getData.page"
+              :page-size="getData.limit"
+              layout="prev, pager, next, jumper"
+              :total="getData.total"
+            >
             </el-pagination>
           </div>
         </div>
@@ -87,9 +111,9 @@
 import {
   designFormDesignServiceAll,
   postFormDesignServiceRealiseProcessData,
-} from '@/api/unit/api.js'
-import { mapState } from 'vuex'
-import {getProjectList} from "@/api/globalConfig";
+} from "@/api/unit/api.js";
+import { mapState } from "vuex";
+import { getProjectList } from "@/api/globalConfig";
 import router from "@/router";
 
 export default {
@@ -100,29 +124,34 @@ export default {
     },
     projectCode: {
       type: String,
-      default: '',
+      default: "",
     },
     projectValue: {
-      default: '',
+      default: "",
     },
   },
   data() {
     return {
       rules: {
         ascription: [
-          { required: true, message: '请输入资源名称', trigger: 'blur' }
+          { required: true, message: "请输入资源名称", trigger: "blur" },
         ],
         business: [
-          { required: true, message: '请输入资源标识', trigger: 'change' }
+          { required: true, message: "请输入资源标识", trigger: "change" },
         ],
         name: [
-          { required: true, message: '请输入表单名称', trigger: 'blur' },
-          { min: 0, max: 100, message: '长度在 0 到 100 个字符', trigger: 'blur' }
+          { required: true, message: "请输入表单名称", trigger: "blur" },
+          {
+            min: 0,
+            max: 100,
+            message: "长度在 0 到 100 个字符",
+            trigger: "blur",
+          },
         ],
       },
-      sysProps:{
-        label: 'name',
-        value: 'code',
+      sysProps: {
+        label: "name",
+        value: "code",
         checkStrictly: true,
         emitPath: false,
       },
@@ -130,125 +159,124 @@ export default {
       projectOption: [],
       systemOption: [],
       postData: {
-        ascription: '',
-        business: '',
-        name: ''
+        ascription: "",
+        business: "",
+        name: "",
       },
-      input: '',
+      input: "",
       getData: {
         page: 1,
         limit: 10,
         total: 1,
       },
       formList: [],
-    }
+    };
   },
   computed: {
-    ...mapState('account', ['userInfo','tenantId'])
+    ...mapState("account", ["userInfo", "tenantId"]),
   },
   methods: {
     deleteEmptyChildren(arr) {
       for (let i = 0; i < arr.length; i++) {
         const arrElement = arr[i];
         if (!arrElement.children.length) {
-          delete arrElement.children
-          continue
+          delete arrElement.children;
+          continue;
         }
         if (arrElement.children) {
-          this.deleteEmptyChildren(arrElement.children)
+          this.deleteEmptyChildren(arrElement.children);
         }
       }
     },
-     getProjectList() {
-      let _this = this
+    getProjectList() {
+      let _this = this;
       getProjectList({
         count: -1,
-        projectCode: '',
+        projectCode: "",
         tenantId: this.tenantId,
-        type: '',
+        type: "",
         menuRoute: router.currentRoute.name,
-        account: JSON.parse(sessionStorage.getItem('loginData')).account
-      }).then(res=> {
-        this.deleteEmptyChildren(res.result)
-        this.projectOption = res?.result ?? []
-        this.systemOption = _this.projectOption[0]?.children
-        this.postData.ascription = this.projectOption[0]?.code
-      })
+        account: JSON.parse(sessionStorage.getItem("loginData")).account,
+      }).then((res) => {
+        this.deleteEmptyChildren(res.result);
+        this.projectOption = res?.result ?? [];
+        this.systemOption = _this.projectOption[0]?.children;
+        this.postData.ascription = this.projectOption[0]?.code;
+      });
     },
     handleClose() {
-      this.$emit('close')
+      this.$emit("close");
     },
     handleSizeChange() {},
     handleCurrentChange() {},
     getFormList() {
       designFormDesignServiceAll({
-        status: 'enabled',
+        status: "enabled",
         tenantId: this.tenantId,
         currentData: {},
-        ascription: 'public',
-        business: '',
-        numberCode: '',
-        name: '',
-        docName: '',
+        ascription: "public",
+        business: "",
+        numberCode: "",
+        name: "",
+        docName: "",
       }).then((res) => {
-
-        this.formList = res.result
-      })
+        this.formList = res.result;
+      });
     },
     onSure() {
-      this.$refs['form'].validate((valid) => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
-          let _this = this
-          const id = 'form_' + Date.parse(new Date())
-          var file1 = new File([_this.currentData.content], 'test.form', {
-            type: 'text/xml',
-          })
-          if(this.postData.id) {
-            formData.append('sourceId', this.postData.sourceId)
-            if (this.postData.status !== 'enabled') {
-              formData.append('id', this.postData.id)
+          let _this = this;
+          const id = "form_" + Date.parse(new Date());
+          var file1 = new File([_this.currentData.content], "test.form", {
+            type: "text/xml",
+          });
+          if (this.postData.id) {
+            formData.append("sourceId", this.postData.sourceId);
+            if (this.postData.status !== "enabled") {
+              formData.append("id", this.postData.id);
             }
           }
-          let formData = new FormData()
-          formData.append('name', this.postData.name)
-          formData.append('docName', this.postData.name + '.form')
-          formData.append('docType', 'json')
-          formData.append('ascription', this.postData.ascription)
-          formData.append('code', id)
-          formData.append('business', this.postData.business)
-          formData.append('status', 'enabled')
-          formData.append('createBy', this.userInfo.account)
-          formData.append('createName', this.userInfo.name)
-          formData.append('tenantId', this.tenantId)
-          formData.append('file', file1)
+          let formData = new FormData();
+          formData.append("name", this.postData.name);
+          formData.append("docName", this.postData.name + ".form");
+          formData.append("docType", "json");
+          formData.append("ascription", this.postData.ascription);
+          formData.append("code", id);
+          formData.append("business", this.postData.business);
+          formData.append("status", "enabled");
+          formData.append("createBy", this.userInfo.account);
+          formData.append("createName", this.userInfo.name);
+          formData.append("tenantId", this.tenantId);
+          formData.append("file", file1);
           postFormDesignServiceRealiseProcessData(formData).then((res) => {
-            this.$message.success('应用至项目表单成功')
-            this.dialogVisibleModal = false
-          })
+            this.$message.success("应用至项目表单成功");
+            this.dialogVisibleModal = false;
+          });
         } else {
-          console.log('error submit!!');
+          console.log("error submit!!");
           return false;
         }
       });
     },
     open(item) {
-      this.currentData = item
-      this.dialogVisibleModal = true
-      this.postData.name = ''
-      this.postData.business = ''
+      this.currentData = item;
+      this.dialogVisibleModal = true;
+      this.postData.name = "";
+      this.postData.business = "";
     },
     changEnergy(value) {
-      this.getData.systemType = value
+      this.getData.systemType = value;
     },
     detailsShow() {
-      this.$refs.detailsRem.dialogVisible2 = true
+      this.$refs.detailsRem.dialogVisible2 = true;
     },
   },
   mounted() {
-    this.getProjectList()
-    this.getFormList()
+    this.getProjectList();
+    this.getFormList();
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -268,7 +296,7 @@ export default {
   display: flex;
 }
 .refence {
-  color: #0DD5EF;
+  color: #0dd5ef;
   padding-top: 15px;
   padding-left: 180px;
 }
@@ -315,13 +343,13 @@ export default {
 }
 .processList-item p {
   display: inline-block;
-  color:  #999999;
+  color: #999999;
   width: 80px;
   margin-right: 15px;
 }
 .processList-item span {
-   color:  #fff;
- }
+  color: #fff;
+}
 .processList-item-detail {
   position: absolute;
   right: 20px;
