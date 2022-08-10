@@ -64,7 +64,7 @@
     <el-form-item label="默认值">
       <el-input class="input" v-model="props.value"></el-input>
     </el-form-item>
-    <depend-value :currentField="props" :fieldOverviews="fieldOverviews" @dependChange="onDependChange" />
+    <depend-value :currentField="props" @dependChange="onDependChange" />
     <el-divider>校验</el-divider>
     <el-form-item label="验证类型">
       <el-select v-model="props.rulesType" @change="handlerChangeRulesType">
@@ -107,7 +107,7 @@ const defaultRules = {
  */
 export default {
   name: 'inputConfig',
-  props: ['props', 'getFormId', 'fieldOverviews'],
+  props: ['props', 'getFormId'],
   components: {
     iconDialog,
     DependValue,
