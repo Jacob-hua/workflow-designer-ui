@@ -1,11 +1,11 @@
 <template>
   <el-dialog
-      title="第三方接口配置"
-      :visible.sync="dialogVisible"
-      width="65%"
-      fullscreen
-      top="1vh"
-      append-to-body
+    title="第三方接口配置"
+    :visible.sync="dialogVisible"
+    width="65%"
+    fullscreen
+    top="1vh"
+    append-to-body
   >
     <el-form ref="form" label-width="80px">
       <div class="top">
@@ -17,21 +17,29 @@
           <el-input disabled v-model="currentRow[0].sourceMark"></el-input>
         </el-form-item>
         <div>
-          <el-button @click="$emit('showAddOrEidtDailog',currentRow,'edit')" type="primary"
-                     v-role="{ id: 'VisitCallEdit', type: 'button' }">编辑
+          <el-button
+            @click="$emit('showAddOrEidtDailog', currentRow, 'edit')"
+            type="primary"
+            v-role="{ id: 'VisitCallEdit', type: 'button' }"
+            >编辑
           </el-button>
-          <el-button @click="deleteApis()" type="primary"
-                     v-role="{ id: 'VisitCallDelete', type: 'button' }">删除
+          <el-button
+            @click="deleteApis()"
+            type="primary"
+            v-role="{ id: 'VisitCallDelete', type: 'button' }"
+            >删除
           </el-button>
         </div>
       </div>
       <div style="display: flex">
         <div class="container">
           <div class="content-wrapper">
-            <el-tabs type="border-card" >
-              <el-tab-pane v-for="(item, index) in currentRow"
-                           :key="item.id"
-                           :name="index+''">
+            <el-tabs type="border-card" @tab-click="handleClick">
+              <el-tab-pane
+                v-for="(item, index) in currentRow"
+                :key="item.id"
+                :name="index + ''"
+              >
                 <span slot="label">{{ item.name }}</span>
                 <el-form-item label="api名称">
                   <el-input v-model="item.name" disabled></el-input>
@@ -46,29 +54,43 @@
                   <el-input v-model="item.path" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="api类型">
-                  <el-select v-model="item.type" disabled placeholder="请选择api类型">
+                  <el-select
+                    v-model="item.type"
+                    disabled
+                    placeholder="请选择api类型"
+                  >
                     <el-option
-                        v-for="item in apiOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
+                      v-for="item in apiOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    >
                     </el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="请求类型">
-                  <el-select v-model="item.method" disabled placeholder="请选择api类型">
+                  <el-select
+                    v-model="item.method"
+                    disabled
+                    placeholder="请选择api类型"
+                  >
                     <el-option
-                        v-for="item in methodsOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
+                      v-for="item in methodsOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    >
                     </el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="请求头">
                   <el-input disabled v-model="item.headers"></el-input>
                 </el-form-item>
-                <div class="params" v-for="(config,idx) in item.configParams" :key="idx">
+                <div
+                  class="params"
+                  v-for="(config, idx) in item.configParams"
+                  :key="idx"
+                >
                   <el-form-item label="参数key">
                     <el-input disabled v-model="config.key"></el-input>
                   </el-form-item>
@@ -81,9 +103,9 @@
           </div>
         </div>
         <div class="cardBox">
-          <p> 解析参数</p>
+          <p>解析参数</p>
           <div class="jsonViewer">
-            <div v-for="(par,idx) in currentPars" :key="idx" class="params">
+            <div v-for="(par, idx) in currentPars" :key="idx" class="params">
               <el-form-item label="参数key">
                 <el-input disabled v-model="par.key"></el-input>
               </el-form-item>
@@ -99,58 +121,64 @@
 </template>
 
 <script>
-import {deleteApi} from "@/api/globalConfig";
+import { deleteApi } from "@/api/globalConfig";
 
 export default {
   name: "AddOrEidtDailog",
   props: {
-    currentRow: Array
+    currentRow: Array,
   },
   data() {
     return {
       currentPars: [],
       form: {},
-      editableTabsValue: '1',
+      editableTabsValue: "1",
       methodsOptions: [
         {
-          value: '1',
-          label: 'POST'
-        }, {
-          value: '2',
-          label: 'GET'
+          value: "1",
+          label: "POST",
+        },
+        {
+          value: "2",
+          label: "GET",
         },
       ],
       apiOptions: [],
       tabIndex: 2,
       dialogVisible: false,
-
-    }
+    };
   },
   methods: {
-    handleClick() {
-      this.currentPars = this.currentRow[this.editableTabsValue].parseParams
+    handleClick(e) {
+      this.editableTabsValue = e.index;
+      this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
+      console.log(this.currentPars);
     },
     deleteApis() {
-      let currentApi = this.currentRow[this.editableTabsValue]
-      deleteApi(currentApi.id).then(res => {
-        this.currentRow.splice(+this.editableTabsValue, 1)
-        this.editableTabsValue = '0'
+      let currentApi = this.currentRow[this.editableTabsValue];
+      deleteApi(currentApi.id).then((res) => {
+        this.currentRow.splice(+this.editableTabsValue, 1);
+        this.editableTabsValue = "0";
         this.$message({
-          type: 'success',
-          message: '删除成功'
-        })
-      })
-    }
+          type: "success",
+          message: "删除成功",
+        });
+      });
+    },
   },
   mounted() {
-    this.editableTabsValue = '0'
-    this.currentPars = this.currentRow[this.editableTabsValue].parseParams
-  }
-}
+    this.editableTabsValue = "0";
+    this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
+  },
+};
 </script>
 
 <style scoped lang="scss">
-/deep/ .content-wrapper .el-tabs--border-card > .el-tabs__header .el-tabs__item.is-active {
+/deep/
+  .content-wrapper
+  .el-tabs--border-card
+  > .el-tabs__header
+  .el-tabs__item.is-active {
   width: auto !important;
 }
 
@@ -235,7 +263,8 @@ p {
   color: rgb(0, 102, 204);
 }
 
-p i, p span {
+p i,
+p span {
   font-size: 22px;
 }
 

@@ -74,8 +74,6 @@
       ></el-tree>
     </div>
     <span slot="footer" class="dialog-footer">
-      <!--      <el-button class="next" v-if="editFlag && !edit"  @click="dialogVisible = false; $emit('showAddOrEidtDailog','pre')">上一步</el-button>-->
-      <!--      <el-button  class="next" v-if="showBtn && btnTxt === '预览'"  @click="preview">{{btnTxt}}</el-button>-->
       <el-button class="cancel" v-if="showBtn" @click="exit">退出</el-button>
     </span>
   </el-dialog>

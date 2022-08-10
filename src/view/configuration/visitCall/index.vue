@@ -4,9 +4,19 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号" width="180" align="center">
         </el-table-column>
-        <el-table-column prop="source" label="资源类型" width="180" align="center">
+        <el-table-column
+          prop="source"
+          label="资源类型"
+          width="180"
+          align="center"
+        >
         </el-table-column>
-        <el-table-column prop="sourceMark" label="资源类型" width="180" align="center">
+        <el-table-column
+          prop="sourceMark"
+          label="资源类型"
+          width="180"
+          align="center"
+        >
         </el-table-column>
         <el-table-column prop="apiCount" label="API数量" align="center">
         </el-table-column>
@@ -16,11 +26,29 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="showAddOrEidtDailog(scope.row)" type="text" size="small" v-role="{ id: 'VisitCallEdit', type: 'button', business: business }">
+            <el-button
+              @click.native.prevent="showAddOrEidtDailog(scope.row)"
+              type="text"
+              size="small"
+              v-role="{
+                id: 'VisitCallEdit',
+                type: 'button',
+                business: business,
+              }"
+            >
               编辑
             </el-button>
             <!-- TODO: id: 权限名，type: 权限类型， business：项目归属 -->
-            <el-button @click.native.prevent="showDetail(scope.row)" type="text" size="small" v-role="{ id: 'VisitCallLook', type: 'button', business: business }">
+            <el-button
+              @click.native.prevent="showDetail(scope.row)"
+              type="text"
+              size="small"
+              v-role="{
+                id: 'VisitCallLook',
+                type: 'button',
+                business: business,
+              }"
+            >
               查看
             </el-button>
           </template>
@@ -29,58 +57,52 @@
     </div>
     <div class="home-table-page">
       <el-pagination
-          @size-change.sync="GetGlobalList"
-          @current-change.sync="GetGlobalList"
-          :current-page="pageInfo.page"
-          :page-size="pageInfo.limit"
-          layout="prev, pager, next, jumper"
-          :total="pageInfo.total">
+        @size-change.sync="GetGlobalList"
+        @current-change.sync="GetGlobalList"
+        :current-page="pageInfo.page"
+        :page-size="pageInfo.limit"
+        layout="prev, pager, next, jumper"
+        :total="pageInfo.total"
+      >
       </el-pagination>
     </div>
-    <Guide
-        ref="guide"
-        :business="business"
-        @showAddDialog="showAddDialog"
-    />
+    <Guide ref="guide" :business="business" @showAddDialog="showAddDialog" />
     <AddOrEidtDailog
-        ref="AddOrEidtDailog"
-        :business="business"
-        :type="type"
-        @showAddOrEidtDailog="showAddOrEidtDailog"
-        v-if="AddOrEidtDailogFlag"
-        :guideForm="guideForm"
+      ref="AddOrEidtDailog"
+      :business="business"
+      :type="type"
+      @showAddOrEidtDailog="showAddOrEidtDailog"
+      v-if="AddOrEidtDailogFlag"
+      :guideForm="guideForm"
     />
     <Detail
-        @showAddOrEidtDailog="showAddOrEidtDailog"
-        v-if="DetailFlag"
-        :currentRow="currentRow"
-        ref="detail"/>
+      @showAddOrEidtDailog="showAddOrEidtDailog"
+      v-if="DetailFlag"
+      :currentRow="currentRow"
+      ref="detail"
+    />
   </div>
 </template>
 
 <script>
-
 import Guide from "@/view/configuration/visitCall/Guide";
 import AddOrEidtDailog from "@/view/configuration/visitCall/AddOrEidtDailog";
 import Detail from "@/view/configuration/visitCall/Detail";
-import { mapState } from 'vuex'
-import {
-  apiDetail,
-  GetGlobalList
-} from "@/api/globalConfig";
-import CONSTANT from '@/constant'
+import { mapState } from "vuex";
+import { apiDetail, GetGlobalList } from "@/api/globalConfig";
+import CONSTANT from "@/constant";
 import ApiEnum from "@/enum/ApiTypeEnum";
 export default {
   components: {
     Guide,
     AddOrEidtDailog,
-    Detail
+    Detail,
   },
   props: {
     business: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
   data() {
     return {
@@ -88,239 +110,234 @@ export default {
       DetailFlag: false,
       guideForm: {},
       AddOrEidtDailogFlag: false,
-      dateRang: ["2022-01-01","2022-12-31"],
-      radio: '1',
-      type: '',
+      dateRang: ["2022-01-01", "2022-12-31"],
+      radio: "1",
+      type: "",
       tableData: [],
       pageInfo: {
         [CONSTANT.PAGE]: 1,
         [CONSTANT.LIMIT]: 10,
-        [CONSTANT.TOTAL]: 0
-      }
-    }
+        [CONSTANT.TOTAL]: 0,
+      },
+    };
   },
   watch: {
-    pageInfo:{
+    pageInfo: {
       deep: true,
       immediate: true,
-       handler(newValue) {
-          if (this.business) {
-            this.GetGlobalList(newValue)
-          }
-      }
-    }
+      handler(newValue) {
+        if (this.business) {
+          this.GetGlobalList(newValue);
+        }
+      },
+    },
   },
   computed: {
-    ...mapState('account', ['userInfo', 'tenantId' ])
+    ...mapState("account", ["userInfo", "tenantId"]),
   },
   methods: {
     showDetail(row) {
+      debugger;
       apiDetail({
         source: row.source,
         sourceMark: row.sourceMark,
-        tenantId: this.tenantId
-      }).then((res)=> {
-        res.result.forEach(api => {
-          api.configParams = []
-          if (api.method ===ApiEnum.API_TYPE_POST) {
-            let body = JSON.parse(api.body)
+        tenantId: this.tenantId,
+      }).then((res) => {
+        res.result.forEach((api) => {
+          api.configParams = [];
+          if (api.method === ApiEnum.API_TYPE_POST) {
+            let body = JSON.parse(api.body);
             for (const element in body) {
-              let obj= {key: '', value: ''}
-              obj.key = element
-              obj.value = body[element]
-              api.configParams.push(obj)
+              let obj = { key: "", value: "" };
+              obj.key = element;
+              obj.value = body[element];
+              api.configParams.push(obj);
             }
           } else {
             //?scope=103&&format=json&&appid=379020&&bk_key=关键字&&bk_length=600
-            let obj= {key: '', value: ''}
-            if(api.parameter) {
-              let parArr = api.parameter.split('?')
-              if (!api.parameter.includes('&')) {
+            let obj = { key: "", value: "" };
+            if (api.parameter) {
+              let parArr = api.parameter.split("?");
+              if (!api.parameter.includes("&")) {
                 api.configParams.push({
-                  key: parArr[1].split('=')[0],
-                  value: parArr[1].split('=')[1]
-                })
+                  key: parArr[1].split("=")[0],
+                  value: parArr[1].split("=")[1],
+                });
               } else {
-                let entry = parArr[1].split("&")
+                let entry = parArr[1].split("&");
                 for (const val of entry) {
                   api.configParams.push({
-                    key:val.split('=')[0],
-                    value: val.split('=')[1]
-                  })
+                    key: val.split("=")[0],
+                    value: val.split("=")[1],
+                  });
                 }
               }
             }
           }
-          api.parseParams = []
-          let obj= {key: '', value: ''}
+          api.parseParams = [];
           if (api.dataParse) {
-            let dataParse = JSON.parse(api.dataParse)
-            Object.keys(dataParse).forEach(keys => {
-              obj.key = keys
-              obj.value = dataParse[keys]
-            })
-
-            api.parseParams.push(obj)
+            let dataParse = JSON.parse(api.dataParse);
+            Object.keys(dataParse).forEach((keys) => {
+              let obj = { key: "", value: "" };
+              obj.key = keys;
+              obj.value = dataParse[keys];
+              api.parseParams.push(obj);
+            });
           }
-        })
-        this.DetailFlag = true
+        });
+        this.DetailFlag = true;
         this.$nextTick(() => {
-          this.$refs.detail.dialogVisible = true
-          this.$refs.detail.editableTabsValue = "0"
-        })
-        this.currentRow = res.result
-      })
+          this.$refs.detail.dialogVisible = true;
+          this.$refs.detail.editableTabsValue = "0";
+        });
+        console.log(res.result);
+        this.currentRow = res.result;
+      });
     },
     apiDetail(params) {
-      apiDetail(params).then((res)=> {
-        this.$refs.AddOrEidtDailog.jsonData = {}
-        res.result.forEach(api => {
-          api.configParams = []
+      apiDetail(params).then((res) => {
+        this.$refs.AddOrEidtDailog.jsonData = {};
+        res.result.forEach((api) => {
+          api.configParams = [];
           if (api.method === ApiEnum.API_TYPE_POST) {
-            let obj= {key: '', value: ''}
-            let body = JSON.parse(api.body)
-            let bodyArr = Object.keys(body)
+            let obj = { key: "", value: "" };
+            let body = JSON.parse(api.body);
+            let bodyArr = Object.keys(body);
             for (const keys of bodyArr) {
               api.configParams.push({
                 key: keys,
-                value: body[keys]
-              })
+                value: body[keys],
+              });
             }
-
           } else {
             //?scope=103&&format=json&&appid=379020&&bk_key=关键字&&bk_length=600
-            let obj= {key: '', value: ''}
-            let parArr = api.parameter.split('?')
-            if (!api.parameter.includes('&')) {
+            let obj = { key: "", value: "" };
+            let parArr = api.parameter.split("?");
+            if (!api.parameter.includes("&")) {
               api.configParams.push({
-                key: parArr[1].split('=')[0],
-                value: parArr[1].split('=')[1]
-              })
+                key: parArr[1].split("=")[0],
+                value: parArr[1].split("=")[1],
+              });
             } else {
-              let entry = parArr[1].split("&")
+              let entry = parArr[1].split("&");
               for (const val of entry) {
                 api.configParams.push({
-                  key:val.split('=')[0],
-                  value: val.split('=')[1]
-                })
+                  key: val.split("=")[0],
+                  value: val.split("=")[1],
+                });
               }
             }
           }
-          api.parseParams = []
-          let obj= {key: '', value: ''}
+          api.parseParams = [];
+          let obj = { key: "", value: "" };
           if (api.dataParse) {
-            let dataParse = JSON.parse(api.dataParse)
-            let dataArr = Object.keys(dataParse)
+            let dataParse = JSON.parse(api.dataParse);
+            let dataArr = Object.keys(dataParse);
             for (const keys of dataArr) {
               api.parseParams.push({
                 key: keys,
-                value: dataParse[keys]
-              })
+                value: dataParse[keys],
+              });
             }
           }
-
-        })
-        this.$refs.AddOrEidtDailog.apiBoxList = res.result
-      })
-    },
-    showAddOrEidtDailog(row, code){
-      this.type = 'edit'
-      if (code === 'pre') {
-        this.$refs.guide.dialogVisible = true
-      }  else if(code === 'detail') {
-        this.AddOrEidtDailogFlag = true
-        this.guideForm = row
-        this.$nextTick(() => {
-          this.$refs.AddOrEidtDailog.dialogVisible = true
         });
-      } else if (code==='edit') {
-        this.AddOrEidtDailogFlag = true,
+        this.$refs.AddOrEidtDailog.apiBoxList = res.result;
+      });
+    },
+    showAddOrEidtDailog(row, code) {
+      this.type = "edit";
+      if (code === "pre") {
+        this.$refs.guide.dialogVisible = true;
+      } else if (code === "detail") {
+        this.AddOrEidtDailogFlag = true;
+        this.guideForm = row;
+        this.$nextTick(() => {
+          this.$refs.AddOrEidtDailog.dialogVisible = true;
+        });
+      } else if (code === "edit") {
+        (this.AddOrEidtDailogFlag = true),
+          this.$nextTick(() => {
+            this.$refs.AddOrEidtDailog.dialogVisible = true;
+            this.$refs.AddOrEidtDailog.apiBoxList = row;
+          });
+      } else {
+        Object.keys(row).length
+          ? ((this.AddOrEidtDailogFlag = true),
             this.$nextTick(() => {
-              this.$refs.AddOrEidtDailog.dialogVisible = true
-              this.$refs.AddOrEidtDailog.apiBoxList = row
-            })
-
-      } else  {
-        Object.keys(row).length ?
-            (
-                this.AddOrEidtDailogFlag = true,
-                    this.$nextTick(() => {
-                      this.$refs.AddOrEidtDailog.dialogVisible = true,
-                          this.apiDetail({
-                            source: row.source,
-                            sourceMark: row.sourceMark,
-                            tenantId: this.tenantId
-                          })
-                    })
-            )
-            : this.$refs.guide.dialogVisible = true
+              (this.$refs.AddOrEidtDailog.dialogVisible = true),
+                this.apiDetail({
+                  source: row.source,
+                  sourceMark: row.sourceMark,
+                  tenantId: this.tenantId,
+                });
+            }))
+          : (this.$refs.guide.dialogVisible = true);
       }
     },
     showAddDialog(form) {
-      this.AddOrEidtDailogFlag = true
-      this.type = 'see'
-      this.guideForm = form
+      this.AddOrEidtDailogFlag = true;
+      this.type = "see";
+      this.guideForm = form;
       this.$nextTick(() => {
-        this.$refs.AddOrEidtDailog.dialogVisible = true
-        this.$refs.AddOrEidtDailog.apiBoxList =[
+        this.$refs.AddOrEidtDailog.dialogVisible = true;
+        this.$refs.AddOrEidtDailog.apiBoxList = [
           {
             // source: '', //系统名称
             // sourceMark: '', // 系统标识
             ...form,
-            name: '', //api名称
-            apiMark: '', // api标识
-            type: '', // api类型,
-            typeName: '', //api类型名称
-            host: '',// 系统host
-            path: '',// 请求路径
-            method: '', //请求方式
-            headers: '', //请求头信息
-            parameter: '', // GET请求参数 eg: ?id=${id}&&name=${name}
-            body: '', //POST请求参数 eg: {\"id\":\"${id}\",\"name\":\"${name}\"}
-            dataParse: '', //解析配置
+            name: "", //api名称
+            apiMark: "", // api标识
+            type: "", // api类型,
+            typeName: "", //api类型名称
+            host: "", // 系统host
+            path: "", // 请求路径
+            method: "", //请求方式
+            headers: "", //请求头信息
+            parameter: "", // GET请求参数 eg: ?id=${id}&&name=${name}
+            body: "", //POST请求参数 eg: {\"id\":\"${id}\",\"name\":\"${name}\"}
+            dataParse: "", //解析配置
             isUse: 1, // 是否使用 1 使用 0禁用 2删除
-            createTime: '', //创建时间
+            createTime: "", //创建时间
             createBy: this.userInfo.account, //创建人
             tenantId: +this.tenantId, //租户id
             configParams: [
               {
-                key: '',
-                value: ''
-              }
+                key: "",
+                value: "",
+              },
             ],
             parseParams: [
               {
-                key: '',
-                value: ''
-              }
-            ]
-          }
-        ]
-      })
+                key: "",
+                value: "",
+              },
+            ],
+          },
+        ];
+      });
     },
     async GetGlobalList() {
-      let data =  await GetGlobalList({
+      let data = await GetGlobalList({
         ...this.pageInfo,
-        "tenantId": this.tenantId ,// 租户id
-        "ascription": this.business
-      })
+        tenantId: this.tenantId, // 租户id
+        ascription: this.business,
+      });
       if (data.result) {
-        this.tableData = data.result.dataList
-        this.pageInfo.total = +data.result.count
+        this.tableData = data.result.dataList;
+        this.pageInfo.total = +data.result.count;
       }
     },
     handleSizeChange(val) {
-      this.pageInfo.limit = val
+      this.pageInfo.limit = val;
     },
     handleCurrentChange(val) {
-      this.pageInfo.page = val
-    }
-  }
-}
+      this.pageInfo.page = val;
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
-
 button {
   font-size: 14px;
   margin-left: 10px;
@@ -332,7 +349,6 @@ button {
 .history_date {
   margin-left: 20px;
 }
-
 
 .his_checkbox {
   display: flex;
@@ -347,7 +363,7 @@ button {
   font-size: 14px;
   color: #000;
   font-weight: 400;
-  font-style: normal
+  font-style: normal;
 }
 
 .fileStyle {
