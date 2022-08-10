@@ -602,6 +602,7 @@ export default {
   display: flex;
   align-items: center;
   padding-left: 10px;
+  color: #fff;
 }
 .config_tit i {
   color: #409eff;
