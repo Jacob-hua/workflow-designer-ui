@@ -1,262 +1,240 @@
-<template>
-  <div>
-    <el-row :gutter="formConf.gutter">
-      <el-form
-        :rules="rules"
-        :ref="formConf.formModel"
-        :size="formConf.size"
-        :model="form"
-        :label-position="formConf.labelPosition"
-        :disabled="formConf.disabled"
-        :validate-on-rule-change="false"
-        label-width="formConf.labelWidth + 'px'"
-        @submit.native.prevent="submit"
-      >
-        <template v-for="(element, index) in metaDataList">
-          <preview-row-item
-            v-if="element.compType === 'row'"
-            :key="'row-' + index"
-            :model="element"
-            :itemList="itemList"
-            @changeItemList="changeItemList"
-            :index="index"
-            :quoteOption="quoteOption"
-            :getFileList="getFileList"
-            :uploadFun="uploadFun"
-            :downloadFun="downloadFun"
-          >
-            <el-col v-for="column in element.columns" :key="column.index" :span="column.span">
-              <template v-for="col in column.list">
-                <preview-item
-                  v-if="col.compType !== 'dynamicTable'"
-                  :key="col.id"
-                  :model="col"
-                  v-model="form[col.id]"
-                  @valChange="handlerValChange"
-                  :quoteOption="quoteOption"
-                  :getFileList="getFileList"
-                  :uploadFun="uploadFun"
-                  :downloadFun="downloadFun"
-                />
-              </template>
-            </el-col>
-          </preview-row-item>
-          <!--item-->
-          <el-col class="drag-col-wrapper" :key="index" :span="element.span" v-else>
-            <preview-item
-              :model="element"
-              v-model="form[element.id]"
-              :quoteOption="quoteOption"
-              :getFileList="getFileList"
-              @valChange="handlerValChange"
-              :uploadFun="uploadFun"
-              :downloadFun="downloadFun"
-            />
-          </el-col>
-        </template>
-      </el-form>
-    </el-row>
-  </div>
-</template>
 <script>
-import previewItem from './previewItem'
-import previewRowItem from './previewRowItem'
-import fancyDynamicTable from '../dynamic/fancyDynamicTable'
-import fancyDynamicTableItem from '../dynamic/fancyDynamicTableItem'
-import { datas, addRow, batchDeleteRow, deleteRow } from '../custom/formDraw'
-import formDepMonitorMixin, { mixinRequestFunction, mixinDependFunction } from '@/mixin/formDepMonitor'
 import { executeApi, processVariable } from '@/api/globalConfig'
+import formDepMonitorMixin, { mixinRequestFunction, mixinDependFunction } from '@/mixin/formDepMonitor'
 import _ from 'lodash'
-import { getSimpleId } from '@/plugin/FormDesign/utils/IdGenerate'
+import render from '../custom/previewRender'
+import checkRules from '../custom/rule'
+
+function handleRequestDependChange(data, fieldInfo) {
+  if (fieldInfo.disabled || this.formConf.disabled) {
+    return
+  }
+  executeApi({
+    apiMark: fieldInfo.requestConfig.apiMark,
+    sourceMark: fieldInfo.requestConfig.sourceMark,
+    data,
+  }).then(({ result: options }) => {
+    fieldInfo.options = options
+  })
+}
+
+function handleDependChange(data, fieldInfo) {
+  if (fieldInfo.compType === 'row') {
+    fieldInfo.visible = fieldInfo.dependValue.targetValue
+      ? data[fieldInfo.id] === fieldInfo.dependValue.targetValue
+      : Boolean(data[fieldInfo.id])
+    return
+  }
+  if (!fieldInfo.dependValue.withLabel) {
+    this.form[fieldInfo.id] = data[fieldInfo.id]
+    return
+  }
+
+  const sourceKeys = (fieldInfo.dependValue.source ?? '').split('.')
+  const sourceField = this.flatFields.find(({ id }) => id === sourceKeys[sourceKeys.length - 1])
+
+  if (sourceField.compType === 'checkbox') {
+    this.form[fieldInfo.id] = sourceField.options
+      .filter(({ value }) => data[fieldInfo.id].includes(value))
+      .map(({ label }) => label)
+      .join(', ')
+    return
+  }
+
+  this.form[fieldInfo.id] = sourceField.options.find(({ value }) => value === data[fieldInfo.id])?.label
+}
+
+function mixinExecuteFunctions(metaData, flatFields = []) {
+  if (metaData.compType !== 'row') {
+    mixinRequestFunction(metaData, handleRequestDependChange.bind(this))
+    mixinDependFunction(metaData, handleDependChange.bind(this))
+    flatFields.push(metaData)
+    return
+  }
+
+  if (metaData.dependValue) {
+    mixinDependFunction(metaData, handleDependChange.bind(this))
+    flatFields.push(metaData)
+  }
+
+  if (metaData.isCopy) {
+    if (Array.isArray(metaData.columns)) {
+      metaData.columns.forEach(({ list }) => {
+        list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta, flatFields))
+      })
+    }
+    return
+  }
+
+  metaData.columns.forEach(({ list }) => {
+    list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta, flatFields))
+  })
+}
+
+function buildModel(model, metaData) {
+  let result = { ...model }
+  if (metaData.compType !== 'row') {
+    result[metaData.id] = metaData.value
+    return result
+  }
+
+  if (metaData.isCopy) {
+    result[metaData.id] = []
+    let tempModel = {}
+    if (Array.isArray(metaData.columns)) {
+      metaData.columns.forEach(({ list }) => {
+        list.forEach((colMeta) => {
+          tempModel = buildModel(tempModel, colMeta)
+        })
+      })
+    }
+    result[metaData.id].push(tempModel)
+    return result
+  }
+
+  metaData.columns.forEach(({ list }) => {
+    list.forEach((item) => (result = buildModel(result, item)))
+  })
+  return result
+}
+
+function buildColumnContainer(h, metaData, valuePath) {
+  return metaData.columns.map(({ list, span }) => {
+    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath))
+    return <el-col span={span}>{formItems}</el-col>
+  })
+}
+
+function buildRowContainer(h, metaData, valuePath) {
+  if (Object.prototype.hasOwnProperty.call(metaData, 'visible') && !metaData.visible) {
+    return <div></div>
+  }
+  if (!metaData.isCopy) {
+    return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath)}</el-row>
+  }
+
+  valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
+
+  const onCopy = (index) => {
+    const cloneObj = _.cloneDeep(_.get(this.form, `${valuePath}[${index}]`))
+    _.get(this.form, `${valuePath}`, []).splice(index, 0, cloneObj)
+  }
+  const onDelete = (index) => {
+    const value = _.get(this.form, `${valuePath}`, [])
+    if (value.length <= 1) {
+      return
+    }
+    _.get(this.form, `${valuePath}`, []).splice(index, 1)
+  }
+
+  const isMultipleShow = this.iconFlag
+  const multipleRows = _.get(this.form, valuePath, [])
+
+  return multipleRows.map((_, index) => {
+    return (
+      <el-row
+        class={metaData.isCopy ? 'rows' : ''}
+        nativeOnMousemove={metaData.isCopy ? this.move : () => {}}
+        nativeOnMouseleave={metaData.isCopy ? this.leave : () => {}}
+      >
+        <div>
+          <i v-show={isMultipleShow} onClick={() => onCopy(index)} class="copy el-icon-circle-plus-outline"></i>
+          <i v-show={isMultipleShow} onClick={() => onDelete(index)} class="del el-icon-remove-outline"></i>
+          {buildColumnContainer.call(this, h, metaData, `${valuePath}[${index}]`)}
+        </div>
+      </el-row>
+    )
+  })
+}
+
+function buildFormItem(h, metaData, valuePath) {
+  if (metaData.compType === 'row') {
+    return buildRowContainer.call(this, h, metaData, valuePath)
+  }
+
+  const rules = checkRules(metaData)
+  valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
+
+  return (
+    <el-form-item
+      label={metaData.showLabel ? metaData.label : ''}
+      label-width={`${metaData.labelWidth}`}
+      prop={metaData.id}
+      rules={rules}
+    >
+      <render
+        key={metaData.id}
+        conf={metaData}
+        value={_.get(this.form, valuePath)}
+        uploadFun={this.uploadFun}
+        downloadFun={this.downloadFun}
+        onInput={(event) => {
+          _.set(this.form, valuePath, event)
+        }}
+      />
+    </el-form-item>
+  )
+}
 
 export default {
   name: 'preview',
   props: ['itemList', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
-  components: {
-    previewItem,
-    previewRowItem,
-    fancyDynamicTable,
-    fancyDynamicTableItem,
-  },
+  components: { render },
   data() {
+    const form = this.itemList.reduce(buildModel, {})
     return {
-      form: {},
+      form,
+      flatFields: [],
       rules: {},
-      currentIndex: -1,
-      quoteOption: [],
-      fileList: [],
-      file: {},
+      iconFlag: false,
+      context: {},
     }
+  },
+  computed: {
+    metaDataList() {
+      this.itemList.forEach((metaData) => mixinExecuteFunctions.call(this, metaData, this.flatFields))
+      return this.itemList
+    },
+  },
+  mounted() {
+    this.getContext().then((context) => {
+      this.context = context
+    })
   },
   mixins: [
     formDepMonitorMixin({
       formData: 'form',
-      formFields: 'metaDataList',
+      formFields: 'flatFields',
     }),
   ],
-  created() {
-    this.handlerInitDatas()
-  },
-  computed: {
-    fieldOverviews() {
-      const fieldOverviews = []
-      this.itemList.forEach(makeFieldOverview)
-      return fieldOverviews
-
-      function makeFieldOverview({ _id, id, label, compType, columns = [] }) {
-        if (compType === 'row') {
-          for (let index = 0; index < columns.length; index++) {
-            const { list = [] } = columns[index]
-            list.forEach(makeFieldOverview)
-          }
-          return
-        }
-        fieldOverviews.push({ _id, id, label })
-      }
-    },
-    metaDataList() {
-      const getFieldId = (fieldId) => {
-        const fieldInfo = this.fieldOverviews.find(({ _id }) => fieldId === _id)
-        if (fieldInfo) {
-          return fieldInfo.id
-        }
-        return fieldId
-      }
-      return this.itemList.map((fieldInfo) => {
-        if (fieldInfo.relationMapping && fieldInfo.relationMapping.length) {
-          if (!fieldInfo.disabled && !this.formConf.disabled) {
-            fieldInfo.context = this.getContext()
-          }
-        }
-        mixinRequestFunction(
-          fieldInfo,
-          (data, fieldInfo) => {
-            if (!fieldInfo.disabled && !this.formConf.disabled) {
-              executeApi({
-                apiMark: fieldInfo.requestConfig.apiMark,
-                sourceMark: fieldInfo.requestConfig.sourceMark,
-                data,
-              }).then(({ result: options }) => {
-                if (
-                  fieldInfo.compType === 'select' ||
-                  fieldInfo.compType === 'radio' ||
-                  fieldInfo.compType === 'checkbox'
-                ) {
-                  this.quoteOption = options
-                } else if (fieldInfo.compType === 'cascader') {
-                  // 处理级联
-                  this.deleteEmptyChildren(options.result)
-                  this.quoteOption = options.result
-                } else {
-                  // 处理选择列表
-                }
-              })
-            }
-          },
-          getFieldId
-        )
-        mixinDependFunction(
-          fieldInfo,
-          (data, { id }) => {
-            Object.keys(data).forEach((key) => {
-              this.form[id] = data[key]
-            })
-          },
-          getFieldId
-        )
-        return fieldInfo
-      })
-    },
-  },
-  watch: {
-    form: {
-      immediate: false,
-      deep: true,
-      handler(data) {
-        this.metaDataList.forEach((item) => {
-          if (
-            (item.compType === 'text' || item.compType === 'input' || item.compType === 'textarea') &&
-            item.relationField
-          ) {
-            if (item.relationField.trim().startsWith('#')) {
-              if (item.compType === 'text') {
-                item.text = data[item.relationField.split('#')[1]]
-              } else {
-                data[item.id] = data[item.relationField.split('#')[1]]
-              }
-            } else if (item.relationField.trim().startsWith('$')) {
-              this.getContext().then((res) => {
-                if (item.compType === 'text') {
-                  item.text = res[item.relationField.split('$')[1]]
-                } else {
-                  data[item.id] = res[item.relationField.split('$')[1]]
-                }
-              })
-            }
-          }
-          if (item.compType === 'row' && item.controlFiled && item.controlFiledVal) {
-            item.controlFiledFlag = String(data[item.controlFiled]) === item.controlFiledVal
-            console.log(item.controlFiledFlag)
-          } else {
-            item.controlFiledFlag = true
-          }
-        })
-      },
-    },
+  render(h) {
+    return (
+      <el-form
+        rules={this.rules}
+        ref={this.formConf.formModel}
+        size={this.formConf.size}
+        props={{
+          model: this.form,
+        }}
+        label-position={this.formConf.labelPosition}
+        disabled={this.formConf.disabled}
+        validate-on-rule-change={false}
+        label-width={this.formConf.labelWidth + 'px'}
+        nativeOnSubmit={this.submit}
+      >
+        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData))}
+      </el-form>
+    )
   },
   methods: {
-    changeItemList(model) {
-      const clone = _.cloneDeep(model)
-      const uId = 'row_' + getSimpleId()
-      clone.id = uId
-      clone._id = uId
-      clone.columns.map((column) => {
-        let itemList = []
-        if (column.list.length) {
-          column.list.map((item) => {
-            const cloneitem = _.cloneDeep(item)
-            cloneitem.id = `${cloneitem.id}_${getSimpleId()}`
-            cloneitem._id = cloneitem.id
-            itemList.push(cloneitem)
-          })
-          column.list = []
-          column.list = itemList
-        }
-      })
-      this.itemList.splice(
-        this.itemList.findIndex((item) => item.id === model.id),
-        0,
-        clone
-      )
+    move() {
+      this.iconFlag = true
     },
-    deleteEmptyChildren(arr) {
-      for (let i = 0; i < arr.length; i++) {
-        const arrElement = arr[i]
-        if (!arrElement.children.length) {
-          delete arrElement.children
-          continue
-        }
-        if (arrElement.children) {
-          this.deleteEmptyChildren(arrElement.children)
-        }
-      }
-    },
-    getFileList(file, fileList) {
-      this.fileList = fileList
-      this.file = file
-    },
-    handlerValChange(key, origin) {
-      this.$set(this.form, key, origin)
-    },
-    handlerDynamicValChange(parentId, index, key, origin) {
-      this.$set(this.form[parentId][index], key, origin)
-      this.currentIndex = index
-    },
-    async resetField() {
-      this.$refs[this.formConf.formModel].resetField()
+    leave() {
+      this.iconFlag = false
     },
     async submit() {
-      this.metaDataList.forEach((metaData) => {
+      this.itemList.forEach((metaData) => {
         Object.keys(this.form).forEach((form) => {
           if (form === metaData.id) {
             metaData.value = this.form[form]
@@ -265,12 +243,6 @@ export default {
       })
       try {
         await this.$refs[this.formConf.formModel].validate()
-        console.log(
-          _.cloneDeep({
-            metaDataList: this.metaDataList,
-            formData: this.form,
-          })
-        )
         return _.cloneDeep({
           metaDataList: this.metaDataList,
           formData: this.form,
@@ -279,25 +251,43 @@ export default {
         throw new Error(e.toString())
       }
     },
+    handlerValChange(key, origin) {
+      this.$set(this.form, key, origin)
+    },
     async getContext() {
       const { result } = await processVariable({
-        // processInstanceId: 'c4ace818-01a9-11ed-8113-b215cd163104'
         processInstanceId: this.processInstanceId ?? '',
       })
       return result
     },
-    handlerAddRow: addRow,
-    handlerDeleteRow: deleteRow,
-    handlerBatchDeleteRow: batchDeleteRow,
-    handlerInitDatas: datas,
   },
-
-  mounted() {},
-  beforeCreate() {},
 }
 </script>
-<style scoped>
-.preview-board {
-  border: 1px dashed #ccc;
+
+<style lang="scss" scoped>
+.rows:hover {
+  border: 1px dashed #fff;
+  padding: 30px 0;
+  padding-right: 10px;
+}
+
+.del {
+  cursor: pointer;
+  font-size: 30px !important;
+  color: red;
+  margin-left: 10px;
+  position: absolute;
+  right: 0;
+  top: -15px;
+}
+
+.copy {
+  position: absolute;
+  right: 40px;
+  top: -15px;
+  cursor: pointer;
+  font-size: 30px !important;
+  color: #409eff;
+  margin-left: 10px;
 }
 </style>
