@@ -31,7 +31,7 @@ function handleDependChange(data, fieldInfo) {
   }
 
   const sourceKeys = (fieldInfo.dependValue.source ?? '').split('.')
-  const sourceField = this.flatFields.find(({ id }) => id === sourceKeys[sourceKeys.length - 1])
+  const sourceField = this.flatFields.find(({ id }) => id === sourceKeys[sourceKeys.length - 1]) ?? {}
 
   if (sourceField.compType === 'checkbox') {
     this.form[fieldInfo.id] = sourceField.options
@@ -41,21 +41,21 @@ function handleDependChange(data, fieldInfo) {
     return
   }
 
-  this.form[fieldInfo.id] = sourceField.options.find(({ value }) => value === data[fieldInfo.id])?.label
+  this.form[fieldInfo.id] = sourceField.options?.find(({ value }) => value === data[fieldInfo.id])?.label
 }
 
 function mixinExecuteFunctions(metaData, flatFields = []) {
   metaData.context = this.context
   if (metaData.compType !== 'row') {
+    flatFields.push(metaData)
     mixinRequestFunction(metaData, handleRequestDependChange.bind(this))
     mixinDependFunction(metaData, handleDependChange.bind(this))
-    flatFields.push(metaData)
     return
   }
 
   if (metaData.dependValue) {
-    mixinDependFunction(metaData, handleDependChange.bind(this))
     flatFields.push(metaData)
+    mixinDependFunction(metaData, handleDependChange.bind(this))
   }
 
   if (metaData.isCopy) {
