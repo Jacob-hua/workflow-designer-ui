@@ -37,7 +37,7 @@
             <el-tabs
               type="border-card"
               @tab-click="handleClick"
-              v-model="activeName"
+              v-model="editableTabsValue"
             >
               <el-tab-pane
                 v-for="(item, index) in currentRow"
@@ -155,7 +155,6 @@ export default {
   },
   methods: {
     handleClick(e) {
-      console.log(this.activeName);
       this.editableTabsValue = e.index;
       this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
       console.log(this.currentPars);
@@ -173,7 +172,7 @@ export default {
     },
   },
   mounted() {
-    this.activeName = this.currentRow[0].id;
+    this.editableTabsValue = "0";
     this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
   },
 };
