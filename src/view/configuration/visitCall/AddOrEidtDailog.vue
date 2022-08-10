@@ -299,8 +299,8 @@ export default {
           }
         })
       if (flag) {
-        let pars = {}
         this.apiBoxList.forEach(apibox => {
+          let pars = {}
           apibox.parseParams.forEach(parse => {
             pars[parse.key] =  parse.value
           })
@@ -322,8 +322,9 @@ export default {
             })
           }
         })
-        let parameterMap = {}
+
         this.apiBoxList.forEach(apiBox => {
+          let parameterMap = {}
           apiBox.configParams.forEach(con => {
             parameterMap[con.key] = con.value? con.value : null
           })
