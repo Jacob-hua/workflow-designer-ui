@@ -80,7 +80,8 @@ function buildRowContainer(h, metaData, valuePath) {
     _.get(this.form, `${valuePath}`, []).splice(index, 0, cloneObj)
   }
   const onDelete = (index) => {
-    if (index === 0) {
+    const value = _.get(this.form, `${valuePath}`, [])
+    if (value.length <= 1) {
       return
     }
     _.get(this.form, `${valuePath}`, []).splice(index, 1)
