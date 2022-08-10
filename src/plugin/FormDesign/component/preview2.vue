@@ -20,6 +20,12 @@ function handleRequestDependChange(data, fieldInfo) {
 }
 
 function handleDependChange(data, fieldInfo) {
+  if (fieldInfo.compType === 'row') {
+    fieldInfo.visible = fieldInfo.dependValue.targetValue
+      ? data[fieldInfo.id] === fieldInfo.dependValue.targetValue
+      : Boolean(data[fieldInfo.id])
+    return
+  }
   if (!fieldInfo.dependValue.withLabel) {
     this.form[fieldInfo.id] = data[fieldInfo.id]
     return
@@ -45,6 +51,11 @@ function mixinExecuteFunctions(metaData, flatFields = []) {
     mixinDependFunction(metaData, handleDependChange.bind(this))
     flatFields.push(metaData)
     return
+  }
+
+  if (metaData.dependValue) {
+    mixinDependFunction(metaData, handleDependChange.bind(this))
+    flatFields.push(metaData)
   }
 
   if (metaData.isCopy) {
@@ -96,6 +107,9 @@ function buildColumnContainer(h, metaData, valuePath) {
 }
 
 function buildRowContainer(h, metaData, valuePath) {
+  if (Object.prototype.hasOwnProperty.call(metaData, 'visible') && !metaData.visible) {
+    return <div></div>
+  }
   if (!metaData.isCopy) {
     return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath)}</el-row>
   }
