@@ -150,7 +150,7 @@ export default {
               "label": '莱芜供热项目',
               "name": '',
               "active": "Y",
-              "type": 'industry',
+              "type": form.type,
               "parentId":	-1,
               "createBy": this.userInfo.account,
               "tenantId": this.tenantId,

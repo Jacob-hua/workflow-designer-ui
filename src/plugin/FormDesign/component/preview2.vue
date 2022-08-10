@@ -148,7 +148,6 @@ export default {
         rules={this.rules}
         ref={this.formConf.formModel}
         size={this.formConf.size}
-        // model={this.form}
           props={{
             model: this.form
           }}
