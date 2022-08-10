@@ -8,7 +8,7 @@
     <el-form-item label="文字">
       <el-input class="input" v-model="props.text"></el-input>
     </el-form-item>
-    <el-form-item label="文字大小">
+    <el-form-item label="文字位置">
       <el-radio-group v-model="props['content-position']">
         <el-radio-button label="left">左</el-radio-button>
         <el-radio-button label="center">中</el-radio-button>

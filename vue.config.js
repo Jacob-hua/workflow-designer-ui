@@ -1,6 +1,9 @@
 module.exports = {
   publicPath: './',
   runtimeCompiler: true,
+  configureWebpack: {
+    devtool: 'source-map'
+  },
   devServer: {
     proxy: {
       '': {
