@@ -51,7 +51,7 @@
               表单名称
             </span>
             <div class="title-item-main">
-              <el-input v-model="postData.name" placeholder="" disabled maxlength="20"></el-input>
+              <el-input v-model="postData.name" placeholder="" maxlength="20"></el-input>
             </div>
           </div>
         </div>
