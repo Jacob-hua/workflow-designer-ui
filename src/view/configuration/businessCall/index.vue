@@ -147,9 +147,7 @@ export default {
         this.$refs.BusinessCon.data = [
               {
                 "code": form.code,
-                "label": '莱芜供热项目',
                 "name": '',
-                "active": "Y",
                 "type": form.type,
                 "parentId":	-1,
                 "createBy": this.userInfo.account,
@@ -157,7 +155,6 @@ export default {
                 "ascription": form.code
               }
         ]
-      this.$refs.BusinessCon.data[0].label = form.name
       this.$refs.BusinessCon.data[0].name = form.name
       this.$refs.BusinessCon.forms = form
       this.$refs.BusinessCon.businessConfigWithTreeCreate(this.$refs.BusinessCon.data[0])
