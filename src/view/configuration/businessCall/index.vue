@@ -144,20 +144,17 @@ export default {
       this.$refs.BusinessCon.dialogVisible = true
       this.$refs.BusinessCon.editFlag = true
       this.$refs.BusinessCon.btnTxt = '预览'
-      this.$refs.BusinessCon.data = [
-            {
-              "code": form.code,
-              "label": '莱芜供热项目',
-              "name": '',
-              "active": "Y",
-              "type": 'industry',
-              "parentId":	-1,
-              "createBy": this.userInfo.account,
-              "tenantId": this.tenantId,
-              "ascription": form.code
-            }
+        this.$refs.BusinessCon.data = [
+              {
+                "code": form.code,
+                "name": '',
+                "type": form.type,
+                "parentId":	-1,
+                "createBy": this.userInfo.account,
+                "tenantId": this.tenantId,
+                "ascription": form.code
+              }
         ]
-      this.$refs.BusinessCon.data[0].label = form.name
       this.$refs.BusinessCon.data[0].name = form.name
       this.$refs.BusinessCon.forms = form
       this.$refs.BusinessCon.businessConfigWithTreeCreate(this.$refs.BusinessCon.data[0])
