@@ -10,7 +10,13 @@ function mixinExecuteFunctions(metaData, flatFields = []) {
   if (metaData.compType !== 'row') {
     mixinRequestFunction(metaData, (data, fiedlInfo) => {})
     mixinDependFunction(metaData, (data, fieldInfo) => {
-      this.form[fieldInfo.id] = data[fieldInfo.id]
+      if (!fieldInfo.dependValue.withLabel) {
+        this.form[fieldInfo.id] = data[fieldInfo.id]
+        return
+      }
+      const sourceKeys = (fieldInfo.dependValue.source ?? '').split('.')
+      const sourceField = this.flatFields.find(({ id }) => id === sourceKeys[sourceKeys.length - 1])
+      this.form[fieldInfo.id] = sourceField.options.find(({ value }) => value === data[fieldInfo.id])?.label
     })
     flatFields.push(metaData)
     return

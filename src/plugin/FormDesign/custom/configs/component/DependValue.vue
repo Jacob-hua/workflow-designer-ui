@@ -23,6 +23,11 @@
           </el-select>
         </el-col>
       </el-row>
+      <el-row v-if="isFormDepend">
+        <el-form-item label="采用显示文本">
+          <el-switch v-model="dependValue.withLabel"></el-switch>
+        </el-form-item>
+      </el-row>
     </template>
   </div>
 </template>
@@ -58,8 +63,14 @@ export default {
       dependValue: {
         sourceType: 'const',
         source: '',
+        withLabel: false,
       },
     }
+  },
+  computed: {
+    isFormDepend() {
+      return this.dependValue && this.dependValue.sourceType === 'form'
+    },
   },
   watch: {
     currentField: {
