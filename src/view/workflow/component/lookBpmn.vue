@@ -3,7 +3,7 @@
     <div>
       <bpmn-info :xml="projectData.content" :processDisplayInfo="processDisplayInfo" />
     </div>
-    <span slot="footer" v-if="!isPublicProject">
+    <span slot="footer" v-if="footerVisible">
       <el-button
         class="editor-button"
         @click="onEdit"
@@ -40,6 +40,10 @@ export default {
     visible: {
       type: Boolean,
       default: false,
+    },
+    footerVisible: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {
@@ -121,11 +125,12 @@ export default {
       formData.set('file', file1)
       updateWorkFlow(formData).then(() => {
         this.$message.success(this.projectData.status === 'disabled' ? '启用成功' : '停用成功')
-        this.$emit('close')
+        this.close()
       })
     },
     close() {
       this.$emit('close')
+      this.$emit('update:visible', false)
     },
   },
 }

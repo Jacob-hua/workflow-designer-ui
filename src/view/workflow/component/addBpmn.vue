@@ -6,7 +6,7 @@
     <div slot="footer">
       <el-button class="publish" @click="onPublish">发布</el-button>
       <el-button class="save" @click="onSave">保存</el-button>
-      <el-button class="cancel" @click="onCancel">取消</el-button>
+      <el-button class="cancel" @click="onClose">取消</el-button>
     </div>
   </el-dialog>
 </template>
@@ -76,7 +76,7 @@ export default {
         this.$message.error('流程设计存在错误/警告')
         return
       }
-      
+
       try {
         const { xml } = await this.iBpmnModeler.saveXML({
           format: true,
@@ -107,11 +107,9 @@ export default {
         this.onClose()
       } catch (e) {}
     },
-    onCancel() {
-      this.$emit('close')
-    },
     onClose() {
       this.$emit('close')
+      this.$emit('update:visible', false)
     },
     async onSave() {
       const { error } = await this.iBpmnModeler.validate()

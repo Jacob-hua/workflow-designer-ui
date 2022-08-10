@@ -50,5 +50,4 @@ export let input = {
   prepend:'',
   //后缀
   append:'',
-  relationField: '' // 文本框关联字段
 }

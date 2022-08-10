@@ -134,8 +134,14 @@ export default {
       this.previewVisible= true;
     },
     viewJSON(){
-      this.viewCode = this.code;
+      this.viewCode = this.generateCode();
       this.JSONVisible = true;
+    },
+    generateCode() {
+      let json = {};
+      json.config = this.formConf;
+      json.list = this.list;
+      return JSON.stringify(json,null,4);
     },
     clear(){
       this.$confirm('此操作将清空整个表单,是否继续?').then(() => {
@@ -222,13 +228,6 @@ export default {
     infoShow() {
       return this.list.length < 1;
     },
-    //  初始化 form表单 数据结构
-    code() {
-      let json = {};
-      json.config = this.formConf;
-      json.list = this.list;
-      return JSON.stringify(json,null,4);
-    }
   },
   watch: {
     activeItem (newValue,oldValue) {

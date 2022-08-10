@@ -17,7 +17,7 @@ export let colorPicker = {
     config: true,
     // 控件左侧label内容
     showLabel:false,
-    label: '单行文本',
+    label: '颜色选择器',
     labelWidth: 0,
     //是否可以禁用
     disabled:false,

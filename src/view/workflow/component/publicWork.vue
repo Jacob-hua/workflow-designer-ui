@@ -187,6 +187,7 @@ export default {
           startTime: this.searchForm.valueDate[0],
           endTime: this.searchForm.valueDate[1],
           createBy: this.userInfo.account,
+          name: this.searchForm.name,
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
