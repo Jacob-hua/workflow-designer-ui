@@ -1,4 +1,5 @@
 import { ApiEnum } from '../enum'
+import _ from 'lodash'
 
 const defaultVariableSpace = () => ({
   const: {},
@@ -62,7 +63,7 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
   return result
 }
 
-export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}, depenFieldHandle = (id) => id) {
+export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
   variableSpace = { ...defaultVariableSpace(), ...variableSpace }
 
   !fieldInfo.context && (fieldInfo.context = {})
@@ -75,42 +76,24 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
   if (!fieldInfo.executeFuncs) {
     fieldInfo.executeFuncs = []
   }
-  const { depObj, fieldMapping } = buildDepObj(variableSpace)
+
   fieldInfo.executeFuncs.push((data) => {
-    const isDiffed = Object.keys(data)
-      .filter((key) => Object.keys(depObj).includes(key))
-      .reduce((isDiffed, key) => {
-        isDiffed = isDiffed || depObj[key] !== data[key]
-        depObj[key] = data[key]
-        return isDiffed
-      }, false)
-    if (isDiffed) {
-      executeFunc(variableMix(variableSpace, depObj, fieldMapping), fieldInfo)
+    if (diffeDepObj(variableSpace.form, data)) {
+      executeFunc(variableMix(variableSpace), fieldInfo)
     }
   })
   return fieldInfo
 
-  function buildDepObj(variableSpace) {
-    return Object.keys(variableSpace.form).reduce(
-      ({ depObj, fieldMapping }, fieldId) => {
-        const fieldName = depenFieldHandle(fieldId)
-        fieldMapping[fieldName] = fieldId
-        return {
-          depObj: { ...depObj, [fieldName]: '' },
-          fieldMapping,
-        }
-      },
-      {
-        depObj: {},
-        fieldMapping: {},
-      }
-    )
+  function diffeDepObj(dependObj, data) {
+    return Object.keys(dependObj).reduce((isDiffe, dependValuePath) => {
+      const dependValue = _.get(data, dependValuePath)
+      isDiffe = isDiffe || dependValue !== dependObj[dependValuePath].value
+      dependObj[dependValuePath].value = dependValue
+      return isDiffe
+    }, false)
   }
 
-  function variableMix(variableSpace, depObj = {}, fieldMapping = {}) {
-    Object.keys(depObj).forEach((key) => {
-      variableSpace.form[fieldMapping[key]]['value'] = depObj[key]
-    })
+  function variableMix(variableSpace) {
     const formVariables = Object.values(variableSpace.form).reduce(
       (formVariables, { variable, value }) => ({ ...formVariables, [variable]: value }),
       {}
@@ -123,7 +106,7 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
   }
 }
 
-export function mixinDependFunction(fieldInfo, executeFunc = () => {}, depenFieldHandle = (id) => id) {
+export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
   if (!fieldInfo.dependValue) {
     return fieldInfo
   }
@@ -133,10 +116,10 @@ export function mixinDependFunction(fieldInfo, executeFunc = () => {}, depenFiel
     ...fieldInfo.dependValue,
   })
 
-  return watchExecute(fieldInfo, variableSpace, executeFunc, depenFieldHandle)
+  return watchExecute(fieldInfo, variableSpace, executeFunc)
 }
 
-export function mixinRequestFunction(fieldInfo, executeFunc = () => {}, depenFieldHandle = (id) => id) {
+export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
   if (!fieldInfo.requestConfig) {
     return fieldInfo
   }
@@ -159,14 +142,9 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}, depenFie
     }
   )
 
-  return watchExecute(
-    fieldInfo,
-    variableSpace,
-    (variableObj, fieldInfo) => {
-      executeFunc(parameterHandler(variableObj), fieldInfo)
-    },
-    depenFieldHandle
-  )
+  return watchExecute(fieldInfo, variableSpace, (variableObj, fieldInfo) => {
+    executeFunc(parameterHandler(variableObj), fieldInfo)
+  })
 
   function makeVariables(requestConfig = [], sourceType = 'form') {
     return (variableFactory(requestConfig) ?? []).map((variable) => ({

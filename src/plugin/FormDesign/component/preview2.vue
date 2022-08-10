@@ -6,24 +6,27 @@ import _ from 'lodash'
 import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
-function mixinExecuteFunctions(metaData) {
+function mixinExecuteFunctions(metaData, flatFields = []) {
   if (metaData.compType !== 'row') {
     mixinRequestFunction(metaData, (data, fiedlInfo) => {})
-    mixinDependFunction(metaData, (data, fieldInfo) => {})
+    mixinDependFunction(metaData, (data, fieldInfo) => {
+      this.form[fieldInfo.id] = data[fieldInfo.id]
+    })
+    flatFields.push(metaData)
     return
   }
 
   if (metaData.isCopy) {
     if (Array.isArray(metaData.columns)) {
       metaData.columns.forEach(({ list }) => {
-        list.forEach((colMeta) => mixinExecuteFunctions(colMeta))
+        list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta, flatFields))
       })
     }
     return
   }
 
   metaData.columns.forEach(({ list }) => {
-    list.forEach((colMeta) => mixinExecuteFunctions(colMeta))
+    list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta, flatFields))
   })
 }
 
@@ -77,7 +80,8 @@ function buildRowContainer(h, metaData, valuePath) {
     _.get(this.form, `${valuePath}`, []).splice(index, 0, cloneObj)
   }
   const onDelete = (index) => {
-    if (index === 0) {
+    const value = _.get(this.form, `${valuePath}`, [])
+    if (value.length <= 1) {
       return
     }
     _.get(this.form, `${valuePath}`, []).splice(index, 1)
@@ -132,39 +136,32 @@ function buildFormItem(h, metaData, valuePath) {
   )
 }
 
-let mixin = []
-
 export default {
   name: 'preview',
   props: ['itemList', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
   components: { previewItem, render },
   data() {
-    if (!this.formConf.disabled) {
-      mixin.push(
-        formDepMonitorMixin({
-          formData: 'form',
-          formFields: 'metaDataList',
-        })
-      )
-    }
     const form = this.itemList.reduce(buildModel, {})
     return {
       form,
+      flatFields: [],
       rules: {},
       quoteOption: [],
-      fileList: [],
-      file: {},
       iconFlag: false,
-      delFlag: false,
     }
   },
   computed: {
     metaDataList() {
-      this.itemList.forEach(mixinExecuteFunctions)
+      this.itemList.forEach((metaData) => mixinExecuteFunctions.call(this, metaData, this.flatFields))
       return this.itemList
     },
   },
-  mixins: mixin,
+  mixins: [
+    formDepMonitorMixin({
+      formData: 'form',
+      formFields: 'flatFields',
+    }),
+  ],
   render(h) {
     return (
       <el-form

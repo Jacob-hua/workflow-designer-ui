@@ -310,7 +310,7 @@ export default {
       apiBoxList: [
         {
           ...this.guideForm,
-          name: "", //api名称
+          name: "", //api
           apiMark: "", // api标识
           type: "", // api类型,
           typeName: "", //api类型名称
