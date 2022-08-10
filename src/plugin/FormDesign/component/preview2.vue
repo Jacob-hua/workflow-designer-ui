@@ -7,24 +7,16 @@ import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
 function handleRequestDependChange(data, fieldInfo) {
-  // if (fieldInfo.disabled || this.formConf.disabled) {
-  //   return
-  // }
-  // executeApi({
-  //   apiMark: fieldInfo.requestConfig.apiMark,
-  //   sourceMark: fieldInfo.requestConfig.sourceMark,
-  //   data,
-  // }).then(({ result: options }) => {
-  //   if (fieldInfo.compType === 'select' || fieldInfo.compType === 'radio' || fieldInfo.compType === 'checkbox') {
-  //     this.quoteOption = options
-  //   } else if (fieldInfo.compType === 'cascader') {
-  //     // 处理级联
-  //     this.deleteEmptyChildren(options.result)
-  //     this.quoteOption = options.result
-  //   } else {
-  //     // 处理选择列表
-  //   }
-  // })
+  if (fieldInfo.disabled || this.formConf.disabled) {
+    return
+  }
+  executeApi({
+    apiMark: fieldInfo.requestConfig.apiMark,
+    sourceMark: fieldInfo.requestConfig.sourceMark,
+    data,
+  }).then(({ result: options }) => {
+    fieldInfo.options = options
+  })
 }
 
 function handleDependChange(data, fieldInfo) {
@@ -35,6 +27,7 @@ function handleDependChange(data, fieldInfo) {
 
   const sourceKeys = (fieldInfo.dependValue.source ?? '').split('.')
   const sourceField = this.flatFields.find(({ id }) => id === sourceKeys[sourceKeys.length - 1])
+
   if (sourceField.compType === 'checkbox') {
     this.form[fieldInfo.id] = sourceField.options
       .filter(({ value }) => data[fieldInfo.id].includes(value))
