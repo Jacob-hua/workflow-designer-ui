@@ -14,7 +14,8 @@
             :key="tag.name"
             closable
             @close="handleClose(tag)"
-            :type="tag.type">
+            :class="'bg'+tag.backGroundColorIndex"
+           >
           {{ tag.name }}
         </el-tag>
         <div style="display: flex; margin-top: 15px">
@@ -182,7 +183,6 @@ export default {
       inputValue: '',
       businessConfigId: '',
       tags: [],
-      color: ['', 'success', 'info', 'warning', 'danger'],
       dialogVisible: false,
       dialogVisible2: false,
       data: [],
@@ -422,7 +422,7 @@ export default {
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue.length > 0 && inputValue.length <= 100) {
-        let index = parseInt(Math.random() * 5)
+        let index = parseInt(Math.random() * 4)
         if (inputValue) {
           if (this.checkRepeat(inputValue)) {
             this.$message({
@@ -431,9 +431,8 @@ export default {
             })
           } else {
             this.tags.push({
-
               isUse: 0,
-              "createBy": this.userInfo.account,
+              createBy: this.userInfo.account,
               updateBy: this.userInfo.account,
               businessConfigId: this.currentId,
               code: "",
@@ -443,7 +442,7 @@ export default {
               name: this.inputValue,
               isSetting: true,
               isRequired: true,
-              type: this.color[index],
+              backGroundColorIndex: index,
               startType: '1',
               disabled: true,
               btnTxt: '编辑'
@@ -544,6 +543,25 @@ export default {
   width: 300px;
   height: 600px;
   border: 1px solid rgb(204, 204, 204);
+}
+
+.bg0 {
+    background: #D4FDD9
+}
+
+.bg1 {
+  background: #D1EBFB
+}
+    
+.bg2 {
+ background: #FFE5AF
+}
+.bg4 {
+ background: #CCCCCC
+}
+
+.bg5 {
+ background: #D3ECEF
 }
 
 @include tree;
