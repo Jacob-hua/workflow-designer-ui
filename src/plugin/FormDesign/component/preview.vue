@@ -176,19 +176,17 @@ export default {
   components: { render },
   data() {
     const form = this.itemList.reduce(buildModel, {})
+    const flatFields = new Map()
+    const metaDataList = _.cloneDeep(this.itemList)
+    metaDataList.forEach((metaData) => mixinExecuteFunctions.call(this, metaData, flatFields))
     return {
       form,
-      flatFields: new Map(),
+      metaDataList,
+      flatFields,
       rules: {},
       iconFlag: false,
       context: {},
     }
-  },
-  computed: {
-    metaDataList() {
-      this.itemList.forEach((metaData) => mixinExecuteFunctions.call(this, metaData, this.flatFields))
-      return this.itemList
-    },
   },
   mounted() {
     this.getContext().then((context) => {
