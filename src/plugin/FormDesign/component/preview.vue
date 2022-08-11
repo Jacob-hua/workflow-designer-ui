@@ -84,8 +84,7 @@ function buildRowContainer(h, metaData, valuePath, flatFields = new Map()) {
   }
 
   if (metaData.dependValue) {
-    valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
-    flatFields.set(valuePath, metaData)
+    flatFields.set(valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`, metaData)
   }
 
   if (!metaData.isCopy) {
