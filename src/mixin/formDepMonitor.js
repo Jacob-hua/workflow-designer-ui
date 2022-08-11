@@ -68,22 +68,26 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
 
   !fieldInfo.context && (fieldInfo.context = {})
 
-  executeFunc(variableMix(variableSpace), fieldInfo)
-
   if (Object.keys(variableSpace.form).length === 0) {
     return fieldInfo
   }
 
   if (!fieldInfo.executeFuncs) {
-    fieldInfo.executeFuncs = []
+    fieldInfo.executeFuncs = new Map()
   }
 
-  fieldInfo.executeFuncs.push((data) => {
+  fieldInfo.executeFuncs.set(calculateFuncKey(variableSpace), (data) => {
     if (diffeDepObj(variableSpace.form, data)) {
       executeFunc(variableMix(variableSpace), fieldInfo)
     }
   })
   return fieldInfo
+
+  function calculateFuncKey(variableSpace) {
+    return Object.keys(variableSpace).reduce((funcKey, space) => {
+      return Object.keys(variableSpace[space]).reduce((funcKey, key) => (funcKey ? `${funcKey}/${key}` : key), funcKey)
+    }, '')
+  }
 
   function diffeDepObj(dependObj, data) {
     return Object.keys(dependObj).reduce((isDiffe, dependValuePath) => {
@@ -164,18 +168,7 @@ function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFi
         immediate: true,
         deep: true,
         handler(data) {
-          if (!this[formFields]) {
-            return
-          }
-          let fields = []
-          if (Object.prototype.toString.call(this[formFields]) === '[object Map]') {
-            fields = [...this[formFields].values()]
-          }
-          if (Object.prototype.toString.call(this[formFields]) === '[object Array]') {
-            fields = this[formFields]
-          }
-
-          const needExecutes = fields.filter(({ executeFuncs }) => executeFuncs) ?? []
+          const needExecutes = this[formFields]?.filter(({ executeFuncs }) => executeFuncs) ?? []
           needExecutes.forEach(({ executeFuncs }) => {
             executeFuncs.forEach((execute) => execute({ ...data }))
           })

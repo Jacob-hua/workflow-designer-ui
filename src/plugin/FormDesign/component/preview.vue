@@ -19,7 +19,7 @@ function handleRequestDependChange(data, fieldInfo) {
 }
 
 function handleDependChange(data, fieldInfo) {
-  console.log('=====')
+  console.log('=====', data)
 }
 
 function handleRowContainerDependChange(data, fieldInfo) {
@@ -137,7 +137,9 @@ function buildFormItem(h, metaData, valuePath) {
   const rules = checkRules(metaData)
   valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
 
-  mixinDependFunction(metaData, handleDependChange.bind(this))
+  if (metaData.dependValue) {
+    mixinDependFunction(metaData, handleDependChange.bind(this))
+  }
 
   return (
     <el-form-item
@@ -165,22 +167,19 @@ export default {
   props: ['itemList', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
   components: { render },
   data() {
-    const form = this.itemList.reduce(buildModel, {})
-    const usefulMeta = this.itemList.reduce(buildUsefulMeta, {})
     const metaDataList = _.cloneDeep(this.itemList)
+    const form = metaDataList.reduce(buildModel, {})
+    const usefulMeta = metaDataList.reduce(buildUsefulMeta, {})
+    const flatFields = Object.values(usefulMeta)
     return {
       form,
       usefulMeta,
+      flatFields,
       metaDataList,
       rules: {},
       iconFlag: false,
       context: {},
     }
-  },
-  computed: {
-    flatFields() {
-      return Object.values(this.usefulMeta)
-    },
   },
   mounted() {
     this.getContext().then((context) => {
