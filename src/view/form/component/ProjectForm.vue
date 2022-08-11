@@ -573,7 +573,6 @@ export default {
   margin-left: 15px;
   float: right;
   margin-top: 15px;
-
 }
 
 .content-wrapper {
