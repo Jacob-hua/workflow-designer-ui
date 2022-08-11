@@ -496,6 +496,7 @@ export default {
               type: "success",
               message: "保存成功",
             });
+            this.$parent.DetailFlag = false;
             this.$parent.GetGlobalList(this.$parent.pageInfo);
           });
         }
