@@ -19,7 +19,23 @@ function handleRequestDependChange(data, fieldInfo) {
 }
 
 function handleDependChange(data, fieldInfo) {
-  console.log('=====', data)
+  if (!fieldInfo.dependValue.withLabel) {
+    _.set(this.form, fieldInfo.valuePath, data[fieldInfo.id])
+    return
+  }
+
+  const sourceKeys = (fieldInfo.dependValue.source ?? '').split('.')
+  const sourceField = this.usefulMeta[sourceKeys[sourceKeys.length - 1]] ?? {}
+
+  if (sourceField.compType === 'checkbox') {
+    this.form[fieldInfo.id] = sourceField.options
+      .filter(({ value }) => data[fieldInfo.id].includes(value))
+      .map(({ label }) => label)
+      .join(', ')
+    return
+  }
+
+  this.form[fieldInfo.id] = sourceField.options?.find(({ value }) => value === data[fieldInfo.id])?.label
 }
 
 function handleRowContainerDependChange(data, fieldInfo) {
@@ -69,7 +85,6 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
 
   let fieldInfo = metaData
   if (metaData.dependValue) {
-    // TODO：需要混入函数
     usefulMeta[`${valuePath}.${metaData.id}`] = _.cloneDeep(metaData)
     fieldInfo = usefulMeta[`${valuePath}.${metaData.id}`]
   }
@@ -121,6 +136,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
 
   usefulMeta[valuePath] = _.cloneDeep(metaData)
   const fieldInfo = usefulMeta[valuePath]
+  fieldInfo.valuePath = valuePath
   const rules = checkRules(fieldInfo)
   if (fieldInfo.dependValue) {
     mixinDependFunction(fieldInfo, handleDependChange.bind(this))
@@ -136,11 +152,11 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
       <render
         key={fieldInfo.id}
         conf={fieldInfo}
-        value={_.get(this.form, valuePath)}
+        value={_.get(this.form, fieldInfo.valuePath)}
         uploadFun={this.uploadFun}
         downloadFun={this.downloadFun}
         onInput={(event) => {
-          _.set(this.form, valuePath, event)
+          _.set(this.form, fieldInfo.valuePath, event)
         }}
       />
     </el-form-item>
