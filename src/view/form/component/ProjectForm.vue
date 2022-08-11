@@ -390,6 +390,7 @@ export default {
     addForm() {
       this.$refs.projectFormDiolog.dialogVisible1 = true;
       this.getProjectList();
+      this.$refs.projectFormDiolog.title = '新建表单';
       this.$refs.projectFormDiolog.postData = {
         ascriptionName: "",
         ascName: "",
