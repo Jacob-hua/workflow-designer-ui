@@ -44,27 +44,6 @@ function handleRowContainerDependChange(data, fieldInfo) {
     : Boolean(data[fieldInfo.id])
 }
 
-function mixinExecuteFunctions(metaData, flatFields = new Map()) {
-  metaData.context = this.context
-  if (metaData.compType !== 'row') {
-    flatFields.set(metaData.id, metaData)
-    mixinRequestFunction(metaData, handleRequestDependChange.bind(this))
-    mixinDependFunction(metaData, handleDependChange.bind(this))
-    return
-  }
-
-  if (metaData.dependValue) {
-    flatFields.set(metaData.id, metaData)
-    mixinDependFunction(metaData, handleRowContainerDependChange.bind(this))
-  }
-
-  if (Array.isArray(metaData.columns)) {
-    metaData.columns.forEach(({ list }) => {
-      list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta, flatFields))
-    })
-  }
-}
-
 function buildModel(model, metaData) {
   let result = { ...model }
   if (metaData.compType !== 'row') {
@@ -92,19 +71,25 @@ function buildModel(model, metaData) {
   return result
 }
 
-function buildColumnContainer(h, metaData, valuePath) {
+function buildColumnContainer(h, metaData, valuePath, flatFields = new Map()) {
   return metaData.columns.map(({ list, span }) => {
-    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath))
+    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath, flatFields))
     return <el-col span={span}>{formItems}</el-col>
   })
 }
 
-function buildRowContainer(h, metaData, valuePath) {
-  if (Object.prototype.hasOwnProperty.call(metaData, 'visible') && !metaData.visible) {
+function buildRowContainer(h, metaData, valuePath, flatFields = new Map()) {
+  if (!metaData.visible) {
     return <div></div>
   }
+
+  if (metaData.dependValue) {
+    valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
+    flatFields.set(valuePath, metaData)
+  }
+
   if (!metaData.isCopy) {
-    return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath)}</el-row>
+    return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath, flatFields)}</el-row>
   }
 
   valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
@@ -134,21 +119,21 @@ function buildRowContainer(h, metaData, valuePath) {
         <div>
           <i v-show={isMultipleShow} onClick={() => onCopy(index)} class="copy el-icon-circle-plus-outline"></i>
           <i v-show={isMultipleShow} onClick={() => onDelete(index)} class="del el-icon-remove-outline"></i>
-          {buildColumnContainer.call(this, h, metaData, `${valuePath}[${index}]`)}
+          {buildColumnContainer.call(this, h, metaData, `${valuePath}[${index}]`, flatFields)}
         </div>
       </el-row>
     )
   })
 }
 
-function buildFormItem(h, metaData, valuePath) {
+function buildFormItem(h, metaData, valuePath, flatFields = new Map()) {
   if (metaData.compType === 'row') {
-    return buildRowContainer.call(this, h, metaData, valuePath)
+    return buildRowContainer.call(this, h, metaData, valuePath, flatFields)
   }
 
   const rules = checkRules(metaData)
   valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
-
+  flatFields.set(valuePath, metaData)
   return (
     <el-form-item
       label={metaData.showLabel ? metaData.label : ''}
@@ -178,7 +163,6 @@ export default {
     const form = this.itemList.reduce(buildModel, {})
     const flatFields = new Map()
     const metaDataList = _.cloneDeep(this.itemList)
-    metaDataList.forEach((metaData) => mixinExecuteFunctions.call(this, metaData, flatFields))
     return {
       form,
       metaDataList,
@@ -214,7 +198,7 @@ export default {
         label-width={this.formConf.labelWidth + 'px'}
         nativeOnSubmit={this.submit}
       >
-        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData))}
+        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData, '', this.flatFields))}
       </el-form>
     )
   },
