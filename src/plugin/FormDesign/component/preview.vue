@@ -19,23 +19,7 @@ function handleRequestDependChange(data, fieldInfo) {
 }
 
 function handleDependChange(data, fieldInfo) {
-  if (!fieldInfo.dependValue.withLabel) {
-    this.form[fieldInfo.id] = data[fieldInfo.id]
-    return
-  }
-
-  const sourceKeys = (fieldInfo.dependValue.source ?? '').split('.')
-  const sourceField = this.flatFields.get(sourceKeys[sourceKeys.length - 1]) ?? {}
-
-  if (sourceField.compType === 'checkbox') {
-    this.form[fieldInfo.id] = sourceField.options
-      .filter(({ value }) => data[fieldInfo.id].includes(value))
-      .map(({ label }) => label)
-      .join(', ')
-    return
-  }
-
-  this.form[fieldInfo.id] = sourceField.options?.find(({ value }) => value === data[fieldInfo.id])?.label
+  console.log('=====')
 }
 
 function handleRowContainerDependChange(data, fieldInfo) {
@@ -71,24 +55,24 @@ function buildModel(model, metaData) {
   return result
 }
 
-function buildColumnContainer(h, metaData, valuePath, flatFields = new Map()) {
+function buildColumnContainer(h, metaData, valuePath) {
   return metaData.columns.map(({ list, span }) => {
-    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath, flatFields))
+    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath))
     return <el-col span={span}>{formItems}</el-col>
   })
 }
 
-function buildRowContainer(h, metaData, valuePath, flatFields = new Map()) {
+function buildRowContainer(h, metaData, valuePath) {
   if (!metaData.visible) {
     return <div></div>
   }
 
   if (metaData.dependValue) {
-    flatFields.set(valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`, metaData)
+    // TODO：需要混入函数
   }
 
   if (!metaData.isCopy) {
-    return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath, flatFields)}</el-row>
+    return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath)}</el-row>
   }
 
   valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
@@ -118,21 +102,21 @@ function buildRowContainer(h, metaData, valuePath, flatFields = new Map()) {
         <div>
           <i v-show={isMultipleShow} onClick={() => onCopy(index)} class="copy el-icon-circle-plus-outline"></i>
           <i v-show={isMultipleShow} onClick={() => onDelete(index)} class="del el-icon-remove-outline"></i>
-          {buildColumnContainer.call(this, h, metaData, `${valuePath}[${index}]`, flatFields)}
+          {buildColumnContainer.call(this, h, metaData, `${valuePath}[${index}]`)}
         </div>
       </el-row>
     )
   })
 }
 
-function buildFormItem(h, metaData, valuePath, flatFields = new Map()) {
+function buildFormItem(h, metaData, valuePath) {
   if (metaData.compType === 'row') {
-    return buildRowContainer.call(this, h, metaData, valuePath, flatFields)
+    return buildRowContainer.call(this, h, metaData, valuePath)
   }
 
   const rules = checkRules(metaData)
   valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
-  flatFields.set(valuePath, metaData)
+
   return (
     <el-form-item
       label={metaData.showLabel ? metaData.label : ''}
@@ -160,12 +144,11 @@ export default {
   components: { render },
   data() {
     const form = this.itemList.reduce(buildModel, {})
-    const flatFields = new Map()
     const metaDataList = _.cloneDeep(this.itemList)
     return {
       form,
       metaDataList,
-      flatFields,
+      flatFields: [],
       rules: {},
       iconFlag: false,
       context: {},
@@ -197,7 +180,7 @@ export default {
         label-width={this.formConf.labelWidth + 'px'}
         nativeOnSubmit={this.submit}
       >
-        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData, '', this.flatFields))}
+        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData, ''))}
       </el-form>
     )
   },
