@@ -68,8 +68,9 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
 
   !fieldInfo.context && (fieldInfo.context = {})
 
+  executeFunc(variableMix(variableSpace), fieldInfo)
+
   if (Object.keys(variableSpace.form).length === 0) {
-    executeFunc(variableMix(variableSpace), fieldInfo)
     return fieldInfo
   }
 
