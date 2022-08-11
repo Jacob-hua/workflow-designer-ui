@@ -225,4 +225,8 @@ label {
   height: 186px;
   background-color: #f5f7f9;
 }
+.card-main label {
+  display: inline-block;
+  width: 80px;
+}
 </style>

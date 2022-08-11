@@ -410,6 +410,7 @@ export default {
 
 .title-item-label {
   margin-right: 15px;
+  color: white;
 }
 
 .title-item-main {
