@@ -163,11 +163,11 @@ export default {
     },
     exit() {
       this.dialogVisible = false;
-      this.clearRedisBusinessConfigCode({}, true);
+      // this.clearRedisBusinessConfigCode(this.data, true);
       this.$parent.getBusinessConfigBasicList();
     },
     handleClose() {
-      this.clearRedisBusinessConfigCode({}, true);
+      // this.clearRedisBusinessConfigCode(this.data, true);
       this.$parent.getBusinessConfigBasicList();
     },
     goEdit() {
