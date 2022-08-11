@@ -89,9 +89,22 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
     }, '')
   }
 
+  function calculateDependValue(data, fieldValuePath, dependValuePath) {
+    fieldValuePath = fieldValuePath ?? ''
+    const domainPath = fieldValuePath.substring(0, fieldValuePath.lastIndexOf('.'))
+    const domain = _.get(data, domainPath, undefined)
+    if (!domain) {
+      return
+    }
+    if (!_.has(domain, dependValuePath)) {
+      return calculateDependValue(data, domainPath, dependValuePath)
+    }
+    return _.get(domain, dependValuePath)
+  }
+
   function diffeDepObj(dependObj, data) {
     return Object.keys(dependObj).reduce((isDiffe, dependValuePath) => {
-      const dependValue = _.get(data, dependValuePath)
+      const dependValue = calculateDependValue(data, fieldInfo.valuePath, dependValuePath)
       isDiffe = isDiffe || dependValue !== dependObj[dependValuePath].value
       dependObj[dependValuePath].value = dependValue
       return isDiffe

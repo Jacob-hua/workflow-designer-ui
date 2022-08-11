@@ -85,8 +85,11 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
 
   let fieldInfo = metaData
   if (metaData.dependValue) {
-    usefulMeta[`${valuePath}.${metaData.id}`] = _.cloneDeep(metaData)
-    fieldInfo = usefulMeta[`${valuePath}.${metaData.id}`]
+    const _valuePath = `${valuePath}.${metaData.id}`
+    usefulMeta[_valuePath] = _.cloneDeep(metaData)
+    fieldInfo = usefulMeta[_valuePath]
+    fieldInfo.valuePath = _valuePath
+    mixinDependFunction(fieldInfo, handleRowContainerDependChange.bind(this))
   }
 
   if (!fieldInfo.isCopy) {
