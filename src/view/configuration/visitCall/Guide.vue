@@ -2,6 +2,7 @@
   <el-dialog
     title="第三方接口配置"
     :visible.sync="dialogVisible"
+    :close-on-click-modal="false"
     v-if="dialogVisible"
     width="30%"
     append-to-body

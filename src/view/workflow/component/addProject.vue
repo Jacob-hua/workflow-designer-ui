@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="新建工作流" :visible="visible" @close="onClose">
+  <el-dialog title="新建工作流" :close-on-click-modal="false" :visible="visible" @close="onClose">
     <el-form label-position="right" label-width="80px" ref="formData" :model="formData" :rules="formRules">
       <el-form-item label="应用项目" prop="ascription">
         <el-col :span="24">

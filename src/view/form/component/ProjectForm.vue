@@ -3,7 +3,7 @@
     <div class="projectHeader">
       <div class="PublicForm-title"></div>
       <div class="datePick">
-        <span class="text">项目选择</span>
+        <span class="text">项目</span>
         <el-select v-model="projectCode">
           <el-option
             v-for="{ id, label, value } in rootOrganizations"
@@ -12,7 +12,7 @@
             :value="value"
           ></el-option>
         </el-select>
-        <span class="text">业务选择</span>
+        <span class="text">业务</span>
         <el-cascader
           v-model="projectValue"
           :key="projectCode"
