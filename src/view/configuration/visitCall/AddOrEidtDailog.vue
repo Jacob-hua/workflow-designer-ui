@@ -137,7 +137,7 @@
                   >
                     <el-select
                       v-model="item.method"
-                      placeholder="请选择api类型"
+                      placeholder="请选择请求类型"
                     >
                       <el-option
                         v-for="item in methodsOptions"
