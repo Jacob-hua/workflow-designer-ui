@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="title" :visible.sync="dialogVisible1">
+    <el-dialog :title="title" :visible.sync="dialogVisible1" >
       <div class="guid">
         <el-form
           ref="form"
