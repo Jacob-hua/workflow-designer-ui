@@ -237,15 +237,15 @@
       </div>
 
       <div slot="footer" class="dialog-footer">
-        <div
-          class="next"
-          @click="
-            dialogVisible = false;
-            $emit('showAddOrEidtDailog', '', 'pre');
-          "
-        >
-          上一步
-        </div>
+        <!--        <div-->
+        <!--          class="next"-->
+        <!--          @click="-->
+        <!--            dialogVisible = false;-->
+        <!--            $emit('showAddOrEidtDailog', '', 'pre');-->
+        <!--          "-->
+        <!--        >-->
+        <!--          上一步-->
+        <!--        </div>-->
         <div class="next" @click="saveOrEdite">保存</div>
         <div class="cancel" @click="dialogVisible = false">取 消</div>
       </div>
