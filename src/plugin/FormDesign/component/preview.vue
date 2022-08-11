@@ -28,6 +28,26 @@ function handleRowContainerDependChange(data, fieldInfo) {
     : Boolean(data[fieldInfo.id])
 }
 
+function buildUsefulMeta(usefulMeta, metaData) {
+  let result = { ...usefulMeta }
+  if (metaData.compType !== 'row') {
+    result[metaData.id] = metaData
+    return result
+  }
+
+  if (metaData.dependValue) {
+    result[metaData.id] = metaData
+  }
+
+  if (Array.isArray(metaData.columns)) {
+    return metaData.columns.reduce(
+      (result, { list }) => list.reduce((result, colMeta) => buildUsefulMeta(result, colMeta), result),
+      result
+    )
+  }
+  return result
+}
+
 function buildModel(model, metaData) {
   let result = { ...model }
   if (metaData.compType !== 'row') {
@@ -117,6 +137,8 @@ function buildFormItem(h, metaData, valuePath) {
   const rules = checkRules(metaData)
   valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
 
+  mixinDependFunction(metaData, handleDependChange.bind(this))
+
   return (
     <el-form-item
       label={metaData.showLabel ? metaData.label : ''}
@@ -144,15 +166,21 @@ export default {
   components: { render },
   data() {
     const form = this.itemList.reduce(buildModel, {})
+    const usefulMeta = this.itemList.reduce(buildUsefulMeta, {})
     const metaDataList = _.cloneDeep(this.itemList)
     return {
       form,
+      usefulMeta,
       metaDataList,
-      flatFields: [],
       rules: {},
       iconFlag: false,
       context: {},
     }
+  },
+  computed: {
+    flatFields() {
+      return Object.values(this.usefulMeta)
+    },
   },
   mounted() {
     this.getContext().then((context) => {
