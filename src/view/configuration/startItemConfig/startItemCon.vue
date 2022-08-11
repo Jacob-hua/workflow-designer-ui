@@ -112,7 +112,7 @@
                   type="datetime"
                   default-time="00:00:00"
                   value-format="yyyy-MM-dd HH:mm:ss"
-                  placeholder="选择日期"
+                  placeholder="选择日期时间"
                 >
                 </el-date-picker>
               </template>
