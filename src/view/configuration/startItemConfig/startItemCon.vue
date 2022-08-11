@@ -569,12 +569,12 @@ export default {
 }
 
 .tip_content {
-  width: 713px;
+  width: 100%;
   height: 73px;
   line-height: 73px;
   text-align: center;
   font-size: 20px;
-  color: blue;
+  color: #fff;
   box-sizing: border-box;
   border-radius: 4px;
   background-color: #212739;
@@ -596,7 +596,7 @@ export default {
 }
 
 .start_left {
-  padding-left: 10px;
+  padding-left: 20px;
   width: 300px;
   height: 600px;
   border: 1px solid rgb(204, 204, 204);
