@@ -9,7 +9,7 @@
         :key="index"
         class="businessCall-main-list-card"
       >
-        <div class="card-main ">
+        <div class="card-main">
           <div>
             <label>项目名称:</label> <span>{{ item.name }}</span>
           </div>
