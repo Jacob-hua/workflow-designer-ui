@@ -97,7 +97,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     return <el-row>{buildColumnContainer.call(this, h, fieldInfo, valuePath, usefulMeta)}</el-row>
   }
 
-  if (!fieldInfo.visible) {
+  if (Object.prototype.hasOwnProperty.call(fieldInfo, 'visible') && !fieldInfo.visible) {
     return <div></div>
   }
 
