@@ -82,7 +82,7 @@ function buildColumnContainer(h, metaData, valuePath, usefulMeta = {}) {
 function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   let fieldInfo = metaData
   if (metaData.dependValue) {
-    const _valuePath = `${valuePath}.${metaData.id}`
+    const _valuePath = valuePath ? `${valuePath}.${metaData.id}` : metaData.id
     !usefulMeta[_valuePath] && (usefulMeta[_valuePath] = _.cloneDeep(metaData))
     this.flatFields = Object.values(usefulMeta ?? {})
     fieldInfo = usefulMeta[_valuePath]

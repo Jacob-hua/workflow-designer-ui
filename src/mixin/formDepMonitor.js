@@ -98,7 +98,7 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
   function calculateDependValue(data, fieldValuePath, dependValuePath) {
     fieldValuePath = fieldValuePath ?? ''
     const domainPath = fieldValuePath.substring(0, fieldValuePath.lastIndexOf('.'))
-    const domain = _.get(data, domainPath, undefined)
+    const domain = domainPath === '' ? data : _.get(data, domainPath, undefined)
     if (!domain) {
       return
     }
