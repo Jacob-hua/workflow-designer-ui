@@ -17,7 +17,7 @@
             <label>项目类型:</label> <span>{{ item.typeName }}</span>
           </div>
           <div>
-            <label>创建时间:</label> <span>{{ item.createTime }}</span>
+            <label>创建人:</label> <span>{{ item.createBy }}</span>
           </div>
         </div>
         <div class="btnBox">
