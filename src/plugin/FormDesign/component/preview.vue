@@ -28,26 +28,6 @@ function handleRowContainerDependChange(data, fieldInfo) {
     : Boolean(data[fieldInfo.id])
 }
 
-function buildUsefulMeta(usefulMeta, metaData) {
-  let result = { ...usefulMeta }
-  if (metaData.compType !== 'row') {
-    result[metaData.id] = metaData
-    return result
-  }
-
-  if (metaData.dependValue) {
-    result[metaData.id] = metaData
-  }
-
-  if (Array.isArray(metaData.columns)) {
-    return metaData.columns.reduce(
-      (result, { list }) => list.reduce((result, colMeta) => buildUsefulMeta(result, colMeta), result),
-      result
-    )
-  }
-  return result
-}
-
 function buildModel(model, metaData) {
   let result = { ...model }
   if (metaData.compType !== 'row') {
@@ -75,27 +55,30 @@ function buildModel(model, metaData) {
   return result
 }
 
-function buildColumnContainer(h, metaData, valuePath) {
+function buildColumnContainer(h, metaData, valuePath, usefulMeta = {}) {
   return metaData.columns.map(({ list, span }) => {
-    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath))
+    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath, usefulMeta))
     return <el-col span={span}>{formItems}</el-col>
   })
 }
 
-function buildRowContainer(h, metaData, valuePath) {
+function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   if (!metaData.visible) {
     return <div></div>
   }
 
+  let fieldInfo = metaData
   if (metaData.dependValue) {
     // TODO：需要混入函数
+    usefulMeta[`${valuePath}.${metaData.id}`] = _.cloneDeep(metaData)
+    fieldInfo = usefulMeta[`${valuePath}.${metaData.id}`]
   }
 
-  if (!metaData.isCopy) {
-    return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath)}</el-row>
+  if (!fieldInfo.isCopy) {
+    return <el-row>{buildColumnContainer.call(this, h, fieldInfo, valuePath, usefulMeta)}</el-row>
   }
 
-  valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
+  valuePath = valuePath ? `${valuePath}.${fieldInfo.id}` : `${fieldInfo.id}`
 
   const onCopy = (index) => {
     const cloneObj = _.cloneDeep(_.get(this.form, `${valuePath}[${index}]`))
@@ -115,42 +98,44 @@ function buildRowContainer(h, metaData, valuePath) {
   return multipleRows.map((_, index) => {
     return (
       <el-row
-        class={metaData.isCopy ? 'rows' : ''}
-        nativeOnMousemove={metaData.isCopy ? this.move : () => {}}
-        nativeOnMouseleave={metaData.isCopy ? this.leave : () => {}}
+        class={fieldInfo.isCopy ? 'rows' : ''}
+        nativeOnMousemove={fieldInfo.isCopy ? this.move : () => {}}
+        nativeOnMouseleave={fieldInfo.isCopy ? this.leave : () => {}}
       >
         <div>
           <i v-show={isMultipleShow} onClick={() => onCopy(index)} class="copy el-icon-circle-plus-outline"></i>
           <i v-show={isMultipleShow} onClick={() => onDelete(index)} class="del el-icon-remove-outline"></i>
-          {buildColumnContainer.call(this, h, metaData, `${valuePath}[${index}]`)}
+          {buildColumnContainer.call(this, h, fieldInfo, `${valuePath}[${index}]`, usefulMeta)}
         </div>
       </el-row>
     )
   })
 }
 
-function buildFormItem(h, metaData, valuePath) {
+function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   if (metaData.compType === 'row') {
-    return buildRowContainer.call(this, h, metaData, valuePath)
+    return buildRowContainer.call(this, h, metaData, valuePath, usefulMeta)
   }
 
-  const rules = checkRules(metaData)
   valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
 
-  if (metaData.dependValue) {
-    mixinDependFunction(metaData, handleDependChange.bind(this))
+  usefulMeta[valuePath] = _.cloneDeep(metaData)
+  const fieldInfo = usefulMeta[valuePath]
+  const rules = checkRules(fieldInfo)
+  if (fieldInfo.dependValue) {
+    mixinDependFunction(fieldInfo, handleDependChange.bind(this))
   }
 
   return (
     <el-form-item
-      label={metaData.showLabel ? metaData.label : ''}
-      label-width={`${metaData.labelWidth}`}
-      prop={metaData.id}
+      label={fieldInfo.showLabel ? fieldInfo.label : ''}
+      label-width={`${fieldInfo.labelWidth}`}
+      prop={fieldInfo.id}
       rules={rules}
     >
       <render
-        key={metaData.id}
-        conf={metaData}
+        key={fieldInfo.id}
+        conf={fieldInfo}
         value={_.get(this.form, valuePath)}
         uploadFun={this.uploadFun}
         downloadFun={this.downloadFun}
@@ -169,17 +154,19 @@ export default {
   data() {
     const metaDataList = _.cloneDeep(this.itemList)
     const form = metaDataList.reduce(buildModel, {})
-    const usefulMeta = metaDataList.reduce(buildUsefulMeta, {})
-    const flatFields = Object.values(usefulMeta)
     return {
       form,
-      usefulMeta,
-      flatFields,
+      usefulMeta: {},
       metaDataList,
       rules: {},
       iconFlag: false,
       context: {},
     }
+  },
+  computed: {
+    flatFields() {
+      return Object.values(this.usefulMeta ?? {})
+    },
   },
   mounted() {
     this.getContext().then((context) => {
@@ -192,6 +179,9 @@ export default {
       formFields: 'flatFields',
     }),
   ],
+  beforeUpdate() {
+    this.usefulMeta = {}
+  },
   render(h) {
     return (
       <el-form
@@ -207,7 +197,7 @@ export default {
         label-width={this.formConf.labelWidth + 'px'}
         nativeOnSubmit={this.submit}
       >
-        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData, ''))}
+        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData, '', this.usefulMeta))}
       </el-form>
     )
   },
