@@ -164,7 +164,18 @@ function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFi
         immediate: true,
         deep: true,
         handler(data) {
-          const needExecutes = this[formFields]?.filter(({ executeFuncs }) => executeFuncs) ?? []
+          if (!this[formFields]) {
+            return
+          }
+          let fields = []
+          if (Object.prototype.toString.call(this[formFields]) === '[object Map]') {
+            fields = [...this[formFields].values()]
+          }
+          if (Object.prototype.toString.call(this[formFields]) === '[object Array]') {
+            fields = this[formFields]
+          }
+
+          const needExecutes = fields.filter(({ executeFuncs }) => executeFuncs) ?? []
           needExecutes.forEach(({ executeFuncs }) => {
             executeFuncs.forEach((execute) => execute({ ...data }))
           })

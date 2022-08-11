@@ -19,19 +19,13 @@ function handleRequestDependChange(data, fieldInfo) {
 }
 
 function handleDependChange(data, fieldInfo) {
-  if (fieldInfo.compType === 'row') {
-    fieldInfo.visible = fieldInfo.dependValue.targetValue
-      ? data[fieldInfo.id] === fieldInfo.dependValue.targetValue
-      : Boolean(data[fieldInfo.id])
-    return
-  }
   if (!fieldInfo.dependValue.withLabel) {
     this.form[fieldInfo.id] = data[fieldInfo.id]
     return
   }
 
   const sourceKeys = (fieldInfo.dependValue.source ?? '').split('.')
-  const sourceField = this.flatFields.find(({ id }) => id === sourceKeys[sourceKeys.length - 1]) ?? {}
+  const sourceField = this.flatFields.get(sourceKeys[sourceKeys.length - 1]) ?? {}
 
   if (sourceField.compType === 'checkbox') {
     this.form[fieldInfo.id] = sourceField.options
@@ -44,18 +38,24 @@ function handleDependChange(data, fieldInfo) {
   this.form[fieldInfo.id] = sourceField.options?.find(({ value }) => value === data[fieldInfo.id])?.label
 }
 
-function mixinExecuteFunctions(metaData, flatFields = []) {
+function handleRowContainerDependChange(data, fieldInfo) {
+  fieldInfo.visible = fieldInfo.dependValue.targetValue
+    ? data[fieldInfo.id] == `${fieldInfo.dependValue.targetValue}`
+    : Boolean(data[fieldInfo.id])
+}
+
+function mixinExecuteFunctions(metaData, flatFields = new Map()) {
   metaData.context = this.context
   if (metaData.compType !== 'row') {
-    flatFields.push(metaData)
+    flatFields.set(metaData.id, metaData)
     mixinRequestFunction(metaData, handleRequestDependChange.bind(this))
     mixinDependFunction(metaData, handleDependChange.bind(this))
     return
   }
 
   if (metaData.dependValue) {
-    flatFields.push(metaData)
-    mixinDependFunction(metaData, handleDependChange.bind(this))
+    flatFields.set(metaData.id, metaData)
+    mixinDependFunction(metaData, handleRowContainerDependChange.bind(this))
   }
 
   if (Array.isArray(metaData.columns)) {
@@ -178,7 +178,7 @@ export default {
     const form = this.itemList.reduce(buildModel, {})
     return {
       form,
-      flatFields: [],
+      flatFields: new Map(),
       rules: {},
       iconFlag: false,
       context: {},
