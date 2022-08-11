@@ -18,6 +18,7 @@ export let row = {
   justify: 'start',
   align: 'top',
   gutter: 0,
+  visible: true,
   columns: [
     {
       index: 0,

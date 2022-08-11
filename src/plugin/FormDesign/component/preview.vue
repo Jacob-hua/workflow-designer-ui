@@ -20,12 +20,12 @@ function handleRequestDependChange(data, fieldInfo) {
 
 function handleDependChange(data, fieldInfo) {
   if (!fieldInfo.dependValue.withLabel) {
-    this.form[fieldInfo.id] = data[fieldInfo.id]
+    _.set(this.form, fieldInfo.valuePath, data[fieldInfo.id])
     return
   }
 
   const sourceKeys = (fieldInfo.dependValue.source ?? '').split('.')
-  const sourceField = this.flatFields.get(sourceKeys[sourceKeys.length - 1]) ?? {}
+  const sourceField = this.usefulMeta[sourceKeys[sourceKeys.length - 1]] ?? {}
 
   if (sourceField.compType === 'checkbox') {
     this.form[fieldInfo.id] = sourceField.options
@@ -42,27 +42,7 @@ function handleRowContainerDependChange(data, fieldInfo) {
   fieldInfo.visible = fieldInfo.dependValue.targetValue
     ? data[fieldInfo.id] == `${fieldInfo.dependValue.targetValue}`
     : Boolean(data[fieldInfo.id])
-}
-
-function mixinExecuteFunctions(metaData, flatFields = new Map()) {
-  metaData.context = this.context
-  if (metaData.compType !== 'row') {
-    flatFields.set(metaData.id, metaData)
-    mixinRequestFunction(metaData, handleRequestDependChange.bind(this))
-    mixinDependFunction(metaData, handleDependChange.bind(this))
-    return
-  }
-
-  if (metaData.dependValue) {
-    flatFields.set(metaData.id, metaData)
-    mixinDependFunction(metaData, handleRowContainerDependChange.bind(this))
-  }
-
-  if (Array.isArray(metaData.columns)) {
-    metaData.columns.forEach(({ list }) => {
-      list.forEach((colMeta) => mixinExecuteFunctions.call(this, colMeta, flatFields))
-    })
-  }
+  this.$forceUpdate()
 }
 
 function buildModel(model, metaData) {
@@ -92,22 +72,36 @@ function buildModel(model, metaData) {
   return result
 }
 
-function buildColumnContainer(h, metaData, valuePath) {
+function buildColumnContainer(h, metaData, valuePath, usefulMeta = {}) {
   return metaData.columns.map(({ list, span }) => {
-    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath))
+    const formItems = list.map((item) => buildFormItem.call(this, h, item, valuePath, usefulMeta))
     return <el-col span={span}>{formItems}</el-col>
   })
 }
 
-function buildRowContainer(h, metaData, valuePath) {
-  if (Object.prototype.hasOwnProperty.call(metaData, 'visible') && !metaData.visible) {
-    return <div></div>
-  }
-  if (!metaData.isCopy) {
-    return <el-row>{buildColumnContainer.call(this, h, metaData, valuePath)}</el-row>
+function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
+  let fieldInfo = metaData
+  if (metaData.dependValue) {
+    const _valuePath = valuePath ? `${valuePath}.${metaData.id}` : metaData.id
+    !usefulMeta[_valuePath] && (usefulMeta[_valuePath] = _.cloneDeep(metaData))
+    this.flatFields = Object.values(usefulMeta ?? {})
+    fieldInfo = usefulMeta[_valuePath]
+    fieldInfo.valuePath = _valuePath
+    mixinDependFunction(fieldInfo, handleRowContainerDependChange.bind(this))
   }
 
-  valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
+  if (!fieldInfo.isCopy) {
+    if (!fieldInfo.visible) {
+      return <div></div>
+    }
+    return <el-row>{buildColumnContainer.call(this, h, fieldInfo, valuePath, usefulMeta)}</el-row>
+  }
+
+  if (Object.prototype.hasOwnProperty.call(fieldInfo, 'visible') && !fieldInfo.visible) {
+    return <div></div>
+  }
+
+  valuePath = valuePath ? `${valuePath}.${fieldInfo.id}` : `${fieldInfo.id}`
 
   const onCopy = (index) => {
     const cloneObj = _.cloneDeep(_.get(this.form, `${valuePath}[${index}]`))
@@ -124,46 +118,57 @@ function buildRowContainer(h, metaData, valuePath) {
   const isMultipleShow = this.iconFlag
   const multipleRows = _.get(this.form, valuePath, [])
 
-  return multipleRows.map((_, index) => {
+  return multipleRows.map((value, index) => {
     return (
       <el-row
-        class={metaData.isCopy ? 'rows' : ''}
-        nativeOnMousemove={metaData.isCopy ? this.move : () => {}}
-        nativeOnMouseleave={metaData.isCopy ? this.leave : () => {}}
+        class={fieldInfo.isCopy ? 'rows' : ''}
+        nativeOnMousemove={fieldInfo.isCopy ? this.move : () => {}}
+        nativeOnMouseleave={fieldInfo.isCopy ? this.leave : () => {}}
       >
         <div>
           <i v-show={isMultipleShow} onClick={() => onCopy(index)} class="copy el-icon-circle-plus-outline"></i>
           <i v-show={isMultipleShow} onClick={() => onDelete(index)} class="del el-icon-remove-outline"></i>
-          {buildColumnContainer.call(this, h, metaData, `${valuePath}[${index}]`)}
+          {buildColumnContainer.call(this, h, fieldInfo, `${valuePath}[${index}]`, usefulMeta)}
         </div>
       </el-row>
     )
   })
 }
 
-function buildFormItem(h, metaData, valuePath) {
+function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   if (metaData.compType === 'row') {
-    return buildRowContainer.call(this, h, metaData, valuePath)
+    return buildRowContainer.call(this, h, metaData, valuePath, usefulMeta)
   }
 
-  const rules = checkRules(metaData)
   valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
+
+  !usefulMeta[valuePath] && (usefulMeta[valuePath] = _.cloneDeep(metaData))
+  this.flatFields = Object.values(usefulMeta ?? {})
+  const fieldInfo = usefulMeta[valuePath]
+  fieldInfo.valuePath = valuePath
+  const rules = checkRules(fieldInfo)
+  if (fieldInfo.dependValue) {
+    mixinDependFunction(fieldInfo, handleDependChange.bind(this))
+  }
+  if (fieldInfo.requestConfig) {
+    mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this))
+  }
 
   return (
     <el-form-item
-      label={metaData.showLabel ? metaData.label : ''}
-      label-width={`${metaData.labelWidth}`}
-      prop={metaData.id}
+      label={fieldInfo.showLabel ? fieldInfo.label : ''}
+      label-width={`${fieldInfo.labelWidth}`}
+      prop={fieldInfo.id}
       rules={rules}
     >
       <render
-        key={metaData.id}
-        conf={metaData}
-        value={_.get(this.form, valuePath)}
+        key={fieldInfo.id}
+        conf={fieldInfo}
+        value={_.get(this.form, fieldInfo.valuePath)}
         uploadFun={this.uploadFun}
         downloadFun={this.downloadFun}
         onInput={(event) => {
-          _.set(this.form, valuePath, event)
+          _.set(this.form, fieldInfo.valuePath, event)
         }}
       />
     </el-form-item>
@@ -175,17 +180,16 @@ export default {
   props: ['itemList', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
   components: { render },
   data() {
-    const form = this.itemList.reduce(buildModel, {})
-    const flatFields = new Map()
     const metaDataList = _.cloneDeep(this.itemList)
-    metaDataList.forEach((metaData) => mixinExecuteFunctions.call(this, metaData, flatFields))
+    const form = metaDataList.reduce(buildModel, {})
     return {
       form,
+      usefulMeta: {},
       metaDataList,
-      flatFields,
       rules: {},
       iconFlag: false,
       context: {},
+      flatFields: [],
     }
   },
   mounted() {
@@ -199,6 +203,9 @@ export default {
       formFields: 'flatFields',
     }),
   ],
+  beforeUpdate() {
+    // this.usefulMeta = {}
+  },
   render(h) {
     return (
       <el-form
@@ -214,7 +221,7 @@ export default {
         label-width={this.formConf.labelWidth + 'px'}
         nativeOnSubmit={this.submit}
       >
-        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData))}
+        {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData, '', this.usefulMeta))}
       </el-form>
     )
   },
