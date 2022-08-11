@@ -69,10 +69,10 @@ const dateType = [
     label: '日(date)',
     value: 'date',
   },
-  {
-    label: '周(week)',
-    value: 'week',
-  },
+  // {
+  //   label: '周(week)',
+  //   value: 'week',
+  // },
   {
     label: '月(month)',
     value: 'month',
