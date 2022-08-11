@@ -84,9 +84,15 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
   return fieldInfo
 
   function calculateFuncKey(variableSpace) {
-    return Object.keys(variableSpace).reduce((funcKey, space) => {
-      return Object.keys(variableSpace[space]).reduce((funcKey, key) => (funcKey ? `${funcKey}/${key}` : key), funcKey)
-    }, '')
+    return Object.keys(variableSpace).reduce(
+      (funcKey, space) => {
+        return Object.keys(variableSpace[space]).reduce(
+          (funcKey, key) => (funcKey ? `${funcKey}/${key}` : key),
+          funcKey
+        )
+      },
+      fieldInfo.valuePath ? `${fieldInfo.valuePath}/` : ''
+    )
   }
 
   function calculateDependValue(data, fieldValuePath, dependValuePath) {

@@ -42,6 +42,7 @@ function handleRowContainerDependChange(data, fieldInfo) {
   fieldInfo.visible = fieldInfo.dependValue.targetValue
     ? data[fieldInfo.id] == `${fieldInfo.dependValue.targetValue}`
     : Boolean(data[fieldInfo.id])
+  this.$forceUpdate()
 }
 
 function buildModel(model, metaData) {
@@ -79,21 +80,25 @@ function buildColumnContainer(h, metaData, valuePath, usefulMeta = {}) {
 }
 
 function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
-  if (!metaData.visible) {
-    return <div></div>
-  }
-
   let fieldInfo = metaData
   if (metaData.dependValue) {
     const _valuePath = `${valuePath}.${metaData.id}`
-    usefulMeta[_valuePath] = _.cloneDeep(metaData)
+    !usefulMeta[_valuePath] && (usefulMeta[_valuePath] = _.cloneDeep(metaData))
+    this.flatFields = Object.values(usefulMeta ?? {})
     fieldInfo = usefulMeta[_valuePath]
     fieldInfo.valuePath = _valuePath
     mixinDependFunction(fieldInfo, handleRowContainerDependChange.bind(this))
   }
 
   if (!fieldInfo.isCopy) {
+    if (!fieldInfo.visible) {
+      return <div></div>
+    }
     return <el-row>{buildColumnContainer.call(this, h, fieldInfo, valuePath, usefulMeta)}</el-row>
+  }
+
+  if (!fieldInfo.visible) {
+    return <div></div>
   }
 
   valuePath = valuePath ? `${valuePath}.${fieldInfo.id}` : `${fieldInfo.id}`
@@ -113,7 +118,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   const isMultipleShow = this.iconFlag
   const multipleRows = _.get(this.form, valuePath, [])
 
-  return multipleRows.map((_, index) => {
+  return multipleRows.map((value, index) => {
     return (
       <el-row
         class={fieldInfo.isCopy ? 'rows' : ''}
@@ -137,12 +142,16 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
 
   valuePath = valuePath ? `${valuePath}.${metaData.id}` : `${metaData.id}`
 
-  usefulMeta[valuePath] = _.cloneDeep(metaData)
+  !usefulMeta[valuePath] && (usefulMeta[valuePath] = _.cloneDeep(metaData))
+  this.flatFields = Object.values(usefulMeta ?? {})
   const fieldInfo = usefulMeta[valuePath]
   fieldInfo.valuePath = valuePath
   const rules = checkRules(fieldInfo)
   if (fieldInfo.dependValue) {
     mixinDependFunction(fieldInfo, handleDependChange.bind(this))
+  }
+  if (fieldInfo.requestConfig) {
+    mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this))
   }
 
   return (
@@ -180,12 +189,8 @@ export default {
       rules: {},
       iconFlag: false,
       context: {},
+      flatFields: [],
     }
-  },
-  computed: {
-    flatFields() {
-      return Object.values(this.usefulMeta ?? {})
-    },
   },
   mounted() {
     this.getContext().then((context) => {
@@ -199,7 +204,7 @@ export default {
     }),
   ],
   beforeUpdate() {
-    this.usefulMeta = {}
+    // this.usefulMeta = {}
   },
   render(h) {
     return (
