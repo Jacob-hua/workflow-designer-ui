@@ -38,6 +38,7 @@
     <el-dialog
       title="启动项配置"
       :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
       width="80%"
       fullscreen
       append-to-body
