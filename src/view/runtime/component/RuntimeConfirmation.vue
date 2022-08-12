@@ -31,7 +31,7 @@ export default {
     },
     title: {
       type: String,
-      default: '确认标题',
+      default: '终止确认',
     },
   },
   computed: {
