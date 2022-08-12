@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-dialog
+        :close-on-click-modal="false"
         title="自定义启动"
         :visible.sync="dialogVisible2"
         v-if="dialogVisible2"

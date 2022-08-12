@@ -53,8 +53,8 @@
         </el-form-item>
       </el-form>
       <template slot="footer">
-        <el-button size="mini" @click="onModalFormCancel">取 消</el-button>
         <el-button size="mini" type="primary" @click="onModalFormSubmit">保 存</el-button>
+        <el-button size="mini" @click="onModalFormCancel">取 消</el-button>
       </template>
     </el-dialog>
   </div>

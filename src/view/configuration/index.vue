@@ -135,6 +135,7 @@ export default {
       this.$confirm("删除不可恢复, 请确认是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
+        cancelButtonClass: "btn-custom-cancel",
         type: "warning",
       })
         .then(() => {
@@ -209,5 +210,12 @@ export default {
 .projectHeader {
   display: inline-block;
   margin: 15px 0px 15px 0px;
+}
+</style>
+
+<style lang="scss">
+
+.btn-custom-cancel {
+  @include cancelbutton;
 }
 </style>
