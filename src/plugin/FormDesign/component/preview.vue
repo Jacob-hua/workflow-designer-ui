@@ -193,8 +193,8 @@ function buildFormItem(h, metaData, valuePath) {
         uploadFun={this.uploadFun}
         downloadFun={this.downloadFun}
         onInput={(event) => {
-          this.$set(metaData, "value", event);
           _.set(this.form, valuePath, event);
+          this.$set(metaData, "value", event);
         }}
       />
     </el-form-item>
