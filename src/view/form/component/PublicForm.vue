@@ -114,10 +114,12 @@
     <detailsDiolog
       tileText="编辑表单"
       ref="detailsDiolog"
+      quote="delete"
       :formDatas="formData"
       @editForm="editForm"
       :status="activeName"
       ascription="public"
+      @deleteSuccsee="deleteSuccsee()"
     ></detailsDiolog>
   </div>
 </template>
@@ -220,6 +222,11 @@ export default {
       this.getManyData();
     },
 
+    deleteSuccsee() {
+      this.$refs.detailsDiolog.dialogVisible2 = false;
+      this.getData();
+    },
+    
     addSuccess(value) {
       this.$refs.PublicFormDiolog.dialogVisible2 = false;
       this.$refs.detailsDiolog.dialogVisible2 = false;

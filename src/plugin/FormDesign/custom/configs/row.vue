@@ -1,4 +1,3 @@
-<!--后期支持flex布局-->
 <template>
   <div v-show="props.compType === 'row'">
     <el-form-item label="字段">
@@ -10,12 +9,7 @@
       <el-input-number size="small" v-model="props.gutter" :min="0" :max="100" />
     </el-form-item>
     <el-divider>列配置项</el-divider>
-    <el-form-item label="控制字段">
-      <el-input v-model="props.controlFiled" placeholder="请输入控制该栅格的字段名"></el-input>
-    </el-form-item>
-    <el-form-item label="控制字段值">
-      <el-input v-model="props.controlFiledVal" placeholder="请输入控制该栅格的字段名"></el-input>
-    </el-form-item>
+    <depend-value :currentField="props" needTargetValue @dependChange="onDependChange" />
     <el-form-item label="是否可复制">
       <el-switch v-model="props.isCopy"></el-switch>
     </el-form-item>
@@ -36,13 +30,14 @@
   </div>
 </template>
 <script>
+import DependValue from './component/DependValue.vue'
 export default {
   name: 'rowConfig',
   props: ['props', 'getFormId'],
-  data() {
-    return {}
-  },
   methods: {
+    onDependChange(dependValue) {
+      this.props.dependValue = dependValue
+    },
     handlerAddCol() {
       const colIndex = this.props.columns + 1
       this.props.columns.push({
@@ -52,7 +47,7 @@ export default {
       })
     },
   },
-  mounted() {},
+  components: { DependValue },
 }
 </script>
 <style lang="scss">

@@ -4,30 +4,33 @@
       <el-switch v-model="currentField.needDepend"></el-switch>
     </el-form-item>
     <template v-if="currentField.needDepend">
-      <el-row :gutter="24">
-        <el-col :span="16"> 关联 </el-col>
-        <el-col :span="8"> 类型 </el-col>
-      </el-row>
-      <el-row :gutter="24">
-        <el-col :span="16">
-          <el-input v-model="dependValue.source" />
-        </el-col>
-        <el-col :span="8">
-          <el-select v-model="dependValue['sourceType']" @change="onSourceTypeChange">
-            <el-option
-              v-for="{ id, label, value } in sourceTypeOptions"
-              :key="id"
-              :label="label"
-              :value="value"
-            ></el-option>
-          </el-select>
-        </el-col>
-      </el-row>
-      <el-row v-if="isFormDepend">
-        <el-form-item label="采用显示文本">
-          <el-switch v-model="dependValue.withLabel"></el-switch>
-        </el-form-item>
-      </el-row>
+      <div class="depend-wrapper">
+        <el-row :gutter="24">
+          <el-col :span="16"> 关联 </el-col>
+          <el-col :span="8"> 类型 </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="16">
+            <el-input v-model="dependValue.source" />
+          </el-col>
+          <el-col :span="8">
+            <el-select v-model="dependValue['sourceType']" @change="onSourceTypeChange">
+              <el-option
+                v-for="{ id, label, value } in sourceTypeOptions"
+                :key="id"
+                :label="label"
+                :value="value"
+              ></el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+      </div>
+      <el-form-item v-if="isFormDepend" label="采用显示文本">
+        <el-switch v-model="dependValue.withLabel"></el-switch>
+      </el-form-item>
+      <el-form-item v-if="needTargetValue" label="目标值">
+        <el-input v-model="dependValue.targetValue" />
+      </el-form-item>
     </template>
   </div>
 </template>
@@ -39,6 +42,10 @@ export default {
     currentField: {
       type: Object,
       default: () => ({}),
+    },
+    needTargetValue: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -63,7 +70,6 @@ export default {
       dependValue: {
         sourceType: 'const',
         source: '',
-        withLabel: false,
       },
     }
   },
@@ -105,3 +111,10 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+.depend-wrapper {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+</style>
