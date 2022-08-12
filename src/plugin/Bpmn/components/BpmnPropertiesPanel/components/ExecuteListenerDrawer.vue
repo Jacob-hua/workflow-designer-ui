@@ -96,6 +96,7 @@
     <el-dialog
       title="字段配置"
       :visible.sync="fieldModalVisible"
+      :close-on-click-modal="false"
       @close="onCloseFieldModal"
       append-to-body
       destroy-on-close

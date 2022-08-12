@@ -81,6 +81,7 @@
     <el-dialog
       title="引入工作流"
       :visible.sync="dialogVisible1"
+      :close-on-click-modal="false"
       width="35%"
       custom-class="dialogVisible1"
     >
