@@ -137,7 +137,7 @@
                   >
                     <el-select
                       v-model="item.method"
-                      placeholder="请选择api类型"
+                      placeholder="请选择请求类型"
                     >
                       <el-option
                         v-for="item in methodsOptions"
@@ -237,15 +237,15 @@
       </div>
 
       <div slot="footer" class="dialog-footer">
-        <div
-          class="next"
-          @click="
-            dialogVisible = false;
-            $emit('showAddOrEidtDailog', '', 'pre');
-          "
-        >
-          上一步
-        </div>
+        <!--        <div-->
+        <!--          class="next"-->
+        <!--          @click="-->
+        <!--            dialogVisible = false;-->
+        <!--            $emit('showAddOrEidtDailog', '', 'pre');-->
+        <!--          "-->
+        <!--        >-->
+        <!--          上一步-->
+        <!--        </div>-->
         <div class="next" @click="saveOrEdite">保存</div>
         <div class="cancel" @click="dialogVisible = false">取 消</div>
       </div>
@@ -497,6 +497,7 @@ export default {
               type: "success",
               message: "保存成功",
             });
+            this.$parent.DetailFlag = false;
             this.$parent.GetGlobalList(this.$parent.pageInfo);
           });
         }

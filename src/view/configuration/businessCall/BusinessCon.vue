@@ -92,7 +92,7 @@ import {
 
 import { mapState } from "vuex";
 
-let id = 2;
+let id = 3;
 export default {
   name: "BusinessCon",
 
@@ -164,11 +164,11 @@ export default {
     },
     exit() {
       this.dialogVisible = false;
-      this.clearRedisBusinessConfigCode({}, true);
+      // this.clearRedisBusinessConfigCode(this.data, true);
       this.$parent.getBusinessConfigBasicList();
     },
     handleClose() {
-      this.clearRedisBusinessConfigCode({}, true);
+      // this.clearRedisBusinessConfigCode(this.data, true);
       this.$parent.getBusinessConfigBasicList();
     },
     goEdit() {

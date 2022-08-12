@@ -127,7 +127,7 @@
 
 <script>
 import formBpmnEdit from "./formBpmnEdit.vue";
-import preview from "@/plugin/FormDesign/component/preview2";
+import preview from "@/plugin/FormDesign/component/preview";
 import {
   postFormDesignRecordFormDesignRecordInfo,
   deleteFormDesignService,
