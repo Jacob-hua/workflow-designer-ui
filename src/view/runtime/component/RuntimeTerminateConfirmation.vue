@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="终止" :visible="visible" width="70%" @close="onCancel" append-to-body>
+  <el-dialog title="终止" :close-on-click-modal="false" :visible="visible" width="70%" @close="onCancel" append-to-body>
     <div>
       <div class="rejectWord">终止原因（必填）</div>
       <div>

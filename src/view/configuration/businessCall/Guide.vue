@@ -3,6 +3,7 @@
   <el-dialog
       title="新建项目"
       :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
       width="30%"
       append-to-body
   >

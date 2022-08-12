@@ -1,11 +1,12 @@
 <template>
   <div>
     <el-dialog
-      title="自定义启动"
-      :visible.sync="dialogVisible2"
-      v-if="dialogVisible2"
-      width="30%"
-      append-to-body
+        :close-on-click-modal="false"
+        title="自定义启动"
+        :visible.sync="dialogVisible2"
+        v-if="dialogVisible2"
+        width="30%"
+        append-to-body
     >
       <div id="item">
         <p class="tit">自定义启动项</p>

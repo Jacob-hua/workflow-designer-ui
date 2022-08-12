@@ -76,6 +76,7 @@ export default {
       this.$confirm('此操作将删除整个业务配置节点,是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        cancelButtonClass: "btn-custom-cancel",
         type: 'warning',
         beforeClose: (action, instance, done) => { // 取消回车确认事件
           if (action === 'confirm') {
@@ -256,5 +257,12 @@ label {
 .card-main label {
   display: inline-block;
   width: 80px;
+}
+</style>
+
+<style lang="scss">
+
+.btn-custom-cancel {
+  @include cancelbutton;
 }
 </style>
