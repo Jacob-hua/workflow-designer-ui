@@ -36,12 +36,12 @@
       </span>
     </el-dialog>
     <el-dialog
-        title="启动项配置"
-        :visible.sync="dialogVisible"
-        :close-on-click-modal="false"
-        width="80%"
-        fullscreen
-        append-to-body
+      title="启动项配置"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="80%"
+      fullscreen
+      append-to-body
     >
       <div class="start_container">
         <div class="start_left">
