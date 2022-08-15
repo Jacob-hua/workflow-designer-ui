@@ -121,7 +121,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     _.get(this.form, `${valuePath}`, []).splice(index, 1)
   }
 
-  const multipleDisabled = this.formConf.disabled || this.fieldInfo.disabled
+  const multipleDisabled = this.formConf.disabled || fieldInfo.disabled
   const multipleRows = _.get(this.form, valuePath, [])
 
   const multipleRowElements = multipleRows.map((value, index) => {
