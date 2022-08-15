@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="部署工作流" :visible="visible" @close="onCancel">
+    <el-dialog title="部署工作流" :close-on-click-modal="false" :visible="visible" @close="onCancel">
       <el-form label-position="right" label-width="80px" ref="formData" :rules="formRules" :model="formData">
         <el-form-item label="应用项目" prop="ascription">
           <el-col :span="24">

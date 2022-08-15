@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="驳回确认" :visible="visible" width="70%" top="5vh" @close="onCancel" append-to-body>
+  <el-dialog title="驳回确认" :close-on-click-modal="false" :visible="visible" width="70%" top="5vh" @close="onCancel" append-to-body>
     <bpmn-info :xml="workflow.processDeployResource" @selectedShape="onSelectedChanged" />
     <div class="reason-wrapper">
       <el-form ref="rejectForm" :model="rejectForm" :rules="rejectRules">

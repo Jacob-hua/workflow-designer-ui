@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog append-to-body :title="title" :visible="visible" @close="onCancel">
+    <el-dialog append-to-body :title="title" :visible="visible" @close="onCancel" :close-on-click-modal="false">
       <div>
         <el-form ref="form" :model="form" :rules="formRules" label-width="80px">
           <el-form-item label="账号" prop="usernmae">
@@ -31,7 +31,7 @@ export default {
     },
     title: {
       type: String,
-      default: '确认标题',
+      default: '终止确认',
     },
   },
   computed: {

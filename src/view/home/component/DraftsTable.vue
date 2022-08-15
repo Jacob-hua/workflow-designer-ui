@@ -127,6 +127,7 @@ export default {
         await this.$confirm('从草稿箱删除草稿不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
+          cancelButtonClass: "btn-custom-cancel",
           type: 'warning',
         })
         const { errorInfo } = await deleteDraft(workflow.id)
@@ -160,5 +161,12 @@ export default {
 
 .file {
   color: #007edb;
+}
+</style>
+
+<style lang="scss">
+
+.btn-custom-cancel {
+  @include cancelbutton;
 }
 </style>

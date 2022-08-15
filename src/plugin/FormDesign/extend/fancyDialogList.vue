@@ -4,6 +4,7 @@
       <el-input v-model="dialogValue" readonly  @click.native="handlerShowDialog" :disabled="disabled" style="width:95%" suffix-icon="el-icon-search"></el-input>
       <el-dialog 
       :visible.sync="dialogVisible" 
+      :close-on-click-modal="false"
       :title="title"
       width="60%"
       center

@@ -48,7 +48,7 @@
     </el-scrollbar>
     <config-panel :activeItem="activeItem" :itemList="list"/>
     <!-- 设计器配置弹出框 -->
-    <el-dialog :visible.sync="previewVisible" width="70%" title="预览" append-to-body>
+    <el-dialog :visible.sync="previewVisible" fullscreen title="预览" append-to-body>
       <preview :uploadFun="upload" :itemList="itemList"  :formConf="formConf" v-if="previewVisible"/>
     </el-dialog>
     <el-dialog :visible.sync="JSONVisible" width="70%" title="JSON" center :close-on-click-modal="false" append-to-body>

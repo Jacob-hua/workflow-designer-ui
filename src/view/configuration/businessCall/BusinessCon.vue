@@ -2,6 +2,7 @@
   <el-dialog
     title="业务配置"
     :visible.sync="dialogVisible"
+    :close-on-click-modal="false"
     v-if="dialogVisible"
     width="50%"
     @close="handleClose()"

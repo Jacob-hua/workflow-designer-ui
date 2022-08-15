@@ -41,6 +41,7 @@
           <el-dialog
             title="表单"
             :visible.sync="dialogVisibleModal"
+            :close-on-click-modal="false"
             width="35%"
             custom-class="dialogVisible1"
             append-to-body

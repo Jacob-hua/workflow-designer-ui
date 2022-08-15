@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="工单详情" top="1vh" fullscreen :visible="visible" @close="onClose">
+  <el-dialog title="工单详情" top="1vh" fullscreen :visible="visible" @close="onClose" :close-on-click-modal="false">
     <div class="container">
       <bpmn-info :xml="workflow.processDeployResource" :processDisplayInfo="processDisplayInfo" />
       <div>

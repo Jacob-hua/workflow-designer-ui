@@ -248,6 +248,7 @@
     <el-dialog
       title="添加API类型"
       :visible.sync="dialogVisible2"
+      :close-on-click-modal="false"
       width="40%"
       append-to-body
     >

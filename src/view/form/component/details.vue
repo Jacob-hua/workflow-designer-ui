@@ -81,6 +81,7 @@
     <el-dialog
       title="引入工作流"
       :visible.sync="dialogVisible1"
+      :close-on-click-modal="false"
       width="35%"
       custom-class="dialogVisible1"
     >
@@ -248,6 +249,7 @@ export default {
       this.$confirm("表单删除不可恢复, 请确认是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
+        cancelButtonClass: "btn-custom-cancel",
         type: "warning",
       })
         .then(() => {
@@ -375,5 +377,12 @@ export default {
   overflow-y: auto;
   height: 660px;
   margin-top: 20px;
+}
+</style>
+
+<style lang="scss">
+
+.btn-custom-cancel {
+  @include cancelbutton;
 }
 </style>

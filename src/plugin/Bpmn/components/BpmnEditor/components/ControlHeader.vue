@@ -36,7 +36,7 @@
         </el-tooltip>
       </el-button-group>
     </div>
-    <el-dialog title="预览" width="60%" :visible.sync="previewModal.visible" append-to-body destroy-on-close>
+    <el-dialog title="预览" width="60%" :close-on-click-modal="false" :visible.sync="previewModal.visible" append-to-body destroy-on-close>
       <highlightjs :language="previewModal.type" :code="previewModal.code" />
     </el-dialog>
   </div>

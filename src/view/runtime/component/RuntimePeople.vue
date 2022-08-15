@@ -3,6 +3,7 @@
     :title="title"
     :visible="visible"
     :before-close="onCancel"
+    :close-on-click-modal="false"
     @open="onOpen"
     top="1vh"
     fullscreen
