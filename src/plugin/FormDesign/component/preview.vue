@@ -121,7 +121,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     _.get(this.form, `${valuePath}`, []).splice(index, 1)
   }
 
-  const isMultipleShow = !this.formConf.disabled
+  const multipleDisabled = this.formConf.disabled || this.fieldInfo.disabled
   const multipleRows = _.get(this.form, valuePath, [])
 
   const multipleRowElements = multipleRows.map((value, index) => {
@@ -133,14 +133,14 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
             icon="el-icon-delete"
             type="text"
             onClick={() => onDelete(index)}
-            disabled={!isMultipleShow}
+            disabled={multipleDisabled}
           ></el-button>
           <el-button
             style="float: right; padding: 3px 0"
             icon="el-icon-plus"
             type="text"
             onClick={() => onCopy(index)}
-            disabled={!isMultipleShow}
+            disabled={multipleDisabled}
           ></el-button>
         </div>
         <el-row>
