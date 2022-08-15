@@ -212,6 +212,7 @@ export default {
   name: "preview",
   props: [
     "itemList",
+    "formData",
     "formConf",
     "uploadFun",
     "downloadFun",
@@ -220,7 +221,12 @@ export default {
   components: { render },
   data() {
     const metaDataList = _.cloneDeep(this.itemList);
-    const form = metaDataList.reduce(buildModel, {});
+    let form = {};
+    if (this.formData) {
+      form = _.cloneDeep(this.formData);
+    } else {
+      form = metaDataList.reduce(buildModel, {});
+    }
     return {
       form,
       usefulMeta: {},
