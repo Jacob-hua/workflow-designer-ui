@@ -170,16 +170,35 @@ export default {
       console.log(this.currentPars);
     },
     deleteApis() {
-      let currentApi = this.currentRow[this.editableTabsValue];
-      deleteApi(currentApi.id).then((res) => {
-        this.currentRow.splice(+this.editableTabsValue, 1);
-        this.editableTabsValue = "0";
-        if (!this.currentRow.length) {
-          this.dialogVisible = false;
-        }
-        this.$message({
-          type: "success",
-          message: "删除成功",
+      this.$confirm("此操作将删除当前选中api,是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        beforeClose: (action, instance, done) => {
+          // 取消回车确认事件
+          if (action === "confirm") {
+            (instance.$refs["confirm"].$el.onclick = function (e) {
+              e = e || window.event;
+              if (e.detail !== 0) {
+                done();
+              }
+            })();
+          } else {
+            done();
+          }
+        },
+      }).then(() => {
+        let currentApi = this.currentRow[this.editableTabsValue];
+        deleteApi(currentApi.id).then((res) => {
+          this.currentRow.splice(+this.editableTabsValue, 1);
+          this.editableTabsValue = "0";
+          if (!this.currentRow.length) {
+            this.dialogVisible = false;
+          }
+          this.$message({
+            type: "success",
+            message: "删除成功",
+          });
         });
       });
     },
