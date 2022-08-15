@@ -11,11 +11,17 @@
     <el-form ref="form" label-width="80px">
       <div class="top">
         <el-form-item label="资源名称">
-          <el-input disabled v-model="currentRow[0].source"></el-input>
+          <el-input
+            disabled
+            v-model="currentRow[0] && currentRow[0].source"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="资源标识">
-          <el-input disabled v-model="currentRow[0].sourceMark"></el-input>
+          <el-input
+            disabled
+            v-model="currentRow[0] && currentRow[0].sourceMark"
+          ></el-input>
         </el-form-item>
         <div>
           <el-button
