@@ -168,6 +168,9 @@ export default {
       deleteApi(currentApi.id).then((res) => {
         this.currentRow.splice(+this.editableTabsValue, 1);
         this.editableTabsValue = "0";
+        if (!this.currentRow.length) {
+          this.dialogVisible = false;
+        }
         this.$message({
           type: "success",
           message: "删除成功",
