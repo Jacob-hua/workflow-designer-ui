@@ -65,12 +65,15 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
   return result
 }
 
-export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
+export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}, immediate = false) {
   variableSpace = { ...defaultVariableSpace(), ...variableSpace }
 
   !fieldInfo.context && (fieldInfo.context = {})
 
   if (Object.keys(variableSpace.form).length === 0) {
+    if (immediate) {
+      executeFunc(variableMix(variableSpace), fieldInfo)
+    }
     return fieldInfo
   }
 
@@ -174,9 +177,14 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     }
   )
 
-  return watchExecute(fieldInfo, variableSpace, (variableObj, fieldInfo) => {
-    executeFunc(parameterHandler(variableObj), fieldInfo)
-  })
+  return watchExecute(
+    fieldInfo,
+    variableSpace,
+    (variableObj, fieldInfo) => {
+      executeFunc(parameterHandler(variableObj), fieldInfo)
+    },
+    true
+  )
 
   function makeVariables(requestConfig = [], sourceType = 'form') {
     return (variableFactory(requestConfig) ?? []).map((variable) => ({
