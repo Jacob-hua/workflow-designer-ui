@@ -72,8 +72,6 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
 
   if (Object.keys(variableSpace.form).length === 0) {
     if (immediate) {
-      console.log('=====', fieldInfo.context)
-      console.log('=====', variableSpace, variableMix(variableSpace))
       executeFunc(variableMix(variableSpace), fieldInfo)
     }
     return fieldInfo

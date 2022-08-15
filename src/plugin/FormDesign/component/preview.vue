@@ -6,7 +6,6 @@ import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
 function handleRequestDependChange(data, fieldInfo) {
-  console.log('~~~~~')
   if (fieldInfo.disabled || this.formConf.disabled) {
     return
   }
@@ -134,14 +133,14 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
             icon="el-icon-delete"
             type="text"
             onClick={() => onDelete(index)}
-            disabled={isMultipleShow}
+            disabled={!isMultipleShow}
           ></el-button>
           <el-button
             style="float: right; padding: 3px 0"
             icon="el-icon-plus"
             type="text"
             onClick={() => onCopy(index)}
-            disabled={isMultipleShow}
+            disabled={!isMultipleShow}
           ></el-button>
         </div>
         <el-row>
@@ -217,6 +216,18 @@ export default {
       flatFields: [],
     }
   },
+  watch: {
+    itemList(itemList) {
+      this.metaDataList = _.cloneDeep(itemList)
+      if (this.formData) {
+        form = _.cloneDeep(this.formData)
+      } else {
+        form = metaDataList.reduce(buildModel, {})
+      }
+      this.flatFields = []
+      this.usefulMeta = {}
+    },
+  },
   async created() {
     this.context = await this.getContext()
   },
@@ -226,9 +237,6 @@ export default {
       formFields: 'flatFields',
     }),
   ],
-  beforeUpdate() {
-    // this.usefulMeta = {}
-  },
   render(h) {
     return (
       <el-form
