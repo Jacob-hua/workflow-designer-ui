@@ -103,9 +103,9 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
     const pathLastIndex =
       fieldValuePath.lastIndexOf('.') === -1 ? fieldValuePath.length : fieldValuePath.lastIndexOf('.')
     const domainPath = fieldValuePath.substring(0, pathLastIndex)
-    const domain = domainPath === '' ? data : _.get(data, domainPath, undefined)
-    if (!domain) {
-      return
+    const domain = _.get(data, domainPath, undefined)
+    if (Object.prototype.toString.call(domain) !== '[object Object]') {
+      return _.get(data, dependValuePath)
     }
     if (!_.has(domain, dependValuePath)) {
       return calculateDependValue(data, domainPath, dependValuePath)
