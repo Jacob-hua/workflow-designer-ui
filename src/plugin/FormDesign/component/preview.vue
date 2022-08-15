@@ -6,9 +6,6 @@ import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
 function handleRequestDependChange(data, fieldInfo) {
-  if (fieldInfo.disabled || this.formConf.disabled) {
-    return
-  }
   executeApi({
     apiMark: fieldInfo.requestConfig.apiMark,
     sourceMark: fieldInfo.requestConfig.sourceMark,
@@ -166,7 +163,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   fieldInfo.context = this.context
   fieldInfo.valuePath = valuePath
   const rules = checkRules(fieldInfo)
-  if (fieldInfo.dependValue) {
+  if (fieldInfo.dependValue && !fieldInfo.disabled && !this.formConf.disabled) {
     mixinDependFunction(fieldInfo, handleDependChange.bind(this))
   }
   if (fieldInfo.requestConfig) {
