@@ -7,6 +7,7 @@
             <el-tree
               :data="rootOrganizationChildren(projectCode)"
               :props="defaultProps"
+              :highlight-current="true"
               @node-click="handleNodeClick"
             ></el-tree>
           </el-card>
@@ -28,7 +29,7 @@
               </div>
               <div class="button-wrapper">
                 <el-button plain @click="createTicket(process)">创建</el-button>
-                <el-button @click="detailsShow(process)">详情</el-button>
+                <!--el-button @click="detailsShow(process)">详情</el-button-->
               </div>
             </div>
           </div>
@@ -100,7 +101,7 @@ export default {
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   methods: {
-    detailsShow(item) {},
+    //detailsShow(item) {},
     handleNodeClick(data) {
       this.getData.type = data.value
       this.getProcessList()
