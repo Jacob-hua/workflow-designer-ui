@@ -560,7 +560,7 @@ export default {
   margin-right: 20px;
 }
 .el-select {
-  width: 215px;
+  width: 203px;
 }
 /deep/ .jv-container.jv-light .jv-item.jv-array {
   color: #fff;
