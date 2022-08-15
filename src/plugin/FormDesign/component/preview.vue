@@ -17,7 +17,12 @@ function handleRequestDependChange(data, fieldInfo) {
     sourceMark: fieldInfo.requestConfig.sourceMark,
     data,
   }).then(({ result: options }) => {
-    fieldInfo.options = options;
+    if (fieldInfo.compType === "cascader") {
+      this.deleteEmptyChildren(options.result);
+      fieldInfo.options = options.result;
+    } else {
+      fieldInfo.options = options;
+    }
   });
 }
 
@@ -262,6 +267,18 @@ export default {
     );
   },
   methods: {
+    deleteEmptyChildren(arr) {
+      for (let i = 0; i < arr.length; i++) {
+        const arrElement = arr[i];
+        if (!arrElement.children.length) {
+          delete arrElement.children;
+          continue;
+        }
+        if (arrElement.children) {
+          this.deleteEmptyChildren(arrElement.children);
+        }
+      }
+    },
     move() {
       this.iconFlag = true;
     },
