@@ -53,6 +53,18 @@ export default {
   },
   methods: {
     next() {
+      console.log(this.$parent.tableData);
+      let flag = this.$parent.tableData.some(
+        ({ source, sourceMark }) =>
+          this.form.sourceMark === sourceMark || source === this.form.source
+      );
+      if (flag) {
+        this.$message({
+          type: "warning",
+          message: "资源类型 或资源名称已存在",
+        });
+        return;
+      }
       this.$refs["form"].validate((valid) => {
         if (valid) {
           this.dialogVisible = false;
