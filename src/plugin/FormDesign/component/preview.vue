@@ -220,9 +220,9 @@ export default {
     itemList(itemList) {
       this.metaDataList = _.cloneDeep(itemList)
       if (this.formData) {
-        form = _.cloneDeep(this.formData)
+        this.form = _.cloneDeep(this.formData)
       } else {
-        form = metaDataList.reduce(buildModel, {})
+        this.form = this.metaDataList.reduce(buildModel, {})
       }
       this.flatFields = []
       this.usefulMeta = {}
