@@ -6,6 +6,7 @@
     fullscreen
     top="1vh"
     append-to-body
+    @close="visitColse"
   >
     <el-form ref="form" label-width="80px">
       <div class="top">
@@ -154,6 +155,9 @@ export default {
     };
   },
   methods: {
+    visitColse() {
+      this.$parent.GetGlobalList();
+    },
     handleClick(e) {
       this.editableTabsValue = e.index;
       this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
