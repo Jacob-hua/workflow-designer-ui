@@ -71,9 +71,7 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
   !fieldInfo.context && (fieldInfo.context = {})
 
   if (Object.keys(variableSpace.form).length === 0) {
-    if (immediate) {
-      executeFunc(variableMix(variableSpace), fieldInfo)
-    }
+    executeFunc(variableMix(variableSpace), fieldInfo)
     return fieldInfo
   }
 
@@ -102,7 +100,9 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
 
   function calculateDependValue(data, fieldValuePath, dependValuePath) {
     fieldValuePath = fieldValuePath ?? ''
-    const domainPath = fieldValuePath.substring(0, fieldValuePath.lastIndexOf('.'))
+    const pathLastIndex =
+      fieldValuePath.lastIndexOf('.') === -1 ? fieldValuePath.length : fieldValuePath.lastIndexOf('.')
+    const domainPath = fieldValuePath.substring(0, pathLastIndex)
     const domain = domainPath === '' ? data : _.get(data, domainPath, undefined)
     if (!domain) {
       return
