@@ -7,6 +7,7 @@
             <el-tree
               :data="rootOrganizationChildren(projectCode)"
               :props="defaultProps"
+              :highlight-current="true"
               @node-click="handleNodeClick"
             ></el-tree>
           </el-card>
