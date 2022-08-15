@@ -6,7 +6,6 @@ import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
 function handleRequestDependChange(data, fieldInfo) {
-  console.log('~~~~~')
   if (fieldInfo.disabled || this.formConf.disabled) {
     return
   }
@@ -123,28 +122,35 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   }
 
   const isMultipleShow = this.iconFlag && !this.formConf.disabled
-  const multipleButtons = isMultipleShow ? (
-    <div>
-      <i onClick={() => onCopy(index)} class="copy el-icon-circle-plus-outline"></i>
-      <i onClick={() => onDelete(index)} class="del el-icon-remove-outline"></i>
-    </div>
-  ) : (
-    ''
-  )
   const multipleRows = _.get(this.form, valuePath, [])
 
-  return multipleRows.map((value, index) => {
+  const multipleRowElements = multipleRows.map((value, index) => {
     return (
-      <el-row
-        class={fieldInfo.isCopy ? 'rows' : ''}
-        nativeOnMousemove={fieldInfo.isCopy ? this.move : () => {}}
-        nativeOnMouseleave={fieldInfo.isCopy ? this.leave : () => {}}
-      >
-        {multipleButtons}
-        <div>{buildColumnContainer.call(this, h, fieldInfo, `${valuePath}[${index}]`, usefulMeta)}</div>
-      </el-row>
+      <el-card>
+        <div slot="header" class="clearfix">
+          <el-button
+            style="float: right; padding: 3px 0"
+            icon="el-icon-delete"
+            type="text"
+            onClick={() => onDelete(index)}
+            disabled={!isMultipleShow}
+          ></el-button>
+          <el-button
+            style="float: right; padding: 3px 0"
+            icon="el-icon-plus"
+            type="text"
+            onClick={() => onCopy(index)}
+            disabled={!isMultipleShow}
+          ></el-button>
+        </div>
+        <el-row>
+          <div>{buildColumnContainer.call(this, h, fieldInfo, `${valuePath}[${index}]`, usefulMeta)}</div>
+        </el-row>
+      </el-card>
     )
   })
+
+  return <div>{multipleRowElements}</div>
 }
 
 function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
@@ -210,6 +216,18 @@ export default {
       flatFields: [],
     }
   },
+  watch: {
+    itemList(itemList) {
+      this.metaDataList = _.cloneDeep(itemList)
+      if (this.formData) {
+        this.form = _.cloneDeep(this.formData)
+      } else {
+        this.form = this.metaDataList.reduce(buildModel, {})
+      }
+      this.flatFields = []
+      this.usefulMeta = {}
+    },
+  },
   async created() {
     this.context = await this.getContext()
   },
@@ -219,9 +237,6 @@ export default {
       formFields: 'flatFields',
     }),
   ],
-  beforeUpdate() {
-    // this.usefulMeta = {}
-  },
   render(h) {
     return (
       <el-form
@@ -253,12 +268,6 @@ export default {
           this.deleteEmptyChildren(arrElement.children)
         }
       }
-    },
-    move() {
-      this.iconFlag = true
-    },
-    leave() {
-      this.iconFlag = false
     },
     async submit() {
       this.itemList.forEach((metaData) => {
@@ -316,5 +325,14 @@ export default {
   font-size: 30px !important;
   color: #409eff;
   margin-left: 10px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: '';
+}
+.clearfix:after {
+  clear: both;
 }
 </style>

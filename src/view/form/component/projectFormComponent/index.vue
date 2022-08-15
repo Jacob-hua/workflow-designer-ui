@@ -178,9 +178,6 @@ export default {
       },
     };
   },
-  mounted() {
-    console.log(this.title);
-  },
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
   },
