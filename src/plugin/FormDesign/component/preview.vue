@@ -123,28 +123,35 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   }
 
   const isMultipleShow = this.iconFlag && !this.formConf.disabled
-  const multipleButtons = isMultipleShow ? (
-    <div>
-      <i onClick={() => onCopy(index)} class="copy el-icon-circle-plus-outline"></i>
-      <i onClick={() => onDelete(index)} class="del el-icon-remove-outline"></i>
-    </div>
-  ) : (
-    ''
-  )
   const multipleRows = _.get(this.form, valuePath, [])
 
-  return multipleRows.map((value, index) => {
+  const multipleRowElements = multipleRows.map((value, index) => {
     return (
-      <el-row
-        class={fieldInfo.isCopy ? 'rows' : ''}
-        nativeOnMousemove={fieldInfo.isCopy ? this.move : () => {}}
-        nativeOnMouseleave={fieldInfo.isCopy ? this.leave : () => {}}
-      >
-        {multipleButtons}
-        <div>{buildColumnContainer.call(this, h, fieldInfo, `${valuePath}[${index}]`, usefulMeta)}</div>
-      </el-row>
+      <el-card>
+        <div slot="header" class="clearfix">
+          <el-button
+            style="float: right; padding: 3px 0"
+            icon="el-icon-delete"
+            type="text"
+            onClick={() => onDelete(index)}
+            disabled={isMultipleShow}
+          ></el-button>
+          <el-button
+            style="float: right; padding: 3px 0"
+            icon="el-icon-plus"
+            type="text"
+            onClick={() => onCopy(index)}
+            disabled={isMultipleShow}
+          ></el-button>
+        </div>
+        <el-row>
+          <div>{buildColumnContainer.call(this, h, fieldInfo, `${valuePath}[${index}]`, usefulMeta)}</div>
+        </el-row>
+      </el-card>
     )
   })
+
+  return <div>{multipleRowElements}</div>
 }
 
 function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
@@ -254,12 +261,6 @@ export default {
         }
       }
     },
-    move() {
-      this.iconFlag = true
-    },
-    leave() {
-      this.iconFlag = false
-    },
     async submit() {
       this.itemList.forEach((metaData) => {
         Object.keys(this.form).forEach((form) => {
@@ -316,5 +317,14 @@ export default {
   font-size: 30px !important;
   color: #409eff;
   margin-left: 10px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: '';
+}
+.clearfix:after {
+  clear: both;
 }
 </style>
