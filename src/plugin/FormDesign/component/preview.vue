@@ -6,6 +6,7 @@ import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
 function handleRequestDependChange(data, fieldInfo) {
+  console.log('~~~~~')
   if (fieldInfo.disabled || this.formConf.disabled) {
     return
   }
@@ -91,6 +92,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     !usefulMeta[_valuePath] && (usefulMeta[_valuePath] = _.cloneDeep(metaData))
     this.flatFields = Object.values(usefulMeta ?? {})
     fieldInfo = usefulMeta[_valuePath]
+    fieldInfo.context = this.context
     fieldInfo.valuePath = _valuePath
     mixinDependFunction(fieldInfo, handleRowContainerDependChange.bind(this))
   }
@@ -155,6 +157,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   !usefulMeta[valuePath] && (usefulMeta[valuePath] = _.cloneDeep(metaData))
   this.flatFields = Object.values(usefulMeta ?? {})
   const fieldInfo = usefulMeta[valuePath]
+  fieldInfo.context = this.context
   fieldInfo.valuePath = valuePath
   const rules = checkRules(fieldInfo)
   if (fieldInfo.dependValue) {
@@ -207,10 +210,8 @@ export default {
       flatFields: [],
     }
   },
-  mounted() {
-    this.getContext().then((context) => {
-      this.context = context
-    })
+  async created() {
+    this.context = await this.getContext()
   },
   mixins: [
     formDepMonitorMixin({
