@@ -18,7 +18,7 @@ function handleRequestDependChange(data, fieldInfo) {
     data,
   }).then(({ result: options }) => {
     if (fieldInfo.compType === "cascader") {
-      this.delEmptyChildren(options.result);
+      this.deleteEmptyChildren(options.result);
       fieldInfo.options = options.result;
     } else {
       fieldInfo.options = options;
@@ -267,7 +267,7 @@ export default {
     );
   },
   methods: {
-    delEmptyChildren(arr) {
+    deleteEmptyChildren(arr) {
       for (let i = 0; i < arr.length; i++) {
         const arrElement = arr[i];
         if (!arrElement.children.length) {
