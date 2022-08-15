@@ -121,7 +121,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     _.get(this.form, `${valuePath}`, []).splice(index, 1)
   }
 
-  const isMultipleShow = this.iconFlag && !this.formConf.disabled
+  const isMultipleShow = !this.formConf.disabled
   const multipleRows = _.get(this.form, valuePath, [])
 
   const multipleRowElements = multipleRows.map((value, index) => {
@@ -211,7 +211,6 @@ export default {
       usefulMeta: {},
       metaDataList,
       rules: {},
-      iconFlag: false,
       context: {},
       flatFields: [],
     }
