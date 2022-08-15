@@ -157,12 +157,6 @@
                         trigger: ['blur', 'change'],
                         message: '请填写请求头',
                       },
-                      {
-                        min: 1,
-                        max: 100,
-                        message: '长度在 1 到 100 个字符',
-                        trigger: 'blur',
-                      },
                     ]"
                   >
                     <el-input v-model="item.headers"></el-input>
