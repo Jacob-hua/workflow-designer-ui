@@ -101,7 +101,6 @@ async function vModel(self, dataObject) {
 }
 
 export default {
-  // inject: ['quoteOption'],
   render(h) {
     let dataObject = {
       attrs: {},
