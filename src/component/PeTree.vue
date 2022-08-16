@@ -3,13 +3,13 @@
     <el-tree
       :data="data"
       class="tree"
-      node-key="groupId"
+      node-key="nodeKey"
       :indent="0"
       @node-click="nodeClick"
       :current-node-key="currentNodeKey"
     >
       <div class="custom-tree-node" slot-scope="{ data }">
-        <span class="pe-tree-label">{{ data.groupName }}</span>
+        <span class="pe-tree-label">{{ data[labelName] }}</span>
       </div>
     </el-tree>
   </div>
@@ -18,6 +18,14 @@
 <script>
 export default {
   props: {
+    nodeKey: {
+      type: String,
+      default: 'groupId'
+    },
+    labelName: {
+      type: String,
+      default: 'groupName'
+    },
     data: {
       type: Array,
       default: () => {

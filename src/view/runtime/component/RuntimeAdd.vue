@@ -4,12 +4,16 @@
       <div class="content-wrapper">
         <div>
           <el-card header="项目选择">
-            <el-tree
-              class="tree"
+            <!-- <el-tree
               :data="rootOrganizationChildren(projectCode)"
               :props="defaultProps"
               @node-click="handleNodeClick"
-            ></el-tree>
+            ></el-tree> -->
+            <PeTree nodeKey="id" labelName="label"  
+              :data="rootOrganizationChildren(projectCode)" 
+              :currentNodeKey="currentNodeKey"
+              @nodeClick="handleNodeClick"
+            ></PeTree>
           </el-card>
         </div>
         <div v-if="processList && processList.length !== 0">
@@ -61,6 +65,7 @@
 import { getProcessDefinitionList } from '@/api/unit/api.js'
 import { mapState, mapGetters } from 'vuex'
 import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
+import PeTree from '@/component/PeTree.vue'
 
 export default {
   name: 'RuntimeAdd',
@@ -141,6 +146,9 @@ export default {
       this.createTicketVisible = true
     },
   },
+  components: {
+      PeTree,
+    },
 }
 </script>
 
@@ -222,6 +230,4 @@ export default {
   text-align: right;
   margin-right: 20px;
 }
-
-  @include tree;
 </style>
