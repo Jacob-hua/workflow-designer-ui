@@ -215,26 +215,29 @@ export default {
       this.$refs.guide.dialogVisible = true;
     },
     showAddDialog(form) {
-      this.$refs.BusinessCon.dialogVisible = true;
-      this.$refs.BusinessCon.editFlag = true;
-      this.$refs.BusinessCon.btnTxt = "预览";
-      this.$refs.BusinessCon.data = [
-        {
-          code: form.code,
-          name: "",
-          type: form.type,
-          parentId: -1,
-          createBy: this.userInfo.account,
-          tenantId: this.tenantId,
-          ascription: form.code,
-        },
-      ];
-      this.$refs.BusinessCon.data[0].name = form.name;
-      this.$refs.BusinessCon.forms = form;
-      this.$refs.BusinessCon.businessConfigWithTreeCreate(
-        this.$refs.BusinessCon.data[0]
-      );
-      this.showBtn = true;
+      this.businessFlag = true;
+      this.$nextTick(() => {
+        this.$refs.BusinessCon.dialogVisible = true;
+        this.$refs.BusinessCon.editFlag = true;
+        this.$refs.BusinessCon.btnTxt = "预览";
+        this.$refs.BusinessCon.data = [
+          {
+            code: form.code,
+            name: "",
+            type: form.type,
+            parentId: -1,
+            createBy: this.userInfo.account,
+            tenantId: this.tenantId,
+            ascription: form.code,
+          },
+        ];
+        this.$refs.BusinessCon.data[0].name = form.name;
+        this.$refs.BusinessCon.forms = form;
+        this.$refs.BusinessCon.businessConfigWithTreeCreate(
+          this.$refs.BusinessCon.data[0]
+        );
+        this.showBtn = true;
+      });
     },
     showGuide() {
       this.$refs.guide.dialogVisible = true;
