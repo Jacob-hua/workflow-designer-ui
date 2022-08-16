@@ -1,14 +1,9 @@
 <template>
   <div>
-    <el-dialog title="新建执行" top="1vh" fullscreen :visible="dialogVisible" @close="onClose" :close-on-click-modal="false">
+    <el-dialog title="新建工单" top="1vh" fullscreen :visible="dialogVisible" @close="onClose" :close-on-click-modal="false">
       <div class="content-wrapper">
         <div>
-          <el-card header="项目选择">
-            <!-- <el-tree
-              :data="rootOrganizationChildren(projectCode)"
-              :props="defaultProps"
-              @node-click="handleNodeClick"
-            ></el-tree> -->
+          <el-card header="业务选择">
             <PeTree nodeKey="id" labelName="label"  
               :data="rootOrganizationChildren(projectCode)" 
               :currentNodeKey="currentNodeKey"
