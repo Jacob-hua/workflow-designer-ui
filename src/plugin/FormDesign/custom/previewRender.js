@@ -1,7 +1,21 @@
 import { isAttr, jsonClone } from "../utils";
 import childrenItem from "./slot/index";
 
+function base64toBlob(code) {
+  let parts = code.split(";base64,");
+  let contentType = parts[0].split(":")[1];
+  let raw = window.atob(parts[1]);
+  let rawL = raw.length;
+  let uint8arry = new Uint8Array(rawL);
+  for (let i = 0; i < uint8arry.length; i++) {
+    let uint8arryElement = uint8arry[i];
+    uint8arryElement = raw.charCodeAt(i);
+  }
+  return uint8arry;
+}
+
 function downloadFile(fileName, fileType, content, charset = "utf-8") {
+  debugger;
   if (!document || !document instanceof Document) {
     throw new Error("This is not a browser environment");
   }
@@ -24,36 +38,39 @@ async function vModel(self, dataObject) {
   if (self.conf.compType === "upload") {
     if (self.value.length) {
       if (self.conf.value[0].type.includes("image")) {
-        const result = await Promise.resolve(
-          self.downloadFun({ url: self.value[0].url })
+        self.attachmentList[0].attachmentList.forEach(
+          ({ pictureData }, index) => {
+            self.conf.value[index].url = `data:image/png;base64,${pictureData}`;
+          }
         );
-        const blob = new Blob([result], {
-          type: `${self.value[0].type};charset=utf-8`,
-        });
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(blob);
-        self.conf.value[0].url = fileReader.result;
       }
       dataObject.attrs["file-list"] = self.conf.value;
     }
     dataObject.attrs["auto-upload"] = false; // 文件手动上传
     dataObject.attrs["on-preview"] = async (file) => {
-      if (self.downloadFun) {
-        const result = await Promise.resolve(self.downloadFun(file));
-        if (!result) {
-          return;
+      if (self.conf.value[0].type.includes("image")) {
+        downloadFile(file.name, file.type, base64toBlob(file.url));
+      } else {
+        if (self.downloadFun) {
+          const result = await Promise.resolve(self.downloadFun(file));
+          if (!result) {
+            return;
+          }
+          console.log(result);
+          downloadFile(file.name, file.type, result);
         }
-        console.log(result);
-        downloadFile(file.name, file.type, result);
       }
     };
     dataObject.attrs["on-remove"] = async (file, fileList) => {
-      self.conf.value.splice(
-        self.conf.value.findIndex((item) => item.uid === file.uid),
+      console.log(file, fileList);
+      self.value.splice(
+        self.value.findIndex((item) => item.uid === file.uid),
         1
       );
     };
+
     dataObject.attrs["on-change"] = async (file, fileList) => {
+      console.log(file, fileList);
       // 文件变换 钩子
       self.conf["fileList"] = fileList;
       if (self.uploadFun) {
@@ -122,5 +139,6 @@ export default {
     "getFileList",
     "uploadFun",
     "downloadFun",
+    "attachmentList",
   ],
 };
