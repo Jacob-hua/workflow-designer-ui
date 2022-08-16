@@ -9,15 +9,17 @@ import render from "../custom/previewRender";
 import checkRules from "../custom/rule";
 
 function handleRequestDependChange(data, fieldInfo) {
-  if (fieldInfo.disabled || this.formConf.disabled) {
-    return;
-  }
   executeApi({
     apiMark: fieldInfo.requestConfig.apiMark,
     sourceMark: fieldInfo.requestConfig.sourceMark,
     data,
   }).then(({ result: options }) => {
-    fieldInfo.options = options;
+    if (fieldInfo.compType === "cascader") {
+      this.deleteEmptyChildren(options.result);
+      fieldInfo.options = options.result;
+    } else {
+      fieldInfo.options = options;
+    }
   });
 }
 
@@ -93,6 +95,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     !usefulMeta[_valuePath] && (usefulMeta[_valuePath] = _.cloneDeep(metaData));
     this.flatFields = Object.values(usefulMeta ?? {});
     fieldInfo = usefulMeta[_valuePath];
+    fieldInfo.context = this.context;
     fieldInfo.valuePath = _valuePath;
     mixinDependFunction(fieldInfo, handleRowContainerDependChange.bind(this));
   }
@@ -129,38 +132,44 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     _.get(this.form, `${valuePath}`, []).splice(index, 1);
   };
 
-  const isMultipleShow = this.iconFlag;
+  const multipleDisabled = this.formConf.disabled || fieldInfo.disabled;
   const multipleRows = _.get(this.form, valuePath, []);
 
-  return multipleRows.map((value, index) => {
+  const multipleRowElements = multipleRows.map((value, index) => {
     return (
-      <el-row
-        class={fieldInfo.isCopy ? "rows" : ""}
-        nativeOnMousemove={fieldInfo.isCopy ? this.move : () => {}}
-        nativeOnMouseleave={fieldInfo.isCopy ? this.leave : () => {}}
-      >
-        <div>
-          <i
-            v-show={isMultipleShow}
-            onClick={() => onCopy(index)}
-            class="copy el-icon-circle-plus-outline"
-          ></i>
-          <i
-            v-show={isMultipleShow}
+      <el-card>
+        <div slot="header" class="clearfix">
+          <el-button
+            style="float: right; padding: 3px 0"
+            icon="el-icon-delete"
+            type="text"
             onClick={() => onDelete(index)}
-            class="del el-icon-remove-outline"
-          ></i>
-          {buildColumnContainer.call(
-            this,
-            h,
-            fieldInfo,
-            `${valuePath}[${index}]`,
-            usefulMeta
-          )}
+            disabled={multipleDisabled}
+          ></el-button>
+          <el-button
+            style="float: right; padding: 3px 0"
+            icon="el-icon-plus"
+            type="text"
+            onClick={() => onCopy(index)}
+            disabled={multipleDisabled}
+          ></el-button>
         </div>
-      </el-row>
+        <el-row>
+          <div>
+            {buildColumnContainer.call(
+              this,
+              h,
+              fieldInfo,
+              `${valuePath}[${index}]`,
+              usefulMeta
+            )}
+          </div>
+        </el-row>
+      </el-card>
     );
   });
+
+  return <div>{multipleRowElements}</div>;
 }
 
 function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
@@ -173,9 +182,10 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   !usefulMeta[valuePath] && (usefulMeta[valuePath] = _.cloneDeep(metaData));
   this.flatFields = Object.values(usefulMeta ?? {});
   const fieldInfo = usefulMeta[valuePath];
+  fieldInfo.context = this.context;
   fieldInfo.valuePath = valuePath;
   const rules = checkRules(fieldInfo);
-  if (fieldInfo.dependValue) {
+  if (fieldInfo.dependValue && !fieldInfo.disabled && !this.formConf.disabled) {
     mixinDependFunction(fieldInfo, handleDependChange.bind(this));
   }
   if (fieldInfo.requestConfig) {
@@ -195,6 +205,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
         value={_.get(this.form, fieldInfo.valuePath)}
         uploadFun={this.uploadFun}
         downloadFun={this.downloadFun}
+        attachmentList={this.attachmentList}
         onInput={(event) => {
           _.set(this.form, fieldInfo.valuePath, event);
         }}
@@ -207,29 +218,45 @@ export default {
   name: "preview",
   props: [
     "itemList",
+    "formData",
     "formConf",
     "uploadFun",
     "downloadFun",
     "processInstanceId",
+    "attachmentList",
   ],
   components: { render },
   data() {
     const metaDataList = _.cloneDeep(this.itemList);
-    const form = metaDataList.reduce(buildModel, {});
+    let form = {};
+    if (this.formData) {
+      form = _.cloneDeep(this.formData);
+    } else {
+      form = metaDataList.reduce(buildModel, {});
+    }
     return {
       form,
       usefulMeta: {},
       metaDataList,
       rules: {},
-      iconFlag: false,
       context: {},
       flatFields: [],
     };
   },
-  mounted() {
-    this.getContext().then((context) => {
-      this.context = context;
-    });
+  watch: {
+    itemList(itemList) {
+      this.metaDataList = _.cloneDeep(itemList);
+      if (this.formData) {
+        this.form = _.cloneDeep(this.formData);
+      } else {
+        this.form = this.metaDataList.reduce(buildModel, {});
+      }
+      this.flatFields = [];
+      this.usefulMeta = {};
+    },
+  },
+  async created() {
+    this.context = await this.getContext();
   },
   mixins: [
     formDepMonitorMixin({
@@ -237,9 +264,6 @@ export default {
       formFields: "flatFields",
     }),
   ],
-  beforeUpdate() {
-    // this.usefulMeta = {}
-  },
   render(h) {
     return (
       <el-form
@@ -262,11 +286,17 @@ export default {
     );
   },
   methods: {
-    move() {
-      this.iconFlag = true;
-    },
-    leave() {
-      this.iconFlag = false;
+    deleteEmptyChildren(arr) {
+      for (let i = 0; i < arr.length; i++) {
+        const arrElement = arr[i];
+        if (!arrElement.children.length) {
+          delete arrElement.children;
+          continue;
+        }
+        if (arrElement.children) {
+          this.deleteEmptyChildren(arrElement.children);
+        }
+      }
     },
     async submit() {
       this.itemList.forEach((metaData) => {
@@ -324,5 +354,14 @@ export default {
   font-size: 30px !important;
   color: #409eff;
   margin-left: 10px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
 }
 </style>

@@ -166,8 +166,12 @@ export default {
       this.dialogVisible = false;
       // this.clearRedisBusinessConfigCode(this.data, true);
       this.$parent.getBusinessConfigBasicList();
+      this.$parent.businessFlag = false;
     },
     handleClose() {
+      this.dialogVisible = false;
+      // this.clearRedisBusinessConfigCode(this.data, true);
+      this.$parent.businessFlag = false;
       // this.clearRedisBusinessConfigCode(this.data, true);
       this.$parent.getBusinessConfigBasicList();
     },

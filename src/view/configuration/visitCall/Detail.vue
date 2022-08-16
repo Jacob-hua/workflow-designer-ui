@@ -6,15 +6,22 @@
     fullscreen
     top="1vh"
     append-to-body
+    @close="visitColse"
   >
     <el-form ref="form" label-width="80px">
       <div class="top">
         <el-form-item label="资源名称">
-          <el-input disabled v-model="currentRow[0].source"></el-input>
+          <el-input
+            disabled
+            v-model="currentRow[0] && currentRow[0].source"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="资源标识">
-          <el-input disabled v-model="currentRow[0].sourceMark"></el-input>
+          <el-input
+            disabled
+            v-model="currentRow[0] && currentRow[0].sourceMark"
+          ></el-input>
         </el-form-item>
         <div>
           <el-button
@@ -154,19 +161,44 @@ export default {
     };
   },
   methods: {
+    visitColse() {
+      this.$parent.GetGlobalList();
+    },
     handleClick(e) {
       this.editableTabsValue = e.index;
       this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
       console.log(this.currentPars);
     },
     deleteApis() {
-      let currentApi = this.currentRow[this.editableTabsValue];
-      deleteApi(currentApi.id).then((res) => {
-        this.currentRow.splice(+this.editableTabsValue, 1);
-        this.editableTabsValue = "0";
-        this.$message({
-          type: "success",
-          message: "删除成功",
+      this.$confirm("此操作将删除当前选中api,是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        beforeClose: (action, instance, done) => {
+          // 取消回车确认事件
+          if (action === "confirm") {
+            (instance.$refs["confirm"].$el.onclick = function (e) {
+              e = e || window.event;
+              if (e.detail !== 0) {
+                done();
+              }
+            })();
+          } else {
+            done();
+          }
+        },
+      }).then(() => {
+        let currentApi = this.currentRow[this.editableTabsValue];
+        deleteApi(currentApi.id).then((res) => {
+          this.currentRow.splice(+this.editableTabsValue, 1);
+          this.editableTabsValue = "0";
+          if (!this.currentRow.length) {
+            this.dialogVisible = false;
+          }
+          this.$message({
+            type: "success",
+            message: "删除成功",
+          });
         });
       });
     },

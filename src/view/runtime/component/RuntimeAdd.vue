@@ -27,7 +27,7 @@
               </div>
               <div class="button-wrapper">
                 <el-button plain @click="createTicket(process)">创建</el-button>
-                <el-button @click="detailsShow(process)">详情</el-button>
+                <!--el-button @click="detailsShow(process)">详情</el-button-->
               </div>
             </div>
           </div>
@@ -81,8 +81,8 @@ export default {
       processList: [],
       energyTree: [],
       getData: {
-        type: 'energy-1',
-        order: 'desc',
+        type: '',
+        order: '',
         page: 1,
         limit: 12,
         total: 1,
@@ -100,7 +100,7 @@ export default {
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   methods: {
-    detailsShow(item) {},
+    //detailsShow(item) {},
     handleNodeClick(data) {
       this.getData.type = data.value
       this.getProcessList()

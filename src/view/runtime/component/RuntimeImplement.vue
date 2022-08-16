@@ -343,6 +343,7 @@ export default {
       if (this.formShow) {
         const { formData, metaDataList } = await this.$refs.preview.submit()
         this.formContant.list = [...metaDataList]
+        this.formContant.data = formData
         this.completeTask(this.formContant, formData)
         return
       }
@@ -446,7 +447,10 @@ export default {
           return
         }
         result.curTrack = this.getCurTrack(result)
-        this.workflow = { ...result, newTaskId: this.calculateNewTaskId(result, this.userInfo.account) }
+        this.workflow = {
+          ...result,
+          newTaskId: this.calculateNewTaskId(result, this.userInfo.account),
+        }
       } catch (error) {}
     },
     getCurTrack(workflow) {

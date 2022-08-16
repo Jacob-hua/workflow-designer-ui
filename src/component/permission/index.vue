@@ -1,6 +1,6 @@
 <template>
   <div class="permission">
-    您没有权限访问
+    您没有权限访问,请联系管理员!
   </div>
 </template>
 
@@ -13,6 +13,7 @@
     width: 100%;
     top: 50%;
     text-align: center;
+    color: white;
     font-size: 30px;
   }
 </style>

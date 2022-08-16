@@ -157,12 +157,6 @@
                         trigger: ['blur', 'change'],
                         message: '请填写请求头',
                       },
-                      {
-                        min: 1,
-                        max: 100,
-                        message: '长度在 1 到 100 个字符',
-                        trigger: 'blur',
-                      },
                     ]"
                   >
                     <el-input v-model="item.headers"></el-input>
@@ -237,15 +231,6 @@
       </div>
 
       <div slot="footer" class="dialog-footer">
-        <!--        <div-->
-        <!--          class="next"-->
-        <!--          @click="-->
-        <!--            dialogVisible = false;-->
-        <!--            $emit('showAddOrEidtDailog', '', 'pre');-->
-        <!--          "-->
-        <!--        >-->
-        <!--          上一步-->
-        <!--        </div>-->
         <div class="next" @click="saveOrEdite">保存</div>
         <div class="cancel" @click="dialogVisible = false">取 消</div>
       </div>
@@ -273,7 +258,6 @@
     </el-dialog>
   </div>
 </template>
-
 <script>
 import {
   apiTypeList,
@@ -576,7 +560,7 @@ export default {
   margin-right: 20px;
 }
 .el-select {
-  width: 215px;
+  width: 203px;
 }
 /deep/ .jv-container.jv-light .jv-item.jv-array {
   color: #fff;

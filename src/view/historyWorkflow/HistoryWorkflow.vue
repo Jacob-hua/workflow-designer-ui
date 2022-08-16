@@ -188,9 +188,13 @@ export default {
     ...mapActions('config', ['dispatchRefreshOrganization']),
     onPageSizeChange(val) {
       this.pageInfo.limit = val
+      this.fetchHistoryTasks(this.pageInfo)
+      this.fetchHistoryStatistic()
     },
     onPageChange(val) {
       this.pageInfo.page = val
+      this.fetchHistoryTasks(this.pageInfo)
+      this.fetchHistoryStatistic()
     },
     onClickDetail(row) {
       this.lookoverVisible = true
