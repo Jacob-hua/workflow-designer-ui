@@ -3,7 +3,9 @@
     <el-dialog title="新建执行" top="1vh" fullscreen :visible="dialogVisible" @close="onClose" :close-on-click-modal="false">
       <div class="content-wrapper">
         <div>
-          <el-card header="项目选择">
+          <el-card header="项目选择" 
+          :row-key="(row)=>{ return row.classId}"
+          :reserve-selection="true">
             <el-tree
               :data="rootOrganizationChildren(projectCode)"
               :props="defaultProps"
