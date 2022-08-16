@@ -5,6 +5,7 @@
         <div>
           <el-card header="项目选择" >
             <el-tree
+              class="tree"
               :data="rootOrganizationChildren(projectCode)"
               :props="defaultProps"
               @node-click="handleNodeClick"
@@ -58,6 +59,7 @@
 
 <script>
 import { getProcessDefinitionList } from '@/api/unit/api.js'
+import { Tree } from 'element-ui'
 import { mapState, mapGetters } from 'vuex'
 import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
 
@@ -221,4 +223,6 @@ export default {
   text-align: right;
   margin-right: 20px;
 }
+
+  @include tree;
 </style>
