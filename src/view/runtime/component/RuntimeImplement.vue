@@ -363,7 +363,6 @@ export default {
       }
     },
     async onExecute() {
-      debugger;
       if (this.formShow) {
         const { formData, metaDataList } = await this.$refs.preview.submit();
         this.formContant.list = [...metaDataList];
