@@ -6,9 +6,6 @@ import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
 function handleRequestDependChange(data, fieldInfo) {
-  if (fieldInfo.disabled || this.formConf.disabled) {
-    return
-  }
   executeApi({
     apiMark: fieldInfo.requestConfig.apiMark,
     sourceMark: fieldInfo.requestConfig.sourceMark,
@@ -121,7 +118,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     _.get(this.form, `${valuePath}`, []).splice(index, 1)
   }
 
-  const isMultipleShow = this.iconFlag && !this.formConf.disabled
+  const multipleDisabled = this.formConf.disabled || fieldInfo.disabled
   const multipleRows = _.get(this.form, valuePath, [])
 
   const multipleRowElements = multipleRows.map((value, index) => {
@@ -133,14 +130,14 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
             icon="el-icon-delete"
             type="text"
             onClick={() => onDelete(index)}
-            disabled={!isMultipleShow}
+            disabled={multipleDisabled}
           ></el-button>
           <el-button
             style="float: right; padding: 3px 0"
             icon="el-icon-plus"
             type="text"
             onClick={() => onCopy(index)}
-            disabled={!isMultipleShow}
+            disabled={multipleDisabled}
           ></el-button>
         </div>
         <el-row>
@@ -166,7 +163,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   fieldInfo.context = this.context
   fieldInfo.valuePath = valuePath
   const rules = checkRules(fieldInfo)
-  if (fieldInfo.dependValue) {
+  if (fieldInfo.dependValue && !fieldInfo.disabled && !this.formConf.disabled) {
     mixinDependFunction(fieldInfo, handleDependChange.bind(this))
   }
   if (fieldInfo.requestConfig) {
@@ -211,7 +208,6 @@ export default {
       usefulMeta: {},
       metaDataList,
       rules: {},
-      iconFlag: false,
       context: {},
       flatFields: [],
     }
