@@ -7,7 +7,7 @@
             <el-tree
               :data="rootOrganizationChildren(projectCode)"
               :props="defaultProps"
-              @node-click="handleNodeClick"
+              @node-click="handleNodeClick" 
             ></el-tree>
           </el-card>
         </div>
@@ -32,7 +32,7 @@
               </div>
             </div>
           </div>
-          <el-pagination
+          <el-pagination  n
             @size-change="onSizeChange"
             @current-change="onCurrentChange"
             :current-page.sync="getData.page"
@@ -177,6 +177,7 @@ export default {
 
 .process {
   width: 370px;
+  height: 229px;
   background-color: $card-bg-color-1;
   display: flex;
   flex-direction: column;

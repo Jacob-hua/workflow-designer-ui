@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="title" :visible="visible" top="5vh" @close="onCloseModal" :close-on-click-modal="false">
+    <el-dialog :title="title" :visible="visible" top="5vh" @close="onCloseModal" >
       <el-skeleton v-if="isLoading" />
       <div v-else>
         <el-form :model="startForm" ref="startForm" label-position="right" label-width="150px">
