@@ -9,7 +9,7 @@
   >
     <span>
       <el-form ref="form" :rules="rules" :model="form" label-width="80px">
-        <el-form-item prop="source" label="资源名称">
+        <el-form-item prop="source" label="资源类型">
           <el-input v-model="form.source"></el-input>
         </el-form-item>
         <el-form-item prop="sourceMark" label="资源标识">
@@ -53,7 +53,6 @@ export default {
   },
   methods: {
     next() {
-      console.log(this.$parent.tableData);
       let flag = this.$parent.tableData.some(
         ({ source, sourceMark }) =>
           this.form.sourceMark === sourceMark || source === this.form.source
