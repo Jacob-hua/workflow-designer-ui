@@ -57,10 +57,10 @@
     </div>
     <div class="home-table-page">
       <el-pagination
-        @size-change.sync="GetGlobalList"
-        @current-change.sync="GetGlobalList"
-        :current-page="pageInfo.page"
-        :page-size="pageInfo.limit"
+        @size-change="GetGlobalList"
+        @current-change="GetGlobalList"
+        :current-page.sync="pageInfo.page"
+        :page-size.sync="pageInfo.limit"
         layout="prev, pager, next, jumper"
         :total="pageInfo.total"
       >
