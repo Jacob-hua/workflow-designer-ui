@@ -13,7 +13,7 @@
         </el-table-column>
         <el-table-column
           prop="sourceMark"
-          label="资源标识"
+          label="资源类型"
           width="180"
           align="center"
         >
