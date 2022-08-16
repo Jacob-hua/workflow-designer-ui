@@ -6,7 +6,6 @@
           <el-card header="业务选择">
             <PeTree nodeKey="id" labelName="label"  
               :data="rootOrganizationChildren(projectCode)" 
-              :currentNodeKey="currentNodeKey"
               @nodeClick="handleNodeClick"
             ></PeTree>
           </el-card>
