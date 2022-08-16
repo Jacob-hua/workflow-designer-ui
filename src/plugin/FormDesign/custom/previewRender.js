@@ -1,21 +1,16 @@
 import { isAttr, jsonClone } from "../utils";
 import childrenItem from "./slot/index";
 
-function base64toBlob(code) {
-  let parts = code.split(";base64,");
-  let contentType = parts[0].split(":")[1];
-  let raw = window.atob(parts[1]);
-  let rawL = raw.length;
-  let uint8arry = new Uint8Array(rawL);
-  for (let i = 0; i < uint8arry.length; i++) {
-    let uint8arryElement = uint8arry[i];
-    uint8arryElement = raw.charCodeAt(i);
+function dataURLBlob(base64Str) {
+  let bstr = base64Str,
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
   }
-  return uint8arry;
+  return u8arr;
 }
-
 function downloadFile(fileName, fileType, content, charset = "utf-8") {
-  debugger;
   if (!document || !document instanceof Document) {
     throw new Error("This is not a browser environment");
   }
@@ -49,14 +44,17 @@ async function vModel(self, dataObject) {
     dataObject.attrs["auto-upload"] = false; // 文件手动上传
     dataObject.attrs["on-preview"] = async (file) => {
       if (self.conf.value[0].type.includes("image")) {
-        downloadFile(file.name, file.type, base64toBlob(file.url));
+        const imgUrl = file.url;
+        const a = document.createElement("a");
+        a.href = imgUrl;
+        a.setAttribute("download", file.name);
+        a.click();
       } else {
         if (self.downloadFun) {
           const result = await Promise.resolve(self.downloadFun(file));
           if (!result) {
             return;
           }
-          console.log(result);
           downloadFile(file.name, file.type, result);
         }
       }
