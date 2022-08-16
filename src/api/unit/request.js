@@ -37,6 +37,13 @@ service.interceptors.response.use(
     return new Promise((resolve, reject) => {
       const status = response.status
       const res = response.data
+      if (res.errorInfo && res.errorInfo.errorCode) {
+        Message({
+          type: 'error',
+          message: res.errorInfo.errorMsg,
+        })
+        reject(res)
+      }
       if (status === 200) {
         resolve(res)
       } else {

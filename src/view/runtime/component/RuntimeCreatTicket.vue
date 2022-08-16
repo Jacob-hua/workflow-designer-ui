@@ -192,6 +192,7 @@ export default {
         const { errorInfo, result } = await selectProcessStartConfigByCode({
           businessConfigCode,
           tenantId: this.tenantId,
+          ascription: this.process.ascription,
         })
         if (errorInfo.errorCode) {
           return []

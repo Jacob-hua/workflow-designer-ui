@@ -1,6 +1,13 @@
 <template>
   <div>
-    <el-dialog title="新建执行" top="1vh" fullscreen :visible="dialogVisible" @close="onClose" :close-on-click-modal="false">
+    <el-dialog
+      title="新建执行"
+      top="1vh"
+      fullscreen
+      :visible="dialogVisible"
+      @close="onClose"
+      :close-on-click-modal="false"
+    >
       <div class="content-wrapper">
         <div>
           <el-card header="项目选择">
@@ -82,8 +89,8 @@ export default {
       processList: [],
       energyTree: [],
       getData: {
-        type: 'energy-1',
-        order: 'desc',
+        type: '',
+        order: '',
         page: 1,
         limit: 12,
         total: 1,
