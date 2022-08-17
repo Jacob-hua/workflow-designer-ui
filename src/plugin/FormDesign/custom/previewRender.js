@@ -1,5 +1,6 @@
 import { isAttr, jsonClone } from "../utils";
 import childrenItem from "./slot/index";
+import Ar from "element-ui/src/locale/lang/ar";
 
 function dataURLBlob(base64Str) {
   let bstr = base64Str,
@@ -31,19 +32,23 @@ async function vModel(self, dataObject) {
   };
   //判断是否为上传组件
   if (self.conf.compType === "upload") {
-    if (self.value.length) {
-      if (self.conf.value[0].type.includes("image")) {
-        self.attachmentList[0].attachmentList.forEach(
-          ({ pictureData }, index) => {
-            self.conf.value[index].url = `data:image/png;base64,${pictureData}`;
-          }
-        );
+    if (self.conf["list-type"] === "picture-card") {
+      if (Array.isArray(self.value)) {
+        self.value.forEach(async (file) => {
+          const result = await Promise.resolve(self.downloadFun(file));
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(result);
+          fileReader.onload = (e) => {
+            console.log(e.target.result);
+            file.url = e.target.result;
+          };
+        });
       }
-      dataObject.attrs["file-list"] = self.conf.value;
+      dataObject.attrs["file-list"] = self.value;
     }
     dataObject.attrs["auto-upload"] = false; // 文件手动上传
     dataObject.attrs["on-preview"] = async (file) => {
-      if (self.conf.value[0].type.includes("image")) {
+      if (file.type?.includes("image")) {
         const imgUrl = file.url;
         const a = document.createElement("a");
         a.href = imgUrl;
@@ -68,7 +73,6 @@ async function vModel(self, dataObject) {
     };
 
     dataObject.attrs["on-change"] = async (file, fileList) => {
-      console.log(file, fileList);
       // 文件变换 钩子
       self.conf["fileList"] = fileList;
       if (self.uploadFun) {
@@ -79,7 +83,6 @@ async function vModel(self, dataObject) {
           type: file.raw.type,
         });
       }
-      self.$emit("input", fileList);
     };
     dataObject.attrs["before-upload"] = (file) => {
       //非限定后缀不允许上传
@@ -136,6 +139,5 @@ export default {
     "getFileList",
     "uploadFun",
     "downloadFun",
-    "attachmentList",
   ],
 };
