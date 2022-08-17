@@ -46,8 +46,8 @@ async function vModel(self, dataObject) {
           });
         }
       }
-      dataObject.attrs["file-list"] = self.value;
     }
+    dataObject.attrs["file-list"] = self.value;
     dataObject.attrs["auto-upload"] = false; // 文件手动上传
     dataObject.attrs["on-preview"] = async (file) => {
       if (file.type?.includes("image")) {
