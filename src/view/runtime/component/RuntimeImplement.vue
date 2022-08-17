@@ -448,9 +448,7 @@ export default {
         this.$message.error(errorInfo.errorMsg);
         return;
       }
-      let set = new Set();
-      set.add(result);
-      this.attachmentList = [...set];
+      this.attachmentList = [result, ...this.attachmentList];
       return result;
     },
     async downloadFile({ url }) {
