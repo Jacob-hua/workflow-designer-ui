@@ -47,7 +47,7 @@ export default {
         processInstanceId: this.workflow.processInstanceId,
       }).then((res) => {
         this.$message.success('终止成功')
-        this.$emit('terminateSuccess')
+        this.$emit('terminated')
       })
     },
   },

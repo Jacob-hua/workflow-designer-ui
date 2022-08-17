@@ -143,42 +143,39 @@ export default {
         Hang: {
           label: '挂起',
           value: 'Hang',
-          component: ({ workflow, onAgencyCompleted, onHangSuccess }) => ({
+          component: ({ workflow, onTaskSuccess }) => ({
             name: 'RuntimeImplementHang',
             props: {
               workflow,
             },
             events: {
-              completed: onAgencyCompleted,
-              hangSuccess: onHangSuccess,
+              hang: onTaskSuccess,
             },
           }),
         },
         Reject: {
           label: '驳回',
           value: 'Reject',
-          component: ({ workflow, onAgencyCompleted, onRejectSuccess }) => ({
+          component: ({ workflow, onTaskSuccess }) => ({
             name: 'RuntimeImplementReject',
             props: {
               workflow,
             },
             events: {
-              completed: onAgencyCompleted,
-              rejectSuccess: onRejectSuccess,
+              rejected: onTaskSuccess,
             },
           }),
         },
         Terminate: {
           label: '终止',
           value: 'Terminate',
-          component: ({ workflow, onAgencyCompleted, onRejectSuccess }) => ({
+          component: ({ workflow, onTaskSuccess }) => ({
             name: 'RuntimeImplementTermination',
             props: {
               workflow,
             },
             events: {
-              completed: onAgencyCompleted,
-              terminateSuccess: onRejectSuccess,
+              terminated: onTaskSuccess,
             },
           }),
         },
@@ -237,9 +234,8 @@ export default {
         const component = this.actionsConfig[action].component({
           workflow: this.workflow,
           onAgencyCompleted: this.onAgencyCompleted,
-          onRejectSuccess: this.onRejectSuccess,
           onSelectExecutor: this.onSelectExecutor,
-          onHangSuccess: this.onHangSuccess,
+          onTaskSuccess: this.onTaskSuccess,
         })
         return { ...this.actionsConfig[action], component }
       }
@@ -288,10 +284,7 @@ export default {
     onAgencyCompleted() {
       this.fetchExecuteDetail()
     },
-    onHangSuccess() {
-      this.$emit('taskSuccess')
-    },
-    onRejectSuccess() {
+    onTaskSuccess() {
       this.$emit('taskSuccess')
     },
     onDialogClose() {

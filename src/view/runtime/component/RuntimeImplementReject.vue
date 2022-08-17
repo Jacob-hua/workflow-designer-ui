@@ -63,7 +63,7 @@ export default {
       }).then((res) => {
         this.rejectConfirmationVisible = false
         this.$message.success('驳回成功！')
-        this.$emit('rejectSuccess')
+        this.$emit('rejected')
       })
     },
   },

@@ -54,14 +54,14 @@ export default {
           processInstanceId: this.workflow.processInstanceId,
         }).then((res) => {
           this.$message.success('激活成功')
-          this.$emit('hangSuccess')
+          this.$emit('hang')
         })
       } else {
         putHangInstance({
           processInstanceId: this.workflow.processInstanceId,
         }).then((res) => {
           this.$message.success('挂起成功')
-          this.$emit('hangSuccess')
+          this.$emit('hang')
         })
       }
     },
