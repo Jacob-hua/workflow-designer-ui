@@ -205,7 +205,6 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
         value={_.get(this.form, fieldInfo.valuePath)}
         uploadFun={this.uploadFun}
         downloadFun={this.downloadFun}
-        attachmentList={this.attachmentList}
         onInput={(event) => {
           _.set(this.form, fieldInfo.valuePath, event);
         }}
@@ -223,7 +222,6 @@ export default {
     "uploadFun",
     "downloadFun",
     "processInstanceId",
-    "attachmentList",
   ],
   components: { render },
   data() {

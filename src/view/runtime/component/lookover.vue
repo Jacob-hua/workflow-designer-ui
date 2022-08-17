@@ -25,7 +25,6 @@
                 status,
                 commentList,
                 taskId,
-                attachmentList,
               } in trackList"
               :key="taskId"
             >
@@ -38,7 +37,6 @@
                 >
                   <div v-if="formContent" class="form">
                     <preview
-                      :attachmentList="attachmentList"
                       :itemList="formContent.list"
                       :formData="formContent.data"
                       :formConf="formContent.config"
