@@ -53,6 +53,7 @@
             :uploadFun="uploadFile.bind(this)"
             :downloadFun="downloadFile.bind(this)"
             v-if="formShow"
+            :flag="true"
             ref="preview"
           ></preview>
         </div>
@@ -111,6 +112,7 @@ export default {
   },
   data() {
     return {
+      attachmentList: [],
       workflow: {},
       formContant: {},
       formShow: false,
@@ -386,6 +388,7 @@ export default {
         nextAssignee: this.workflow.executors?.[0].userId,
         commentList: [],
         formData,
+        attachmentList: this.attachmentList,
         processInstanceId: this.workflow.processInstanceId,
         processKey: this.workflow.processDeployKey,
         taskId: this.workflow.newTaskId,
@@ -445,6 +448,9 @@ export default {
         this.$message.error(errorInfo.errorMsg);
         return;
       }
+      let set = new Set();
+      set.add(result);
+      this.attachmentList = [...set];
       return result;
     },
     async downloadFile({ url }) {
