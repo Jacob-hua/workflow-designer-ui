@@ -319,6 +319,7 @@ export default {
 .detail-title {
   margin-top: 20px;
   padding-bottom: 40px;
+  color: white;
   border-bottom: 1px solid #cccccc;
 }
 
