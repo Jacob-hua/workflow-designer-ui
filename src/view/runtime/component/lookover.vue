@@ -165,7 +165,8 @@ export default {
             return { ...item };
           }
           const formContent = JSON.parse(item.formData);
-          formContent.config["disabled"] = true;
+          formContent.config["disabled"] = false;
+          formContent.config["readOnly"] = true;
           return { ...item, formContent };
         });
       }

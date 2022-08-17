@@ -254,7 +254,8 @@ export default {
       const newForm = { ...form }
       newForm.formContent = JSON.parse(newForm.content)
       newForm.formContent.fields = newForm.formContent.list
-      newForm.formContent.config && (newForm.formContent.config.disabled = true)
+      newForm.formContent.config &&
+        ((newForm.formContent.config.disabled = true), (newForm.formContent.config.readOnly = true))
       return newForm
     },
   },

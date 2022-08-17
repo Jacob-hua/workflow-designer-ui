@@ -109,7 +109,7 @@ export default {
       this.$emit('canvasLoaded', iBpmn)
     },
     onSelectedShape(element, iBpmn) {
-      this.$emit('selectedShape',element)
+      this.$emit('selectedShape', element)
       this.iBpmn = iBpmn
       if (!element) {
         this.taskInfo = {
@@ -165,7 +165,8 @@ export default {
       const newForm = { ...form }
       newForm.formContent = JSON.parse(newForm.content)
       newForm.formContent.fields = newForm.formContent.list
-      newForm.formContent.config && (newForm.formContent.config.disabled = true)
+      newForm.formContent.config &&
+        ((newForm.formContent.config.disabled = true), (newForm.formContent.config.readOnly = true))
       return newForm
     },
   },

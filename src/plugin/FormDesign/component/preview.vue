@@ -185,11 +185,13 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   fieldInfo.context = this.context;
   fieldInfo.valuePath = valuePath;
   const rules = checkRules(fieldInfo);
-  if (fieldInfo.dependValue && !fieldInfo.disabled && !this.formConf.disabled) {
-    mixinDependFunction(fieldInfo, handleDependChange.bind(this));
-  }
-  if (fieldInfo.requestConfig) {
-    mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this));
+  if (!fieldInfo.disabled && !this.formConf.disabled) {
+    if (fieldInfo.dependValue && !fieldInfo.readOnly && !this.formConf.readOnly) {
+      mixinDependFunction(fieldInfo, handleDependChange.bind(this));
+    }
+    if (fieldInfo.requestConfig) {
+      mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this));
+    }
   }
 
   return (
@@ -318,6 +320,9 @@ export default {
       this.$set(this.form, key, origin);
     },
     async getContext() {
+      if (!this.processInstanceId) {
+        return {}
+      }
       const { result } = await processVariable({
         processInstanceId: this.processInstanceId ?? "",
       });
