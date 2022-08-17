@@ -109,7 +109,7 @@ export default {
       this.$emit('canvasLoaded', iBpmn)
     },
     onSelectedShape(element, iBpmn) {
-      this.$emit('selectedShape',element)
+      this.$emit('selectedShape', element)
       this.iBpmn = iBpmn
       if (!element) {
         this.taskInfo = {
