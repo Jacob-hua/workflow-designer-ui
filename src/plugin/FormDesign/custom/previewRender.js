@@ -84,11 +84,20 @@ async function vModel(self, dataObject) {
           type: file.raw.type,
           uid: file.uid,
         });
+        // self.value.forEach(async (file) => {
+        //   if (!file.url.includes("data")) {
+        //     const result = await Promise.resolve(self.downloadFun(file));
+        //     const fileReader = new FileReader();
+        //     fileReader.readAsDataURL(result);
+        //     fileReader.onload = (e) => {
+        //       file.url = e.target.result;
+        //     };
+        //   }
+        // });
       }
     };
     dataObject.attrs["before-upload"] = (file) => {
       //非限定后缀不允许上传
-
       const fileName = file.name;
       const suffixName = fileName.split(".").pop();
 
