@@ -1,17 +1,7 @@
 <template>
-  <el-dialog
-    title="工单详情"
-    top="1vh"
-    fullscreen
-    :visible="visible"
-    @close="onClose"
-    :close-on-click-modal="false"
-  >
+  <el-dialog title="工单详情" top="1vh" fullscreen :visible="visible" @close="onClose" :close-on-click-modal="false">
     <div class="container">
-      <bpmn-info
-        :xml="workflow.processDeployResource"
-        :processDisplayInfo="processDisplayInfo"
-      />
+      <bpmn-info :xml="workflow.processDeployResource" :processDisplayInfo="processDisplayInfo" />
       <div>
         <div class="title">工作流执行详情</div>
         <div class="process-content">
@@ -19,27 +9,17 @@
             <el-timeline-item
               :timestamp="taskName"
               placement="top"
-              v-for="{
-                taskName,
-                formDataList,
-                status,
-                commentList,
-                taskId,
-              } in trackList"
+              v-for="{ taskName, formDataList, status, commentList, taskId } in trackList"
               :key="taskId"
             >
               <div class="contant">
-                <div
-                  v-for="(
-                    { formContent, assignee: formAssignee, time }, index
-                  ) in formDataList"
-                  :key="index"
-                >
+                <div v-for="({ formContent, assignee: formAssignee, time }, index) in formDataList" :key="index">
                   <div v-if="formContent" class="form">
                     <preview
                       :itemList="formContent.list"
                       :formData="formContent.data"
                       :formConf="formContent.config"
+                      :processInstanceId="processInstanceId"
                       :downloadFun="downloadFile.bind(this)"
                     ></preview>
                   </div>
@@ -49,10 +29,7 @@
                       <span>{{ formAssignee }} 执行中</span>
                     </div>
                   </div>
-                  <div
-                    v-if="statusHas(status, 'completed')"
-                    class="execute-info"
-                  >
+                  <div v-if="statusHas(status, 'completed')" class="execute-info">
                     <div>
                       <i class="el-icon-check success"></i>
                       <span>{{ formAssignee }} 执行</span>
@@ -67,16 +44,8 @@
                     <span>{{ time }}</span>
                   </div>
                   <div v-if="statusHas(status, 'rejected')">
-                    <div
-                      v-for="(
-                        { comments, assignee: commentAssignee }, index
-                      ) in commentList"
-                      :key="index"
-                    >
-                      <div
-                        v-for="({ message }, index) in comments"
-                        :key="index"
-                      >
+                    <div v-for="({ comments, assignee: commentAssignee }, index) in commentList" :key="index">
+                      <div v-for="({ message }, index) in comments" :key="index">
                         <i class="el-icon-warning-outline warning"></i>
                         <span>{{ message }}</span>
                       </div>
@@ -107,13 +76,10 @@
 </template>
 
 <script>
-import BpmnInfo from "@/component/BpmnInfo.vue";
-import preview from "@/plugin/FormDesign/component/preview";
-import {
-  getExecuteDetail,
-  downloadTaskAttachmentFile,
-} from "@/api/unit/api.js";
-import { mapState } from "vuex";
+import BpmnInfo from '@/component/BpmnInfo.vue'
+import preview from '@/plugin/FormDesign/component/preview'
+import { getExecuteDetail, downloadTaskAttachmentFile } from '@/api/unit/api.js'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -135,104 +101,98 @@ export default {
         const { errorInfo, result } = await getExecuteDetail({
           processInstanceId,
           assignee,
-        });
+        })
         if (errorInfo.errorCode) {
-          return;
+          return
         }
-        return result;
+        return result
       },
     },
   },
   data() {
     return {
       workflow: {},
-    };
+    }
   },
   computed: {
-    ...mapState("account", ["tenantId", "userInfo"]),
+    ...mapState('account', ['tenantId', 'userInfo']),
     trackList() {
-      const trackList = this.workflow.trackList ?? [];
+      const trackList = this.workflow.trackList ?? []
       return trackList.map((track) => {
         if (!track) {
-          return track;
+          return track
         }
-        track.formDataList = handleFormDataList(track);
-        return track;
-      });
+        track.formDataList = handleFormDataList(track)
+        return track
+      })
       function handleFormDataList({ formDataList = [] }) {
         return formDataList.map((item) => {
           if (!item.formData) {
-            return { ...item };
+            return { ...item }
           }
-          const formContent = JSON.parse(item.formData);
-          formContent.config["disabled"] = false;
-          formContent.config["readOnly"] = true;
-          return { ...item, formContent };
-        });
+          const formContent = JSON.parse(item.formData)
+          formContent.config['disabled'] = true
+          formContent.config['readOnly'] = true
+          return { ...item, formContent }
+        })
       }
     },
     processDisplayInfo() {
       return [
         {
-          label: "流程编码",
+          label: '流程编码',
           value: this.workflow.processNumber,
         },
         {
-          label: "部署名称",
+          label: '部署名称',
           value: this.workflow.processDeployName,
         },
         {
-          label: "部署时间",
+          label: '部署时间',
           value: this.workflow.startTime,
         },
         {
-          label: "应用项目",
+          label: '应用项目',
           value: this.$getMappingName(this.workflow.ascription),
         },
         {
-          label: "流程类型",
+          label: '流程类型',
           value: this.$getMappingName(this.workflow.business),
         },
         {
-          label: "部署人",
+          label: '部署人',
           value: this.workflow.starter,
         },
-      ];
+      ]
     },
   },
   mounted() {
-    this.fetchExecuteDetail();
+    this.fetchExecuteDetail()
   },
   methods: {
-    undefineStatus(status = "") {
-      return status
-        .split(",")
-        .some(
-          (status) => !["completed", "run", "rejected", "hang"].includes(status)
-        );
+    undefineStatus(status = '') {
+      return status.split(',').some((status) => !['completed', 'run', 'rejected', 'hang'].includes(status))
     },
-    statusHas(status = "", target = "") {
-      return status.split(",").includes(target);
+    statusHas(status = '', target = '') {
+      return status.split(',').includes(target)
     },
     onClose() {
-      this.$emit("close");
-      this.$emit("update:visible", false);
+      this.$emit('close')
+      this.$emit('update:visible', false)
     },
     async downloadFile(result) {
       return await downloadTaskAttachmentFile({
         attachmentId: result.url,
-      });
+      })
     },
     async fetchExecuteDetail() {
       try {
-        const result = await Promise.resolve(
-          this.detailFunc(this.processInstanceId, this.userInfo.account)
-        );
-        this.workflow = result ?? {};
+        const result = await Promise.resolve(this.detailFunc(this.processInstanceId, this.userInfo.account))
+        this.workflow = result ?? {}
       } catch (error) {}
     },
   },
-};
+}
 </script>
 
 <style scoped lang="scss">
