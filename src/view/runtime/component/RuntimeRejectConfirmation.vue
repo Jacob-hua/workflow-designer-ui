@@ -1,5 +1,13 @@
 <template>
-  <el-dialog title="驳回确认" :close-on-click-modal="false" :visible="visible" width="70%" top="5vh" @close="onCancel" append-to-body>
+  <el-dialog
+    title="驳回确认"
+    :close-on-click-modal="false"
+    :visible="visible"
+    width="70%"
+    top="5vh"
+    @close="onCancel"
+    append-to-body
+  >
     <bpmn-info :xml="workflow.processDeployResource" @selectedShape="onSelectedChanged" />
     <div class="reason-wrapper">
       <el-form ref="rejectForm" :model="rejectForm" :rules="rejectRules">
@@ -53,6 +61,10 @@ export default {
       this.$refs.rejectForm['validate'] &&
         this.$refs.rejectForm.validate((valid) => {
           if (!valid) {
+            return
+          }
+          if (!this.taskKey) {
+            this.$message.error('请选择被驳回的节点')
             return
           }
           this.$emit('submit', {
