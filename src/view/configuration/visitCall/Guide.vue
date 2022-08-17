@@ -60,7 +60,7 @@ export default {
       if (flag) {
         this.$message({
           type: "warning",
-          message: "资源类型或资源名称已存在",
+          message: "资源类型或资源标识已存在",
         });
         return;
       }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="工作流详情" fullscreen :visible="visible" @close="onCancel">
+    <el-dialog title="部署详情" fullscreen :visible="visible" @close="onCancel">
       <workflow-info :workflow="workflow" :xml="workflow.processResource" :processDisplayInfo="processDisplayInfo" />
       <span slot="footer">
         <el-button

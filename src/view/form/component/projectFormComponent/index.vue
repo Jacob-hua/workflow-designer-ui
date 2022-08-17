@@ -73,7 +73,7 @@
             <span class="title-item-label marginLeft40"> 表单名称 </span>
             <div class="title-item-main">
               <el-input
-                :disabled="this.title === '编辑表单'"
+                :disabled="this.title === '编辑1表单'"
                 v-model="postData.name"
                 placeholder=""
                 maxlength="20"
