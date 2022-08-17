@@ -85,6 +85,7 @@ async function vModel(self, dataObject) {
           uid: file.uid,
         });
       }
+      self.$emit("input", fileList);
     };
     dataObject.attrs["before-upload"] = (file) => {
       //非限定后缀不允许上传
