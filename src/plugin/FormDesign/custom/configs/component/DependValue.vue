@@ -116,5 +116,6 @@ export default {
 .depend-wrapper {
   margin-top: 10px;
   margin-bottom: 10px;
+  color: white;
 }
 </style>

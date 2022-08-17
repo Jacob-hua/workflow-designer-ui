@@ -98,6 +98,10 @@ export default {
           value: this.workflow.numberCode,
         },
         {
+          label: '流程名称',
+          value: this.workflow.name,
+        },
+        {
           label: '部署时间',
           value: this.workflow.createTime,
         },
