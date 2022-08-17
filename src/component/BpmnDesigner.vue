@@ -68,11 +68,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tenantId']),
+    ...mapState('account', ['tenantId', 'currentOrganization']),
   },
   mounted() {
     this.fetchUserGroup({
-      projectCode: 'XM_aff0659724a54c119ac857d4e560b47b',
+      projectCode: this.currentOrganization,
       displayType: 'tree',
     }).then((res) => {
       this.userGroup = res
