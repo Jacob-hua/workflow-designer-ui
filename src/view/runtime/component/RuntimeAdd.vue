@@ -1,22 +1,13 @@
 <template>
   <div>
-    <el-dialog
-      title="新建执行"
-      top="1vh"
-      fullscreen
-      :visible="dialogVisible"
-      @close="onClose"
-      :close-on-click-modal="false"
-    >
+    <el-dialog title="新建工单" top="1vh" fullscreen :visible="dialogVisible" @close="onClose" :close-on-click-modal="false">
       <div class="content-wrapper">
         <div>
-          <el-card header="项目选择">
-            <el-tree
-              :data="rootOrganizationChildren(projectCode)"
-              :props="defaultProps"
-              :highlight-current="true"
-              @node-click="handleNodeClick"
-            ></el-tree>
+          <el-card header="业务选择">
+            <PeTree nodeKey="id" labelName="label"  
+              :data="rootOrganizationChildren(projectCode)" 
+              @nodeClick="handleNodeClick"
+            ></PeTree>
           </el-card>
         </div>
         <div v-if="processList && processList.length !== 0">
@@ -68,6 +59,7 @@
 import { getProcessDefinitionList } from '@/api/unit/api.js'
 import { mapState, mapGetters } from 'vuex'
 import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
+import PeTree from '@/component/PeTree.vue'
 
 export default {
   name: 'RuntimeAdd',
@@ -148,6 +140,9 @@ export default {
       this.createTicketVisible = true
     },
   },
+  components: {
+      PeTree,
+    },
 }
 </script>
 
@@ -185,6 +180,7 @@ export default {
 
 .process {
   width: 370px;
+  height: 229px;
   background-color: $card-bg-color-1;
   display: flex;
   flex-direction: column;
