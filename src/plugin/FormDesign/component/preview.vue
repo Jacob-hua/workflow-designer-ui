@@ -186,7 +186,11 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   fieldInfo.valuePath = valuePath;
   const rules = checkRules(fieldInfo);
   if (!fieldInfo.disabled && !this.formConf.disabled) {
-    if (fieldInfo.dependValue && !fieldInfo.readOnly && !this.formConf.readOnly) {
+    if (
+      fieldInfo.dependValue &&
+      !fieldInfo.readOnly &&
+      !this.formConf.readOnly
+    ) {
       mixinDependFunction(fieldInfo, handleDependChange.bind(this));
     }
     if (fieldInfo.requestConfig) {
@@ -276,7 +280,7 @@ export default {
           model: this.form,
         }}
         label-position={this.formConf.labelPosition}
-        disabled={this.formConf.disabled}
+        disabled={this.formConf.disabled ? "" : "disabled"}
         validate-on-rule-change={false}
         label-width={this.formConf.labelWidth + "px"}
         nativeOnSubmit={this.submit}
@@ -323,7 +327,7 @@ export default {
     },
     async getContext() {
       if (!this.processInstanceId) {
-        return {}
+        return {};
       }
       const { result } = await processVariable({
         processInstanceId: this.processInstanceId ?? "",
