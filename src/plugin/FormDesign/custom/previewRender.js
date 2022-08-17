@@ -1,6 +1,5 @@
 import { isAttr, jsonClone } from "../utils";
 import childrenItem from "./slot/index";
-import Ar from "element-ui/src/locale/lang/ar";
 
 function dataURLBlob(base64Str) {
   let bstr = base64Str,
@@ -33,16 +32,19 @@ async function vModel(self, dataObject) {
   //判断是否为上传组件
   if (self.conf.compType === "upload") {
     if (self.conf["list-type"] === "picture-card") {
-      if (Array.isArray(self.value)) {
-        self.value.forEach(async (file) => {
-          const result = await Promise.resolve(self.downloadFun(file));
-          const fileReader = new FileReader();
-          fileReader.readAsDataURL(result);
-          fileReader.onload = (e) => {
-            console.log(e.target.result);
-            file.url = e.target.result;
-          };
-        });
+      if (!self.flag) {
+        if (Array.isArray(self.value)) {
+          self.value.forEach(async (file) => {
+            if (!file.url.includes("data")) {
+              const result = await Promise.resolve(self.downloadFun(file));
+              const fileReader = new FileReader();
+              fileReader.readAsDataURL(result);
+              fileReader.onload = (e) => {
+                file.url = e.target.result;
+              };
+            }
+          });
+        }
       }
       dataObject.attrs["file-list"] = self.value;
     }
@@ -65,7 +67,6 @@ async function vModel(self, dataObject) {
       }
     };
     dataObject.attrs["on-remove"] = async (file, fileList) => {
-      console.log(file, fileList);
       self.value.splice(
         self.value.findIndex((item) => item.uid === file.uid),
         1
@@ -81,6 +82,7 @@ async function vModel(self, dataObject) {
           name: file.name,
           url: result,
           type: file.raw.type,
+          uid: file.uid,
         });
       }
     };
@@ -139,5 +141,6 @@ export default {
     "getFileList",
     "uploadFun",
     "downloadFun",
+    "flag",
   ],
 };

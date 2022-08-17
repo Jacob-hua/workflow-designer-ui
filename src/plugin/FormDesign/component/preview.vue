@@ -204,6 +204,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
         conf={fieldInfo}
         value={_.get(this.form, fieldInfo.valuePath)}
         uploadFun={this.uploadFun}
+        flag={this.flag}
         downloadFun={this.downloadFun}
         onInput={(event) => {
           _.set(this.form, fieldInfo.valuePath, event);
@@ -222,6 +223,7 @@ export default {
     "uploadFun",
     "downloadFun",
     "processInstanceId",
+    "flag",
   ],
   components: { render },
   data() {
