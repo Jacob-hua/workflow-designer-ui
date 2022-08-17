@@ -46,8 +46,8 @@ async function vModel(self, dataObject) {
           });
         }
       }
-      dataObject.attrs["file-list"] = self.value;
     }
+    dataObject.attrs["file-list"] = self.value;
     dataObject.attrs["auto-upload"] = false; // 文件手动上传
     dataObject.attrs["on-preview"] = async (file) => {
       if (file.type?.includes("image")) {
@@ -85,7 +85,6 @@ async function vModel(self, dataObject) {
           uid: file.uid,
         });
       }
-      self.$emit("input", fileList);
     };
     dataObject.attrs["before-upload"] = (file) => {
       //非限定后缀不允许上传

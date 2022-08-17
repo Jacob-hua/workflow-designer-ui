@@ -414,10 +414,8 @@ export default {
         this.$message.error(errorInfo.errorMsg)
         return
       }
-      let set = new Set()
-      set.add(result)
-      this.attachmentList = [...set]
-      return result
+      this.attachmentList = [result, ...this.attachmentList];
+      return result;
     },
     async downloadFile({ url }) {
       return await downloadTaskAttachmentFile({
