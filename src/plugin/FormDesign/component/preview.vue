@@ -280,7 +280,7 @@ export default {
           model: this.form,
         }}
         label-position={this.formConf.labelPosition}
-        disabled={this.formConf.disabled ? "" : "disabled"}
+        disabled={this.formConf.disabled ? " " : "disabled"}
         validate-on-rule-change={false}
         label-width={this.formConf.labelWidth + "px"}
         nativeOnSubmit={this.submit}
