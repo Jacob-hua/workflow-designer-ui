@@ -65,6 +65,7 @@ export default {
   name: 'RuntimeAdd',
   components: {
     RuntimeCreatTicket,
+    PeTree,
   },
   props: {
     dialogVisible: {
@@ -140,9 +141,6 @@ export default {
       this.createTicketVisible = true
     },
   },
-  components: {
-      PeTree,
-    },
 }
 </script>
 
