@@ -50,11 +50,6 @@ export default {
       this.rejectConfirmationVisible = true
     },
     onRejectConfirmationSubmit(rejectData) {
-      if (!rejectData.taskKey) {
-        this.$message.error('请选择被驳回的节点')
-        return
-      }
-
       putRejectTask({
         message: rejectData.rejectReason,
         processInstanceId: this.workflow.processInstanceId,
