@@ -9,11 +9,14 @@
             <el-timeline-item
               :timestamp="taskName"
               placement="top"
-              v-for="{ taskName, formDataList, status, commentList, taskId } in trackList"
+              v-for="{ taskName, formDataList, assigneeStatus, status, commentList, taskId } in trackList"
               :key="taskId"
             >
               <div class="contant">
-                <div v-for="({ formContent, assignee: formAssignee, time }, index) in formDataList" :key="index">
+                <div
+                  v-for="({ formContent, assignee: formAssignee, time }, index) in formDataList"
+                  :key="index"
+                >
                   <div v-if="formContent" class="form">
                     <preview
                       :itemList="formContent.list"
@@ -23,27 +26,27 @@
                       :downloadFun="downloadFile.bind(this)"
                     ></preview>
                   </div>
-                  <div v-if="statusHas(status, 'run')" class="execute-info">
+                  <div v-if="assigneeStatus[formAssignee] === 'run'" class="execute-info">
                     <div>
                       <i class="el-icon-check executing"></i>
                       <span>{{ formAssignee }} 执行中</span>
                     </div>
                   </div>
-                  <div v-if="statusHas(status, 'completed')" class="execute-info">
+                  <div v-if="assigneeStatus[formAssignee] === 'completed'" class="execute-info">
                     <div>
                       <i class="el-icon-check success"></i>
                       <span>{{ formAssignee }} 执行</span>
                     </div>
                     <span>{{ time }}</span>
                   </div>
-                  <div v-if="statusHas(status, 'hang')" class="execute-info">
+                  <div v-if="assigneeStatus[formAssignee] === 'hang'" class="execute-info">
                     <div>
                       <i class="el-icon-check warning"></i>
                       <span>{{ formAssignee }} 挂起</span>
                     </div>
                     <span>{{ time }}</span>
                   </div>
-                  <div v-if="statusHas(status, 'rejected')">
+                  <div v-if="assigneeStatus[formAssignee] === 'rejected'">
                     <div v-for="({ comments, assignee: commentAssignee }, index) in commentList" :key="index">
                       <div v-for="({ message }, index) in comments" :key="index">
                         <i class="el-icon-warning-outline warning"></i>
@@ -123,6 +126,7 @@ export default {
           return track
         }
         track.formDataList = handleFormDataList(track)
+        track.assigneeStatus = handleAssigneeStatus(track)
         return track
       })
       function handleFormDataList({ formDataList = [] }) {
@@ -135,6 +139,10 @@ export default {
           formContent.config['readOnly'] = true
           return { ...item, formContent }
         })
+      }
+      function handleAssigneeStatus({ assignee, status }) {
+        const statusArray = status.split(',')
+        return assignee.split(',').reduce((result, name, index) => ({ ...result, [name]: statusArray[index] }), {})
       }
     },
     processDisplayInfo() {
@@ -172,9 +180,6 @@ export default {
   methods: {
     undefineStatus(status = '') {
       return status.split(',').some((status) => !['completed', 'run', 'rejected', 'hang'].includes(status))
-    },
-    statusHas(status = '', target = '') {
-      return status.split(',').includes(target)
     },
     onClose() {
       this.$emit('close')
