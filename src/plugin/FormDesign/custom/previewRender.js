@@ -30,88 +30,88 @@ async function vModel(self, dataObject) {
     self.$emit("input", val);
   };
   //判断是否为上传组件
-  if (self.conf.compType === "upload") {
-    if (self.conf["list-type"] === "picture-card") {
-      if (!self.flag) {
-        if (Array.isArray(self.value)) {
-          self.value.forEach(async (file) => {
-            if (!file.url.includes("data")) {
-              const result = await Promise.resolve(self.downloadFun(file));
-              const fileReader = new FileReader();
-              fileReader.readAsDataURL(result);
-              fileReader.onload = (e) => {
-                file.url = e.target.result;
-              };
-            }
-          });
-        }
-      }
-    }
-    dataObject.attrs["file-list"] = self.value;
-    dataObject.attrs["auto-upload"] = false; // 文件手动上传
-    dataObject.attrs["on-preview"] = async (file) => {
-      if (file.type?.includes("image")) {
-        const imgUrl = file.url;
-        const a = document.createElement("a");
-        a.href = imgUrl;
-        a.setAttribute("download", file.name);
-        a.click();
-      } else {
-        if (self.downloadFun) {
-          const result = await Promise.resolve(self.downloadFun(file));
-          if (!result) {
-            return;
-          }
-          downloadFile(file.name, file.type, result);
-        }
-      }
-    };
-    dataObject.attrs["on-remove"] = async (file, fileList) => {
-      self.value.splice(
-        self.value.findIndex((item) => item.uid === file.uid),
-        1
-      );
-    };
-
-    dataObject.attrs["on-change"] = async (file, fileList) => {
-      // 文件变换 钩子
-      self.conf["fileList"] = fileList;
-      if (self.uploadFun) {
-        const result = await Promise.resolve(self.uploadFun(file));
-        self.value.push({
-          name: file.name,
-          url: result,
-          type: file.raw.type,
-          uid: file.uid,
-        });
-        // self.value.forEach(async (file) => {
-        //   if (!file.url.includes("data")) {
-        //     const result = await Promise.resolve(self.downloadFun(file));
-        //     const fileReader = new FileReader();
-        //     fileReader.readAsDataURL(result);
-        //     fileReader.onload = (e) => {
-        //       file.url = e.target.result;
-        //     };
-        //   }
-        // });
-      }
-    };
-    dataObject.attrs["before-upload"] = (file) => {
-      //非限定后缀不允许上传
-      const fileName = file.name;
-      const suffixName = fileName.split(".").pop();
-
-      if (!self.conf.accept.includes(suffixName)) {
-        self.$message.error("该后缀文件不允许上传");
-        return false;
-      }
-      const fileSize = file.size;
-      if (fileSize > dataObject.props.fileSize * 1024 * 1024) {
-        self.$message.error("文件大小超出限制，请检查！");
-        return false;
-      }
-    };
-  }
+  // if (self.conf.compType === "upload") {
+  //   if (self.conf["list-type"] === "picture-card") {
+  //     if (!self.flag) {
+  //       if (Array.isArray(self.value)) {
+  //         self.value.forEach(async (file) => {
+  //           if (!file.url.includes("data")) {
+  //             const result = await Promise.resolve(self.downloadFun(file));
+  //             const fileReader = new FileReader();
+  //             fileReader.readAsDataURL(result);
+  //             fileReader.onload = (e) => {
+  //               file.url = e.target.result;
+  //             };
+  //           }
+  //         });
+  //       }
+  //     }
+  //   }
+  //   dataObject.attrs["file-list"] = self.value;
+  //   dataObject.attrs["auto-upload"] = false; // 文件手动上传
+  //   dataObject.attrs["on-preview"] = async (file) => {
+  //     if (file.type?.includes("image")) {
+  //       const imgUrl = file.url;
+  //       const a = document.createElement("a");
+  //       a.href = imgUrl;
+  //       a.setAttribute("download", file.name);
+  //       a.click();
+  //     } else {
+  //       if (self.downloadFun) {
+  //         const result = await Promise.resolve(self.downloadFun(file));
+  //         if (!result) {
+  //           return;
+  //         }
+  //         downloadFile(file.name, file.type, result);
+  //       }
+  //     }
+  //   };
+  //   dataObject.attrs["on-remove"] = async (file, fileList) => {
+  //     self.value.splice(
+  //       self.value.findIndex((item) => item.uid === file.uid),
+  //       1
+  //     );
+  //   };
+  //
+  //   dataObject.attrs["on-change"] = async (file, fileList) => {
+  //     // 文件变换 钩子
+  //     self.conf["fileList"] = fileList;
+  //     if (self.uploadFun) {
+  //       const result = await Promise.resolve(self.uploadFun(file));
+  //       self.value.push({
+  //         name: file.name,
+  //         url: result,
+  //         type: file.raw.type,
+  //         uid: file.uid,
+  //       });
+  //       // self.value.forEach(async (file) => {
+  //       //   if (!file.url.includes("data")) {
+  //       //     const result = await Promise.resolve(self.downloadFun(file));
+  //       //     const fileReader = new FileReader();
+  //       //     fileReader.readAsDataURL(result);
+  //       //     fileReader.onload = (e) => {
+  //       //       file.url = e.target.result;
+  //       //     };
+  //       //   }
+  //       // });
+  //     }
+  //   };
+  //   dataObject.attrs["before-upload"] = (file) => {
+  //     //非限定后缀不允许上传
+  //     const fileName = file.name;
+  //     const suffixName = fileName.split(".").pop();
+  //
+  //     if (!self.conf.accept.includes(suffixName)) {
+  //       self.$message.error("该后缀文件不允许上传");
+  //       return false;
+  //     }
+  //     const fileSize = file.size;
+  //     if (fileSize > dataObject.props.fileSize * 1024 * 1024) {
+  //       self.$message.error("文件大小超出限制，请检查！");
+  //       return false;
+  //     }
+  //   };
+  // }
 }
 
 export default {

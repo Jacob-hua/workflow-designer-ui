@@ -197,7 +197,6 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
       mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this));
     }
   }
-
   return (
     <el-form-item
       label={fieldInfo.showLabel ? fieldInfo.label : ""}
