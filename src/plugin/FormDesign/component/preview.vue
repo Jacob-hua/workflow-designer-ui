@@ -257,7 +257,7 @@ export default {
       form = metaDataList.reduce(buildModel, {});
     }
     return {
-      fileList: [], // 文件列表
+      fileList: [],
       form,
       usefulMeta: {},
       metaDataList,
