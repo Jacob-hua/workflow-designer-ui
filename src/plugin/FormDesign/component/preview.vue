@@ -183,18 +183,18 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   fieldInfo.context = this.context;
   fieldInfo.valuePath = valuePath;
   const rules = checkRules(fieldInfo);
-  if (!fieldInfo.disabled && !this.formConf.disabled) {
-    if (
-      fieldInfo.dependValue &&
-      !fieldInfo.readOnly &&
-      !this.formConf.readOnly
-    ) {
-      mixinDependFunction(fieldInfo, handleDependChange.bind(this));
-    }
-    if (fieldInfo.requestConfig) {
-      mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this));
-    }
+  
+  const needDependFunction = !this.formConf.disabled && !fieldInfo.disabled && fieldInfo.dependValue
+  if (needDependFunction) {
+    mixinDependFunction(fieldInfo, handleDependChange.bind(this))
   }
+
+  const needRequestFunction =
+    (this.formConf.readOnly || (!this.formConf.disabled && !fieldInfo.disabled)) && fieldInfo.requestConfig
+  if (needRequestFunction) {
+    mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this))
+  }
+
   if (
     fieldInfo["list-type"] === "text" ||
     fieldInfo["list-type"] === "picture-card"
