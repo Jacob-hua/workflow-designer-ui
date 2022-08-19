@@ -33,11 +33,22 @@
       </div>
     </div>
     <el-form-item label="自定义解析">
-      <el-switch v-model="customOptionPath" @change="onCustomOptionPathChange" />
+      <el-switch v-model="customParser" @change="onCustomOptionPathChange" />
     </el-form-item>
-    <el-form-item v-if="customOptionPath" label="数据路径">
-      <el-input v-model="optionPath" @change="onVariableChange" />
-    </el-form-item>
+    <template v-if="customParser">
+      <el-form-item label="数据路径">
+        <el-input v-model="parserProp.optionPath" />
+      </el-form-item>
+      <el-form-item label="label">
+        <el-input v-model="parserProp.label" />
+      </el-form-item>
+      <el-form-item label="value">
+        <el-input v-model="parserProp.value" />
+      </el-form-item>
+      <el-form-item v-if="hasChildren" label="children">
+        <el-input v-model="parserProp.children" />
+      </el-form-item>
+    </template>
   </div>
 </template>
 
@@ -46,12 +57,23 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import { apiDetail } from '@/api/globalConfig'
 import { variableFactory as variableParser } from '@/mixin/formDepMonitor'
 
+const defaultParserProp = () => ({
+  optionPath: '',
+  label: 'label',
+  value: 'value',
+  children: 'children',
+})
+
 export default {
   name: 'InterfaceParser',
   props: {
     currentField: {
       type: Object,
       default: () => ({}),
+    },
+    hasChildren: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -74,8 +96,8 @@ export default {
           value: 'form',
         },
       ],
-      customOptionPath: false,
-      optionPath: '',
+      customParser: false,
+      parserProp: defaultParserProp(),
       requestConfig: {},
       variables: [],
     }
@@ -95,7 +117,14 @@ export default {
         this.requestConfig = currentField.requestConfig
         this.variables = currentField.requestConfig.variables
         this.interfaceId = currentField.requestConfig.id
-        this.optionPath = currentField.requestConfig.optionPath
+        this.customParser = currentField.requestConfig.customParser
+        this.parserProp = currentField.requestConfig.parserProp
+      },
+    },
+    parserProp: {
+      deep: true,
+      handler() {
+        this.onVariableChange()
       },
     },
     async interfaceId(interfaceId) {
@@ -143,15 +172,14 @@ export default {
       this.variables[index].source = ''
     },
     onCustomOptionPathChange() {
-      this.optionPath = ''
-      this.onVariableChange()
+      this.parserProp = defaultParserProp()
     },
     onVariableChange() {
       this.$emit('variableChange', {
         ...this.requestConfig,
         variables: this.variables,
-        customOptionPath: this.customOptionPath,
-        optionPath: this.optionPath,
+        customParser: this.customParser,
+        parserProp: this.parserProp,
       })
     },
   },

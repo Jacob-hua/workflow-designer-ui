@@ -74,7 +74,12 @@
         <el-checkbox v-model="props['china-area-data']" @change="handlerSetAreaData" />
       </el-form-item>
     </div>
-    <interface-parser v-if="props.dataType === 'dynamic'" :currentField="props" @variableChange="onVariableChange" />
+    <interface-parser
+      v-if="props.dataType === 'dynamic'"
+      :currentField="props"
+      :hasChildren="true"
+      @variableChange="onVariableChange"
+    />
     <el-dialog
       :visible.sync="staticDataVisible"
       width="70%"
