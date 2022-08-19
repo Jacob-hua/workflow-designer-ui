@@ -59,10 +59,14 @@ function handleDependChange(data, fieldInfo) {
 }
 
 function handleRowContainerDependChange(data, fieldInfo) {
+  const oldVisible = fieldInfo.visible
   fieldInfo.visible = fieldInfo.dependValue.targetValue
     ? data[fieldInfo.id] == `${fieldInfo.dependValue.targetValue}`
     : Boolean(data[fieldInfo.id])
-  this.$forceUpdate()
+
+  if (oldVisible !== fieldInfo.visible) {
+    this.$forceUpdate()
+  }
 }
 
 function buildModel(model, metaData) {
