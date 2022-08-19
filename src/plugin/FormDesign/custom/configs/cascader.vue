@@ -58,6 +58,7 @@
     <el-form-item label="任一级可选">
       <el-switch v-model="props.props.props.checkStrictly"></el-switch>
     </el-form-item>
+    <depend-value :currentField="props" @dependChange="onDependChange" />
     <el-form-item label="选项配置">
       <el-radio-group v-model="props.dataType" @change="handlerChangeDataType">
         <el-radio-button label="static">静态数据</el-radio-button>
@@ -103,6 +104,7 @@ import 'codemirror/theme/dracula.css'
 import 'codemirror/mode/javascript/javascript'
 import { mapMutations } from 'vuex'
 import InterfaceParser from './component/InterfaceParser.vue'
+import DependValue from './component/DependValue.vue'
 
 const options = {
   tabSize: 2, // 缩进格式
@@ -123,6 +125,7 @@ export default {
   components: {
     codemirror,
     InterfaceParser,
+    DependValue,
   },
   mixins: [changeId],
   data() {
@@ -135,6 +138,9 @@ export default {
   },
   methods: {
     ...mapMutations('form', ['addThirdPartyApi']),
+    onDependChange(dependValue) {
+      this.props.dependValue = dependValue
+    },
     onVariableChange(requestConfig) {
       this.props.requestConfig = requestConfig
       this.addThirdPartyApi({ id: requestConfig.id })
