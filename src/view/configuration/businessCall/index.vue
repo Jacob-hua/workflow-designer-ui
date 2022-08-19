@@ -192,6 +192,7 @@ export default {
 
     lookBusiness(id) {
       this.type = "see";
+      this.businessFlag = true;
       // 获取组织 结构树
       getBusinessConfigWithTree(id, +this.tenantId).then((res) => {
         this.$refs.BusinessCon.dialogVisible = true;
