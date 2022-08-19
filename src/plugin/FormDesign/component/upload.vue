@@ -2,7 +2,7 @@
   <el-form-item
     :label="fieldInfo.showLabel ? fieldInfo.label : ''"
     :label-width="fieldInfo.labelWidth"
-    :prop="fieldInfo.id"
+    :prop="fieldInfo.valuePath"
     :rules="rules"
   >
     <el-upload
