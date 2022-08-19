@@ -44,6 +44,5 @@ export default {
     "getFileList",
     "uploadFun",
     "downloadFun",
-    "flag",
   ],
 };
