@@ -28,6 +28,7 @@
       list-type="picture-card"
       :file-list="this.value"
       :on-change="imgChange"
+      multiple
       :auto-upload="false"
     >
       <i slot="default" class="el-icon-plus"></i>
