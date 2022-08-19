@@ -77,7 +77,7 @@
           </div>
           <div class="card-main">
             <div>
-              <label>项目名称:</label> <span>{{ item.name }}</span>
+              <long-text label="项目名称:" :content="item.name" />
             </div>
             <div>
               <label>项目类型:</label> <span>{{ item.typeName }}</span>
@@ -116,6 +116,7 @@
 <script>
 import Guide from "@/view/configuration/businessCall/Guide";
 import BusinessCon from "@/view/configuration/businessCall/BusinessCon";
+import longText from "../../../component/LongText.vue";
 import {
   getBusinessConfigBasicList,
   getDicDataByClassify,
@@ -127,6 +128,7 @@ export default {
   components: {
     Guide,
     BusinessCon,
+    longText,
   },
   data() {
     return {
