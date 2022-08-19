@@ -193,14 +193,17 @@ export default {
       const fileName = file.name;
       const suffixName = fileName.split(".").pop();
       if (!this.fieldInfo.accept.includes(suffixName)) {
+        this.delFile(file);
         this.$message.error("该后缀文件不允许上传");
         return false;
       }
       const fileSize = file.size;
       if (fileSize > this.fieldInfo.fileSize * 1024 * 1024) {
+        this.delFile(file);
         this.$message.error("文件大小超出限制，请检查！");
         return false;
       }
+
       const blobMappingUrl = {};
       blobMappingUrl[file.url] = await Promise.resolve(this.uploadFun(file));
       file["blobMappingUrl"] = blobMappingUrl;
@@ -211,11 +214,13 @@ export default {
       const fileName = file.name;
       const suffixName = fileName.split(".").pop();
       if (!this.fieldInfo.accept.includes(suffixName)) {
+        this.delFile(file);
         this.$message.error("该后缀文件不允许上传");
         return false;
       }
       const fileSize = file.size;
       if (fileSize > this.fieldInfo.fileSize * 1024 * 1024) {
+        this.delFile(file);
         this.$message.error("文件大小超出限制，请检查！");
         return false;
       }
