@@ -123,10 +123,9 @@ export default {
   },
   methods: {
     displayNoneDom() {
-      let uploadCollection = Array.from(
+      Array.from(
         document.getElementsByClassName("el-upload--picture-card")
-      );
-      uploadCollection.forEach((upload) => {
+      ).forEach((upload) => {
         upload.style.display = "none";
       });
     },
