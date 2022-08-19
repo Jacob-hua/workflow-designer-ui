@@ -10,12 +10,12 @@
       class="upload-demo"
       action="#"
       :auto-upload="false"
-      :show-file-list="false"
+      :show-file-list="fieldInfo['show-file-list']"
       :on-preview="handlePreview"
       :on-remove="handleRemove"
       :before-upload="beforeUpload"
       :on-change="fileChange"
-      multiple
+      :multiple="fieldInfo.multiple"
       :limit="20"
       :on-exceed="handleExceed"
       :file-list="this.value"
@@ -28,7 +28,7 @@
       list-type="picture-card"
       :file-list="this.value"
       :on-change="imgChange"
-      multiple
+      :multiple="fieldInfo.multiple"
       :auto-upload="false"
     >
       <i slot="default" class="el-icon-plus"></i>
