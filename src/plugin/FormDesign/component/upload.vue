@@ -10,7 +10,7 @@
       class="upload-demo"
       action="#"
       :auto-upload="false"
-      :show-file-list="fieldInfo['show-file-list']"
+      :show-file-list="false"
       :on-preview="handlePreview"
       :on-remove="handleRemove"
       :before-upload="beforeUpload"
