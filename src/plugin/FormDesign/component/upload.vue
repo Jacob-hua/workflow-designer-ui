@@ -47,6 +47,13 @@
           >
             <i class="el-icon-download"></i>
           </span>
+          <span
+            v-show="!readOnly"
+            class="el-upload-list__item-delete"
+            @click="delFile(file)"
+          >
+            <i class="el-icon-delete"></i>
+          </span>
         </span>
       </div>
     </el-upload>
