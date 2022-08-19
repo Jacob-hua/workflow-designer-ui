@@ -212,7 +212,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
       <el-form-item
         label={fieldInfo.showLabel ? fieldInfo.label : ''}
         label-width={`${fieldInfo.labelWidth}`}
-        prop={fieldInfo.id}
+        prop={fieldInfo.valuePath}
         rules={rules}
       >
         <render
@@ -248,7 +248,6 @@ export default {
       form,
       usefulMeta: {},
       metaDataList,
-      rules: {},
       context: {},
       flatFields: [],
     }
@@ -277,7 +276,6 @@ export default {
   render(h) {
     return (
       <el-form
-        rules={this.rules}
         ref={this.formConf.formModel}
         size={this.formConf.size}
         props={{
