@@ -69,11 +69,11 @@
       append-to-body
     >
       <preview
-        :flag="true"
         :uploadFun="upload"
         :itemList="itemList"
         :formConf="formConf"
         v-if="previewVisible"
+        :flag="true"
       />
     </el-dialog>
     <el-dialog
