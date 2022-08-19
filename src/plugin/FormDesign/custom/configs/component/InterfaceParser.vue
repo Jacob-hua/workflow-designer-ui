@@ -175,12 +175,16 @@ export default {
       this.parserProp = defaultParserProp()
     },
     onVariableChange() {
-      this.$emit('variableChange', {
+      const result = {
         ...this.requestConfig,
         variables: this.variables,
         customParser: this.customParser,
         parserProp: this.parserProp,
-      })
+      }
+      if (!this.hasChildren) {
+        delete result.parserProp.children
+      }
+      this.$emit('variableChange', result)
     },
   },
 }
