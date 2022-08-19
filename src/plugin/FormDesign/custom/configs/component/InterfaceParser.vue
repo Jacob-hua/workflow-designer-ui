@@ -5,30 +5,32 @@
         <el-option v-for="{ name, id } in interFaceOption" :key="id" :label="name" :value="id" />
       </el-select>
     </el-form-item>
-    <el-row v-if="variables.length > 0" :gutter="24">
-      <el-col :span="6"> 变量 </el-col>
-      <el-col :span="10"> 关联 </el-col>
-      <el-col :span="8"> 类型 </el-col>
-    </el-row>
-    <div v-for="({ variable }, index) in variables" :key="index">
+    <div v-if="variables.length > 0" class="variable-wrapper">
       <el-row :gutter="24">
-        <el-col :span="6">
-          <span>{{ variable }}</span>
-        </el-col>
-        <el-col :span="10">
-          <el-input v-model="variables[index]['source']" @change="onVariableChange" />
-        </el-col>
-        <el-col :span="8">
-          <el-select v-model="variables[index]['sourceType']" @change="onSourceTypeChange(index)">
-            <el-option
-              v-for="{ id, label, value } in sourceTypeOptions"
-              :key="id"
-              :label="label"
-              :value="value"
-            ></el-option>
-          </el-select>
-        </el-col>
+        <el-col :span="6"> 变量 </el-col>
+        <el-col :span="10"> 关联 </el-col>
+        <el-col :span="8"> 类型 </el-col>
       </el-row>
+      <div v-for="({ variable }, index) in variables" :key="index">
+        <el-row :gutter="24" class="variable">
+          <el-col :span="6">
+            <span>{{ variable }}</span>
+          </el-col>
+          <el-col :span="10">
+            <el-input v-model="variables[index]['source']" @change="onVariableChange" />
+          </el-col>
+          <el-col :span="8">
+            <el-select v-model="variables[index]['sourceType']" @change="onSourceTypeChange(index)">
+              <el-option
+                v-for="{ id, label, value } in sourceTypeOptions"
+                :key="id"
+                :label="label"
+                :value="value"
+              ></el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+      </div>
     </div>
   </div>
 </template>
@@ -140,3 +142,16 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.variable-wrapper {
+  color: white;
+}
+
+.variable {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+</style>
