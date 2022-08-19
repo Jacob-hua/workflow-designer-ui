@@ -32,6 +32,12 @@
         </el-row>
       </div>
     </div>
+    <el-form-item label="自定义解析">
+      <el-switch v-model="customOptionPath" @change="onCustomOptionPathChange" />
+    </el-form-item>
+    <el-form-item v-if="customOptionPath" label="数据路径">
+      <el-input v-model="optionPath" @change="onVariableChange" />
+    </el-form-item>
   </div>
 </template>
 
@@ -68,6 +74,8 @@ export default {
           value: 'form',
         },
       ],
+      customOptionPath: false,
+      optionPath: '',
       requestConfig: {},
       variables: [],
     }
@@ -87,6 +95,7 @@ export default {
         this.requestConfig = currentField.requestConfig
         this.variables = currentField.requestConfig.variables
         this.interfaceId = currentField.requestConfig.id
+        this.optionPath = currentField.requestConfig.optionPath
       },
     },
     async interfaceId(interfaceId) {
@@ -133,10 +142,16 @@ export default {
     onSourceTypeChange(index) {
       this.variables[index].source = ''
     },
+    onCustomOptionPathChange() {
+      this.optionPath = ''
+      this.onVariableChange()
+    },
     onVariableChange() {
       this.$emit('variableChange', {
         ...this.requestConfig,
         variables: this.variables,
+        customOptionPath: this.customOptionPath,
+        optionPath: this.optionPath,
       })
     },
   },
