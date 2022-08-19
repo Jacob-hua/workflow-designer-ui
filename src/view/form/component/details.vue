@@ -71,7 +71,6 @@
         </div>
         <div class="fromEdit">
           <preview
-            :flag="true"
             :itemList="itemList"
             :formConf="formConf"
             v-if="dialogVisible2"
@@ -172,6 +171,8 @@ export default {
         if (newValue.content) {
           let content = JSON.parse(newValue.content);
           let list = content.list;
+          content.config["disabled"] = true;
+          content.config["readOnly"] = true;
           for (const formItem of list) {
             if (formItem.columns && formItem.columns.length) {
               for (const formItemElement of formItem.columns) {

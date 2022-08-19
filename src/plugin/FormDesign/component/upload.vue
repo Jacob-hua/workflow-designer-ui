@@ -64,7 +64,7 @@
           ></span>
           <span @click="download(file)" class="preview el-icon-download"></span>
           <span
-            v-show="flag"
+            v-show="!readOnly"
             @click="delFile(file)"
             class="preview el-icon-delete"
           >
@@ -99,7 +99,7 @@ export default {
       type: Array,
       default: [],
     },
-    flag: {
+    readOnly: {
       type: Boolean,
     },
   },
@@ -117,7 +117,7 @@ export default {
     },
   },
   mounted() {
-    if (!this.flag) {
+    if (this.readOnly) {
       this.displayNoneDom();
       this.mappingProcess();
     }
