@@ -16,7 +16,7 @@
       :before-upload="beforeUpload"
       :on-change="fileChange"
       multiple
-      :limit="20"
+      :limit="30"
       :on-exceed="handleExceed"
       :file-list="this.value"
     >
@@ -257,7 +257,7 @@ export default {
     },
     handleExceed(files, fileList) {
       this.$message.warning(
-        `当前限制选择 20 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
+        `当前限制选择 30 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
           files.length + fileList.length
         } 个文件`
       );
