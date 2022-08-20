@@ -16,7 +16,9 @@
         />
       </el-form-item>
       <el-form-item label="候选用户">
-        <el-tag v-for="{ value, label } in candidateUsers" :key="value"> {{ label }} </el-tag>
+        <el-tag v-for="{ value, label } in candidateUsers" :key="value" closable @close="onDelCandidateUser(value)">
+          {{ label }}
+        </el-tag>
         <el-button class="button-new-tag" size="small" @click="onEditCandidate">编辑候选用户</el-button>
         <element-user-task-drawer
           v-bind="$attrs"
@@ -57,6 +59,12 @@ export default {
     },
     onCandidateSubmit(result) {
       this.candidateUsers = result
+    },
+    onDelCandidateUser(tag) {
+      this.candidateUsers.splice(
+        this.candidateUsers.findIndex(({ value }) => value === tag),
+        1
+      )
     },
   },
 }
