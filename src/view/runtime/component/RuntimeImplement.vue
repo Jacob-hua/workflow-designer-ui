@@ -86,7 +86,7 @@ import {
   downloadTaskAttachmentFile,
 } from "@/api/unit/api.js";
 import { mapState } from "vuex";
-
+import _ from "lodash";
 export default {
   components: {
     BpmnInfo,
@@ -379,7 +379,19 @@ export default {
       }
       this.completeTask();
     },
+    transformData(formData, data) {
+      let valuePath = formData.config.valuePath;
+      let [firstPath, endPath] = valuePath.split("[0].");
+      formData.data[firstPath].forEach((list) => {
+        list[endPath].forEach((file) => {
+          file.url = file.blobMappingUrl[file.url];
+          delete file["blobMappingUrl"];
+        });
+      });
+      data = formData.data;
+    },
     async completeTask(formData = {}, data = {}) {
+      this.transformData(formData, data);
       const { errorInfo } = await postCompleteTask({
         assignee: this.userInfo.account,
         nextAssignee: this.workflow.executors?.[0].userId,

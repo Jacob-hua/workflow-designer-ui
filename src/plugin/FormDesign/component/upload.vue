@@ -62,7 +62,14 @@
     </el-dialog>
     <ul v-if="isShowTextUpload">
       <li @mousemove="fileMove(file)" v-for="(file, key) in value" :key="key">
-        <span> {{ file.name }}</span>
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="file.name"
+          placement="top"
+        >
+          <span> {{ file.name }}</span>
+        </el-tooltip>
         <p>
           <span
             @click="handlePreview(file)"
@@ -109,6 +116,9 @@ export default {
     readOnly: {
       type: Boolean,
     },
+    formConf: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -139,9 +149,7 @@ export default {
     },
     mappingProcess() {
       this.value.forEach(async (file) => {
-        const result = await Promise.resolve(
-          this.downloadFun({ url: file.blobMappingUrl[file.url] })
-        );
+        const result = await Promise.resolve(this.downloadFun(file));
         if (!result) {
           return;
         }
@@ -216,8 +224,20 @@ export default {
         return false;
       }
       const blobMappingUrl = {};
-      blobMappingUrl[file.url] = await Promise.resolve(this.uploadFun(file));
+      const attachmentId = await Promise.resolve(this.uploadFun(file));
+      const result = await Promise.resolve(
+        this.downloadFun({ url: attachmentId })
+      );
+      const reader = new FileReader();
+      reader.readAsDataURL(result);
+      reader.onload = (e) => {
+        console.log(e.target.result);
+        file.url = e.target.result;
+        blobMappingUrl[file.url] = attachmentId;
+      };
       file["blobMappingUrl"] = blobMappingUrl;
+      console.log(this.fieldInfo.valuePath);
+      this.formConf["valuePath"] = this.fieldInfo.valuePath;
       this.value.push(file);
       this.$emit("input", this.value);
     },
