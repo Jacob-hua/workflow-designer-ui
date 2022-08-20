@@ -25,6 +25,8 @@
 
 <script>
 import BpmnInfo from '../../../component/BpmnInfo.vue'
+import { putRejectTask } from '@/api/unit/api.js'
+import { mapState } from 'vuex'
 
 export default {
   name: 'RuntimeRejectConfirmation',
@@ -52,6 +54,9 @@ export default {
       },
     }
   },
+  computed: {
+    ...mapState('account', ['userInfo']),
+  },
   methods: {
     onCancel() {
       this.$emit('update:visible', false)
@@ -59,7 +64,7 @@ export default {
     },
     onSubmit() {
       this.$refs.rejectForm['validate'] &&
-        this.$refs.rejectForm.validate((valid) => {
+        this.$refs.rejectForm.validate(async (valid) => {
           if (!valid) {
             return
           }
@@ -67,10 +72,23 @@ export default {
             this.$message.error('请选择被驳回的节点')
             return
           }
-          this.$emit('submit', {
-            rejectReason: this.rejectForm.rejectReason,
+          const { errorInfo } = await putRejectTask({
+            message: this.rejectForm.rejectReason,
+            processInstanceId: this.workflow.processInstanceId,
             taskKey: this.taskKey,
+            userId: this.userInfo.account,
+            currentTaskId: this.workflow.newTaskId,
+            processKey: this.workflow.processDeployKey,
+            currentTaskName: this.workflow.processDeployName,
+            currentTaskKey: this.workflow.taskKey,
+            createBy: this.userInfo.account,
           })
+          if (errorInfo.errorCode) {
+            this.$message.error(errorInfo.errorMsg)
+            return
+          }
+          this.$message.success('驳回成功！')
+          this.$emit('rejected')
           this.$emit('update:visible', false)
         })
     },
