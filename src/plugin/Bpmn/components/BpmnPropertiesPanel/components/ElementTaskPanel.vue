@@ -19,12 +19,24 @@
         <el-tag v-for="{ value, label } in candidateUsers" :key="value" closable @close="onDelCandidateUser(value)">
           {{ label }}
         </el-tag>
-        <el-button class="button-new-tag" size="small" @click="onEditCandidate">编辑候选用户</el-button>
+        <el-button class="button-new-tag" size="small" @click="onEditCandidateUser">编辑候选用户</el-button>
         <element-user-task-drawer
           v-bind="$attrs"
-          :visible.sync="candidateVisible"
+          :visible.sync="candidateUserVisible"
           model="multipleUser"
-          @submit="onCandidateSubmit"
+          @submit="onCandidateUserSubmit"
+        />
+      </el-form-item>
+      <el-form-item label="候选分组">
+        <el-tag v-for="{ value, label } in candidateGroups" :key="value" closable @close="onDelCandidateGroup(value)">
+          {{ label }}
+        </el-tag>
+        <el-button class="button-new-tag" size="small" @click="onEditCandidateGroup">编辑候选分组</el-button>
+        <element-user-task-drawer
+          v-bind="$attrs"
+          :visible.sync="candidateGroupVisible"
+          model="multipleOrganization"
+          @submit="onCandidateGroupSubmit"
         />
       </el-form-item>
     </el-form>
@@ -39,9 +51,11 @@ export default {
   data() {
     return {
       assigneeVisible: false,
-      candidateVisible: false,
+      candidateUserVisible: false,
+      candidateGroupVisible: false,
       assignee: {},
       candidateUsers: [],
+      candidateGroups: [],
     }
   },
   methods: {
@@ -54,15 +68,27 @@ export default {
     onAssigneeSubmit(result) {
       this.assignee = result[0]
     },
-    onEditCandidate() {
-      this.candidateVisible = true
+    onEditCandidateUser() {
+      this.candidateUserVisible = true
     },
-    onCandidateSubmit(result) {
+    onCandidateUserSubmit(result) {
       this.candidateUsers = result
     },
     onDelCandidateUser(tag) {
       this.candidateUsers.splice(
         this.candidateUsers.findIndex(({ value }) => value === tag),
+        1
+      )
+    },
+    onEditCandidateGroup() {
+      this.candidateGroupVisible = true
+    },
+    onCandidateGroupSubmit(result) {
+      this.candidateGroups = result
+    },
+    onDelCandidateGroup(tag) {
+      this.candidateGroups.splice(
+        this.candidateGroups.findIndex(({ value }) => value === tag),
         1
       )
     },
