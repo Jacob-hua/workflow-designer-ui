@@ -73,7 +73,7 @@
         <p>
           <span
             @click="handlePreview(file)"
-            v-show="isTypeAnImage(file.name.split('.')[1])"
+            v-show="isTypeAnImage(file)"
             class="preview el-icon-zoom-in"
           ></span>
           <span @click="download(file)" class="preview el-icon-download"></span>
@@ -203,11 +203,17 @@ export default {
       link.click();
       window.URL.revokeObjectURL(link.href);
     },
-    checkFileFormat(file) {
+    fileListDel(fileList, file) {
+      fileList.splice(
+        fileList.findIndex(({ uid }) => uid === file.uid),
+        1
+      );
+    },
+    checkFileFormat(file, fileList) {
       const fileName = file.name;
       const suffixName = fileName.split(".").pop();
       if (!this.fieldInfo.accept.includes(suffixName)) {
-        this.delFile(file);
+        this.fileListDel(fileList, file);
         this.$message.error(
           `该后缀文件不允许上传, 正确格式为${this.fieldInfo.accept}`
         );
@@ -215,7 +221,7 @@ export default {
       }
       const fileSize = file.size;
       if (fileSize > this.fieldInfo.fileSize * 1024 * 1024) {
-        this.delFile(file);
+        this.fileListDel(fileList, file);
         this.$message.error(`
         文件大小超出限制，请检查！最大上传大小为
           ${this.fieldInfo.fileSize}MB
@@ -224,8 +230,8 @@ export default {
       }
       return true;
     },
-    async imgChange(file) {
-      if (!this.checkFileFormat(file)) {
+    async imgChange(file, fileList) {
+      if (!this.checkFileFormat(file, fileList)) {
         return false;
       }
       const blobMappingUrl = {};
@@ -246,8 +252,8 @@ export default {
       this.value.push(file);
       this.$emit("input", this.value);
     },
-    async fileChange(file) {
-      if (!this.checkFileFormat(file)) {
+    async fileChange(file, fileList) {
+      if (!this.checkFileFormat(file, fileList)) {
         return false;
       }
       file.url = await Promise.resolve(this.uploadFun(file));
@@ -256,7 +262,9 @@ export default {
     },
     async beforeUpload(file) {},
     handleRemove(file, fileList) {},
-    isTypeAnImage(ext) {
+    isTypeAnImage(file) {
+      let patternFileExtension = /\.([0-9a-z]+)(?:[\?#]|$)/i;
+      let ext = file.name.match(patternFileExtension)[1];
       return (
         ["png", "jpg", "jpeg", "gif", "webp", "psd", "tiff"].indexOf(
           ext.toLowerCase()
@@ -273,12 +281,11 @@ export default {
     },
     async handlePreview(file) {
       try {
-        const [, ext] = file.name.split(".");
         const result = await Promise.resolve(this.downloadFun(file));
         if (!result) {
           return;
         }
-        if (!this.isTypeAnImage(ext)) {
+        if (!this.isTypeAnImage(file)) {
           this.downloadFile(file.name, file.type, result);
         } else {
           this.blobToBase64(result);
