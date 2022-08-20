@@ -5,12 +5,24 @@
         <el-tag v-if="assignee.value" closable @close="onDelAssignee" :key="assignee.value">{{
           assignee.label
         }}</el-tag>
-        <el-button v-if="!assignee.value" class="button-new-tag" size="small" @click="onAddUser">添加用户</el-button>
+        <el-button v-if="!assignee.value" class="button-new-tag" size="small" @click="onAddAssignee"
+          >添加处理用户</el-button
+        >
         <element-user-task-drawer
           v-bind="$attrs"
-          :visible.sync="taskDrawerVisible"
+          :visible.sync="assigneeVisible"
           model="singleUser"
           @submit="onAssigneeSubmit"
+        />
+      </el-form-item>
+      <el-form-item label="候选用户">
+        <el-tag v-for="{ value, label } in candidateUsers" :key="value"> {{ label }} </el-tag>
+        <el-button class="button-new-tag" size="small" @click="onEditCandidate">编辑候选用户</el-button>
+        <element-user-task-drawer
+          v-bind="$attrs"
+          :visible.sync="candidateVisible"
+          model="multipleUser"
+          @submit="onCandidateSubmit"
         />
       </el-form-item>
     </el-form>
@@ -24,19 +36,27 @@ export default {
   components: { ElementUserTaskDrawer },
   data() {
     return {
-      taskDrawerVisible: false,
+      assigneeVisible: false,
+      candidateVisible: false,
       assignee: {},
+      candidateUsers: [],
     }
   },
   methods: {
-    onAddUser() {
-      this.taskDrawerVisible = true
+    onAddAssignee() {
+      this.assigneeVisible = true
     },
     onDelAssignee() {
       this.assignee = {}
     },
     onAssigneeSubmit(result) {
       this.assignee = result[0]
+    },
+    onEditCandidate() {
+      this.candidateVisible = true
+    },
+    onCandidateSubmit(result) {
+      this.candidateUsers = result
     },
   },
 }
