@@ -208,13 +208,18 @@ export default {
       const suffixName = fileName.split(".").pop();
       if (!this.fieldInfo.accept.includes(suffixName)) {
         this.delFile(file);
-        this.$message.error("该后缀文件不允许上传");
+        this.$message.error(
+          `该后缀文件不允许上传, 正确格式为${this.fieldInfo.accept}`
+        );
         return false;
       }
       const fileSize = file.size;
       if (fileSize > this.fieldInfo.fileSize * 1024 * 1024) {
         this.delFile(file);
-        this.$message.error("文件大小超出限制，请检查！");
+        this.$message.error(`
+        文件大小超出限制，请检查！最大上传大小为
+          ${this.fieldInfo.fileSize}MB
+        `);
         return false;
       }
       return true;
