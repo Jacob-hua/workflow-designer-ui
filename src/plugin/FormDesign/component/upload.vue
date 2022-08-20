@@ -15,7 +15,7 @@
       :on-remove="handleRemove"
       :before-upload="beforeUpload"
       :on-change="fileChange"
-      multiple
+      :multiple="fieldInfo.multiple"
       :limit="30"
       :on-exceed="handleExceed"
       :file-list="this.value"
@@ -28,7 +28,7 @@
       list-type="picture-card"
       :file-list="this.value"
       :on-change="imgChange"
-      multiple
+      :multiple="fieldInfo.multiple"
       :auto-upload="false"
     >
       <i slot="default" class="el-icon-plus"></i>
