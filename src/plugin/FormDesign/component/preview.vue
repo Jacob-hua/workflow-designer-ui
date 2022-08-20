@@ -31,7 +31,11 @@ function handleRequestDependChange(data, fieldInfo) {
       if (Array.isArray(domain[children])) {
         domain[children] = domain[children].map(formatData)
       }
-      const result = { label: domain[label], value: domain[value], children: domain[children] }
+      const result = {
+        label: domain[label],
+        value: domain[value],
+        children: domain[children],
+      }
       if (domain[children].length === 0) {
         delete result.children
       }
@@ -203,7 +207,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
         uploadFun={this.uploadFun}
         downloadFun={this.downloadFun}
         fieldInfo={fieldInfo}
-        flag={this.flag}
+        readOnly={this.formConf.readOnly}
         onInput={(event) => {
           _.set(this.form, fieldInfo.valuePath, event)
         }}
@@ -224,7 +228,6 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
           conf={fieldInfo}
           value={_.get(this.form, fieldInfo.valuePath)}
           uploadFun={this.uploadFun}
-          flag={this.flag}
           downloadFun={this.downloadFun}
           onInput={(event) => {
             _.set(this.form, fieldInfo.valuePath, event)
@@ -237,7 +240,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
 import upload from '@/plugin/FormDesign/component/upload'
 export default {
   name: 'preview',
-  props: ['itemList', 'formData', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId', 'flag'],
+  props: ['itemList', 'formData', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
   components: { render, upload },
   data() {
     const metaDataList = _.cloneDeep(this.itemList)

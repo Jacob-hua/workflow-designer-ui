@@ -53,7 +53,6 @@
             :uploadFun="uploadFile.bind(this)"
             :downloadFun="downloadFile.bind(this)"
             v-if="formShow"
-            :flag="true"
             ref="preview"
           ></preview>
         </div>

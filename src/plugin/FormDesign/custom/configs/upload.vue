@@ -38,7 +38,7 @@
     <el-form-item label="必填">
       <el-switch v-model="props.required"></el-switch>
     </el-form-item>
-    <el-form-item label="多文件上传">
+    <el-form-item label="选多文件上传">
       <el-switch v-model="props.multiple"></el-switch>
     </el-form-item>
     <el-form-item label="显示文件列表">

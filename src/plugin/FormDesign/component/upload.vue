@@ -2,7 +2,7 @@
   <el-form-item
     :label="fieldInfo.showLabel ? fieldInfo.label : ''"
     :label-width="fieldInfo.labelWidth"
-    :prop="fieldInfo.id"
+    :prop="fieldInfo.valuePath"
     :rules="rules"
   >
     <el-upload
@@ -15,8 +15,8 @@
       :on-remove="handleRemove"
       :before-upload="beforeUpload"
       :on-change="fileChange"
-      multiple
-      :limit="20"
+      :multiple="fieldInfo.multiple"
+      :limit="30"
       :on-exceed="handleExceed"
       :file-list="this.value"
     >
@@ -28,7 +28,7 @@
       list-type="picture-card"
       :file-list="this.value"
       :on-change="imgChange"
-      multiple
+      :multiple="fieldInfo.multiple"
       :auto-upload="false"
     >
       <i slot="default" class="el-icon-plus"></i>
@@ -47,6 +47,13 @@
           >
             <i class="el-icon-download"></i>
           </span>
+          <span
+            v-show="!readOnly"
+            class="el-upload-list__item-delete"
+            @click="delFile(file)"
+          >
+            <i class="el-icon-delete"></i>
+          </span>
         </span>
       </div>
     </el-upload>
@@ -64,7 +71,7 @@
           ></span>
           <span @click="download(file)" class="preview el-icon-download"></span>
           <span
-            v-show="flag"
+            v-show="!readOnly"
             @click="delFile(file)"
             class="preview el-icon-delete"
           >
@@ -99,7 +106,7 @@ export default {
       type: Array,
       default: [],
     },
-    flag: {
+    readOnly: {
       type: Boolean,
     },
   },
@@ -117,17 +124,16 @@ export default {
     },
   },
   mounted() {
-    if (!this.flag) {
+    if (this.readOnly) {
       this.displayNoneDom();
       this.mappingProcess();
     }
   },
   methods: {
     displayNoneDom() {
-      let uploadCollection = Array.from(
+      Array.from(
         document.getElementsByClassName("el-upload--picture-card")
-      );
-      uploadCollection.forEach((upload) => {
+      ).forEach((upload) => {
         upload.style.display = "none";
       });
     },
@@ -189,16 +195,24 @@ export default {
       link.click();
       window.URL.revokeObjectURL(link.href);
     },
-    async imgChange(file) {
+    checkFileFormat(file) {
       const fileName = file.name;
       const suffixName = fileName.split(".").pop();
       if (!this.fieldInfo.accept.includes(suffixName)) {
+        this.delFile(file);
         this.$message.error("该后缀文件不允许上传");
         return false;
       }
       const fileSize = file.size;
       if (fileSize > this.fieldInfo.fileSize * 1024 * 1024) {
+        this.delFile(file);
         this.$message.error("文件大小超出限制，请检查！");
+        return false;
+      }
+      return true;
+    },
+    async imgChange(file) {
+      if (!this.checkFileFormat(file)) {
         return false;
       }
       const blobMappingUrl = {};
@@ -208,15 +222,7 @@ export default {
       this.$emit("input", this.value);
     },
     async fileChange(file) {
-      const fileName = file.name;
-      const suffixName = fileName.split(".").pop();
-      if (!this.fieldInfo.accept.includes(suffixName)) {
-        this.$message.error("该后缀文件不允许上传");
-        return false;
-      }
-      const fileSize = file.size;
-      if (fileSize > this.fieldInfo.fileSize * 1024 * 1024) {
-        this.$message.error("文件大小超出限制，请检查！");
+      if (!this.checkFileFormat(file)) {
         return false;
       }
       file.url = await Promise.resolve(this.uploadFun(file));
@@ -258,7 +264,7 @@ export default {
     },
     handleExceed(files, fileList) {
       this.$message.warning(
-        `当前限制选择 20 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
+        `当前限制选择 30 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
           files.length + fileList.length
         } 个文件`
       );
