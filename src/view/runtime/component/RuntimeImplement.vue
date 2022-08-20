@@ -379,22 +379,22 @@ export default {
       }
       this.completeTask();
     },
-    // transformData(formData, data) {
-    //   let valuePath = formData?.config?.valuePath;
-    //   let [firstPath, endPath] = valuePath?.split("[0].");
-    //   if (valuePath && firstPath && endPath) {
-    //     formData?.data[firstPath].forEach((list) => {
-    //       list[endPath].forEach((file) => {
-    //         file.url = file.blobMappingUrl[file.url];
-    //         delete file["blobMappingUrl"];
-    //       });
-    //     });
-    //     data = formData.data;
-    //   } else {
-    //   }
-    // },
+    transformData(formData, data) {
+      let valuePath = formData?.config?.valuePath;
+      let [firstPath, endPath] = valuePath?.split("[0].");
+      if (valuePath && firstPath && endPath) {
+        formData?.data[firstPath].forEach((list) => {
+          list[endPath].forEach((file) => {
+            file.url = file.blobMappingUrl[file.url];
+            delete file["blobMappingUrl"];
+          });
+        });
+        data = formData.data;
+      } else {
+      }
+    },
     async completeTask(formData = {}, data = {}) {
-      // this.transformData(formData, data);
+      this.transformData(formData, data);
       const { errorInfo } = await postCompleteTask({
         assignee: this.userInfo.account,
         nextAssignee: this.workflow.executors?.[0].userId,
