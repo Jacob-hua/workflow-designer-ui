@@ -45,13 +45,14 @@
     >
       <div class="start_container">
         <div class="start_left">
-          <el-tree
-            @node-click="handleNodeClick"
-            class="tree"
-            default-expand-all
-            :data="data"
-            :props="defaultProps"
-          ></el-tree>
+          <PeTree
+          nodeKey="id"
+          labelName="name"
+          @node-click="handleNodeClick"
+          default-expand-all
+          :data="data"
+          :props="defaultProps"
+          ></PeTree>
         </div>
         <div class="start_right">
           <p>自定义启动项</p>
@@ -215,8 +216,12 @@ import {
 import FormTypeEnum from "@/enum/FormTypeEnum";
 import StartItemEnum from "@/enum/StartItemEnum";
 import { mapState } from "vuex";
+import PeTree from '@/component/PeTree.vue';
 
 export default {
+  components: {
+    PeTree,
+  },
   name: "startItemCon",
   props: {
     footFlag: {
@@ -625,6 +630,4 @@ export default {
 .bg4 {
   background: #d3ecef;
 }
-
-@include tree;
 </style>

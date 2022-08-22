@@ -99,15 +99,9 @@
           </el-select>
         </div>
         <div class="from-item">
-          <span>流程类型</span>
-          <el-select v-model="postData.business" placeholder="请选择流程类型">
-            <el-option
-              v-for="item in options2"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
+          <span>表单类型</span>
+          <el-select v-model="postData.business" placeholder="请选择表单类型">
+            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </div>
         <div class="from-item">

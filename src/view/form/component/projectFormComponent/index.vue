@@ -22,7 +22,7 @@
             </el-form-item>
           </div>
           <div class="from-item">
-            <el-form-item label="流程类型" prop="business">
+            <el-form-item label="表单类型" prop="business">
               <el-cascader
                 ref="cascader"
                 v-model="postData.business"
@@ -142,7 +142,7 @@ export default {
           { required: true, message: "请选择应用项目", trigger: "blur" },
         ],
         business: [
-          { required: true, message: "请选择流程类型", trigger: "change" },
+          { required: true, message: "请选择表单类型", trigger: "change" },
         ],
         name: [
           { required: true, message: "请输入表单名称", trigger: "blur" },

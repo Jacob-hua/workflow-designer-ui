@@ -47,7 +47,7 @@ export let upload = {
   //允许文件类型
   accept:'.pdf, .doc, .docx, .xls, .xlsx',
   // 允许图片类型
-  acceptPicture:'.png, .PNG, .jpg, .JPG, .JPEG, .jpeg',
+  acceptPicture:'.png, .PNG, .jpg, .JPG, .jpeg, .JPEG',
   //文件大小MB
   fileSize:10,
 }
