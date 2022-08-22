@@ -184,6 +184,10 @@ export default {
         this.value.findIndex(({ uid }) => uid === file.uid),
         1
       );
+      this.displayList.splice(
+        this.displayList.findIndex(({ uid }) => uid === file.uid),
+        1
+      );
     },
     isBase64(file) {
       return (
