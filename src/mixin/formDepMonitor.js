@@ -117,6 +117,10 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
     return Object.keys(dependObj).reduce((isDiffe, dependValuePath) => {
       const dependValue = calculateDependValue(data, fieldInfo.valuePath, dependValuePath)
       isDiffe = isDiffe || dependValue !== dependObj[dependValuePath].value
+      // 如果前后的dependValue都是假值，则默认为发生变化
+      if (!dependValue && !dependObj[dependValuePath].value) {
+        isDiffe = true
+      }
       dependObj[dependValuePath].value = dependValue
       return isDiffe
     }, false)
