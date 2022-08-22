@@ -339,7 +339,7 @@ export default {
         item.startType = +item.startType;
       });
     },
-    checkCodeIsNull() {
+    checkIsNull() {
       return this.tableData.every((table) => table.code);
     },
     checkCodeIsRepeat(data) {
