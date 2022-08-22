@@ -252,7 +252,7 @@ function onSelectionChangedListener(_, commit, iBpmnModeler = new IBpmnModeler()
     listeners,
     inputParameters,
     outputParameters,
-    userTask,
+    // userTask,
     actions,
     multiInstance,
     timer,
