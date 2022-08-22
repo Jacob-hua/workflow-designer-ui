@@ -283,6 +283,10 @@ export default {
               message: res.result,
             });
           } else {
+            this.tableData.splice(
+              this.tableData.findIndex((item) => item.id === row.id),
+              1
+            );
             this.$message({
               type: "success",
               message: "删除成功",
@@ -295,8 +299,7 @@ export default {
             }
           }
         });
-      }
-      if (!res.result) {
+      } else {
         this.tableData.splice(
           this.tableData.findIndex((item) => item.id === row.id),
           1
