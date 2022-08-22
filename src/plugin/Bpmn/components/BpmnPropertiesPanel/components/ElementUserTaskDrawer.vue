@@ -50,7 +50,7 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="usersVisible" label="选中">
+          <el-form-item label="选择结果">
             <el-tag v-for="{ label, value } in result" :key="value" :type="value" closable @close="onDelTag(value)">{{
               label
             }}</el-tag>
@@ -92,6 +92,10 @@ export default {
       type: String,
       default: 'singleUser',
     },
+    selected: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -103,6 +107,14 @@ export default {
       result: [],
       userSelectOptions: [],
     }
+  },
+  watch: {
+    selected: {
+      immediate: true,
+      handler(selected) {
+        this.result = deepCopy(selected)
+      },
+    },
   },
   computed: {
     userGroupOptions() {

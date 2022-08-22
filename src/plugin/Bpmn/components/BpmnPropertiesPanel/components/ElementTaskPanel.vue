@@ -10,8 +10,10 @@
         >
         <element-user-task-drawer
           v-bind="$attrs"
+          v-if="assigneeVisible"
           :visible.sync="assigneeVisible"
           model="singleUser"
+          :selected="[assignee]"
           @submit="onAssigneeSubmit"
         />
       </el-form-item>
@@ -22,7 +24,9 @@
         <el-button class="button-new-tag" size="small" @click="onEditCandidateUser">编辑候选用户</el-button>
         <element-user-task-drawer
           v-bind="$attrs"
+          v-if="candidateUserVisible"
           :visible.sync="candidateUserVisible"
+          :selected="candidateUsers"
           model="multipleUser"
           @submit="onCandidateUserSubmit"
         />
@@ -34,7 +38,9 @@
         <el-button class="button-new-tag" size="small" @click="onEditCandidateGroup">编辑候选分组</el-button>
         <element-user-task-drawer
           v-bind="$attrs"
+          v-if="candidateGroupVisible"
           :visible.sync="candidateGroupVisible"
+          :selected="candidateGroups"
           model="multipleOrganization"
           @submit="onCandidateGroupSubmit"
         />
