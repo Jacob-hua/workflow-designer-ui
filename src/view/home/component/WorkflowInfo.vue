@@ -121,12 +121,13 @@ export default {
         this.formContent = {}
         return
       }
-      const displayCandidateGroups = JSON.parse(this.iBpmn.getSelectedShapeInfoByType('displayCandidateGroups') ?? '[]')
-      const displayAssignee = JSON.parse(this.iBpmn.getSelectedShapeInfoByType('displayAssignee') ?? '{}')
-      this.taskInfo.name = this.iBpmn.getSelectedShapeInfoByType('name')
+      const shapeInfo = this.iBpmn.getSelectedShapeInfo()
+      const displayCandidateGroups = JSON.parse(shapeInfo['displayCandidateGroups'] ?? '[]')
+      const displayAssignee = JSON.parse(shapeInfo['displayAssignee'] ?? '{}')
+      this.taskInfo.name = shapeInfo['name']
       this.taskInfo.group = displayCandidateGroups.map(({ label }) => label).join(',')
       this.taskInfo.assignee = displayAssignee.label
-      this.fetchFormContent(this.iBpmn.getSelectedShapeInfoByType('formKey'))
+      this.fetchFormContent(shapeInfo['formKey'])
     },
     onRemoveForm() {
       if (!this.iBpmn.getSelectedShape()) {
@@ -134,6 +135,9 @@ export default {
       }
       this.iBpmn.updateSelectedShapeProperties({
         'camunda:formKey': '',
+      })
+      this.iBpmn.updateSelectedShapeProperties({
+        'camunda:formId': '',
       })
       this.formContent = {}
       this.$emit('removeForm', this.workflow)

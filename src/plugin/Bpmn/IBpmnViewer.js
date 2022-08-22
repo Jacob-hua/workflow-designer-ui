@@ -121,29 +121,8 @@ class IBpmnViewer {
     return element.businessObject ?? {}
   }
 
-  getShapeInfoByType(element, type) {
-    const shapeProperties = this.getShapeInfo(element)
-    if (shapeProperties.$type === type) {
-      return shapeProperties
-    }
-    if (shapeProperties[type]) {
-      return shapeProperties[type]
-    }
-    const extensionElements = shapeProperties.extensionElements
-    if (!extensionElements) {
-      return
-    }
-    if (extensionElements.$type === type) {
-      return extensionElements
-    }
-    if (Array.isArray(extensionElements.values) && extensionElements.values.length > 0) {
-      return extensionElements.values.filter(({ $type }) => $type === type)
-    }
-    return
-  }
-
-  getSelectedShapeInfoByType(type) {
-    return this.getShapeInfoByType(this.getSelectedShape(), type)
+  getSelectedShapeInfo() {
+    return this.getSelectedShape()?.businessObject ?? {}
   }
 
   getShapeType(element) {
