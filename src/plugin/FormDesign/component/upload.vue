@@ -124,7 +124,6 @@ export default {
   data() {
     return {
       displayList: [],
-      fileList: [],
       dialogVisible: false,
       dialogImageUrl: "",
       listType: "text",
