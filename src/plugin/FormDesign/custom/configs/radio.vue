@@ -11,9 +11,6 @@
     <el-form-item label="标题">
       <el-input class="input" v-model="props.label"></el-input>
     </el-form-item>
-    <el-form-item label="提示符">
-      <el-input class="input" v-model="props.placeholder" placeholder="请输入提示符" />
-    </el-form-item>
     <!-- <el-form-item label="表单栅格">
       <el-slider class="input" v-model="props.span" :max="24" :min="1" :marks="{12:''}"></el-slider>
     </el-form-item> -->

@@ -11,7 +11,7 @@
       >
         <div class="card-main">
           <div>
-            <label>项目名称:</label> <span>{{ item.name }}</span>
+            <long-text label="项目名称:" :content="item.name" />
           </div>
           <div>
             <label>项目类型:</label> <span>{{ item.typeName }}</span>
@@ -58,6 +58,7 @@
 
 <script>
 import StartItemCon from "@/view/configuration/startItemConfig/startItemCon";
+import longText from "../../../component/LongText.vue";
 import {
   getBusinessConfigBasicList,
   getBusinessConfigWithTree,
@@ -67,6 +68,7 @@ import { mapState } from "vuex";
 export default {
   components: {
     StartItemCon,
+    longText,
   },
   name: "index",
   data() {

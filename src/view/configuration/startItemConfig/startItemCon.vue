@@ -46,12 +46,12 @@
       <div class="start_container">
         <div class="start_left">
           <PeTree
-          nodeKey="id"
-          labelName="name"
-          @node-click="handleNodeClick"
-          default-expand-all
-          :data="data"
-          :props="defaultProps"
+            nodeKey="id"
+            labelName="name"
+            @node-click="handleNodeClick"
+            default-expand-all
+            :data="data"
+            :props="defaultProps"
           ></PeTree>
         </div>
         <div class="start_right">
