@@ -112,10 +112,14 @@ export default {
     },
   },
   watch: {
-    userTask({ displayAssignee, displayCandidateUsers, displayCandidateGroups }) {
-      this.displayAssignee = { ...displayAssignee }
-      this.displayCandidateUsers = [...displayCandidateUsers]
-      this.displayCandidateGroups = [...displayCandidateGroups]
+    userTask: {
+      deep: true,
+      immediate: true,
+      handler({ displayAssignee, displayCandidateUsers, displayCandidateGroups }) {
+        this.displayAssignee = { ...displayAssignee }
+        this.displayCandidateUsers = [...displayCandidateUsers]
+        this.displayCandidateGroups = [...displayCandidateGroups]
+      },
     },
     displayAssignee: {
       deep: true,
@@ -131,10 +135,7 @@ export default {
       deep: true,
       immediate: true,
       handler(displayCandidateUsers) {
-        if (
-          emptyPropertiesObject(displayCandidateUsers) ||
-          deepEquals(displayCandidateUsers, this.userTask.displayCandidateUsers)
-        ) {
+        if (deepEquals(displayCandidateUsers, this.userTask.displayCandidateUsers)) {
           return
         }
         this.updateUserTask({ displayCandidateUsers: deepCopy(displayCandidateUsers) })
@@ -144,10 +145,7 @@ export default {
       deep: true,
       immediate: true,
       handler(displayCandidateGroups) {
-        if (
-          emptyPropertiesObject(displayCandidateGroups) ||
-          deepEquals(displayCandidateGroups, this.userTask.displayCandidateGroups)
-        ) {
+        if (deepEquals(displayCandidateGroups, this.userTask.displayCandidateGroups)) {
           return
         }
         this.updateUserTask({ displayCandidateGroups: deepCopy(displayCandidateGroups) })
