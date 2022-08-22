@@ -79,8 +79,7 @@
             </div>
             <div class="card-main">
               <div class="card-main-item">
-                <span class="label">表单名称:</span>
-                <span class="value" :title="item.name">{{ item.name }}</span>
+                <long-text label="表单名称:" :content="item.name" />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -107,8 +106,7 @@
             </div>
             <div class="card-main">
               <div class="card-main-item">
-                <span class="label">表单名称:</span>
-                <span class="value" :title="item.name">{{ item.name }}</span>
+                <long-text label="表单名称:" :content="item.name" />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -165,6 +163,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { getProjectList } from '@/api/globalConfig'
 import router from '@/router'
 import { currentOneMonthAgo } from '@/util/date'
+import longText from "../../../component/LongText.vue";
 
 export default {
   data() {
@@ -423,6 +422,7 @@ export default {
     projectFormDiolog,
     detailsDiologForm,
     application,
+    longText,
   },
 }
 </script>
@@ -594,7 +594,7 @@ export default {
 
 .card-main-item .label {
   display: inline-block;
-  width: 90px;
+  width: 80px;
   color: #999999;
 }
 

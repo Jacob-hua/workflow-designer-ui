@@ -8,6 +8,9 @@
     <el-form-item label="标题">
       <el-input class="input" v-model="props.label"></el-input>
     </el-form-item>
+    <el-form-item label="提示符">
+      <el-input class="input" v-model="props.placeholder"></el-input>
+    </el-form-item>
     <el-form-item label="栅格间隔">
       <el-input-number v-model="props.gutter" :min="0"></el-input-number>
     </el-form-item>
@@ -16,9 +19,6 @@
     </el-form-item>
     <el-form-item label="显示标签">
       <el-switch v-model="props.showLabel"></el-switch>
-    </el-form-item>
-    <el-form-item label="显示标签">
-      <el-input class="input" v-model="props.placeholder"></el-input>
     </el-form-item>
     <el-form-item label="必填">
       <el-switch v-model="props.required"></el-switch>
