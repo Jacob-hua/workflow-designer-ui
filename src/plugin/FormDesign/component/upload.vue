@@ -278,7 +278,6 @@ export default {
       const file2 = _.cloneDeep(file);
       reader.readAsDataURL(result);
       reader.onload = (e) => {
-        console.log(e.target.result);
         file2.url = e.target.result;
       };
       this.displayList.push(file2);
