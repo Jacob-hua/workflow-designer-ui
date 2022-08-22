@@ -49,7 +49,7 @@ function users2CascaderData(data) {
   }
   return {
     value: data.userId,
-    label: `${data.firstName}${data.lastName}`,
+    label: `${data.lastName}`,
   }
 }
 

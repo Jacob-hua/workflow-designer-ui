@@ -5,15 +5,21 @@
         <el-tag v-if="assignee.value" closable @close="onDelAssignee" :key="assignee.value">{{
           assignee.label
         }}</el-tag>
-        <el-button v-if="!assignee.value" class="button-new-tag" size="small" @click="onAddAssignee"
-          >添加处理用户</el-button
+        <el-button
+          v-if="!assignee.value"
+          class="button-new-tag"
+          size="small"
+          @click="onAddAssignee"
+          icon="el-icon-edit"
         >
+          处理用户
+        </el-button>
         <element-user-task-drawer
           v-bind="$attrs"
           v-if="assigneeVisible"
           :visible.sync="assigneeVisible"
           model="singleUser"
-          :selected="[assignee]"
+          :selected="selectedAssignee"
           @submit="onAssigneeSubmit"
         />
       </el-form-item>
@@ -21,7 +27,9 @@
         <el-tag v-for="{ value, label } in candidateUsers" :key="value" closable @close="onDelCandidateUser(value)">
           {{ label }}
         </el-tag>
-        <el-button class="button-new-tag" size="small" @click="onEditCandidateUser">编辑候选用户</el-button>
+        <el-button class="button-new-tag" size="small" @click="onEditCandidateUser" icon="el-icon-edit">
+          候选用户
+        </el-button>
         <element-user-task-drawer
           v-bind="$attrs"
           v-if="candidateUserVisible"
@@ -35,7 +43,9 @@
         <el-tag v-for="{ value, label } in candidateGroups" :key="value" closable @close="onDelCandidateGroup(value)">
           {{ label }}
         </el-tag>
-        <el-button class="button-new-tag" size="small" @click="onEditCandidateGroup">编辑候选分组</el-button>
+        <el-button class="button-new-tag" size="small" @click="onEditCandidateGroup" icon="el-icon-edit">
+          候选分组
+        </el-button>
         <element-user-task-drawer
           v-bind="$attrs"
           v-if="candidateGroupVisible"
@@ -63,6 +73,14 @@ export default {
       candidateUsers: [],
       candidateGroups: [],
     }
+  },
+  computed: {
+    selectedAssignee() {
+      if (Object.prototype.hasOwnProperty.call(this.assignee, 'value')) {
+        return [this.assignee]
+      }
+      return []
+    },
   },
   methods: {
     onAddAssignee() {
@@ -102,4 +120,15 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+</style>

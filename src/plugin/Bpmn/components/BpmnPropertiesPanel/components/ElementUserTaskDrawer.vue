@@ -221,6 +221,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../index.scss';
+
+/deep/ .el-dialog {
+  @include formDialog;
+}
+
+.form-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 50px 0;
+}
+
+.submit-button {
+  @include primaryBtn;
+}
+
+.cancel-button {
+  @include cancelBtn;
+}
+
 .el-tag + .el-tag {
   margin-left: 10px;
 }
