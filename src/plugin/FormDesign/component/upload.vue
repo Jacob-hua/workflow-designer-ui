@@ -310,18 +310,9 @@ export default {
       };
     },
     async handlePreview(file) {
-      try {
-        const result = await Promise.resolve(this.downloadFun(file));
-        if (!result) {
-          return;
-        }
-        if (!this.isTypeAnImage(file)) {
-          this.downloadFile(file.name, file.type, result);
-        } else {
-          this.blobToBase64(result);
-        }
-      } catch (e) {
-        throw new Error(e.toString());
+      if (this.isTypeAnImage(file)) {
+        this.dialogVisible = true;
+        this.dialogImageUrl = file.url;
       }
     },
     handleExceed(files, fileList) {
