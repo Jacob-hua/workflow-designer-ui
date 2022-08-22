@@ -108,24 +108,14 @@ function baseInfoParameter2State(iBpmnModeler = new IBpmnModeler()) {
 
 function userTaskParameter2State(iBpmnModeler = new IBpmnModeler()) {
   const userTask = {
-    assignee: '',
-    candidateUsers: '',
-    candidateGroups: '',
-    customAssignee: false,
-    customCandidate: false,
-    customCandidateGroup: false,
+    displayAssignee: {},
+    displayCandidateUsers: [],
+    displayCandidateGroups: [],
   }
   const shapeInfo = iBpmnModeler.getSelectedShapeInfo()
-  userTask.assignee = shapeInfo['assignee']
-  userTask.customAssignee = !!shapeInfo['assignee']
-  userTask.candidateUsers = Array.isArray(shapeInfo['candidateUsers'])
-    ? shapeInfo['candidateUsers'].join(',')
-    : shapeInfo['candidateUsers']
-  userTask.customCandidate = !!shapeInfo['candidateUsers']
-  userTask.candidateGroups = Array.isArray(shapeInfo['candidateGroups'])
-    ? shapeInfo['candidateGroups'].join(',')
-    : shapeInfo['candidateGroups']
-  userTask.customCandidateGroup = !!shapeInfo['candidateGroups']
+  userTask.displayAssignee = JSON.parse(shapeInfo['displayAssignee'] ?? '{}')
+  userTask.displayCandidateUsers = JSON.parse(shapeInfo['displayCandidateUsers'] ?? '[]')
+  userTask.displayCandidateGroups = JSON.parse(shapeInfo['displayCandidateGroups'] ?? '[]')
   return userTask
 }
 

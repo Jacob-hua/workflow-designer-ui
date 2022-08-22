@@ -1,30 +1,35 @@
 import Vue from 'vue'
+import store from '../store'
 
 Vue.directive('role', {
-  bind: function(el, binding, vnode ) {
-    let type = binding.value.type
-    let id = binding.value.id
-    let { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
-    let proJectRole = permissions.filter((item) => {
-      // return item.projectCode === binding.value.business
-      // TODO: 应该匹配vuex中的项目选项
-      return item.projectCode === 'XM_aff0659724a54c119ac857d4e560b47b'
-    })[0].permissionSet
-    switch (type){
+  bind: function (el, binding, vnode) {
+    const type = binding.value.type
+    const id = binding.value.id
+    const { permissions } = JSON.parse(sessionStorage.getItem('loginData'))
+    if (!permissions) {
+      return
+    }
+    const proJectRole = permissions.find(
+      (item) => item.projectCode === store.account.state.currentOrganization
+    )?.permissionSet
+    if (!proJectRole) {
+      return
+    }
+    switch (type) {
       case 'contain':
-        break;
+        break
       case 'button':
-        let findEle = proJectRole.findIndex((item) => {
+        const findEle = proJectRole.findIndex((item) => {
           return item.frontRoute === id
         })
         if (findEle === -1) {
           el.style.display = 'none'
         }
-        break;
+        break
       case 'menu':
-        break;
+        break
       default:
-        break;
+        break
     }
-  }
+  },
 })

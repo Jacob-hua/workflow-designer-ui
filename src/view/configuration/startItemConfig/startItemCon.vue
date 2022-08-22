@@ -1,12 +1,12 @@
 <template>
   <div>
     <el-dialog
-        :close-on-click-modal="false"
-        title="自定义启动"
-        :visible.sync="dialogVisible2"
-        v-if="dialogVisible2"
-        width="30%"
-        append-to-body
+      :close-on-click-modal="false"
+      title="自定义启动"
+      :visible.sync="dialogVisible2"
+      v-if="dialogVisible2"
+      width="30%"
+      append-to-body
     >
       <div id="item">
         <p class="tit">自定义启动项</p>
@@ -288,6 +288,10 @@ export default {
               message: res.result,
             });
           } else {
+            this.tableData.splice(
+              this.tableData.findIndex((item) => item.id === row.id),
+              1
+            );
             this.$message({
               type: "success",
               message: "删除成功",
@@ -300,8 +304,7 @@ export default {
             }
           }
         });
-      }
-      if (!res.result) {
+      } else {
         this.tableData.splice(
           this.tableData.findIndex((item) => item.id === row.id),
           1
@@ -314,7 +317,7 @@ export default {
       }
     },
     radioChange(val) {
-      if (val === FormTypeEnum.FORM_TYPE_SELECT) {
+      if (val === "2") {
         getThirdInterfaceList({
           tenantId: this.tenantId,
           ascription: this.businessData.code,
@@ -336,7 +339,7 @@ export default {
         item.startType = +item.startType;
       });
     },
-    checkCodeIsNull() {
+    checkIsNull() {
       return this.tableData.every((table) => table.code);
     },
     checkCodeIsRepeat(data) {

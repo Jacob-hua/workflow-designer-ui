@@ -301,12 +301,27 @@
           "type": "String"
         },
         {
+          "name": "displayAssignee",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "candidateUsers",
           "isAttr": true,
           "type": "String"
         },
         {
+          "name": "displayCandidateUsers",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "candidateGroups",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "displayCandidateGroups",
           "isAttr": true,
           "type": "String"
         },

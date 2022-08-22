@@ -9,18 +9,42 @@ import render from "../custom/previewRender";
 import checkRules from "../custom/rule";
 
 function handleRequestDependChange(data, fieldInfo) {
+  const {
+    requestConfig: { apiMark, sourceMark, customParser, parserProp },
+  } = fieldInfo;
   executeApi({
-    apiMark: fieldInfo.requestConfig.apiMark,
-    sourceMark: fieldInfo.requestConfig.sourceMark,
+    apiMark: apiMark,
+    sourceMark: sourceMark,
     data,
   }).then(({ result: options }) => {
-    if (fieldInfo.compType === "cascader") {
-      this.deleteEmptyChildren(options.result);
-      fieldInfo.options = options.result;
-    } else {
-      fieldInfo.options = options;
+    if (customParser) {
+      options = parserOptions(options, parserProp);
     }
+    fieldInfo.options = options;
   });
+
+  function parserOptions(options, { label, value, children, optionPath }) {
+    options = options ?? [];
+    if (optionPath) {
+      options = _.get(options, optionPath, []);
+    }
+    return options.map(formatData);
+
+    function formatData(domain) {
+      if (Array.isArray(domain[children])) {
+        domain[children] = domain[children].map(formatData);
+      }
+      const result = {
+        label: domain[label],
+        value: domain[value],
+        children: domain[children],
+      };
+      if (domain[children].length === 0) {
+        delete result.children;
+      }
+      return result;
+    }
+  }
 }
 
 function handleDependChange(data, fieldInfo) {
@@ -29,8 +53,7 @@ function handleDependChange(data, fieldInfo) {
     return;
   }
 
-  const sourceKeys = (fieldInfo.dependValue.source ?? "").split(".");
-  const sourceField = this.usefulMeta[sourceKeys[sourceKeys.length - 1]] ?? {};
+  const sourceField = this.usefulMeta[fieldInfo.dependValue.source] ?? {};
 
   if (sourceField.compType === "checkbox") {
     this.form[fieldInfo.id] = sourceField.options
@@ -39,17 +62,20 @@ function handleDependChange(data, fieldInfo) {
       .join(", ");
     return;
   }
-
   this.form[fieldInfo.id] = sourceField.options?.find(
     ({ value }) => value === data[fieldInfo.id]
   )?.label;
 }
 
 function handleRowContainerDependChange(data, fieldInfo) {
+  const oldVisible = fieldInfo.visible;
   fieldInfo.visible = fieldInfo.dependValue.targetValue
     ? data[fieldInfo.id] == `${fieldInfo.dependValue.targetValue}`
     : Boolean(data[fieldInfo.id]);
-  this.$forceUpdate();
+
+  if (oldVisible !== fieldInfo.visible) {
+    this.$forceUpdate();
+  }
 }
 
 function buildModel(model, metaData) {
@@ -185,35 +211,62 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   fieldInfo.context = this.context;
   fieldInfo.valuePath = valuePath;
   const rules = checkRules(fieldInfo);
-  if (fieldInfo.dependValue && !fieldInfo.disabled && !this.formConf.disabled) {
+
+  const needDependFunction =
+    !this.formConf.disabled && !fieldInfo.disabled && fieldInfo.dependValue;
+  if (needDependFunction) {
     mixinDependFunction(fieldInfo, handleDependChange.bind(this));
   }
-  if (fieldInfo.requestConfig) {
+
+  const needRequestFunction =
+    (this.formConf.readOnly ||
+      (!this.formConf.disabled && !fieldInfo.disabled)) &&
+    fieldInfo.requestConfig;
+  if (needRequestFunction) {
     mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this));
   }
 
-  return (
-    <el-form-item
-      label={fieldInfo.showLabel ? fieldInfo.label : ""}
-      label-width={`${fieldInfo.labelWidth}`}
-      prop={fieldInfo.id}
-      rules={rules}
-    >
-      <render
-        key={fieldInfo.id}
-        conf={fieldInfo}
-        value={_.get(this.form, fieldInfo.valuePath)}
+  if (
+    fieldInfo["list-type"] === "text" ||
+    fieldInfo["list-type"] === "picture-card"
+  ) {
+    return (
+      <upload
+        formConf={this.formConf}
         uploadFun={this.uploadFun}
         downloadFun={this.downloadFun}
-        attachmentList={this.attachmentList}
+        fieldInfo={fieldInfo}
+        readOnly={this.formConf.readOnly}
         onInput={(event) => {
           _.set(this.form, fieldInfo.valuePath, event);
         }}
+        rules={rules}
+        value={_.get(this.form, fieldInfo.valuePath)}
       />
-    </el-form-item>
-  );
+    );
+  } else {
+    return (
+      <el-form-item
+        label={fieldInfo.showLabel ? fieldInfo.label : ""}
+        label-width={`${fieldInfo.labelWidth}px`}
+        prop={fieldInfo.valuePath}
+        rules={rules}
+      >
+        <render
+          key={fieldInfo.id}
+          conf={fieldInfo}
+          value={_.get(this.form, fieldInfo.valuePath)}
+          uploadFun={this.uploadFun}
+          downloadFun={this.downloadFun}
+          onInput={(event) => {
+            _.set(this.form, fieldInfo.valuePath, event);
+          }}
+        />
+      </el-form-item>
+    );
+  }
 }
-
+import upload from "@/plugin/FormDesign/component/upload";
 export default {
   name: "preview",
   props: [
@@ -223,9 +276,8 @@ export default {
     "uploadFun",
     "downloadFun",
     "processInstanceId",
-    "attachmentList",
   ],
-  components: { render },
+  components: { render, upload },
   data() {
     const metaDataList = _.cloneDeep(this.itemList);
     let form = {};
@@ -235,10 +287,10 @@ export default {
       form = metaDataList.reduce(buildModel, {});
     }
     return {
+      fileList: [],
       form,
       usefulMeta: {},
       metaDataList,
-      rules: {},
       context: {},
       flatFields: [],
     };
@@ -267,7 +319,6 @@ export default {
   render(h) {
     return (
       <el-form
-        rules={this.rules}
         ref={this.formConf.formModel}
         size={this.formConf.size}
         props={{
@@ -286,18 +337,6 @@ export default {
     );
   },
   methods: {
-    deleteEmptyChildren(arr) {
-      for (let i = 0; i < arr.length; i++) {
-        const arrElement = arr[i];
-        if (!arrElement.children.length) {
-          delete arrElement.children;
-          continue;
-        }
-        if (arrElement.children) {
-          this.deleteEmptyChildren(arrElement.children);
-        }
-      }
-    },
     async submit() {
       this.itemList.forEach((metaData) => {
         Object.keys(this.form).forEach((form) => {
@@ -316,10 +355,10 @@ export default {
         throw new Error(e.toString());
       }
     },
-    handlerValChange(key, origin) {
-      this.$set(this.form, key, origin);
-    },
     async getContext() {
+      if (!this.processInstanceId) {
+        return {};
+      }
       const { result } = await processVariable({
         processInstanceId: this.processInstanceId ?? "",
       });

@@ -50,7 +50,7 @@
               class="primary"
               type="primary"
               @click="deleteRow()"
-              v-if="quote == 'delete'"
+              v-if="quote === 'delete'"
               v-role="{ id: 'FromDelete', type: 'button', business: business }"
               >删除</el-button
             >
@@ -59,12 +59,22 @@
         <div v-if="status !== 'drafted'">
           <div class="optionV">
             <el-select v-model="value" placeholder="请选择" @change="upDataV()">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
             </el-select>
           </div>
         </div>
         <div class="fromEdit">
-          <preview :itemList="itemList" :formConf="formConf" v-if="dialogVisible2"></preview>
+          <preview
+            :itemList="itemList"
+            :formConf="formConf"
+            v-if="dialogVisible2"
+          ></preview>
         </div>
       </div>
     </el-dialog>
@@ -79,18 +89,33 @@
         <div class="from-item">
           <span>应用项目</span>
           <el-select v-model="postData.ascription" placeholder="请选择应用项目">
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option
+              v-for="item in options1"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>表单类型</span>
           <el-select v-model="postData.business" placeholder="请选择表单类型">
-            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option
+              v-for="item in options2"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>表单名称</span>
-          <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
+          <el-input
+            v-model="postData.name"
+            placeholder="请输入部署名称"
+          ></el-input>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -102,37 +127,37 @@
 </template>
 
 <script>
-import formBpmnEdit from './formBpmnEdit.vue'
-import preview from '@/plugin/FormDesign/component/preview'
+import formBpmnEdit from "./formBpmnEdit.vue";
+import preview from "@/plugin/FormDesign/component/preview";
 import {
   postFormDesignRecordFormDesignRecordInfo,
   deleteFormDesignService,
   postFormDesignServiceRealiseProcessData,
-} from '@/api/unit/api.js'
-import Preview from '@/plugin/FormDesign/component/preview'
-import { mapState } from 'vuex'
-import { getAllBusinessConfig } from '@/api/globalConfig'
+} from "@/api/unit/api.js";
+import Preview from "@/plugin/FormDesign/component/preview";
+import { mapState } from "vuex";
+import { getAllBusinessConfig } from "@/api/globalConfig";
 export default {
   props: {
     tileText: {
       type: String,
-      default: '',
+      default: "",
     },
     quote: {
       type: String,
-      default: 'quote',
+      default: "quote",
     },
     status: {
       type: String,
-      default: '',
+      default: "",
     },
     ascription: {
       type: String,
-      default: 'public',
+      default: "public",
     },
     business: {
       type: String,
-      default: '',
+      default: "",
     },
     formDatas: {
       type: Object,
@@ -144,61 +169,63 @@ export default {
       immediate: true,
       handler(newValue, oldValue) {
         if (newValue.content) {
-          let content = JSON.parse(newValue.content)
-          let list = content.list
+          let content = JSON.parse(newValue.content);
+          let list = content.list;
+          content.config["disabled"] = true;
+          content.config["readOnly"] = true;
           for (const formItem of list) {
             if (formItem.columns && formItem.columns.length) {
               for (const formItemElement of formItem.columns) {
                 for (const formItemElementElement of formItemElement.list) {
-                  formItemElementElement.disabled = true
+                  formItemElementElement.disabled = true;
                 }
               }
             } else {
-              if (Object.keys(formItem).includes('disabled')) {
-                formItem.disabled = true
+              if (Object.keys(formItem).includes("disabled")) {
+                formItem.disabled = true;
               } else {
               }
             }
           }
-          this.itemList = list
+          this.itemList = list;
           this.$nextTick(() => {
-            let ql_blank = document.querySelector('.ql-blank')
+            let ql_blank = document.querySelector(".ql-blank");
             if (ql_blank) {
-              ql_blank.setAttribute('contenteditable', false)
+              ql_blank.setAttribute("contenteditable", false);
             }
-          })
+          });
         }
       },
     },
   },
   computed: {
     formConf: function () {
-      return JSON.parse(this.formDatas.content).config
+      return JSON.parse(this.formDatas.content).config;
     },
-    ...mapState('account', ['tenantId', 'userInfo']),
+    ...mapState("account", ["tenantId", "userInfo"]),
   },
   data() {
     return {
-      ascriptionName: '',
-      businessName: '',
+      ascriptionName: "",
+      businessName: "",
       itemList: [],
       previewVisible: false,
       dialogVisible2: false,
       dialogVisible1: false,
       options: [],
       formBpmnEditKey: 0,
-      value: '',
+      value: "",
       postData: {
-        ascription: '',
-        business: '',
-        systemType: '',
-        name: '',
+        ascription: "",
+        business: "",
+        systemType: "",
+        name: "",
       },
-      input: '',
+      input: "",
       options1: [],
       options2: [],
       options3: [],
-    }
+    };
   },
   components: {
     Preview,
@@ -208,24 +235,24 @@ export default {
   methods: {
     getAllBusinessConfig(data) {
       getAllBusinessConfig({ tenantId: data.tenantId }).then((res) => {
-        let result = res.result ?? []
+        let result = res.result ?? [];
         result.forEach((item) => {
           if (item.code === data.ascription) {
-            this.ascriptionName = item.name
+            this.ascriptionName = item.name;
           }
           if (item.code === data.business) {
-            this.businessName = item.name
+            this.businessName = item.name;
           }
-        })
-      })
+        });
+      });
     },
 
     deleteRow() {
-      this.$confirm('表单删除不可恢复, 请确认是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        cancelButtonClass: 'btn-custom-cancel',
-        type: 'warning',
+      this.$confirm("表单删除不可恢复, 请确认是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        cancelButtonClass: "btn-custom-cancel",
+        type: "warning",
       })
         .then(() => {
           deleteFormDesignService({
@@ -233,13 +260,13 @@ export default {
             updateBy: this.userInfo.account,
           }).then((res) => {
             this.$message({
-              type: 'success',
-              message: '删除成功!',
-            })
-            this.$emit('deleteSuccsee')
-          })
+              type: "success",
+              message: "删除成功!",
+            });
+            this.$emit("deleteSuccsee");
+          });
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     upDataV() {
       postFormDesignRecordFormDesignRecordInfo({
@@ -250,38 +277,39 @@ export default {
         business: this.business,
         createBy: this.userInfo.account,
       }).then((res) => {
-        this.formDatas = res.result
-        this.formBpmnEditKey++
-      })
+        res.result.count = this.formDatas.count;
+        this.formDatas = res.result;
+        this.formBpmnEditKey++;
+      });
     },
     editForm() {
-      this.$emit('editForm', this.formDatas, this.tileText)
+      this.$emit("editForm", this.formDatas, this.tileText);
     },
     nextDiolog() {
-      const xml = this.$refs.formbpmn.importData()
-      xml.id = 'form_' + Date.parse(new Date())
-      var file1 = new File([JSON.stringify(xml)], 'test.form', {
-        type: 'text/xml',
-      })
-      let formData = new FormData()
-      formData.append('name', this.postData.name)
-      formData.append('docName', this.postData.name + '.form')
-      formData.append('ascription', this.postData.ascription)
-      formData.append('code', xml.id)
-      formData.append('business', this.postData.business)
-      formData.append('status', 'enabled')
-      formData.append('createBy', this.userInfo.account)
-      formData.append('createName', 'admin')
-      formData.append('tenantId', this.tenantId)
-      formData.append('file', file1)
+      const xml = this.$refs.formbpmn.importData();
+      xml.id = "form_" + Date.parse(new Date());
+      var file1 = new File([JSON.stringify(xml)], "test.form", {
+        type: "text/xml",
+      });
+      let formData = new FormData();
+      formData.append("name", this.postData.name);
+      formData.append("docName", this.postData.name + ".form");
+      formData.append("ascription", this.postData.ascription);
+      formData.append("code", xml.id);
+      formData.append("business", this.postData.business);
+      formData.append("status", "enabled");
+      formData.append("createBy", this.userInfo.account);
+      formData.append("createName", "admin");
+      formData.append("tenantId", this.tenantId);
+      formData.append("file", file1);
       postFormDesignServiceRealiseProcessData(formData).then((res) => {
-        this.$message.success('发布至可用表单成功')
-        this.dialogVisible1 = false
-        this.dialogVisible2 = false
-      })
+        this.$message.success("发布至可用表单成功");
+        this.dialogVisible1 = false;
+        this.dialogVisible2 = false;
+      });
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

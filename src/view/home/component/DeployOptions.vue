@@ -159,7 +159,7 @@ export default {
     generateWorkflowFormData() {
       const formIds = this.iBpmn
         .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
-        .map((element) => this.iBpmn.getShapeInfoByType(element, 'formId'))
+        .map((element) => this.iBpmn.getShapeInfo(element)['formId'])
         .filter((formId) => formId)
         .join(',')
 
@@ -225,14 +225,11 @@ export default {
         workflowFormData.append('processFile', file)
 
         if (this.workflow.status === 'enabled') {
-          postProcessDraft(workflowFormData).then(() => {
-            this.$message.success('保存成功')
-          })
+          await postProcessDraft(workflowFormData)
         } else {
-          putProcessDraft(workflowFormData).then(() => {
-            this.$message.success('保存成功')
-          })
+          await putProcessDraft(workflowFormData)
         }
+        this.$message.success('保存成功')
         this.$emit('saved')
         this.onClose()
       } catch (error) {}

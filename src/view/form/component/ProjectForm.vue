@@ -280,6 +280,7 @@ export default {
     },
     close() {
       this.dialogVisible = false
+      this.getData()
     },
     // 查询草稿箱
     getDraftData() {

@@ -30,12 +30,9 @@ const state = () => ({
     completionCondition: '',
   },
   userTask: {
-    assignee: '',
-    candidateUsers: '',
-    candidateGroups: '',
-    customAssignee: false,
-    customCandidate: false,
-    customCandidateGroup: false,
+    displayAssignee: {},
+    displayCandidateUsers: [],
+    displayCandidateGroups: [],
   },
   actions: [],
 })

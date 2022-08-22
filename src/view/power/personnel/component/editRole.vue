@@ -71,7 +71,7 @@
       </el-tabs>
     </div>
     <span slot="footer" class="dialog-footer" v-if="type === 'edit'">
-      <el-button class="save" type="primary" @click="award">授予</el-button>
+      <el-button class="save" type="primary" @click="award" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'" >授予</el-button>
       <el-button class="cancel" @click="handleClose">取消</el-button>
     </span>
   </el-dialog>
