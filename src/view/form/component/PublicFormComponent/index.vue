@@ -7,26 +7,35 @@
       width="90%"
       custom-class="dialogVisible2"
     >
-      <div class="dialogVisible2-main">
-        <div class="form-title">
-          <div class="title-item">
-            <span class="title-item-label"> 表单名称 </span>
-            <div class="title-item-main">
-              <el-input
-                v-model="postData.name"
-                :disabled="tit !== '新建表单'"
-                placeholder=""
-              ></el-input>
+    <el-form
+          ref="form"
+          label-width="100px"
+          label-position="right"
+          :rules="rules"
+          :model="postData">
+          <div class="dialogVisible2-main">
+            <div class="form-title">
+              <div class="title-item">
+                <el-form-item label=" 表单名称" class="title-item-label" prop="name">
+                    <div class="title-item-main">
+                      <el-input
+                        v-model="postData.name"
+                        :disabled="tit !== '新建表单'"
+                        placeholder=""
+                        :rules="rules"
+                      ></el-input>
+                    </div>
+                </el-form-item>
+              </div>
+            </div>
+            <div class="form-Main">
+              <form-designer
+                ref="formDesigner"
+                v-if="dialogVisible2"
+              ></form-designer>
             </div>
           </div>
-        </div>
-        <div class="form-Main">
-          <form-designer
-            ref="formDesigner"
-            v-if="dialogVisible2"
-          ></form-designer>
-        </div>
-      </div>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <div class="next" type="primary" @click="addEnableForm()">发布</div>
         <div class="next" @click="addDraftForm()">保存</div>
@@ -40,6 +49,7 @@
 import formbpmn from "../formBpmn.vue";
 import {
   postFormDesignService,
+  putFormDesignService,
   postFormDesignServiceRealiseProcessData,
 } from "@/api/unit/api.js";
 import { FormEditor } from "@bpmn-io/form-js-editor";
@@ -53,6 +63,17 @@ export default {
   },
   data() {
     return {
+       rules: {
+        name: [
+          { required: true, message: "请输入表单名称", trigger: "blur" },
+          {
+            min: 0,
+            max: 100,
+            message: "长度在 0 到 100 个字符",
+            trigger: "blur",
+          },
+        ],
+      },
       tit: "新建表单",
       dialogVisible2: false,
       input: "",
@@ -64,6 +85,9 @@ export default {
   },
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
+    isNewDraftForm() {
+      return this.tit && this.tit === '新建表单' ;
+    },
   },
   methods: {
     nextDiolog() {
@@ -132,12 +156,10 @@ export default {
       });
     },
     addDraftForm() {
-      const id = "form_" + Date.parse(new Date());
-      const formFile = new File(
-        [this.$refs.formDesigner.getFormData()],
-        "form.json",
-        { type: "text/json" }
-      );
+      if (!this.postData.name) {
+        this.$message.error("请填写表单名称");
+        return;
+      }
       let formData = new FormData();
       switch (this.dataType) {
         case "enabled":
@@ -161,18 +183,39 @@ export default {
       formData.append("docName", this.postData.name + ".json");
       formData.append("docType", "json");
       formData.append("ascription", "public");
-      formData.append("code", id);
+   
       formData.append("business", "");
       formData.append("status", "drafted");
-      formData.append("createBy", this.userInfo.account);
-      formData.append("createName", "admin");
+      //formData.append("createName", "admin");
       formData.append("tenantId", this.tenantId);
+
+      const formFile = new File(
+        [this.$refs.formDesigner.getFormData()],
+        "form.json",
+        { type: "text/json" }
+      );
       formData.append("file", formFile);
-      postFormDesignService(formData).then((res) => {
-        this.$message.success("保存草稿成功");
-        this.$emit("addSuccess", "drafted");
-        this.dialogVisible2 = false;
-      });
+
+      if(this.isNewDraftForm){
+        formData.append("createBy", this.userInfo.account);
+        const code = "form_" + Date.parse(new Date());
+        formData.append("code", code);
+        
+        postFormDesignService(formData).then((res) => {
+          this.$message.success("保存草稿成功");
+          this.$emit("addSuccess", "drafted");
+          this.dialogVisible2 = false;
+        }); 
+      }else{
+        formData.append("id", this.postData.id);
+        formData.append("code", this.postData.code);
+        formData.append("updateBy", this.userInfo.account);
+        putFormDesignService(formData).then((res) => {
+          this.$message.success("更新草稿成功");
+          this.$emit("addSuccess", "drafted");
+          this.dialogVisible2 = false;
+        }); 
+        }
     },
   },
   components: {
