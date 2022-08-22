@@ -93,6 +93,7 @@ export default {
   },
   data() {
     return {
+      attachmentList: [],
       workflow: {},
       formContant: {},
       formShow: false,
@@ -141,41 +142,39 @@ export default {
         Hang: {
           label: '挂起',
           value: 'Hang',
-          component: ({ workflow, onAgencyCompleted }) => ({
+          component: ({ workflow, onTaskSuccess }) => ({
             name: 'RuntimeImplementHang',
             props: {
               workflow,
             },
             events: {
-              completed: onAgencyCompleted,
+              hang: onTaskSuccess,
             },
           }),
         },
         Reject: {
           label: '驳回',
           value: 'Reject',
-          component: ({ workflow, onAgencyCompleted, onRejectSuccess }) => ({
+          component: ({ workflow, onTaskSuccess }) => ({
             name: 'RuntimeImplementReject',
             props: {
               workflow,
             },
             events: {
-              completed: onAgencyCompleted,
-              rejectSuccess: onRejectSuccess,
+              rejected: onTaskSuccess,
             },
           }),
         },
         Terminate: {
           label: '终止',
           value: 'Terminate',
-          component: ({ workflow, onAgencyCompleted, onRejectSuccess }) => ({
+          component: ({ workflow, onTaskSuccess }) => ({
             name: 'RuntimeImplementTermination',
             props: {
               workflow,
             },
             events: {
-              completed: onAgencyCompleted,
-              terminateSuccess: onRejectSuccess,
+              terminated: onTaskSuccess,
             },
           }),
         },
@@ -217,7 +216,7 @@ export default {
       if (this.noExecutor) {
         temps.push(makeComponent.call(this, 'NoExecutor'))
       }
-      let actions = this.iBpmnViewer.getShapeInfoByType(this.curExecuteShape, 'actions')?.split(',') ?? []
+      let actions = this.iBpmnViewer.getShapeInfo(this.curExecuteShape)['actions']?.split(',') ?? []
       if (curTaskIsFirstTask.call(this)) {
         actions = actions.filter((action) => action !== 'Reject')
       }
@@ -234,8 +233,8 @@ export default {
         const component = this.actionsConfig[action].component({
           workflow: this.workflow,
           onAgencyCompleted: this.onAgencyCompleted,
-          onRejectSuccess: this.onRejectSuccess,
           onSelectExecutor: this.onSelectExecutor,
+          onTaskSuccess: this.onTaskSuccess,
         })
         return { ...this.actionsConfig[action], component }
       }
@@ -284,7 +283,7 @@ export default {
     onAgencyCompleted() {
       this.fetchExecuteDetail()
     },
-    onRejectSuccess() {
+    onTaskSuccess() {
       this.$emit('taskSuccess')
     },
     onDialogClose() {
@@ -359,6 +358,7 @@ export default {
         nextAssignee: this.workflow.executors?.[0].userId,
         commentList: [],
         formData,
+        attachmentList: this.attachmentList,
         processInstanceId: this.workflow.processInstanceId,
         processKey: this.workflow.processDeployKey,
         taskId: this.workflow.newTaskId,
@@ -413,6 +413,7 @@ export default {
         this.$message.error(errorInfo.errorMsg)
         return
       }
+      this.attachmentList = [result, ...this.attachmentList]
       return result
     },
     async downloadFile({ url }) {

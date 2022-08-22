@@ -5,31 +5,50 @@
         <el-option v-for="{ name, id } in interFaceOption" :key="id" :label="name" :value="id" />
       </el-select>
     </el-form-item>
-    <el-row v-if="variables.length > 0" :gutter="24">
-      <el-col :span="6"> 变量 </el-col>
-      <el-col :span="10"> 关联 </el-col>
-      <el-col :span="8"> 类型 </el-col>
-    </el-row>
-    <div v-for="({ variable }, index) in variables" :key="index">
+    <div v-if="variables.length > 0" class="variable-wrapper">
       <el-row :gutter="24">
-        <el-col :span="6">
-          <span>{{ variable }}</span>
-        </el-col>
-        <el-col :span="10">
-          <el-input v-model="variables[index]['source']" @change="onVariableChange" />
-        </el-col>
-        <el-col :span="8">
-          <el-select v-model="variables[index]['sourceType']" @change="onSourceTypeChange(index)">
-            <el-option
-              v-for="{ id, label, value } in sourceTypeOptions"
-              :key="id"
-              :label="label"
-              :value="value"
-            ></el-option>
-          </el-select>
-        </el-col>
+        <el-col :span="6"> 变量 </el-col>
+        <el-col :span="10"> 关联 </el-col>
+        <el-col :span="8"> 类型 </el-col>
       </el-row>
+      <div v-for="({ variable }, index) in variables" :key="index">
+        <el-row :gutter="24" class="variable">
+          <el-col :span="6">
+            <span>{{ variable }}</span>
+          </el-col>
+          <el-col :span="10">
+            <el-input v-model="variables[index]['source']" @change="onVariableChange" />
+          </el-col>
+          <el-col :span="8">
+            <el-select v-model="variables[index]['sourceType']" @change="onSourceTypeChange(index)">
+              <el-option
+                v-for="{ id, label, value } in sourceTypeOptions"
+                :key="id"
+                :label="label"
+                :value="value"
+              ></el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+      </div>
     </div>
+    <el-form-item label="自定义解析">
+      <el-switch v-model="customParser" @change="onCustomOptionPathChange" />
+    </el-form-item>
+    <template v-if="customParser">
+      <el-form-item label="数据路径">
+        <el-input v-model="parserProp.optionPath" />
+      </el-form-item>
+      <el-form-item label="label">
+        <el-input v-model="parserProp.label" />
+      </el-form-item>
+      <el-form-item label="value">
+        <el-input v-model="parserProp.value" />
+      </el-form-item>
+      <el-form-item v-if="hasChildren" label="children">
+        <el-input v-model="parserProp.children" />
+      </el-form-item>
+    </template>
   </div>
 </template>
 
@@ -38,12 +57,23 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import { apiDetail } from '@/api/globalConfig'
 import { variableFactory as variableParser } from '@/mixin/formDepMonitor'
 
+const defaultParserProp = () => ({
+  optionPath: '',
+  label: 'label',
+  value: 'value',
+  children: 'children',
+})
+
 export default {
   name: 'InterfaceParser',
   props: {
     currentField: {
       type: Object,
       default: () => ({}),
+    },
+    hasChildren: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -66,6 +96,8 @@ export default {
           value: 'form',
         },
       ],
+      customParser: false,
+      parserProp: defaultParserProp(),
       requestConfig: {},
       variables: [],
     }
@@ -85,6 +117,14 @@ export default {
         this.requestConfig = currentField.requestConfig
         this.variables = currentField.requestConfig.variables
         this.interfaceId = currentField.requestConfig.id
+        this.customParser = currentField.requestConfig.customParser
+        this.parserProp = currentField.requestConfig.parserProp
+      },
+    },
+    parserProp: {
+      deep: true,
+      handler() {
+        this.onVariableChange()
       },
     },
     async interfaceId(interfaceId) {
@@ -131,12 +171,34 @@ export default {
     onSourceTypeChange(index) {
       this.variables[index].source = ''
     },
+    onCustomOptionPathChange() {
+      this.parserProp = defaultParserProp()
+    },
     onVariableChange() {
-      this.$emit('variableChange', {
+      const result = {
         ...this.requestConfig,
         variables: this.variables,
-      })
+        customParser: this.customParser,
+        parserProp: this.parserProp,
+      }
+      if (!this.hasChildren) {
+        delete result.parserProp.children
+      }
+      this.$emit('variableChange', result)
     },
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.variable-wrapper {
+  color: white;
+}
+
+.variable {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+</style>

@@ -109,7 +109,7 @@ export default {
       this.$emit('canvasLoaded', iBpmn)
     },
     onSelectedShape(element, iBpmn) {
-      this.$emit('selectedShape',element)
+      this.$emit('selectedShape', element)
       this.iBpmn = iBpmn
       if (!element) {
         this.taskInfo = {
@@ -121,10 +121,13 @@ export default {
         this.formContent = {}
         return
       }
-      this.taskInfo.name = this.iBpmn.getSelectedShapeInfoByType('name')
-      this.taskInfo.group = this.iBpmn.getSelectedShapeInfoByType('candidateGroups')
-      this.taskInfo.assignee = this.iBpmn.getSelectedShapeInfoByType('assignee')
-      this.fetchFormContent(this.iBpmn.getSelectedShapeInfoByType('formKey'))
+      const shapeInfo = this.iBpmn.getSelectedShapeInfo()
+      const displayCandidateGroups = JSON.parse(shapeInfo['displayCandidateGroups'] ?? '[]')
+      const displayAssignee = JSON.parse(shapeInfo['displayAssignee'] ?? '{}')
+      this.taskInfo.name = shapeInfo['name']
+      this.taskInfo.group = displayCandidateGroups.map(({ label }) => label).join(',')
+      this.taskInfo.assignee = displayAssignee.label
+      this.fetchFormContent(shapeInfo['formKey'])
     },
     onRemoveForm() {
       if (!this.iBpmn.getSelectedShape()) {
@@ -132,6 +135,9 @@ export default {
       }
       this.iBpmn.updateSelectedShapeProperties({
         'camunda:formKey': '',
+      })
+      this.iBpmn.updateSelectedShapeProperties({
+        'camunda:formId': '',
       })
       this.formContent = {}
       this.$emit('removeForm', this.workflow)

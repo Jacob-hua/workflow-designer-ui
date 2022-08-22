@@ -58,40 +58,14 @@
     <el-form-item label="任一级可选">
       <el-switch v-model="props.props.props.checkStrictly"></el-switch>
     </el-form-item>
-    <el-form-item label="数据类型">
+    <depend-value :currentField="props" @dependChange="onDependChange" />
+    <el-form-item label="选项配置">
       <el-radio-group v-model="props.dataType" @change="handlerChangeDataType">
         <el-radio-button label="static">静态数据</el-radio-button>
         <el-radio-button label="dynamic">动态数据</el-radio-button>
       </el-radio-group>
     </el-form-item>
-    <div v-show="props.dataType === 'dynamic'">
-      <el-form-item label="第三方API">
-        <el-select v-model="interFace" clearable>
-          <el-option
-            v-for="({ name, id, source, sourceMark }, index) in interFaceOption"
-            @click.native="onClickOption(id, source, sourceMark)"
-            :key="index"
-            :label="name"
-            :value="id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item v-if="variableOption.length" label="关联">
-        <div v-for="(variable, index) in variableArr" :key="index">
-          <div>{{ variable }}</div>
-          <el-input v-model="variableOption[index][variable]"></el-input>
-        </div>
-      </el-form-item>
-      <el-form-item label="显示标识">
-        <el-input v-model="props.props.props.label"></el-input>
-      </el-form-item>
-      <el-form-item label="值标识">
-        <el-input v-model="props.props.props.value"></el-input>
-      </el-form-item>
-      <el-form-item label="下级标识">
-        <el-input v-model="props.props.props.children"></el-input>
-      </el-form-item>
-    </div>
+    <el-divider>选项</el-divider>
     <div v-show="props.dataType === 'static'">
       <el-form-item label="静态数据">
         <el-button icon="el-icon-edit-outline" circle @click="handlerStaticData"></el-button>
@@ -100,7 +74,12 @@
         <el-checkbox v-model="props['china-area-data']" @change="handlerSetAreaData" />
       </el-form-item>
     </div>
-
+    <interface-parser
+      v-if="props.dataType === 'dynamic'"
+      :currentField="props"
+      :hasChildren="true"
+      @variableChange="onVariableChange"
+    />
     <el-dialog
       :visible.sync="staticDataVisible"
       width="70%"
@@ -128,9 +107,10 @@ import 'codemirror/lib/codemirror.css'
 // 引入主题后还需要在 options 中指定主题才会生效
 import 'codemirror/theme/dracula.css'
 import 'codemirror/mode/javascript/javascript'
-import { mapActions, mapMutations, mapState } from 'vuex'
-import { apiDetail } from '@/api/globalConfig'
-import { variableFactory } from '@/mixin/formDepMonitor'
+import { mapMutations } from 'vuex'
+import InterfaceParser from './component/InterfaceParser.vue'
+import DependValue from './component/DependValue.vue'
+
 const options = {
   tabSize: 2, // 缩进格式
   theme: 'dracula', // 主题，对应主题库 JS 需要提前引入
@@ -146,9 +126,11 @@ const options = {
  */
 export default {
   name: 'cascaderConfig',
-  props: ['props', 'itemList'],
+  props: ['props', 'itemList', 'getFormId'],
   components: {
     codemirror,
+    InterfaceParser,
+    DependValue,
   },
   mixins: [changeId],
   data() {
@@ -157,47 +139,16 @@ export default {
       codeMirror: options,
       staticOptions: '',
       tempOptions: [],
-      currentDetail: {},
-      variableOption: [],
-      variableArr: [],
-      interFace: '',
     }
   },
-  computed: {
-    ...mapState('account', ['tenantId', 'currentOrganization']),
-    ...mapState('form', ['interFaceOption', 'dynamicOption']),
-  },
   methods: {
-    ...mapActions('form', ['refreshApiList', 'executeFunction']),
     ...mapMutations('form', ['addThirdPartyApi']),
-    onClickOption(id, source, sourceMark) {
-      let _this = this
-      apiDetail({
-        source: source,
-        sourceMark: sourceMark,
-        tenantId: this.tenantId,
-      }).then((res) => {
-        // 获取开闭所问题是不是
-        this.currentDetail = res.result.filter((item) => item.id === id)[0]
-        this.variableArr = variableFactory(this.currentDetail)
-        this.addThirdPartyApi({ id: this.currentDetail.id })
-        if (this.variableArr) {
-          this.variableOption = this.variableArr.map((variable) => ({
-            [variable]: variable,
-          }))
-        }
-
-        this.itemList.forEach((item) => {
-          if (item.id === this.props.id) {
-            item.requestConfig = this.currentDetail
-            item.relationMapping = this.variableOption
-          }
-        })
-
-        // console.log(arr)
-        // _this.executeFunction({api: this.currentDetail, relation: this.props.relation, value: ''}  )
-        // this.addThirdPartyApi( { id: this.currentDetail.id } )
-      })
+    onDependChange(dependValue) {
+      this.props.dependValue = dependValue
+    },
+    onVariableChange(requestConfig) {
+      this.props.requestConfig = requestConfig
+      this.addThirdPartyApi({ id: requestConfig.id })
     },
     handlerChangeLabel(val) {
       this.props.labelWidth = val ? '80' : '1'
@@ -217,7 +168,6 @@ export default {
       } else {
         this.tempOptions = this.props.options
         this.props.options = []
-        this.refreshApiList()
       }
     },
     handlerSetAreaData(val) {
@@ -230,8 +180,6 @@ export default {
       }
     },
   },
-  mounted() {},
-  watch: {},
 }
 </script>
 <style scoped></style>
