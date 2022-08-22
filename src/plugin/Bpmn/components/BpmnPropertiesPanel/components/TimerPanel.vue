@@ -2,7 +2,7 @@
   <div>
     <el-form :model="timerForm" label-position="right" label-width="100px">
       <el-form-item label="定时器类型">
-        <el-select v-model="timerForm.timerType">
+        <el-select v-model="timerForm.timerType" @change="onTimerTypeChange">
           <el-option
             v-for="({ label, value }, index) in timerTypeOptions"
             :key="index"
@@ -71,6 +71,9 @@ export default {
         type: `${this.namespace}/panel/updateTimer`,
         ...payload,
       })
+    },
+    onTimerTypeChange() {
+      this.timerForm.timer = ''
     },
   },
 }
