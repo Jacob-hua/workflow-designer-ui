@@ -159,7 +159,7 @@ export default {
     generateWorkflowFormData() {
       const formIds = this.iBpmn
         .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
-        .map((element) => this.iBpmn.getShapeInfoByType(element, 'formId'))
+        .map((element) => this.iBpmn.getShapeInfo(element)['formId'])
         .filter((formId) => formId)
         .join(',')
 
