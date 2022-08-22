@@ -18,7 +18,7 @@
       :multiple="fieldInfo.multiple"
       :limit="30"
       :on-exceed="handleExceed"
-      :file-list="this.value"
+      :file-list="value"
     >
       <el-button size="small" type="primary">点击上传</el-button>
     </el-upload>
@@ -26,7 +26,7 @@
       v-else
       action="#"
       list-type="picture-card"
-      :file-list="this.value"
+      :file-list="displayList"
       :on-change="imgChange"
       :multiple="fieldInfo.multiple"
       :auto-upload="false"
@@ -90,6 +90,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 export default {
   name: "upload",
   props: {
@@ -122,6 +123,7 @@ export default {
   },
   data() {
     return {
+      displayList: [],
       fileList: [],
       dialogVisible: false,
       dialogImageUrl: "",
@@ -137,6 +139,22 @@ export default {
     if (this.readOnly) {
       this.displayNoneDom();
       this.mappingProcess();
+    } else {
+      this.value.forEach(async (file) => {
+        if (this.isTypeAnImage(file)) {
+          const result = await Promise.resolve(this.downloadFun(file));
+          if (!result) {
+            return;
+          }
+          const file2 = _.cloneDeep(file);
+          const reader = new FileReader();
+          reader.readAsDataURL(result);
+          reader.onload = () => {
+            file2.url = reader.result;
+          };
+          this.displayList.push(file2);
+        }
+      });
     }
   },
   methods: {
@@ -159,6 +177,7 @@ export default {
           file.url = reader.result;
         };
       });
+      this.displayList = this.value;
     },
     fileMove(file) {},
     delFile(file) {
@@ -167,24 +186,34 @@ export default {
         1
       );
     },
-    async download(file) {
-      const [, ext] = file.name.split(".");
-      const result = await Promise.resolve(this.downloadFun(file));
-      if (!result) {
-        return;
-      }
-      const reader = new FileReader();
-      reader.readAsDataURL(result);
-      reader.onload = () => {
-        this.handleDownload({ name: file.name, url: reader.result });
-      };
+    isBase64(file) {
+      return (
+        file.url.indexOf("data:") !== -1 && file.url.indexOf("base64") !== -1
+      );
     },
-    handleDownload(file) {
-      const imgUrl = file.url;
+    async download(file) {
+      if (this.isBase64(file)) {
+        this.newDownload(file);
+      } else {
+        const result = await Promise.resolve(this.downloadFun(file));
+        if (!result) {
+          return;
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(result);
+        reader.onload = () => {
+          this.handleDownload({ name: file.name, url: reader.result });
+        };
+      }
+    },
+    newDownload(file) {
       const a = document.createElement("a");
-      a.href = imgUrl;
+      a.href = file.url;
       a.setAttribute("download", file.name);
       a.click();
+    },
+    handleDownload(file) {
+      this.newDownload(file);
     },
     async previewImage(file) {
       this.dialogVisible = true;
@@ -234,23 +263,22 @@ export default {
       if (!this.checkFileFormat(file, fileList)) {
         return false;
       }
-      const blobMappingUrl = {};
       const attachmentId = await Promise.resolve(this.uploadFun(file));
       const result = await Promise.resolve(
         this.downloadFun({ url: attachmentId })
       );
+      file.url = attachmentId;
+      this.value.push(file);
+
+      this.$emit("input", this.value);
       const reader = new FileReader();
+      const file2 = _.cloneDeep(file);
       reader.readAsDataURL(result);
       reader.onload = (e) => {
         console.log(e.target.result);
-        file.url = e.target.result;
-        blobMappingUrl[file.url] = attachmentId;
+        file2.url = e.target.result;
       };
-      file["blobMappingUrl"] = blobMappingUrl;
-      console.log(this.fieldInfo.valuePath);
-      this.formConf["valuePath"] = this.fieldInfo.valuePath;
-      this.value.push(file);
-      this.$emit("input", this.value);
+      this.displayList.push(file2);
     },
     async fileChange(file, fileList) {
       if (!this.checkFileFormat(file, fileList)) {
