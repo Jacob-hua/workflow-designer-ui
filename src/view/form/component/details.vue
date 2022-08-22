@@ -50,7 +50,7 @@
               class="primary"
               type="primary"
               @click="deleteRow()"
-              v-if="quote == 'delete'"
+              v-if="quote === 'delete'"
               v-role="{ id: 'FromDelete', type: 'button', business: business }"
               >删除</el-button
             >
@@ -101,7 +101,13 @@
         <div class="from-item">
           <span>表单类型</span>
           <el-select v-model="postData.business" placeholder="请选择表单类型">
-            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option
+              v-for="item in options2"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
           </el-select>
         </div>
         <div class="from-item">
@@ -271,6 +277,7 @@ export default {
         business: this.business,
         createBy: this.userInfo.account,
       }).then((res) => {
+        res.result.count = this.formDatas.count;
         this.formDatas = res.result;
         this.formBpmnEditKey++;
       });
