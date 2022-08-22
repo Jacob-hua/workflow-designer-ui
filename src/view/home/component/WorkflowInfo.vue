@@ -121,9 +121,11 @@ export default {
         this.formContent = {}
         return
       }
+      const displayCandidateGroups = JSON.parse(this.iBpmn.getSelectedShapeInfoByType('displayCandidateGroups') ?? '[]')
+      const displayAssignee = JSON.parse(this.iBpmn.getSelectedShapeInfoByType('displayAssignee') ?? '{}')
       this.taskInfo.name = this.iBpmn.getSelectedShapeInfoByType('name')
-      this.taskInfo.group = this.iBpmn.getSelectedShapeInfoByType('candidateGroups')
-      this.taskInfo.assignee = this.iBpmn.getSelectedShapeInfoByType('assignee')
+      this.taskInfo.group = displayCandidateGroups.map(({ label }) => label).join(',')
+      this.taskInfo.assignee = displayAssignee.label
       this.fetchFormContent(this.iBpmn.getSelectedShapeInfoByType('formKey'))
     },
     onRemoveForm() {
