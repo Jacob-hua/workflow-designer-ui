@@ -30,7 +30,7 @@
             size="mini"
             v-if="showinput && data.id === currentNode.id"
             v-model="nodeCode"
-            placeholder="请输入项目code"
+            placeholder="请输入节点code"
           ></el-input>
           <el-input
             size="mini"

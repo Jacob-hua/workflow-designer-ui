@@ -66,7 +66,7 @@
                 </el-form-item>
 
                 <div class="from-item">
-                  <el-form-item label="流程类型" prop="business">
+                  <el-form-item label="表单类型" prop="business">
                     <el-cascader
                       ref="cascader"
                       v-model="postData.business"
