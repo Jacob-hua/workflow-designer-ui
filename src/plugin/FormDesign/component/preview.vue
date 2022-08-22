@@ -248,7 +248,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
     return (
       <el-form-item
         label={fieldInfo.showLabel ? fieldInfo.label : ""}
-        label-width={`${fieldInfo.labelWidth}`}
+        label-width={`${fieldInfo.labelWidth}px`}
         prop={fieldInfo.valuePath}
         rules={rules}
       >
