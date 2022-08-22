@@ -33,7 +33,9 @@
             <el-cascader
               v-model="organization"
               :options="userGroupOptions"
-              :props="organizeCascaderProps"
+              :props="{
+                emitPath: false,
+              }"
               :show-all-levels="false"
               clearable
               @change="onOrganizationChange"
@@ -102,7 +104,7 @@ export default {
       custom: false,
       inputVisible: false,
       inputValue: '',
-      organization: [],
+      organization: '',
       users: '',
       result: [],
       userSelectOptions: [],
@@ -126,12 +128,6 @@ export default {
     organizationVisible() {
       return ['singleUser', 'multipleUser', 'multipleOrganization'].includes(this.model)
     },
-    organizeCascaderProps() {
-      return {
-        emitPath: false,
-        multiple: ['multipleOrganization'].includes(this.model),
-      }
-    },
     usersVisible() {
       return ['singleUser', 'multipleUser'].includes(this.model)
     },
@@ -141,11 +137,15 @@ export default {
       this.$emit('close')
       this.$emit('update:visible', false)
       this.result = []
-      this.organization = []
+      this.organization = ''
       this.users = ''
       this.custom = false
     },
     onOrganizationChange(organize) {
+      if (['multipleOrganization'].includes(this.model)) {
+        findeOrganize(this.userGroupOptions, this.organization, this.result)
+        return
+      }
       if (Array.isArray(organize)) {
         organize = organize[organize.length - 1]
       }
@@ -185,20 +185,6 @@ export default {
       this.inputValue = ''
     },
     onSubmit() {
-      if (['multipleOrganization'].includes(this.model)) {
-        const findeOrganize = (organizes, targets, result = []) => {
-          for (let index = 0; index < organizes.length; index++) {
-            const organize = organizes[index]
-            if (Array.isArray(organize.children)) {
-              findeOrganize(organize.children, targets, result)
-            }
-            if (targets.includes(organize.value)) {
-              result.push(organize)
-            }
-          }
-        }
-        findeOrganize(this.userGroupOptions, this.organization, this.result)
-      }
       this.$emit('submit', deepCopy(this.result))
       this.onCloseDrawer()
     },
