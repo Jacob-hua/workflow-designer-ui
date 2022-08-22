@@ -143,6 +143,17 @@ export default {
     },
     onOrganizationChange(organize) {
       if (['multipleOrganization'].includes(this.model)) {
+        const findeOrganize = (organizes, targets, result = []) => {
+          for (let index = 0; index < organizes.length; index++) {
+            const organize = organizes[index]
+            if (Array.isArray(organize.children)) {
+              findeOrganize(organize.children, targets, result)
+            }
+            if (targets.includes(organize.value)) {
+              result.push(organize)
+            }
+          }
+        }
         findeOrganize(this.userGroupOptions, this.organization, this.result)
         return
       }
