@@ -184,6 +184,10 @@ export default {
         this.value.findIndex(({ uid }) => uid === file.uid),
         1
       );
+      this.displayList.splice(
+        this.displayList.findIndex(({ uid }) => uid === file.uid),
+        1
+      );
     },
     isBase64(file) {
       return (
@@ -274,7 +278,6 @@ export default {
       const file2 = _.cloneDeep(file);
       reader.readAsDataURL(result);
       reader.onload = (e) => {
-        console.log(e.target.result);
         file2.url = e.target.result;
       };
       this.displayList.push(file2);
