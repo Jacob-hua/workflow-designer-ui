@@ -50,7 +50,7 @@
               class="primary"
               type="primary"
               @click="deleteRow()"
-              v-if="quote == 'delete'"
+              v-if="quote === 'delete'"
               v-role="{ id: 'FromDelete', type: 'button', business: business }"
               >删除</el-button
             >
