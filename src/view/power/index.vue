@@ -12,7 +12,7 @@
             <personel v-if="power === 'Personnel' && permissionRole" :business="projectCode"></personel>-->
             <permission v-if="!permissionRole"></permission>-->
           </el-tab-pane>
-          <el-tab-pane label="角色权限" name="Role">
+          <el-tab-pane label="用户组权限" name="Role">
             <role v-if="power === 'Role' && permissionRole" :business="projectCode"></role>-->
             <permission v-if="!permissionRole"></permission>-->
           </el-tab-pane>

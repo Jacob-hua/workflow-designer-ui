@@ -1,7 +1,7 @@
 <template>
   <el-form-item
     :label="fieldInfo.showLabel ? fieldInfo.label : ''"
-    :label-width="fieldInfo.labelWidth"
+    :label-width="fieldInfo.labelWidth + 'px'"
     :prop="fieldInfo.valuePath"
     :rules="rules"
   >
@@ -18,7 +18,7 @@
       :multiple="fieldInfo.multiple"
       :limit="30"
       :on-exceed="handleExceed"
-      :file-list="this.value"
+      :file-list="value"
     >
       <el-button size="small" type="primary">点击上传</el-button>
     </el-upload>
@@ -26,7 +26,7 @@
       v-else
       action="#"
       list-type="picture-card"
-      :file-list="this.value"
+      :file-list="displayList"
       :on-change="imgChange"
       :multiple="fieldInfo.multiple"
       :auto-upload="false"
@@ -62,11 +62,18 @@
     </el-dialog>
     <ul v-if="isShowTextUpload">
       <li @mousemove="fileMove(file)" v-for="(file, key) in value" :key="key">
-        <span> {{ file.name }}</span>
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="file.name"
+          placement="top"
+        >
+          <span> {{ file.name }}</span>
+        </el-tooltip>
         <p>
           <span
             @click="handlePreview(file)"
-            v-show="isTypeAnImage(file.name.split('.')[1])"
+            v-show="isTypeAnImage(file)"
             class="preview el-icon-zoom-in"
           ></span>
           <span @click="download(file)" class="preview el-icon-download"></span>
@@ -83,6 +90,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 export default {
   name: "upload",
   props: {
@@ -109,10 +117,13 @@ export default {
     readOnly: {
       type: Boolean,
     },
+    formConf: {
+      type: Object,
+    },
   },
   data() {
     return {
-      fileList: [],
+      displayList: [],
       dialogVisible: false,
       dialogImageUrl: "",
       listType: "text",
@@ -127,6 +138,22 @@ export default {
     if (this.readOnly) {
       this.displayNoneDom();
       this.mappingProcess();
+    } else {
+      this.value.forEach(async (file) => {
+        if (this.isTypeAnImage(file)) {
+          const result = await Promise.resolve(this.downloadFun(file));
+          if (!result) {
+            return;
+          }
+          const file2 = _.cloneDeep(file);
+          const reader = new FileReader();
+          reader.readAsDataURL(result);
+          reader.onload = () => {
+            file2.url = reader.result;
+          };
+          this.displayList.push(file2);
+        }
+      });
     }
   },
   methods: {
@@ -139,9 +166,7 @@ export default {
     },
     mappingProcess() {
       this.value.forEach(async (file) => {
-        const result = await Promise.resolve(
-          this.downloadFun({ url: file.blobMappingUrl[file.url] })
-        );
+        const result = await Promise.resolve(this.downloadFun(file));
         if (!result) {
           return;
         }
@@ -151,6 +176,7 @@ export default {
           file.url = reader.result;
         };
       });
+      this.displayList = this.value;
     },
     fileMove(file) {},
     delFile(file) {
@@ -158,25 +184,39 @@ export default {
         this.value.findIndex(({ uid }) => uid === file.uid),
         1
       );
+      this.displayList.splice(
+        this.displayList.findIndex(({ uid }) => uid === file.uid),
+        1
+      );
+    },
+    isBase64(file) {
+      return (
+        file.url.indexOf("data:") !== -1 && file.url.indexOf("base64") !== -1
+      );
     },
     async download(file) {
-      const [, ext] = file.name.split(".");
-      const result = await Promise.resolve(this.downloadFun(file));
-      if (!result) {
-        return;
+      if (this.isBase64(file)) {
+        this.newDownload(file);
+      } else {
+        const result = await Promise.resolve(this.downloadFun(file));
+        if (!result) {
+          return;
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(result);
+        reader.onload = () => {
+          this.handleDownload({ name: file.name, url: reader.result });
+        };
       }
-      const reader = new FileReader();
-      reader.readAsDataURL(result);
-      reader.onload = () => {
-        this.handleDownload({ name: file.name, url: reader.result });
-      };
     },
-    handleDownload(file) {
-      const imgUrl = file.url;
+    newDownload(file) {
       const a = document.createElement("a");
-      a.href = imgUrl;
+      a.href = file.url;
       a.setAttribute("download", file.name);
       a.click();
+    },
+    handleDownload(file) {
+      this.newDownload(file);
     },
     async previewImage(file) {
       this.dialogVisible = true;
@@ -195,34 +235,55 @@ export default {
       link.click();
       window.URL.revokeObjectURL(link.href);
     },
-    checkFileFormat(file) {
+    fileListDel(fileList, file) {
+      fileList.splice(
+        fileList.findIndex(({ uid }) => uid === file.uid),
+        1
+      );
+    },
+    checkFileFormat(file, fileList) {
       const fileName = file.name;
       const suffixName = fileName.split(".").pop();
       if (!this.fieldInfo.accept.includes(suffixName)) {
-        this.delFile(file);
-        this.$message.error("该后缀文件不允许上传");
+        this.fileListDel(fileList, file);
+        this.$message.error(
+          `该后缀文件不允许上传, 正确格式为${this.fieldInfo.accept}`
+        );
         return false;
       }
       const fileSize = file.size;
       if (fileSize > this.fieldInfo.fileSize * 1024 * 1024) {
-        this.delFile(file);
-        this.$message.error("文件大小超出限制，请检查！");
+        this.fileListDel(fileList, file);
+        this.$message.error(`
+        文件大小超出限制，请检查！最大上传大小为
+          ${this.fieldInfo.fileSize}MB
+        `);
         return false;
       }
       return true;
     },
-    async imgChange(file) {
-      if (!this.checkFileFormat(file)) {
+    async imgChange(file, fileList) {
+      if (!this.checkFileFormat(file, fileList)) {
         return false;
       }
-      const blobMappingUrl = {};
-      blobMappingUrl[file.url] = await Promise.resolve(this.uploadFun(file));
-      file["blobMappingUrl"] = blobMappingUrl;
+      const attachmentId = await Promise.resolve(this.uploadFun(file));
+      const result = await Promise.resolve(
+        this.downloadFun({ url: attachmentId })
+      );
+      file.url = attachmentId;
       this.value.push(file);
+
       this.$emit("input", this.value);
+      const reader = new FileReader();
+      const file2 = _.cloneDeep(file);
+      reader.readAsDataURL(result);
+      reader.onload = (e) => {
+        file2.url = e.target.result;
+      };
+      this.displayList.push(file2);
     },
-    async fileChange(file) {
-      if (!this.checkFileFormat(file)) {
+    async fileChange(file, fileList) {
+      if (!this.checkFileFormat(file, fileList)) {
         return false;
       }
       file.url = await Promise.resolve(this.uploadFun(file));
@@ -231,7 +292,9 @@ export default {
     },
     async beforeUpload(file) {},
     handleRemove(file, fileList) {},
-    isTypeAnImage(ext) {
+    isTypeAnImage(file) {
+      let patternFileExtension = /\.([0-9a-z]+)(?:[\?#]|$)/i;
+      let ext = file.name.match(patternFileExtension)[1];
       return (
         ["png", "jpg", "jpeg", "gif", "webp", "psd", "tiff"].indexOf(
           ext.toLowerCase()
@@ -248,12 +311,11 @@ export default {
     },
     async handlePreview(file) {
       try {
-        const [, ext] = file.name.split(".");
         const result = await Promise.resolve(this.downloadFun(file));
         if (!result) {
           return;
         }
-        if (!this.isTypeAnImage(ext)) {
+        if (!this.isTypeAnImage(file)) {
           this.downloadFile(file.name, file.type, result);
         } else {
           this.blobToBase64(result);

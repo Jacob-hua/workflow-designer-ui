@@ -46,6 +46,8 @@ export let upload = {
   tips:'点击按钮上传附件',
   //允许文件类型
   accept:'.pdf, .doc, .docx, .xls, .xlsx',
+  // 允许图片类型
+  acceptPicture:'.png, .PNG, .jpg, .JPG, .JPEG, .jpeg',
   //文件大小MB
   fileSize:10,
 }

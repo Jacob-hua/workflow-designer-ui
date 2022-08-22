@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <label class="fontcolor" :style="labelStyle">{{label}}</label> 
+        <label class="fontcolor" :style="labelStyle">{{ label }}</label>
         <el-tooltip :style="contentStyle" :content="content" :placement="placement" effect="light">
             <span class="text-hidden">{{ content }}</span>
         </el-tooltip>
@@ -57,11 +57,11 @@ export default {
 }
 
 .wrapper {
-display: flex;
+    display: flex;
 }
 
-.fontcolor{
-color: #999999;
+.fontcolor {
+    color: #999999;
 }
 </style>
 

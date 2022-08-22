@@ -27,7 +27,7 @@
         <!--        </div>-->
       </div>
       <div>
-        <label style="margin-right: 11px">当前角色</label>
+        <label style="margin-right: 11px">用户组</label>
         <div class="item2" v-for="(item, index) in detailData.currentGroup" :key="index">
           <el-input :value="item" disabled></el-input>
         </div>
