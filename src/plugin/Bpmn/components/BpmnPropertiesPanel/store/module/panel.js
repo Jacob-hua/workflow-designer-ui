@@ -195,7 +195,7 @@ const mutationsEffect = {
   addOutputParameter: panelEffect.inputOutputParameterEffect,
   updateOutputParameter: panelEffect.inputOutputParameterEffect,
   removeOutputParameter: panelEffect.inputOutputParameterEffect,
-  // updateUserTask: panelEffect.userTaskEffect,
+  updateUserTask: panelEffect.userTaskEffect,
   updateMultiInstance: panelEffect.multiInstanceEffect,
   updateActions: panelEffect.actionsEffect,
   updateTimer: panelEffect.timerEffect,

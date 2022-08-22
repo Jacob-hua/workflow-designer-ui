@@ -171,7 +171,7 @@ export default {
       this.displayAssignee = {}
     },
     onAssigneeSubmit(result) {
-      this.displayAssignee = result[0]
+      this.displayAssignee = result?.[0] ?? {}
     },
     onEditCandidateUser() {
       this.candidateUserVisible = true
