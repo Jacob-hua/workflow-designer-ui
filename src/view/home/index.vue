@@ -98,7 +98,7 @@
             @refreshTable="onWorkflowRefresh"
             @deployed="onWorkflowDeployed"
             @saved="onWorkflowSaved"
-            @delted="onWorkflowDeleted"
+            @deleted="onWorkflowDeleted"
           ></workflow-table>
         </el-tab-pane>
         <el-tab-pane name="drafts">
