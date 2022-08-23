@@ -225,23 +225,14 @@ export default {
           });
           return;
         }
-        checkCode({
-          tenantId: this.tenantId,
+        this.businessConfigWithTreeCreate({
           code: this.nodeCode,
-          projectCode: this.forms.code || this.data[0].code,
-        }).then((res) => {
-          if (res.errorInfo.errorMsg) {
-            return;
-          }
-          this.businessConfigWithTreeCreate({
-            code: this.nodeCode,
-            name: this.inptVal,
-            createBy: this.userInfo.account,
-            tenantId: this.tenantId,
-            type: "industry",
-            parentId: data.id,
-            ascription: this.data[0].code,
-          });
+          name: this.inptVal,
+          createBy: this.userInfo.account,
+          tenantId: this.tenantId,
+          type: "industry",
+          parentId: data.id,
+          ascription: this.data[0].code,
         });
       } else {
         this.$message({
