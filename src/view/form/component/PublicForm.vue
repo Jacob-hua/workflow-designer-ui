@@ -226,7 +226,7 @@ export default {
       this.$refs.detailsDiolog.dialogVisible2 = false;
       this.getData();
     },
-    
+
     addSuccess(value) {
       this.$refs.PublicFormDiolog.dialogVisible2 = false;
       this.$refs.detailsDiolog.dialogVisible2 = false;
@@ -382,7 +382,7 @@ export default {
   border: 1px solid #666666;
   min-height: 170px;
   display: inline-block;
-  width: 330px;
+  width: 310px;
   margin-right: 40px;
   margin-bottom: 40px;
 }
@@ -403,6 +403,7 @@ export default {
   cursor: pointer;
 }
 .card-main {
+  display: inline;
   padding: 10px 10px;
 }
 .card-main-item {
