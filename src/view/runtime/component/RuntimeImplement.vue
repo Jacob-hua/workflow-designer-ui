@@ -216,11 +216,12 @@ export default {
       if (this.noExecutor) {
         temps.push(makeComponent.call(this, 'NoExecutor'))
       }
-      let actions = this.iBpmnViewer.getShapeInfo(this.curExecuteShape)['actions']?.split(',') ?? []
+      let shapeActions = this.iBpmnViewer.getShapeInfo(this.curExecuteShape)['actions']?.split(',') ?? []
       if (curTaskIsFirstTask.call(this)) {
-        actions = actions.filter((action) => action !== 'Reject')
+        shapeActions = shapeActions.filter((action) => action !== 'Reject')
       }
-      return actions.map(makeComponent.bind(this)).concat(temps)
+      const actions = ['Agency', 'Circulate', 'Hang', 'Reject', 'Terminate']
+      return actions.filter((action) => shapeActions.includes(action)).map(makeComponent.bind(this)).concat(temps)
 
       function curTaskIsFirstTask() {
         const curTaskIndex = this.iBpmnViewer
