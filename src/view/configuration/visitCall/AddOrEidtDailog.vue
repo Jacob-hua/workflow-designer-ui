@@ -437,7 +437,7 @@ export default {
           apibox.dataParse = JSON.stringify(pars);
           if (apibox.method === ApiEnum.API_TYPE_POST) {
             let obj = {};
-            apibox.configParams.forEach((item) => {
+            apibox.configParams?.forEach((item) => {
               obj[item.key] = item.value;
             });
             apibox.body = JSON.stringify(obj);
@@ -455,7 +455,7 @@ export default {
 
         this.apiBoxList.forEach((apiBox) => {
           let parameterMap = {};
-          apiBox.configParams.forEach((con) => {
+          apiBox.configParams?.forEach((con) => {
             parameterMap[con.key] = con.value ? con.value : null;
           });
           apiBox.parameterMap = parameterMap;
@@ -466,24 +466,48 @@ export default {
         });
 
         if (this.type === "see") {
-          postSaveOrEdite(this.apiBoxList).then((res) => {
-            this.dialogVisible = false;
-            this.$message({
-              type: "success",
-              message: "保存成功",
-            });
-            this.$parent.GetGlobalList(this.business);
+          let arr = [];
+          this.apiBoxList.forEach((api) => {
+            arr.push(api.apiMark);
           });
+          let set = new Set(arr);
+          if (set.size === arr.length) {
+            postSaveOrEdite(this.apiBoxList).then((res) => {
+              this.dialogVisible = false;
+              this.$message({
+                type: "success",
+                message: "保存成功",
+              });
+              this.$parent.GetGlobalList(this.business);
+            });
+          } else {
+            this.$message({
+              type: "warning",
+              message: "api标识有重复,请修改",
+            });
+          }
         } else {
-          putSaveOrEdite(this.apiBoxList).then((res) => {
-            this.dialogVisible = false;
-            this.$message({
-              type: "success",
-              message: "保存成功",
-            });
-            this.$parent.DetailFlag = false;
-            this.$parent.GetGlobalList(this.business);
+          let arr = [];
+          this.apiBoxList.forEach((api) => {
+            arr.push(api.apiMark);
           });
+          let set = new Set(arr);
+          if (set.size === arr.length) {
+            putSaveOrEdite(this.apiBoxList).then((res) => {
+              this.dialogVisible = false;
+              this.$message({
+                type: "success",
+                message: "保存成功",
+              });
+              this.$parent.DetailFlag = false;
+              this.$parent.GetGlobalList(this.business);
+            });
+          } else {
+            this.$message({
+              type: "warning",
+              message: "api标识有重复,请修改",
+            });
+          }
         }
       }
     },
