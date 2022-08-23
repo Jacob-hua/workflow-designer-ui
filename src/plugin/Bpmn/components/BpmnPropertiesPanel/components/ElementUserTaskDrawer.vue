@@ -52,7 +52,7 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="选择结果">
+          <el-form-item :label="title">
             <el-tag v-for="{ label, value } in result" :key="value" :type="value" closable @close="onDelTag(value)">{{
               label
             }}</el-tag>

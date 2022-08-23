@@ -47,7 +47,7 @@ export default {
           {
             min: 1,
             max: 50,
-            message: "长度在 0 到 50 个字符",
+            message: "长度在 1 到 50 个字符",
             trigger: "blur",
           },
         ],
@@ -56,8 +56,8 @@ export default {
           { required: true, message: "请输入项目code", trigger: "blur" },
           {
             min: 1,
-            max: 100,
-            message: "长度在 0 到 100 个字符",
+            max: 50,
+            message: "长度在 1 到 50 个字符",
             trigger: "blur",
           },
         ],
