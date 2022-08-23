@@ -170,12 +170,7 @@
                 ></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column
-              align="center"
-              v-if="processFlag"
-              prop=""
-              label="操作"
-            >
+            <el-table-column v-if="btnFlag" align="center" prop="" label="操作">
               <template slot-scope="scope">
                 <span
                   @click="deleteRow(scope.row)"
@@ -379,7 +374,6 @@ export default {
       }
     },
     handleNodeClick(data) {
-      debugger;
       this.processFlag = true;
       this.currentId = data.id;
       this.businessConfigId = data.id;
@@ -413,6 +407,7 @@ export default {
       });
     },
     editTable(row, txt) {
+      debugger;
       if (row.btnTxt === "编辑" && row.id) {
         this.checkIsReferenced(row);
       }
@@ -440,6 +435,7 @@ export default {
           } else {
             // 走新建接口
             startConfig(row).then((res) => {
+              row.id = res.result;
               this.$message({
                 type: "success",
                 message: "创建成功",
@@ -457,7 +453,6 @@ export default {
         row.isSetting = !!row.isSetting;
         row.isRequired = !!row.isRequired;
       }
-      // this.tableData.forEach(item => item.disabled = false)
     },
     saveTag() {
       if (this.tags.length) {
