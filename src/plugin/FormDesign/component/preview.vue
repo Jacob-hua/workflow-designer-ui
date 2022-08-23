@@ -145,6 +145,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
       return
     }
     _.get(this.form, `${valuePath}`, []).splice(index, 1)
+    // TODO: 当表单数据被删除时，对应的usefulMeta和flatField也需要进行相关的删除操作
   }
 
   const multipleDisabled = this.formConf.disabled || fieldInfo.disabled
