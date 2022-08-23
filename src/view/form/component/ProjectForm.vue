@@ -66,11 +66,7 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <el-tabs
-        type="border-card"
-        v-model="activeName"
-        @tab-click="changeActiveName"
-      >
+      <el-tabs type="border-card" v-model="formStatus" @tab-click="changeActiveName">
         <el-tab-pane name="enabled">
           <span slot="label">可用表单({{ getDataFirst.total }})</span>
           <div
@@ -146,7 +142,7 @@
       title="新建表单"
       ref="projectFormDiolog"
       @addSuccess="addSuccess()"
-      :dataType="dataType"
+      :formStatus="formStatus"
       :projectOption="projectOption"
       :systemOption="systemOption"
       :sysProps="sysProps"
@@ -157,7 +153,7 @@
       :formDatas="formData"
       @editForm="editForm"
       quote="delete"
-      :status="activeName"
+      :status="formStatus"
       @deleteSuccsee="deleteSuccsee()"
     ></detailsDiologForm>
     <application
@@ -199,11 +195,10 @@ export default {
       formData: {},
       projectValue: "",
       projectOption: [],
-      dataType: "enabled",
-      projectCode: "",
+      formStatus: 'enabled',
+      projectCode: '',
       valueDate: [start, end],
-      input: "",
-      activeName: "enabled",
+      input: '',
       formListFirst: [],
       formListSecond: [],
       getDataFirst: {
@@ -356,13 +351,13 @@ export default {
     },
 
     getData() {
-      switch (this.activeName) {
-        case "enabled":
-          this.getEnableData();
-          break;
-        case "drafted":
-          this.getDraftData();
-          break;
+      switch (this.formStatus) {
+        case 'enabled':
+          this.getEnableData()
+          break
+        case 'drafted':
+          this.getDraftData()
+          break
         default:
           break;
       }
@@ -373,14 +368,14 @@ export default {
     },
 
     deleteSuccsee() {
-      this.$refs.detailsDiolog.dialogVisible2 = false;
-      this.getData();
+      this.$refs.detailsDiolog.dialogVisible2 = false
+      this.getManyData()
     },
 
     addSuccess() {
-      this.$refs.detailsDiolog.dialogVisible2 = false;
-      this.$refs.projectFormDiolog.dialogVisible2 = false;
-      this.getData();
+      this.$refs.detailsDiolog.dialogVisible2 = false
+      this.$refs.projectFormDiolog.dialogVisible2 = false
+      this.getManyData()
     },
 
     changProjectCode(code) {
@@ -425,7 +420,7 @@ export default {
 
       postFormDesignRecordFormDesignRecordInfo({
         id: item.id,
-        status: this.activeName,
+        status: this.formStatus,
         tenantId: this.tenantId,
         ascription: this.projectCode,
         business:
