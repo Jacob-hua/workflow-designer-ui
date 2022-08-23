@@ -342,13 +342,13 @@ export default {
 
     deleteSuccsee() {
       this.$refs.detailsDiolog.dialogVisible2 = false
-      this.getData()
+      this.getManyData()
     },
 
     addSuccess() {
       this.$refs.detailsDiolog.dialogVisible2 = false
       this.$refs.projectFormDiolog.dialogVisible2 = false
-      this.getData()
+      this.getManyData()
     },
 
     changProjectCode(code) {

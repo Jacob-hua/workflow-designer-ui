@@ -223,7 +223,7 @@ export default {
 
     deleteSuccsee() {
       this.$refs.detailsDiolog.dialogVisible2 = false;
-      this.getData();
+      this.getManyData();
     },
     
     addSuccess(value) {
