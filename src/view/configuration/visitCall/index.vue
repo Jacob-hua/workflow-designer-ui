@@ -127,7 +127,7 @@ export default {
       immediate: true,
       handler(newValue) {
         if (this.business) {
-          this.GetGlobalList(newValue);
+          this.GetGlobalList(this.business);
         }
       },
     },
@@ -316,11 +316,11 @@ export default {
         ];
       });
     },
-    async GetGlobalList() {
+    async GetGlobalList(business) {
       let data = await GetGlobalList({
         ...this.pageInfo,
         tenantId: this.tenantId, // 租户id
-        ascription: this.business,
+        ascription: business,
       });
       if (data.result) {
         this.tableData = data.result.dataList;
