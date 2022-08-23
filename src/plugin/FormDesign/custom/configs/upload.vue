@@ -49,6 +49,15 @@
     <el-form-item v-show="false" label="请求地址">
       <el-input v-model="props.action"></el-input>
     </el-form-item>
+    <el-form-item label="显示类型">
+      <el-radio-group @change="onSelectChange" v-model="props['list-type']">
+        <el-radio-button label="text">文件</el-radio-button>
+        <el-radio-button label="picture-card">照片</el-radio-button>
+      </el-radio-group>
+    </el-form-item>
+    <el-form-item label="允许类型">
+      <el-input v-model="props.accept"></el-input>
+    </el-form-item>
     <el-form-item label="大小(MB)">
       <el-input-number
         v-model="props.fileSize"
@@ -56,9 +65,6 @@
         :max="100"
         :step="10"
       />
-    </el-form-item>
-    <el-form-item label="允许文件类型">
-      <el-input v-model="props.accept"></el-input>
     </el-form-item>
     <el-form-item label="必填">
       <el-switch v-model="props.required"></el-switch>
@@ -68,12 +74,6 @@
     </el-form-item>
     <el-form-item label="显示文件列表">
       <el-switch v-model="props['show-file-list']"></el-switch>
-    </el-form-item>
-    <el-form-item label="显示类型">
-      <el-radio-group @change="onSelectChange" v-model="props['list-type']">
-        <el-radio-button label="text">普通</el-radio-button>
-        <el-radio-button label="picture-card">照片</el-radio-button>
-      </el-radio-group>
     </el-form-item>
     <el-form-item label="按钮文字">
       <el-input v-model="props.buttonText"></el-input>
