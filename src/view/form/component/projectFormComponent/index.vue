@@ -73,7 +73,7 @@
             <span class="title-item-label marginLeft40"> 表单名称 </span>
             <div class="title-item-main">
               <el-input
-                :disabled="this.title === '编辑表单'"
+                :disabled="this.tit !== '新建表单'"
                 v-model="postData.name"
                 placeholder=""
                 maxlength="20"
@@ -180,6 +180,9 @@ export default {
   },
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
+    isNewDraftForm() {
+      return this.tit && this.tit === '新建表单' ;
+    },
   },
   methods: {
     onOptionClick() {
@@ -253,7 +256,13 @@ export default {
         this.dialogVisible2 = false;
       });
     },
+
     addDraftForm() {
+
+      if (!this.postData.name) {
+        this.$message.error("请填写表单名称");
+        return;
+      }
       const id = "form_" + Date.parse(new Date());
       const formFile = new File(
         [this.$refs.formDesigner.getFormData()],

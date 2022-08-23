@@ -34,7 +34,7 @@
     <div class="content-wrapper">
       <el-tabs
         type="border-card"
-        v-model="activeName"
+        v-model="formStatus"
         @tab-click="changeActiveName"
       >
         <el-tab-pane name="enabled">
@@ -109,7 +109,7 @@
     <PublicFormDiolog
       ref="PublicFormDiolog"
       @addSuccess="addSuccess()"
-      :dataType="dataType"
+      :formStatus="formStatus"
     ></PublicFormDiolog>
     <detailsDiolog
       tileText="编辑表单"
@@ -117,7 +117,7 @@
       quote="delete"
       :formDatas="formData"
       @editForm="editForm"
-      :status="activeName"
+      :status="formStatus"
       ascription="public"
       @deleteSuccsee="deleteSuccsee()"
     ></detailsDiolog>
@@ -141,10 +141,9 @@ export default {
       formData: {},
       valueDate: [start, end],
       input: "",
-      activeName: "enabled",
+      formStatus: "enabled",
       formListFirst: [],
       formListSecond: [],
-      dataType: "enabled",
       getDataFirst: {
         page: 1,
         limit: 9999999,
@@ -206,7 +205,7 @@ export default {
     },
 
     getData() {
-      switch (this.activeName) {
+      switch (this.formStatus) {
         case "enabled":
           this.getEnableData();
           break;
@@ -258,7 +257,7 @@ export default {
     detailsDiolog(item) {
       postFormDesignRecordFormDesignRecordInfo({
         id: item.id,
-        status: this.activeName,
+        status: this.formStatus,
         tenantId: this.tenantId,
         ascription: "public",
         business: "",

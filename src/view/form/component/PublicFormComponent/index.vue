@@ -37,9 +37,9 @@
           </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <div class="next" type="primary" @click="addEnableForm()">发布</div>
-        <div class="next" @click="addDraftForm()">保存</div>
-        <div class="cancel" @click="dialogVisible2 = false">取消</div>
+        <div class="next" type="primary" @click="addEnableForm()">发布1</div>
+        <div class="next" @click="addDraftForm()">保存1</div>
+        <div class="cancel" @click="dialogVisible2 = false">取消1</div>
       </div>
     </el-dialog>
   </div>
@@ -56,7 +56,7 @@ import { FormEditor } from "@bpmn-io/form-js-editor";
 import { mapState } from "vuex";
 export default {
   props: {
-    dataType: {
+    formStatus: {
       type: String,
       default: "enabled",
     },
@@ -117,7 +117,7 @@ export default {
         type: "text/json",
       });
       let formData = new FormData();
-      switch (this.dataType) {
+      switch (this.formStatus) {
         case "enabled":
           break;
         case "":
@@ -155,27 +155,13 @@ export default {
         this.dialogVisible2 = false;
       });
     },
+    
     addDraftForm() {
       if (!this.postData.name) {
         this.$message.error("请填写表单名称");
         return;
       }
       let formData = new FormData();
-      switch (this.dataType) {
-        case "enabled":
-          break;
-        case "":
-          break;
-        case "enabled-edit":
-          formData.append("sourceId", this.postData.sourceId);
-          break;
-        case "-edit":
-          formData.append("id", this.postData.id);
-          formData.append("sourceId", this.postData.sourceId);
-          break;
-        default:
-          break;
-      }
       if (this.postData.id) {
         formData.append("sourceId", this.postData.sourceId);
       }
@@ -186,7 +172,6 @@ export default {
    
       formData.append("business", "");
       formData.append("status", "drafted");
-      //formData.append("createName", "admin");
       formData.append("tenantId", this.tenantId);
 
       const formFile = new File(
@@ -196,22 +181,23 @@ export default {
       );
       formData.append("file", formFile);
 
-      if(this.isNewDraftForm){
+      if(this.isNewDraftForm || this.formStatus==='enabled' ){
         formData.append("createBy", this.userInfo.account);
         const code = "form_" + Date.parse(new Date());
         formData.append("code", code);
         
         postFormDesignService(formData).then((res) => {
-          this.$message.success("保存草稿成功");
+          this.$message.success("保存成功");
           this.$emit("addSuccess", "drafted");
           this.dialogVisible2 = false;
         }); 
+
       }else{
         formData.append("id", this.postData.id);
         formData.append("code", this.postData.code);
         formData.append("updateBy", this.userInfo.account);
         putFormDesignService(formData).then((res) => {
-          this.$message.success("更新草稿成功");
+          this.$message.success("更新成功");
           this.$emit("addSuccess", "drafted");
           this.dialogVisible2 = false;
         }); 
