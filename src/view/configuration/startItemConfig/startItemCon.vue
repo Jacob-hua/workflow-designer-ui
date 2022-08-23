@@ -216,7 +216,7 @@ import {
 import FormTypeEnum from "@/enum/FormTypeEnum";
 import StartItemEnum from "@/enum/StartItemEnum";
 import { mapState } from "vuex";
-import PeTree from '@/component/PeTree.vue';
+import PeTree from "@/component/PeTree.vue";
 
 export default {
   components: {
@@ -379,6 +379,7 @@ export default {
       }
     },
     handleNodeClick(data) {
+      debugger;
       this.processFlag = true;
       this.currentId = data.id;
       this.businessConfigId = data.id;
