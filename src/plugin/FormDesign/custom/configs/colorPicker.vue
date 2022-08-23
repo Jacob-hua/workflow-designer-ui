@@ -27,18 +27,6 @@
         <el-radio-button label="mini">迷你</el-radio-button>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="预定义颜色">
-      <div class="select-item" v-for="(item, index) in props.predefine" :key="item">
-        <span class="el-color-picker__color">
-          <span class="el-color-picker__color-inner" :style="{ 'background-color': item }"> </span>
-        </span>
-        <div class="close-btn select-line-icon">
-          <i class="el-icon-remove-outline" @click="handlerRemoveColor(index)" />
-        </div>
-      </div>
-      <br />
-      <el-color-picker v-model="color" @change="handlerAddPreColor"></el-color-picker>
-    </el-form-item>
   </div>
 </template>
 <script>
