@@ -37,9 +37,9 @@
           </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <div class="next" type="primary" @click="addEnableForm()">发布1</div>
-        <div class="next" @click="addDraftForm()">保存1</div>
-        <div class="cancel" @click="dialogVisible2 = false">取消1</div>
+        <div class="next" type="primary" @click="addEnableForm()">发布</div>
+        <div class="next" @click="addDraftForm()">保存</div>
+        <div class="cancel" @click="dialogVisible2 = false">取消</div>
       </div>
     </el-dialog>
   </div>
