@@ -211,6 +211,20 @@ export default {
     },
     onblur(node, data) {
       if (this.nodeCode && this.inptVal) {
+        if (this.nodeCode.length > 50) {
+          this.$message({
+            type: "warning",
+            message: "节点code 超过50, 请修改保存",
+          });
+          return;
+        }
+        if (this.inptVal.length > 50) {
+          this.$message({
+            type: "warning",
+            message: "节点名称超过50, 请修改保存",
+          });
+          return;
+        }
         checkCode({
           tenantId: this.tenantId,
           code: this.nodeCode,
