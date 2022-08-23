@@ -205,6 +205,18 @@ export default {
       }
       return this.workflow.curTrack.status.split(',').includes('hang')
     },
+    reject() {
+      if (!this.workflow.curTrack) {
+        return false
+      }
+      return this.workflow.curTrack.status.split(',').includes('reject')
+    },
+    terminate() {
+      if (!this.workflow.curTrack) {
+        return false
+      }
+      return this.workflow.curTrack.status.split(',').includes('terminate')
+    },
     actions() {
       if (!this.curExecuteShape) {
         return []
@@ -221,7 +233,10 @@ export default {
         shapeActions = shapeActions.filter((action) => action !== 'Reject')
       }
       const actions = ['Agency', 'Circulate', 'Hang', 'Reject', 'Terminate']
-      return actions.filter((action) => shapeActions.includes(action)).map(makeComponent.bind(this)).concat(temps)
+      return actions
+        .filter((action) => shapeActions.includes(action))
+        .map(makeComponent.bind(this))
+        .concat(temps)
 
       function curTaskIsFirstTask() {
         const curTaskIndex = this.iBpmnViewer
@@ -428,6 +443,9 @@ export default {
       })
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      if (this.hang || this.reject || this.terminate) {
         return
       }
       this.noExecutor = result.some(
