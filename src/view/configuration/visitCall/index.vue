@@ -57,8 +57,8 @@
     </div>
     <div class="home-table-page">
       <el-pagination
-        @size-change="GetGlobalList"
-        @current-change="GetGlobalList"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
         :current-page.sync="pageInfo.page"
         :page-size.sync="pageInfo.limit"
         layout="prev, pager, next, jumper"
@@ -121,19 +121,13 @@ export default {
       },
     };
   },
-  watch: {
-    pageInfo: {
-      deep: true,
-      immediate: true,
-      handler(newValue) {
-        if (this.business) {
-          this.GetGlobalList(this.business);
-        }
-      },
-    },
-  },
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
+  },
+  mounted() {
+    setTimeout(() => {
+      this.GetGlobalList(this.business);
+    }, 200);
   },
   methods: {
     showDetail(row) {
@@ -279,6 +273,7 @@ export default {
       this.type = "see";
       this.guideForm = form;
       this.$nextTick(() => {
+        this.$refs.AddOrEidtDailog.jsonData = [];
         this.$refs.AddOrEidtDailog.dialogVisible = true;
         this.$refs.AddOrEidtDailog.apiBoxList = [
           {
@@ -329,9 +324,11 @@ export default {
     },
     handleSizeChange(val) {
       this.pageInfo.limit = val;
+      this.GetGlobalList(this.business);
     },
     handleCurrentChange(val) {
       this.pageInfo.page = val;
+      this.GetGlobalList(this.business);
     },
   },
 };
