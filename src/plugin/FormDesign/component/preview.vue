@@ -58,9 +58,11 @@ function handleDependChange(data, fieldInfo) {
       .filter(({ value }) => data[fieldInfo.id].includes(value))
       .map(({ label }) => label)
       .join(', ')
+    fieldInfo.text = this.form[fieldInfo.id]
     return
   }
   this.form[fieldInfo.id] = sourceField.options?.find(({ value }) => value === data[fieldInfo.id])?.label
+  fieldInfo.text = this.form[fieldInfo.id]
 }
 
 function handleRowContainerDependChange(data, fieldInfo) {
@@ -253,7 +255,6 @@ export default {
       form = metaDataList.reduce(buildModel, {})
     }
     return {
-      fileList: [],
       form,
       usefulMeta: {},
       metaDataList,
