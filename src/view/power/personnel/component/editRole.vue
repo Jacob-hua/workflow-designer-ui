@@ -1,19 +1,40 @@
 <template>
-  <el-dialog title="权限授予" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" fullscreen top="1vh">
+  <el-dialog
+    title="权限授予"
+    :visible.sync="dialogVisible"
+    width="60%"
+    :before-close="handleClose"
+    fullscreen
+    top="1vh"
+  >
     <div class="dialogHeader">
       <span>人员信息</span>
-      <el-button class="plain" type="primary" @click="grant()" v-if="type !== 'edit'">授权</el-button>
+      <el-button
+        class="plain"
+        type="primary"
+        @click="grant()"
+        v-if="type !== 'edit'"
+        >授权</el-button
+      >
     </div>
     <div class="dialogPeople">
       <div>
         <div class="item">
           <label>姓名</label>
-          <el-input placeholder="请输入内容" v-model="detailData.name" :disabled="true">
+          <el-input
+            placeholder="请输入内容"
+            v-model="detailData.name"
+            :disabled="true"
+          >
           </el-input>
         </div>
         <div class="item">
           <label>账号</label>
-          <el-input placeholder="请输入内容" v-model="detailData.id" :disabled="true">
+          <el-input
+            placeholder="请输入内容"
+            v-model="detailData.id"
+            :disabled="true"
+          >
           </el-input>
         </div>
       </div>
@@ -28,39 +49,86 @@
       </div>
       <div>
         <label style="margin-right: 11px">用户组</label>
-        <div class="item2" v-for="(item, index) in detailData.currentGroup" :key="index">
+        <div
+          class="item2"
+          v-for="(item, index) in detailData.currentGroup"
+          :key="index"
+        >
           <el-input :value="item" disabled></el-input>
         </div>
       </div>
     </div>
     <div class="content-wrapper">
       <el-tabs type="border-card" v-model="activeName" @tab-click="changeRole">
-        <el-tab-pane v-for="(item, key) in detailData.map" :key="Math.random()" :name="key">
+        <el-tab-pane
+          v-for="(item, key) in detailData.map"
+          :key="Math.random()"
+          :name="key"
+        >
           <span slot="label">{{ key }}</span>
           <div class="RoleMain">
-            <div v-for="(item, index) in detailData.map[checkRole]" :key="index" class="RoleList">
+            <div
+              v-for="(item, index) in detailData.map[checkRole]"
+              :key="index"
+              class="RoleList"
+            >
               <div>
-                <label class="roleTitle">应用菜单权限</label><br>
-                <el-checkbox :label="item.id" v-model="item.flag"
-                             :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'"
-                             :true-label="0" :false-label="1" @change="changeTitleFlag(item, $event)">{{ item.name }}
+                <label class="roleTitle">应用菜单权限</label><br />
+                <el-checkbox
+                  :label="item.id"
+                  v-model="item.flag"
+                  :disabled="
+                    detailData.roleList[detailData.roleList.length - 1].name !==
+                      checkRole || type !== 'edit'
+                  "
+                  :true-label="0"
+                  :false-label="1"
+                  @change="changeTitleFlag(item, $event)"
+                  >{{ item.name }}
                 </el-checkbox>
               </div>
               <div class="role-item">
-                <label class="roleTitle">操作权限</label><br>
-                <div v-for="(item1, index1) in item.children" :key="index1"
-                     style="display: inline-block;margin-right: 20px;">
-                  <el-checkbox :label="item1.id" v-model="item1.flag"
-                               :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !=='edit'"
-                               :true-label="0" :false-label="1" @change="changeFlag(item, item1, $event)">{{
-                      item1.name
-                    }}
+                <label class="roleTitle">操作权限</label><br />
+                <div
+                  v-for="(item1, index1) in item.children"
+                  :key="index1"
+                  style="display: inline-block; margin-right: 20px"
+                >
+                  <el-checkbox
+                    :label="item1.id"
+                    v-model="item1.flag"
+                    :disabled="
+                      detailData.roleList[detailData.roleList.length - 1]
+                        .name !== checkRole || type !== 'edit'
+                    "
+                    :true-label="0"
+                    :false-label="1"
+                    @change="changeFlag(item, item1, $event)"
+                    >{{ item1.name }}
                   </el-checkbox>
-                  <div v-if="item1.children.length > 0" style="margin-top: 20px;margin-bottom: 20px;margin-left: 20px;">
-                    <el-checkbox :label="item2.id" v-model="item2.flag"
-                                 :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'"
-                                 :true-label="0" v-for="(item2, index2) in item1.children" :key="index2"
-                                 :false-label="1" @change="changeChildrenFlag(item, item1, $event)">{{ item2.name }}
+                  <div
+                    v-if="item1.children.length > 0"
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      margin-top: 20px;
+                      margin-bottom: 20px;
+                      margin-left: 20px;
+                    "
+                  >
+                    <el-checkbox
+                      :label="item2.id"
+                      v-model="item2.flag"
+                      :disabled="
+                        detailData.roleList[detailData.roleList.length - 1]
+                          .name !== checkRole || type !== 'edit'
+                      "
+                      :true-label="0"
+                      v-for="(item2, index2) in item1.children"
+                      :key="index2"
+                      :false-label="1"
+                      @change="changeChildrenFlag(item, item1, $event)"
+                      >{{ item2.name }}
                     </el-checkbox>
                   </div>
                 </div>
@@ -71,174 +139,182 @@
       </el-tabs>
     </div>
     <span slot="footer" class="dialog-footer" v-if="type === 'edit'">
-      <el-button class="save" type="primary" @click="award" :disabled="detailData.roleList[detailData.roleList.length - 1].name !== checkRole || type !== 'edit'" >授予</el-button>
+      <el-button
+        class="save"
+        type="primary"
+        @click="award"
+        :disabled="
+          detailData.roleList[detailData.roleList.length - 1].name !==
+            checkRole || type !== 'edit'
+        "
+        >授予</el-button
+      >
       <el-button class="cancel" @click="handleClose">取消</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-import {
-  getUserPermission,
-  postMapping,
-  userLogin
-} from '@/api/unit/api.js'
-import {mapState} from 'vuex'
+import { getUserPermission, postMapping, userLogin } from "@/api/unit/api.js";
+import { mapState } from "vuex";
 
 export default {
   props: {
     dialogVisible: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
-    ...mapState('account', ['tenantId', 'userInfo']),
+    ...mapState("account", ["tenantId", "userInfo"]),
   },
   data() {
     return {
-      activeName: '',
+      activeName: "",
       detailData: {
-        id: '',
-        name: '',
+        id: "",
+        name: "",
         currentGroup: [],
-        map: []
+        map: [],
       },
-      input: '123',
-      value: '',
-      type: 'see',
+      input: "123",
+      value: "",
+      type: "see",
       options: [],
-      checkRole: '',
+      checkRole: "",
       menuNameCheck: [],
       checkList: [],
       disabledChange: true,
-      roleList: [{
-        menuName: '工作流管理',
-        menuCode: 'gongzuoliu',
-        checkList: [],
-        menuNameCheck: [],
-        role: [{
-          roleName: '查看',
-          roleCode: 'chakan'
+      roleList: [
+        {
+          menuName: "工作流管理",
+          menuCode: "gongzuoliu",
+          checkList: [],
+          menuNameCheck: [],
+          role: [
+            {
+              roleName: "查看",
+              roleCode: "chakan",
+            },
+            {
+              roleName: "下装工作流",
+              roleCode: "xiazhuang",
+            },
+            {
+              roleName: "新建工作流",
+              roleCode: "xinjian",
+            },
+            {
+              roleName: "编辑工作流",
+              roleCode: "bianji",
+            },
+          ],
         },
-          {
-            roleName: '下装工作流',
-            roleCode: 'xiazhuang'
-          },
-          {
-            roleName: '新建工作流',
-            roleCode: 'xinjian'
-          },
-          {
-            roleName: '编辑工作流',
-            roleCode: 'bianji'
-          },
-        ]
-      }]
-    }
+      ],
+    };
   },
   watch: {
     "detailData.map": {
       handler() {
-        this.activeName = Object.keys(this.detailData.map)[0]
-      }
-    }
+        this.activeName = Object.keys(this.detailData.map)[0];
+      },
+    },
   },
   methods: {
     award() {
-      let permission = {}
-      let postArr = []
+      let permission = {};
+      let postArr = [];
       let recursionItem = function (item, arr) {
         if (item.children.length === 0) {
-          return
+          return;
         } else {
           item.children.forEach((item1) => {
             if (item1.flag === 0) {
-              arr.push(item1.permission)
+              arr.push(item1.permission);
             }
-            recursionItem(item1, arr)
-          })
+            recursionItem(item1, arr);
+          });
         }
-      }
+      };
       Object.keys(this.detailData.map).forEach((mapName, index) => {
         if (index === Object.keys(this.detailData.map).length - 1) {
           this.detailData.map[mapName].forEach((item) => {
-            permission[item.permissionType] = []
+            permission[item.permissionType] = [];
             if (item.flag === 0) {
-              permission[item.permissionType].push(item.permission)
+              permission[item.permissionType].push(item.permission);
             }
-            recursionItem(item, permission[item.permissionType])
-          })
+            recursionItem(item, permission[item.permissionType]);
+          });
           let projectCode = this.detailData.roleList.filter((item) => {
-            return item.name === mapName
-          })
+            return item.name === mapName;
+          });
           postArr.push({
             code: projectCode[0].code,
             name: this.detailData.name,
             type: projectCode[0].type,
             projectCode: projectCode[0].projectCode,
             tenantId: this.tenantId,
-            permission: permission
-          })
+            permission: permission,
+          });
         }
-      })
+      });
       postMapping(postArr).then((res) => {
-        this.$message.success('权限修改成功')
-        this.$emit('handleClose')
-      })
+        this.$message.success("权限修改成功");
+        this.$emit("handleClose");
+      });
     },
     handleClose() {
-      this.$emit('handleClose')
+      this.$emit("handleClose");
     },
     changeRole() {
-      this.checkRole = this.activeName
+      this.checkRole = this.activeName;
     },
     grant() {
-      this.type = 'edit'
+      this.type = "edit";
     },
     changeFlag(item, item1, event) {
       if (event == 0) {
-        item.flag = 0
+        item.flag = 0;
       } else if (event == 1 && item1) {
         if (item1.children.length > 0) {
           item1.children.forEach((item2) => {
-            item2.flag = 1
-          })
+            item2.flag = 1;
+          });
         }
       }
-      this.$forceUpdate()
+      this.$forceUpdate();
     },
     changeChildrenFlag(item, item1, event) {
       if (event == 0) {
-        item.flag = 0
-        item1.flag = 0
+        item.flag = 0;
+        item1.flag = 0;
       }
     },
     changeTitleFlag(item, event) {
       if (event == 1) {
         item.children.forEach((item1) => {
-          item1.flag = 1
+          item1.flag = 1;
           if (item1.children.length > 0) {
             item1.children.forEach((item2) => {
-              item2.flag = 1
-            })
+              item2.flag = 1;
+            });
           }
-        })
-        this.$forceUpdate()
+        });
+        this.$forceUpdate();
       }
     },
     getMapping(item) {
       getUserPermission({
-        projectCode: item.groupList[0].id.split(':')[0],
+        projectCode: item.groupList[0].id.split(":")[0],
         tenantId: item.tenantList[0].id,
-        userId: item.userId
+        userId: item.userId,
       }).then((res) => {
-        this.detailData = res.result
-        this.checkRole = Object.keys(this.detailData.map)[0]
-      })
-    }
-  }
-}
+        this.detailData = res.result;
+        this.checkRole = Object.keys(this.detailData.map)[0];
+      });
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -256,7 +332,7 @@ export default {
 }
 
 .cancel {
-  @include cancelBtn
+  @include cancelBtn;
 }
 
 .plain {
@@ -315,7 +391,7 @@ export default {
   height: 40px;
   /*background-color: #F5F7FA;*/
   border: 1px solid;
-  border-color: #E4E7ED;
+  border-color: #e4e7ed;
   cursor: not-allowed;
   border-radius: 4px;
   display: inline-block;
@@ -341,7 +417,6 @@ export default {
 }
 
 .RoleMain {
-  height: 400px;
   border: 1px solid #333333;
   padding: 20px;
   overflow: auto;
