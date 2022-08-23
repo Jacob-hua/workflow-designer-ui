@@ -107,7 +107,7 @@ import { mapState } from "vuex";
 
 export default {
   props: {
-    dataType: {
+    formStatus: {
       type: String,
       default: "enabled",
     },
@@ -180,8 +180,8 @@ export default {
   },
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
-    isNewDraftForm() {
-      return this.tit && this.tit === '新建表单' ;
+    isNewDraftProjectForm() {
+      return this.title && this.title === '新建表单' ;
     },
   },
   methods: {
@@ -218,7 +218,7 @@ export default {
         type: "text/json",
       });
       let formData = new FormData();
-      switch (this.dataType) {
+      switch (this.formStatus) {
         case "enabled":
           break;
         case "drafted":
@@ -263,14 +263,14 @@ export default {
         this.$message.error("请填写表单名称");
         return;
       }
-      const id = "form_" + Date.parse(new Date());
+   
       const formFile = new File(
         [this.$refs.formDesigner.getFormData()],
         "form.json",
         { type: "text/json" }
       );
       let formData = new FormData();
-      switch (this.dataType) {
+      switch (this.formStatus) {
         case "enabled":
           break;
         case "drafted":
@@ -292,45 +292,64 @@ export default {
       formData.append("docName", this.postData.name + ".json");
       formData.append("docType", "json");
       formData.append("ascription", this.postData.ascription);
-      formData.append("code", id);
+   
       formData.append("business", this.postData.business);
       formData.append("status", "drafted");
-      formData.append("createBy", this.userInfo.account);
-      formData.append("createName", this.userInfo.name);
       formData.append("tenantId", this.tenantId);
       formData.append("file", formFile);
-      switch (this.dataType) {
-        case "enabled":
-          postFormDesignService(formData).then((res) => {
-            this.$message.success("保存草稿成功");
-            this.$emit("addSuccess", "drafted");
-            this.dialogVisible2 = false;
-          });
-          break;
-        case "drafted":
-          postFormDesignService(formData).then((res) => {
-            this.$message.success("保存草稿成功");
-            this.$emit("addSuccess", "drafted");
-            this.dialogVisible2 = false;
-          });
-          break;
-        case "enabled-edit":
-          postFormDesignService(formData).then((res) => {
-            this.$message.success("保存草稿成功");
-            this.$emit("addSuccess", "drafted");
-            this.dialogVisible2 = false;
-          });
-          break;
-        case "drafted-edit":
-          putFormDesignService(formData).then((res) => {
-            this.$message.success("保存草稿成功");
-            this.$emit("addSuccess", "drafted");
-            this.dialogVisible2 = false;
-          });
-          break;
-        default:
-          break;
+
+      if(this.isNewDraftProjectForm || this.formStatus === 'enabled'){
+        formData.append("createBy", this.userInfo.account);
+        const code = "form_" + Date.parse(new Date());
+        formData.append("code", code);
+        postFormDesignService(formData).then((res) => {
+          this.$message.success("保存成功");
+          this.$emit("addSuccess", "drafted");
+          this.dialogVisible2 = false;
+        });
+      } else {
+        formData.append("id", this.postData.id);
+        formData.append("code", this.postData.code);
+        formData.append("updateBy", this.userInfo.account);
+        putFormDesignService(formData).then((res) => {
+          this.$message.success("更新成功");
+          this.$emit("addSuccess", "drafted");
+          this.dialogVisible2 = false;
+        });
       }
+      
+      // switch (this.formStatus) {
+      //   case "enabled":
+      //     postFormDesignService(formData).then((res) => {
+      //       this.$message.success("保存草稿成功");
+      //       this.$emit("addSuccess", "drafted");
+      //       this.dialogVisible2 = false;
+      //     });
+      //     break;
+      //   case "drafted":
+      //     postFormDesignService(formData).then((res) => {
+      //       this.$message.success("保存草稿成功");
+      //       this.$emit("addSuccess", "drafted");
+      //       this.dialogVisible2 = false;
+      //     });
+      //     break;
+      //   case "enabled-edit":
+      //     postFormDesignService(formData).then((res) => {
+      //       this.$message.success("保存草稿成功");
+      //       this.$emit("addSuccess", "drafted");
+      //       this.dialogVisible2 = false;
+      //     });
+      //     break;
+      //   case "drafted-edit":
+      //     putFormDesignService(formData).then((res) => {
+      //       this.$message.success("保存草稿成功");
+      //       this.$emit("addSuccess", "drafted");
+      //       this.dialogVisible2 = false;
+      //     });
+      //     break;
+      //   default:
+      //     break;
+      // }
     },
     async init() {
       const container = this.$refs.form;

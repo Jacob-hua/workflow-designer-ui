@@ -85,7 +85,7 @@ export default {
   },
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
-    isNewDraftForm() {
+    isNewDraftPublicForm() {
       return this.tit && this.tit === '新建表单' ;
     },
   },
@@ -181,7 +181,7 @@ export default {
       );
       formData.append("file", formFile);
 
-      if(this.isNewDraftForm || this.formStatus==='enabled' ){
+      if(this.isNewDraftPublicForm || this.formStatus==='enabled' ){
         formData.append("createBy", this.userInfo.account);
         const code = "form_" + Date.parse(new Date());
         formData.append("code", code);

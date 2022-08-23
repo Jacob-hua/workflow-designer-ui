@@ -60,7 +60,7 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <el-tabs type="border-card" v-model="activeName" @tab-click="changeActiveName">
+      <el-tabs type="border-card" v-model="formStatus" @tab-click="changeActiveName">
         <el-tab-pane name="enabled">
           <span slot="label">可用表单({{ getDataFirst.total }})</span>
           <div class="home-table-card" v-for="(item, index) in formListFirst" :key="index">
@@ -126,7 +126,7 @@
       title="新建表单"
       ref="projectFormDiolog"
       @addSuccess="addSuccess()"
-      :dataType="dataType"
+      :formStatus="formStatus"
       :projectOption="projectOption"
       :systemOption="systemOption"
       :sysProps="sysProps"
@@ -137,7 +137,7 @@
       :formDatas="formData"
       @editForm="editForm"
       quote="delete"
-      :status="activeName"
+      :status="formStatus"
       @deleteSuccsee="deleteSuccsee()"
     ></detailsDiologForm>
     <application
@@ -179,11 +179,10 @@ export default {
       formData: {},
       projectValue: '',
       projectOption: [],
-      dataType: 'enabled',
+      formStatus: 'enabled',
       projectCode: '',
       valueDate: [start, end],
       input: '',
-      activeName: 'enabled',
       formListFirst: [],
       formListSecond: [],
       getDataFirst: {
@@ -325,7 +324,7 @@ export default {
     },
 
     getData() {
-      switch (this.activeName) {
+      switch (this.formStatus) {
         case 'enabled':
           this.getEnableData()
           break
@@ -391,7 +390,7 @@ export default {
 
       postFormDesignRecordFormDesignRecordInfo({
         id: item.id,
-        status: this.activeName,
+        status: this.formStatus,
         tenantId: this.tenantId,
         ascription: this.projectCode,
         business: typeof this.projectValue === 'string' ? this.projectValue : this.projectValue.at(-1),
