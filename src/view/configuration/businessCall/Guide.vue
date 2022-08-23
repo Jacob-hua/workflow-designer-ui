@@ -46,8 +46,8 @@ export default {
           { required: true, message: "请输入项目名称", trigger: "blur" },
           {
             min: 1,
-            max: 100,
-            message: "长度在 0 到 100 个字符",
+            max: 50,
+            message: "长度在 0 到 50 个字符",
             trigger: "blur",
           },
         ],
