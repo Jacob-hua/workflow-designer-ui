@@ -317,39 +317,6 @@ export default {
           this.dialogVisible2 = false;
         });
       }
-      
-      // switch (this.formStatus) {
-      //   case "enabled":
-      //     postFormDesignService(formData).then((res) => {
-      //       this.$message.success("保存草稿成功");
-      //       this.$emit("addSuccess", "drafted");
-      //       this.dialogVisible2 = false;
-      //     });
-      //     break;
-      //   case "drafted":
-      //     postFormDesignService(formData).then((res) => {
-      //       this.$message.success("保存草稿成功");
-      //       this.$emit("addSuccess", "drafted");
-      //       this.dialogVisible2 = false;
-      //     });
-      //     break;
-      //   case "enabled-edit":
-      //     postFormDesignService(formData).then((res) => {
-      //       this.$message.success("保存草稿成功");
-      //       this.$emit("addSuccess", "drafted");
-      //       this.dialogVisible2 = false;
-      //     });
-      //     break;
-      //   case "drafted-edit":
-      //     putFormDesignService(formData).then((res) => {
-      //       this.$message.success("保存草稿成功");
-      //       this.$emit("addSuccess", "drafted");
-      //       this.dialogVisible2 = false;
-      //     });
-      //     break;
-      //   default:
-      //     break;
-      // }
     },
     async init() {
       const container = this.$refs.form;
