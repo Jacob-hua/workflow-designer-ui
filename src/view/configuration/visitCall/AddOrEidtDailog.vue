@@ -432,13 +432,17 @@ export default {
         this.apiBoxList.forEach((apibox) => {
           let pars = {};
           apibox.parseParams.forEach((parse) => {
-            pars[parse.key] = parse.value;
+            if (parse.key) {
+              pars[parse.key] = parse.value;
+            }
           });
           apibox.dataParse = JSON.stringify(pars);
           if (apibox.method === ApiEnum.API_TYPE_POST) {
             let obj = {};
             apibox.configParams?.forEach((item) => {
-              obj[item.key] = item.value;
+              if (item.key) {
+                obj[item.key] = item.value;
+              }
             });
             apibox.body = JSON.stringify(obj);
           } else {
