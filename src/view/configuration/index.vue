@@ -3,7 +3,11 @@
     <el-tabs v-model="activeName" type="border-card">
       <el-tab-pane label="访问配置" name="first">
         <div class="selectBox">
-          <el-select v-model="business" placeholder="请选择">
+          <el-select
+            @change="valChange"
+            v-model="business"
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in projectOption"
               :key="item.id"
@@ -87,6 +91,10 @@ export default {
     ...mapState("account", ["userInfo", "tenantId"]),
   },
   methods: {
+    valChange(val) {
+      console.log(val);
+      this.$refs.first.GetGlobalList(val);
+    },
     async getProjectList() {
       let res = await getProjectList({
         count: -1,
@@ -100,7 +108,7 @@ export default {
       this.business = this.projectOption[0]?.code;
       this.changeActiveName("first");
       this.$nextTick(() => {
-        this.$refs.first.GetGlobalList(this.$refs.first.pageInfo);
+        this.$refs.first.GetGlobalList(this.business);
       });
     },
     changeActiveName(value) {
@@ -214,7 +222,6 @@ export default {
 </style>
 
 <style lang="scss">
-
 .btn-custom-cancel {
   @include cancelbutton;
 }

@@ -407,7 +407,6 @@ export default {
       });
     },
     editTable(row, txt) {
-      debugger;
       if (row.btnTxt === "编辑" && row.id) {
         this.checkIsReferenced(row);
       }
