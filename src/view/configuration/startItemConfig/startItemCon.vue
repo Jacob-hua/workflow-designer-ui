@@ -46,12 +46,12 @@
       <div class="start_container">
         <div class="start_left">
           <PeTree
-          nodeKey="id"
-          labelName="name"
-          @node-click="handleNodeClick"
-          default-expand-all
-          :data="data"
-          :props="defaultProps"
+            nodeKey="id"
+            labelName="name"
+            @node-click="handleNodeClick"
+            default-expand-all
+            :data="data"
+            :props="defaultProps"
           ></PeTree>
         </div>
         <div class="start_right">
@@ -216,7 +216,7 @@ import {
 import FormTypeEnum from "@/enum/FormTypeEnum";
 import StartItemEnum from "@/enum/StartItemEnum";
 import { mapState } from "vuex";
-import PeTree from '@/component/PeTree.vue';
+import PeTree from "@/component/PeTree.vue";
 
 export default {
   components: {
@@ -379,6 +379,7 @@ export default {
       }
     },
     handleNodeClick(data) {
+      debugger;
       this.processFlag = true;
       this.currentId = data.id;
       this.businessConfigId = data.id;
