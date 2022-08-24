@@ -9,34 +9,36 @@
       custom-class="dialogVisibleEdit"
     >
       <div class="dialogVisible2-main">
-        <div class="detail-title">
-          <div class="detail-title-item">
-            <span class="detail-title-item-label">表单编码:</span>
-            <span>{{ formDatas.numberCode }}</span>
-          </div>
-          <div class="detail-title-item">
-            <span class="detail-title-item-label">表单名称:</span>
-            <span>{{ formDatas.name }}</span>
-          </div>
-          <div v-if="ascriptionName" class="detail-title-item">
-            <span class="detail-title-item-label">项目名称:</span>
-            <span>{{ ascriptionName }}</span>
-          </div>
-          <div v-if="businessName" class="detail-title-item">
-            <span class="detail-title-item-label">业务类型:</span>
-            <span>{{ businessName }}</span>
-          </div>
-          <div class="detail-title-item">
-            <span class="detail-title-item-label">创建人:</span>
-            <span>{{ formDatas.createBy }}</span>
-          </div>
-          <div class="detail-title-item">
-            <span class="detail-title-item-label">创建时间:</span>
-            <span>{{ formDatas.createTime }}</span>
-          </div>
-          <div class="detail-title-item" v-if="quote == 'delete'">
-            <span class="detail-title-item-label">发布次数:</span>
-            <span>{{ formDatas.count }}</span>
+        <div class="ProjectForm-title">
+          <div class="detail-title">
+            <div class="detail-title-item">
+              <span class="detail-title-item-label">表单编码:</span>
+              <span>{{ formDatas.numberCode }}</span>
+            </div>
+            <div class="detail-title-item">
+              <span class="detail-title-item-label">表单名称:</span>
+              <span>{{ formDatas.name }}</span>
+            </div>
+            <div v-if="ascriptionName" class="detail-title-item">
+              <span class="detail-title-item-label">项目名称:</span>
+              <span>{{ ascriptionName }}</span>
+            </div>
+            <div v-if="businessName" class="detail-title-item">
+              <span class="detail-title-item-label">业务类型:</span>
+              <span>{{ businessName }}</span>
+            </div>
+            <div class="detail-title-item">
+              <span class="detail-title-item-label">创建人:</span>
+              <span>{{ formDatas.createBy }}</span>
+            </div>
+            <div class="detail-title-item">
+              <span class="detail-title-item-label">创建时间:</span>
+              <span>{{ formDatas.createTime }}</span>
+            </div>
+            <div class="detail-title-item" v-if="quote == 'delete'">
+              <span class="detail-title-item-label">发布次数:</span>
+              <span>{{ formDatas.count }}</span>
+            </div>
           </div>
           <div class="detail-title-item-button">
             <el-button
@@ -137,6 +139,7 @@ import {
 import Preview from "@/plugin/FormDesign/component/preview";
 import { mapState } from "vuex";
 import { getAllBusinessConfig } from "@/api/globalConfig";
+
 export default {
   props: {
     tileText: {
@@ -316,9 +319,11 @@ export default {
 /deep/ .dialogVisibleEdit {
   width: 100% !important;
 }
+
 .primary {
   @include primaryBtn;
 }
+
 .from-item {
   display: flex;
   margin-bottom: 20px;
@@ -330,29 +335,33 @@ export default {
   height: 40px;
   line-height: 40px;
 }
+
 .form-title {
   border-bottom: 1px solid #cccccc;
   margin-bottom: 40px;
 }
+
 .title-item {
   display: inline-block;
   margin-bottom: 20px;
 }
+
 .title-item-label {
   margin-right: 15px;
 }
+
 .title-item-main {
   display: inline-block;
 }
+
 .detail-title {
-  margin-top: 20px;
-  padding-bottom: 40px;
   color: white;
-  border-bottom: 1px solid #cccccc;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .detail-title-item {
-  margin-right: 60px;
+  margin-right: 30px;
   display: inline-block;
 }
 
@@ -362,7 +371,6 @@ export default {
 }
 
 .detail-title-item-button {
-  margin-top: -30px;
   display: flex;
   justify-content: flex-end;
 }
@@ -377,6 +385,14 @@ export default {
   overflow-y: auto;
   height: 660px;
   margin-top: 20px;
+}
+
+.ProjectForm-title {
+  display: flex;
+  border-bottom: 1px solid #cccccc;
+  margin-top: 20px;
+  padding-bottom: 40px;
+  justify-content: space-between;
 }
 </style>
 
