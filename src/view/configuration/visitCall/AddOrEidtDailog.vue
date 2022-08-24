@@ -4,6 +4,7 @@
       title="第三方接口配置"
       :visible.sync="dialogVisible"
       width="80%"
+      @close="close"
       fullscreen
       top="1vh"
       append-to-body
