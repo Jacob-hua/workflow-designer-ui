@@ -7,16 +7,22 @@
       :indent="0"
       @node-click="nodeClick"
       :current-node-key="currentNodeKey"
+      default-expand-all
     >
       <div class="custom-tree-node" slot-scope="{ data }">
-        <span class="pe-tree-label">{{ data[labelName] }}</span>
+        <long-text :content="data[labelName]" />
       </div>
     </el-tree>
   </div>
 </template>
 
 <script>
+import longText from "@/component/LongText.vue";
+
 export default {
+  components: {
+    longText,
+  },
   props: {
     nodeKey: {
       type: String,
@@ -42,6 +48,9 @@ export default {
   },
   methods: {
     nodeClick(data, node) {
+      this.$emit('nodeClick', data, node)
+    },
+    content(data, node){
       this.$emit('nodeClick', data, node)
     },
   },
