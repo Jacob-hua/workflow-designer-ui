@@ -4,8 +4,8 @@
       <div class="content-wrapper">
         <div>
           <el-card header="业务选择">
-            <PeTree nodeKey="id" labelName="label"  
-              :data="rootOrganizationChildren(projectCode)" 
+            <PeTree nodeKey="id" labelName="label"
+              :data="rootOrganizationChildren(projectCode)"
               @nodeClick="handleNodeClick"
             ></PeTree>
           </el-card>
@@ -15,7 +15,7 @@
             <div class="process" v-for="(process, index) in processList" :key="index">
               <div class="process-info">
                 <div>部署名称:</div>
-                <div>{{ process.deployName }}</div>
+                <long-text contentStyle="color: white; width: 180px" :content="process.deployName" />
               </div>
               <div class="process-info">
                 <div>部署人:</div>
@@ -60,12 +60,14 @@ import { getProcessDefinitionList } from '@/api/unit/api.js'
 import { mapState, mapGetters } from 'vuex'
 import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
 import PeTree from '@/component/PeTree.vue'
+import longText from "../../../component/LongText.vue"
 
 export default {
   name: 'RuntimeAdd',
   components: {
     RuntimeCreatTicket,
     PeTree,
+    longText,
   },
   props: {
     dialogVisible: {

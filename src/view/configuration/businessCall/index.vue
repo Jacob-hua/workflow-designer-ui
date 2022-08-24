@@ -77,7 +77,7 @@
           </div>
           <div class="card-main">
             <div>
-              <long-text label="项目名称:" :content="item.name" />
+              <label>项目名称:</label> <long-text :content="item.name" />
             </div>
             <div>
               <label>项目类型:</label> <span>{{ item.typeName }}</span>
@@ -152,6 +152,7 @@ export default {
       this.$confirm("此操作将删除整个业务配置节点,是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
+        cancelButtonClass: "btn-custom-cancel",
         type: "warning",
         beforeClose: (action, instance, done) => {
           // 取消回车确认事件
