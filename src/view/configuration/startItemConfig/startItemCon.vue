@@ -49,7 +49,6 @@
             nodeKey="id"
             labelName="name"
             @nodeClick="handleNodeClick"
-            default-expand-all
             :data="data"
             :props="defaultProps"
           ></PeTree>
@@ -153,7 +152,7 @@
                 </el-radio>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="" label="配置" width="200">
+            <el-table-column align="center" prop="" label="配置" width="100">
               <template slot-scope="scope">
                 <el-checkbox
                   :disabled="scope.row.disabled"
@@ -161,7 +160,7 @@
                 ></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column align="center" width="200" prop="" label="必填">
+            <el-table-column align="center" width="100" prop="" label="必填">
               <template slot-scope="scope">
                 <el-checkbox
                   @change="write(scope.row)"
@@ -170,7 +169,12 @@
                 ></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column v-if="btnFlag" align="center" prop="" label="操作">
+            <el-table-column
+              align="center"
+              v-if="processFlag"
+              prop=""
+              label="操作"
+            >
               <template slot-scope="scope">
                 <span
                   @click="deleteRow(scope.row)"
@@ -211,7 +215,7 @@ import {
 import FormTypeEnum from "@/enum/FormTypeEnum";
 import StartItemEnum from "@/enum/StartItemEnum";
 import { mapState } from "vuex";
-import PeTree from "@/component/PeTree.vue";
+import PeTree from '@/component/PeTree.vue';
 
 export default {
   components: {
@@ -434,7 +438,6 @@ export default {
           } else {
             // 走新建接口
             startConfig(row).then((res) => {
-              row.id = res.result;
               this.$message({
                 type: "success",
                 message: "创建成功",
@@ -452,6 +455,7 @@ export default {
         row.isSetting = !!row.isSetting;
         row.isRequired = !!row.isRequired;
       }
+      // this.tableData.forEach(item => item.disabled = false)
     },
     saveTag() {
       if (this.tags.length) {

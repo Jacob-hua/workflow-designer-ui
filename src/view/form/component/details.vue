@@ -363,6 +363,8 @@ export default {
 .detail-title-item {
   margin-right: 30px;
   display: inline-block;
+  margin-top: 10px;
+  padding-bottom: 20px;
 }
 
 .detail-title-item-label {
@@ -373,6 +375,8 @@ export default {
 .detail-title-item-button {
   display: flex;
   justify-content: flex-end;
+  margin-top: 20px;
+  padding-bottom: 20px;
 }
 
 .optionV {
@@ -390,8 +394,6 @@ export default {
 .ProjectForm-title {
   display: flex;
   border-bottom: 1px solid #cccccc;
-  margin-top: 20px;
-  padding-bottom: 40px;
   justify-content: space-between;
 }
 </style>
