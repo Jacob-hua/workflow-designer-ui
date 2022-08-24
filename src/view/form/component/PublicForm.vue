@@ -56,7 +56,7 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <span class="value" :title="item.name">{{ item.name }}</span>
+                <long-text contentStyle="color: white; width: 180px" :content="item.name" />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -90,7 +90,7 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <span class="value" :title="item.name">{{ item.name }}</span>
+                <long-text contentStyle="color: white; width: 180px" :content="item.name" />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -127,6 +127,7 @@
 <script>
 import PublicFormDiolog from "./PublicFormComponent/index.vue";
 import detailsDiolog from "./details.vue";
+import longText from "../../../component/LongText.vue";
 import {
   postFormDesignRecordDraftInfo,
   postFormDesignBasicFormRecord,
@@ -286,6 +287,7 @@ export default {
   components: {
     PublicFormDiolog,
     detailsDiolog,
+    longText,
   },
   created() {
     this.getEnableData();
@@ -411,7 +413,6 @@ export default {
 .card-main-item {
   line-height: 40px;
   height: 40px;
-  color: black;
   font-size: 14px;
 }
 .card-main-item .label {

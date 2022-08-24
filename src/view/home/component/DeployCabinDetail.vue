@@ -213,7 +213,6 @@ export default {
     .info {
       display: flex;
       padding: 5px 0;
-      white-space:nowrap;
       & > span:first-child {
         width: 65px;
         text-align: end;
