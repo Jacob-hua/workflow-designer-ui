@@ -211,23 +211,28 @@ export default {
     },
     onblur(node, data) {
       if (this.nodeCode && this.inptVal) {
-        checkCode({
-          tenantId: this.tenantId,
-          code: this.nodeCode,
-          projectCode: this.forms.code || this.data[0].code,
-        }).then((res) => {
-          if (res.errorInfo.errorMsg) {
-            return;
-          }
-          this.businessConfigWithTreeCreate({
-            code: this.nodeCode,
-            name: this.inptVal,
-            createBy: this.userInfo.account,
-            tenantId: this.tenantId,
-            type: "industry",
-            parentId: data.id,
-            ascription: this.data[0].code,
+        if (this.nodeCode.length > 50) {
+          this.$message({
+            type: "warning",
+            message: "节点code 超过50, 请修改保存",
           });
+          return;
+        }
+        if (this.inptVal.length > 50) {
+          this.$message({
+            type: "warning",
+            message: "节点名称超过50, 请修改保存",
+          });
+          return;
+        }
+        this.businessConfigWithTreeCreate({
+          code: this.nodeCode,
+          name: this.inptVal,
+          createBy: this.userInfo.account,
+          tenantId: this.tenantId,
+          type: "industry",
+          parentId: data.id,
+          ascription: this.data[0].code,
         });
       } else {
         this.$message({

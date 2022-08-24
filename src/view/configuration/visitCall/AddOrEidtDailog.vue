@@ -472,6 +472,25 @@ export default {
           });
           let set = new Set(arr);
           if (set.size === arr.length) {
+            // parameterMap: {2: null}
+            // parseParams: [{key: "5", value: ""}, {key: "", value: "5"}]
+            // let flag = false;
+            // this.apiBoxList.forEach((api) => {
+            //   let api2 = _.deepClone(api)
+            //   if (
+            //     Object.keys(api2.parameterMap).includes("") ||
+            //     Object.keys(JSON.parse(api2.dataParse).includes(""))
+            //   ) {
+            //     flag = true;
+            //     this.$message({
+            //       type: "warning",
+            //       message: "存在key为空的情况、请检查配置",
+            //     });
+            //   }
+            // });
+            // if (flag) {
+            //   return;
+            // }
             postSaveOrEdite(this.apiBoxList).then((res) => {
               this.dialogVisible = false;
               this.$message({
