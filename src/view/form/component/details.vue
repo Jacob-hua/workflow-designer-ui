@@ -1,7 +1,13 @@
 <template>
   <div>
-    <el-dialog title="表单详情" :visible.sync="dialogVisible2" fullscreen top="1vh" width="90%"
-      custom-class="dialogVisibleEdit">
+    <el-dialog
+      title="表单详情"
+      :visible.sync="dialogVisible2"
+      fullscreen
+      top="1vh"
+      width="90%"
+      custom-class="dialogVisibleEdit"
+    >
       <div class="dialogVisible2-main">
         <div class="ProjectForm-title">
           <div class="detail-title">
@@ -45,7 +51,8 @@
             <el-button
               class="primary"
               type="primary"
-              @click="deleteRow()" v-if="quote === 'delete'"
+              @click="deleteRow()"
+              v-if="quote === 'delete'"
               v-role="{ id: 'FromDelete', type: 'button', business: business }"
               >删除</el-button
             >
@@ -89,7 +96,8 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
+            >
+            </el-option>
           </el-select>
         </div>
         <div class="from-item">
@@ -100,7 +108,8 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
+            >
+            </el-option>
           </el-select>
         </div>
         <div class="from-item">
@@ -260,7 +269,7 @@ export default {
             this.$emit("deleteSuccsee");
           });
         })
-        .catch(() => { });
+        .catch(() => {});
     },
     upDataV() {
       postFormDesignRecordFormDesignRecordInfo({
