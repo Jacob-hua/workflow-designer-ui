@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <bpmn-viewer
+      v-if="xml"
       :xml="xml"
       :prop="{
         bpmnRenderer: {
@@ -14,16 +15,30 @@
 </template>
 
 <script>
+function isBase64(str) {
+  if (str === '' || str.trim() === '') {
+    return false
+  }
+  try {
+    return window.btoa(window.atob(str)) === str
+  } catch (error) {
+    return false
+  }
+}
+
 export default {
   name: 'WorkflowViewer',
   data() {
     return {
-      xml: 'xml',
+      xml: '',
     }
   },
   mounted() {
     window.refreshCanvas = (xml) => {
-      this.xml = xml
+      if (!isBase64(xml)) {
+        return
+      }
+      this.xml = window.atob(xml)
     }
   },
 }
