@@ -5,8 +5,8 @@
         <div>
           <el-card header="业务选择">
             <PeTree nodeKey="id" labelName="label"
-            :data="rootOrganizationChildren(projectCode)"
-            @nodeClick="handleNodeClick"
+              :data="rootOrganizationChildren(projectCode)"
+              @nodeClick="handleNodeClick"
             ></PeTree>
           </el-card>
         </div>
@@ -31,13 +31,14 @@
               </div>
             </div>
           </div>
-          <el-pagination 
+          <el-pagination
             @size-change="onSizeChange"
             @current-change="onCurrentChange"
             :current-page.sync="getData.page"
             :page-size="getData.limit"
             layout="prev, pager, next, jumper"
-            :total="getData.total">
+            :total="getData.total"
+          >
           </el-pagination>
         </div>
         <div class="empty" v-else>
@@ -47,7 +48,8 @@
     </el-dialog>
     <runtime-creat-ticket
       :visible="createTicketVisible"
-      :process="process" @close="onCreateTicketVisible"
+      :process="process"
+      @close="onCreateTicketVisible"
       @submit="onCreateTicketSubmit"
     />
   </div>
