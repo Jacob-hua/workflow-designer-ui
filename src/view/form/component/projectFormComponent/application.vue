@@ -297,6 +297,7 @@ export default {
   display: flex;
 }
 .refence {
+  cursor: pointer;
   color: #0dd5ef;
   padding-top: 15px;
   padding-left: 180px;
@@ -329,7 +330,7 @@ export default {
   color: #0066cc;
 }
 .processList {
-  height: 600px;
+  height: 590px;
   overflow-y: auto;
 }
 .processList-item {
@@ -341,6 +342,7 @@ export default {
   margin-right: 20px;
   display: inline-block;
   margin-top: 30px;
+  padding-bottom: 10px;
 }
 .processList-item p {
   display: inline-block;
