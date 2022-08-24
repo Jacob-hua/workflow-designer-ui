@@ -1,6 +1,6 @@
 <template>
   <div class="configuration">
-    <el-tabs v-model="activeName" type="border-card">
+    <el-tabs @tab-click="tabClick" v-model="activeName" type="border-card">
       <el-tab-pane label="访问配置" name="first">
         <div class="selectBox">
           <el-select
@@ -84,13 +84,21 @@ export default {
       },
     };
   },
-  mounted() {
-    this.getProjectList();
+  async mounted() {
+    await this.getProjectList();
+    await this.$refs.first.GetGlobalList(this.business);
   },
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
   },
   methods: {
+    tabClick() {
+      if (this.activeName === "first") {
+        this.$nextTick(() => {
+          this.$refs.first.GetGlobalList(this.business);
+        });
+      }
+    },
     valChange(val) {
       console.log(val);
       this.$refs.first.GetGlobalList(val);
