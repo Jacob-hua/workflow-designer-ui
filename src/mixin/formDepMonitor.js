@@ -99,13 +99,10 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
   }
 
   function calculateDependValue(data, fieldValuePath, dependValuePath) {
-    // console.log('fieldValuePath', fieldValuePath)
     fieldValuePath = fieldValuePath ?? ''
     const pathLastIndex = fieldValuePath.lastIndexOf('.')
     const domainPath = fieldValuePath.substring(0, pathLastIndex)
-    // console.log('domainPath', domainPath)
     const domain = _.get(data, domainPath, undefined)
-    // console.log('domain', domain)
     if (Object.prototype.toString.call(domain) !== '[object Object]') {
       return _.get(data, dependValuePath)
     }

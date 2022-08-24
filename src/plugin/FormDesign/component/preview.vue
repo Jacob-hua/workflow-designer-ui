@@ -161,14 +161,14 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
       <el-card>
         <div slot="header" class="clearfix">
           <el-button
-            style="float: right; padding: 3px 0"
+            style="float: right; padding: 3px 0; margin: 0 10px;"
             icon="el-icon-delete"
             type="text"
             onClick={() => onDelete(index)}
             disabled={multipleDisabled}
           ></el-button>
           <el-button
-            style="float: right; padding: 3px 0"
+            style="float: right; padding: 3px 0; margin: 0 10px;"
             icon="el-icon-plus"
             type="text"
             onClick={() => onCopy(index)}
