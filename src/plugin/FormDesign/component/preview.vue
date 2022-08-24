@@ -144,8 +144,13 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     if (value.length <= 1) {
       return
     }
+    Object.keys(usefulMeta)
+      .filter((key) => key.startsWith(`${valuePath}[${value.length - 1}]`))
+      .forEach((key) => {
+        this.$delete(this.usefulMeta, key)
+      })
+
     _.get(this.form, `${valuePath}`, []).splice(index, 1)
-    // TODO: 当表单数据被删除时，对应的usefulMeta和flatField也需要进行相关的删除操作
   }
 
   const multipleDisabled = this.formConf.disabled || fieldInfo.disabled
