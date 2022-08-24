@@ -35,45 +35,80 @@
             </div>
           </div>
           <div class="detail-title-item-button">
-            <el-button class="primary" type="primary" @click="editForm()"
-              v-role="{ id: 'FromEdit', type: 'button', business: business }">编辑</el-button>
-            <el-button class="primary" type="primary" @click="deleteRow()" v-if="quote === 'delete'"
-              v-role="{ id: 'FromDelete', type: 'button', business: business }">删除</el-button>
+            <el-button
+              class="primary"
+              type="primary"
+              @click="editForm()"
+              v-role="{ id: 'FromEdit', type: 'button', business: business }"
+              >编辑</el-button
+            >
+            <el-button
+              class="primary"
+              type="primary"
+              @click="deleteRow()" v-if="quote === 'delete'"
+              v-role="{ id: 'FromDelete', type: 'button', business: business }"
+              >删除</el-button
+            >
           </div>
         </div>
         <div v-if="status !== 'drafted'">
           <div class="optionV">
             <el-select v-model="value" placeholder="请选择" @change="upDataV()">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
               </el-option>
             </el-select>
           </div>
         </div>
         <div class="fromEdit">
-          <preview :itemList="itemList" :formConf="formConf" v-if="dialogVisible2"></preview>
+          <preview
+            :itemList="itemList"
+            :formConf="formConf"
+            v-if="dialogVisible2"
+          ></preview>
         </div>
       </div>
     </el-dialog>
-    <el-dialog title="引入工作流" :visible.sync="dialogVisible1" :close-on-click-modal="false" width="35%"
-      custom-class="dialogVisible1">
+    <el-dialog
+      title="引入工作流"
+      :visible.sync="dialogVisible1"
+      :close-on-click-modal="false"
+      width="35%"
+      custom-class="dialogVisible1"
+    >
       <div>
         <div class="from-item">
           <span>应用项目</span>
           <el-select v-model="postData.ascription" placeholder="请选择应用项目">
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
+            <el-option
+              v-for="item in options1"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>表单类型</span>
           <el-select v-model="postData.business" placeholder="请选择表单类型">
-            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
+            <el-option
+              v-for="item in options2"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
           </el-select>
         </div>
         <div class="from-item">
           <span>表单名称</span>
-          <el-input v-model="postData.name" placeholder="请输入部署名称"></el-input>
+          <el-input
+            v-model="postData.name"
+            placeholder="请输入部署名称"
+          ></el-input>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -286,7 +321,7 @@ export default {
   text-align: center;
 }
 
-.from-item>span {
+.from-item > span {
   width: 100px;
   height: 40px;
   line-height: 40px;
