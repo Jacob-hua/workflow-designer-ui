@@ -481,7 +481,10 @@ export default {
       );
     },
     checkRepeat(inputValue) {
-      return this.tableData.some((tag) => tag.name === inputValue);
+      return (
+        this.tableData.some((tag) => tag.name === inputValue) ||
+        this.tags.some((tag) => tag.name === inputValue)
+      );
     },
     handleInputConfirm() {
       let inputValue = this.inputValue;
