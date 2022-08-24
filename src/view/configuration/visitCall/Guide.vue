@@ -66,7 +66,9 @@ export default {
           ascription: this.business,
         });
         return result;
-      } catch (e) {}
+      } catch (e) {
+        console.log(e.toString());
+      }
     },
     async next() {
       const result = await this.checkSourceSort();
