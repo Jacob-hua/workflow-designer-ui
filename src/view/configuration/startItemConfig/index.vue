@@ -11,8 +11,7 @@
       >
         <div class="card-main">
           <div>
-            <label>项目名称:</label>
-            <long-text :content="item.name" />
+            <label>项目名称:</label> <long-text :content="item.name" />
           </div>
           <div>
             <label>项目类型:</label> <span>{{ item.typeName }}</span>
@@ -230,6 +229,6 @@ label {
 }
 .card-main label {
   display: inline-block;
-  width: 80px;  
+  width: 80px;
 }
 </style>

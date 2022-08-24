@@ -40,7 +40,7 @@ export default {
 }
 
 .wrapper {
-  display: flex;
+  display: inline-flex;
 }
 
 </style>

@@ -30,7 +30,7 @@
               <div>
                 <div class="info">
                   <span>部署名称:</span>
-                  <span>{{ deployName }}</span>
+                  <long-text contentStyle="margin-left: 10px; width: 130px;" :content="deployName" />
                 </div>
                 <div class="info">
                   <span>部署人:</span>
@@ -59,12 +59,14 @@ import BpmnInfo from '@/component/BpmnInfo.vue'
 import { mapGetters } from 'vuex'
 import { getDeployBasic } from '@/api/unit/api.js'
 import DeployDetail from './DeployDetail.vue'
+import longText from "../../../component/LongText.vue";
 
 export default {
   name: 'DeployCabinDetail',
   components: {
     BpmnInfo,
     DeployDetail,
+    longText,
   },
   props: {
     visible: {
@@ -211,6 +213,7 @@ export default {
     .info {
       display: flex;
       padding: 5px 0;
+      white-space:nowrap;
       & > span:first-child {
         width: 65px;
         text-align: end;

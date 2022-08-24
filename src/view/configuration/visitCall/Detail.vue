@@ -51,7 +51,7 @@
                 :key="item.id"
                 :name="String(index)"
               >
-                <span slot="label">{{ item.name }}</span>
+                <div slot="label"><long-text :content="item.name" /></div>
                 <el-form-item label="api名称">
                   <el-input v-model="item.name" disabled></el-input>
                 </el-form-item>
@@ -133,8 +133,12 @@
 
 <script>
 import { deleteApi } from "@/api/globalConfig";
+import longText from "../../../component/LongText.vue";
 
 export default {
+  components: {
+    longText,
+  },
   name: "AddOrEidtDailog",
   props: {
     currentRow: Array,

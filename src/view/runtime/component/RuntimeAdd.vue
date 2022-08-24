@@ -1,12 +1,13 @@
 <template>
   <div>
-    <el-dialog title="新建工单" top="1vh" fullscreen :visible="dialogVisible" @close="onClose"
-      :close-on-click-modal="false">
+    <el-dialog title="新建工单" top="1vh" fullscreen :visible="dialogVisible" @close="onClose" :close-on-click-modal="false">
       <div class="content-wrapper">
         <div>
           <el-card header="业务选择">
-            <PeTree nodeKey="id" labelName="label" :data="rootOrganizationChildren(projectCode)"
-              @nodeClick="handleNodeClick"></PeTree>
+            <PeTree nodeKey="id" labelName="label"
+            :data="rootOrganizationChildren(projectCode)"
+            @nodeClick="handleNodeClick"
+            ></PeTree>
           </el-card>
         </div>
         <div v-if="processList && processList.length !== 0">
@@ -30,8 +31,13 @@
               </div>
             </div>
           </div>
-          <el-pagination @size-change="onSizeChange" @current-change="onCurrentChange" :current-page.sync="getData.page"
-            :page-size="getData.limit" layout="prev, pager, next, jumper" :total="getData.total">
+          <el-pagination 
+            @size-change="onSizeChange"
+            @current-change="onCurrentChange"
+            :current-page.sync="getData.page"
+            :page-size="getData.limit"
+            layout="prev, pager, next, jumper"
+            :total="getData.total">
           </el-pagination>
         </div>
         <div class="empty" v-else>
@@ -39,8 +45,11 @@
         </div>
       </div>
     </el-dialog>
-    <runtime-creat-ticket :visible="createTicketVisible" :process="process" @close="onCreateTicketVisible"
-      @submit="onCreateTicketSubmit" />
+    <runtime-creat-ticket
+      :visible="createTicketVisible"
+      :process="process" @close="onCreateTicketVisible"
+      @submit="onCreateTicketSubmit"
+    />
   </div>
 </template>
 
@@ -144,11 +153,11 @@ export default {
   display: flex;
   height: 100%;
 
-  &>div:first-child {
+  & > div:first-child {
     width: 278px;
   }
 
-  &>div:last-child {
+  & > div:last-child {
     flex: 1;
     margin-left: 12px;
     border: 1px solid $border-color-1;
@@ -175,19 +184,15 @@ export default {
   flex-direction: column;
   border-radius: 4px;
 
-  .process-label {
-    margin: 30px 30px 0px 32px;
-  }
-
   .process-info {
     display: flex;
     margin: 30px 30px 0px 32px;
 
-    &>div:first-child {
+    & > div:first-child {
       width: 60px;
     }
 
-    &>div:last-child {
+    & > div:last-child {
       margin-left: 30px;
       color: $font-color;
     }
@@ -199,7 +204,7 @@ export default {
     display: flex;
     justify-content: flex-end;
 
-    &>button {
+    & > button {
       @include primaryPlainBtn;
       width: 68px;
       height: 28px;
