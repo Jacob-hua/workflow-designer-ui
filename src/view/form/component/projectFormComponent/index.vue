@@ -1,6 +1,10 @@
 <template>
   <div>
-    <el-dialog :title="title" :close-on-click-modal="false" :visible.sync="dialogVisible1">
+    <el-dialog
+      :title="title"
+      :close-on-click-modal="false"
+      :visible.sync="dialogVisible1"
+    >
       <div class="guid">
         <el-form
           ref="form"
@@ -73,7 +77,6 @@
             <span class="title-item-label marginLeft40"> 表单名称 </span>
             <div class="title-item-main">
               <el-input
-                :disabled="this.tit !== '新建表单'"
                 v-model="postData.name"
                 placeholder=""
                 maxlength="20"
@@ -181,7 +184,7 @@ export default {
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
     isNewDraftProjectForm() {
-      return this.title && this.title === '新建表单' ;
+      return this.title && this.title === "新建表单";
     },
   },
   methods: {
@@ -258,12 +261,11 @@ export default {
     },
 
     addDraftForm() {
-
       if (!this.postData.name) {
         this.$message.error("请填写表单名称");
         return;
       }
-   
+
       const formFile = new File(
         [this.$refs.formDesigner.getFormData()],
         "form.json",
@@ -292,13 +294,13 @@ export default {
       formData.append("docName", this.postData.name + ".json");
       formData.append("docType", "json");
       formData.append("ascription", this.postData.ascription);
-   
+
       formData.append("business", this.postData.business);
       formData.append("status", "drafted");
       formData.append("tenantId", this.tenantId);
       formData.append("file", formFile);
 
-      if(this.isNewDraftProjectForm || this.formStatus === 'enabled'){
+      if (this.isNewDraftProjectForm || this.formStatus === "enabled") {
         formData.append("createBy", this.userInfo.account);
         const code = "form_" + Date.parse(new Date());
         formData.append("code", code);

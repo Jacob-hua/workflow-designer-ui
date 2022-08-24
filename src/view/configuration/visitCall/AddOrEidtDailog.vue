@@ -4,6 +4,7 @@
       title="第三方接口配置"
       :visible.sync="dialogVisible"
       width="80%"
+      @close="close"
       fullscreen
       top="1vh"
       append-to-body
@@ -232,7 +233,7 @@
 
       <div slot="footer" class="dialog-footer">
         <div class="next" @click="saveOrEdite">保存</div>
-        <div class="cancel" @click="dialogVisible = false">取 消</div>
+        <div class="cancel" @click="close">取 消</div>
       </div>
     </el-dialog>
 
@@ -347,6 +348,13 @@ export default {
     ...mapState("account", ["userInfo", "tenantId"]),
   },
   methods: {
+    close() {
+      this.dialogVisible = false;
+      console.log(this.$refs["form0"]);
+      this.$refs["form0"][0].clearValidate();
+      this.$refs["form0"][0].resetFields();
+    },
+
     apiTypeChange(currentApi, typeName) {
       currentApi.typeName = typeName;
     },
