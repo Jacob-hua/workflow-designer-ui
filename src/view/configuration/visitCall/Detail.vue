@@ -166,7 +166,7 @@ export default {
   },
   methods: {
     visitColse() {
-      this.$parent.GetGlobalList();
+      this.$parent.GetGlobalList(this.currentRow[0].ascription);
     },
     handleClick(e) {
       this.editableTabsValue = e.index;

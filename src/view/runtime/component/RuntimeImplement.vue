@@ -205,6 +205,18 @@ export default {
       }
       return this.workflow.curTrack.status.split(',').includes('hang')
     },
+    reject() {
+      if (!this.workflow.curTrack) {
+        return false
+      }
+      return this.workflow.curTrack.status.split(',').includes('reject')
+    },
+    terminate() {
+      if (!this.workflow.curTrack) {
+        return false
+      }
+      return this.workflow.curTrack.status.split(',').includes('terminate')
+    },
     actions() {
       if (!this.curExecuteShape) {
         return []
@@ -216,11 +228,15 @@ export default {
       if (this.noExecutor) {
         temps.push(makeComponent.call(this, 'NoExecutor'))
       }
-      let actions = this.iBpmnViewer.getShapeInfo(this.curExecuteShape)['actions']?.split(',') ?? []
+      let shapeActions = this.iBpmnViewer.getShapeInfo(this.curExecuteShape)['actions']?.split(',') ?? []
       if (curTaskIsFirstTask.call(this)) {
-        actions = actions.filter((action) => action !== 'Reject')
+        shapeActions = shapeActions.filter((action) => action !== 'Reject')
       }
-      return actions.map(makeComponent.bind(this)).concat(temps)
+      const actions = ['Agency', 'Circulate', 'Hang', 'Reject', 'Terminate']
+      return actions
+        .filter((action) => shapeActions.includes(action))
+        .map(makeComponent.bind(this))
+        .concat(temps)
 
       function curTaskIsFirstTask() {
         const curTaskIndex = this.iBpmnViewer
@@ -427,6 +443,9 @@ export default {
       })
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
+        return
+      }
+      if (this.hang || this.reject || this.terminate) {
         return
       }
       this.noExecutor = result.some(

@@ -302,7 +302,7 @@ label {
 .businessCall-main-list-card {
   position: relative;
   line-height: 40px;
-  width: 292px;
+  width: 282px;
   height: 186px;
   margin-bottom: 10px;
   border: 1px solid #0066cc;

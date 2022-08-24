@@ -99,7 +99,7 @@ export default {
         })
         const { errorInfo, result } = await getDeleteDeployment({
           id: this.workflow.deployRecordId,
-          cascade: true,
+          cascade: false,
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)

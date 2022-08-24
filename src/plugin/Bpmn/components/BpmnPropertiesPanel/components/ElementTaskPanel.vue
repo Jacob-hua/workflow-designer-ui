@@ -17,6 +17,7 @@
         <element-user-task-drawer
           v-if="assigneeVisible"
           model="singleUser"
+          title="指定处理用户"
           :visible.sync="assigneeVisible"
           :namespace="namespace"
           :lazyLoadUser="lazyLoadUser"
@@ -39,6 +40,7 @@
         <element-user-task-drawer
           v-if="candidateUserVisible"
           model="multipleUser"
+          title="指定候选用户"
           :visible.sync="candidateUserVisible"
           :namespace="namespace"
           :lazyLoadUser="lazyLoadUser"
@@ -61,6 +63,7 @@
         <element-user-task-drawer
           v-if="candidateGroupVisible"
           model="multipleOrganization"
+          title="指定候选分组"
           :visible.sync="candidateGroupVisible"
           :namespace="namespace"
           :lazyLoadUser="lazyLoadUser"
