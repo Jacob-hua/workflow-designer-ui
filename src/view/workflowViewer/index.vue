@@ -48,7 +48,9 @@ export default {
       if (!isBase64(xml)) {
         return
       }
-      this.xml = new Blob([base64ToArrayBuffer(xml)]).text()
+      new Blob([base64ToArrayBuffer(xml)]).text().then((res) => {
+        this.xml = res
+      })
     }
   },
 }
