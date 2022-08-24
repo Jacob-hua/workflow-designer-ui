@@ -11,7 +11,7 @@
       >
         <div class="card-main">
           <div>
-            <long-text label="项目名称:" :content="item.name" />
+            <label>项目名称:</label> <long-text :content="item.name" />
           </div>
           <div>
             <label>项目类型:</label> <span>{{ item.typeName }}</span>

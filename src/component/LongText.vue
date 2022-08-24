@@ -1,68 +1,48 @@
 <template>
-    <div class="wrapper">
-        <label class="fontcolor" :style="labelStyle">{{ label }}</label>
-        <el-tooltip :style="contentStyle" :content="content" :placement="placement" effect="light">
-            <span class="text-hidden">{{ content }}</span>
-        </el-tooltip>
-    </div>
+  <div class="wrapper">
+    <el-tooltip :style="contentStyle" :content="content" :placement="placement" effect="light">
+      <span class="text-hidden">{{ content }}</span>
+    </el-tooltip>
+  </div>
 </template>
 
 <script>
 export default {
-    props: {
-        label: {
-            type: String,
-            required: true
-        },
-        content: {
-            type: String,
-            required: true
-        },
-        placement: {
-            type: String,
-            default: 'bottom'
-        },
-        contentWidth: {
-            type: Number,
-            default: 180
-        },
-        labelWidth: {
-            type: Number,
-            default: 80
-        },
-        lineClamp: {
-            type: Number,
-            default: 1
-        },
+  props: {
+    content: {
+      type: String,
+      required: true
     },
-    computed: {
-        contentStyle() {
-            return `width: ${this.contentWidth}px; -webkit-line-clamp: ${this.lineClamp}`
-        },
-        labelStyle() {
-            return `width: ${this.labelWidth}px;`
-        }
+    placement: {
+      type: String,
+      default: 'bottom'
     },
+    contentStyle: {
+      type: String,
+      default: 'width: 180px'
+    },
+    lineClamp: {
+      type: Number,
+      default: 1
+    },
+  },
 }
 </script>
 
-<style>
+<style scoped lang="scss">
 .text-hidden {
-    word-break: break-all;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    color: white;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
 }
 
 .wrapper {
-    display: flex;
+  display: inline-flex;
 }
 
-.fontcolor {
-    color: #999999;
-}
 </style>
 
 
