@@ -66,7 +66,11 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <el-tabs type="border-card" v-model="formStatus" @tab-click="changeActiveName">
+      <el-tabs
+        type="border-card"
+        v-model="formStatus"
+        @tab-click="changeActiveName"
+      >
         <el-tab-pane name="enabled">
           <span slot="label">可用表单({{ getDataFirst.total }})</span>
           <div
@@ -195,10 +199,10 @@ export default {
       formData: {},
       projectValue: "",
       projectOption: [],
-      formStatus: 'enabled',
-      projectCode: '',
+      formStatus: "enabled",
+      projectCode: "",
       valueDate: [start, end],
-      input: '',
+      input: "",
       formListFirst: [],
       formListSecond: [],
       getDataFirst: {
@@ -352,12 +356,12 @@ export default {
 
     getData() {
       switch (this.formStatus) {
-        case 'enabled':
-          this.getEnableData()
-          break
-        case 'drafted':
-          this.getDraftData()
-          break
+        case "enabled":
+          this.getEnableData();
+          break;
+        case "drafted":
+          this.getDraftData();
+          break;
         default:
           break;
       }
@@ -368,14 +372,14 @@ export default {
     },
 
     deleteSuccsee() {
-      this.$refs.detailsDiolog.dialogVisible2 = false
-      this.getManyData()
+      this.$refs.detailsDiolog.dialogVisible2 = false;
+      this.getManyData();
     },
 
     addSuccess() {
-      this.$refs.detailsDiolog.dialogVisible2 = false
-      this.$refs.projectFormDiolog.dialogVisible2 = false
-      this.getManyData()
+      this.$refs.detailsDiolog.dialogVisible2 = false;
+      this.$refs.projectFormDiolog.dialogVisible2 = false;
+      this.getManyData();
     },
 
     changProjectCode(code) {
@@ -499,6 +503,9 @@ export default {
 
 .reset {
   @include resetBtn;
+}
+.PublicForm {
+  width: 1500px;
 }
 
 .PublicForm-title {
