@@ -338,8 +338,4 @@ label {
   display: inline-block;
   width: 80px;
 }
-
-.card-main input {
-  float: left;
-}
 </style>
