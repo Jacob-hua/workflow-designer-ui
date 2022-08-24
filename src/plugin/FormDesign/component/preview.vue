@@ -158,7 +158,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
 
   const multipleRowElements = multipleRows.map((value, index) => {
     return (
-      <el-card body-style={{ padding: '10px 0px' }}>
+      <el-card body-style={{ padding: '10px 0px' }} style={{ margin: '10px 0px' }}>
         <div slot="header" class="clearfix">
           <el-button
             style="float: right; padding: 3px 0; margin: 0 10px;"
