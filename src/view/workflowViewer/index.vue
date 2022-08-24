@@ -26,6 +26,16 @@ function isBase64(str) {
   }
 }
 
+function base64ToArrayBuffer(base64) {
+  var binaryStr = window.atob(base64)
+  var len = binaryStr.length
+  var bytes = new Uint8Array(len)
+  for (var i = 0; i < len; i++) {
+    bytes[i] = binaryStr.charCodeAt(i)
+  }
+  return bytes.buffer
+}
+
 export default {
   name: 'WorkflowViewer',
   data() {
@@ -38,7 +48,9 @@ export default {
       if (!isBase64(xml)) {
         return
       }
-      this.xml = window.atob(xml)
+      new Blob([base64ToArrayBuffer(xml)]).text().then((res) => {
+        this.xml = res
+      })
     }
   },
 }
