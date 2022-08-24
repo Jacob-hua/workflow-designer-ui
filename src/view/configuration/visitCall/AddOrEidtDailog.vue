@@ -20,7 +20,7 @@
                 class="el-icon-circle-plus-outline"
               ></i>
               <span
-                @click="deleteApiBox(index)"
+                @click="deleteApiBox(index, item)"
                 v-else
                 class="el-icon-delete"
               ></span>
@@ -266,6 +266,7 @@ import {
   postSaveOrEdite,
   simulationRequest,
   putSaveOrEdite,
+  deleteApi,
 } from "@/api/globalConfig";
 import { mapState } from "vuex";
 
@@ -571,8 +572,37 @@ export default {
         ],
       });
     },
-    deleteApiBox(index) {
-      this.apiBoxList.splice(index, 1);
+    deleteApiBox(index, item) {
+      this.$confirm("此操作将删除当前选中api,是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        beforeClose: (action, instance, done) => {
+          // 取消回车确认事件
+          if (action === "confirm") {
+            (instance.$refs["confirm"].$el.onclick = function (e) {
+              e = e || window.event;
+              if (e.detail !== 0) {
+                done();
+              }
+            })();
+          } else {
+            done();
+          }
+        },
+      }).then(() => {
+        if (item.id) {
+          deleteApi(item.id).then((res) => {
+            this.apiBoxList.splice(index, 1);
+            this.$message({
+              type: "success",
+              message: "删除成功",
+            });
+            this.$parent.GetGlobalList(this.business);
+          });
+        }
+        this.apiBoxList.splice(index, 1);
+      });
     },
     addParams(index) {
       this.apiBoxList[index].configParams.push({
