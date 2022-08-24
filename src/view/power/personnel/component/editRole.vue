@@ -271,6 +271,8 @@ export default {
     },
     grant() {
       this.type = "edit";
+      this.activeName = "个人权限";
+      this.checkRole = this.activeName;
     },
     changeFlag(item, item1, event) {
       if (event == 0) {
