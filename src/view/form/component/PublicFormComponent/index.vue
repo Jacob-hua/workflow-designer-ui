@@ -99,11 +99,6 @@ export default {
         return;
       }
 
-      if (this.postData.name.length <= 2) {
-        this.$message.error("表单名称的长度必须大于两个字符");
-        return;
-      }
-
       let formDatas = {
         list: this.$refs.formDesigner.designList,
         config: this.$refs.formDesigner.formConfig,
