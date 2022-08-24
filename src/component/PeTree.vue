@@ -42,10 +42,6 @@ export default {
       type: String,
       default: 'XM_aff0659724a54c119ac857d4e560b47b:-1:template:78',
     },
-    placement: {
-      type: String,
-      default: 'bottom'
-    },
   },
   data() {
     return {}
@@ -62,13 +58,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.pe-tree-label {
-  width: 170px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  display: block;
-}
-
   @include tree;
 </style>
