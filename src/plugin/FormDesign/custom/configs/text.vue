@@ -30,21 +30,21 @@
         @change="handlerChangeBold"
       ></el-input-number>
     </el-form-item>
-    <el-form-item label="关联">
-      <el-input v-model="props.relationField" placeholder="#本表单取, $跨任务取值"></el-input>
-    </el-form-item>
+    <depend-value :currentField="props" @dependChange="onDependChange" />
   </div>
 </template>
 <script>
 import { changeId } from '../mixin'
+import DependValue from './component/DependValue.vue'
 export default {
   name: 'textConfig',
+  components: { DependValue },
   props: ['props'],
-  data() {
-    return {}
-  },
   mixins: [changeId],
   methods: {
+    onDependChange(dependValue) {
+      this.props.dependValue = dependValue
+    },
     handlerChangeSize(val) {
       this.props.size = val + ''
     },
