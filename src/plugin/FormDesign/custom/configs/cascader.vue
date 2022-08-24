@@ -190,7 +190,7 @@ export default {
         this.props.options = JSON.parse(this.staticOptions);
         this.staticDataVisible = false;
       } catch (e) {
-        this.$message.warning("JSON格式有错误、请修改");
+        this.$message.warning("JSON格式有错误,请修改");
       }
     },
     handlerChangeDataType(value) {
