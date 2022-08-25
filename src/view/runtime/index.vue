@@ -249,6 +249,15 @@ export default {
       ]
     },
   },
+  watch: {
+    searchForm: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.pageInfo.page = 1
+      },
+    },
+  },
   async mounted() {
     await this.dispatchRefreshOrganization()
     this.searchForm.ascription = this.currentOrganization
