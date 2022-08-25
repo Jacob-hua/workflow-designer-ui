@@ -2,6 +2,7 @@
   <div>
     <el-dialog
       :title="title"
+      @close="close"
       :close-on-click-modal="false"
       :visible.sync="dialogVisible1"
     >
@@ -49,7 +50,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <div class="next" @click="nextDiolog()" type="primary">下一步</div>
-        <div class="cancel" @click="dialogVisible1 = false">取消</div>
+        <div class="cancel" @click="close">取消</div>
       </div>
     </el-dialog>
     <el-dialog
@@ -68,21 +69,41 @@
           label-position="right"
         >
           <div class="form-title">
-              <div class="title-item">
-                    <el-form-item label="业务类型" class="title-item-label" prop="business">
-                        <div class="title-item-main">
-                           <el-input :disabled="true" v-model="postData.ascName"></el-input>
-                           <el-input v-show="false" v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
-                        </div>
-                    </el-form-item>
-              </div>
-              <div class="title-item">
-                    <el-form-item label="表单名称" class="title-item-label" prop="name">
-                        <div class="title-item-main">
-                          <el-input v-model="postData.name" placeholder=""   :disabled="title !== '新建表单'"></el-input>
-                        </div>
-                  </el-form-item>
-              </div>
+            <div class="title-item">
+              <el-form-item
+                label="业务类型"
+                class="title-item-label"
+                prop="business"
+              >
+                <div class="title-item-main">
+                  <el-input
+                    :disabled="true"
+                    v-model="postData.ascName"
+                  ></el-input>
+                  <el-input
+                    v-show="false"
+                    v-model="postData.ascription"
+                    placeholder=""
+                    :disabled="true"
+                  ></el-input>
+                </div>
+              </el-form-item>
+            </div>
+            <div class="title-item">
+              <el-form-item
+                label="表单名称"
+                class="title-item-label"
+                prop="name"
+              >
+                <div class="title-item-main">
+                  <el-input
+                    v-model="postData.name"
+                    placeholder=""
+                    :disabled="title !== '新建表单'"
+                  ></el-input>
+                </div>
+              </el-form-item>
+            </div>
           </div>
           <div class="form-Main">
             <form-designer ref="formDesigner"></form-designer>
@@ -202,6 +223,11 @@ export default {
     },
   },
   methods: {
+    close() {
+      this.dialogVisible1 = false;
+      this.$refs.guideForm.clearValidate();
+      this.$refs.guideForm.resetFields();
+    },
     onOptionClick() {
       let nodeInfo = this.$refs.cascader.getCheckedNodes();
       this.postData.ascName = nodeInfo[0].label;
@@ -224,58 +250,58 @@ export default {
     },
 
     addEnableForm() {
-     this.$refs["newOrEditForm"].validate((valid) => {
+      this.$refs["newOrEditForm"].validate((valid) => {
         if (valid) {
-            let formDatas = {
-              list: this.$refs.formDesigner.designList,
-              config: this.$refs.formDesigner.formConfig,
-            };
-            if (formDatas.list.length === 0) {
-              this.$message.error("不允许提交空表单");
-              return;
-            }
-            const id = "form_" + Date.parse(new Date());
-            const formFile = new File([JSON.stringify(formDatas)], "form.json", {
-              type: "text/json",
-            });
-            let formData = new FormData();
-            switch (this.formStatus) {
-              case "enabled":
-                break;
-              case "drafted":
-                break;
-              case "enabled-edit":
-                formData.append("sourceId", this.postData.sourceId);
-                break;
-              case "drafted-edit":
-                formData.append("id", this.postData.id);
-                formData.append("sourceId", this.postData.sourceId);
-                break;
-              default:
-                break;
-            }
-            if (this.postData.id) {
+          let formDatas = {
+            list: this.$refs.formDesigner.designList,
+            config: this.$refs.formDesigner.formConfig,
+          };
+          if (formDatas.list.length === 0) {
+            this.$message.error("不允许提交空表单");
+            return;
+          }
+          const id = "form_" + Date.parse(new Date());
+          const formFile = new File([JSON.stringify(formDatas)], "form.json", {
+            type: "text/json",
+          });
+          let formData = new FormData();
+          switch (this.formStatus) {
+            case "enabled":
+              break;
+            case "drafted":
+              break;
+            case "enabled-edit":
               formData.append("sourceId", this.postData.sourceId);
-              if (this.postData.status !== "enabled") {
-                formData.append("id", this.postData.id);
-              }
+              break;
+            case "drafted-edit":
+              formData.append("id", this.postData.id);
+              formData.append("sourceId", this.postData.sourceId);
+              break;
+            default:
+              break;
+          }
+          if (this.postData.id) {
+            formData.append("sourceId", this.postData.sourceId);
+            if (this.postData.status !== "enabled") {
+              formData.append("id", this.postData.id);
             }
-            formData.append("name", this.postData.name);
-            formData.append("docName", this.postData.name + ".json");
-            formData.append("docType", "json");
-            formData.append("ascription", this.postData.ascription);
-            formData.append("code", id);
-            formData.append("business", this.postData.business);
-            formData.append("status", "enabled");
-            formData.append("createBy", this.userInfo.account);
-            formData.append("createName", this.userInfo.name);
-            formData.append("tenantId", this.tenantId);
-            formData.append("file", formFile);
-            postFormDesignServiceRealiseProcessData(formData).then((res) => {
-              this.$message.success("发布至可用表单成功");
-              this.$emit("addSuccess", "enabled");
-              this.dialogVisible2 = false;
-            }); 
+          }
+          formData.append("name", this.postData.name);
+          formData.append("docName", this.postData.name + ".json");
+          formData.append("docType", "json");
+          formData.append("ascription", this.postData.ascription);
+          formData.append("code", id);
+          formData.append("business", this.postData.business);
+          formData.append("status", "enabled");
+          formData.append("createBy", this.userInfo.account);
+          formData.append("createName", this.userInfo.name);
+          formData.append("tenantId", this.tenantId);
+          formData.append("file", formFile);
+          postFormDesignServiceRealiseProcessData(formData).then((res) => {
+            this.$message.success("发布至可用表单成功");
+            this.$emit("addSuccess", "enabled");
+            this.dialogVisible2 = false;
+          });
         } else {
           return false;
         }
@@ -285,63 +311,63 @@ export default {
     addDraftForm() {
       this.$refs["newOrEditForm"].validate((valid) => {
         if (valid) {
-            const formFile = new File(
-              [this.$refs.formDesigner.getFormData()],
-              "form.json",
-              { type: "text/json" }
-            );
-            let formData = new FormData();
-            switch (this.formStatus) {
-              case "enabled":
-                break;
-              case "drafted":
-                break;
-              case "enabled-edit":
-                formData.append("sourceId", this.postData.sourceId);
-                break;
-              case "drafted-edit":
-                formData.append("id", this.postData.id);
-                formData.append("sourceId", this.postData.sourceId);
-                break;
-              default:
-                break;
-            }
-            if (this.postData.id) {
+          const formFile = new File(
+            [this.$refs.formDesigner.getFormData()],
+            "form.json",
+            { type: "text/json" }
+          );
+          let formData = new FormData();
+          switch (this.formStatus) {
+            case "enabled":
+              break;
+            case "drafted":
+              break;
+            case "enabled-edit":
               formData.append("sourceId", this.postData.sourceId);
-            }
-            formData.append("name", this.postData.name);
-            formData.append("docName", this.postData.name + ".json");
-            formData.append("docType", "json");
-            formData.append("ascription", this.postData.ascription);
-
-            formData.append("business", this.postData.business);
-            formData.append("status", "drafted");
-            formData.append("tenantId", this.tenantId);
-            formData.append("file", formFile);
-
-            if (this.isNewDraftProjectForm || this.formStatus === "enabled") {
-              formData.append("createBy", this.userInfo.account);
-              const code = "form_" + Date.parse(new Date());
-              formData.append("code", code);
-              postFormDesignService(formData).then((res) => {
-                this.$message.success("保存成功");
-                this.$emit("addSuccess", "drafted");
-                this.dialogVisible2 = false;
-              });
-            } else {
+              break;
+            case "drafted-edit":
               formData.append("id", this.postData.id);
-              formData.append("code", this.postData.code);
-              formData.append("updateBy", this.userInfo.account);
-              putFormDesignService(formData).then((res) => {
-                this.$message.success("更新成功");
-                this.$emit("addSuccess", "drafted");
-                this.dialogVisible2 = false;
-              });
-            }
+              formData.append("sourceId", this.postData.sourceId);
+              break;
+            default:
+              break;
+          }
+          if (this.postData.id) {
+            formData.append("sourceId", this.postData.sourceId);
+          }
+          formData.append("name", this.postData.name);
+          formData.append("docName", this.postData.name + ".json");
+          formData.append("docType", "json");
+          formData.append("ascription", this.postData.ascription);
+
+          formData.append("business", this.postData.business);
+          formData.append("status", "drafted");
+          formData.append("tenantId", this.tenantId);
+          formData.append("file", formFile);
+
+          if (this.isNewDraftProjectForm || this.formStatus === "enabled") {
+            formData.append("createBy", this.userInfo.account);
+            const code = "form_" + Date.parse(new Date());
+            formData.append("code", code);
+            postFormDesignService(formData).then((res) => {
+              this.$message.success("保存成功");
+              this.$emit("addSuccess", "drafted");
+              this.dialogVisible2 = false;
+            });
+          } else {
+            formData.append("id", this.postData.id);
+            formData.append("code", this.postData.code);
+            formData.append("updateBy", this.userInfo.account);
+            putFormDesignService(formData).then((res) => {
+              this.$message.success("更新成功");
+              this.$emit("addSuccess", "drafted");
+              this.dialogVisible2 = false;
+            });
+          }
         } else {
           return false;
         }
-      }); 
+      });
     },
     async init() {
       const container = this.$refs.form;
