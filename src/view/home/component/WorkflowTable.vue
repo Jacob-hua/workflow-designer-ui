@@ -48,12 +48,7 @@
       :business="workflow.business"
       @submit="onConfirmationSubmit"
     />
-    <deploy-options
-      :visible.sync="deployOptionsVisible"
-      :workflow="workflow"
-      @deployed="onDeployed"
-      @saved="onSaved"
-    />
+    <deploy-options :visible.sync="deployOptionsVisible" :workflow="workflow" @deployed="onDeployed" @saved="onSaved" />
     <deploy-cabin-detail :visible.sync="deployCabinDetailVisible" :workflow="workflow" @deleted="onDeletedDeploy" />
   </div>
 </template>
@@ -100,6 +95,7 @@ export default {
     searchForm: {
       deep: true,
       handler() {
+        this.pageInfo.page = 1
         this.fetchWorkflows()
       },
     },

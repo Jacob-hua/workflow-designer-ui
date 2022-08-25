@@ -81,6 +81,7 @@ export default {
       immediate: true,
       handler(value) {
         if (Object.keys(value).length) {
+          this.pageInfo.page = 1
           this.findWorkFlowRecord()
         }
       },
@@ -105,7 +106,7 @@ export default {
         await this.$confirm('删除不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          cancelButtonClass: "btn-custom-cancel",
+          cancelButtonClass: 'btn-custom-cancel',
           type: 'warning',
         })
         const { errorInfo } = await deleteWorkflow({
@@ -164,7 +165,6 @@ export default {
 </style>
 
 <style lang="scss">
-
 .btn-custom-cancel {
   @include cancelbutton;
 }
