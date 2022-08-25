@@ -160,7 +160,7 @@ export default {
       },
       rules4NewForm: {
         business: [
-          { required: true, message: "业务类型不能为空", trigger: "change" },
+          { required: true, message: "业务类型不能为空", trigger: "blur" },
         ],
         name: [
           { required: true, message: "请输入表单名称", trigger: "blur" },
