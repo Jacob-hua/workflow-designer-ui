@@ -21,7 +21,7 @@
                       <el-input
                         v-model="postData.name"
                         :disabled="tit !== '新建表单'"
-                        placeholder=""
+                        placeholder="请输入表单名称"
                         :rules="rules"
                       ></el-input>
                     </div>
@@ -93,110 +93,115 @@ export default {
     nextDiolog() {
       this.dialogVisible2 = true;
     },
+
     addEnableForm() {
-      if (!this.postData.name) {
-        this.$message.error("请填写表单名称");
-        return;
-      }
 
-      let formDatas = {
-        list: this.$refs.formDesigner.designList,
-        config: this.$refs.formDesigner.formConfig,
-      };
-      if (formDatas.list.length === 0) {
-        this.$message.error("不允许提交空表单");
-        return;
-      }
-      const id = "form_" + Date.parse(new Date());
-      var file1 = new File([JSON.stringify(formDatas)], "form.json", {
-        type: "text/json",
-      });
-      let formData = new FormData();
-      switch (this.formStatus) {
-        case "enabled":
-          break;
-        case "":
-          break;
-        case "enabled-edit":
-          formData.append("sourceId", this.postData.sourceId);
-          break;
-        case "-edit":
-          formData.append("id", this.postData.id);
-          formData.append("sourceId", this.postData.sourceId);
-          break;
-        default:
-          break;
-      }
-      if (this.postData.id) {
-        formData.append("sourceId", this.postData.sourceId);
-        if (this.postData.status !== "enabled") {
-          formData.append("id", this.postData.id);
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          let formDatas = {
+            list: this.$refs.formDesigner.designList,
+            config: this.$refs.formDesigner.formConfig,
+          };
+          if (formDatas.list.length === 0) {
+            this.$message.error("不允许提交空表单");
+            return;
+          }
+          const id = "form_" + Date.parse(new Date());
+          var file1 = new File([JSON.stringify(formDatas)], "form.json", {
+            type: "text/json",
+          });
+          let formData = new FormData();
+          switch (this.formStatus) {
+            case "enabled":
+              break;
+            case "":
+              break;
+            case "enabled-edit":
+              formData.append("sourceId", this.postData.sourceId);
+              break;
+            case "-edit":
+              formData.append("id", this.postData.id);
+              formData.append("sourceId", this.postData.sourceId);
+              break;
+            default:
+              break;
+          }
+          if (this.postData.id) {
+            formData.append("sourceId", this.postData.sourceId);
+            if (this.postData.status !== "enabled") {
+              formData.append("id", this.postData.id);
+            }
+          }
+          formData.append("name", this.postData.name);
+          formData.append("docName", this.postData.name + ".json");
+          formData.append("docType", "json");
+          formData.append("ascription", "public");
+          formData.append("code", id);
+          formData.append("business", "");
+          formData.append("status", "enabled");
+          formData.append("createBy", this.userInfo.account);
+          formData.append("createName", this.userInfo.name);
+          formData.append("tenantId", this.tenantId);
+          formData.append("file", file1);
+          postFormDesignServiceRealiseProcessData(formData).then((res) => {
+            this.$message.success("发布至可用表单成功");
+            this.$emit("addSuccess", "enabled");
+            this.dialogVisible2 = false;
+          });
+        } else {
+          return false;
         }
-      }
-      formData.append("name", this.postData.name);
-      formData.append("docName", this.postData.name + ".json");
-      formData.append("docType", "json");
-      formData.append("ascription", "public");
-      formData.append("code", id);
-      formData.append("business", "");
-      formData.append("status", "enabled");
-      formData.append("createBy", this.userInfo.account);
-      formData.append("createName", this.userInfo.name);
-      formData.append("tenantId", this.tenantId);
-      formData.append("file", file1);
-      postFormDesignServiceRealiseProcessData(formData).then((res) => {
-        this.$message.success("发布至可用表单成功");
-        this.$emit("addSuccess", "enabled");
-        this.dialogVisible2 = false;
       });
+         
     },
-    
     addDraftForm() {
-      if (!this.postData.name) {
-        this.$message.error("请填写表单名称");
-        return;
-      }
-      let formData = new FormData();
-      if (this.postData.id) {
-        formData.append("sourceId", this.postData.sourceId);
-      }
-      formData.append("name", this.postData.name);
-      formData.append("docName", this.postData.name + ".json");
-      formData.append("docType", "json");
-      formData.append("ascription", "public");
-   
-      formData.append("business", "");
-      formData.append("status", "drafted");
-      formData.append("tenantId", this.tenantId);
-
-      const formFile = new File(
-        [this.$refs.formDesigner.getFormData()],
-        "form.json",
-        { type: "text/json" }
-      );
-      formData.append("file", formFile);
-
-      if(this.isNewDraftPublicForm || this.formStatus==='enabled' ){
-        formData.append("createBy", this.userInfo.account);
-        const code = "form_" + Date.parse(new Date());
-        formData.append("code", code);
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+            let formData = new FormData();
+            if (this.postData.id) {
+              formData.append("sourceId", this.postData.sourceId);
+            }
+            formData.append("name", this.postData.name);
+            formData.append("docName", this.postData.name + ".json");
+            formData.append("docType", "json");
+            formData.append("ascription", "public");
         
-        postFormDesignService(formData).then((res) => {
-          this.$message.success("保存成功");
-          this.$emit("addSuccess", "drafted");
-          this.dialogVisible2 = false;
-        }); 
+            formData.append("business", "");
+            formData.append("status", "drafted");
+            formData.append("tenantId", this.tenantId);
 
-      }else{
-        formData.append("id", this.postData.id);
-        formData.append("code", this.postData.code);
-        formData.append("updateBy", this.userInfo.account);
-        putFormDesignService(formData).then((res) => {
-          this.$message.success("更新成功");
-          this.$emit("addSuccess", "drafted");
-          this.dialogVisible2 = false;
-        }); 
-        }
+            const formFile = new File(
+              [this.$refs.formDesigner.getFormData()],
+              "form.json",
+              { type: "text/json" }
+            );
+            formData.append("file", formFile);
+
+            if(this.isNewDraftPublicForm || this.formStatus==='enabled' ){
+              formData.append("createBy", this.userInfo.account);
+              const code = "form_" + Date.parse(new Date());
+              formData.append("code", code);
+              
+              postFormDesignService(formData).then((res) => {
+                this.$message.success("保存成功");
+                this.$emit("addSuccess", "drafted");
+                this.dialogVisible2 = false;
+              }); 
+
+            }else{
+              formData.append("id", this.postData.id);
+              formData.append("code", this.postData.code);
+              formData.append("updateBy", this.userInfo.account);
+              putFormDesignService(formData).then((res) => {
+                this.$message.success("更新成功");
+                this.$emit("addSuccess", "drafted");
+                this.dialogVisible2 = false;
+              }); 
+            }
+          } else {
+            return false;
+          }
+        });
     },
   },
   components: {
