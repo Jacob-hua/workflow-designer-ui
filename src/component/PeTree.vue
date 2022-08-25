@@ -10,7 +10,7 @@
       default-expand-all
     >
       <div class="custom-tree-node" slot-scope="{ data }">
-        <long-text :content="data[labelName]" />
+        <long-text contentStyle="display:inline-block; width: 230px" :content="data[labelName]" />
       </div>
     </el-tree>
   </div>

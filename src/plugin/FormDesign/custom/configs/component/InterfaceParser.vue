@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-form-item label="第三方API">
+      <dropDownText :options="interFaceOption" :key="id" :label="name" :value="id"/>
       <el-select v-model="interfaceId" clearable>
         <el-option v-for="{ name, id } in interFaceOption" :key="id" :label="name" :value="id" />
       </el-select>
@@ -56,6 +57,7 @@
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { apiDetail } from '@/api/globalConfig'
 import { variableFactory as variableParser } from '@/mixin/formDepMonitor'
+import dropDownText from "@/component/DropDownText.vue";
 
 const defaultParserProp = () => ({
   optionPath: '',
@@ -65,6 +67,9 @@ const defaultParserProp = () => ({
 })
 
 export default {
+  components: {
+    dropDownText,
+  },
   name: 'InterfaceParser',
   props: {
     currentField: {
