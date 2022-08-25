@@ -29,7 +29,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
-          clearable
+          :clearable="false"
         >
         </el-date-picker>
         <span class="text">表单</span>
@@ -93,7 +93,8 @@
             </div>
             <div class="card-main">
               <div class="card-main-item">
-                <long-text label="表单名称:" :content="item.name" />
+                <span class="label">表单名称:</span>
+                <long-text contentStyle="color: white; width: 180px" :content="item.name" />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -126,7 +127,8 @@
             </div>
             <div class="card-main">
               <div class="card-main-item">
-                <long-text label="表单名称:" :content="item.name" />
+                <span class="label">表单名称:</span>
+                <long-text contentStyle="color: white; width: 180px" :content="item.name" />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>

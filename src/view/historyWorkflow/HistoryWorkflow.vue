@@ -22,6 +22,7 @@
         <el-form-item label="发起时间">
           <el-date-picker
             v-model="searchForm.valueDate"
+            :clearable="false"
             type="daterange"
             align="right"
             unlink-panels
@@ -37,7 +38,11 @@
     </div>
     <div class="statistics-wrapper">
       <div v-for="(cardData, index) in statisticCards" :key="index">
-        <div class="data-wrapper" v-for="({ label, value, icon }, index) in cardData" :key="index">
+        <div
+          class="data-wrapper"
+          v-for="({ label, value, icon }, index) in cardData"
+          :key="index"
+        >
           <div class="icon">
             <img :src="icon" />
           </div>
@@ -48,18 +53,26 @@
     </div>
     <div class="content-wrapper">
       <el-table :data="tableData">
-        <el-table-column type="index" label="序号" width="180"> </el-table-column>
-        <el-table-column prop="processDeployName" label="名称" width="180"> </el-table-column>
-        <el-table-column prop="displayProcessDeployType" label="部署类型"> </el-table-column>
+        <el-table-column type="index" label="序号" width="180">
+        </el-table-column>
+        <el-table-column prop="processDeployName" label="名称" width="180">
+        </el-table-column>
+        <el-table-column prop="displayProcessDeployType" label="部署类型">
+        </el-table-column>
         <el-table-column prop="starter" label="发起人"> </el-table-column>
         <el-table-column prop="startTime" label="发起时间"> </el-table-column>
-        <el-table-column prop="displayAssignee" label="执行人"> </el-table-column>
+        <el-table-column prop="displayAssignee" label="执行人">
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button
               @click="onClickDetail(scope.row)"
               type="text"
-              v-role="{ id: 'HistoryLook', type: 'button', business: searchForm.ascription }"
+              v-role="{
+                id: 'HistoryLook',
+                type: 'button',
+                business: searchForm.ascription,
+              }"
             >
               查看
             </el-button>
@@ -76,136 +89,146 @@
       >
       </el-pagination>
     </div>
-    <lookover v-if="lookoverVisible" :visible.sync="lookoverVisible" :processInstanceId="processInstanceId" />
+    <lookover
+      v-if="lookoverVisible"
+      :visible.sync="lookoverVisible"
+      :processInstanceId="processInstanceId"
+    />
   </div>
 </template>
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
-import { currentOneMonthAgo } from '@/util/date'
-import { listHistoryTask, postHistoryProcessCountStatistic } from '@/api/historyWorkflow.js'
-import { getAllBusinessConfig } from '@/api/globalConfig'
-import Lookover from '@/view/runtime/component/lookover.vue'
+import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
+import { currentOneMonthAgo } from "@/util/date";
+import {
+  listHistoryTask,
+  postHistoryProcessCountStatistic,
+} from "@/api/historyWorkflow.js";
+import { getAllBusinessConfig } from "@/api/globalConfig";
+import Lookover from "@/view/runtime/component/lookover.vue";
 
 export default {
-  name: 'HistoryWorkflow',
+  name: "HistoryWorkflow",
   components: {
     Lookover,
   },
   data() {
-    const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
+    const { start, end } = currentOneMonthAgo("yyyy-MM-DD HH:mm:ss");
     return {
       searchForm: {
         valueDate: [start, end],
-        ascription: '',
-        business: '',
+        ascription: "",
+        business: "",
       },
       headerNum: {
         currentDayAccumulateProcessCount: 0,
-        currentDayAvgTime: '0时0分',
+        currentDayAvgTime: "0时0分",
         currentDayCompleteProcessCount: 0,
         currentMonthAccumulateProcessCount: 0,
-        currentMonthAvgTime: '0时0分',
+        currentMonthAvgTime: "0时0分",
         currentMonthCompleteProcessCount: 0,
       },
       lookoverVisible: false,
-      processInstanceId: '',
+      processInstanceId: "",
       tableData: [],
       pageInfo: {
         page: 1,
         limit: 10,
         total: 0,
       },
-    }
+    };
   },
   computed: {
-    ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
-    ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
+    ...mapState("account", ["tenantId", "userInfo", "currentOrganization"]),
+    ...mapState("uiConfig", ["cascaderProps"]),
+    ...mapGetters("config", [
+      "rootOrganizations",
+      "rootOrganizationChildrenAndAll",
+    ]),
     statisticCards() {
       const currentMonthStatistic = [
         {
-          label: '当月累计工作流',
+          label: "当月累计工作流",
           value: this.headerNum.currentMonthAccumulateProcessCount,
-          icon: require('../../assets/image/history/total-month.svg'),
+          icon: require("../../assets/image/history/total-month.svg"),
         },
         {
-          label: '当月完成工作流',
+          label: "当月完成工作流",
           value: this.headerNum.currentMonthCompleteProcessCount,
-          icon: require('../../assets/image/history/completed-month.svg'),
+          icon: require("../../assets/image/history/completed-month.svg"),
         },
         {
-          label: '当月平均完成时长',
+          label: "当月平均完成时长",
           value: this.headerNum.currentMonthAvgTime,
-          icon: require('../../assets/image/history/online-month.svg'),
+          icon: require("../../assets/image/history/online-month.svg"),
         },
-      ]
+      ];
       const currentDayStatistic = [
         {
-          label: '当日累计工作流',
+          label: "当日累计工作流",
           value: this.headerNum.currentDayAccumulateProcessCount,
-          icon: require('../../assets/image/history/total-day.svg'),
+          icon: require("../../assets/image/history/total-day.svg"),
         },
         {
-          label: '当日完成工作流',
+          label: "当日完成工作流",
           value: this.headerNum.currentDayCompleteProcessCount,
-          icon: require('../../assets/image/history/completed-day.svg'),
+          icon: require("../../assets/image/history/completed-day.svg"),
         },
         {
-          label: '当日平均完成时长',
+          label: "当日平均完成时长",
           value: this.headerNum.currentDayAvgTime,
-          icon: require('../../assets/image/history/online-day.svg'),
+          icon: require("../../assets/image/history/online-day.svg"),
         },
-      ]
-      return [currentMonthStatistic, currentDayStatistic]
+      ];
+      return [currentMonthStatistic, currentDayStatistic];
     },
   },
   watch: {
-    'searchForm.ascription'(val) {
+    "searchForm.ascription"(val) {
       if (val === this.currentOrganization) {
-        return
+        return;
       }
-      this.updateCurrentOrganization({ currentOrganization: val })
+      this.updateCurrentOrganization({ currentOrganization: val });
     },
     searchForm: {
       deep: true,
       handler() {
-        this.fetchHistoryTasks(this.pageInfo)
-        this.fetchHistoryStatistic()
+        this.fetchHistoryTasks(this.pageInfo);
+        this.fetchHistoryStatistic();
       },
     },
     currentOrganization: {
       immediate: true,
       handler(val) {
-        this.searchForm.ascription = val
+        this.searchForm.ascription = val;
       },
     },
   },
   mounted() {
-    this.dispatchRefreshOrganization()
+    this.dispatchRefreshOrganization();
   },
   methods: {
-    ...mapMutations('account', ['updateCurrentOrganization']),
-    ...mapActions('config', ['dispatchRefreshOrganization']),
+    ...mapMutations("account", ["updateCurrentOrganization"]),
+    ...mapActions("config", ["dispatchRefreshOrganization"]),
     onPageSizeChange(val) {
-      this.pageInfo.limit = val
-      this.fetchHistoryTasks(this.pageInfo)
-      this.fetchHistoryStatistic()
+      this.pageInfo.limit = val;
+      this.fetchHistoryTasks(this.pageInfo);
+      this.fetchHistoryStatistic();
     },
     onPageChange(val) {
-      this.pageInfo.page = val
-      this.fetchHistoryTasks(this.pageInfo)
-      this.fetchHistoryStatistic()
+      this.pageInfo.page = val;
+      this.fetchHistoryTasks(this.pageInfo);
+      this.fetchHistoryStatistic();
     },
     onClickDetail(row) {
-      this.lookoverVisible = true
-      this.processInstanceId = row.processInstanceId
+      this.lookoverVisible = true;
+      this.processInstanceId = row.processInstanceId;
     },
     async fetchHistoryStatistic() {
       const {
         ascription,
         business,
         valueDate: [startTime, endTime],
-      } = this.searchForm
+      } = this.searchForm;
       const { errorInfo, result } = await postHistoryProcessCountStatistic({
         assignee: this.userInfo.account,
         tenantId: this.tenantId,
@@ -213,19 +236,19 @@ export default {
         business,
         startTime,
         endTime,
-      })
+      });
       if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
+        this.$message.error(errorInfo.errorMsg);
+        return;
       }
-      this.headerNum = result
+      this.headerNum = result;
     },
     async fetchHistoryTasks(pageInfo) {
       const {
         ascription,
         business,
         valueDate: [startTime, endTime],
-      } = this.searchForm
+      } = this.searchForm;
       const [{ errorInfo, result }] = await Promise.all([
         await listHistoryTask({
           ascription,
@@ -233,32 +256,32 @@ export default {
           business,
           endTime, // 结束时间
           startTime, // 起始时间
-          order: 'desc', // 排序方式
+          order: "desc", // 排序方式
           ...pageInfo,
           tenantId: this.tenantId, // 租户id
         }),
         await getAllBusinessConfig({ tenantId: this.tenantId }),
-      ])
+      ]);
       if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.erroMsg)
-        return
+        this.$message.error(errorInfo.erroMsg);
+        return;
       }
       if (!result?.dataList) {
-        this.tableData = []
-        return
+        this.tableData = [];
+        return;
       }
       this.tableData = result.dataList.map((row) => {
-        const displayAssignee = row.assigneeList?.join(' ') ?? ''
+        const displayAssignee = row.assigneeList?.join(" ") ?? "";
         return {
           ...row,
           displayProcessDeployType: this.$getMappingName(row.processDeployType),
           displayAssignee,
-        }
-      })
-      this.pageInfo.total = +result.count
+        };
+      });
+      this.pageInfo.total = +result.count;
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

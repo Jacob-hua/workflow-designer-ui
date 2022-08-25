@@ -49,7 +49,6 @@
             nodeKey="id"
             labelName="name"
             @nodeClick="handleNodeClick"
-            default-expand-all
             :data="data"
             :props="defaultProps"
           ></PeTree>

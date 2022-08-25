@@ -1,10 +1,19 @@
 <template>
   <div>
-    <el-dialog title="新建工单" top="1vh" fullscreen :visible="dialogVisible" @close="onClose" :close-on-click-modal="false">
+    <el-dialog
+      title="新建工单"
+      top="1vh"
+      fullscreen
+      :visible="dialogVisible"
+      @close="onClose"
+      :close-on-click-modal="false"
+    >
       <div class="content-wrapper">
         <div>
           <el-card header="业务选择">
-            <PeTree nodeKey="id" labelName="label"
+            <PeTree
+              nodeKey="id"
+              labelName="label"
               :data="rootOrganizationChildren(projectCode)"
               @nodeClick="handleNodeClick"
             ></PeTree>
@@ -60,7 +69,7 @@ import { getProcessDefinitionList } from '@/api/unit/api.js'
 import { mapState, mapGetters } from 'vuex'
 import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
 import PeTree from '@/component/PeTree.vue'
-import longText from "../../../component/LongText.vue"
+import longText from '../../../component/LongText.vue'
 
 export default {
   name: 'RuntimeAdd',
@@ -102,8 +111,10 @@ export default {
     ...mapState('account', ['tenantId', 'userInfo']),
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
+  created() {
+    this.getProcessList()
+  },
   methods: {
-    //detailsShow(item) {},
     handleNodeClick(data) {
       this.getData.type = data.value
       this.getProcessList()

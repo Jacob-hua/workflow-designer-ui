@@ -131,14 +131,25 @@ export default {
         }
         this.isLoading = true
         this.startConfigList = await this.fetchProcessStartConfigList(process.systemType)
+        const placeholderPrefixs = {
+          [FormTypeEnum.FORM_TYPE_INPUT]: 'input',
+          [FormTypeEnum.FORM_TYPE_SELECT]: 'select',
+          [FormTypeEnum.FORM_TYPE_TIME]: 'time',
+        }
+        const startForm = this.startConfigList.reduce(
+          (startForm, { jwpProcessStartConfigEntity: { code, value, startType } }) => {
+            if (['input', 'time'].includes(placeholderPrefixs[startType])) {
+              startForm[code] = value
+            } else {
+              startForm[code] = ''
+            }
+            return startForm
+          },
+          {}
+        )
+        this.startForm = startForm
         this.isLoading = false
       },
-    },
-    startFormFields(startFormFields) {
-      this.startForm = startFormFields.reduce((startForm, field) => {
-        startForm[field.prop] = field.value
-        return startForm
-      }, {})
     },
   },
   methods: {
