@@ -399,8 +399,7 @@ export default {
         name: "",
       };
       this.$refs.projectFormDiolog.postData.ascription = this.projectCode;
-      this.$refs.projectFormDiolog.postData.ascriptionName =
-        this.ascriptionName;
+      this.$refs.projectFormDiolog.postData.ascriptionName = this.ascriptionName;
     },
 
     addForm2(item, tileText) {
