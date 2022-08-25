@@ -40,12 +40,7 @@
       :total="pageInfo.total"
     >
     </el-pagination>
-    <deploy-options
-      :visible.sync="deployOptionsVisible"
-      :workflow="workflow"
-      @deployed="onDeployed"
-      @saved="onSaved"
-    />
+    <deploy-options :visible.sync="deployOptionsVisible" :workflow="workflow" @deployed="onDeployed" @saved="onSaved" />
   </div>
 </template>
 
@@ -84,6 +79,7 @@ export default {
     searchForm: {
       deep: true,
       handler() {
+        this.pageInfo.page = 1
         this.fetchWorkflows()
       },
     },
@@ -127,7 +123,7 @@ export default {
         await this.$confirm('从草稿箱删除草稿不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          cancelButtonClass: "btn-custom-cancel",
+          cancelButtonClass: 'btn-custom-cancel',
           type: 'warning',
         })
         const { errorInfo } = await deleteDraft(workflow.id)
@@ -165,7 +161,6 @@ export default {
 </style>
 
 <style lang="scss">
-
 .btn-custom-cancel {
   @include cancelbutton;
 }

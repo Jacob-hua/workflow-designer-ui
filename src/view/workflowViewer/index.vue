@@ -45,9 +45,9 @@ export default {
   },
   mounted() {
     window.refreshCanvas = (xml) => {
-      if (!isBase64(xml)) {
-        return
-      }
+      // if (!isBase64(xml)) {
+      //   return
+      // }
       new Blob([base64ToArrayBuffer(xml)]).text().then((res) => {
         this.xml = res
       })
