@@ -67,9 +67,9 @@ export default {
         name: [
           { required: true, message: "请输入表单名称", trigger: "blur" },
           {
-            min: 0,
+            min: 1,
             max: 100,
-            message: "长度在 0 到 100 个字符",
+            message: "表单名称长度在 1 到 100 个字符",
             trigger: "blur",
           },
         ],
