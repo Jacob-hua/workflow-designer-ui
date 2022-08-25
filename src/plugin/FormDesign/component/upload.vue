@@ -62,14 +62,7 @@
     </el-dialog>
     <ul v-if="isShowTextUpload">
       <li @mousemove="fileMove(file)" v-for="(file, key) in value" :key="key">
-        <el-tooltip
-          class="item"
-          effect="dark"
-          :content="file.name"
-          placement="top"
-        >
-          <span> {{ file.name }}</span>
-        </el-tooltip>
+        <long-text :content="file.name" />
         <p>
           <span
             @click="handlePreview(file)"
@@ -91,8 +84,12 @@
 
 <script>
 import _ from "lodash";
+import LongText from "@/component/LongText";
 export default {
   name: "upload",
+  components: {
+    LongText,
+  },
   props: {
     fieldInfo: {
       type: Object,
