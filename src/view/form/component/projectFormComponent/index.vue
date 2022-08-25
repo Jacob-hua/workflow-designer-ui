@@ -226,7 +226,6 @@ export default {
     close() {
       this.dialogVisible1 = false;
       this.$refs.guideForm.clearValidate();
-      this.$refs.guideForm.resetFields();
     },
     onOptionClick() {
       let nodeInfo = this.$refs.cascader.getCheckedNodes();
