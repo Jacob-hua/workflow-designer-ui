@@ -43,7 +43,7 @@ const layouts = {
         </el-col>
     )
   },
-  rowItem(h, element){
+  rowItem(h, element, parent){
     const { onActiveItemChange } = this.$listeners
     const className = this.activeItem.id === element.id ? 'drawing-item drawing-row-item active-from-item' : 'drawing-item drawing-row-item'    
     return (
@@ -70,7 +70,7 @@ const layouts = {
               }
             </div>
           </el-row>
-          {components.itemBtns.call(this,h,element)}
+          {components.itemBtns.call(this,h,element, parent)}
         </el-col>
     )    
   },
