@@ -1,10 +1,10 @@
 <template>
   <div>
     <el-form :model="baseInfoForm" label-position="right" label-width="100px">
-      <el-form-item label="ID">
+      <el-form-item :label="labels.id">
         <el-input v-model="baseInfoForm.id" disabled></el-input>
       </el-form-item>
-      <el-form-item :label="nameLabel">
+      <el-form-item :label="labels.name">
         <el-input v-model="baseInfoForm.name" clearable></el-input>
       </el-form-item>
     </el-form>
@@ -36,7 +36,7 @@ export default {
     shapeType() {
       return this.$store.state[this.namespace].panel.shapeType
     },
-    nameLabel() {
+    labels() {
       const shapeLabelHandle = {
         [shapeType.START_EVENT]: '开始节点',
         [shapeType.END_EVENT]: '结束节点',
@@ -49,7 +49,10 @@ export default {
         [shapeType.INCLUSIVE_GATEWAY]: '相容网关',
         [shapeType.EVENT_BASE_GATEWAY]: '事件网关',
       }
-      return `${shapeLabelHandle[this.shapeType] ?? '流程'}名称`
+      return {
+        id: `${shapeLabelHandle[this.shapeType] ?? '流程'}ID`,
+        name: `${shapeLabelHandle[this.shapeType] ?? '流程'}名称`,
+      }
     },
   },
   watch: {
