@@ -272,6 +272,7 @@ import { mapState } from "vuex";
 
 import ApiEnum from "@/enum/ApiTypeEnum";
 
+import _ from "lodash";
 export default {
   name: "AddOrEidtDailog",
   props: {
@@ -351,7 +352,6 @@ export default {
   methods: {
     close() {
       this.dialogVisible = false;
-      console.log(this.$refs["form0"]);
       this.$refs["form0"][0].clearValidate();
       this.$refs["form0"][0].resetFields();
     },
@@ -424,6 +424,19 @@ export default {
         this.apiOptions = res.result;
       });
     },
+    checkKeyIsEmpty(flag = false) {
+      this.apiBoxList.forEach((api) => {
+        let api2 = _.cloneDeep(api);
+        if (
+          Object.keys(api2.parameterMap).includes("") ||
+          Object.keys(JSON.parse(api2.dataParse)).includes("")
+        ) {
+          flag = true;
+        }
+      });
+      return flag;
+    },
+
     saveOrEdite() {
       let flag = false;
       this.apiBoxList.forEach((apiBox, index) => {
@@ -470,7 +483,6 @@ export default {
           apiBox.parameterMap = parameterMap;
         });
         this.apiBoxList.forEach((apiBox) => {
-          delete apiBox.configParams;
           apiBox.ascription = this.business;
         });
 
@@ -481,25 +493,13 @@ export default {
           });
           let set = new Set(arr);
           if (set.size === arr.length) {
-            // parameterMap: {2: null}
-            // parseParams: [{key: "5", value: ""}, {key: "", value: "5"}]
-            // let flag = false;
-            // this.apiBoxList.forEach((api) => {
-            //   let api2 = _.deepClone(api)
-            //   if (
-            //     Object.keys(api2.parameterMap).includes("") ||
-            //     Object.keys(JSON.parse(api2.dataParse).includes(""))
-            //   ) {
-            //     flag = true;
-            //     this.$message({
-            //       type: "warning",
-            //       message: "存在key为空的情况、请检查配置",
-            //     });
-            //   }
-            // });
-            // if (flag) {
-            //   return;
-            // }
+            let result = this.checkKeyIsEmpty();
+            if (result) {
+              this.$message.warning(
+                "参数或解析参数配置中存在key为空, 请修改后保存"
+              );
+              return;
+            }
             postSaveOrEdite(this.apiBoxList).then((res) => {
               this.dialogVisible = false;
               this.$message({
@@ -521,6 +521,13 @@ export default {
           });
           let set = new Set(arr);
           if (set.size === arr.length) {
+            let result = this.checkKeyIsEmpty();
+            if (result) {
+              this.$message.warning(
+                "参数或解析参数配置中存在key为空, 请修改后保存"
+              );
+              return;
+            }
             putSaveOrEdite(this.apiBoxList).then((res) => {
               this.dialogVisible = false;
               this.$message({
