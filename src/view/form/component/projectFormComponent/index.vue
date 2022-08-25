@@ -69,18 +69,18 @@
         >
           <div class="form-title">
               <div class="title-item">
-                    <el-form-item label="业务类型" class="title-item-label" prop="name">
+                    <el-form-item label="业务类型" class="title-item-label" prop="business">
                         <div class="title-item-main">
                            <el-input :disabled="true" v-model="postData.ascName"></el-input>
                            <el-input v-show="false" v-model="postData.ascription" placeholder="" :disabled="true"></el-input>
-                      </div>
-                  </el-form-item>
+                        </div>
+                    </el-form-item>
               </div>
               <div class="title-item">
                     <el-form-item label="表单名称" class="title-item-label" prop="name">
                         <div class="title-item-main">
-                          <el-input v-model="postData.name" placeholder=""></el-input>
-                      </div>
+                          <el-input v-model="postData.name" placeholder=""   :disabled="title !== '新建表单'"></el-input>
+                        </div>
                   </el-form-item>
               </div>
           </div>
@@ -159,6 +159,9 @@ export default {
         ],
       },
       rules4NewForm: {
+        business: [
+          { required: true, message: "业务类型不能为空", trigger: "change" },
+        ],
         name: [
           { required: true, message: "请输入表单名称", trigger: "blur" },
           {
