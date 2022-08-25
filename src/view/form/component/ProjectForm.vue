@@ -285,7 +285,6 @@ export default {
         _this.deleteEmptyChildren(_this.systemOption);
         _this.$nextTick(() => {
           _this.$refs.projectFormDiolog.options = _this.systemOption;
-          _this.$refs.projectFormDiolog.postData.business = _this.projectValue;
         });
       });
     },
@@ -299,7 +298,6 @@ export default {
       )[0].children;
       this.deleteEmptyChildren(this.systemOption);
       this.projectValue = this.systemOption[0]?.code ?? "";
-      this.$refs.projectFormDiolog.postData.business = this.projectValue;
     },
     application() {
       this.dialogVisible = true;
