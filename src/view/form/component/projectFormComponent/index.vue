@@ -79,10 +79,7 @@
               <div class="title-item">
                     <el-form-item label="表单名称" class="title-item-label" prop="name">
                         <div class="title-item-main">
-                          <el-input
-                            v-model="postData.name"
-                            placeholder=""
-                          ></el-input>
+                          <el-input v-model="postData.name" placeholder=""></el-input>
                       </div>
                   </el-form-item>
               </div>
