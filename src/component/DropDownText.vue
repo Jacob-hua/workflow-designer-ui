@@ -1,12 +1,12 @@
 <template>
-  <el-select v-model="value" placeholder="请选择">
+  <el-select v-model="value" placeholder="请选择" >
     <el-option
-      v-for="item in options"
-      :key="item[this.key]"
-      :label="item[this.label]"
-      :value="item[this.value]"
+      v-for=" item in options"
+      :key="item[dropDownKey]"
+      :label="item[dropDownLabel]"
+      :value="item[dropDownValue]"
     >
-    <long-text :content="item[this.label]" />
+       <long-text :content="item[dropDownLabel]" />
     </el-option>
   </el-select>
 </template>
@@ -26,15 +26,21 @@ export default {
       type: String,
       default: 'bottom'
     },
-    key: {
-      type: String
+    dropDownKey: {
+      type: String,
+       default: 'id'
     },
-    label: {
-      type: String
+    dropDownLabel: {
+      type: String,
+      default: 'name'
     },
-    value: {
-      type: String
+    dropDownValue: {
+      type: String,
+       default: 'id'
     },
+  },
+  data() {
+    return {}
   },
 }
 </script>

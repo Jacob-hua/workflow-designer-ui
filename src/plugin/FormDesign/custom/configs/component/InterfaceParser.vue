@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form-item label="第三方API">
-      <dropDownText :options="interFaceOption" :key="id" :label="name" :value="id"/>
+      <dropDownText :options="interFaceOption" dropDownKey='id' dropDownLabel='name' dropDownValue='id' />
       <el-select v-model="interfaceId" clearable>
         <el-option v-for="{ name, id } in interFaceOption" :key="id" :label="name" :value="id" />
       </el-select>
