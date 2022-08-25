@@ -3,43 +3,49 @@
     <el-dialog
       :title="tit"
       fullscreen
+      @close="close"
       :visible.sync="dialogVisible2"
       width="90%"
       custom-class="dialogVisible2"
     >
-    <el-form
-          ref="form"
-          label-width="100px"
-          label-position="right"
-          :rules="rules"
-          :model="postData">
-          <div class="dialogVisible2-main">
-            <div class="form-title">
-              <div class="title-item">
-                <el-form-item label=" 表单名称" class="title-item-label" prop="name">
-                    <div class="title-item-main">
-                      <el-input
-                        v-model="postData.name"
-                        :disabled="tit !== '新建表单'"
-                        placeholder="请输入表单名称"
-                        :rules="rules"
-                      ></el-input>
-                    </div>
-                </el-form-item>
-              </div>
-            </div>
-            <div class="form-Main">
-              <form-designer
-                ref="formDesigner"
-                v-if="dialogVisible2"
-              ></form-designer>
+      <el-form
+        ref="form"
+        label-width="100px"
+        label-position="right"
+        :rules="rules"
+        :model="postData"
+      >
+        <div class="dialogVisible2-main">
+          <div class="form-title">
+            <div class="title-item">
+              <el-form-item
+                label=" 表单名称"
+                class="title-item-label"
+                prop="name"
+              >
+                <div class="title-item-main">
+                  <el-input
+                    v-model="postData.name"
+                    :disabled="tit !== '新建表单'"
+                    placeholder="请输入表单名称"
+                    :rules="rules"
+                  ></el-input>
+                </div>
+              </el-form-item>
             </div>
           </div>
+          <div class="form-Main">
+            <form-designer
+              ref="formDesigner"
+              v-if="dialogVisible2"
+            ></form-designer>
+          </div>
+        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <div class="next" type="primary" @click="addEnableForm()">发布</div>
         <div class="next" @click="addDraftForm()">保存</div>
-        <div class="cancel" @click="dialogVisible2 = false">取消</div>
+        <div class="cancel" @click="close">取消</div>
       </div>
     </el-dialog>
   </div>
@@ -63,13 +69,13 @@ export default {
   },
   data() {
     return {
-       rules: {
+      rules: {
         name: [
           { required: true, message: "请输入表单名称", trigger: "blur" },
           {
-            min: 0,
+            min: 1,
             max: 100,
-            message: "长度在 0 到 100 个字符",
+            message: "表单名称长度在 1 到 100 个字符",
             trigger: "blur",
           },
         ],
@@ -86,17 +92,21 @@ export default {
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
     isNewDraftPublicForm() {
-      return this.tit && this.tit === '新建表单' ;
+      return this.tit && this.tit === "新建表单";
     },
   },
   methods: {
+    close() {
+      this.dialogVisible2 = false;
+      this.$refs["form"].clearValidate();
+      this.$refs["form"].resetFields();
+    },
     nextDiolog() {
       this.dialogVisible2 = true;
     },
 
     addEnableForm() {
-
-      this.$refs['form'].validate((valid) => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           let formDatas = {
             list: this.$refs.formDesigner.designList,
@@ -152,56 +162,54 @@ export default {
           return false;
         }
       });
-         
     },
     addDraftForm() {
-      this.$refs['form'].validate((valid) => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
-            let formData = new FormData();
-            if (this.postData.id) {
-              formData.append("sourceId", this.postData.sourceId);
-            }
-            formData.append("name", this.postData.name);
-            formData.append("docName", this.postData.name + ".json");
-            formData.append("docType", "json");
-            formData.append("ascription", "public");
-        
-            formData.append("business", "");
-            formData.append("status", "drafted");
-            formData.append("tenantId", this.tenantId);
-
-            const formFile = new File(
-              [this.$refs.formDesigner.getFormData()],
-              "form.json",
-              { type: "text/json" }
-            );
-            formData.append("file", formFile);
-
-            if(this.isNewDraftPublicForm || this.formStatus==='enabled' ){
-              formData.append("createBy", this.userInfo.account);
-              const code = "form_" + Date.parse(new Date());
-              formData.append("code", code);
-              
-              postFormDesignService(formData).then((res) => {
-                this.$message.success("保存成功");
-                this.$emit("addSuccess", "drafted");
-                this.dialogVisible2 = false;
-              }); 
-
-            }else{
-              formData.append("id", this.postData.id);
-              formData.append("code", this.postData.code);
-              formData.append("updateBy", this.userInfo.account);
-              putFormDesignService(formData).then((res) => {
-                this.$message.success("更新成功");
-                this.$emit("addSuccess", "drafted");
-                this.dialogVisible2 = false;
-              }); 
-            }
-          } else {
-            return false;
+          let formData = new FormData();
+          if (this.postData.id) {
+            formData.append("sourceId", this.postData.sourceId);
           }
-        });
+          formData.append("name", this.postData.name);
+          formData.append("docName", this.postData.name + ".json");
+          formData.append("docType", "json");
+          formData.append("ascription", "public");
+
+          formData.append("business", "");
+          formData.append("status", "drafted");
+          formData.append("tenantId", this.tenantId);
+
+          const formFile = new File(
+            [this.$refs.formDesigner.getFormData()],
+            "form.json",
+            { type: "text/json" }
+          );
+          formData.append("file", formFile);
+
+          if (this.isNewDraftPublicForm || this.formStatus === "enabled") {
+            formData.append("createBy", this.userInfo.account);
+            const code = "form_" + Date.parse(new Date());
+            formData.append("code", code);
+
+            postFormDesignService(formData).then((res) => {
+              this.$message.success("保存成功");
+              this.$emit("addSuccess", "drafted");
+              this.dialogVisible2 = false;
+            });
+          } else {
+            formData.append("id", this.postData.id);
+            formData.append("code", this.postData.code);
+            formData.append("updateBy", this.userInfo.account);
+            putFormDesignService(formData).then((res) => {
+              this.$message.success("更新成功");
+              this.$emit("addSuccess", "drafted");
+              this.dialogVisible2 = false;
+            });
+          }
+        } else {
+          return false;
+        }
+      });
     },
   },
   components: {

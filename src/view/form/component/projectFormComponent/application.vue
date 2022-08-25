@@ -39,6 +39,7 @@
             </div>
           </div>
           <el-dialog
+            @close="close"
             title="表单"
             :visible.sync="dialogVisibleModal"
             :close-on-click-modal="false"
@@ -88,7 +89,7 @@
             </div>
             <div slot="footer" class="dialog-footer">
               <div class="next" @click="onSure()" type="primary">确定</div>
-              <div class="cancel" @click="dialogVisibleModal = false">取消</div>
+              <div class="cancel" @click="close">取消</div>
             </div>
           </el-dialog>
           <div class="process-page">
@@ -177,6 +178,11 @@ export default {
     ...mapState("account", ["userInfo", "tenantId"]),
   },
   methods: {
+    close() {
+      this.dialogVisibleModal = false;
+      this.$refs.form.clearValidate();
+      this.$refs.form.resetFields();
+    },
     deleteEmptyChildren(arr) {
       for (let i = 0; i < arr.length; i++) {
         const arrElement = arr[i];
