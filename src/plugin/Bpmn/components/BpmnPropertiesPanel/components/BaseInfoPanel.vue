@@ -1,6 +1,9 @@
 <template>
   <div>
     <el-form :model="baseInfoForm" label-position="right" label-width="100px">
+      <el-form-item label="ID">
+        <el-input v-model="baseInfoForm.id" disabled></el-input>
+      </el-form-item>
       <el-form-item :label="nameLabel">
         <el-input v-model="baseInfoForm.name" clearable></el-input>
       </el-form-item>
