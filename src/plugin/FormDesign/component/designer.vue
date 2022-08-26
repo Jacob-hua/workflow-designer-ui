@@ -175,6 +175,7 @@ export default {
     },
     clear() {
       this.$confirm("此操作将清空整个表单,是否继续?").then(() => {
+        this.activeItem = {};
         this.$emit("clear");
       });
     },
