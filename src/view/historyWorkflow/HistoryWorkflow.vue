@@ -22,6 +22,7 @@
         <el-form-item label="发起时间">
           <el-date-picker
             v-model="searchForm.valueDate"
+            :clearable="false"
             type="daterange"
             align="right"
             unlink-panels
@@ -59,7 +60,11 @@
             <el-button
               @click="onClickDetail(scope.row)"
               type="text"
-              v-role="{ id: 'HistoryLook', type: 'button', business: searchForm.ascription }"
+              v-role="{
+                id: 'HistoryLook',
+                type: 'button',
+                business: searchForm.ascription,
+              }"
             >
               查看
             </el-button>
@@ -169,6 +174,7 @@ export default {
     searchForm: {
       deep: true,
       handler() {
+        this.pageInfo.page = 1
         this.fetchHistoryTasks(this.pageInfo)
         this.fetchHistoryStatistic()
       },

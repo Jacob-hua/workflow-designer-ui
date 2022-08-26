@@ -1,8 +1,17 @@
 <template>
   <div v-show="props.compType === 'cascader'">
     <el-form-item label="字段">
-      <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
-        <el-input class="input" v-model="props.id" @change="handlerChangeId"></el-input>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="请注意,ID的修改可能会导致该组件相关事件失效！"
+        placement="left"
+      >
+        <el-input
+          class="input"
+          v-model="props.id"
+          @change="handlerChangeId"
+        ></el-input>
       </el-tooltip>
     </el-form-item>
     <el-form-item label="标题">
@@ -11,18 +20,31 @@
     <el-form-item label="栅格">
       <el-input-number v-model="props.span" :min="1" :max="24" />
     </el-form-item>
-    <el-form-item label="宽度"> <el-input-number v-model="props.width" :min="0" :max="100" />% </el-form-item>
+    <el-form-item label="宽度">
+      <el-input-number v-model="props.width" :min="0" :max="100" />%
+    </el-form-item>
     <el-form-item label="提示符">
-      <el-input class="input" v-model="props.placeholder" placeholder="请输入提示符" />
+      <el-input
+        class="input"
+        v-model="props.placeholder"
+        placeholder="请输入提示符"
+      />
     </el-form-item>
     <el-form-item label="栅格间隔">
       <el-input-number v-model="props.gutter" :min="0"></el-input-number>
     </el-form-item>
     <el-form-item label="标签宽度">
-      <el-input-number v-model="props.labelWidth" :min="0" :max="200"></el-input-number>
+      <el-input-number
+        v-model="props.labelWidth"
+        :min="0"
+        :max="200"
+      ></el-input-number>
     </el-form-item>
     <el-form-item label="显示标签">
-      <el-switch v-model="props.showLabel" @change="handlerChangeLabel"></el-switch>
+      <el-switch
+        v-model="props.showLabel"
+        @change="handlerChangeLabel"
+      ></el-switch>
     </el-form-item>
     <el-form-item label="大小">
       <el-radio-group v-model="props.size">
@@ -68,10 +90,17 @@
     <el-divider>选项</el-divider>
     <div v-show="props.dataType === 'static'">
       <el-form-item label="静态数据">
-        <el-button icon="el-icon-edit-outline" circle @click="handlerStaticData"></el-button>
+        <el-button
+          icon="el-icon-edit-outline"
+          circle
+          @click="handlerStaticData"
+        ></el-button>
       </el-form-item>
       <el-form-item label="省市区">
-        <el-checkbox v-model="props['china-area-data']" @change="handlerSetAreaData" />
+        <el-checkbox
+          v-model="props['china-area-data']"
+          @change="handlerSetAreaData"
+        />
       </el-form-item>
     </div>
     <interface-parser
@@ -85,7 +114,6 @@
       width="70%"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
-      :show-close="false"
       :center="true"
       top="20px"
       append-to-body
@@ -98,35 +126,35 @@
   </div>
 </template>
 <script>
-import { changeId } from '../mixin'
+import { changeId } from "../mixin";
 //引入 省市区 数据
-import { areaData } from '../../utils/chinaAreaData'
-import { codemirror } from 'vue-codemirror'
+import { areaData } from "../../utils/chinaAreaData";
+import { codemirror } from "vue-codemirror";
 // 核心样式
-import 'codemirror/lib/codemirror.css'
+import "codemirror/lib/codemirror.css";
 // 引入主题后还需要在 options 中指定主题才会生效
-import 'codemirror/theme/dracula.css'
-import 'codemirror/mode/javascript/javascript'
-import { mapMutations } from 'vuex'
-import InterfaceParser from './component/InterfaceParser.vue'
-import DependValue from './component/DependValue.vue'
+import "codemirror/theme/dracula.css";
+import "codemirror/mode/javascript/javascript";
+import { mapMutations } from "vuex";
+import InterfaceParser from "./component/InterfaceParser.vue";
+import DependValue from "./component/DependValue.vue";
 
 const options = {
   tabSize: 2, // 缩进格式
-  theme: 'dracula', // 主题，对应主题库 JS 需要提前引入
+  theme: "dracula", // 主题，对应主题库 JS 需要提前引入
   lineNumbers: true, // 显示行号
   line: true,
   styleActiveLine: true, // 高亮选中行
   hintOptions: {
     completeSingle: true, // 当匹配只有一项的时候是否自动补全
   },
-}
+};
 /**
  * input的配置项
  */
 export default {
-  name: 'cascaderConfig',
-  props: ['props', 'itemList', 'getFormId'],
+  name: "cascaderConfig",
+  props: ["props", "itemList", "getFormId"],
   components: {
     codemirror,
     InterfaceParser,
@@ -137,49 +165,53 @@ export default {
     return {
       staticDataVisible: false,
       codeMirror: options,
-      staticOptions: '',
+      staticOptions: "",
       tempOptions: [],
-    }
+    };
   },
   methods: {
-    ...mapMutations('form', ['addThirdPartyApi']),
+    ...mapMutations("form", ["addThirdPartyApi"]),
     onDependChange(dependValue) {
-      this.props.dependValue = dependValue
+      this.props.dependValue = dependValue;
     },
     onVariableChange(requestConfig) {
-      this.props.requestConfig = requestConfig
-      this.addThirdPartyApi({ id: requestConfig.id })
+      this.props.requestConfig = requestConfig;
+      this.addThirdPartyApi({ id: requestConfig.id });
     },
     handlerChangeLabel(val) {
-      this.props.labelWidth = val ? '80' : '1'
+      this.props.labelWidth = val ? "80" : "1";
     },
     handlerStaticData() {
-      this.staticOptions = JSON.stringify(this.props.options, null, 4)
-      this.staticDataVisible = true
+      this.staticOptions = JSON.stringify(this.props.options, null, 4);
+      this.staticDataVisible = true;
     },
     handlerSave() {
-      this.props.options = JSON.parse(this.staticOptions)
-      this.staticDataVisible = false
+      try {
+        this.props.options = JSON.parse(this.staticOptions);
+        this.staticDataVisible = false;
+      } catch (e) {
+        this.$message.warning("JSON格式有错误,请修改");
+      }
     },
     handlerChangeDataType(value) {
-      if (value === 'static') {
-        this.props.options = []
-        this.props.options = this.tempOptions
+      if (value === "static") {
+        this.props.options = [];
+        this.props.options = this.tempOptions;
       } else {
-        this.tempOptions = this.props.options
-        this.props.options = []
+        this.tempOptions = this.props.options;
+        this.props.options = [];
       }
     },
     handlerSetAreaData(val) {
       if (val) {
-        const areaoptions = areaData()
-        this.tempOptions = this.props.options
-        this.props.options = areaoptions
+        const areaoptions = areaData();
+        this.tempOptions = this.props.options;
+        this.props.options = areaoptions;
       } else {
-        this.props.options = this.tempOptions
+        this.props.options = this.tempOptions;
       }
     },
   },
-}
+};
 </script>
 <style scoped></style>

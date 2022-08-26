@@ -29,7 +29,7 @@
               v-model="userName"
               placeholder="请输入姓名搜索人员"
               prefix-icon="el-icon-search"
-              @keyup.enter.native="getPeopleList"
+              @keyup.enter.native="fetchPeopleList"
             ></el-input>
             <el-table
               ref="multipleTable"
@@ -146,10 +146,19 @@ export default {
     onOpen() {
       this.fetchTreeData()
     },
-    onSelectionAll() {
+    onSelectionAll(rows) {
       if (this.isRadio) {
         this.multipleSelection = []
+        return
       }
+      rows.forEach((row) => {
+        const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
+        if (targetIndex === -1) {
+          this.multipleSelection.push(row)
+        } else {
+          this.multipleSelection.splice(targetIndex, 1)
+        }
+      })
     },
     onSelectionChange(_, row) {
       const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
@@ -165,6 +174,18 @@ export default {
     },
     onCancel() {
       this.dialogVisible = false
+      this.userName = ''
+      this.multipleSelection = []
+      this.tableData = []
+      this.treeData = []
+      this.getData = {
+        groupId: '',
+        name: '',
+        tenantId: this.tenantId,
+        limit: 10,
+        page: 1,
+        total: 1,
+      }
       this.$emit('update:visible', false)
     },
     onTreeSelectedChange(key) {

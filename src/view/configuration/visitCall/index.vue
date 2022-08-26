@@ -124,11 +124,7 @@ export default {
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),
   },
-  mounted() {
-    setTimeout(() => {
-      this.GetGlobalList(this.business);
-    }, 200);
-  },
+  mounted() {},
   methods: {
     showDetail(row) {
       this.DetailFlag = false;

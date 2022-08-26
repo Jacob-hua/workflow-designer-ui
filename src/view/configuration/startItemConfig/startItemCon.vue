@@ -152,7 +152,12 @@
                 </el-radio>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="" label="配置" width="200">
+            <el-table-column
+              align="center"
+              prop=""
+              label="配置"
+              :width="btnFlag ? 200 : 240"
+            >
               <template slot-scope="scope">
                 <el-checkbox
                   :disabled="scope.row.disabled"
@@ -160,7 +165,12 @@
                 ></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column align="center" width="200" prop="" label="必填">
+            <el-table-column
+              align="center"
+              :width="btnFlag ? 200 : 240"
+              prop=""
+              label="必填"
+            >
               <template slot-scope="scope">
                 <el-checkbox
                   @change="write(scope.row)"
@@ -480,7 +490,10 @@ export default {
       );
     },
     checkRepeat(inputValue) {
-      return this.tableData.some((tag) => tag.name === inputValue);
+      return (
+        this.tableData.some((tag) => tag.name === inputValue) ||
+        this.tags.some((tag) => tag.name === inputValue)
+      );
     },
     handleInputConfirm() {
       let inputValue = this.inputValue;

@@ -257,20 +257,39 @@ export default {
       });
     },
     remove(node, data) {
-      deleteBusinessConfig({
-        id: parseInt(data.id),
-        projectCode: this.data[0].code,
-        tenantId: this.tenantId,
-        updateBy: this.userInfo.account,
-      }).then((res) => {
-        this.$message({
-          type: "success",
-          message: "删除成功",
+      this.$confirm("此操作将删当前业务节点,是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        beforeClose: (action, instance, done) => {
+          // 取消回车确认事件
+          if (action === "confirm") {
+            (instance.$refs["confirm"].$el.onclick = function (e) {
+              e = e || window.event;
+              if (e.detail !== 0) {
+                done();
+              }
+            })();
+          } else {
+            done();
+          }
+        },
+      }).then(() => {
+        deleteBusinessConfig({
+          id: parseInt(data.id),
+          projectCode: this.data[0].code,
+          tenantId: this.tenantId,
+          updateBy: this.userInfo.account,
+        }).then((res) => {
+          this.$message({
+            type: "success",
+            message: "删除成功",
+          });
+          const parent = node.parent;
+          const children = parent.data.children || parent.data;
+          const index = children.findIndex((d) => d.id === data.id);
+          children.splice(index, 1);
         });
-        const parent = node.parent;
-        const children = parent.data.children || parent.data;
-        const index = children.findIndex((d) => d.id === data.id);
-        children.splice(index, 1);
       });
     },
   },

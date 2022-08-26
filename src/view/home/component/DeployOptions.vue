@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="visible">
     <el-dialog title="部署工作流" :visible="visible" @close="onCancel" fullscreen>
       <div class="deploy-wrapper">
         <div>
@@ -154,6 +154,8 @@ export default {
       this.iBpmn = iBpmn
     },
     onClose() {
+      this.formName = ''
+      this.formContent = {}
       this.$emit('update:visible', false)
     },
     generateWorkflowFormData() {

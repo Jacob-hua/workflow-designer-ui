@@ -30,10 +30,12 @@
   </div>
 </template>
 <script>
+import { changeId } from '../mixin'
 import DependValue from './component/DependValue.vue'
 export default {
   name: 'rowConfig',
   props: ['props', 'getFormId'],
+  mixins: [changeId],
   methods: {
     onDependChange(dependValue) {
       this.props.dependValue = dependValue

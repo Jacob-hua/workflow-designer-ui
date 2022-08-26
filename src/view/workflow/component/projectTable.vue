@@ -86,6 +86,7 @@ export default {
       immediate: true,
       handler(value) {
         if (Object.keys(value).length) {
+          this.pageInfo.page = 1
           this.findWorkFlowRecord()
         }
       },

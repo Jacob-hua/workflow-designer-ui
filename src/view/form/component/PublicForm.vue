@@ -338,6 +338,9 @@ export default {
   margin-right: 10px;
   margin-left: 10px;
 }
+.PublicForm {
+  width: 1500px;
+}
 .PublicForm-title-input {
   display: inline-block;
   margin-left: 40px;

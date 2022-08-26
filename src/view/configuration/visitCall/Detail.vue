@@ -10,19 +10,33 @@
   >
     <el-form ref="form" label-width="80px">
       <div class="top">
-        <el-form-item label="资源名称">
-          <el-input
-            disabled
-            v-model="currentRow[0] && currentRow[0].source"
-          ></el-input>
-        </el-form-item>
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="currentRow[0] && currentRow[0].source"
+          placement="top"
+        >
+          <el-form-item label="资源名称">
+            <el-input
+              disabled
+              v-model="currentRow[0] && currentRow[0].source"
+            ></el-input>
+          </el-form-item>
+        </el-tooltip>
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="currentRow[0] && currentRow[0].sourceMark"
+          placement="top"
+        >
+          <el-form-item label="资源标识">
+            <el-input
+              disabled
+              v-model="currentRow[0] && currentRow[0].sourceMark"
+            ></el-input>
+          </el-form-item>
+        </el-tooltip>
 
-        <el-form-item label="资源标识">
-          <el-input
-            disabled
-            v-model="currentRow[0] && currentRow[0].sourceMark"
-          ></el-input>
-        </el-form-item>
         <div>
           <el-button
             @click="$emit('showAddOrEidtDailog', currentRow, 'edit')"
@@ -52,62 +66,125 @@
                 :name="String(index)"
               >
                 <div slot="label"><long-text :content="item.name" /></div>
-                <el-form-item label="api名称">
-                  <el-input v-model="item.name" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="api标识">
-                  <el-input v-model="item.apiMark" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="主机地址">
-                  <el-input v-model="item.host" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="访问路径">
-                  <el-input v-model="item.path" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="api类型">
-                  <el-select
-                    v-model="item.type"
-                    disabled
-                    placeholder="请选择api类型"
-                  >
-                    <el-option
-                      v-for="item in apiOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="item.name"
+                  placement="top"
+                >
+                  <el-form-item label="api名称">
+                    <el-input v-model="item.name" disabled></el-input>
+                  </el-form-item>
+                </el-tooltip>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="item.apiMark"
+                  placement="top"
+                >
+                  <el-form-item label="api标识">
+                    <el-input v-model="item.apiMark" disabled></el-input>
+                  </el-form-item>
+                </el-tooltip>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="item.host"
+                  placement="top"
+                >
+                  <el-form-item label="主机地址">
+                    <el-input v-model="item.host" disabled></el-input>
+                  </el-form-item>
+                </el-tooltip>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="item.path"
+                  placement="top"
+                >
+                  <el-form-item label="访问路径">
+                    <el-input v-model="item.path" disabled></el-input>
+                  </el-form-item>
+                </el-tooltip>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="item.type"
+                  placement="top"
+                >
+                  <el-form-item label="api类型">
+                    <el-select
+                      v-model="item.type"
+                      disabled
+                      placeholder="请选择api类型"
                     >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="请求类型">
-                  <el-select
-                    v-model="item.method"
-                    disabled
-                    placeholder="请选择api类型"
-                  >
-                    <el-option
-                      v-for="item in methodsOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
+                      <el-option
+                        v-for="item in apiOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      >
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-tooltip>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="item.method"
+                  placement="top"
+                >
+                  <el-form-item label="请求类型">
+                    <el-select
+                      v-model="item.method"
+                      disabled
+                      placeholder="请选择api类型"
                     >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="请求头">
-                  <el-input disabled v-model="item.headers"></el-input>
-                </el-form-item>
+                      <el-option
+                        v-for="item in methodsOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      >
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-tooltip>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="item.headers"
+                  placement="top"
+                >
+                  <el-form-item label="请求头">
+                    <el-input disabled v-model="item.headers"></el-input>
+                  </el-form-item>
+                </el-tooltip>
                 <div
                   class="params"
                   v-for="(config, idx) in item.configParams"
                   :key="idx"
                 >
-                  <el-form-item label="参数key">
-                    <el-input disabled v-model="config.key"></el-input>
-                  </el-form-item>
-                  <el-form-item label="参数value">
-                    <el-input disabled v-model="config.value"></el-input>
-                  </el-form-item>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="config.key"
+                    placement="top"
+                  >
+                    <el-form-item label="参数key">
+                      <el-input disabled v-model="config.key"></el-input>
+                    </el-form-item>
+                  </el-tooltip>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="config.value"
+                    placement="top"
+                  >
+                    <el-form-item label="参数value">
+                      <el-input disabled v-model="config.value"></el-input>
+                    </el-form-item>
+                  </el-tooltip>
                 </div>
               </el-tab-pane>
             </el-tabs>
@@ -117,12 +194,26 @@
           <p>解析参数</p>
           <div class="jsonViewer">
             <div v-for="(par, idx) in currentPars" :key="idx" class="params">
-              <el-form-item label="参数key">
-                <el-input disabled v-model="par.key"></el-input>
-              </el-form-item>
-              <el-form-item label="参数value">
-                <el-input disabled v-model="par.value"></el-input>
-              </el-form-item>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="par.key"
+                placement="top"
+              >
+                <el-form-item label="参数key">
+                  <el-input disabled v-model="par.key"></el-input>
+                </el-form-item>
+              </el-tooltip>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="par.value"
+                placement="top"
+              >
+                <el-form-item label="参数value">
+                  <el-input disabled v-model="par.value"></el-input>
+                </el-form-item>
+              </el-tooltip>
             </div>
           </div>
         </div>

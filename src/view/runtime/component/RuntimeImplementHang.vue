@@ -10,7 +10,11 @@
         <el-button @click="onConfirmation('挂起确认')">挂起</el-button>
       </div>
     </div>
-    <runtime-confirmation :title="confirmationTitle" :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
+    <runtime-confirmation
+      :title="confirmationTitle"
+      :visible.sync="confirmationVisible"
+      @validate="onConfirmationValidate"
+    />
   </div>
 </template>
 
@@ -52,6 +56,7 @@ export default {
       if (this.hang) {
         getActiveInstance({
           processInstanceId: this.workflow.processInstanceId,
+          taskId: this.workflow.newTaskId,
         }).then((res) => {
           this.$message.success('激活成功')
           this.$emit('hang')
@@ -59,6 +64,7 @@ export default {
       } else {
         putHangInstance({
           processInstanceId: this.workflow.processInstanceId,
+          taskId: this.workflow.newTaskId,
         }).then((res) => {
           this.$message.success('挂起成功')
           this.$emit('hang')

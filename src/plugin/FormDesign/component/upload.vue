@@ -1,10 +1,19 @@
 <template>
   <el-form-item
-    :label="fieldInfo.showLabel ? fieldInfo.label : ''"
     :label-width="fieldInfo.labelWidth + 'px'"
     :prop="fieldInfo.valuePath"
     :rules="rules"
   >
+    <template slot="label">
+      <el-tooltip
+        class="item"
+        effect="light"
+        :content="fieldInfo.showLabel ? fieldInfo.label : ''"
+        placement="top-start"
+      >
+        <span>{{ fieldInfo.showLabel ? fieldInfo.label : "" }}</span>
+      </el-tooltip>
+    </template>
     <el-upload
       v-if="isShowTextUpload"
       class="upload-demo"
@@ -62,14 +71,10 @@
     </el-dialog>
     <ul v-if="isShowTextUpload">
       <li @mousemove="fileMove(file)" v-for="(file, key) in value" :key="key">
-        <el-tooltip
-          class="item"
-          effect="dark"
+        <long-text
+          contentStyle="width: 200px;color: #fff"
           :content="file.name"
-          placement="top"
-        >
-          <span> {{ file.name }}</span>
-        </el-tooltip>
+        />
         <p>
           <span
             @click="handlePreview(file)"
@@ -91,8 +96,12 @@
 
 <script>
 import _ from "lodash";
+import LongText from "@/component/LongText";
 export default {
   name: "upload",
+  components: {
+    LongText,
+  },
   props: {
     fieldInfo: {
       type: Object,
@@ -327,6 +336,21 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/ {
+  .el-form-item__content {
+    margin-left: 60px !important;
+  }
+}
+/deep/ .el-form-item__label {
+  width: 100px !important;
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+
+  -o-text-overflow: ellipsis;
+}
 ul {
   li {
     height: 40px;

@@ -4,6 +4,7 @@
       title="第三方接口配置"
       :visible.sync="dialogVisible"
       width="80%"
+      @close="close"
       fullscreen
       top="1vh"
       append-to-body
@@ -19,7 +20,7 @@
                 class="el-icon-circle-plus-outline"
               ></i>
               <span
-                @click="deleteApiBox(index)"
+                @click="deleteApiBox(index, item)"
                 v-else
                 class="el-icon-delete"
               ></span>
@@ -232,7 +233,7 @@
 
       <div slot="footer" class="dialog-footer">
         <div class="next" @click="saveOrEdite">保存</div>
-        <div class="cancel" @click="dialogVisible = false">取 消</div>
+        <div class="cancel" @click="close">取 消</div>
       </div>
     </el-dialog>
 
@@ -265,11 +266,13 @@ import {
   postSaveOrEdite,
   simulationRequest,
   putSaveOrEdite,
+  deleteApi,
 } from "@/api/globalConfig";
 import { mapState } from "vuex";
 
 import ApiEnum from "@/enum/ApiTypeEnum";
 
+import _ from "lodash";
 export default {
   name: "AddOrEidtDailog",
   props: {
@@ -347,6 +350,12 @@ export default {
     ...mapState("account", ["userInfo", "tenantId"]),
   },
   methods: {
+    close() {
+      this.dialogVisible = false;
+      this.$refs["form0"][0].clearValidate();
+      this.$refs["form0"][0].resetFields();
+    },
+
     apiTypeChange(currentApi, typeName) {
       currentApi.typeName = typeName;
     },
@@ -415,6 +424,19 @@ export default {
         this.apiOptions = res.result;
       });
     },
+    checkKeyIsEmpty(flag = false) {
+      this.apiBoxList.forEach((api) => {
+        let api2 = _.cloneDeep(api);
+        if (
+          Object.keys(api2.parameterMap).includes("") ||
+          Object.keys(JSON.parse(api2.dataParse)).includes("")
+        ) {
+          flag = true;
+        }
+      });
+      return flag;
+    },
+
     saveOrEdite() {
       let flag = false;
       this.apiBoxList.forEach((apiBox, index) => {
@@ -461,7 +483,6 @@ export default {
           apiBox.parameterMap = parameterMap;
         });
         this.apiBoxList.forEach((apiBox) => {
-          delete apiBox.configParams;
           apiBox.ascription = this.business;
         });
 
@@ -472,25 +493,13 @@ export default {
           });
           let set = new Set(arr);
           if (set.size === arr.length) {
-            // parameterMap: {2: null}
-            // parseParams: [{key: "5", value: ""}, {key: "", value: "5"}]
-            // let flag = false;
-            // this.apiBoxList.forEach((api) => {
-            //   let api2 = _.deepClone(api)
-            //   if (
-            //     Object.keys(api2.parameterMap).includes("") ||
-            //     Object.keys(JSON.parse(api2.dataParse).includes(""))
-            //   ) {
-            //     flag = true;
-            //     this.$message({
-            //       type: "warning",
-            //       message: "存在key为空的情况、请检查配置",
-            //     });
-            //   }
-            // });
-            // if (flag) {
-            //   return;
-            // }
+            let result = this.checkKeyIsEmpty();
+            if (result) {
+              this.$message.warning(
+                "参数或解析参数配置中存在key为空, 请修改后保存"
+              );
+              return;
+            }
             postSaveOrEdite(this.apiBoxList).then((res) => {
               this.dialogVisible = false;
               this.$message({
@@ -512,6 +521,13 @@ export default {
           });
           let set = new Set(arr);
           if (set.size === arr.length) {
+            let result = this.checkKeyIsEmpty();
+            if (result) {
+              this.$message.warning(
+                "参数或解析参数配置中存在key为空, 请修改后保存"
+              );
+              return;
+            }
             putSaveOrEdite(this.apiBoxList).then((res) => {
               this.dialogVisible = false;
               this.$message({
@@ -563,8 +579,37 @@ export default {
         ],
       });
     },
-    deleteApiBox(index) {
-      this.apiBoxList.splice(index, 1);
+    deleteApiBox(index, item) {
+      this.$confirm("此操作将删除当前选中api,是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        beforeClose: (action, instance, done) => {
+          // 取消回车确认事件
+          if (action === "confirm") {
+            (instance.$refs["confirm"].$el.onclick = function (e) {
+              e = e || window.event;
+              if (e.detail !== 0) {
+                done();
+              }
+            })();
+          } else {
+            done();
+          }
+        },
+      }).then(() => {
+        if (item.id) {
+          deleteApi(item.id).then((res) => {
+            this.apiBoxList.splice(index, 1);
+            this.$message({
+              type: "success",
+              message: "删除成功",
+            });
+            this.$parent.GetGlobalList(this.business);
+          });
+        }
+        this.apiBoxList.splice(index, 1);
+      });
     },
     addParams(index) {
       this.apiBoxList[index].configParams.push({

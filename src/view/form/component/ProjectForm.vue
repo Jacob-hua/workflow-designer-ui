@@ -29,7 +29,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
-          clearable
+          :clearable="false"
         >
         </el-date-picker>
         <span class="text">表单</span>
@@ -66,7 +66,11 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <el-tabs type="border-card" v-model="formStatus" @tab-click="changeActiveName">
+      <el-tabs
+        type="border-card"
+        v-model="formStatus"
+        @tab-click="changeActiveName"
+      >
         <el-tab-pane name="enabled">
           <span slot="label">可用表单({{ getDataFirst.total }})</span>
           <div
@@ -90,7 +94,10 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <long-text contentStyle="color: white; width: 180px" :content="item.name" />
+                <long-text
+                  contentStyle="color: white; width: 180px"
+                  :content="item.name"
+                />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -124,7 +131,10 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <long-text contentStyle="color: white; width: 180px" :content="item.name" />
+                <long-text
+                  contentStyle="color: white; width: 180px"
+                  :content="item.name"
+                />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -197,10 +207,10 @@ export default {
       formData: {},
       projectValue: "",
       projectOption: [],
-      formStatus: 'enabled',
-      projectCode: '',
+      formStatus: "enabled",
+      projectCode: "",
       valueDate: [start, end],
-      input: '',
+      input: "",
       formListFirst: [],
       formListSecond: [],
       getDataFirst: {
@@ -245,7 +255,6 @@ export default {
       await this.dispatchRefreshOrganization();
       await this.getDraftData();
       await this.getEnableData();
-      await this.getProjectList();
     },
     reset() {
       this.input = "";
@@ -264,38 +273,6 @@ export default {
           this.deleteEmptyChildren(arrElement.children);
         }
       }
-    },
-    async getProjectList() {
-      let _this = this;
-      getProjectList({
-        count: -1,
-        projectCode: "",
-        tenantId: this.tenantId,
-        type: "",
-        menuRoute: router.currentRoute.name,
-        account: JSON.parse(sessionStorage.getItem("loginData")).account,
-      }).then((res) => {
-        _this.projectOption = res?.result ?? [];
-        _this.ascriptionName = _this.projectOption[0].name;
-        _this.systemOption = _this.projectOption[0].children;
-        _this.deleteEmptyChildren(_this.systemOption);
-        _this.$nextTick(() => {
-          _this.$refs.projectFormDiolog.options = _this.systemOption;
-          _this.$refs.projectFormDiolog.postData.business = _this.projectValue;
-        });
-      });
-    },
-
-    handleChange() {
-      this.getManyData();
-    },
-    projectChange(val) {
-      this.systemOption = this.projectOption.filter(
-        ({ code }) => code === val
-      )[0].children;
-      this.deleteEmptyChildren(this.systemOption);
-      this.projectValue = this.systemOption[0]?.code ?? "";
-      this.$refs.projectFormDiolog.postData.business = this.projectValue;
     },
     application() {
       this.dialogVisible = true;
@@ -354,12 +331,12 @@ export default {
 
     getData() {
       switch (this.formStatus) {
-        case 'enabled':
-          this.getEnableData()
-          break
-        case 'drafted':
-          this.getDraftData()
-          break
+        case "enabled":
+          this.getEnableData();
+          break;
+        case "drafted":
+          this.getDraftData();
+          break;
         default:
           break;
       }
@@ -370,14 +347,14 @@ export default {
     },
 
     deleteSuccsee() {
-      this.$refs.detailsDiolog.dialogVisible2 = false
-      this.getManyData()
+      this.$refs.detailsDiolog.dialogVisible2 = false;
+      this.getManyData();
     },
 
     addSuccess() {
-      this.$refs.detailsDiolog.dialogVisible2 = false
-      this.$refs.projectFormDiolog.dialogVisible2 = false
-      this.getManyData()
+      this.$refs.detailsDiolog.dialogVisible2 = false;
+      this.$refs.projectFormDiolog.dialogVisible2 = false;
+      this.getManyData();
     },
 
     changProjectCode(code) {
@@ -386,7 +363,6 @@ export default {
     },
     addForm() {
       this.$refs.projectFormDiolog.dialogVisible1 = true;
-      this.getProjectList();
       this.$refs.projectFormDiolog.title = "新建表单";
       this.$refs.projectFormDiolog.postData = {
         ascriptionName: "",
@@ -397,8 +373,7 @@ export default {
         name: "",
       };
       this.$refs.projectFormDiolog.postData.ascription = this.projectCode;
-      this.$refs.projectFormDiolog.postData.ascriptionName =
-        this.ascriptionName;
+      this.$refs.projectFormDiolog.postData.ascriptionName = this.ascriptionName;
     },
 
     addForm2(item, tileText) {
@@ -501,6 +476,9 @@ export default {
 
 .reset {
   @include resetBtn;
+}
+.PublicForm {
+  width: 1500px;
 }
 
 .PublicForm-title {

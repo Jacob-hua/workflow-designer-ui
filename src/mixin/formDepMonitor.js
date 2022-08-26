@@ -65,8 +65,8 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
   return result
 }
 
-export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => {}) {
-  variableSpace = { ...defaultVariableSpace(), ...variableSpace }
+export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = false) {
+  const variableSpace = { ...defaultVariableSpace(), ...(fieldInfo.variableSpace ?? {}) }
 
   !fieldInfo.context && (fieldInfo.context = {})
 
@@ -94,14 +94,13 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
           funcKey
         )
       },
-      fieldInfo.valuePath ? `${fieldInfo.valuePath}/` : ''
+      fieldInfo.valuePath ? `${fieldInfo.valuePath}` : ''
     )
   }
 
   function calculateDependValue(data, fieldValuePath, dependValuePath) {
     fieldValuePath = fieldValuePath ?? ''
-    const pathLastIndex =
-      fieldValuePath.lastIndexOf('.') === -1 ? fieldValuePath.length : fieldValuePath.lastIndexOf('.')
+    const pathLastIndex = fieldValuePath.lastIndexOf('.')
     const domainPath = fieldValuePath.substring(0, pathLastIndex)
     const domain = _.get(data, domainPath, undefined)
     if (Object.prototype.toString.call(domain) !== '[object Object]') {
@@ -118,7 +117,7 @@ export function watchExecute(fieldInfo, variableSpace = {}, executeFunc = () => 
       const dependValue = calculateDependValue(data, fieldInfo.valuePath, dependValuePath)
       isDiffe = isDiffe || dependValue !== dependObj[dependValuePath].value
       // 如果前后的dependValue都是假值，则默认为发生变化
-      if (!dependValue && !dependObj[dependValuePath].value) {
+      if (immediate && !dependValue && !dependObj[dependValuePath].value) {
         isDiffe = true
       }
       dependObj[dependValuePath].value = dependValue
@@ -150,12 +149,15 @@ export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
     return fieldInfo
   }
 
-  const variableSpace = variableClassify({
-    variable: fieldInfo.id,
-    ...fieldInfo.dependValue,
-  })
+  if (!fieldInfo.variableSpace) {
+    const variableSpace = variableClassify({
+      variable: fieldInfo.id,
+      ...fieldInfo.dependValue,
+    })
+    fieldInfo.variableSpace = variableSpace
+  }
 
-  return watchExecute(fieldInfo, variableSpace, executeFunc)
+  return watchExecute(fieldInfo, executeFunc, true)
 }
 
 export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
@@ -174,14 +176,17 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     return fieldInfo
   }
 
-  const variableSpace = variables.reduce(
-    (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
-    {
-      ...defaultVariableSpace(),
-    }
-  )
+  if (!fieldInfo.variableSpace) {
+    const variableSpace = variables.reduce(
+      (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
+      {
+        ...defaultVariableSpace(),
+      }
+    )
+    fieldInfo.variableSpace = variableSpace
+  }
 
-  return watchExecute(fieldInfo, variableSpace, (variableObj, fieldInfo) => {
+  return watchExecute(fieldInfo, (variableObj, fieldInfo) => {
     executeFunc(parameterHandler(variableObj), fieldInfo)
   })
 

@@ -25,6 +25,9 @@
 </template>
 
 <script>
+import { checkSourceSort } from "@/api/globalConfig";
+import { mapState } from "vuex";
+
 export default {
   name: "Guide",
   props: {
@@ -51,17 +54,26 @@ export default {
       editFlag: false,
     };
   },
+  computed: {
+    ...mapState("account", ["userInfo", "tenantId"]),
+  },
   methods: {
-    next() {
-      let flag = this.$parent.tableData.some(
-        ({ source, sourceMark }) =>
-          this.form.sourceMark === sourceMark || source === this.form.source
-      );
-      if (flag) {
-        this.$message({
-          type: "warning",
-          message: "资源类型或资源标识已存在",
+    async checkSourceSort() {
+      try {
+        const { result } = await checkSourceSort({
+          ...this.form,
+          tenantId: this.tenantId,
+          ascription: this.business,
         });
+        return result;
+      } catch (e) {
+        console.log(e.toString());
+      }
+    },
+    async next() {
+      const result = await this.checkSourceSort();
+      if (result) {
+        this.$message.warning("资源或资源标识已存在");
         return;
       }
       this.$refs["form"].validate((valid) => {
