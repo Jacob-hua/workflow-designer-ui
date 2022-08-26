@@ -189,7 +189,6 @@ export default {
       this.$emit('variableChange', result)
     },
     selectedChange(selected){
-      console.log( selected);
       this.interfaceId = selected
     },
   },
