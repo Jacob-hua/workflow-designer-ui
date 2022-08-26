@@ -61,7 +61,8 @@
         <div class="title">已选择人员</div>
         <div class="users">
           <div class="users-item" v-for="(item, index) in multipleSelection" :key="index">
-            {{ item.userId }} <i class="el-icon-remove-outline" @click="onDeletePeople(index)"></i>
+          <long-text contentStyle="width: 80px" :content="item.userId" />
+          <i class="el-icon-remove-outline" @click="onDeletePeople(index)"></i>
           </div>
         </div>
       </div>
@@ -76,9 +77,12 @@
 <script>
 import { getPersonUser, getThreeSystemOrganize } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
-import { row } from '../../../plugin/FormDesign/custom/items/row'
+import longText from "@/component/LongText.vue"
 
 export default {
+  components: {
+    longText,
+  },
   props: {
     visible: {
       type: Boolean,

@@ -268,6 +268,7 @@ export default {
       this.$confirm("此操作将删除当前选中api,是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
+        cancelButtonClass: "btn-custom-cancel",
         type: "warning",
         beforeClose: (action, instance, done) => {
           // 取消回车确认事件
