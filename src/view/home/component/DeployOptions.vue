@@ -154,6 +154,7 @@ export default {
       this.iBpmn = iBpmn
     },
     onClose() {
+      this.formName = ''
       this.$emit('update:visible', false)
     },
     generateWorkflowFormData() {
