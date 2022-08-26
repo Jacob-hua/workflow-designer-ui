@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     changeProduct() {
-      this.$emit('selectedChange',this.selected);
+      this.$emit('selectedChange', this.selected);
     },
   },
 }
