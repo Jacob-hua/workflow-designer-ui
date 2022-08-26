@@ -45,6 +45,7 @@ export default {
       putCancelInstance({
         cancelReason: terminateReason,
         processInstanceId: this.workflow.processInstanceId,
+        taskId: this.workflow.newTaskId,
       }).then((res) => {
         this.$message.success('终止成功')
         this.$emit('terminated')

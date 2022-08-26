@@ -57,6 +57,7 @@ export default {
       await postModifyProcessUser({
         processInstanceId: this.workflow.processInstanceId,
         taskKey: this.workflow.taskKey,
+        taskId: this.workflow.newTaskId,
         userList,
       })
       this.$message.success('加减签成功')
