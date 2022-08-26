@@ -56,12 +56,12 @@
                 :model="postData"
               >
                 <el-form-item label="应用项目" prop="ascription">
-                  <el-select v-model="postData.ascription">
+                  <el-select v-model="postData.ascription" disabled>
                     <el-option
-                      v-for="item in projectOption"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.code"
+                      v-for="{ id, label, value } in rootOrganizations"
+                      :key="id"
+                      :label="label"
+                      :value="value"
                     ></el-option>
                   </el-select>
                 </el-form-item>
@@ -69,12 +69,13 @@
                 <div class="from-item">
                   <el-form-item label="表单类型" prop="business">
                     <el-cascader
-                      ref="cascader"
                       v-model="postData.business"
-                      :options="systemOption"
-                      :props="sysProps"
                       clearable
-                    ></el-cascader>
+                      :style="{ width: '100%' }"
+                      :options="rootOrganizationChildren(postData.ascription)"
+                      :props="cascaderProps"
+                    >
+                    </el-cascader>
                   </el-form-item>
                 </div>
                 <div class="from-item">
@@ -114,7 +115,7 @@ import {
   designFormDesignServiceAll,
   postFormDesignServiceRealiseProcessData,
 } from "@/api/unit/api.js";
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import { getProjectList } from "@/api/globalConfig";
 import router from "@/router";
 
@@ -175,7 +176,27 @@ export default {
     };
   },
   computed: {
-    ...mapState("account", ["userInfo", "tenantId"]),
+    ...mapState("account", ["tenantId", "userInfo", "currentOrganization"]),
+    ...mapState("uiConfig", ["cascaderProps"]),
+    ...mapGetters("config", [
+      "rootOrganizations",
+      "rootOrganizationChildren",
+      "rootOrganizationChildrenAndAll",
+    ]),
+  },
+  watch: {
+    "postData.ascription"(value) {
+      if (value === this.currentOrganization) {
+        return;
+      }
+      this.updateCurrentOrganization({ currentOrganization: value });
+    },
+    currentOrganization: {
+      immediate: true,
+      handler(value) {
+        this.postData.ascription = value;
+      },
+    },
   },
   methods: {
     close() {
@@ -194,22 +215,6 @@ export default {
           this.deleteEmptyChildren(arrElement.children);
         }
       }
-    },
-    getProjectList() {
-      let _this = this;
-      getProjectList({
-        count: -1,
-        projectCode: "",
-        tenantId: this.tenantId,
-        type: "",
-        menuRoute: router.currentRoute.name,
-        account: JSON.parse(sessionStorage.getItem("loginData")).account,
-      }).then((res) => {
-        this.deleteEmptyChildren(res.result);
-        this.projectOption = res?.result ?? [];
-        this.systemOption = _this.projectOption[0]?.children;
-        this.postData.ascription = this.projectOption[0]?.code;
-      });
     },
     handleClose() {
       this.$emit("close");
@@ -272,15 +277,8 @@ export default {
       this.postData.name = "";
       this.postData.business = "";
     },
-    changEnergy(value) {
-      this.getData.systemType = value;
-    },
-    detailsShow() {
-      this.$refs.detailsRem.dialogVisible2 = true;
-    },
   },
   mounted() {
-    this.getProjectList();
     this.getFormList();
   },
 };

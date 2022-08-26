@@ -133,14 +133,17 @@ export default {
     PeTree,
     editRole,
   },
-  watch: {
-    business: {
-      handler() {
-        this.getTree();
-      },
-      immediate: true,
-    },
+  mounted() {
+    this.getTree();
   },
+  // watch: {
+  //   business: {
+  //     handler() {
+  //       this.getTree();
+  //     },
+  //     immediate: false,
+  //   },
+  // },
 };
 </script>
 
