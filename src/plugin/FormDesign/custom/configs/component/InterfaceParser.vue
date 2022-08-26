@@ -1,10 +1,7 @@
 <template>
   <div>
     <el-form-item label="第三方API">
-      <dropDownText :options="interFaceOption" :key="id" :label="name" :value="id"/>
-      <el-select v-model="interfaceId" clearable>
-        <el-option v-for="{ name, id } in interFaceOption" :key="id" :label="name" :value="id" />
-      </el-select>
+      <seclect :options="interFaceOption" key="id" label="name" value="id" @selectedChange="selectedChange"/>
     </el-form-item>
     <div v-if="variables.length > 0" class="variable-wrapper">
       <el-row :gutter="24">
@@ -57,7 +54,7 @@
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { apiDetail } from '@/api/globalConfig'
 import { variableFactory as variableParser } from '@/mixin/formDepMonitor'
-import dropDownText from "@/component/DropDownText.vue";
+import seclect from "@/component/Select.vue";
 
 const defaultParserProp = () => ({
   optionPath: '',
@@ -68,7 +65,7 @@ const defaultParserProp = () => ({
 
 export default {
   components: {
-    dropDownText,
+    seclect,
   },
   name: 'InterfaceParser',
   props: {
@@ -190,6 +187,10 @@ export default {
         delete result.parserProp.children
       }
       this.$emit('variableChange', result)
+    },
+    selectedChange(selected){
+      console.log( selected);
+      this.interfaceId = selected
     },
   },
 }
