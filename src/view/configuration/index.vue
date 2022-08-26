@@ -84,9 +84,8 @@ export default {
       },
     };
   },
-  async mounted() {
-    await this.getProjectList();
-    await this.$refs.first.GetGlobalList(this.business);
+  mounted() {
+    this.getProjectList();
   },
   computed: {
     ...mapState("account", ["userInfo", "tenantId"]),

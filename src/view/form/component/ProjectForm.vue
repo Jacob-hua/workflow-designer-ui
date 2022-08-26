@@ -94,7 +94,10 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <long-text contentStyle="color: white; width: 180px" :content="item.name" />
+                <long-text
+                  contentStyle="color: white; width: 180px"
+                  :content="item.name"
+                />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -128,7 +131,10 @@
             <div class="card-main">
               <div class="card-main-item">
                 <span class="label">表单名称:</span>
-                <long-text contentStyle="color: white; width: 180px" :content="item.name" />
+                <long-text
+                  contentStyle="color: white; width: 180px"
+                  :content="item.name"
+                />
               </div>
               <div class="card-main-item">
                 <span class="label">创建人:</span>
@@ -249,7 +255,6 @@ export default {
       await this.dispatchRefreshOrganization();
       await this.getDraftData();
       await this.getEnableData();
-      await this.getProjectList();
     },
     reset() {
       this.input = "";
@@ -268,36 +273,6 @@ export default {
           this.deleteEmptyChildren(arrElement.children);
         }
       }
-    },
-    async getProjectList() {
-      let _this = this;
-      getProjectList({
-        count: -1,
-        projectCode: "",
-        tenantId: this.tenantId,
-        type: "",
-        menuRoute: router.currentRoute.name,
-        account: JSON.parse(sessionStorage.getItem("loginData")).account,
-      }).then((res) => {
-        _this.projectOption = res?.result ?? [];
-        _this.ascriptionName = _this.projectOption[0].name;
-        _this.systemOption = _this.projectOption[0].children;
-        _this.deleteEmptyChildren(_this.systemOption);
-        _this.$nextTick(() => {
-          _this.$refs.projectFormDiolog.options = _this.systemOption;
-        });
-      });
-    },
-
-    handleChange() {
-      this.getManyData();
-    },
-    projectChange(val) {
-      this.systemOption = this.projectOption.filter(
-        ({ code }) => code === val
-      )[0].children;
-      this.deleteEmptyChildren(this.systemOption);
-      this.projectValue = this.systemOption[0]?.code ?? "";
     },
     application() {
       this.dialogVisible = true;
@@ -388,7 +363,6 @@ export default {
     },
     addForm() {
       this.$refs.projectFormDiolog.dialogVisible1 = true;
-      this.getProjectList();
       this.$refs.projectFormDiolog.title = "新建表单";
       this.$refs.projectFormDiolog.postData = {
         ascriptionName: "",

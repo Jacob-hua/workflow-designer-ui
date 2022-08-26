@@ -16,12 +16,12 @@
         >
           <div class="from-item">
             <el-form-item label="应用项目" prop="ascription">
-              <el-select :disabled="true" v-model="postData.ascription">
+              <el-select v-model="postData.ascription" disabled>
                 <el-option
-                  v-for="item in projectOption"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.code"
+                  v-for="{ id, label, value } in rootOrganizations"
+                  :key="id"
+                  :label="label"
+                  :value="value"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -29,13 +29,13 @@
           <div class="from-item">
             <el-form-item label="表单类型" prop="business">
               <el-cascader
-                ref="cascader"
                 v-model="postData.business"
-                :options="systemOption"
-                :props="sysProps"
                 clearable
-                @change="onOptionClick"
-              ></el-cascader>
+                :style="{ width: '100%' }"
+                :options="rootOrganizationChildren(postData.ascription)"
+                :props="cascaderProps"
+              >
+              </el-cascader>
             </el-form-item>
           </div>
           <div class="from-item">
@@ -128,7 +128,7 @@ import {
 } from "@/api/unit/api.js";
 import { FormEditor } from "@bpmn-io/form-js-editor";
 
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   props: {
@@ -157,6 +157,32 @@ export default {
       default: () => {
         {
         }
+      },
+    },
+  },
+  computed: {
+    isNewDraftProjectForm() {
+      return this.title && this.title === "新建表单";
+    },
+    ...mapState("account", ["tenantId", "userInfo", "currentOrganization"]),
+    ...mapState("uiConfig", ["cascaderProps"]),
+    ...mapGetters("config", [
+      "rootOrganizations",
+      "rootOrganizationChildren",
+      "rootOrganizationChildrenAndAll",
+    ]),
+  },
+  watch: {
+    "postData.ascription"(value) {
+      if (value === this.currentOrganization) {
+        return;
+      }
+      this.updateCurrentOrganization({ currentOrganization: value });
+    },
+    currentOrganization: {
+      immediate: true,
+      handler(value) {
+        this.postData.ascription = value;
       },
     },
   },
@@ -216,27 +242,19 @@ export default {
       },
     };
   },
-  computed: {
-    ...mapState("account", ["userInfo", "tenantId"]),
-    isNewDraftProjectForm() {
-      return this.title && this.title === "新建表单";
-    },
-  },
+
   methods: {
     close() {
       this.dialogVisible1 = false;
       this.$refs.guideForm.clearValidate();
+      this.$refs.newOrEditForm.clearValidate();
     },
-    onOptionClick() {
-      let nodeInfo = this.$refs.cascader.getCheckedNodes();
-      this.postData.ascName = nodeInfo[0].label;
-    },
-
     nextDiolog() {
       this.$refs["guideForm"].validate((valid) => {
         if (valid) {
           this.dialogVisible1 = false;
           this.dialogVisible2 = true;
+          this.postData.ascName = this.$getMappingName(this.postData.business);
           this.$nextTick(() => {
             this.title = "新建表单";
             this.$refs.formDesigner.clear();
