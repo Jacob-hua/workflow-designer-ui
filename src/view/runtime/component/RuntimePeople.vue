@@ -76,6 +76,7 @@
 <script>
 import { getPersonUser, getThreeSystemOrganize } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
+import { row } from '../../../plugin/FormDesign/custom/items/row'
 
 export default {
   props: {
@@ -141,10 +142,19 @@ export default {
     onOpen() {
       this.fetchTreeData()
     },
-    onSelectionAll() {
+    onSelectionAll(rows) {
       if (this.isRadio) {
         this.multipleSelection = []
+        return
       }
+      rows.forEach((row) => {
+        const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
+        if (targetIndex === -1) {
+          this.multipleSelection.push(row)
+        } else {
+          this.multipleSelection.splice(targetIndex, 1)
+        }
+      })
     },
     onSelectionChange(_, row) {
       const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
