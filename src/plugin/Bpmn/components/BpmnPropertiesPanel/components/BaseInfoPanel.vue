@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import shapeType from '../../../enum/shapeType'
+import zh from '../../../i18n/zh'
 import { deepCopy, deepEquals } from '../../../utils/object'
 
 export default {
@@ -37,21 +37,9 @@ export default {
       return this.$store.state[this.namespace].panel.shapeType
     },
     labels() {
-      const shapeLabelHandle = {
-        [shapeType.START_EVENT]: '开始节点',
-        [shapeType.END_EVENT]: '结束节点',
-        [shapeType.SEQUENCE_FLOW]: '连接',
-        [shapeType.USER_TASK]: '用户任务',
-        [shapeType.TASK]: '任务',
-        [shapeType.COMPLEX_GATEWAY]: '复杂网关',
-        [shapeType.PARALLEL_GATEWAY]: '并联网关',
-        [shapeType.EXCLUSIVE_GATEWAY]: '互斥网关',
-        [shapeType.INCLUSIVE_GATEWAY]: '相容网关',
-        [shapeType.EVENT_BASE_GATEWAY]: '事件网关',
-      }
       return {
-        id: `${shapeLabelHandle[this.shapeType] ?? '流程'}ID`,
-        name: `${shapeLabelHandle[this.shapeType] ?? '流程'}名称`,
+        id: `${zh[this.shapeType] ?? '流程'}ID`,
+        name: `${zh[this.shapeType] ?? '流程'}名称`,
       }
     },
   },
