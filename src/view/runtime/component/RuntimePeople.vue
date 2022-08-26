@@ -29,7 +29,7 @@
               v-model="userName"
               placeholder="请输入姓名搜索人员"
               prefix-icon="el-icon-search"
-              @keyup.enter.native="getPeopleList"
+              @keyup.enter.native="fetchPeopleList"
             ></el-input>
             <el-table
               ref="multipleTable"
@@ -160,6 +160,18 @@ export default {
     },
     onCancel() {
       this.dialogVisible = false
+      this.userName = ''
+      this.multipleSelection = []
+      this.tableData = []
+      this.treeData = []
+      this.getData = {
+        groupId: '',
+        name: '',
+        tenantId: this.tenantId,
+        limit: 10,
+        page: 1,
+        total: 1,
+      }
       this.$emit('update:visible', false)
     },
     onTreeSelectedChange(key) {
