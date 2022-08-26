@@ -1,4 +1,3 @@
-import shapeType from '../../../../enum/shapeType'
 import IBpmnModeler from '../../../../IBpmnModeler'
 
 function baseInfoParameter2State(iBpmnModeler = new IBpmnModeler()) {
@@ -33,11 +32,6 @@ function multiInstance2State(element, iBpmnModeler = new IBpmnModeler()) {
   return state
 }
 
-function defaultListener2State(element, iBpmnModeler = new IBpmnModeler()) {
-  console.log(element)
-  console.log(iBpmnModeler.getShapeType(element))
-}
-
 function onShapeChangedListener({ element }, commit, iBpmnModeler = new IBpmnModeler()) {
   if (!element) {
     return
@@ -45,7 +39,6 @@ function onShapeChangedListener({ element }, commit, iBpmnModeler = new IBpmnMod
   const baseInfo = baseInfoParameter2State(iBpmnModeler)
   const shapeType = shapeType2State(element, iBpmnModeler)
   const multiInstance = multiInstance2State(element, iBpmnModeler)
-  defaultListener2State(element, iBpmnModeler)
   commit('refreshState', { baseInfo, shapeType, multiInstance })
 }
 
