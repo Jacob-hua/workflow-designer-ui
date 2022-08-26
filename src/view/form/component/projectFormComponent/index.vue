@@ -247,6 +247,7 @@ export default {
     close() {
       this.dialogVisible1 = false;
       this.$refs.guideForm.clearValidate();
+      this.$refs.newOrEditForm.clearValidate();
     },
     nextDiolog() {
       this.$refs["guideForm"].validate((valid) => {
