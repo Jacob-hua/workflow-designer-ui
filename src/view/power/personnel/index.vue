@@ -165,6 +165,7 @@ export default {
   padding-right: 20px;
   height: 650px;
   flex: 4;
+  overflow-y: auto;
   /*border: 1px solid #cccccc;*/
   border: 1px solid #333333;
 }
