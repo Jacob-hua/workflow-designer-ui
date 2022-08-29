@@ -344,10 +344,6 @@ export default {
   @include primaryPlainBtn;
   width: 118px;
   height: 42px;
-  //display: inline-block;
-  //line-height: 42px;
-  //text-align: center;
-  //border: 1px solid #cccccc;
   margin-right: 20px;
 }
 

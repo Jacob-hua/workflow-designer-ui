@@ -156,6 +156,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    business: {
+      type: String,
+    },
   },
   computed: {
     ...mapState("account", ["tenantId", "userInfo"]),
@@ -304,7 +307,7 @@ export default {
     },
     getMapping(item) {
       getUserPermission({
-        projectCode: item.groupList[0].id.split(":")[0],
+        projectCode: this.business,
         tenantId: item.tenantList[0].id,
         userId: item.userId,
       }).then((res) => {
