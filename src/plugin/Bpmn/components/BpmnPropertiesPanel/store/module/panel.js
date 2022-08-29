@@ -5,6 +5,7 @@ import panelListener from '../listener'
 const state = () => ({
   shapeType: '',
   baseInfo: {
+    id: '',
     name: '',
   },
   timer: {},
