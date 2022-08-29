@@ -156,7 +156,6 @@ export default {
   watch: {
     searchForm: {
       deep: true,
-      immediate: true,
       handler() {
         this.getManyData()
       },
@@ -165,7 +164,6 @@ export default {
   async created() {
     await this.dispatchRefreshOrganization()
     this.searchForm.ascription = this.findRootOrganizationByIndex(0).value
-    this.getManyData()
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
