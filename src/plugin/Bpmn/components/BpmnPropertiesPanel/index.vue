@@ -117,6 +117,12 @@ export default {
           this.executeListenerPanelInfo,
           this.inputOutputPanelInfo,
         ],
+        [BpmnShapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT]: [
+          this.baseInfoPanelInfo,
+          this.timerPanelInfo,
+          this.executeListenerPanelInfo,
+          this.inputOutputPanelInfo,
+        ],
         [BpmnShapeType.END_EVENT]: [this.baseInfoPanelInfo, this.executeListenerPanelInfo, this.inputOutputPanelInfo],
         [BpmnShapeType.USER_TASK]: [
           this.baseInfoPanelInfo,

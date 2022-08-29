@@ -13,6 +13,7 @@
 
 <script>
 import shapeType from '../../../enum/shapeType'
+import zh from '../../../i18n/zh'
 import { deepCopy, deepEquals } from '../../../utils/object'
 
 export default {
@@ -36,26 +37,40 @@ export default {
     shapeType() {
       return this.$store.state[this.namespace].panel.shapeType
     },
+    listeners() {
+      return this.$store.state[this.namespace].panel.listeners
+    },
     labels() {
-      const shapeLabelHandle = {
-        [shapeType.START_EVENT]: '开始节点',
-        [shapeType.END_EVENT]: '结束节点',
-        [shapeType.SEQUENCE_FLOW]: '连接',
-        [shapeType.USER_TASK]: '用户任务',
-        [shapeType.TASK]: '任务',
-        [shapeType.COMPLEX_GATEWAY]: '复杂网关',
-        [shapeType.PARALLEL_GATEWAY]: '并联网关',
-        [shapeType.EXCLUSIVE_GATEWAY]: '互斥网关',
-        [shapeType.INCLUSIVE_GATEWAY]: '相容网关',
-        [shapeType.EVENT_BASE_GATEWAY]: '事件网关',
-      }
       return {
-        id: `${shapeLabelHandle[this.shapeType] ?? '流程'}ID`,
-        name: `${shapeLabelHandle[this.shapeType] ?? '流程'}名称`,
+        id: `${zh[this.shapeType] ?? '流程'}ID`,
+        name: `${zh[this.shapeType] ?? '流程'}名称`,
       }
     },
   },
   watch: {
+    shapeType(value) {
+      const existedListener = (listener) =>
+        this.listeners.find(
+          (item) =>
+            item.event === listener.event &&
+            item.listenerType === listener.listenerType &&
+            item.class === listener.class
+        )
+      const listener = {
+        event: 'start',
+        listenerType: 'class',
+        class: '',
+      }
+      if ([shapeType.TIMER_START_EVENT].includes(value)) {
+        listener.class = 'com.siact.product.jwp.listener.ScheduleStartListener'
+      } else if ([shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)) {
+        listener.class = 'com.siact.product.jwp.listener.TimeOutListener'
+      }
+      if (existedListener(listener)) {
+        return
+      }
+      this.addListener({ listener })
+    },
     baseInfo(value) {
       this.baseInfoForm = { ...value }
     },
@@ -76,6 +91,12 @@ export default {
   methods: {
     updateBaseInfo(payload) {
       this.$store.commit(`${this.namespace}/panel/updateBaseInfo`, payload)
+    },
+    addListener(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/addListener`,
+        ...payload,
+      })
     },
   },
 }

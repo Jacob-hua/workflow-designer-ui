@@ -169,8 +169,15 @@ class IBpmnModeler {
   }
 
   getShapeType(element) {
-    const { $type, eventDefinitions = [] } = this.getShapeInfo(element)
-    return getShapeType(eventDefinitions[0] ? `${$type}_${eventDefinitions[0].$type}` : `${$type}`)
+    const shapeInfo = this.getShapeInfo(element)
+    let tag = shapeInfo.$type
+    if (Array.isArray(shapeInfo.eventDefinitions) && shapeInfo.eventDefinitions.length > 0) {
+      tag = `${tag}_${shapeInfo.eventDefinitions[0].$type}`
+      if (Object.keys(shapeInfo).includes('cancelActivity') && !shapeInfo.cancelActivity) {
+        tag = `${tag}_false`
+      }
+    }   
+    return getShapeType(tag)
   }
 
   updateSelectedShapeExtensions(extensions = {}) {

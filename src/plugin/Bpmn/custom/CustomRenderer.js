@@ -155,7 +155,6 @@ class CustomRenderer extends BaseRenderer {
       return
     }
     var h = this._renderer(type)
-    console.log(type)
     /* jshint -W040 */
     return h(parentGfx, element)
   }
