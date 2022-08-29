@@ -128,12 +128,9 @@
                   v-for="(item1, index1) in item.children"
                   :key="index1"
                   :style="{
-                    display: 'inline-block',
-                    marginRight:
-                      item.children.filter(({ flag }) => flag === 0).length ===
-                      1
-                        ? '0px'
-                        : '20px',
+                    display:
+                      item1.name === '业务配置' ? 'block' : 'inline-block',
+                    marginRight: item1.flag === 1 ? '0px' : '20px',
                   }"
                 >
                   <el-checkbox
@@ -344,10 +341,6 @@ export default {
   @include primaryPlainBtn;
   width: 118px;
   height: 42px;
-  //display: inline-block;
-  //line-height: 42px;
-  //text-align: center;
-  //border: 1px solid #cccccc;
   margin-right: 20px;
 }
 

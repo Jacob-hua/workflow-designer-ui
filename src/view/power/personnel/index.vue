@@ -54,6 +54,7 @@
       </div>
     </div>
     <editRole
+      :business="business"
       :dialogVisible="dialogVisible"
       @handleClose="handleClose()"
       ref="editRole"
