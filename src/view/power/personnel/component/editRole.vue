@@ -326,12 +326,10 @@ export default {
   @include contentTab;
   /deep/ .el-tabs--border-card {
     .el-tabs__item {
-      font-size: 14px;
       width: unset !important ;
     }
 
     .el-tabs__item.is-active {
-      font-size: 14px;
       width: unset !important;
     }
   }
