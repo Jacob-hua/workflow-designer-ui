@@ -23,6 +23,9 @@
           <el-table-column type="index" label="序号" width="50" align="center">
           </el-table-column>
           <el-table-column prop="lastName" label="姓名" align="center">
+            <template slot-scope="scope">
+              {{ scope.row.firstName }} {{ scope.row.lastName }}
+            </template>
           </el-table-column>
           <el-table-column label="角色" align="center">
             <template slot-scope="scope">
