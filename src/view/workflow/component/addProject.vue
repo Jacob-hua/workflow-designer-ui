@@ -65,8 +65,8 @@ export default {
             validator: (_, value, callback) => {
               if (value === '') {
                 callback(new Error('请输入流程名称'))
-              } else if (String.prototype.trim.call(value).length < 2) {
-                callback(new Error('流程名称长度不能小于2'))
+              } else if (String.prototype.trim.call(value).length < 3) {
+                callback(new Error('流程名称长度必须大于2'))
               } else if (String.prototype.trim.call(value).length > 100) {
                 callback(new Error('流程名称长度不能大于100'))
               } else {
