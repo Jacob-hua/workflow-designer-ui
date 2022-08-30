@@ -20,7 +20,11 @@ function multiInstance2State(element, iBpmnModeler = new IBpmnModeler()) {
     elementVariable: '',
     completionCondition: '',
   }
-  const moddleElement = iBpmnModeler.getShapeInfoByType(element, 'loopCharacteristics')
+  const shapeInfo = iBpmnModeler.getSelectedShapeInfo()
+  if (!shapeInfo.loopCharacteristics) {
+    return state
+  }
+  const moddleElement = shapeInfo.loopCharacteristics
   if (!moddleElement) {
     return state
   }

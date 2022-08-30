@@ -65,6 +65,8 @@ export default {
         listener.class = 'com.siact.product.jwp.listener.ScheduleStartListener'
       } else if ([shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)) {
         listener.class = 'com.siact.product.jwp.listener.TimeOutListener'
+      } else {
+        return
       }
       if (existedListener(listener)) {
         return
