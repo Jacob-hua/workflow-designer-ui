@@ -57,6 +57,7 @@
       :title="title"
       :visible.sync="dialogVisible2"
       fullscreen
+      @close="closeForm"
       top="1vh"
       custom-class="dialogVisibleEdit"
     >
@@ -247,6 +248,9 @@ export default {
     close() {
       this.dialogVisible1 = false;
       this.$refs.guideForm.clearValidate();
+    },
+    closeForm() {
+      this.dialogVisible2 = false;
       this.$refs.newOrEditForm.clearValidate();
     },
     nextDiolog() {
