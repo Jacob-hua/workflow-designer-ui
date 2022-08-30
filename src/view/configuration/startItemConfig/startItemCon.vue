@@ -40,6 +40,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="80%"
+      @close="close()"
       fullscreen
       append-to-body
     >
@@ -58,10 +59,9 @@
           <div v-if="!tableData.length" class="tip_content">
             当前未配置自定义启动项
           </div>
-          <div class="selfDefine" v-if="footFlag" @click="showSelf">自定义</div>
-          <!--          <el-button @click="editTable" v-if="btnFlag && tableData.length" style="margin-left: 960px" type="primary"-->
-          <!--                     v-role="{ id: 'StartItemConfigEdit', type: 'button', business: business }">编辑-->
-          <!--          </el-button>-->
+          <div class="selfDefine" v-if="isShowCustom" @click="showSelf">
+            自定义
+          </div>
           <el-table
             v-if="tableFlag && tableData.length > 0"
             :data="tableData"
@@ -230,7 +230,7 @@ export default {
   props: {
     footFlag: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     businessData: {
       type: Object,
@@ -260,6 +260,14 @@ export default {
     };
   },
   computed: {
+    isShowCustom: {
+      get() {
+        return this.footFlag;
+      },
+      set(value) {
+        this.$emit("update:footFlag", value);
+      },
+    },
     ...mapState("account", ["userInfo", "tenantId"]),
   },
   mounted() {
@@ -271,6 +279,9 @@ export default {
     });
   },
   methods: {
+    close() {
+      this.$emit("update:footFlag", false);
+    },
     codeChange(value) {
       if (value.length < 1 || value.length > 100) {
         this.$message({
@@ -383,22 +394,27 @@ export default {
       }
     },
     handleNodeClick(data) {
-      this.processFlag = true;
-      this.currentId = data.id;
-      this.businessConfigId = data.id;
-      selectProcessStartConfigList(data.id, +this.tenantId).then((res) => {
-        res.result.forEach((item) => {
-          item.disabled = true;
-          item.startType = item.startType + "";
-          item.isSetting = !!item.isSetting;
-          item.isRequired = !!item.isRequired;
+      if (data.parentId !== "-1") {
+        this.isShowCustom = true;
+        this.processFlag = true;
+        this.currentId = data.id;
+        this.businessConfigId = data.id;
+        selectProcessStartConfigList(data.id, +this.tenantId).then((res) => {
+          res.result.forEach((item) => {
+            item.disabled = true;
+            item.startType = item.startType + "";
+            item.isSetting = !!item.isSetting;
+            item.isRequired = !!item.isRequired;
+          });
+          res.result.forEach((item) => {
+            item["btnTxt"] = "编辑";
+          });
+          this.tableFlag = true;
+          this.tableData = res.result;
         });
-        res.result.forEach((item) => {
-          item["btnTxt"] = "编辑";
-        });
-        this.tableFlag = true;
-        this.tableData = res.result;
-      });
+      } else {
+        this.$emit("update:footFlag", false);
+      }
     },
     // 检查引用
     checkIsReferenced(data) {

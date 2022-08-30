@@ -38,15 +38,7 @@
           </el-input>
         </div>
       </div>
-      <div>
-        <!--        <div class="item1">-->
-        <!--          <label>业务选择</label>-->
-        <!--          <el-select v-model="value" placeholder="请选择">-->
-        <!--            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">-->
-        <!--            </el-option>-->
-        <!--          </el-select>-->
-        <!--        </div>-->
-      </div>
+      <div></div>
       <div>
         <label style="margin-right: 11px">用户组</label>
         <div
@@ -164,6 +156,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    business: {
+      type: String,
+    },
   },
   computed: {
     ...mapState("account", ["tenantId", "userInfo"]),
@@ -216,7 +211,12 @@ export default {
   watch: {
     "detailData.map": {
       handler() {
-        this.activeName = Object.keys(this.detailData.map)[0];
+        if (this.type === "edit") {
+          this.activeName = "个人权限";
+          this.checkRole = this.activeName;
+        } else {
+          this.activeName = Object.keys(this.detailData.map)[0];
+        }
       },
     },
   },
@@ -307,7 +307,7 @@ export default {
     },
     getMapping(item) {
       getUserPermission({
-        projectCode: item.groupList[0].id.split(":")[0],
+        projectCode: this.business,
         tenantId: item.tenantList[0].id,
         userId: item.userId,
       }).then((res) => {
@@ -327,6 +327,15 @@ export default {
   min-height: 100vh;
   margin-top: 40px;
   @include contentTab;
+  /deep/ .el-tabs--border-card {
+    .el-tabs__item {
+      width: unset !important ;
+    }
+
+    .el-tabs__item.is-active {
+      width: unset !important;
+    }
+  }
 }
 
 .save {
