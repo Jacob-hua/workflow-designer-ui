@@ -10,9 +10,7 @@
         class="businessCall-main-list-card"
       >
         <div class="card-main">
-          <div>
-            <label>项目名称:</label> <long-text :content="item.name" />
-          </div>
+          <div><label>项目名称:</label> <long-text :content="item.name" /></div>
           <div>
             <label>项目类型:</label> <span>{{ item.typeName }}</span>
           </div>
@@ -49,7 +47,7 @@
     <div v-if="itemconFlag">
       <StartItemCon
         :businessData="businessData"
-        :footFlag="footFlag"
+        :footFlag.sync="footFlag"
         ref="StartItemCon"
       />
     </div>
@@ -90,7 +88,6 @@ export default {
   },
   methods: {
     showSartDailog(id, item) {
-      this.footFlag = true;
       this.businessData = item;
       let _this = this;
       getBusinessConfigWithTree(id, +_this.tenantId).then((res) => {
