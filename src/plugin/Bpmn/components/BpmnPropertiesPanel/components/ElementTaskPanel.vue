@@ -128,7 +128,7 @@ export default {
       deep: true,
       immediate: true,
       handler(displayAssignee) {
-        if (emptyPropertiesObject(displayAssignee) || deepEquals(displayAssignee, this.userTask.displayAssignee)) {
+        if (deepEquals(displayAssignee, this.userTask.displayAssignee)) {
           return
         }
         this.updateUserTask({ displayAssignee: deepCopy(displayAssignee) })

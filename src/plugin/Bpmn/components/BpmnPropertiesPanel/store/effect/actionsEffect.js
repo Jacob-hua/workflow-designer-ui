@@ -6,6 +6,9 @@ function actionsEffect({ actions }, iBpmnModeler = new IBpmnModeler()) {
     return
   }
   iBpmnModeler.updateSelectedShapeProperties({ actions })
+  if (!actions || actions.length === 0) {
+    delete iBpmnModeler.getSelectedShapeInfo().actions
+  }
 }
 
 export default actionsEffect

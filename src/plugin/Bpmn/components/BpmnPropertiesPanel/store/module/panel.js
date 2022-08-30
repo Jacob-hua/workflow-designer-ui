@@ -169,7 +169,7 @@ const mutations = {
     state.multiInstance = deepCopy(newMultiInstance)
   },
   updateActions(state, { newActions }) {
-    if (!Array.isArray(newActions) || newActions.length < 1) {
+    if (!Array.isArray(newActions)) {
       return
     }
     state.actions = [...newActions]
