@@ -45,7 +45,11 @@
                 type="text"
                 size="small"
                 @click="editData(scope.row)"
-                v-role="{ id: 'PowerLook', type: 'button', business: business }"
+                v-role="{
+                  id: 'PowerPersonnel',
+                  type: 'button',
+                  business: business,
+                }"
                 >编辑</el-button
               >
             </template>

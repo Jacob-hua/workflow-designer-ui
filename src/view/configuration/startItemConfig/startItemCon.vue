@@ -56,7 +56,7 @@
         </div>
         <div class="start_right">
           <p>自定义启动项</p>
-          <div v-if="!tableData.length" class="tip_content">
+          <div v-if="!tableData.length || !tableFlag" class="tip_content">
             当前未配置自定义启动项
           </div>
           <div class="selfDefine" v-if="isShowCustom" @click="showSelf">
@@ -413,6 +413,7 @@ export default {
           this.tableData = res.result;
         });
       } else {
+        this.tableFlag = false;
         this.$emit("update:footFlag", false);
       }
     },
