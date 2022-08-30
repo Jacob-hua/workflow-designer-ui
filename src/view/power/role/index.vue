@@ -31,7 +31,11 @@
             type="primary"
             icon="el-icon-s-finance"
             @click="editHandle()"
-            v-role="{ id: 'PowerLook', type: 'button', business: business }"
+            v-role="{
+              id: 'PowerPersonnel',
+              type: 'button',
+              business: business,
+            }"
             >编辑</el-button
           >
         </div>

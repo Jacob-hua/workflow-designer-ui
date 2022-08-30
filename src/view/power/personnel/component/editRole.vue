@@ -13,6 +13,11 @@
         class="plain"
         type="primary"
         @click="grant()"
+        v-role="{
+          id: 'PowerPersonnel',
+          type: 'button',
+          business: business,
+        }"
         v-if="type !== 'edit'"
         >授权</el-button
       >

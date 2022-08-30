@@ -20,6 +20,11 @@
         type="primary"
         @click="grant()"
         v-if="type !== 'edit'"
+        v-role="{
+          id: 'PowerPersonnel',
+          type: 'button',
+          business: business,
+        }"
         style="float: right"
         >编辑</el-button
       >
