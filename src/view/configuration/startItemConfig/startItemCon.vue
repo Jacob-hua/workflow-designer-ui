@@ -394,23 +394,27 @@ export default {
       }
     },
     handleNodeClick(data) {
-      this.isShowCustom = true;
-      this.processFlag = true;
-      this.currentId = data.id;
-      this.businessConfigId = data.id;
-      selectProcessStartConfigList(data.id, +this.tenantId).then((res) => {
-        res.result.forEach((item) => {
-          item.disabled = true;
-          item.startType = item.startType + "";
-          item.isSetting = !!item.isSetting;
-          item.isRequired = !!item.isRequired;
+      if (data.parentId !== "-1") {
+        this.isShowCustom = true;
+        this.processFlag = true;
+        this.currentId = data.id;
+        this.businessConfigId = data.id;
+        selectProcessStartConfigList(data.id, +this.tenantId).then((res) => {
+          res.result.forEach((item) => {
+            item.disabled = true;
+            item.startType = item.startType + "";
+            item.isSetting = !!item.isSetting;
+            item.isRequired = !!item.isRequired;
+          });
+          res.result.forEach((item) => {
+            item["btnTxt"] = "编辑";
+          });
+          this.tableFlag = true;
+          this.tableData = res.result;
         });
-        res.result.forEach((item) => {
-          item["btnTxt"] = "编辑";
-        });
-        this.tableFlag = true;
-        this.tableData = res.result;
-      });
+      } else {
+        this.$emit("update:footFlag", false);
+      }
     },
     // 检查引用
     checkIsReferenced(data) {
