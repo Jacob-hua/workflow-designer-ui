@@ -184,7 +184,7 @@
 </template>
 
 <script>
-import { postPersonUser, postMapping } from "@/api/unit/api.js";
+import { postPersonUser, postMapping, mappingGroup } from "@/api/unit/api.js";
 import { mapState } from "vuex";
 export default {
   props: {
@@ -247,7 +247,7 @@ export default {
         tenantId: this.tenantId,
         permission: permission,
       });
-      postMapping(postArr).then((res) => {
+      mappingGroup(postArr).then((res) => {
         this.$message.success("权限修改成功");
         this.$emit("handleClose");
       });

@@ -75,8 +75,10 @@
                   :label="item.id"
                   v-model="item.flag"
                   :disabled="
-                    detailData.roleList[detailData.roleList.length - 1].name !==
-                      checkRole || type !== 'edit'
+                    (detailData.roleList &&
+                      detailData.roleList[detailData.roleList.length - 1]
+                        .name !== checkRole) ||
+                    type !== 'edit'
                   "
                   :true-label="0"
                   :false-label="1"
@@ -95,8 +97,10 @@
                     :label="item1.id"
                     v-model="item1.flag"
                     :disabled="
-                      detailData.roleList[detailData.roleList.length - 1]
-                        .name !== checkRole || type !== 'edit'
+                      (detailData.roleList &&
+                        detailData.roleList[detailData.roleList.length - 1]
+                          .name !== checkRole) ||
+                      type !== 'edit'
                     "
                     :true-label="0"
                     :false-label="1"
@@ -117,8 +121,10 @@
                       :label="item2.id"
                       v-model="item2.flag"
                       :disabled="
-                        detailData.roleList[detailData.roleList.length - 1]
-                          .name !== checkRole || type !== 'edit'
+                        (detailData.roleList &&
+                          detailData.roleList[detailData.roleList.length - 1]
+                            .name !== checkRole) ||
+                        type !== 'edit'
                       "
                       :true-label="0"
                       v-for="(item2, index2) in item1.children"
@@ -141,8 +147,10 @@
         type="primary"
         @click="award"
         :disabled="
-          detailData.roleList[detailData.roleList.length - 1].name !==
-            checkRole || type !== 'edit'
+          (detailData.roleList &&
+            detailData.roleList[detailData.roleList.length - 1].name !==
+              checkRole) ||
+          type !== 'edit'
         "
         >授予</el-button
       >
@@ -152,7 +160,12 @@
 </template>
 
 <script>
-import { getUserPermission, postMapping, userLogin } from "@/api/unit/api.js";
+import {
+  getUserPermission,
+  postMapping,
+  userLogin,
+  mappingUser,
+} from "@/api/unit/api.js";
 import { mapState } from "vuex";
 
 export default {
@@ -250,9 +263,11 @@ export default {
             }
             recursionItem(item, permission[item.permissionType]);
           });
-          let projectCode = this.detailData.roleList.filter((item) => {
-            return item.name === mapName;
-          });
+          let projectCode =
+            this.detailData.roleList &&
+            this.detailData.roleList.filter((item) => {
+              return item.name === mapName;
+            });
           postArr.push({
             code: projectCode[0].code,
             name: this.detailData.name,
@@ -263,7 +278,7 @@ export default {
           });
         }
       });
-      postMapping(postArr).then((res) => {
+      mappingUser(postArr).then((res) => {
         this.$message.success("权限修改成功");
         this.$emit("handleClose");
       });

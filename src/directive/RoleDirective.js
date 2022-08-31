@@ -12,7 +12,6 @@ Vue.directive("role", {
     const proJectRole = permissions.find(
       (item) => item.projectCode === store.account.state.currentOrganization
     )?.permissionSet;
-    console.log(proJectRole);
     if (!proJectRole) {
       return;
     }
