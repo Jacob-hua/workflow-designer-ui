@@ -61,8 +61,8 @@
         <div class="title">已选择人员</div>
         <div class="users">
           <div class="users-item" v-for="(item, index) in multipleSelection" :key="index">
-          <long-text contentStyle="width: 80px" :content="item.userId" />
-          <i class="el-icon-remove-outline" @click="onDeletePeople(index)"></i>
+            <long-text contentStyle="width: 80px" :content="item.userId" />
+            <i class="el-icon-remove-outline" @click="onDeletePeople(index)"></i>
           </div>
         </div>
       </div>
@@ -77,7 +77,7 @@
 <script>
 import { getPersonUser, getThreeSystemOrganize } from '@/api/unit/api.js'
 import { mapState } from 'vuex'
-import longText from "@/component/LongText.vue"
+import longText from '@/component/LongText.vue'
 
 export default {
   components: {
@@ -151,12 +151,16 @@ export default {
         this.multipleSelection = []
         return
       }
+      if (rows.length === 0) {
+        this.multipleSelection = []
+        return
+      }
       rows.forEach((row) => {
         const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
         if (targetIndex === -1) {
           this.multipleSelection.push(row)
         } else {
-          this.multipleSelection.splice(targetIndex, 1)
+          this.multipleSelection.splice(targetIndex, 1, row)
         }
       })
     },
