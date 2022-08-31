@@ -150,6 +150,7 @@ export default {
         this.updateBaseInfo({
           newBaseInfo: {
             name: this.iBpmnModeler.getRootShapeInfo().name,
+            id: this.iBpmnModeler.getRootShapeInfo().id,
           },
         })
       },
