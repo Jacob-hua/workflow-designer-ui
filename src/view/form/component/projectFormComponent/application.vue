@@ -114,6 +114,7 @@
 import {
   designFormDesignServiceAll,
   postFormDesignServiceRealiseProcessData,
+  associationForm,
 } from "@/api/unit/api.js";
 import { mapGetters, mapState } from "vuex";
 import { getProjectList } from "@/api/globalConfig";
@@ -261,7 +262,7 @@ export default {
           formData.append("createName", this.userInfo.name);
           formData.append("tenantId", this.tenantId);
           formData.append("file", file1);
-          postFormDesignServiceRealiseProcessData(formData).then((res) => {
+          associationForm(formData).then((res) => {
             this.$message.success("应用至项目表单成功");
             this.dialogVisibleModal = false;
           });
