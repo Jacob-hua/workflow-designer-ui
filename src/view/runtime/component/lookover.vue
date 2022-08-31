@@ -46,6 +46,13 @@
                     </div>
                     <span>{{ time }}</span>
                   </div>
+                  <div v-if="assigneeStatus[formAssignee] === 'timedOut'" class="execute-info">
+                    <div>
+                      <i class="el-icon-time warning"></i>
+                      <span>{{ formAssignee }} 超时</span>
+                    </div>
+                    <span>{{ time }}</span>
+                  </div>
                   <div v-if="assigneeStatus[formAssignee] === 'rejected'">
                     <div v-for="({ comments, assignee: commentAssignee }, index) in commentList" :key="index">
                       <div v-for="({ message }, index) in comments" :key="index">
@@ -179,7 +186,7 @@ export default {
   },
   methods: {
     undefineStatus(status = '') {
-      return status.split(',').some((status) => !['completed', 'run', 'rejected', 'hang'].includes(status))
+      return status.split(',').some((status) => !['completed', 'run', 'rejected', 'hang', 'timedOut'].includes(status))
     },
     onClose() {
       this.$emit('close')
@@ -251,6 +258,11 @@ export default {
 }
 
 .el-icon-check {
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+.el-icon-time {
   font-size: 20px;
   margin-right: 20px;
 }
