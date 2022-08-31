@@ -152,7 +152,12 @@
 </template>
 
 <script>
-import { getUserPermission, postMapping, userLogin } from "@/api/unit/api.js";
+import {
+  getUserPermission,
+  postMapping,
+  userLogin,
+  mappingUser,
+} from "@/api/unit/api.js";
 import { mapState } from "vuex";
 
 export default {
@@ -263,7 +268,7 @@ export default {
           });
         }
       });
-      postMapping(postArr).then((res) => {
+      mappingUser(postArr).then((res) => {
         this.$message.success("权限修改成功");
         this.$emit("handleClose");
       });
