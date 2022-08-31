@@ -179,6 +179,9 @@ export default {
         cancelButtonText: "取消",
         cancelButtonClass: "btn-custom-cancel",
         type: "warning",
+      }).then(() => {
+        this.activeItem = {};
+        this.$emit("clear");
       });
     },
     handlerActiveItemChange(obj) {
