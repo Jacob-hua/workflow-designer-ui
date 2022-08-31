@@ -174,7 +174,7 @@ export default {
       return JSON.stringify(json, null, 4);
     },
     clear() {
-      this.$confirm("此操作将清空整个表单,是否继续??", "提示", {
+      this.$confirm("此操作将清空整个表单,是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         cancelButtonClass: "btn-custom-cancel",
