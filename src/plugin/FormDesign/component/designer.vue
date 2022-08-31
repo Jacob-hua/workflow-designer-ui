@@ -180,7 +180,6 @@ export default {
         cancelButtonClass: "btn-custom-cancel",
         type: "warning",
       }).then(() => {
-        this.activeItem = {};
         this.$emit("clear");
       });
     },
