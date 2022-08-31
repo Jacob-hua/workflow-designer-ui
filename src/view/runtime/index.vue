@@ -206,6 +206,10 @@ export default {
           title: '删除',
           className: 'table-step-rejected',
         },
+        timedOut: {
+          title: '超时',
+          className: 'table-step-rejected'
+        }
       },
     }
   },
