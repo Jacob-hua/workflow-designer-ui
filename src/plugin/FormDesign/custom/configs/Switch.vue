@@ -1,8 +1,17 @@
 <template>
   <div v-show="props.compType === 'Switch'">
-    <el-form-item label="ID">
-      <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
-        <el-input class="input" v-model="props.id" @change="handlerChangeId"></el-input>
+    <el-form-item label="字段">
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="请注意,字段重复可能会导致该组件相关事件失效！"
+        placement="left"
+      >
+        <el-input
+          class="input"
+          v-model="props.id"
+          @change="handlerChangeId"
+        ></el-input>
       </el-tooltip>
     </el-form-item>
     <el-form-item label="标题">
@@ -12,10 +21,17 @@
       <el-input-number v-model="props.gutter" :min="0"></el-input-number>
     </el-form-item>
     <el-form-item label="标签宽度">
-      <el-input-number v-model="props.labelWidth" :min="1" :max="200"></el-input-number>
+      <el-input-number
+        v-model="props.labelWidth"
+        :min="1"
+        :max="200"
+      ></el-input-number>
     </el-form-item>
     <el-form-item label="显示标签">
-      <el-switch v-model="props.showLabel" @change="handlerChangeLabel"></el-switch>
+      <el-switch
+        v-model="props.showLabel"
+        @change="handlerChangeLabel"
+      ></el-switch>
     </el-form-item>
     <el-form-item label="必填">
       <el-switch v-model="props.required"></el-switch>
@@ -38,29 +54,29 @@
   </div>
 </template>
 <script>
-import { changeId } from '../mixin'
+import { changeId } from "../mixin";
 
 export default {
-  name: 'inputConfig',
-  props: ['props', 'getFormId'],
+  name: "inputConfig",
+  props: ["props", "getFormId"],
   components: {},
   mixins: [changeId],
   data() {
-    return {}
+    return {};
   },
   methods: {
     handlerChangeLabel(val) {
-      this.props.labelWidth = val ? '80' : '1'
+      this.props.labelWidth = val ? "80" : "1";
     },
     handlerChangeDisStatus(val) {
-      this.props.readOnly = !val
+      this.props.readOnly = !val;
     },
     handlerChangeReadStatus(val) {
-      this.props.disabled = !val
+      this.props.disabled = !val;
     },
   },
   mounted() {},
-}
+};
 </script>
 <style scoped>
 .input {

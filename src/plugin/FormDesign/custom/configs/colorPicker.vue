@@ -1,18 +1,34 @@
 <template>
   <div v-show="props.compType === 'colorPicker'">
     <el-form-item label="字段">
-      <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
-        <el-input class="input" v-model="props.id" @change="handlerChangeId"></el-input>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="请注意,字段重复可能会导致该组件相关事件失效！"
+        placement="left"
+      >
+        <el-input
+          class="input"
+          v-model="props.id"
+          @change="handlerChangeId"
+        ></el-input>
       </el-tooltip>
     </el-form-item>
     <el-form-item label="显示标签">
-      <el-switch v-model="props.showLabel" @change="handlerShowLabel"></el-switch>
+      <el-switch
+        v-model="props.showLabel"
+        @change="handlerShowLabel"
+      ></el-switch>
     </el-form-item>
     <el-form-item label="标签文字" v-show="props.showLabel">
       <el-input class="input" v-model="props.label"></el-input>
     </el-form-item>
     <el-form-item label="标签长度" v-show="props.showLabel">
-      <el-input-number v-model="props.labelWidth" :min="1" :max="200"></el-input-number>
+      <el-input-number
+        v-model="props.labelWidth"
+        :min="1"
+        :max="200"
+      ></el-input-number>
     </el-form-item>
     <el-form-item label="透明">
       <el-switch v-model="props['show-alpha']"></el-switch>
@@ -30,37 +46,37 @@
   </div>
 </template>
 <script>
-import { changeId } from '../mixin'
+import { changeId } from "../mixin";
 export default {
-  name: 'buttonConfig',
+  name: "buttonConfig",
   props: {
     props: {},
   },
   mixins: [changeId],
   data() {
     return {
-      color: '#409EFF',
-    }
+      color: "#409EFF",
+    };
   },
   methods: {
     handlerShowLabel(val) {
       if (val) {
-        this.props.labelWidth = 80
+        this.props.labelWidth = 80;
       } else {
-        this.props.labelWidth = 0
+        this.props.labelWidth = 0;
       }
     },
     handlerAddPreColor(val) {
-      console.log(val)
-      this.props.predefine.push(val)
-      console.log(this.props.predefine)
+      console.log(val);
+      this.props.predefine.push(val);
+      console.log(this.props.predefine);
     },
     handlerRemoveColor(index) {
-      this.props.predefine.splice(index, 1)
+      this.props.predefine.splice(index, 1);
     },
   },
   mounted() {},
-}
+};
 </script>
 <style scoped>
 .el-color-picker__color {

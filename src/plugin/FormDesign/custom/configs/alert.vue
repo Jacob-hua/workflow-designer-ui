@@ -1,7 +1,12 @@
 <template>
   <div v-show="props.compType === 'alert'">
     <el-form-item label="字段">
-      <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="请注意,字段重复可能会导致该组件相关事件失效！"
+        placement="left"
+      >
         <el-input class="input" v-model="props.id"></el-input>
       </el-tooltip>
     </el-form-item>
@@ -41,23 +46,23 @@
  * input的配置项
  */
 export default {
-  name: 'buttonConfig',
+  name: "buttonConfig",
   props: {
     props: {},
   },
   components: {},
   data() {
-    return {}
+    return {};
   },
   methods: {
     handlerShowLabel(val) {
       if (val) {
-        this.props.labelWidth = 80
+        this.props.labelWidth = 80;
       } else {
-        this.props.labelWidth = 0
+        this.props.labelWidth = 0;
       }
     },
   },
   mounted() {},
-}
+};
 </script>

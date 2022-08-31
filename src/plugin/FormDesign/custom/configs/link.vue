@@ -1,8 +1,17 @@
 <template>
   <div v-show="props.compType === 'link'">
     <el-form-item label="字段">
-      <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
-        <el-input class="input" v-model="props.id" @change="handlerChangeId"></el-input>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="请注意,字段重复可能会导致该组件相关事件失效！"
+        placement="left"
+      >
+        <el-input
+          class="input"
+          v-model="props.id"
+          @change="handlerChangeId"
+        ></el-input>
       </el-tooltip>
     </el-form-item>
     <el-form-item label="链接文字">
@@ -24,14 +33,17 @@
       <el-switch v-model="props.disabled"></el-switch>
     </el-form-item>
     <el-form-item label="新窗口">
-      <el-switch v-model="isNewWindow" @change="handlerChangeTargetValue"></el-switch>
+      <el-switch
+        v-model="isNewWindow"
+        @change="handlerChangeTargetValue"
+      ></el-switch>
     </el-form-item>
   </div>
 </template>
 <script>
-import { changeId } from '../mixin'
+import { changeId } from "../mixin";
 export default {
-  name: 'buttonConfig',
+  name: "buttonConfig",
   props: {
     props: {},
   },
@@ -40,24 +52,24 @@ export default {
   data() {
     return {
       isNewWindow: true,
-    }
+    };
   },
   methods: {
     handlerShowLabel(val) {
       if (val) {
-        this.props.labelWidth = 80
+        this.props.labelWidth = 80;
       } else {
-        this.props.labelWidth = 0
+        this.props.labelWidth = 0;
       }
     },
     handlerChangeTargetValue(val) {
       if (val) {
-        this.props.target = '_blank'
+        this.props.target = "_blank";
       } else {
-        this.props.target = '_self'
+        this.props.target = "_self";
       }
     },
   },
   mounted() {},
-}
+};
 </script>
