@@ -6,7 +6,7 @@
           <el-tooltip
             class="item"
             effect="dark"
-            content="请注意,ID的修改可能会导致该组件相关事件失效！"
+            content="请注意,字段重复可能会导致该组件相关事件失效！"
             placement="left"
           >
             <el-input class="input" v-model="props.id"></el-input>
@@ -19,7 +19,11 @@
           <el-input-number v-model="props.span" :min="1" :max="24" />
         </el-form-item>
         <el-form-item label="标签宽度">
-          <el-input-number v-model="props.labelWidth" :min="1" :max="200"></el-input-number>
+          <el-input-number
+            v-model="props.labelWidth"
+            :min="1"
+            :max="200"
+          ></el-input-number>
         </el-form-item>
         <el-form-item label="显示标签">
           <el-switch v-model="props.showLabel"></el-switch>
@@ -46,7 +50,12 @@
           <el-switch v-model="props.showIndex"></el-switch>
         </el-form-item>
         <el-form-item label="表格高度">
-          <el-input-number v-model="props.height" :step="10" :max="1500" :min="100"></el-input-number>
+          <el-input-number
+            v-model="props.height"
+            :step="10"
+            :max="1500"
+            :min="100"
+          ></el-input-number>
         </el-form-item>
         <el-form-item label="字段值">
           <el-input v-model="props.dval"></el-input>
@@ -59,12 +68,27 @@
         <el-table :data="colOptions" @row-dblclick="handlerDeleteRow">
           <el-table-column property="label" label="字段" align="center" />
           <el-table-column property="property" label="属性" align="center" />
-          <el-table-column property="width" label="宽度" align="center" width="70" />
+          <el-table-column
+            property="width"
+            label="宽度"
+            align="center"
+            width="70"
+          />
           <el-table-column label="显示"> </el-table-column>
         </el-table>
         <br />
-        <el-alert title="字段和属性不能为空,请检查" v-show="alertShow" type="error" :closable="false" />
-        <el-alert title="属性已存在请检查" v-show="propertyExistShow" type="error" :closable="false" />
+        <el-alert
+          title="字段和属性不能为空,请检查"
+          v-show="alertShow"
+          type="error"
+          :closable="false"
+        />
+        <el-alert
+          title="属性已存在请检查"
+          v-show="propertyExistShow"
+          type="error"
+          :closable="false"
+        />
         <br />
         <el-form-item label="字段" label-width="60px">
           <el-input v-model="dLabel" />
@@ -79,7 +103,12 @@
           <el-switch v-model="dShow" />
         </el-form-item>
         <div style="margin-left: 20px">
-          <el-button style="padding-bottom: 0" icon="el-icon-circle-plus-outline" type="text" @click="addColItem">
+          <el-button
+            style="padding-bottom: 0"
+            icon="el-icon-circle-plus-outline"
+            type="text"
+            @click="addColItem"
+          >
             添加选项
           </el-button>
         </div>
@@ -93,66 +122,70 @@
  * text的配置项
  */
 export default {
-  name: 'textConfig',
+  name: "textConfig",
   props: {
     props: {},
   },
   data() {
     return {
-      activePanel: '1',
+      activePanel: "1",
       colOptions: [],
-      dLabel: '',
-      dProperty: '',
+      dLabel: "",
+      dProperty: "",
       dWidth: 150,
       dShow: true,
       alertShow: false,
       propertyExistShow: false,
-    }
+    };
   },
   methods: {
     addColItem() {
-      if (this.dLabel !== '' && this.dProperty !== '') {
-        const existOptions = this.colOptions.find((item) => item.property === this.dProperty)
-        if (typeof existOptions === 'undefined') {
-          this.alertShow = false
-          this.propertyExistShow = false
-          const obj = {}
-          obj.index = this.colOptions.length
-          obj.show = this.dShow
-          obj.label = this.dLabel
-          obj.property = this.dProperty
-          obj.width = this.dWidth
-          this.colOptions.push(obj)
-          this.resetFields()
+      if (this.dLabel !== "" && this.dProperty !== "") {
+        const existOptions = this.colOptions.find(
+          (item) => item.property === this.dProperty
+        );
+        if (typeof existOptions === "undefined") {
+          this.alertShow = false;
+          this.propertyExistShow = false;
+          const obj = {};
+          obj.index = this.colOptions.length;
+          obj.show = this.dShow;
+          obj.label = this.dLabel;
+          obj.property = this.dProperty;
+          obj.width = this.dWidth;
+          this.colOptions.push(obj);
+          this.resetFields();
         } else {
-          this.propertyExistShow = true
+          this.propertyExistShow = true;
         }
       } else {
-        this.alertShow = true
+        this.alertShow = true;
       }
     },
     resetFields() {
-      this.dLabel = ''
-      this.dProperty = ''
-      this.dWidth = 150
-      this.dShow = true
+      this.dLabel = "";
+      this.dProperty = "";
+      this.dWidth = 150;
+      this.dShow = true;
     },
     handlerDeleteRow(row) {
-      let index = this.colOptions.findIndex((item) => item.property == row.property)
-      this.colOptions.splice(index, 1)
+      let index = this.colOptions.findIndex(
+        (item) => item.property == row.property
+      );
+      this.colOptions.splice(index, 1);
     },
   },
   mounted() {
     this.$nextTick(() => {
-      this.colOptions = this.colOptions.concat(JSON.parse(this.props.colConf))
-    })
+      this.colOptions = this.colOptions.concat(JSON.parse(this.props.colConf));
+    });
   },
   watch: {
     colOptions(newVal) {
-      this.props.colConf = JSON.stringify(newVal)
+      this.props.colConf = JSON.stringify(newVal);
     },
   },
-}
+};
 </script>
 <style scoped>
 .dialogList >>> .el-collapse-item__header {

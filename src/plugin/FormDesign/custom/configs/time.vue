@@ -1,8 +1,17 @@
 <template>
   <div v-show="props.compType === 'time'">
     <el-form-item label="字段">
-      <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
-        <el-input class="input" v-model="props.id" @change="handlerChangeId"></el-input>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="请注意,字段重复可能会导致该组件相关事件失效！"
+        placement="left"
+      >
+        <el-input
+          class="input"
+          v-model="props.id"
+          @change="handlerChangeId"
+        ></el-input>
       </el-tooltip>
     </el-form-item>
     <el-form-item label="标题">
@@ -15,7 +24,11 @@
       <el-input-number v-model="props.gutter" :min="0"></el-input-number>
     </el-form-item>
     <el-form-item label="标签宽度">
-      <el-input-number v-model="props.labelWidth" :min="1" :max="200"></el-input-number>
+      <el-input-number
+        v-model="props.labelWidth"
+        :min="1"
+        :max="200"
+      ></el-input-number>
     </el-form-item>
     <el-form-item label="显示标签">
       <el-switch v-model="props.showLabel"></el-switch>
@@ -39,23 +52,27 @@
       <el-input v-model="props['range-separator']"></el-input>
     </el-form-item>
     <el-form-item label="默认值">
-      <el-time-picker class="input" v-model="props.value" placeholder="选择默认时间" />
+      <el-time-picker
+        class="input"
+        v-model="props.value"
+        placeholder="选择默认时间"
+      />
     </el-form-item>
   </div>
 </template>
 <script>
-import { changeId } from '../mixin'
+import { changeId } from "../mixin";
 export default {
-  name: 'timeConfig',
+  name: "timeConfig",
   components: {},
   mixins: [changeId],
-  props: ['props', 'getFormId'],
+  props: ["props", "getFormId"],
   data() {
-    return {}
+    return {};
   },
   methods: {},
   mounted() {},
-}
+};
 </script>
 <style scoped>
 .input {

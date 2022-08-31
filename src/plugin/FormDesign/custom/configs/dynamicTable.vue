@@ -1,8 +1,17 @@
 <template>
   <div v-show="props.compType === 'dynamicTable'">
     <el-form-item label="字段">
-      <el-tooltip class="item" effect="dark" content="请注意,ID的修改可能会导致该组件相关事件失效！" placement="left">
-        <el-input class="input" v-model="props.id" @change="handlerChangeId"></el-input>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="请注意,字段重复可能会导致该组件相关事件失效！"
+        placement="left"
+      >
+        <el-input
+          class="input"
+          v-model="props.id"
+          @change="handlerChangeId"
+        ></el-input>
       </el-tooltip>
     </el-form-item>
     <el-form-item label="显示新增按钮" label-width="120px">
@@ -29,16 +38,14 @@
   </div>
 </template>
 <script>
-import {changeId} from '../mixin'
+import { changeId } from "../mixin";
 export default {
-  name:"dynamicTableConfig",
-  props:['props','getFormId'],
-  mixins:[changeId],
-  data(){
-    return {
-    }
+  name: "dynamicTableConfig",
+  props: ["props", "getFormId"],
+  mixins: [changeId],
+  data() {
+    return {};
   },
-  methods:{
-  }
-}
+  methods: {},
+};
 </script>
