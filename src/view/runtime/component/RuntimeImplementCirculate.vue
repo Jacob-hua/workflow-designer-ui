@@ -26,7 +26,10 @@
             编辑
           </el-button>
         </div>
-        <div class="empty" v-else-if="circulations[0].unitList.length == 0">
+        <div
+          class="empty"
+          v-else-if="circulations && circulations[0].unitList.length == 0"
+        >
           <div>暂无传阅</div>
           <el-button
             @click="onAddCirculate(taskId)"
