@@ -118,6 +118,7 @@
     </div>
     <interface-parser
       v-if="props.dataType === 'dynamic'"
+      :key="props._id"
       :currentField="props"
       @variableChange="onVariableChange"
     />
