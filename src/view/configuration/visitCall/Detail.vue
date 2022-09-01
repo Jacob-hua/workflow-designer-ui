@@ -236,6 +236,7 @@ export default {
   },
   data() {
     return {
+      ascription: "",
       currentPars: [],
       activeName: "",
       form: {},
@@ -257,7 +258,7 @@ export default {
   },
   methods: {
     visitColse() {
-      this.$parent.GetGlobalList(this.currentRow[0].ascription);
+      this.$parent.GetGlobalList(this.ascription);
     },
     handleClick(e) {
       this.editableTabsValue = e.index;
@@ -300,7 +301,8 @@ export default {
     },
   },
   mounted() {
-    this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
+    this.ascription = this.currentRow && this.currentRow[0].ascription;
+    this.this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
   },
 };
 </script>
