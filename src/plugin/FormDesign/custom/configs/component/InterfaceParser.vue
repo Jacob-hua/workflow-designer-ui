@@ -1,7 +1,14 @@
 <template>
   <div>
     <el-form-item label="第三方API">
-      <seclect :options="interFaceOption" key="id" label="name" value="id" @selectedChange="selectedChange"/>
+      <seclect
+        :requestConfig="currentField.requestConfig"
+        :options="interFaceOption"
+        key="id"
+        label="name"
+        value="id"
+        @selectedChange="selectedChange"
+      />
     </el-form-item>
     <div v-if="variables.length > 0" class="variable-wrapper">
       <el-row :gutter="24">
@@ -15,10 +22,16 @@
             <span>{{ variable }}</span>
           </el-col>
           <el-col :span="10">
-            <el-input v-model="variables[index]['source']" @change="onVariableChange" />
+            <el-input
+              v-model="variables[index]['source']"
+              @change="onVariableChange"
+            />
           </el-col>
           <el-col :span="8">
-            <el-select v-model="variables[index]['sourceType']" @change="onSourceTypeChange(index)">
+            <el-select
+              v-model="variables[index]['sourceType']"
+              @change="onSourceTypeChange(index)"
+            >
               <el-option
                 v-for="{ id, label, value } in sourceTypeOptions"
                 :key="id"
@@ -51,23 +64,23 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
-import { apiDetail } from '@/api/globalConfig'
-import { variableFactory as variableParser } from '@/mixin/formDepMonitor'
+import { mapActions, mapGetters, mapState } from "vuex";
+import { apiDetail } from "@/api/globalConfig";
+import { variableFactory as variableParser } from "@/mixin/formDepMonitor";
 import seclect from "@/component/Select.vue";
 
 const defaultParserProp = () => ({
-  optionPath: '',
-  label: 'label',
-  value: 'value',
-  children: 'children',
-})
+  optionPath: "",
+  label: "label",
+  value: "value",
+  children: "children",
+});
 
 export default {
   components: {
     seclect,
   },
-  name: 'InterfaceParser',
+  name: "InterfaceParser",
   props: {
     currentField: {
       type: Object,
@@ -80,73 +93,72 @@ export default {
   },
   data() {
     return {
-      interfaceId: '',
+      interfaceId: "",
       sourceTypeOptions: [
         {
           id: 0,
-          label: '常量',
-          value: 'const',
+          label: "常量",
+          value: "const",
         },
         {
           id: 1,
-          label: '环境变量',
-          value: 'context',
+          label: "环境变量",
+          value: "context",
         },
         {
           id: 2,
-          label: '表单',
-          value: 'form',
+          label: "表单",
+          value: "form",
         },
       ],
       customParser: false,
       parserProp: defaultParserProp(),
       requestConfig: {},
       variables: [],
-    }
+    };
   },
   computed: {
-    ...mapState('account', ['tenantId']),
-    ...mapState('form', ['interFaceOption']),
-    ...mapGetters('form', ['findInterfaceById']),
+    ...mapState("account", ["tenantId"]),
+    ...mapState("form", ["interFaceOption"]),
+    ...mapGetters("form", ["findInterfaceById"]),
   },
   watch: {
     currentField: {
       immediate: true,
       handler(currentField) {
         if (!currentField || !currentField.requestConfig) {
-          return
+          return;
         }
-        this.requestConfig = currentField.requestConfig
-        this.variables = currentField.requestConfig.variables
-        this.interfaceId = currentField.requestConfig.id
-        this.customParser = currentField.requestConfig.customParser
-        this.parserProp = currentField.requestConfig.parserProp
+        this.requestConfig = currentField.requestConfig;
+        this.variables = currentField.requestConfig.variables;
+        this.interfaceId = currentField.requestConfig.id;
+        this.customParser = currentField.requestConfig.customParser;
+        this.parserProp = currentField.requestConfig.parserProp;
       },
     },
     parserProp: {
       deep: true,
       handler() {
-        this.onVariableChange()
+        this.onVariableChange();
       },
     },
     async interfaceId(interfaceId) {
       if (!interfaceId) {
-        return
+        return;
       }
       const { errorInfo, result } = await apiDetail({
         ...this.findInterfaceById(interfaceId),
         tenantId: this.tenantId,
-      })
+      });
       if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
+        this.$message.error(errorInfo.errorMsg);
+        return;
       }
       if (!Array.isArray(result) || result.length === 0) {
-        return
+        return;
       }
-      const { id, name, source, sourceMark, apiMark, method, parameter, body } = result.find(
-        ({ id }) => id === interfaceId
-      )
+      const { id, name, source, sourceMark, apiMark, method, parameter, body } =
+        result.find(({ id }) => id === interfaceId);
       this.requestConfig = {
         id,
         name,
@@ -156,25 +168,27 @@ export default {
         method,
         parameter,
         body,
-      }
-      this.variables = (variableParser(this.requestConfig) ?? []).map((variable) => ({
-        variable,
-        sourceType: 'const',
-        source: '',
-      }))
-      this.onVariableChange()
+      };
+      this.variables = (variableParser(this.requestConfig) ?? []).map(
+        (variable) => ({
+          variable,
+          sourceType: "const",
+          source: "",
+        })
+      );
+      this.onVariableChange();
     },
   },
   mounted() {
-    this.refreshApiList()
+    this.refreshApiList();
   },
   methods: {
-    ...mapActions('form', ['refreshApiList']),
+    ...mapActions("form", ["refreshApiList"]),
     onSourceTypeChange(index) {
-      this.variables[index].source = ''
+      this.variables[index].source = "";
     },
     onCustomOptionPathChange() {
-      this.parserProp = defaultParserProp()
+      this.parserProp = defaultParserProp();
     },
     onVariableChange() {
       const result = {
@@ -182,17 +196,17 @@ export default {
         variables: this.variables,
         customParser: this.customParser,
         parserProp: this.parserProp,
-      }
+      };
       if (!this.hasChildren) {
-        delete result.parserProp.children
+        delete result.parserProp.children;
       }
-      this.$emit('variableChange', result)
+      this.$emit("variableChange", result);
     },
-    selectedChange(selected){
-      this.interfaceId = selected
+    selectedChange(selected) {
+      this.interfaceId = selected;
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
