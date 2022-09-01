@@ -45,13 +45,6 @@ export default {
       selected: "",
     };
   },
-  watch: {
-    requestConfig(newVal) {
-      if (newVal.id) {
-        this.selected = newVal.id;
-      }
-    },
-  },
   mounted() {
     if (this.requestConfig.id) {
       this.selected = this.requestConfig.id;
