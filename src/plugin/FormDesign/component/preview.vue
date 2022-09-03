@@ -309,13 +309,6 @@ export default {
   },
   methods: {
     async submit() {
-      this.itemList.forEach((metaData) => {
-        Object.keys(this.form).forEach((form) => {
-          if (form === metaData.id) {
-            metaData.value = this.form[form]
-          }
-        })
-      })
       try {
         await this.$refs[this.formConf.formModel].validate()
         return _.cloneDeep({

@@ -357,9 +357,7 @@ export default {
     async onExecute() {
       if (this.formShow) {
         const { formData, metaDataList } = await this.$refs.preview.submit()
-        this.formContant.list = [...metaDataList]
-        this.formContant.data = formData
-        this.completeTask(this.formContant, formData)
+        this.completeTask({...this.formContant, data: formData, list: metaDataList}, formData)
         return
       }
       if (this.noExecutor && (!Array.isArray(this.workflow.executors) || this.workflow.executors.length === 0)) {
