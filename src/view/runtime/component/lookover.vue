@@ -13,10 +13,7 @@
               :key="taskId"
             >
               <div class="contant">
-                <div
-                  v-for="({ formContent, assignee: formAssignee, time }, index) in formDataList"
-                  :key="index"
-                >
+                <div v-for="({ formContent, assignee: formAssignee, time }, index) in formDataList" :key="index">
                   <div v-if="formContent" class="form">
                     <preview
                       :itemList="formContent.list"
@@ -148,6 +145,8 @@ export default {
         })
       }
       function handleAssigneeStatus({ assignee, status }) {
+        assignee = assignee ?? ''
+        status = status ?? ''
         const statusArray = status.split(',')
         return assignee.split(',').reduce((result, name, index) => ({ ...result, [name]: statusArray[index] }), {})
       }
