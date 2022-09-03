@@ -149,7 +149,7 @@ export default {
       }
       let docName = formKey.split(':')[2]
       const { errorInfo, result = [] } = await designFormDesignServiceAll({
-        status: 'enabled',
+        status: 'enabled,deleted',
         tenantId: this.tenantId,
         ascription: this.workflow.ascription,
         business: this.workflow.business,
