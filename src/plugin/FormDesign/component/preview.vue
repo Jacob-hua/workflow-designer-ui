@@ -129,7 +129,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     return <el-row>{buildColumnContainer.call(this, h, fieldInfo, valuePath, usefulMeta)}</el-row>
   }
 
-  if (Object.prototype.hasOwnProperty.call(fieldInfo, 'visible') && !fieldInfo.visible) {
+  if (!fieldInfo.visible) {
     return <div></div>
   }
 
@@ -309,13 +309,6 @@ export default {
   },
   methods: {
     async submit() {
-      this.itemList.forEach((metaData) => {
-        Object.keys(this.form).forEach((form) => {
-          if (form === metaData.id) {
-            metaData.value = this.form[form]
-          }
-        })
-      })
       try {
         await this.$refs[this.formConf.formModel].validate()
         return _.cloneDeep({
