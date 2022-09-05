@@ -320,8 +320,12 @@ export default {
     },
     async handlePreview(file) {
       if (this.isTypeAnImage(file)) {
-        this.dialogVisible = true;
-        this.dialogImageUrl = file.url;
+        if (this.isBase64(file)) {
+          this.dialogVisible = true;
+          this.dialogImageUrl = file.url;
+        } else {
+          this.blobToBase64(await Promise.resolve(this.downloadFun(file)));
+        }
       }
     },
     handleExceed(files, fileList) {
