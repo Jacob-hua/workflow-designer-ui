@@ -46,15 +46,17 @@
       <el-switch v-model="props.disabled"></el-switch>
     </el-form-item>
     <el-form-item label="范围选择">
-      <el-switch v-model="props['is-range']"></el-switch>
+      <el-switch @change="rangeChange" v-model="props['is-range']"></el-switch>
     </el-form-item>
     <el-form-item label="分隔符" v-show="props['is-range']">
       <el-input v-model="props['range-separator']"></el-input>
     </el-form-item>
     <el-form-item label="默认值">
       <el-time-picker
+        :is-range="isRange"
         class="input"
         v-model="props.value"
+        value-format="HH:mm:ss"
         placeholder="选择默认时间"
       />
     </el-form-item>
@@ -68,9 +70,15 @@ export default {
   mixins: [changeId],
   props: ["props", "getFormId"],
   data() {
-    return {};
+    return {
+      isRange: false,
+    };
   },
-  methods: {},
+  methods: {
+    rangeChange(isRange) {
+      this.isRange = isRange;
+    },
+  },
   mounted() {},
 };
 </script>
