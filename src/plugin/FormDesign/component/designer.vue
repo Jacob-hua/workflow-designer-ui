@@ -246,6 +246,7 @@ export default {
         const index = this.list.findIndex((item) => item.id === origin.id);
         this.list.splice(index, 1);
       }
+      this.activeItem = {};
     },
     handlerSaveFormConf() {
       this.formConfVisible = false;

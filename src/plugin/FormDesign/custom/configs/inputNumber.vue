@@ -37,7 +37,10 @@
       <el-switch v-model="props.required"></el-switch>
     </el-form-item>
     <el-form-item label="最小值">
-      <el-input-number v-model="props.min"></el-input-number>
+      <el-input-number
+        @change="minChange"
+        v-model="props.min"
+      ></el-input-number>
     </el-form-item>
     <el-form-item label="最大值">
       <el-input-number v-model="props.max"></el-input-number>
@@ -80,6 +83,11 @@ export default {
     return {};
   },
   methods: {
+    minChange(val) {
+      if (this.props.value < val || val > this.props.max) {
+        this.props.value = val;
+      }
+    },
     handlerChangeLabel(val) {
       this.props.labelWidth = val ? "80" : "1";
     },

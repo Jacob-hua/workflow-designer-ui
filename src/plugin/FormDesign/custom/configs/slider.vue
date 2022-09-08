@@ -44,7 +44,7 @@
       <el-input-number v-model="props.step"></el-input-number>
     </el-form-item>
     <el-form-item label="范围选择">
-      <el-switch v-model="props.range"></el-switch>
+      <el-switch @change="rangeChange" v-model="props.range"></el-switch>
     </el-form-item>
     <el-form-item label="显示断点">
       <el-switch v-model="props['show-stops']"></el-switch>
@@ -70,7 +70,15 @@ export default {
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    rangeChange(isRange) {
+      if (isRange) {
+        this.props.value = [this.props.min, this.props.max];
+      } else {
+        this.props.value = this.props.min;
+      }
+    },
+  },
   mounted() {},
 };
 </script>
