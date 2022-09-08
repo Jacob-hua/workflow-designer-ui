@@ -135,9 +135,20 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
 
   valuePath = valuePath ? `${valuePath}.${fieldInfo.id}` : `${fieldInfo.id}`
 
+  const initObj = (obj) => {
+    Object.keys(obj).forEach((key) => {
+      if (Array.isArray(obj[key])) {
+        obj[key] = [initObj(obj[key][0])]
+      } else {
+        obj[key] = ''
+      }
+    })
+    return obj
+  }
+
   const onCopy = (index) => {
     const cloneObj = _.cloneDeep(_.get(this.form, `${valuePath}[${index}]`))
-    _.get(this.form, `${valuePath}`, []).splice(index, 0, cloneObj)
+    _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, initObj(cloneObj))
   }
   const onDelete = (index) => {
     const value = _.get(this.form, `${valuePath}`, [])
@@ -158,7 +169,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
 
   const multipleRowElements = multipleRows.map((value, index) => {
     return (
-      <el-card body-style={{ padding: '10px 0px' }} style={{ margin: '10px 0px' }}>
+      <el-card body-style={{ padding: '10px 0px' }} style={{ margin: '10px 3px' }} shadow="always">
         <div slot="header" class="clearfix">
           <el-button
             style="float: right; padding: 3px 0; margin: 0 10px;"
