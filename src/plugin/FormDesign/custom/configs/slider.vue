@@ -82,12 +82,11 @@ export default {
   data() {
     return {
       defaultValue: [],
-      isUpdate: false,
     };
   },
   watch: {
     defaultValue(value) {
-      this.checkDefaultValue(value, this.isUpdate);
+      this.checkDefaultValue(value);
     },
   },
   methods: {
