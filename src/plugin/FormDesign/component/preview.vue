@@ -135,10 +135,18 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
 
   valuePath = valuePath ? `${valuePath}.${fieldInfo.id}` : `${fieldInfo.id}`
 
-  const initObj = (obj) => {
+  const initObj = (valuePath, obj) => {
     Object.keys(obj).forEach((key) => {
-      if (Array.isArray(obj[key])) {
-        obj[key] = [initObj(obj[key][0])]
+      const metaData = this.usefulMeta[`${valuePath}.${key}`]
+      if (
+        ['checkbox', 'upload'].includes(metaData.compType) ||
+        (['select'].includes(metaData.compType) && metaData.multiple)
+      ) {
+        obj[key] = []
+      } else if(['slider'].includes(metaData.compType) && metaData.isRange) {
+        obj[key] = [...metaData.value]
+      } else if (['row'].includes(metaData.compType) && metaData.isCopy) {
+        obj[key] = [initObj(`${valuePath}`, obj[key][0])]
       } else {
         obj[key] = ''
       }
@@ -148,7 +156,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
 
   const onCopy = (index) => {
     const cloneObj = _.cloneDeep(_.get(this.form, `${valuePath}[${index}]`))
-    _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, initObj(cloneObj))
+    _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, initObj(`${valuePath}[${index}]`, cloneObj))
   }
   const onDelete = (index) => {
     const value = _.get(this.form, `${valuePath}`, [])
