@@ -77,6 +77,7 @@ export default {
   methods: {
     rangeChange(isRange) {
       this.isRange = isRange;
+      this.props.value = ["08:00:00", "11:29:20"];
     },
   },
   mounted() {},
