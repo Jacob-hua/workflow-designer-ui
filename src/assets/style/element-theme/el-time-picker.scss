@@ -2,9 +2,17 @@ $el-timer-active-color: #409EFF;
 .el-time-spinner {
   background-color: $input-number-bg-color;
 }
-
+.el-time-spinner__item.active:not(.disabled) {
+  color: #fff;
+}
 .el-time-spinner__wrapper.is-arrow .el-time-spinner__item:hover:not(.disabled):not(.active) {
   background-color: $el-timer-active-color;
+  color: #fff;
+}
+.el-range-editor.is-disabled input {
+  background-color: unset;
+}
+.el-date-editor .el-range-separator {
   color: #fff;
 }
 .el-date-editor .el-range-separator {
