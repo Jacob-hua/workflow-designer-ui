@@ -136,7 +136,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   valuePath = valuePath ? `${valuePath}.${fieldInfo.id}` : `${fieldInfo.id}`
 
   const onCopy = (index) => {
-    const cloneObj = _.cloneDeep(_.get(this.initForm, `${valuePath}[${index}]`))
+    const cloneObj = _.cloneDeep(_.get(this.initForm, `${valuePath}[0]`))
     _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, cloneObj)
   }
   const onDelete = (index) => {
@@ -255,12 +255,12 @@ export default {
   data() {
     const metaDataList = _.cloneDeep(this.itemList)
     let form = {}
+    const initForm = metaDataList.reduce(buildModel, {})
     if (this.formData) {
       form = _.cloneDeep(this.formData)
     } else {
-      form = metaDataList.reduce(buildModel, {})
+      form = _.cloneDeep(initForm)
     }
-    const initForm = metaDataList.reduce(buildModel, {})
     return {
       initForm,
       form,
