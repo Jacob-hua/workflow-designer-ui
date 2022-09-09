@@ -78,7 +78,7 @@ export default {
     rangeChange(isRange) {
       this.isRange = isRange;
       if (isRange) {
-        this.props.value = ["00:00:00", "24:00:00"];
+        this.props.value = ["00:00:00", "23:59:59"];
       } else {
         this.props.value = "";
       }
