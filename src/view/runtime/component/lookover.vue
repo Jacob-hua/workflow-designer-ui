@@ -162,7 +162,7 @@ export default {
           value: this.workflow.processDeployName,
         },
         {
-          label: '部署时间',
+          label: '发起时间',
           value: this.workflow.startTime,
         },
         {
