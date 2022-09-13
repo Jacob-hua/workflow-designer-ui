@@ -232,7 +232,7 @@ export default {
       if (curTaskIsFirstTask.call(this)) {
         shapeActions = shapeActions.filter((action) => action !== 'Reject')
       }
-      const actions = ['Agency', 'Circulate', 'Hang', 'Reject', 'Terminate']
+      const actions = ['Agency', 'Circulate', 'Signature', 'Hang', 'Reject', 'Terminate']
       return actions
         .filter((action) => shapeActions.includes(action))
         .map(makeComponent.bind(this))
