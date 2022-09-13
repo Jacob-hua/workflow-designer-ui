@@ -53,7 +53,7 @@
     </el-form-item>
     <el-form-item label="默认值">
       <el-time-picker
-        :is-range="isRange"
+        :is-range="props['is-range']"
         class="input"
         v-model="props.value"
         value-format="HH:mm:ss"
@@ -70,25 +70,14 @@ export default {
   mixins: [changeId],
   props: ["props", "getFormId"],
   data() {
-    return {
-      isRange: false,
-    };
+    return {};
   },
-  watch: {
-    props: {
-      handler(newValue) {
-        this.isRange = newValue["is-range"];
-      },
-      immediate: false,
-    },
-  },
+
   methods: {
     rangeChange(isRange) {
-      this.isRange = isRange;
       if (isRange) {
         this.props.value = ["00:00:00", "23:59:59"];
       } else {
-        this.isRange = false;
         this.props.value = "";
       }
     },
@@ -96,7 +85,7 @@ export default {
   mounted() {},
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 .input {
   width: 75%;
 }
