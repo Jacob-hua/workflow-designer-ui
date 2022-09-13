@@ -136,7 +136,8 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   valuePath = valuePath ? `${valuePath}.${fieldInfo.id}` : `${fieldInfo.id}`
 
   const onCopy = (index) => {
-    const cloneObj = _.cloneDeep(_.get(this.initForm, `${valuePath}[0]`))
+    // 从初始的form对象中找到对应的对象进行复制
+    const cloneObj = _.cloneDeep(_.get(this.initForm, `${valuePath}[0]`.replace(/\[(.*?)\]/g, '[0]')))
     _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, cloneObj)
   }
   const onDelete = (index) => {
