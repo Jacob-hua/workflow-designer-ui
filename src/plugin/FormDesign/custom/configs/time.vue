@@ -74,12 +74,21 @@ export default {
       isRange: false,
     };
   },
+  watch: {
+    props: {
+      handler(newValue) {
+        this.isRange = newValue["is-range"];
+      },
+      immediate: false,
+    },
+  },
   methods: {
     rangeChange(isRange) {
       this.isRange = isRange;
       if (isRange) {
         this.props.value = ["00:00:00", "23:59:59"];
       } else {
+        this.isRange = false;
         this.props.value = "";
       }
     },
