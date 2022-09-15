@@ -25,7 +25,7 @@
 <script>
 import RuntimePeople from './RuntimePeople.vue'
 import { postModifyProcessUser } from '@/api/unit/api.js'
-import LongText from "@/component/LongText";
+import LongText from '@/component/LongText';
 export default {
   components: { RuntimePeople, LongText },
   name: 'RuntimeImplementSignature',
