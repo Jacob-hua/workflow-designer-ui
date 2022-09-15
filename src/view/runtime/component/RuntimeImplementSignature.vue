@@ -6,7 +6,7 @@
         <div class="info">
           <div>
             <div class="user" v-for="({ userId }, index) in signature" :key="index">
-              {{ userId }}
+              <long-text content-style="color: #fff" :content="userId"/>
             </div>
           </div>
         </div>
@@ -25,9 +25,9 @@
 <script>
 import RuntimePeople from './RuntimePeople.vue'
 import { postModifyProcessUser } from '@/api/unit/api.js'
-
+import LongText from '@/component/LongText';
 export default {
-  components: { RuntimePeople },
+  components: { RuntimePeople, LongText },
   name: 'RuntimeImplementSignature',
   props: {
     workflow: {
