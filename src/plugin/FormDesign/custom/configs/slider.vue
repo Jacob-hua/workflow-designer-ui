@@ -60,7 +60,7 @@
       <el-switch v-model="props.disabled"></el-switch>
     </el-form-item>
     <el-form-item v-if="!props.range" label="默认值">
-      <el-input class="input" v-model="props.value"></el-input>
+      <el-input @change="defaultChange" class="input" v-model="props.value"></el-input>
     </el-form-item>
     <template v-else>
       <el-form-item label="默认起始值">
@@ -90,6 +90,9 @@ export default {
     },
   },
   methods: {
+    defaultChange(value) {
+      this.props.value = +value
+    },
     checkDefaultValue(defaultValue) {
       if (defaultValue[0] < this.props.min || defaultValue[0] > this.props.max)
         defaultValue[0] = this.props.min;
