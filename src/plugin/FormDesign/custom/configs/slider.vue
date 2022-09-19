@@ -60,14 +60,14 @@
       <el-switch v-model="props.disabled"></el-switch>
     </el-form-item>
     <el-form-item v-if="!props.range" label="默认值">
-      <el-input class="input" v-model="props.value"></el-input>
+      <el-input-number :min="props.min" :max="props.max" class="input" v-model="props.value"></el-input-number>
     </el-form-item>
     <template v-else>
       <el-form-item label="默认起始值">
-        <el-input class="input" v-model="defaultValue[0]"></el-input>
+        <el-input-number class="input" v-model="defaultValue[0]"></el-input-number>
       </el-form-item>
       <el-form-item label="默认值终止值">
-        <el-input class="input" v-model="defaultValue[1]"></el-input>
+        <el-input-number class="input" v-model="defaultValue[1]"></el-input-number>
       </el-form-item>
     </template>
   </div>

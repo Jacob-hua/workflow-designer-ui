@@ -49,7 +49,7 @@
       <el-switch @change="rangeChange" v-model="props['is-range']"></el-switch>
     </el-form-item>
     <el-form-item label="分隔符" v-show="props['is-range']">
-      <el-input v-model="props['range-separator']"></el-input>
+      <el-input  class="input" v-model="props['range-separator']"></el-input>
     </el-form-item>
     <el-form-item label="默认值">
       <el-time-picker
