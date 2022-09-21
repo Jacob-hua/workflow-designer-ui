@@ -29,7 +29,7 @@
           </el-table-column>
           <el-table-column label="角色" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.groupList[0].name }}</span>
+              <span>{{ scope.row.groupList[0] && scope.row.groupList[0].name }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
