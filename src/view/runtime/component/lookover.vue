@@ -65,7 +65,7 @@
                       </div>
                     </div>
                   </div>
-                  <div v-if="undefineStatus(status)">
+                  <div v-if="undefineStatus(status)" class="execute-info">
                     <div>
                       <i class="el-icon-check warning"></i>
                       <span>{{ formAssignee }} 终止</span>
