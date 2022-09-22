@@ -283,7 +283,7 @@ export default {
         limit: 10,
         total: 0,
       }
-      this.fetchNewTasks()
+      this.getAllApi()
     },
     onExecute(row) {
       this.workflow = { ...row }
@@ -297,17 +297,17 @@ export default {
       this.lookoverVisible = false
     },
     onPageSizeChange() {
-      this.fetchNewTasks()
+      this.getAllApi()
     },
     onPageChange() {
-      this.fetchNewTasks()
+      this.getAllApi()
     },
     onRuntimeImplementClose() {
       this.runtimeImplementVisible = false
     },
     onAddSuccess() {
       this.runtimeAddVisible = false
-      this.fetchNewTasks()
+      this.getAllApi()
     },
     onAddTicket() {
       this.runtimeAddVisible = true
@@ -320,7 +320,9 @@ export default {
       this.getAllApi()
     },
     async getAllApi() {
-      await Promise.all([this.fetchDataNumber(), this.fetchNewTasks(), this.fetchAmount()])
+      await this.fetchDataNumber()
+      await this.fetchNewTasks()
+      await this.fetchAmount()
     },
     async fetchDataNumber() {
       try {
