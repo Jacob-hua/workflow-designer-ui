@@ -23,17 +23,17 @@
           <el-table-column type="index" label="序号" width="50" align="center">
           </el-table-column>
           <el-table-column prop="lastName" label="姓名" align="center">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               {{ scope.row.firstName }} {{ scope.row.lastName }}
             </template>
           </el-table-column>
           <el-table-column label="角色" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.groupList[0] && scope.row.groupList[0].name }}</span>
+            <template v-slot="scope">
+              <span v-for="(item,index) in scope.row.groupList" :key="index">{{ item.name }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <el-button
                 type="text"
                 size="small"
