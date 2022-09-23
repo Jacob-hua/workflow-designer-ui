@@ -132,7 +132,7 @@ export default {
       }).then((res) => {
         this.tableData =  res.result?.dataList.map(table=> {
           return {
-            role: table.groupList.map(group => group.name).join(','),
+            role: table.groupList.map(group => group.name).join('，'),
             ...table
           }
         })
