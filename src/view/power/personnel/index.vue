@@ -27,10 +27,7 @@
               {{ scope.row.firstName }} {{ scope.row.lastName }}
             </template>
           </el-table-column>
-          <el-table-column label="角色" align="center">
-            <template v-slot="scope">
-              <span v-for="(item,index) in scope.row.groupList" :key="index">{{ item.name }}</span>
-            </template>
+          <el-table-column prop="role" label="角色" align="center">
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template v-slot="scope">
@@ -87,7 +84,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("account", ["userInfo", "tenantId"]),
+    ...mapState("account", ["userInfo", "tenantId"])
   },
   methods: {
     handleNodeClick(data) {
@@ -133,7 +130,12 @@ export default {
         tenantId: this.tenantId,
         userId: this.userInfo.account,
       }).then((res) => {
-        this.tableData = res.result.dataList;
+        this.tableData =  res.result?.dataList.map(table=> {
+          return {
+            role: table.groupList.map(group => group.name).join(','),
+            ...table
+          }
+        })
       });
     },
   },
