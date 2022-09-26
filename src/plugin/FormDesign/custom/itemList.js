@@ -10,7 +10,7 @@ import {rate} from "./items/rate";
 import {date} from "./items/date";
 import {time} from "./items/time";
 import {editor} from "./items/editor";
-import {colorPicker} from "./items/colorPicker";
+// import {colorPicker} from "./items/colorPicker";
 import {cascader} from "./items/cascader";
 import {upload} from "./items/upload";
 // import {dialogList} from "./items/dialogList";
@@ -19,14 +19,14 @@ import {button} from "./items/button";
 import {divider} from "./items/divider";
 import {row} from "./items/row";
 
-import {alert} from "./items/alert";
+// import {alert} from "./items/alert";
 import {link} from "./items/link";
 import {text} from "./items/text";
 // import {barCode} from "./items/barCode";
 
 export  const formItems = [
   input,select,radio,checkbox,Switch,inputNumber,textarea,slider
-  ,rate,date,time,editor,colorPicker,cascader,upload
+  ,rate,date,time,editor,cascader,upload
 ];
-export  const assistFormItems = [button,divider,alert,link,text];
+export  const assistFormItems = [button,divider,link,text];
 export  const layoutFormItems = [row];

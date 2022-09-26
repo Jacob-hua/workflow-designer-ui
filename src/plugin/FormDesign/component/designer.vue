@@ -13,9 +13,14 @@
       >
         JSON
       </el-button>
-      <!--      <el-button icon="el-icon-s-tools" type="text" @click="setting">-->
-      <!--        设置-->
-      <!--      </el-button>-->
+      <el-button
+          class="mainBtn"
+          icon="el-icon-tickets"
+          type="text"
+          @click="tree"
+      >
+        组件树
+      </el-button>
       <el-button
         class="delete-btn mainBtn"
         icon="el-icon-delete-solid"
@@ -88,6 +93,21 @@
         <el-button type="primary" @click="handlerSetJson()">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog width="70%" append-to-body title="组件树" :visible.sync="dialogTableVisible">
+      <el-tree
+          :data="data"
+          node-key="id"
+          default-expand-all
+          draggable
+          :props="defaultProps"
+          :allow-drop="allowDrop"
+          :allow-drag="allowDrag">
+      </el-tree>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogTableVisible = false">取 消</el-button>
+        <el-button type="primary" @click="opens">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -126,6 +146,12 @@ export default {
   },
   data() {
     return {
+      data: [],
+      defaultProps: {
+        children: "columns",
+        label: 'id',
+      },
+      dialogTableVisible: false,
       imgPath: require("../../../assets/image/common/no_data.png"),
       formConf: formConf,
       activeItem: {},
@@ -152,6 +178,66 @@ export default {
   },
   mounted() {},
   methods: {
+    opens() {
+      this.dialogTableVisible = false
+      let json = {};
+      json.config = this.formConf;
+      json.list = this.convert2Data(this.data) ;
+       let jsonStr =  JSON.stringify(json, null, 4);
+      this.$emit("updateJSON", jsonStr);
+    },
+    convert2Data(data) {
+      return data.map(list => {
+        if (list.compType === 'row') {
+          list.columns = list.columns.map((column,index) =>{
+            this.convert2Data(column.columns)
+            return {
+              id: index,
+              list: column.columns,
+              index: column.index,
+              span: column.span
+            }
+          })
+        }
+        return list
+      })
+    },
+    convertData(data) {
+      return data.map(list => {
+        if (list.compType === 'row') {
+          list.columns = list.columns.map((column,index) =>{
+            this.convertData(column.list)
+            return {
+              id: index,
+              columns: column.list,
+              index: column.index,
+              span: column.span
+            }
+          })
+        }
+        return list
+      })
+    },
+    tree() {
+      this.dialogTableVisible = true
+     let formData =  JSON.parse(JSON.stringify(this.list))
+     this.data = this.convertData(formData)
+    },
+    allowDrop(draggingNode, dropNode, type) {
+      if ( ( dropNode.data.index % 1 === 0 )  && ( type === 'prev' || type === 'next' ) ) {
+        return  false
+      }
+      console.log({ draggingNode, dropNode, type })
+      if (draggingNode.parent.data.compType === 'row' && draggingNode.data.columns) {
+        return false
+      }
+      return !(draggingNode.level === dropNode.level && draggingNode.data.compType !== 'row' && type === 'inner');
+
+    },
+    allowDrag(draggingNode) {
+      return true
+    },
+
     upload(file) {
       console.log(file);
     },
@@ -302,6 +388,9 @@ export default {
 }
 </style>
 <style lang="scss">
+.el-tree-node__content {
+  height: 45px;
+}
 @import "../style/designer";
 </style>
 <style>
