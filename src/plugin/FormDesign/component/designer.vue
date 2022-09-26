@@ -6,21 +6,26 @@
         预览
       </el-button>
       <el-button
-        class="mainBtn"
-        icon="el-icon-tickets"
-        type="text"
-        @click="viewJSON"
+          class="mainBtn"
+          icon="el-icon-tickets"
+          type="text"
+          @click="viewJSON"
       >
         JSON
       </el-button>
-      <!--      <el-button icon="el-icon-s-tools" type="text" @click="setting">-->
-      <!--        设置-->
-      <!--      </el-button>-->
       <el-button
-        class="delete-btn mainBtn"
-        icon="el-icon-delete-solid"
-        type="text"
-        @click="clear"
+          class="mainBtn"
+          icon="el-icon-tickets"
+          type="text"
+          @click="handleTreeClick"
+      >
+        组件树
+      </el-button>
+      <el-button
+          class="delete-btn mainBtn"
+          icon="el-icon-delete-solid"
+          type="text"
+          @click="clear"
       >
         清空
       </el-button>
@@ -28,33 +33,33 @@
     <el-scrollbar class="center-scrollbar">
       <el-row class="center-board-row" :gutter="formConf.gutter">
         <el-form
-          :size="formConf.size"
-          :label-position="formConf.labelPosition"
-          :disabled="formConf.disabled"
-          :label-width="formConf.labelWidth + 'px'"
+            :size="formConf.size"
+            :label-position="formConf.labelPosition"
+            :disabled="formConf.disabled"
+            :label-width="formConf.labelWidth + 'px'"
         >
           <draggable
-            class="drawing-board"
-            :list="list"
-            :animation="100"
-            group="componentsGroup"
-            draggable=".drawing-item"
+              class="drawing-board"
+              :list="list"
+              :animation="100"
+              group="componentsGroup"
+              draggable=".drawing-item"
           >
             <design-item
-              v-for="(element, index) in list"
-              :key="index"
-              :model="element"
-              :activeItem="activeItem"
-              @rowItemRollBack="handlerRollBack"
-              @onActiveItemChange="handlerActiveItemChange"
-              @copyItem="handlerItemCopy"
-              @deleteItem="handlerItemDelete"
+                v-for="(element, index) in list"
+                :key="index"
+                :model="element"
+                :activeItem="activeItem"
+                @rowItemRollBack="handlerRollBack"
+                @onActiveItemChange="handlerActiveItemChange"
+                @copyItem="handlerItemCopy"
+                @deleteItem="handlerItemDelete"
             />
           </draggable>
           <div v-show="infoShow" class="empty-info">
             <el-empty
-              :image="imgPath"
-              description="从左侧拖拽添加控件"
+                :image="imgPath"
+                description="从左侧拖拽添加控件"
             ></el-empty>
           </div>
         </el-form>
@@ -63,31 +68,32 @@
     <config-panel :activeItem="activeItem" :itemList="list" />
     <!-- 设计器配置弹出框 -->
     <el-dialog
-      :visible.sync="previewVisible"
-      fullscreen
-      title="预览"
-      append-to-body
+        :visible.sync="previewVisible"
+        fullscreen
+        title="预览"
+        append-to-body
     >
       <preview
-        :uploadFun="upload"
-        :itemList="itemList"
-        :formConf="formConf"
-        v-if="previewVisible"
+          :uploadFun="upload"
+          :itemList="itemList"
+          :formConf="formConf"
+          v-if="previewVisible"
       />
     </el-dialog>
     <el-dialog
-      :visible.sync="JSONVisible"
-      width="70%"
-      title="JSON"
-      center
-      :close-on-click-modal="false"
-      append-to-body
+        :visible.sync="JSONVisible"
+        width="70%"
+        title="JSON"
+        center
+        :close-on-click-modal="false"
+        append-to-body
     >
       <codemirror v-model="viewCode" :options="options" />
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="handlerSetJson()">确 定</el-button>
       </span>
     </el-dialog>
+    <component-tree ref="tree" @updateJSON = "updateJSON" :data="data" v-if="dialogTableVisible" :visible.sync ='dialogTableVisible'></component-tree>
   </div>
 </template>
 <script>
@@ -104,10 +110,12 @@ import "codemirror/lib/codemirror.css";
 // 引入主题后还需要在 options 中指定主题才会生效
 import "codemirror/theme/dracula.css";
 import "codemirror/mode/javascript/javascript";
+import ComponentTree from "@/plugin/FormDesign/component/componentTree";
 
 export default {
   name: "Designer",
   components: {
+    ComponentTree,
     draggable,
     configPanel,
     designItem,
@@ -126,6 +134,8 @@ export default {
   },
   data() {
     return {
+      data: [],
+      dialogTableVisible: false,
       imgPath: require("../../../assets/image/common/no_data.png"),
       formConf: formConf,
       activeItem: {},
@@ -152,6 +162,17 @@ export default {
   },
   mounted() {},
   methods: {
+    updateJSON(jsonStr) {
+      this.$emit("updateJSON", jsonStr);
+    },
+    handleTreeClick() {
+      this.dialogTableVisible = true
+      let formData =  JSON.parse(JSON.stringify(this.list))
+      this.$nextTick(() => {
+        this.data = this.$refs.tree.json2TreeData(formData)
+      })
+
+    },
     upload(file) {
       console.log(file);
     },
@@ -236,7 +257,7 @@ export default {
       if (parent) {
         parent.columns.map((column, index) => {
           const colIndex = column.list.findIndex(
-            (item) => item.id === origin.id
+              (item) => item.id === origin.id
           );
           if (colIndex > -1) {
             column.list.splice(colIndex, 1);
@@ -302,6 +323,9 @@ export default {
 }
 </style>
 <style lang="scss">
+.el-tree-node__content {
+  height: 45px;
+}
 @import "../style/designer";
 </style>
 <style>
