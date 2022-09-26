@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="70%" append-to-body title="组件树" :visible.sync="dialogTableVisible">
+  <el-dialog width="70%" append-to-body title="组件树" :visible.sync="visible">
     <el-tree
         :data="data"
         node-key="id"
@@ -19,11 +19,13 @@
 <script>
 export default {
   props: {
-    dialogTableVisible: {
-      type: Boolean
+    visible: {
+      type: Boolean,
+      default: false
     },
     data: {
-      type: Array
+      type: Array,
+       default: []
     }
   },
   data() {
@@ -37,10 +39,10 @@ export default {
   },
   methods: {
     close() {
-      this.$emit('update:dialogTableVisible', false)
+      this.$emit('update:visible', false)
     },
     opens() {
-      this.$emit('update:dialogTableVisible', false)
+      this.$emit('update:visible', false)
       let json = {};
       json.config = this.formConf;
       json.list = this.treeData2json(this.data) ;

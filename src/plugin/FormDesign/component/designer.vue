@@ -93,7 +93,7 @@
         <el-button type="primary" @click="handlerSetJson()">确 定</el-button>
       </span>
     </el-dialog>
-    <component-tree @updateJSON = "updateJSON" :data="data" v-if="dialogTableVisible" :dialogTableVisible.sync ='dialogTableVisible'></component-tree>
+    <component-tree ref="tree" @updateJSON = "updateJSON" :data="data" v-if="dialogTableVisible" :visible.sync ='dialogTableVisible'></component-tree>
   </div>
 </template>
 <script>
@@ -135,10 +135,6 @@ export default {
   data() {
     return {
       data: [],
-      // defaultProps: {
-      //   children: "columns",
-      //   label: 'id',
-      // },
       dialogTableVisible: false,
       imgPath: require("../../../assets/image/common/no_data.png"),
       formConf: formConf,
@@ -169,65 +165,14 @@ export default {
     updateJSON(jsonStr) {
       this.$emit("updateJSON", jsonStr);
     },
-    opens() {
-      this.dialogTableVisible = false
-      let json = {};
-      json.config = this.formConf;
-      json.list = this.treeData2json(this.data) ;
-      let jsonStr =  JSON.stringify(json, null, 4);
-      this.$emit("updateJSON", jsonStr);
-    },
-    treeData2json(data) {
-      return data.map(list => {
-        if (list.compType === 'row') {
-          list.columns = list.columns.map((column,index) =>{
-            this.treeData2json(column.columns)
-            return {
-              id: index,
-              list: column.columns,
-              index: column.index,
-              span: column.span
-            }
-          })
-        }
-        return list
-      })
-    },
-    json2TreeData(data) {
-      return data.map(list => {
-        if (list.compType === 'row') {
-          list.columns = list.columns.map((column,index) =>{
-            this.json2TreeData(column.list)
-            return {
-              id: index,
-              columns: column.list,
-              index: column.index,
-              span: column.span
-            }
-          })
-        }
-        return list
-      })
-    },
     handleTreeClick() {
       this.dialogTableVisible = true
       let formData =  JSON.parse(JSON.stringify(this.list))
-      this.data = this.json2TreeData(formData)
-    },
-    allowDrop(draggingNode, dropNode, type) {
-      if ( ( dropNode.data.index % 1 === 0 )  && ( type === 'prev' || type === 'next' ) ) {
-        return  false
-      }
-      if (draggingNode.parent.data.compType === 'row' && draggingNode.data.columns) {
-        return false
-      }
-      return !(draggingNode.level === dropNode.level && draggingNode.data.compType !== 'row' && type === 'inner');
+      this.$nextTick(() => {
+        this.data = this.$refs.tree.json2TreeData(formData)
+      })
 
     },
-    allowDrag(draggingNode) {
-      return true
-    },
-
     upload(file) {
       console.log(file);
     },
