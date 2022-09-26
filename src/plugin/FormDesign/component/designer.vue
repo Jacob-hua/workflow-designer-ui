@@ -93,7 +93,7 @@
         <el-button type="primary" @click="handlerSetJson()">确 定</el-button>
       </span>
     </el-dialog>
-    <component-tree @updateJSON = "updateJSON" :data="data" :dialogTableVisible.sync ='dialogTableVisible'></component-tree>
+    <component-tree @updateJSON = "updateJSON" :data="data" v-if="dialogTableVisible" :dialogTableVisible.sync ='dialogTableVisible'></component-tree>
   </div>
 </template>
 <script>
