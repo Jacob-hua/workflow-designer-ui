@@ -13,14 +13,14 @@
       >
         JSON
       </el-button>
-      <el-button
-          class="mainBtn"
-          icon="el-icon-tickets"
-          type="text"
-          @click="handleTreeClick"
-      >
-        组件树
-      </el-button>
+<!--      <el-button-->
+<!--          class="mainBtn"-->
+<!--          icon="el-icon-tickets"-->
+<!--          type="text"-->
+<!--          @click="handleTreeClick"-->
+<!--      >-->
+<!--        组件树-->
+<!--      </el-button>-->
       <el-button
           class="delete-btn mainBtn"
           icon="el-icon-delete-solid"
@@ -165,14 +165,14 @@ export default {
     updateJSON(jsonStr) {
       this.$emit("updateJSON", jsonStr);
     },
-    handleTreeClick() {
-      this.dialogTableVisible = true
-      let formData =  JSON.parse(JSON.stringify(this.list))
-      this.$nextTick(() => {
-        this.data = this.$refs.tree.json2TreeData(formData)
-      })
-
-    },
+    // handleTreeClick() {
+    //   this.dialogTableVisible = true
+    //   let formData =  JSON.parse(JSON.stringify(this.list))
+    //   this.$nextTick(() => {
+    //     this.data = this.$refs.tree.json2TreeData(formData)
+    //   })
+    //
+    // },
     upload(file) {
       console.log(file);
     },
