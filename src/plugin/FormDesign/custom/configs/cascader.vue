@@ -203,15 +203,15 @@ export default {
         this.props.options = [];
       }
     },
-    handlerSetAreaData(val) {
-      if (val) {
-        const areaoptions = areaData();
-        this.tempOptions = this.props.options;
-        this.props.options = areaoptions;
-      } else {
-        this.props.options = this.tempOptions;
-      }
-    },
+    // handlerSetAreaData(val) {
+    //   if (val) {
+    //     const areaoptions = areaData();
+    //     this.tempOptions = this.props.options;
+    //     this.props.options = areaoptions;
+    //   } else {
+    //     this.props.options = this.tempOptions;
+    //   }
+    // },
   },
 };
 </script>
