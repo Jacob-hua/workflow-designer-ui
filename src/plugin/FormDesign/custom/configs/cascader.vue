@@ -96,12 +96,6 @@
           @click="handlerStaticData"
         ></el-button>
       </el-form-item>
-<!--      <el-form-item label="省市区">-->
-<!--        <el-checkbox-->
-<!--          v-model="props['china-area-data']"-->
-<!--          @change="handlerSetAreaData"-->
-<!--        />-->
-<!--      </el-form-item>-->
     </div>
     <interface-parser
       v-if="props.dataType === 'dynamic'"
@@ -203,15 +197,6 @@ export default {
         this.props.options = [];
       }
     },
-    // handlerSetAreaData(val) {
-    //   if (val) {
-    //     const areaoptions = areaData();
-    //     this.tempOptions = this.props.options;
-    //     this.props.options = areaoptions;
-    //   } else {
-    //     this.props.options = this.tempOptions;
-    //   }
-    // },
   },
 };
 </script>
