@@ -96,12 +96,12 @@
           @click="handlerStaticData"
         ></el-button>
       </el-form-item>
-      <el-form-item label="省市区">
-        <el-checkbox
-          v-model="props['china-area-data']"
-          @change="handlerSetAreaData"
-        />
-      </el-form-item>
+<!--      <el-form-item label="省市区">-->
+<!--        <el-checkbox-->
+<!--          v-model="props['china-area-data']"-->
+<!--          @change="handlerSetAreaData"-->
+<!--        />-->
+<!--      </el-form-item>-->
     </div>
     <interface-parser
       v-if="props.dataType === 'dynamic'"
