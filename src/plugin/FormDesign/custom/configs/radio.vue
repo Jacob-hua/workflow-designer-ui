@@ -83,7 +83,7 @@
         </el-button>
       </div>
     </div>
-    <interface-parser v-if="props.dataType === 'dynamic'" :currentField="props" @variableChange="onVariableChange" />
+    <interface-parser v-if="props.dataType === 'dynamic'" :key="props._id" :currentField="props" @variableChange="onVariableChange" />
   </div>
 </template>
 <script>
@@ -163,7 +163,6 @@ export default {
     },
     handlerChangeDataType(value) {
       if (value === 'static') {
-        delete this.props.requestConfig
         this.props.options = []
         this.props.options = this.tempOptions
       } else {

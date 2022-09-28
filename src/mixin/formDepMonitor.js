@@ -164,7 +164,9 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
   if (!fieldInfo.requestConfig) {
     return fieldInfo
   }
-
+  if (fieldInfo.dataType==='static') {
+    return fieldInfo
+  }
   let variables = fieldInfo.requestConfig.variables
   if (!variables) {
     variables = makeVariables(fieldInfo.requestConfig)

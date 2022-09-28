@@ -106,6 +106,7 @@
     <interface-parser
       v-if="props.dataType === 'dynamic'"
       :currentField="props"
+      :key="props._id"
       :hasChildren="true"
       @variableChange="onVariableChange"
     />
