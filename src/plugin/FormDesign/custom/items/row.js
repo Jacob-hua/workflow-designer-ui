@@ -1,6 +1,8 @@
 export let row = {
   id: '',
   _id: '',
+  // 栅格可复制时标题
+  title: '',
   compType: 'row',
   //控件名称
   compName: '栅格布局',

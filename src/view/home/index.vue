@@ -61,14 +61,14 @@
             <img :src="require('../../assets/image/home/executed.svg')" />
           </div>
           <div class="title">{{ workflowContents.executionTotalProcessCount }}</div>
-          <div class="label">执行工作流总数</div>
+          <div class="label">操作工作流总数</div>
         </div>
         <div class="data-wrapper">
           <div class="icon">
             <img :src="require('../../assets/image/home/executing.svg')" />
           </div>
           <div class="title">{{ workflowContents.executionInProcessCount }}</div>
-          <div class="label">执行中</div>
+          <div class="label">操作中</div>
         </div>
         <div class="data-wrapper">
           <div class="icon">

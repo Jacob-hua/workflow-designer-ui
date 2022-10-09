@@ -3,8 +3,8 @@
     <div class="container">
       <div class="content">
         <div class="empty" v-if="executors.length == 0">
-          <span>后续任务未指定执行人，请选择执行人</span>
-          <el-button @click="onConfirmation">选择执行人</el-button>
+          <span>后续任务未指定操作人，请选择操作人</span>
+          <el-button @click="onConfirmation">选择操作人</el-button>
         </div>
         <div class="info" v-else>
           <div>
@@ -17,7 +17,7 @@
       </div>
     </div>
     <runtime-people
-      title="选择执行人"
+      title="选择操作人"
       :visible.sync="runtimePeopleVisible"
       :selected="runtimePeopleSelected"
       @submit="onRuntimePeopleSubmit"

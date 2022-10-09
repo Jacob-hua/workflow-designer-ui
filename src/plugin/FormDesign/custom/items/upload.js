@@ -27,7 +27,7 @@ export let upload = {
   // 是否必填
   required: false,
   //上传地址
-  action:'http://k8s.isiact.com/workflow-runtime-service/execute/taskAttachment',
+  action:'',
   //多选上传
   multiple:false,
   name:'file',

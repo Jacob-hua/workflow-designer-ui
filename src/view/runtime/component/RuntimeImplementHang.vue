@@ -2,7 +2,7 @@
   <div>
     <div class="container">
       <div v-if="hang">
-        <div>当前流程已被挂起，如需将继续执行流程，请进行认证操作</div>
+        <div>当前流程已被挂起，如需将继续操作流程，请进行认证操作</div>
         <el-button @click="onConfirmation('激活确认')">重新激活</el-button>
       </div>
       <div v-else>

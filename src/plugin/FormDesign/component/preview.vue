@@ -156,11 +156,11 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
 
   const multipleDisabled = this.formConf.disabled || fieldInfo.disabled
   const multipleRows = _.get(this.form, valuePath, [])
-
   const multipleRowElements = multipleRows.map((value, index) => {
     return (
       <el-card body-style={{ padding: '10px 0px' }} style={{ margin: '10px 3px' }} shadow="always">
         <div slot="header" class="clearfix">
+          {fieldInfo.title}
           <el-button
             style="float: right; padding: 3px 0; margin: 0 10px;"
             icon="el-icon-delete"
