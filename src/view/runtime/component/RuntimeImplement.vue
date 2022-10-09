@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="执行工作流" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
+  <el-dialog title="操作工作流" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
     <div class="container">
       <div>
         <bpmn-info
@@ -179,7 +179,7 @@ export default {
           }),
         },
         NoExecutor: {
-          label: '指定执行人',
+          label: '指定操作人',
           value: 'NoExecutor',
           component: ({ workflow, onSelectExecutor }) => ({
             name: 'RuntimeImplementExecutor',
@@ -361,7 +361,7 @@ export default {
         return
       }
       if (this.noExecutor && (!Array.isArray(this.workflow.executors) || this.workflow.executors.length === 0)) {
-        this.$message.error('后续执行人为空！')
+        this.$message.error('后续操作人为空！')
         return
       }
       this.completeTask()
@@ -385,7 +385,7 @@ export default {
         return
       }
       this.formShow = false
-      this.$message.success('执行成功')
+      this.$message.success('操作成功')
       this.$emit('taskSuccess')
     },
     async fetchFormData(formKey) {
@@ -451,7 +451,7 @@ export default {
           assignee === null && candidateGroup === null && candidateUser === null
       )
       if (this.noExecutor) {
-        this.$message.warning('下一步无执行人')
+        this.$message.warning('下一步无操作人')
       }
     },
     async fetchExecuteDetail() {

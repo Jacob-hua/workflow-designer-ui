@@ -14,6 +14,12 @@
         ></el-input>
       </el-tooltip>
     </el-form-item>
+    <el-form-item label="标题">
+      <el-input
+          size="small"
+          v-model="props.title"
+      />
+    </el-form-item>
     <el-form-item label="栅格间隔">
       <el-input-number
         size="small"

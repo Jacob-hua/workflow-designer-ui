@@ -73,7 +73,7 @@
               <el-table-column prop="displayEnergyType" label="部署类型" />
               <el-table-column prop="starter" label="发起人" />
               <el-table-column prop="startTime" label="发起时间" />
-              <el-table-column label="执行进程" min-width="250">
+              <el-table-column align="center" label="流程进度" min-width="250">
                 <template slot-scope="{ row }">
                   <el-steps :active="row.displayTrackList.length" align-center process-status="success">
                     <el-step
@@ -90,7 +90,7 @@
               <el-table-column label="操作">
                 <template slot-scope="{ row }">
                   <el-button v-if="row.canExecute" @click.native.prevent="onExecute(row)" type="text" size="small">
-                    执行
+                    操作
                   </el-button>
                   <el-button
                     @click.native.prevent="onDetail(row)"
@@ -187,7 +187,7 @@ export default {
       },
       taskStatusConfig: {
         run: {
-          title: '执行',
+          title: '激活',
           className: '',
         },
         completed: {
@@ -221,12 +221,12 @@ export default {
       return [
         {
           icon: require('../../assets/image/runtime/executed.svg'),
-          label: '执行工作流总数',
+          label: '操作工作流总数',
           value: this.workflowCounts.executionTotalProcessCount,
         },
         {
           icon: require('../../assets/image/runtime/executing.svg'),
-          label: '执行中',
+          label: '操作中',
           value: this.workflowCounts.executionInProcessCount,
         },
         {
@@ -372,7 +372,7 @@ export default {
 
         newTask.displayTrackList = newTask.progressBarList.map(({ taskName, taskStatus }) => ({
           taskName,
-          ...(this.taskStatusConfig[taskStatus] ?? { title: '多人执行', className: '' }),
+          ...(this.taskStatusConfig[taskStatus] ?? { title: '多人操作', className: '' }),
         }))
         newTask.displayEnergyType = this.$getMappingName(newTask.processDeployType)
         newTask.canExecute = task.taskUserSet.includes(this.userInfo.account)

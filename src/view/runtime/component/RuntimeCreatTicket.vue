@@ -26,7 +26,7 @@
             ></el-date-picker>
           </el-form-item>
         </el-form>
-        <div v-if="isEmptyConfig" class="dialog-message">创建的执行会进入执行列表并开始执行流程,是否继续？</div>
+        <div v-if="isEmptyConfig" class="dialog-message">创建的操作会进入操作列表并开始操作流程,是否继续？</div>
       </div>
       <span slot="footer">
         <el-button class="submit-button" :loading="isSubmiting" @click="onSubmit">立即创建</el-button>

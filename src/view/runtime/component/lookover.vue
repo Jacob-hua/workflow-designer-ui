@@ -3,7 +3,7 @@
     <div class="container">
       <bpmn-info :xml="workflow.processDeployResource" :processDisplayInfo="processDisplayInfo" />
       <div>
-        <div class="title">工作流执行详情</div>
+        <div class="title">工作流操作详情</div>
         <div class="process-content">
           <el-timeline>
             <el-timeline-item
@@ -26,13 +26,13 @@
                   <div v-if="assigneeStatus[formAssignee] === 'run'" class="execute-info">
                     <div>
                       <i class="el-icon-check executing"></i>
-                      <span>{{ formAssignee }} 执行中</span>
+                      <span>{{ formAssignee }} 操作中</span>
                     </div>
                   </div>
                   <div v-if="assigneeStatus[formAssignee] === 'completed'" class="execute-info">
                     <div>
                       <i class="el-icon-check success"></i>
-                      <span>{{ formAssignee }} 执行</span>
+                      <span>{{ formAssignee }} 操作</span>
                     </div>
                     <span>{{ time }}</span>
                   </div>

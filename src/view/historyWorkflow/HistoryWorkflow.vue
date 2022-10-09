@@ -61,7 +61,7 @@
         </el-table-column>
         <el-table-column prop="starter" label="发起人"> </el-table-column>
         <el-table-column prop="startTime" label="发起时间"> </el-table-column>
-        <el-table-column prop="displayAssignee" label="执行人">
+        <el-table-column prop="displayAssignee" label="操作人">
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
