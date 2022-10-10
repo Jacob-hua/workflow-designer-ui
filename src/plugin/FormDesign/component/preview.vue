@@ -200,13 +200,12 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   fieldInfo.valuePath = valuePath
   const rules = checkRules(fieldInfo)
 
-  const needDependFunction = !this.formConf.disabled && !fieldInfo.disabled && fieldInfo.dependValue
+  const needDependFunction = !this.formConf.disabled && fieldInfo.dependValue
   if (needDependFunction) {
     mixinDependFunction(fieldInfo, handleDependChange.bind(this))
   }
 
-  const needRequestFunction =
-    (this.formConf.readOnly || (!this.formConf.disabled && !fieldInfo.disabled)) && fieldInfo.requestConfig
+  const needRequestFunction = (this.formConf.readOnly || !this.formConf.disabled) && fieldInfo.requestConfig
   if (needRequestFunction) {
     mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this))
   }
