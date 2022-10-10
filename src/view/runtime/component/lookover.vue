@@ -32,7 +32,7 @@
                   <div v-if="assigneeStatus[formAssignee] === 'completed'" class="execute-info">
                     <div>
                       <i class="el-icon-check success"></i>
-                      <span>{{ formAssignee }} 操作</span>
+                      <span>{{ formAssignee }} 完成</span>
                     </div>
                     <span>{{ time }}</span>
                   </div>
