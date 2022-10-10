@@ -160,7 +160,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     return (
       <el-card body-style={{ padding: '10px 0px' }} style={{ margin: '10px 3px' }} shadow="always">
         <div slot="header" class="clearfix">
-          {`#${index+1}.${fieldInfo.title}`}
+          {`#${index + 1}.${fieldInfo.title}`}
           <el-button
             style="float: right; padding: 3px 0; margin: 0 10px;"
             icon="el-icon-delete"
