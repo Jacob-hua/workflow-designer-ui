@@ -80,7 +80,7 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
   }
 
   fieldInfo.executeFuncs.set(calculateFuncKey(variableSpace), (data) => {
-    if (diffeDepObj(variableSpace.form, data)) {
+    if (diffDepObj(variableSpace.form, data)) {
       executeFunc(variableMix(variableSpace), fieldInfo)
     }
   })
@@ -112,16 +112,16 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
     return _.get(domain, dependValuePath)
   }
 
-  function diffeDepObj(dependObj, data) {
-    return Object.keys(dependObj).reduce((isDiffe, dependValuePath) => {
+  function diffDepObj(dependObj, data) {
+    return Object.keys(dependObj).reduce((isDiffed, dependValuePath) => {
       const dependValue = calculateDependValue(data, fieldInfo.valuePath, dependValuePath)
-      isDiffe = isDiffe || dependValue !== dependObj[dependValuePath].value
+      isDiffed = isDiffed || dependValue !== dependObj[dependValuePath].value
       // 如果前后的dependValue都是假值，则默认为发生变化
       if (immediate && !dependValue && !dependObj[dependValuePath].value) {
-        isDiffe = true
+        isDiffed = true
       }
       dependObj[dependValuePath].value = dependValue
-      return isDiffe
+      return isDiffed
     }, false)
   }
 
@@ -164,7 +164,7 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
   if (!fieldInfo.requestConfig) {
     return fieldInfo
   }
-  if (fieldInfo.dataType==='static') {
+  if (fieldInfo.dataType === 'static') {
     return fieldInfo
   }
   let variables = fieldInfo.requestConfig.variables
