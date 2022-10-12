@@ -78,4 +78,7 @@ export default {
 .field-box /deep/ .el-scrollbar__wrap {
   overflow-x: hidden;
 }
+.right-board {
+  width: 400px;
+}
 </style>
