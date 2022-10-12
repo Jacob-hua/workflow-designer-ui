@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :model="conditionForm" label-position="right" label-width="100px">
+    <el-form :model="conditionForm" label-position="right" label-width="120px">
       <el-form-item label="条件类型">
         <el-select v-model="conditionForm.type">
           <el-option

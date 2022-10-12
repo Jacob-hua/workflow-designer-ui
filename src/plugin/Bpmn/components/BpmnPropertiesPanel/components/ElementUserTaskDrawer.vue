@@ -16,16 +16,19 @@
             >
               {{ label }}
             </el-tag>
-            <el-input
-              v-if="inputVisible"
-              v-model="inputValue"
-              ref="saveTagInput"
-              size="small"
-              @keyup.enter.native="handleInputConfirm"
-              @blur="handleInputConfirm"
-            >
-            </el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 新 增</el-button>
+            <template v-if="inputVisible">
+              <el-row :gutter="20">
+                <el-col :span="12">
+                  <el-input v-model="inputValue" ref="saveTagInput" size="small"> </el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button class="submit-button" @click="handleInputConfirm">确定</el-button>
+                </el-col>
+              </el-row>
+            </template>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput" icon="el-icon-edit">{{
+              newTagButton
+            }}</el-button>
           </el-form-item>
         </template>
         <template v-else>
@@ -131,6 +134,12 @@ export default {
     usersVisible() {
       return ['singleUser', 'multipleUser'].includes(this.model)
     },
+    newTagButton() {
+      if (this.model === 'singleUser' && this.result.length > 0) {
+        return '修改'
+      }
+      return '新增'
+    },
   },
   methods: {
     onCloseDrawer() {
@@ -183,6 +192,10 @@ export default {
     },
     showInput() {
       this.inputVisible = true
+      if (this.newTagButton === '修改') {
+        this.inputValue = this.result[0]?.value
+        this.result = []
+      }
       this.$nextTick((_) => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
