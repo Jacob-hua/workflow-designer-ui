@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :model="timerForm" label-position="right" label-width="100px">
+    <el-form :model="timerForm" label-position="right" label-width="120px">
       <el-form-item label="定时器类型">
         <el-select v-model="timerForm.timerType" @change="onTimerTypeChange">
           <el-option

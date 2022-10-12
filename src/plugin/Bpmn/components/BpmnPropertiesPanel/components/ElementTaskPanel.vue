@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form label-position="right" label-width="100px">
+    <el-form label-position="right" label-width="120px">
       <el-form-item label="处理用户">
         <el-tag v-if="displayAssignee.value" closable @close="onDelAssignee" :key="displayAssignee.value">{{
           displayAssignee.label

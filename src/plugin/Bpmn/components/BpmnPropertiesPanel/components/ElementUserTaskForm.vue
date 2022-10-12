@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form label-position="right" label-width="100px" :model="userTaskForm">
+    <el-form label-position="right" label-width="120px" :model="userTaskForm">
       <el-form-item label="处理用户">
         <el-row>
           <el-col :span="18">
