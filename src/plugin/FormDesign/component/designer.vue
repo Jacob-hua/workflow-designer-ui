@@ -294,6 +294,9 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.center-board {
+  width: 65%;
+}
 .action-bar {
   display: flex;
   justify-content: right;
