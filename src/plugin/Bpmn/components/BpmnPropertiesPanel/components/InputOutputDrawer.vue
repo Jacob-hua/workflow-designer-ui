@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-drawer :title="title" :visible="visible" @close="onCloseDrawer" append-to-body direction="rtl">
-      <el-form :model="parameterForm" :rules="parameterFormRules" ref="parameterForm" label-width="120px">
+      <el-form :model="parameterForm" :rules="parameterFormRules" ref="parameterForm" label-width="130px">
         <el-form-item label="变量名" prop="name">
           <el-input v-model="parameterForm.name" />
         </el-form-item>

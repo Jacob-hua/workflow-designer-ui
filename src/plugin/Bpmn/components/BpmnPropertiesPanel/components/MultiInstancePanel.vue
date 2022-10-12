@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form label-position="right" label-width="120px">
+    <el-form label-position="right" label-width="130px">
       <el-form-item label="回路特性">
         <el-select v-model="instanceForm.loopCharacteristics" clearable>
           <el-option
