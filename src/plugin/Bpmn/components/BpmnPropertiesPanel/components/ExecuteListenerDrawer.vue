@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-drawer :title="title" :visible="visible" @close="onCloseDrawer" append-to-body direction="rtl">
-      <el-form :model="listenerForm" :rules="listenerFormRules" ref="listenerForm" label-width="120px">
+      <el-form :model="listenerForm" :rules="listenerFormRules" ref="listenerForm" label-width="130px">
         <el-form-item label="事件类型" prop="event">
           <el-select v-model="listenerForm.event">
             <el-option
