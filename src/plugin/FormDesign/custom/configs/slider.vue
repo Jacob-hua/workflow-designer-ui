@@ -64,10 +64,10 @@
     </el-form-item>
     <template v-else>
       <el-form-item label="默认起始值">
-        <el-input-number class="input" v-model="defaultValue[0]"></el-input-number>
+        <el-input-number class="input" v-model="props.value[0]"></el-input-number>
       </el-form-item>
       <el-form-item label="默认值终止值">
-        <el-input-number class="input" v-model="defaultValue[1]"></el-input-number>
+        <el-input-number class="input" v-model="props.value[1]"></el-input-number>
       </el-form-item>
     </template>
   </div>
@@ -85,7 +85,7 @@ export default {
     };
   },
   watch: {
-    defaultValue(value) {
+   'props.value': function (value) {
       this.checkDefaultValue(value);
     },
   },
@@ -103,9 +103,9 @@ export default {
     },
     rangeChange(isRange) {
       if (isRange) {
-        this.defaultValue = [this.props.min, this.props.max];
+        this.props.value = [this.props.min, this.props.max];
       } else {
-        this.defaultValue = this.props.min;
+        this.props.value = this.props.min;
       }
     },
   },

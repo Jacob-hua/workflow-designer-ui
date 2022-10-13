@@ -165,14 +165,6 @@ export default {
     updateJSON(jsonStr) {
       this.$emit("updateJSON", jsonStr);
     },
-    // handleTreeClick() {
-    //   this.dialogTableVisible = true
-    //   let formData =  JSON.parse(JSON.stringify(this.list))
-    //   this.$nextTick(() => {
-    //     this.data = this.$refs.tree.json2TreeData(formData)
-    //   })
-    //
-    // },
     upload(file) {
       console.log(file);
     },
@@ -243,7 +235,7 @@ export default {
             }
           });
         } else {
-          const clone = JSON.parse(JSON.stringify(origin));
+          const clone = JSON.parse(JSON.stringify(origin))
           const uId = "fd_" + getSimpleId();
           clone.id = uId;
           clone._id = uId;
@@ -295,7 +287,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .center-board {
-  width: 65%;
+  width: 61.5%;
 }
 .action-bar {
   display: flex;

@@ -240,15 +240,12 @@ export default {
       const {
         ascription,
         business,
-        valueDate: [startTime, endTime],
       } = this.searchForm;
       const { errorInfo, result } = await postHistoryProcessCountStatistic({
         assignee: this.userInfo.account,
         tenantId: this.tenantId,
         ascription,
-        business,
-        startTime,
-        endTime,
+        business
       });
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg);

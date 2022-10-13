@@ -79,6 +79,6 @@ export default {
   overflow-x: hidden;
 }
 .right-board {
-  width: 400px;
+ width: 400px;
 }
 </style>
