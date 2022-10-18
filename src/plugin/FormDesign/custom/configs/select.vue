@@ -121,6 +121,7 @@
       :key="props._id"
       :currentField="props"
       @variableChange="onVariableChange"
+      @close="close"
     />
   </div>
 </template>
@@ -153,6 +154,9 @@ export default {
     onVariableChange(requestConfig) {
       this.props.requestConfig = requestConfig;
       this.addThirdPartyApi({ id: requestConfig.id });
+    },
+    close() {
+      delete this.props.requestConfig
     },
     handlerChangeLabel(val) {
       this.props.labelWidth = val ? "80" : "1";

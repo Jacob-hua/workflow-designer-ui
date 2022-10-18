@@ -2,6 +2,7 @@
   <div>
     <el-form-item label="第三方API">
       <seclect
+          @clear="close"
         :requestConfig="currentField.requestConfig"
         :options="interFaceOption"
         key="id"
@@ -205,6 +206,9 @@ export default {
     selectedChange(selected) {
       this.interfaceId = selected;
     },
+    close() {
+      this.$emit('close')
+    }
   },
 };
 </script>

@@ -4,6 +4,7 @@
     @change="changeProduct"
     placeholder="请选择"
     clearable
+    @clear="clear"
   >
     <el-option
       v-for="item in options"
@@ -55,6 +56,9 @@ export default {
     }
   },
   methods: {
+    clear() {
+      this.$emit('clear')
+    },
     changeProduct() {
       this.$emit("selectedChange", this.selected);
     },
