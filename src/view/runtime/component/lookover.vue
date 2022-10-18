@@ -16,10 +16,10 @@
                 <div v-for="({ formContent, assignee: formAssignee, time }, index) in formDataList" :key="index">
                   <div v-if="formContent" class="form">
                     <preview
+                      :context="context"
                       :itemList="formContent.list"
                       :formData="formContent.data"
                       :formConf="formContent.config"
-                      :processInstanceId="processInstanceId"
                       :downloadFun="downloadFile.bind(this)"
                     ></preview>
                   </div>
@@ -119,6 +119,7 @@ export default {
   data() {
     return {
       workflow: {},
+      context: {},
     }
   },
   computed: {
@@ -180,10 +181,20 @@ export default {
       ]
     },
   },
-  mounted() {
+  async mounted() {
     this.fetchExecuteDetail()
+    this.context = await this.getContext()
   },
   methods: {
+    async getContext() {
+      if (!this.processInstanceId) {
+        return {}
+      }
+      const { result } = await processVariable({
+        processInstanceId: this.processInstanceId ?? '',
+      })
+      return result
+    },
     undefineStatus(status = '') {
       return status.split(',').some((status) => !['completed', 'run', 'rejected', 'hang', 'timedOut'].includes(status))
     },
