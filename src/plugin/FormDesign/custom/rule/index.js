@@ -1,6 +1,6 @@
 export default function checkRules(element) {
   let r = []
-  const _trigger = ['change']
+  const _trigger = element.disabled ? ['blur'] : ['blur', 'change']
   if (element.required) {
     r.push({ required: true, message: element.label + '不能为空', trigger: _trigger })
   }
