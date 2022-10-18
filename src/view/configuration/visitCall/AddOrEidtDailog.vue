@@ -184,7 +184,6 @@
                   </el-form-item>
                   <i
                     @click="deleteParams(index, paramsIndex)"
-                    v-if="paramsIndex !== 0"
                     class="el-icon-remove-outline"
                   ></i>
                 </div>
@@ -215,7 +214,6 @@
                   </el-form-item>
                   <i
                     @click="deleteParseParams(index, parseIndex)"
-                    v-if="parseIndex !== 0"
                     class="el-icon-remove-outline"
                   ></i>
                 </div>
@@ -340,16 +338,10 @@ export default {
           createBy: this.userInfo.account, //创建人
           tenantId: this.tenantId, //租户id
           configParams: [
-            {
-              key: "",
-              value: "",
-            },
+
           ],
           parseParams: [
-            {
-              key: "",
-              value: "",
-            },
+
           ],
         },
       ]
@@ -446,7 +438,6 @@ export default {
       variableFactory[config.method](config)
     },
     checkKeyIsEmpty( { parameterMap,  dataParse } ,isEmpty = true) {
-      debugger
       if (typeof dataParse === 'string') {
         dataParse = JSON.parse(dataParse)
       }
