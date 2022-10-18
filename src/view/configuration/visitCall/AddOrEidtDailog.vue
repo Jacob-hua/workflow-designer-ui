@@ -217,13 +217,13 @@
                     class="el-icon-remove-outline"
                   ></i>
                 </div>
-                <el-button @click="saveConfig(item, `form${index}`)" style="margin-left: 500px" type="primary">保存</el-button>
+                <el-button class="save" @click="saveConfig(item, `form${index}`)" type="primary">保存</el-button>
               </div>
             </el-form>
 
           </div>
         </div>
-        <div>
+        <div class="right">
           <p>请求结果</p>
           <div class="jsonViewer">
             <json-viewer :value="jsonData"></json-viewer>
@@ -539,8 +539,9 @@ export default {
     },
     deleteApiBox(index, item) {
       this.$confirm("此操作将删除当前选中api,是否继续?", "提示", {
-        cancelButtonText: "取消",
-        confirmButtonText: "确定",
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        cancelButtonClass: "btn-custom-cancel",
         type: "warning",
         beforeClose: (action, instance, done) => {
           // 取消回车确认事件
@@ -592,6 +593,35 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.save {
+  margin-left: 455px
+}
+.save::-webkit-scrollbar {
+  width: 20px;
+}
+.save::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  background-color: rgba(0,0,0,0.1);
+}
+.save::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  border-radius: 0;
+  background-color: rgba(255,255,255,0.1);
+}
+.container::-webkit-scrollbar {
+  width: 20px;
+}
+.container::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  background-color: rgba(0,0,0,0.1);
+}
+.container::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  border-radius: 0;
+  background-color: rgba(255,255,255,0.1);
+}
 .next {
   @include primaryBtn;
 }
