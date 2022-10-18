@@ -46,8 +46,12 @@ export default {
     };
   },
   mounted() {
-    if (this.requestConfig.id) {
-      this.selected = this.requestConfig.id;
+    if (this.requestConfig?.id) {
+      this.options.forEach(option => {
+        if (option.id === this.requestConfig?.id) {
+          this.selected = this.requestConfig.id;
+        }
+      })
     }
   },
   methods: {

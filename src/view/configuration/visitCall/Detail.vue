@@ -302,7 +302,7 @@ export default {
   },
   mounted() {
     this.ascription = this.currentRow && this.currentRow[0].ascription;
-    this.this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
+    this.currentPars = this.currentRow[this.editableTabsValue].parseParams;
   },
 };
 </script>
