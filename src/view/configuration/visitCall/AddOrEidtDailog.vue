@@ -446,7 +446,6 @@ export default {
       variableFactory[config.method](config)
     },
     checkKeyIsEmpty( { parameterMap,  dataParse } ,isEmpty = true) {
-      debugger
       if (typeof dataParse === 'string') {
         dataParse = JSON.parse(dataParse)
       }
