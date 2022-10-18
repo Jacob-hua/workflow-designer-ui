@@ -45,6 +45,15 @@ export default {
       selected: "",
     };
   },
+  mounted() {
+    if (this.requestConfig?.id) {
+      this.options.forEach(option => {
+        if (option.id === this.requestConfig?.id) {
+          this.selected = this.requestConfig.id;
+        }
+      })
+    }
+  },
   methods: {
     changeProduct() {
       this.$emit("selectedChange", this.selected);
