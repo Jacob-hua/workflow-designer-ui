@@ -217,7 +217,7 @@
                     class="el-icon-remove-outline"
                   ></i>
                 </div>
-                <el-button @click="saveConfig(item, `form${index}`)" style="margin-left: 500px" type="primary">保存</el-button>
+                <el-button class="save" @click="saveConfig(item, `form${index}`)" type="primary">保存</el-button>
               </div>
             </el-form>
 
@@ -592,6 +592,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.save {
+  margin-left: 455px
+}
 .next {
   @include primaryBtn;
 }
