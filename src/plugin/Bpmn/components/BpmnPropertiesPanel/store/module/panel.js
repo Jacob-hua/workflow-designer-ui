@@ -90,6 +90,9 @@ const mutations = {
     }
     state.listeners.splice(index, 1)
   },
+  clearListener(state) {
+    state.listeners = []
+  },
   addSignal(state, { signal }) {
     if (emptyPropertiesObject(signal)) {
       return
@@ -187,6 +190,7 @@ const mutationsEffect = {
   addListener: panelEffect.listenerEffect,
   updateListener: panelEffect.listenerEffect,
   removeListener: panelEffect.listenerEffect,
+  clearListener: panelEffect.listenerEffect,
   addSignal: panelEffect.signalEffect,
   updateSignal: panelEffect.signalEffect,
   removeSignal: panelEffect.signalEffect,
