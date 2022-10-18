@@ -69,10 +69,12 @@
     <Guide ref="guide" :business="business" @showAddDialog="showAddDialog" />
     <AddOrEidtDailog
       ref="AddOrEidtDailog"
+      v-if="addConfig"
       :business="business"
       :type="type"
       @showAddOrEidtDailog="showAddOrEidtDailog"
-      v-if="AddOrEidtDailogFlag"
+      @refreshList = "GetGlobalList"
+      :visible.sync="addConfig"
       :guideForm="guideForm"
     />
     <Detail
@@ -109,7 +111,7 @@ export default {
       currentRow: [],
       DetailFlag: false,
       guideForm: {},
-      AddOrEidtDailogFlag: false,
+      addConfig: false,
       dateRang: ["2022-01-01", "2022-12-31"],
       radio: "1",
       type: "",
@@ -144,7 +146,6 @@ export default {
               api.configParams.push(obj);
             }
           } else {
-            //?scope=103&&format=json&&appid=379020&&bk_key=关键字&&bk_length=600
             let obj = { key: "", value: "" };
             if (api.parameter) {
               let parArr = api.parameter.split("?");
@@ -200,7 +201,6 @@ export default {
               });
             }
           } else {
-            //?scope=103&&format=json&&appid=379020&&bk_key=关键字&&bk_length=600
             let obj = { key: "", value: "" };
             let parArr = api.parameter.split("?");
             if (!api.parameter.includes("&")) {
@@ -235,77 +235,33 @@ export default {
       });
     },
     showAddOrEidtDailog(row, code) {
-      this.type = "edit";
+      this.type = code
       if (code === "pre") {
-        this.$refs.guide.dialogVisible = true;
+        this.addConfig = true
       } else if (code === "detail") {
-        this.AddOrEidtDailogFlag = true;
         this.guideForm = row;
-        this.$nextTick(() => {
-          this.$refs.AddOrEidtDailog.dialogVisible = true;
-        });
+        this.addConfig = true
       } else if (code === "edit") {
-        (this.AddOrEidtDailogFlag = true),
-          this.$nextTick(() => {
-            this.$refs.AddOrEidtDailog.dialogVisible = true;
-            this.$refs.AddOrEidtDailog.apiBoxList = row;
-          });
+        this.addConfig = true
+        this.$nextTick(() => {
+          this.$refs.AddOrEidtDailog.apiBoxList = row;
+        })
       } else {
         Object.keys(row).length
-          ? ((this.AddOrEidtDailogFlag = true),
+          ? ((this.addConfig = true),
             this.$nextTick(() => {
-              (this.$refs.AddOrEidtDailog.dialogVisible = true),
                 this.apiDetail({
                   source: row.source,
                   sourceMark: row.sourceMark,
                   tenantId: this.tenantId,
                 });
             }))
-          : (this.$refs.guide.dialogVisible = true);
+          : (this.addConfig = true);
       }
     },
     showAddDialog(form) {
-      this.AddOrEidtDailogFlag = true;
-      this.type = "see";
+      this.addConfig = true
       this.guideForm = form;
-      this.$nextTick(() => {
-        this.$refs.AddOrEidtDailog.jsonData = [];
-        this.$refs.AddOrEidtDailog.dialogVisible = true;
-        this.$refs.AddOrEidtDailog.apiBoxList = [
-          {
-            // source: '', //系统名称
-            // sourceMark: '', // 系统标识
-            ...form,
-            name: "", //api名称
-            apiMark: "", // api标识
-            type: "", // api类型,
-            typeName: "", //api类型名称
-            host: "", // 系统host
-            path: "", // 请求路径
-            method: "", //请求方式
-            headers: "", //请求头信息
-            parameter: "", // GET请求参数 eg: ?id=${id}&&name=${name}
-            body: "", //POST请求参数 eg: {\"id\":\"${id}\",\"name\":\"${name}\"}
-            dataParse: "", //解析配置
-            isUse: 1, // 是否使用 1 使用 0禁用 2删除
-            createTime: "", //创建时间
-            createBy: this.userInfo.account, //创建人
-            tenantId: +this.tenantId, //租户id
-            configParams: [
-              {
-                key: "",
-                value: "",
-              },
-            ],
-            parseParams: [
-              {
-                key: "",
-                value: "",
-              },
-            ],
-          },
-        ];
-      });
     },
     async GetGlobalList(business) {
       let data = await GetGlobalList({

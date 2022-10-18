@@ -2,7 +2,7 @@
   <div>
     <el-dialog
       title="第三方接口配置"
-      :visible.sync="dialogVisible"
+      :visible.sync="visible"
       width="80%"
       @close="close"
       fullscreen
@@ -105,8 +105,8 @@
                   >
                     <el-select v-model="item.type" placeholder="请选择api类型">
                       <el-option
-                        v-for="(apiItem, idxe) in apiOptions"
-                        :key="idxe"
+                        v-for="(apiItem, apiIndex) in apiOptions "
+                        :key="apiIndex"
                         @click.native="apiTypeChange(item, apiItem.typeName)"
                         :label="apiItem.typeName"
                         :value="apiItem.type"
@@ -142,7 +142,7 @@
                     >
                       <el-option
                         v-for="item in methodsOptions"
-                        :key="Math.random()"
+                        :key="item.value"
                         :label="item.label"
                         :value="item.label"
                       >
@@ -172,8 +172,8 @@
                   ></i>
                 </div>
                 <div
-                  v-for="(params, indexs) in item.configParams"
-                  :key="indexs"
+                  v-for="(params, paramsIndex) in item.configParams"
+                  :key="paramsIndex"
                   class="params"
                 >
                   <el-form-item label="参数key">
@@ -183,13 +183,13 @@
                     <el-input v-model="params.value"></el-input>
                   </el-form-item>
                   <i
-                    @click="deleteParams(index, indexs)"
-                    v-if="indexs !== 0"
+                    @click="deleteParams(index, paramsIndex)"
+                    v-if="paramsIndex !== 0"
                     class="el-icon-remove-outline"
                   ></i>
                 </div>
                 <el-button
-                  @click="excuteParse(item)"
+                  @click="executeParse(item)"
                   class="parse"
                   type="primary"
                   >模拟请求</el-button
@@ -203,8 +203,8 @@
                   ></i>
                 </div>
                 <div
-                  v-for="(parse, idxs) in item.parseParams"
-                  :key="idxs"
+                  v-for="(parse, parseIndex) in item.parseParams"
+                  :key="parseIndex"
                   class="params"
                 >
                   <el-form-item label="参数key">
@@ -214,13 +214,15 @@
                     <el-input v-model="parse.value"></el-input>
                   </el-form-item>
                   <i
-                    @click="deleteParseParams(index, idxs)"
-                    v-if="idxs !== 0"
+                    @click="deleteParseParams(index, parseIndex)"
+                    v-if="parseIndex !== 0"
                     class="el-icon-remove-outline"
                   ></i>
                 </div>
+                <el-button @click="saveConfig(item, `form${index}`)" style="margin-left: 1000px" type="primary">保存</el-button>
               </div>
             </el-form>
+
           </div>
         </div>
         <div>
@@ -230,16 +232,11 @@
           </div>
         </div>
       </div>
-
-      <div slot="footer" class="dialog-footer">
-        <div class="next" @click="saveOrEdite">保存</div>
-        <div class="cancel" @click="close">取 消</div>
-      </div>
     </el-dialog>
 
     <el-dialog
       title="添加API类型"
-      :visible.sync="dialogVisible2"
+      :visible.sync="apiTypeVisible"
       :close-on-click-modal="false"
       width="40%"
       append-to-body
@@ -253,8 +250,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <div class="next" @click="saveApi">保存</div>
-        <div class="cancel" @click="dialogVisible2 = false">取 消</div>
+        <div class="next" @click="saveApiType">保存</div>
+        <div class="cancel" @click="apiTypeVisible = false">取 消</div>
       </div>
     </el-dialog>
   </div>
@@ -274,7 +271,6 @@ import ApiEnum from "@/enum/ApiTypeEnum";
 
 import _ from "lodash";
 export default {
-  name: "AddOrEidtDailog",
   props: {
     guideForm: Object,
     business: {
@@ -285,10 +281,14 @@ export default {
       type: String,
       default: "edit",
     },
+    visible: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
-      dialogVisible2: false,
+      apiTypeVisible: false,
       typeForm: {
         type: "",
         typeName: "",
@@ -296,7 +296,33 @@ export default {
       jsonData: [],
       value: "",
       apiBoxList: [
+
+      ],
+      methodsOptions: [
         {
+          value: "1",
+          label: "POST",
+        },
+        {
+          value: "2",
+          label: "GET",
+        },
+      ],
+      apiOptions: [],
+    };
+  },
+  mounted() {
+    this.initApiBoxList()
+    this.loadApiOptionList()
+  },
+  computed: {
+    ...mapState("account", ["userInfo", "tenantId"]),
+  },
+  methods: {
+    initApiBoxList() {
+      this.apiBoxList = [
+        {
+          ascription: this.business,
           ...this.guideForm,
           name: "", //api名称
           apiMark: "", // api标识
@@ -311,8 +337,8 @@ export default {
           dataParse: "", //解析配置
           isUse: 1, // 是否使用 1 使用 0禁用 2删除
           createTime: "", //创建时间
-          createBy: "", //创建人
-          tenantId: "", //租户id
+          createBy: this.userInfo.account, //创建人
+          tenantId: this.tenantId, //租户id
           configParams: [
             {
               key: "",
@@ -326,225 +352,166 @@ export default {
             },
           ],
         },
-      ],
-      methodsOptions: [
-        {
-          value: "1",
-          label: "POST",
-        },
-        {
-          value: "2",
-          label: "GET",
-        },
-      ],
-      apiOptions: [],
-      dialogVisible: false,
-    };
-  },
-  mounted() {
-    this.apiBoxList[0].createBy = this.userInfo.account;
-    this.apiBoxList[0].tenantId = this.tenantId;
-    this.apiTypeList();
-  },
-  computed: {
-    ...mapState("account", ["userInfo", "tenantId"]),
-  },
-  methods: {
-    close() {
-      this.dialogVisible = false;
-      this.$refs["form0"][0].clearValidate();
-      this.$refs["form0"][0].resetFields();
+      ]
     },
+    async getApiTypeList({ tenantId, ascription }) {
+      try {
+        const { errorInfo, result = [] } = await apiTypeList({
+          tenantId,
+          ascription
 
-    apiTypeChange(currentApi, typeName) {
-      currentApi.typeName = typeName;
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        return result
+      } catch (e) {
+        return []
+      }
+
     },
-    saveApi() {
-      // get(`/config/global/checkApiType?typeName=${params.typeName}&type=user&tenantId=18`);
-      checkApiType({
-        ...this.typeForm,
+    async loadApiOptionList() {
+      this.apiOptions = await this.getApiTypeList({
         tenantId: this.tenantId,
         ascription: this.business,
-      }).then((res) => {
-        if (res.result) {
-          this.apiOptions.push(this.typeForm);
-          this.dialogVisible2 = false;
-        } else {
-          this.$message({
-            type: "error",
-            message: "Api类型或类型名称重复",
-          });
-        }
-      });
+      })
     },
     addApiType() {
-      this.dialogVisible2 = true;
+      this.apiTypeVisible = true;
       this.typeForm = {
         type: "",
         typeName: "",
       };
     },
-
-    excuteParse(api) {
-      if (api.method === ApiEnum.API_TYPE_POST) {
-        let body = JSON.parse(api.body || "{}") ?? {};
-        api.configParams.forEach((config, index) => {
-          body[config.key] = config.value;
-        });
-        simulationRequest({
-          body: body,
-          headers: api.headers,
-          method: api.method,
-          url: api.url,
-        }).then((res) => {
-          this.jsonData = res;
-        });
-      } else {
-        api.configParams.forEach((config, index) => {
-          if (index === 0) {
-            api.parameter = `?${config.key}=${config.value}`;
-          } else {
-            api.parameter += `&${config.key}=${config.value}`;
-          }
-        });
-        simulationRequest({
-          headers: api.headers,
-          method: api.method,
-          url: api.host + api.path + api.parameter,
-        }).then((res) => {
-          this.jsonData = res;
-        });
-      }
+    async saveApi( { tenantId, ascription}) {
+        const { errorInfo, result } = await checkApiType({
+          ...this.typeForm,
+          tenantId,
+          ascription,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        return result
     },
-    apiTypeList() {
-      apiTypeList({
+    async saveApiType() {
+     const result = await this.saveApi({
         tenantId: this.tenantId,
         ascription: this.business,
-      }).then((res) => {
-        this.apiOptions = res.result;
-      });
-    },
-    checkKeyIsEmpty(flag = false) {
-      this.apiBoxList.forEach((api) => {
-        let api2 = _.cloneDeep(api);
-        if (
-          Object.keys(api2.parameterMap).includes("") ||
-          Object.keys(JSON.parse(api2.dataParse)).includes("")
-        ) {
-          flag = true;
-        }
-      });
-      return flag;
-    },
-
-    saveOrEdite() {
-      let flag = false;
-      this.apiBoxList.forEach((apiBox, index) => {
-        let refName = `form${index}`;
-        try {
-          this.$refs[refName][0].validate((valid) => {
-            flag = !!valid;
-          });
-        } catch (e) {
-          flag = false;
-          throw new Error(e.toString());
-        }
-      });
-      if (flag) {
-        this.apiBoxList.forEach((apibox) => {
-          let pars = {};
-          apibox.parseParams.forEach((parse) => {
-            pars[parse.key] = parse.value;
-          });
-          apibox.dataParse = JSON.stringify(pars);
-          if (apibox.method === ApiEnum.API_TYPE_POST) {
-            let obj = {};
-            apibox.configParams?.forEach((item) => {
-              obj[item.key] = item.value;
-            });
-            apibox.body = JSON.stringify(obj);
-          } else {
-            // ?id=${id}&&name=${name}
-            apibox.configParams.forEach((config, index) => {
-              if (index === 0) {
-                apibox.parameter = `?${config.key}=${config.value}`;
-              } else {
-                apibox.parameter += `&${config.key}=${config.value}`;
-              }
-            });
-          }
-        });
-
-        this.apiBoxList.forEach((apiBox) => {
-          let parameterMap = {};
-          apiBox.configParams?.forEach((con) => {
-            parameterMap[con.key] = con.value ? con.value : null;
-          });
-          apiBox.parameterMap = parameterMap;
-        });
-        this.apiBoxList.forEach((apiBox) => {
-          apiBox.ascription = this.business;
-        });
-
-        if (this.type === "see") {
-          let arr = [];
-          this.apiBoxList.forEach((api) => {
-            arr.push(api.apiMark);
-          });
-          let set = new Set(arr);
-          if (set.size === arr.length) {
-            let result = this.checkKeyIsEmpty();
-            if (result) {
-              this.$message.warning(
-                "参数或解析参数配置中存在key为空, 请修改后保存"
-              );
-              return;
-            }
-            postSaveOrEdite(this.apiBoxList).then((res) => {
-              this.dialogVisible = false;
-              this.$message({
-                type: "success",
-                message: "保存成功",
-              });
-              this.$parent.GetGlobalList(this.business);
-            });
-          } else {
-            this.$message({
-              type: "warning",
-              message: "api标识有重复,请修改",
-            });
-          }
-        } else {
-          let arr = [];
-          this.apiBoxList.forEach((api) => {
-            arr.push(api.apiMark);
-          });
-          let set = new Set(arr);
-          if (set.size === arr.length) {
-            let result = this.checkKeyIsEmpty();
-            if (result) {
-              this.$message.warning(
-                "参数或解析参数配置中存在key为空, 请修改后保存"
-              );
-              return;
-            }
-            putSaveOrEdite(this.apiBoxList).then((res) => {
-              this.dialogVisible = false;
-              this.$message({
-                type: "success",
-                message: "保存成功",
-              });
-              this.$parent.DetailFlag = false;
-              this.$parent.GetGlobalList(this.business);
-            });
-          } else {
-            this.$message({
-              type: "warning",
-              message: "api标识有重复,请修改",
-            });
-          }
-        }
+      })
+      if (!result) {
+        this.$message.error('Api类型或类型名称重复')
       }
+      this.apiOptions.push(this.typeForm)
+      this.apiTypeVisible = false
+    },
+    apiTypeChange(currentApi, typeName) {
+      currentApi.typeName = typeName;
+    },
+    close() {
+      this.$emit('update:visible', false)
+    },
+    handlerPostParams(config) {
+      const body = config.parameterMap = config.configParams?.reduce((body = {}, parameter) => {
+        body[parameter.key] = parameter.value
+        return body
+      }, {})
+      config.body = JSON.stringify(body)
+      config.parameterMap = body
+    },
+    handlerGetParams(config) {
+      config.parameterMap = {}
+       config.parameter = config.configParams?.reduce((parameters ={}, params, index) => {
+        if (index === 0) {
+          parameters = `?${params.key}=${params.value}`;
+        } else {
+          parameters += `&${params.key}=${params.value}`;
+        }
+         config.parameterMap[params.key] = params.value
+          return parameters
+      }, '')
+    },
+    handleSaveParameter(config) {
+     const dataParse  =  config.parseParams?.reduce((dataParse = {}, params) => {
+        dataParse[params.key] = params.value
+        return dataParse
+      }, {})
+      config.dataParse = JSON.stringify(dataParse)
+      const variableFactory = {
+       [ApiEnum.API_TYPE_POST]: this.handlerPostParams,
+        [ApiEnum.API_TYPE_GET]: this.handlerGetParams
+      }
+      variableFactory[config.method](config)
+    },
+    checkKeyIsEmpty( { parameterMap,  dataParse } ,isEmpty = true) {
+      debugger
+      if (typeof dataParse === 'string') {
+        dataParse = JSON.parse(dataParse)
+      }
+      if (
+          Object.keys(parameterMap).includes("") ||
+          Object.keys(dataParse).includes("")) {
+        isEmpty = false
+      }
+      return isEmpty
+    },
+    async saveConfig(config, formIndex) {
+      console.log(config)
+      const [formInstance] = this.$refs[formIndex]
+      await formInstance.validate()
+      this.handleSaveParameter(config)
+      if (!this.checkKeyIsEmpty(config)) {
+        this.$message.warning(
+            "参数或解析参数配置中存在key为空, 请修改后保存"
+        );
+        return
+      }
+      await postSaveOrEdite([config])
+      this.$message.success('保存成功')
+      this.close()
+      if(this.type === 'edit') {
+        this.$parent.DetailFlag = false
+      }
+      this.$emit('refreshList', this.business)
+    },
+    processPost( { method, configParams, body, url, headers } ) {
+     body = configParams.reduce(( requestBody = {}, params ) => {
+       requestBody[params.key] = params.value
+       return requestBody
+      },{})
+      return {
+        body,
+        headers,
+        method,
+        url
+      }
+    },
+    processGet( { method, headers, host, path, parameter, configParams } ) {
+      parameter = configParams.reduce((parameters, config, index) => {
+        if (index === 0) {
+          parameters = `?${config.key}=${config.value}`;
+        } else {
+          parameters += `&${config.key}=${config.value}`;
+        }
+        return parameters
+      }, '')
+      return {
+        headers,
+        method,
+        url: `${host}${path}${parameter}`
+      }
+    },
+    parameterFactory({ method, body = '{}', configParams = [], headers, url, host, path,  parameter }) {
+      const processParameterMap = {
+        [ApiEnum.API_TYPE_POST]: this.processPost,
+        [ApiEnum.API_TYPE_GET]: this.processGet
+      }
+     return processParameterMap[method]( { method, body, configParams, headers, url, host, path,  parameter } )
+    },
+    async executeParse(api){
+      this.jsonData =  await simulationRequest(this.parameterFactory(api))
     },
     addApiBox() {
       this.apiBoxList.push({
