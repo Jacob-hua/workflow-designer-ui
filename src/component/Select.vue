@@ -45,11 +45,6 @@ export default {
       selected: "",
     };
   },
-  mounted() {
-    if (this.requestConfig.id) {
-      this.selected = this.requestConfig.id;
-    }
-  },
   methods: {
     changeProduct() {
       this.$emit("selectedChange", this.selected);

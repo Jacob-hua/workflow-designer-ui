@@ -217,7 +217,7 @@
                     class="el-icon-remove-outline"
                   ></i>
                 </div>
-                <el-button @click="saveConfig(item, `form${index}`)" style="margin-left: 1000px" type="primary">保存</el-button>
+                <el-button @click="saveConfig(item, `form${index}`)" style="margin-left: 500px" type="primary">保存</el-button>
               </div>
             </el-form>
 
@@ -539,8 +539,8 @@ export default {
     },
     deleteApiBox(index, item) {
       this.$confirm("此操作将删除当前选中api,是否继续?", "提示", {
-        confirmButtonText: "确定",
         cancelButtonText: "取消",
+        confirmButtonText: "确定",
         type: "warning",
         beforeClose: (action, instance, done) => {
           // 取消回车确认事件
@@ -597,6 +597,10 @@ export default {
 }
 .cancel {
   @include cancelBtn;
+}
+.container {
+  height:85vh;
+  overflow-y: auto;
 }
 .dialog-footer {
   display: flex;
