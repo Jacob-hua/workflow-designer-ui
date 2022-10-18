@@ -199,7 +199,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   // TODO: 这里是引发多次调用render的关键，需要将context设置为非响应式数据
   fieldInfo.context = this.context
   fieldInfo.valuePath = valuePath
-  const rules = checkRules(fieldInfo)
+  const rules = checkRules(fieldInfo);
 
   const needDependFunction = !this.formConf.disabled && fieldInfo.dependValue
   if (needDependFunction) {
