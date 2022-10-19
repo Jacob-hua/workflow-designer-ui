@@ -38,10 +38,12 @@ service.interceptors.response.use(
       const status = response.status
       const res = response.data
       if (res.errorInfo && res.errorInfo.errorCode) {
-        Message({
-          type: 'error',
-          message: res.errorInfo.errorMsg,
-        })
+        if (response.config.url !== '/config/global/executeApi'){
+          Message({
+            type: 'error',
+            message: res.errorInfo.errorMsg,
+          })
+        }
         reject(res)
       }
       if (status === 200) {
@@ -79,6 +81,10 @@ service.interceptors.response.use(
         })
         break
       case 404:
+        if (error.response.config.url === '/config/global/executeApi') {
+          Message.warning('您所配置的第三接口有误')
+          return
+        }
         Message({
           type: 'error',
           message: '未找到远程服务器',
