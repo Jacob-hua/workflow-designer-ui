@@ -6,6 +6,7 @@
       fullscreen
       top="1vh"
       width="90%"
+      @close="close"
       custom-class="dialogVisibleEdit"
     >
       <div class="dialogVisible2-main">
@@ -236,6 +237,9 @@ export default {
     preview,
   },
   methods: {
+    close() {
+      this.$emit('close')
+    },
     getAllBusinessConfig(data) {
       getAllBusinessConfig({ tenantId: data.tenantId }).then((res) => {
         let result = res.result ?? [];
@@ -291,12 +295,12 @@ export default {
     nextDiolog() {
       const xml = this.$refs.formbpmn.importData();
       xml.id = "form_" + Date.parse(new Date());
-      var file1 = new File([JSON.stringify(xml)], "test.form", {
+      var file1 = new File([JSON.stringify(xml)], "test.json", {
         type: "text/xml",
       });
       let formData = new FormData();
       formData.append("name", this.postData.name);
-      formData.append("docName", this.postData.name + ".form");
+      formData.append("docName", this.postData.name + ".json");
       formData.append("ascription", this.postData.ascription);
       formData.append("code", xml.id);
       formData.append("business", this.postData.business);

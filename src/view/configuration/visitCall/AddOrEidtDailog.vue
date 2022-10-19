@@ -10,28 +10,28 @@
       append-to-body
     >
       <div style="display: flex">
-        <div class="container">
+        <el-scrollbar  style="width: 70%" class="center-scrollbar " >
           <div v-for="(item, index) in apiBoxList" :key="index">
             <p>
               API{{ index + 1 }}
               <i
-                @click="addApiBox"
-                v-if="index === 0"
-                class="el-icon-circle-plus-outline"
+                  @click="addApiBox"
+                  v-if="index === 0"
+                  class="el-icon-circle-plus-outline"
               ></i>
               <span
-                @click="deleteApiBox(index, item)"
-                v-else
-                class="el-icon-delete"
+                  @click="deleteApiBox(index, item)"
+                  v-else
+                  class="el-icon-delete"
               ></span>
             </p>
             <el-form :ref="`form${index}`" :model="item" label-width="80px">
               <div class="cardBox">
                 <div style="display: flex; flex-wrap: wrap">
                   <el-form-item
-                    label="api名称"
-                    prop="name"
-                    :rules="[
+                      label="api名称"
+                      prop="name"
+                      :rules="[
                       {
                         required: true,
                         trigger: ['blur', 'change'],
@@ -48,9 +48,9 @@
                     <el-input v-model="item.name"></el-input>
                   </el-form-item>
                   <el-form-item
-                    label="api标识"
-                    prop="apiMark"
-                    :rules="[
+                      label="api标识"
+                      prop="apiMark"
+                      :rules="[
                       {
                         required: true,
                         trigger: ['blur', 'change'],
@@ -67,9 +67,9 @@
                     <el-input v-model="item.apiMark"></el-input>
                   </el-form-item>
                   <el-form-item
-                    label="主机地址"
-                    prop="host"
-                    :rules="[
+                      label="主机地址"
+                      prop="host"
+                      :rules="[
                       {
                         required: true,
                         trigger: ['blur', 'change'],
@@ -80,9 +80,9 @@
                     <el-input v-model="item.host"></el-input>
                   </el-form-item>
                   <el-form-item
-                    label="访问路径"
-                    prop="path"
-                    :rules="[
+                      label="访问路径"
+                      prop="path"
+                      :rules="[
                       {
                         required: true,
                         trigger: ['blur', 'change'],
@@ -93,9 +93,9 @@
                     <el-input v-model="item.path"></el-input>
                   </el-form-item>
                   <el-form-item
-                    label="api类型"
-                    prop="type"
-                    :rules="[
+                      label="api类型"
+                      prop="type"
+                      :rules="[
                       {
                         required: true,
                         trigger: ['blur', 'change'],
@@ -105,17 +105,17 @@
                   >
                     <el-select v-model="item.type" placeholder="请选择api类型">
                       <el-option
-                        v-for="(apiItem, apiIndex) in apiOptions "
-                        :key="apiIndex"
-                        @click.native="apiTypeChange(item, apiItem.typeName)"
-                        :label="apiItem.typeName"
-                        :value="apiItem.type"
+                          v-for="(apiItem, apiIndex) in apiOptions "
+                          :key="apiIndex"
+                          @click.native="apiTypeChange(item, apiItem.typeName)"
+                          :label="apiItem.typeName"
+                          :value="apiItem.type"
                       >
                       </el-option>
                     </el-select>
                     <p
-                      @click="addApiType"
-                      style="
+                        @click="addApiType"
+                        style="
                         color: rgb(26, 136, 255);
                         font-size: 14px;
                         cursor: pointer;
@@ -126,9 +126,9 @@
                   </el-form-item>
 
                   <el-form-item
-                    label="请求类型"
-                    prop="method"
-                    :rules="[
+                      label="请求类型"
+                      prop="method"
+                      :rules="[
                       {
                         required: true,
                         trigger: ['blur', 'change'],
@@ -137,22 +137,22 @@
                     ]"
                   >
                     <el-select
-                      v-model="item.method"
-                      placeholder="请选择请求类型"
+                        v-model="item.method"
+                        placeholder="请选择请求类型"
                     >
                       <el-option
-                        v-for="item in methodsOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.label"
+                          v-for="item in methodsOptions"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.label"
                       >
                       </el-option>
                     </el-select>
                   </el-form-item>
                   <el-form-item
-                    label="请求头"
-                    prop="headers"
-                    :rules="[
+                      label="请求头"
+                      prop="headers"
+                      :rules="[
                       {
                         required: true,
                         trigger: ['blur', 'change'],
@@ -167,14 +167,14 @@
                 <div class="config_tit">
                   <span>配置参数</span>
                   <i
-                    @click="addParams(index)"
-                    class="el-icon-circle-plus-outline"
+                      @click="addParams(index)"
+                      class="el-icon-circle-plus-outline"
                   ></i>
                 </div>
                 <div
-                  v-for="(params, paramsIndex) in item.configParams"
-                  :key="paramsIndex"
-                  class="params"
+                    v-for="(params, paramsIndex) in item.configParams"
+                    :key="paramsIndex"
+                    class="params"
                 >
                   <el-form-item label="参数key">
                     <el-input v-model="params.key"></el-input>
@@ -183,28 +183,28 @@
                     <el-input v-model="params.value"></el-input>
                   </el-form-item>
                   <i
-                    @click="deleteParams(index, paramsIndex)"
-                    class="el-icon-remove-outline"
+                      @click="deleteParams(index, paramsIndex)"
+                      class="el-icon-remove-outline"
                   ></i>
                 </div>
                 <el-button
-                  @click="executeParse(item)"
-                  class="parse"
-                  type="primary"
-                  >模拟请求</el-button
+                    @click="executeParse(item)"
+                    class="parse"
+                    type="primary"
+                >模拟请求</el-button
                 >
                 <el-divider></el-divider>
                 <div class="config_tit">
                   <span style="color: #1d89ff">解析参数</span>
                   <i
-                    @click="addParseParams(index)"
-                    class="el-icon-circle-plus-outline"
+                      @click="addParseParams(index)"
+                      class="el-icon-circle-plus-outline"
                   ></i>
                 </div>
                 <div
-                  v-for="(parse, parseIndex) in item.parseParams"
-                  :key="parseIndex"
-                  class="params"
+                    v-for="(parse, parseIndex) in item.parseParams"
+                    :key="parseIndex"
+                    class="params"
                 >
                   <el-form-item label="参数key">
                     <el-input v-model="parse.key"></el-input>
@@ -213,8 +213,8 @@
                     <el-input v-model="parse.value"></el-input>
                   </el-form-item>
                   <i
-                    @click="deleteParseParams(index, parseIndex)"
-                    class="el-icon-remove-outline"
+                      @click="deleteParseParams(index, parseIndex)"
+                      class="el-icon-remove-outline"
                   ></i>
                 </div>
                 <el-button class="save" @click="saveConfig(item, `form${index}`)" type="primary">保存</el-button>
@@ -222,13 +222,15 @@
             </el-form>
 
           </div>
-        </div>
+        </el-scrollbar>
+        <el-scrollbar class="center-scrollbar" >
         <div class="right">
           <p>请求结果</p>
           <div class="jsonViewer">
             <json-viewer :value="jsonData"></json-viewer>
           </div>
         </div>
+        </el-scrollbar>
       </div>
     </el-dialog>
 
@@ -593,34 +595,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.center-scrollbar {
+  height: 85vh !important;
+}
+.center-scrollbar /deep/ .el-scrollbar__bar.is-horizontal {
+  display: none;
+}
+.center-scrollbar /deep/ .el-scrollbar__wrap {
+  overflow-x: hidden;
+}
 .save {
-  margin-left: 455px
-}
-.save::-webkit-scrollbar {
-  width: 20px;
-}
-.save::-webkit-scrollbar-thumb {
-  border-radius: 20px;
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-  background-color: rgba(0,0,0,0.1);
-}
-.save::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-  border-radius: 0;
-  background-color: rgba(255,255,255,0.1);
-}
-.container::-webkit-scrollbar {
-  width: 20px;
-}
-.container::-webkit-scrollbar-thumb {
-  border-radius: 20px;
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-  background-color: rgba(0,0,0,0.1);
-}
-.container::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-  border-radius: 0;
-  background-color: rgba(255,255,255,0.1);
+  margin-left: 41%;
 }
 .next {
   @include primaryBtn;

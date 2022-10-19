@@ -106,7 +106,7 @@ export default {
     },
 
     addEnableForm() {
-      this.$refs["form"].validate((valid) => {
+      this.$refs["form"].validate( (valid) => {
         if (valid) {
           let formDatas = {
             list: this.$refs.formDesigner.designList,
