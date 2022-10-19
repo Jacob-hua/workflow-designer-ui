@@ -117,6 +117,7 @@
       quote="delete"
       :formDatas="formData"
       @editForm="editForm"
+      @close="close"
       :status="formStatus"
       ascription="public"
       @deleteSuccsee="deleteSuccsee()"
@@ -161,6 +162,9 @@ export default {
     ...mapState("account", ["userInfo", "tenantId"]),
   },
   methods: {
+    close() {
+      delete this.$refs.PublicFormDiolog.postData.id
+    },
     // 查询草稿箱
     getDraftData() {
       this.valueDate = this.valueDate || [];
@@ -232,7 +236,6 @@ export default {
       this.$refs.detailsDiolog.dialogVisible2 = false;
       this.getManyData();
     },
-
     addForm(item, tileText) {
       if (typeof item === "boolean") {
         this.$refs.PublicFormDiolog.tit = tileText;
