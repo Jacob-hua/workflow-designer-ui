@@ -52,16 +52,18 @@
                   </div>
                   <div v-if="assigneeStatus[formAssignee] === 'rejected'">
                     <div v-for="({ comments, assignee: commentAssignee }, index) in commentList" :key="index">
-                      <div v-for="({ message }, index) in comments" :key="index">
-                        <i class="el-icon-warning-outline warning"></i>
-                        <span>{{ message }}</span>
-                      </div>
-                      <div class="execute-info">
-                        <div>
-                          <i class="el-icon-close warning"></i>
-                          <span>{{ commentAssignee }} 驳回 </span>
+                      <div v-if="commentAssignee === formAssignee">
+                        <div v-for="({ message }, index) in comments" :key="index">
+                          <i class="el-icon-warning-outline warning"></i>
+                          <span>{{ message }}</span>
                         </div>
-                        <span>{{ time }}</span>
+                        <div class="execute-info">
+                          <div>
+                            <i class="el-icon-close warning"></i>
+                            <span>{{ commentAssignee }} 驳回 </span>
+                          </div>
+                          <span>{{ time }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
