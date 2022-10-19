@@ -11,7 +11,6 @@
     >
       <div class="diologMain">
         <div class="diologMain-right">
-<!--          <div class="processList">-->
           <el-scrollbar class="center-scrollbar" >
             <div
                 class="processList-item"
@@ -40,7 +39,6 @@
             </div>
           </el-scrollbar>
 
-<!--          </div>-->
           <el-dialog
             @close="close"
             title="表单"
@@ -280,6 +278,7 @@ export default {
 <style scoped lang="scss">
 .center-scrollbar {
   height: 85vh !important;
+  margin-left: 100px;
 }
 .center-scrollbar /deep/ .el-scrollbar__bar.is-horizontal {
   display: none;

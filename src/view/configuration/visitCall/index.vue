@@ -148,18 +148,18 @@ export default {
           } else {
             let obj = { key: "", value: "" };
             if (api.parameter) {
-              let parArr = api.parameter.split("?");
+              let parArr = api.parameter?.split("?");
               if (!api.parameter.includes("&")) {
                 api.configParams.push({
-                  key: parArr[1].split("=")[0],
-                  value: parArr[1].split("=")[1],
+                  key: parArr[1]?.split("=")[0],
+                  value: parArr[1]?.split("=")[1],
                 });
               } else {
-                let entry = parArr[1].split("&");
+                let entry = parArr[1]?.split("&");
                 for (const val of entry) {
                   api.configParams.push({
-                    key: val.split("=")[0],
-                    value: val.split("=")[1],
+                    key: val?.split("=")[0],
+                    value: val?.split("=")[1],
                   });
                 }
               }
@@ -202,18 +202,18 @@ export default {
             }
           } else {
             let obj = { key: "", value: "" };
-            let parArr = api.parameter.split("?");
+            let parArr = api.parameter?.split("?");
             if (!api.parameter.includes("&")) {
               api.configParams.push({
-                key: parArr[1].split("=")[0],
-                value: parArr[1].split("=")[1],
+                key: parArr[1]?.split("=")[0],
+                value: parArr[1]?.split("=")[1],
               });
             } else {
-              let entry = parArr[1].split("&");
+              let entry = parArr[1]?.split("&");
               for (const val of entry) {
-                api.configParams.push({
-                  key: val.split("=")[0],
-                  value: val.split("=")[1],
+                api.configParams?.push({
+                  key: val?.split("=")[0],
+                  value: val?.split("=")[1],
                 });
               }
             }
