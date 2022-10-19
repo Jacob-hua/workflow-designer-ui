@@ -278,7 +278,7 @@ export default {
 <style scoped lang="scss">
 .center-scrollbar {
   height: 85vh !important;
-  margin-left: 100px;
+  margin-left: 102px;
 }
 .center-scrollbar /deep/ .el-scrollbar__bar.is-horizontal {
   display: none;
