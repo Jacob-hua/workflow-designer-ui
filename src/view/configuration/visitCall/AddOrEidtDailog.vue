@@ -508,6 +508,7 @@ export default {
     },
     addApiBox() {
       this.apiBoxList.push({
+        ascription: this.business,
         source: this.apiBoxList[0].source, //系统名称
         sourceMark: this.apiBoxList[0].sourceMark, // 系统标识
         name: "", //api名称
@@ -526,16 +527,10 @@ export default {
         createBy: this.userInfo.account, //创建人
         tenantId: +this.tenantId, //租户id
         configParams: [
-          {
-            key: "",
-            value: "",
-          },
+
         ],
         parseParams: [
-          {
-            key: "",
-            value: "",
-          },
+
         ],
       });
     },
