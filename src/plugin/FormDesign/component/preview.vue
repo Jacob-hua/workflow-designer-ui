@@ -1,5 +1,5 @@
 <script>
-import { executeApi, processVariable } from '@/api/globalConfig'
+import { executeApi } from '@/api/globalConfig'
 import formDepMonitorMixin, { mixinRequestFunction, mixinDependFunction } from '@/mixin/formDepMonitor'
 import _ from 'lodash'
 import render from '../custom/previewRender'
@@ -251,7 +251,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
 import upload from '@/plugin/FormDesign/component/upload'
 export default {
   name: 'preview',
-  props: ['itemList', 'formData', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
+  props: ['itemList', 'formData', 'formConf', 'uploadFun', 'downloadFun', 'context'],
   components: { render, upload },
   data() {
     const metaDataList = _.cloneDeep(this.itemList)
@@ -281,9 +281,6 @@ export default {
       this.flatFields = []
       this.usefulMeta = {}
     },
-  },
-  async created() {
-    this.context = await this.getContext()
   },
   mixins: [
     formDepMonitorMixin({
@@ -320,15 +317,6 @@ export default {
       } catch (e) {
         throw new Error(e.toString())
       }
-    },
-    async getContext() {
-      if (!this.processInstanceId) {
-        return {}
-      }
-      const { result } = await processVariable({
-        processInstanceId: this.processInstanceId ?? '',
-      })
-      return result
     },
   },
 }
