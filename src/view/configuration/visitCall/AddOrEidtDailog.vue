@@ -463,7 +463,6 @@ export default {
       }
       await postSaveOrEdite([config])
       this.$message.success('保存成功')
-      this.close()
       if(this.type === 'edit') {
         this.$parent.DetailFlag = false
       }

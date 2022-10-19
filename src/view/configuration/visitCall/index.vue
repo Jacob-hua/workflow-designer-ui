@@ -140,24 +140,24 @@ export default {
           if (api.method === ApiEnum.API_TYPE_POST) {
             let body = JSON.parse(api.body);
             for (const element in body) {
-              let obj = { key: "", value: "" };
+              let obj = { };
               obj.key = element;
               obj.value = body[element];
-              api.configParams.push(obj);
+              api.configParams?.push(obj);
             }
           } else {
-            let obj = { key: "", value: "" };
+            let obj = {};
             if (api.parameter) {
               let parArr = api.parameter?.split("?");
               if (!api.parameter.includes("&")) {
-                api.configParams.push({
+                api.configParams?.push({
                   key: parArr[1]?.split("=")[0],
                   value: parArr[1]?.split("=")[1],
                 });
               } else {
                 let entry = parArr[1]?.split("&");
                 for (const val of entry) {
-                  api.configParams.push({
+                  api.configParams?.push({
                     key: val?.split("=")[0],
                     value: val?.split("=")[1],
                   });
@@ -169,10 +169,10 @@ export default {
           if (api.dataParse) {
             let dataParse = JSON.parse(api.dataParse);
             Object.keys(dataParse).forEach((keys) => {
-              let obj = { key: "", value: "" };
+              let obj = { };
               obj.key = keys;
               obj.value = dataParse[keys];
-              api.parseParams.push(obj);
+              api.parseParams?.push(obj);
             });
           }
         });
@@ -181,7 +181,6 @@ export default {
           this.$refs.detail.dialogVisible = true;
           this.$refs.detail.editableTabsValue = "0";
         });
-        console.log(res.result);
         this.currentRow = res.result;
       });
     },
@@ -191,40 +190,42 @@ export default {
         res.result.forEach((api) => {
           api.configParams = [];
           if (api.method === ApiEnum.API_TYPE_POST) {
-            let obj = { key: "", value: "" };
+            let obj = {};
             let body = JSON.parse(api.body);
             let bodyArr = Object.keys(body);
             for (const keys of bodyArr) {
-              api.configParams.push({
+              api.configParams?.push({
                 key: keys,
                 value: body[keys],
               });
             }
           } else {
-            let obj = { key: "", value: "" };
+            let obj = { };
             let parArr = api.parameter?.split("?");
-            if (!api.parameter.includes("&")) {
-              api.configParams.push({
+            if (!api.parameter.includes("&") && parArr[1]) {
+              api.configParams?.push({
                 key: parArr[1]?.split("=")[0],
                 value: parArr[1]?.split("=")[1],
               });
             } else {
               let entry = parArr[1]?.split("&");
-              for (const val of entry) {
-                api.configParams?.push({
-                  key: val?.split("=")[0],
-                  value: val?.split("=")[1],
-                });
+              if (entry) {
+                for (const val of entry) {
+                  api.configParams?.push({
+                    key: val?.split("=")[0],
+                    value: val?.split("=")[1],
+                  });
+                }
               }
             }
           }
           api.parseParams = [];
-          let obj = { key: "", value: "" };
+          let obj = {  };
           if (api.dataParse) {
             let dataParse = JSON.parse(api.dataParse);
             let dataArr = Object.keys(dataParse);
             for (const keys of dataArr) {
-              api.parseParams.push({
+              api.parseParams?.push({
                 key: keys,
                 value: dataParse[keys],
               });
