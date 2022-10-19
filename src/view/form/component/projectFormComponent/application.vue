@@ -11,11 +11,12 @@
     >
       <div class="diologMain">
         <div class="diologMain-right">
-          <div class="processList">
+<!--          <div class="processList">-->
+          <el-scrollbar class="center-scrollbar" >
             <div
-              class="processList-item"
-              v-for="(item, index) in formList"
-              :key="index"
+                class="processList-item"
+                v-for="(item, index) in formList"
+                :key="index"
             >
               <div class="processList-item-word">
                 <p>表单名称:</p>
@@ -37,7 +38,9 @@
                 <div class="refence" @click="open(item)">关联</div>
               </div>
             </div>
-          </div>
+          </el-scrollbar>
+
+<!--          </div>-->
           <el-dialog
             @close="close"
             title="表单"
@@ -93,17 +96,6 @@
               <div class="cancel" @click="close">取消</div>
             </div>
           </el-dialog>
-          <div class="process-page">
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page.sync="getData.page"
-              :page-size="getData.limit"
-              layout="prev, pager, next, jumper"
-              :total="getData.total"
-            >
-            </el-pagination>
-          </div>
         </div>
       </div>
     </el-dialog>
@@ -286,6 +278,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.center-scrollbar {
+  height: 85vh !important;
+}
+.center-scrollbar /deep/ .el-scrollbar__bar.is-horizontal {
+  display: none;
+}
+.center-scrollbar /deep/ .el-scrollbar__wrap {
+  overflow-x: hidden;
+}
+
 /deep/ .dialogVisibleEdit {
   width: 100% !important;
 }
