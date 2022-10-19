@@ -241,7 +241,7 @@ export default {
         if (valid) {
           let _this = this;
           const id = "form_" + Date.parse(new Date());
-          var file1 = new File([_this.currentData.content], "test.form", {
+          var file1 = new File([_this.currentData.content], "test.json", {
             type: "text/xml",
           });
           if (this.postData.id) {
@@ -252,7 +252,7 @@ export default {
           }
           let formData = new FormData();
           formData.append("name", this.postData.name);
-          formData.append("docName", this.postData.name + ".form");
+          formData.append("docName", this.postData.name + ".json");
           formData.append("docType", "json");
           formData.append("ascription", this.postData.ascription);
           formData.append("code", id);
