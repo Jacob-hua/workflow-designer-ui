@@ -107,7 +107,7 @@
             </div>
           </div>
           <div class="form-Main">
-            <form-designer ref="formDesigner"></form-designer>
+            <form-designer v-if="dialogVisible2" ref="formDesigner"></form-designer>
           </div>
         </el-form>
       </div>
