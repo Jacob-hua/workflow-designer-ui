@@ -238,7 +238,7 @@ export default {
   },
   methods: {
     close() {
-      this.$emit('close')
+      this.$emit('closes')
     },
     getAllBusinessConfig(data) {
       getAllBusinessConfig({ tenantId: data.tenantId }).then((res) => {

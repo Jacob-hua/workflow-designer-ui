@@ -219,6 +219,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/ .el-select {
+  width: 100%;
+}
 .next {
   @include primaryBtn;
 }
