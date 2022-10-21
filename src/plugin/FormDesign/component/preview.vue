@@ -176,7 +176,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
             disabled={multipleDisabled}
           ></el-button>
         </div>
-        <el-row>
+        <el-row gutter={fieldInfo.gutter}>
           <div>{buildColumnContainer.call(this, h, fieldInfo, `${valuePath}[${index}]`, usefulMeta)}</div>
         </el-row>
       </el-card>
@@ -228,23 +228,25 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
     )
   } else {
     return (
-      <el-form-item
-        label={fieldInfo.showLabel ? fieldInfo.label : ''}
-        label-width={`${fieldInfo.labelWidth}px`}
-        prop={fieldInfo.valuePath}
-        rules={rules}
-      >
-        <render
-          key={fieldInfo.id}
-          conf={fieldInfo}
-          value={_.get(this.form, fieldInfo.valuePath)}
-          uploadFun={this.uploadFun}
-          downloadFun={this.downloadFun}
-          onInput={(event) => {
-            _.set(this.form, fieldInfo.valuePath, event)
-          }}
-        />
-      </el-form-item>
+        <el-col span={fieldInfo.gutter}>
+          <el-form-item
+              label={fieldInfo.showLabel ? fieldInfo.label : ''}
+              label-width={`${fieldInfo.labelWidth}px`}
+              prop={fieldInfo.valuePath}
+              rules={rules}
+          >
+            <render
+                key={fieldInfo.id}
+                conf={fieldInfo}
+                value={_.get(this.form, fieldInfo.valuePath)}
+                uploadFun={this.uploadFun}
+                downloadFun={this.downloadFun}
+                onInput={(event) => {
+                  _.set(this.form, fieldInfo.valuePath, event)
+                }}
+            />
+          </el-form-item>
+        </el-col>
     )
   }
 }
@@ -323,6 +325,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/ .el-select {
+  width: 100% !important;
+}
 .rows:hover {
   border: 1px dashed #fff;
   padding: 30px 0;
