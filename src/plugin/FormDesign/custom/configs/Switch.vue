@@ -17,9 +17,7 @@
     <el-form-item label="标题">
       <el-input class="input" v-model="props.label"></el-input>
     </el-form-item>
-    <el-form-item label="栅格间隔">
-      <el-input-number v-model="props.gutter" :min="0"></el-input-number>
-    </el-form-item>
+
     <el-form-item label="标签宽度">
       <el-input-number
         v-model="props.labelWidth"

@@ -234,7 +234,6 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
               prop={fieldInfo.valuePath}
               rules={rules}
           >
-            <el-col span={fieldInfo.gutter}>
             <render
                 key={fieldInfo.id}
                 conf={fieldInfo}
@@ -245,7 +244,6 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
                   _.set(this.form, fieldInfo.valuePath, event)
                 }}
             />
-            </el-col>
           </el-form-item>
     )
   }

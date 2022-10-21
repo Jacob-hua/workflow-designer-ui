@@ -17,18 +17,12 @@
     <el-form-item label="标题">
       <el-input class="input" v-model="props.label"></el-input>
     </el-form-item>
-    <el-form-item label="栅格">
-      <el-input-number v-model="props.span" :min="1" :max="24" />
-    </el-form-item>
     <el-form-item label="提示符">
       <el-input
         class="input"
         v-model="props.placeholder"
         placeholder="请输入提示符"
       />
-    </el-form-item>
-    <el-form-item label="栅格间隔">
-      <el-input-number v-model="props.gutter" :min="0"></el-input-number>
     </el-form-item>
     <el-form-item label="标签宽度">
       <el-input-number
