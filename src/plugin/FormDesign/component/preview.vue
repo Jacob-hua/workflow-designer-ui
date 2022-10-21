@@ -227,13 +227,13 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
     )
   } else {
     return (
-        <el-col span={fieldInfo.gutter}>
           <el-form-item
               label={fieldInfo.showLabel ? fieldInfo.label : ''}
               label-width={`${fieldInfo.labelWidth}px`}
               prop={fieldInfo.valuePath}
               rules={rules}
           >
+            <el-col span={fieldInfo.gutter}>
             <render
                 key={fieldInfo.id}
                 conf={fieldInfo}
@@ -244,8 +244,8 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
                   _.set(this.form, fieldInfo.valuePath, event)
                 }}
             />
+            </el-col>
           </el-form-item>
-        </el-col>
     )
   }
 }
