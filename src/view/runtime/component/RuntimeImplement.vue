@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
+  <el-dialog title="操作工作流" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
     <div class="container">
       <div>
         <bpmn-info
