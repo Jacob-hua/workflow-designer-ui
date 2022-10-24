@@ -104,7 +104,7 @@ export default {
           value: this.workflow.name,
         },
         {
-          label: '部署时间',
+          label: '创建时间',
           value: this.workflow.createTime,
         },
         {

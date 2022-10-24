@@ -31,7 +31,7 @@
         <div class="form-title">表单内容</div>
         <el-scrollbar class="form-preview">
           <preview
-            :processInstanceId="workflow.processInstanceId"
+            :context="context"
             :itemList="formContant.list"
             :formConf="formContant.config"
             :uploadFun="uploadFile.bind(this)"
@@ -67,6 +67,7 @@ import {
   uploadTaskAttachmentFile,
   downloadTaskAttachmentFile,
 } from '@/api/unit/api.js'
+import { processVariable } from '@/api/globalConfig'
 import { mapState } from 'vuex'
 
 export default {
@@ -195,6 +196,7 @@ export default {
       curExecuteShape: undefined,
       noExecutor: false,
       iBpmnViewer: {},
+      context: {},
     }
   },
   computed: {
@@ -294,8 +296,18 @@ export default {
   async mounted() {
     await this.fetchExecuteDetail()
     await this.fetchProcessNodeInfo()
+    this.context = await this.getContext()
   },
   methods: {
+    async getContext() {
+      if (!this.processInstanceId) {
+        return {}
+      }
+      const { result } = await processVariable({
+        processInstanceId: this.processInstanceId ?? '',
+      })
+      return result
+    },
     onAgencyCompleted() {
       this.fetchExecuteDetail()
     },
@@ -357,7 +369,7 @@ export default {
     async onExecute() {
       if (this.formShow) {
         const { formData, metaDataList } = await this.$refs.preview.submit()
-        this.completeTask({...this.formContant, data: formData, list: metaDataList}, formData)
+        this.completeTask({ ...this.formContant, data: formData, list: metaDataList }, formData)
         return
       }
       if (this.noExecutor && (!Array.isArray(this.workflow.executors) || this.workflow.executors.length === 0)) {
@@ -552,7 +564,28 @@ export default {
   background: $card-bg-color-1;
   border: 1px solid $border-color-1;
   border-radius: 8px;
-  padding: 12px 30px;
+  padding: 12px 0px;
+  display: flex;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    display: block !important;
+    width: 5px;
+    height: 8px;
+    background-color: $card-bg-color-1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $border-color-1;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: $card-bg-color-1;
+  }
+
+  .el-form {
+    flex-shrink: 0;
+  }
 }
 
 .submit-button {

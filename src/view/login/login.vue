@@ -92,6 +92,8 @@ export default {
         this.getMapping(res.result.tenants[0]?.id)
         this.$router.push('/home')
         this.updateThirdLogin({ thirdLogin: true })
+      }).catch(() => {
+        this.$router.push('/home/noPermission')
       })
     },
     getMapping(tenantId) {
