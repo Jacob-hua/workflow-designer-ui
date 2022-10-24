@@ -88,6 +88,7 @@
 import BpmnInfo from '@/component/BpmnInfo.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { getExecuteDetail, downloadTaskAttachmentFile } from '@/api/unit/api.js'
+import { processVariable } from '@/api/globalConfig'
 import { mapState } from 'vuex'
 
 export default {
