@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="操作工作流" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
+  <el-dialog title="" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
     <div class="container">
       <div>
         <bpmn-info
@@ -29,7 +29,7 @@
       </div>
       <div>
         <div class="form-title">表单内容</div>
-        <div class="form-preview">
+        <el-scrollbar class="form-preview">
           <preview
             :context="context"
             :itemList="formContant.list"
@@ -39,7 +39,7 @@
             v-if="formShow"
             ref="preview"
           ></preview>
-        </div>
+        </el-scrollbar>
       </div>
     </div>
     <span slot="footer">

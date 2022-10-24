@@ -46,16 +46,24 @@ export default {
       selected: "",
     };
   },
-  mounted() {
-    if (this.requestConfig?.id) {
-      this.options.forEach(option => {
-        if (option.id === this.requestConfig?.id) {
-          this.selected = this.requestConfig.id;
-        }
-      })
+  watch: {
+    options: {
+      handler(newValue) {
+          if (this.requestConfig?.id) {
+           if (!this.isHit(newValue)) {
+             return
+           }
+            this.selected = this.requestConfig.id
+          }
+      },
+      deep:true,
+      immediate: true
     }
   },
   methods: {
+    isHit(options) {
+      return options.some(option => option.id ===String(this.requestConfig?.id))
+    },
     clear() {
       this.$emit('clear')
     },
