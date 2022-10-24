@@ -560,12 +560,28 @@ export default {
 
 .form-preview {
   height: 685px;
-  overflow: scroll;
   margin-top: 15px;
   background: $card-bg-color-1;
   border: 1px solid $border-color-1;
   border-radius: 8px;
   padding: 12px 0px;
+  display: flex;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    display: block !important;
+    width: 5px;
+    height: 8px;
+    background-color: $card-bg-color-1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $border-color-1;
+  }
+
+  .el-form {
+    flex-shrink: 0;
+  }
 }
 
 .submit-button {

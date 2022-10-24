@@ -326,31 +326,6 @@ export default {
 /deep/ .el-select {
   width: 100% !important;
 }
-.rows:hover {
-  border: 1px dashed #fff;
-  padding: 30px 0;
-  padding-right: 10px;
-}
-
-.del {
-  cursor: pointer;
-  font-size: 30px !important;
-  color: red;
-  margin-left: 10px;
-  position: absolute;
-  right: 0;
-  top: -15px;
-}
-
-.copy {
-  position: absolute;
-  right: 40px;
-  top: -15px;
-  cursor: pointer;
-  font-size: 30px !important;
-  color: #409eff;
-  margin-left: 10px;
-}
 
 .clearfix:before,
 .clearfix:after {
