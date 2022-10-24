@@ -29,7 +29,7 @@
       </div>
       <div>
         <div class="form-title">表单内容</div>
-        <el-scrollbar class="form-preview">
+        <div class="form-preview">
           <preview
             :context="context"
             :itemList="formContant.list"
@@ -39,7 +39,7 @@
             v-if="formShow"
             ref="preview"
           ></preview>
-        </el-scrollbar>
+        </div>
       </div>
     </div>
     <span slot="footer">
@@ -564,7 +564,7 @@ export default {
   background: $card-bg-color-1;
   border: 1px solid $border-color-1;
   border-radius: 8px;
-  padding: 12px 0px;
+  padding: 12px 0;
   display: flex;
   overflow-x: auto;
 
