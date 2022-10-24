@@ -66,6 +66,7 @@ export default {
       } else if ([shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)) {
         listener.class = 'com.siact.product.jwp.listener.TimeOutListener'
       } else {
+        this.clearListener()
         return
       }
       if (existedListener(listener)) {
@@ -98,6 +99,11 @@ export default {
       this.$store.commit({
         type: `${this.namespace}/panel/addListener`,
         ...payload,
+      })
+    },
+    clearListener() {
+      this.$store.commit({
+        type: `${this.namespace}/panel/clearListener`,
       })
     },
   },

@@ -1,5 +1,5 @@
 <script>
-import { executeApi, processVariable } from '@/api/globalConfig'
+import { executeApi } from '@/api/globalConfig'
 import formDepMonitorMixin, { mixinRequestFunction, mixinDependFunction } from '@/mixin/formDepMonitor'
 import _ from 'lodash'
 import render from '../custom/previewRender'
@@ -196,9 +196,10 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   !usefulMeta[valuePath] && (usefulMeta[valuePath] = _.cloneDeep(metaData))
   this.flatFields = Object.values(usefulMeta ?? {})
   const fieldInfo = usefulMeta[valuePath]
+  // TODO: 这里是引发多次调用render的关键，需要将context设置为非响应式数据
   fieldInfo.context = this.context
   fieldInfo.valuePath = valuePath
-  const rules = checkRules(fieldInfo)
+  const rules = checkRules(fieldInfo);
 
   const needDependFunction = !this.formConf.disabled && fieldInfo.dependValue
   if (needDependFunction) {
@@ -250,7 +251,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
 import upload from '@/plugin/FormDesign/component/upload'
 export default {
   name: 'preview',
-  props: ['itemList', 'formData', 'formConf', 'uploadFun', 'downloadFun', 'processInstanceId'],
+  props: ['itemList', 'formData', 'formConf', 'uploadFun', 'downloadFun', 'context'],
   components: { render, upload },
   data() {
     const metaDataList = _.cloneDeep(this.itemList)
@@ -266,7 +267,6 @@ export default {
       form,
       usefulMeta: {},
       metaDataList,
-      context: {},
       flatFields: [],
     }
   },
@@ -281,9 +281,6 @@ export default {
       this.flatFields = []
       this.usefulMeta = {}
     },
-  },
-  async created() {
-    this.context = await this.getContext()
   },
   mixins: [
     formDepMonitorMixin({
@@ -321,15 +318,6 @@ export default {
         throw new Error(e.toString())
       }
     },
-    async getContext() {
-      if (!this.processInstanceId) {
-        return {}
-      }
-      const { result } = await processVariable({
-        processInstanceId: this.processInstanceId ?? '',
-      })
-      return result
-    },
   },
 }
 </script>
@@ -337,31 +325,6 @@ export default {
 <style lang="scss" scoped>
 /deep/ .el-select {
   width: 100% !important;
-}
-.rows:hover {
-  border: 1px dashed #fff;
-  padding: 30px 0;
-  padding-right: 10px;
-}
-
-.del {
-  cursor: pointer;
-  font-size: 30px !important;
-  color: red;
-  margin-left: 10px;
-  position: absolute;
-  right: 0;
-  top: -15px;
-}
-
-.copy {
-  position: absolute;
-  right: 40px;
-  top: -15px;
-  cursor: pointer;
-  font-size: 30px !important;
-  color: #409eff;
-  margin-left: 10px;
 }
 
 .clearfix:before,

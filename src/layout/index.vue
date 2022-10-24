@@ -117,7 +117,7 @@ export default {
         this.$router.push({ name: this.menuList[0].menuRoute })
       }
     } else {
-      this.$router.push('/')
+      this.$router.push('/home/noPermission')
       this.$message.error('该账号无任何菜单访问权限')
     }
   },

@@ -16,10 +16,10 @@
                 <div v-for="({ formContent, assignee: formAssignee, time }, index) in formDataList" :key="index">
                   <div v-if="formContent" class="form">
                     <preview
+                      :context="context"
                       :itemList="formContent.list"
                       :formData="formContent.data"
                       :formConf="formContent.config"
-                      :processInstanceId="processInstanceId"
                       :downloadFun="downloadFile.bind(this)"
                     ></preview>
                   </div>
@@ -52,16 +52,18 @@
                   </div>
                   <div v-if="assigneeStatus[formAssignee] === 'rejected'">
                     <div v-for="({ comments, assignee: commentAssignee }, index) in commentList" :key="index">
-                      <div v-for="({ message }, index) in comments" :key="index">
-                        <i class="el-icon-warning-outline warning"></i>
-                        <span>{{ message }}</span>
-                      </div>
-                      <div class="execute-info">
-                        <div>
-                          <i class="el-icon-close warning"></i>
-                          <span>{{ commentAssignee }} 驳回 </span>
+                      <div v-if="commentAssignee === formAssignee">
+                        <div v-for="({ message }, index) in comments" :key="index">
+                          <i class="el-icon-warning-outline warning"></i>
+                          <span>{{ message }}</span>
                         </div>
-                        <span>{{ time }}</span>
+                        <div class="execute-info">
+                          <div>
+                            <i class="el-icon-close warning"></i>
+                            <span>{{ commentAssignee }} 驳回 </span>
+                          </div>
+                          <span>{{ time }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -86,6 +88,7 @@
 import BpmnInfo from '@/component/BpmnInfo.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { getExecuteDetail, downloadTaskAttachmentFile } from '@/api/unit/api.js'
+import { processVariable } from '@/api/globalConfig'
 import { mapState } from 'vuex'
 
 export default {
@@ -119,6 +122,7 @@ export default {
   data() {
     return {
       workflow: {},
+      context: {},
     }
   },
   computed: {
@@ -180,10 +184,20 @@ export default {
       ]
     },
   },
-  mounted() {
+  async mounted() {
     this.fetchExecuteDetail()
+    this.context = await this.getContext()
   },
   methods: {
+    async getContext() {
+      if (!this.processInstanceId) {
+        return {}
+      }
+      const { result } = await processVariable({
+        processInstanceId: this.processInstanceId ?? '',
+      })
+      return result
+    },
     undefineStatus(status = '') {
       return status.split(',').some((status) => !['completed', 'run', 'rejected', 'hang', 'timedOut'].includes(status))
     },
