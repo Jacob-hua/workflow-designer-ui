@@ -579,6 +579,10 @@ export default {
     background: $border-color-1;
   }
 
+  &::-webkit-scrollbar-corner {
+    background-color: $card-bg-color-1;
+  }
+
   .el-form {
     flex-shrink: 0;
   }
