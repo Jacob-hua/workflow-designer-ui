@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="操作工作流" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
+  <el-dialog title="" :visible="visible" top="1vh" fullscreen @close="onDialogClose">
     <div class="container">
       <div>
         <bpmn-info
@@ -29,7 +29,7 @@
       </div>
       <div>
         <div class="form-title">表单内容</div>
-        <div class="form-preview">
+        <el-scrollbar class="form-preview">
           <preview
             :processInstanceId="workflow.processInstanceId"
             :itemList="formContant.list"
@@ -39,7 +39,7 @@
             v-if="formShow"
             ref="preview"
           ></preview>
-        </div>
+        </el-scrollbar>
       </div>
     </div>
     <span slot="footer">
@@ -548,12 +548,11 @@ export default {
 
 .form-preview {
   height: 685px;
-  overflow: scroll;
   margin-top: 15px;
   background: $card-bg-color-1;
   border: 1px solid $border-color-1;
   border-radius: 8px;
-  padding: 12px 0px;
+  padding: 12px 30px;
 }
 
 .submit-button {
