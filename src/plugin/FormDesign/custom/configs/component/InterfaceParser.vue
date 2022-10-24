@@ -205,6 +205,7 @@ export default {
     },
     selectedChange(selected) {
       this.interfaceId = selected;
+      this.currentField.requestConfig.id= selected
     },
     close() {
       this.$emit('close')
