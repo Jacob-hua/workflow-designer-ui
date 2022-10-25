@@ -564,7 +564,7 @@ export default {
   background: $card-bg-color-1;
   border: 1px solid $border-color-1;
   border-radius: 8px;
-  padding: 12px 0px;
+  padding: 12px 0;
   display: flex;
   overflow-x: auto;
 
