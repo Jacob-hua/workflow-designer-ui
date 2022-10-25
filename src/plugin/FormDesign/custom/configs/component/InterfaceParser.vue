@@ -199,13 +199,12 @@ export default {
         parserProp: this.parserProp,
       };
       if (!this.hasChildren) {
-        delete result.parserProp.children;
+        delete result?.parserProp?.children;
       }
       this.$emit("variableChange", result);
     },
     selectedChange(selected) {
       this.interfaceId = selected;
-      this.currentField.requestConfig.id= selected
     },
     close() {
       this.$emit('close')
