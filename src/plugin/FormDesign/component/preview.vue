@@ -199,7 +199,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   // TODO: 这里是引发多次调用render的关键，需要将context设置为非响应式数据
   fieldInfo.context = this.context
   fieldInfo.valuePath = valuePath
-  const rules = checkRules(fieldInfo);
+  const rules = checkRules(fieldInfo)
 
   const needDependFunction = !this.formConf.disabled && fieldInfo.dependValue
   if (needDependFunction) {
@@ -228,23 +228,23 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
     )
   } else {
     return (
-          <el-form-item
-              label={fieldInfo.showLabel ? fieldInfo.label : ''}
-              label-width={`${fieldInfo.labelWidth}px`}
-              prop={fieldInfo.valuePath}
-              rules={rules}
-          >
-            <render
-                key={fieldInfo.id}
-                conf={fieldInfo}
-                value={_.get(this.form, fieldInfo.valuePath)}
-                uploadFun={this.uploadFun}
-                downloadFun={this.downloadFun}
-                onInput={(event) => {
-                  _.set(this.form, fieldInfo.valuePath, event)
-                }}
-            />
-          </el-form-item>
+      <el-form-item
+        label={fieldInfo.showLabel ? fieldInfo.label : ''}
+        label-width={`${fieldInfo.labelWidth}px`}
+        prop={fieldInfo.valuePath}
+        rules={rules}
+      >
+        <render
+          key={fieldInfo.id}
+          conf={fieldInfo}
+          value={_.get(this.form, fieldInfo.valuePath)}
+          uploadFun={this.uploadFun}
+          downloadFun={this.downloadFun}
+          onInput={(event) => {
+            _.set(this.form, fieldInfo.valuePath, event)
+          }}
+        />
+      </el-form-item>
     )
   }
 }
@@ -301,6 +301,7 @@ export default {
         validate-on-rule-change={false}
         label-width={this.formConf.labelWidth + 'px'}
         nativeOnSubmit={this.submit}
+        style={{ width: '100%' }}
       >
         {this.metaDataList.map((metaData) => buildFormItem.call(this, h, metaData, '', this.usefulMeta))}
       </el-form>
