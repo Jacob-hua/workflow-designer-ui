@@ -12,12 +12,12 @@ function parametersState2Parameter(
     attrs.name = parameter.name
 
     const computeParameter = {
-      'string/expression': {
+      'string/expression': (parameter) => ({
         value: parameter.value,
-      },
-      script: { definition: convertScript(parameter) },
-      list: { definition: convertList(parameter.listValues) },
-      map: { definition: convertMap(parameter.mapValues) },
+      }),
+      script: (parameter) => ({ definition: convertScript(parameter) }),
+      list: (parameter) => ({ definition: convertList(parameter.listValues) }),
+      map: (parameter) => ({ definition: convertMap(parameter.mapValues) }),
     }
     attrs = { ...attrs, ...computeParameter[parameter.type] }
     return iBpmnModeler.createDefaultModdleInstance(localName, attrs)
