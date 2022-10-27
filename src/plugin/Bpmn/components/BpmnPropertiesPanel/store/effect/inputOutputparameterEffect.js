@@ -19,7 +19,7 @@ function parametersState2Parameter(
       list: (parameter) => ({ definition: convertList(parameter.listValues) }),
       map: (parameter) => ({ definition: convertMap(parameter.mapValues) }),
     }
-    attrs = { ...attrs, ...computeParameter[parameter.type] }
+    attrs = { ...attrs, ...computeParameter[parameter.type](parameter) }
     return iBpmnModeler.createDefaultModdleInstance(localName, attrs)
   }
 
