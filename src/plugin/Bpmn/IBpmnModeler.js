@@ -176,11 +176,11 @@ class IBpmnModeler {
       if (Object.keys(shapeInfo).includes('cancelActivity') && !shapeInfo.cancelActivity) {
         tag = `${tag}_false`
       }
-    }   
+    }
     return getShapeType(tag)
   }
 
-  updateSelectedShapeExtensions(extensions = {}) {
+  updateSelectedShapeExtensions(extensions = []) {
     if (!this.getSelectedShape()) {
       return
     }
@@ -189,11 +189,17 @@ class IBpmnModeler {
 
   updateShapeExtensions(shape, extensions) {
     /** ! 更新时需要将原有属性和新属性合并 */
-    const oldValues = this.getShapeInfoByType(shape, 'bpmn:ExtensionElements')
+    const oldExtensions = this.getShapeInfoByType(shape, 'bpmn:ExtensionElements')?.values ?? []
+    const elements = [...oldExtensions, ...extensions].reduce((elements, element) => {
+      elements[element.$type] = element
+      return elements
+    }, {})
     const extensionElements = this.#getModule('moddle').create('bpmn:ExtensionElements', {
-      values: [...oldValues,...extensions],
+      values: Object.values(elements),
     })
-    this.updateShapeProperties(shape, { extensionElements })
+    this.updateShapeProperties(shape, {
+      extensionElements,
+    })
   }
 
   updateSelectedShapeProperties(payload = {}) {
