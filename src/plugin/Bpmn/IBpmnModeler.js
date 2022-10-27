@@ -188,8 +188,10 @@ class IBpmnModeler {
   }
 
   updateShapeExtensions(shape, extensions) {
+    /** ! 更新时需要将原有属性和新属性合并 */
+    const oldValues = this.getShapeInfoByType(shape, 'bpmn:ExtensionElements')
     const extensionElements = this.#getModule('moddle').create('bpmn:ExtensionElements', {
-      values: extensions,
+      values: [...oldValues,...extensions],
     })
     this.updateShapeProperties(shape, { extensionElements })
   }
