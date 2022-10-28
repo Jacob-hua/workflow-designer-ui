@@ -63,10 +63,8 @@ export default {
       }
       if ([shapeType.TIMER_START_EVENT].includes(value)) {
         listener.class = 'com.siact.product.jwp.listener.ScheduleStartListener'
-        this.addListener({ listener })
       } else if ([shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)) {
         listener.class = 'com.siact.product.jwp.listener.TimeOutListener'
-        this.addListener({ listener })
       } else if (
         [
           shapeType.START_EVENT, // 开始事件
@@ -81,9 +79,10 @@ export default {
         this.clearListener()
         return
       }
-      if (existedListener(listener)) {
+      if (listener.class === '' || existedListener(listener)) {
         return
       }
+      this.addListener({ listener })
     },
     baseInfo(value) {
       this.baseInfoForm = { ...value }
