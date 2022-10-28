@@ -63,14 +63,19 @@ export default {
       }
       if ([shapeType.TIMER_START_EVENT].includes(value)) {
         listener.class = 'com.siact.product.jwp.listener.ScheduleStartListener'
+        this.addListener({ listener })
       } else if ([shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)) {
         listener.class = 'com.siact.product.jwp.listener.TimeOutListener'
+        this.addListener({ listener })
       } else if (
         [
-          shapeType.START_EVENT,
-          shapeType.MESSAGE_START_EVENT,
-          shapeType.CONDITIONAL_START_EVENT,
-          shapeType.SIGNAL_START_EVENT,
+          shapeType.START_EVENT, // 开始事件
+          shapeType.MESSAGE_START_EVENT, // 消息开始事件
+          shapeType.CONDITIONAL_START_EVENT, // 条件开始事件
+          shapeType.SIGNAL_START_EVENT, // 信号开始事件
+          shapeType.END_EVENT, // 结束事件
+          shapeType.INTERMEDIATE_THROW_EVENT, // 中间抛出事件
+          shapeType.INTERMEDIATE_CATCH_EVENT, // 中间捕获事件
         ].includes(value)
       ) {
         this.clearListener()
@@ -108,7 +113,6 @@ export default {
       })
     },
     clearListener() {
-      console.log('清空监听器')
       this.$store.commit({
         type: `${this.namespace}/panel/clearListener`,
       })
