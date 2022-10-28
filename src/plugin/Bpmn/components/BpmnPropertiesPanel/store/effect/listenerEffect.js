@@ -46,7 +46,9 @@ function listenersState2Parameter(listeners, iBpmnModeler = new IBpmnModeler()) 
 
 function listenerEffect({ listeners }, iBpmnModeler = new IBpmnModeler()) {
   const parameters = listenersState2Parameter(listeners, iBpmnModeler)
-  iBpmnModeler.updateSelectedShapeExtensions(parameters)
+  const oldExtensions = iBpmnModeler.getSelectedShapeExtensions()
+  const otherExtensions = Array.from(oldExtensions).filter(({$type}) => $type !== 'camunda:ExecutionListener')
+  iBpmnModeler.updateSelectedShapeExtensions([...parameters, ...otherExtensions])
 }
 
 export default listenerEffect

@@ -50,7 +50,9 @@ function inputOutputParameterEffect({ inputParameters, outputParameters }, iBpmn
     inputParameters: parametersState2Parameter(inputParameters, iBpmnModeler, 'InputParameter'),
     outputParameters: parametersState2Parameter(outputParameters, iBpmnModeler, 'OutputParameter'),
   })
-  iBpmnModeler.updateSelectedShapeExtensions([parameters])
+  const oldExtensions = iBpmnModeler.getSelectedShapeExtensions()
+  const otherExtensions = Array.from(oldExtensions).filter(({ $type }) => $type !== 'camunda:InputOutput')
+  iBpmnModeler.updateSelectedShapeExtensions([...otherExtensions, parameters])
 }
 
 export default inputOutputParameterEffect
