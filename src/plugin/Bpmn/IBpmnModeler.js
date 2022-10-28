@@ -180,6 +180,17 @@ class IBpmnModeler {
     return getShapeType(tag)
   }
 
+  getSelectedShapeExtensions() {
+    return this.getShapeExtensions(this.getSelectedShape())
+  }
+
+  getShapeExtensions(shape) {
+    if (!shape) {
+      return []
+    }
+    return this.getShapeInfoByType(shape, 'bpmn:ExtensionElements')?.values ?? [] 
+  }
+
   updateSelectedShapeExtensions(extensions = []) {
     if (!this.getSelectedShape()) {
       return
@@ -188,14 +199,8 @@ class IBpmnModeler {
   }
 
   updateShapeExtensions(shape, extensions) {
-    /** ! 更新时需要将原有属性和新属性合并 */
-    const oldExtensions = this.getShapeInfoByType(shape, 'bpmn:ExtensionElements')?.values ?? []
-    const elements = [...oldExtensions, ...extensions].reduce((elements, element) => {
-      elements[element.$type] = element
-      return elements
-    }, {})
     const extensionElements = this.#getModule('moddle').create('bpmn:ExtensionElements', {
-      values: Object.values(elements),
+      values: extensions,
     })
     this.updateShapeProperties(shape, {
       extensionElements,

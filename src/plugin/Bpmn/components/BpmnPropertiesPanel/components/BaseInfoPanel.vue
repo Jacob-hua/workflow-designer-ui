@@ -65,14 +65,20 @@ export default {
         listener.class = 'com.siact.product.jwp.listener.ScheduleStartListener'
       } else if ([shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)) {
         listener.class = 'com.siact.product.jwp.listener.TimeOutListener'
-      } else {
+      } else if (
+        [
+          shapeType.START_EVENT,
+          shapeType.MESSAGE_START_EVENT,
+          shapeType.CONDITIONAL_START_EVENT,
+          shapeType.SIGNAL_START_EVENT,
+        ].includes(value)
+      ) {
         this.clearListener()
         return
       }
       if (existedListener(listener)) {
         return
       }
-      this.addListener({ listener })
     },
     baseInfo(value) {
       this.baseInfoForm = { ...value }
@@ -102,6 +108,7 @@ export default {
       })
     },
     clearListener() {
+      console.log('清空监听器')
       this.$store.commit({
         type: `${this.namespace}/panel/clearListener`,
       })
