@@ -62,11 +62,11 @@ export default {
         class: '',
       }
       if ([shapeType.TIMER_START_EVENT].includes(value)) {
+        this.clearListener()
         listener.class = 'com.siact.product.jwp.listener.ScheduleStartListener'
-        this.addListener({ listener })
       } else if ([shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)) {
+        this.clearListener()
         listener.class = 'com.siact.product.jwp.listener.TimeOutListener'
-        this.addListener({ listener })
       } else if (
         [
           shapeType.START_EVENT, // 开始事件
@@ -76,14 +76,27 @@ export default {
           shapeType.END_EVENT, // 结束事件
           shapeType.INTERMEDIATE_THROW_EVENT, // 中间抛出事件
           shapeType.INTERMEDIATE_CATCH_EVENT, // 中间捕获事件
+          shapeType.BOUNDARY_EVENT, // 边界事件
+          shapeType.MESSAGE_BOUNDARY_EVENT, // 消息边界事件
+          shapeType.MESSAGE_NON_INTERRUPTING_BOUNDARY_EVENT, // 消息边界事件（非中断）
+          shapeType.TIMER_BOUNDARY_EVENT, // 定时边界事件
+          shapeType.ESCALATION_BOUNDARY_EVENT, // 升级边界事件
+          shapeType.ESCALATION_NON_INTERRUPTING_BOUNDARY_EVENT, // 升级边界事件（非中断）
+          shapeType.CONDITIONAL_BOUNDARY_EVENT, // 条件边界事件
+          shapeType.CONDITIONAL_NON_INTERRUPTING_BOUNDARY_EVENT, // 条件边界事件（非中断）
+          shapeType.ERROR_BOUNDARY_EVENT, // 错误边界事件
+          shapeType.SIGNAL_BOUNDARY_EVENT, // 信号边界事件
+          shapeType.SIGNAL_NON_INTERRUPTING_BOUNDARY_EVENT, // 信号边界事件（非中断）
+          shapeType.COMPENSATE_BOUNDARY_EVENT, // 补偿边界事件
         ].includes(value)
       ) {
         this.clearListener()
         return
       }
-      if (existedListener(listener)) {
+      if (listener.class === '' || existedListener(listener)) {
         return
       }
+      this.addListener({ listener })
     },
     baseInfo(value) {
       this.baseInfoForm = { ...value }
