@@ -70,7 +70,7 @@ export default {
       }))
       this.runtimePeopleVisible = true
     },
-    async onRuntimePeopleSubmit({ addeds, removeds }) {
+    async onRuntimePeopleSubmit({ addeds, removeds, selections }) {
       if (removeds.length) {
         let strDelete = removeds.map(({ userId }) => userId).join(',')
         await getModifyCandidate({
@@ -87,6 +87,7 @@ export default {
           taskId: this.editTaskId,
         })
       }
+      this.runtimePeopleSelected = [...selections]
       this.$message.success('代办成功')
       this.$emit('completed')
     },
