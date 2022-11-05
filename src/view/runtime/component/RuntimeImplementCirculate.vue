@@ -88,7 +88,7 @@ export default {
       }));
       this.runtimePeopleVisible = true;
     },
-    async onRuntimePeopleSubmit({ addeds, removeds }) {
+    async onRuntimePeopleSubmit({ addeds, removeds, selections }) {
       if (removeds.length) {
         let strDelete = removeds.map(({ userId }) => userId).join(",");
         await getCirculation({
@@ -111,6 +111,7 @@ export default {
           processInstanceId: this.workflow.processInstanceId,
         });
       }
+      this.runtimePeopleSelected = [...selections]
       this.$message.success("传阅成功");
       this.$emit("completed");
     },
