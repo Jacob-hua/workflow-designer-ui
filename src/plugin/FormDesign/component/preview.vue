@@ -5,7 +5,7 @@ import _ from 'lodash'
 import render from '../custom/previewRender'
 import checkRules from '../custom/rule'
 
-function handleRequestDependChange(data, fieldInfo) {
+function handleRequestDependChange(data, fieldInfo, isDependDiffed) {
   const {
     requestConfig: { apiMark, sourceMark, customParser, parserProp },
   } = fieldInfo
@@ -18,6 +18,9 @@ function handleRequestDependChange(data, fieldInfo) {
       options = parserOptions(options, parserProp)
     }
     fieldInfo.options = options
+    if (isDependDiffed) {
+      _.set(this.form, fieldInfo.valuePath, fieldInfo.value)
+    }
   })
 
   function parserOptions(options, { label, value, children, optionPath }) {

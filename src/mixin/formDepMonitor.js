@@ -71,7 +71,7 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
   !fieldInfo.context && (fieldInfo.context = {})
 
   if (Object.keys(variableSpace.form).length === 0) {
-    executeFunc(variableMix(variableSpace), fieldInfo)
+    executeFunc(variableMix(variableSpace), fieldInfo, false)
     return fieldInfo
   }
 
@@ -81,7 +81,7 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
 
   fieldInfo.executeFuncs.set(calculateFuncKey(variableSpace), (data) => {
     if (diffDepObj(variableSpace.form, data)) {
-      executeFunc(variableMix(variableSpace), fieldInfo)
+      executeFunc(variableMix(variableSpace), fieldInfo, true)
     }
   })
   return fieldInfo
@@ -188,8 +188,8 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     fieldInfo.variableSpace = variableSpace
   }
 
-  return watchExecute(fieldInfo, (variableObj, fieldInfo) => {
-    executeFunc(parameterHandler(variableObj), fieldInfo)
+  return watchExecute(fieldInfo, (variableObj, fieldInfo, isDependDiffed) => {
+    executeFunc(parameterHandler(variableObj), fieldInfo, isDependDiffed)
   })
 
   function makeVariables(requestConfig = [], sourceType = 'form') {
