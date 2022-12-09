@@ -20,7 +20,7 @@
             :props="cascaderProps"
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="编辑时间 ">
+        <el-form-item label="创建时间 ">
           <el-date-picker
             v-model="searchForm.valueDate"
             type="daterange"
