@@ -15,7 +15,7 @@
         </el-option>
       </el-select>
     </div>
-    <div class="power-body">
+    <div v-if="visible" class="power-body">
       <el-tabs v-model="power" type="border-card" @tab-click="changePower">
         <el-tab-pane label="人员权限" name="Personnel">
           <personel
@@ -49,6 +49,7 @@ export default {
       projectCode: "",
       power: "Personnel",
       permissionRole: true,
+      visible: false,
     };
   },
   mounted() {
@@ -70,6 +71,7 @@ export default {
       this.projectOption = res?.result ?? [];
       this.projectCode = this.projectOption[0].code;
       this.changePower("Personnel");
+      this.visible = true
     },
     changePower() {
       let { permissions } = JSON.parse(sessionStorage.getItem("loginData"));
