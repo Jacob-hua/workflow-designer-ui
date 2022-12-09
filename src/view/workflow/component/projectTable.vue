@@ -9,7 +9,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="createBy" label="创建人"> </el-table-column>
-      <el-table-column prop="createTime" label="编辑时间"> </el-table-column>
+      <el-table-column prop="createTime" label="创建时间"> </el-table-column>
       <el-table-column prop="displayStatus" label="状态">
         <template slot-scope="scope">
           <span class="status" :class="scope.row.status === 'enabled' ? '' : 'status-failed'">{{
