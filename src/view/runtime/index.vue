@@ -271,6 +271,7 @@ export default {
       immediate: true,
       handler() {
         this.pageInfo.page = 1
+        this.getAllApi()
       },
     },
   },
@@ -346,6 +347,7 @@ export default {
           startTime: this.searchForm.valueDate[0],
           endTime: this.searchForm.valueDate[1],
           tenantId: this.tenantId,
+          processDeployName: this.searchForm.processDeployName,
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
@@ -370,6 +372,7 @@ export default {
           endTime: this.searchForm.valueDate[1],
           tenantId: this.tenantId,
           assignee: this.userInfo.account,
+          processDeployName: this.searchForm.processDeployName,
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
@@ -403,6 +406,7 @@ export default {
           endTime: this.searchForm.valueDate[1],
           ascription: this.searchForm.ascription,
           tenantId: this.tenantId,
+          processDeployName: this.searchForm.processDeployName,
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMessage)
