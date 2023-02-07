@@ -158,23 +158,23 @@ export default {
     processDisplayInfo() {
       return [
         {
-          label: '流程编码',
+          label: '工单编码',
           value: this.workflow.processNumber,
         },
         {
-          label: '部署名称',
+          label: '工单类型',
           value: this.workflow.processDeployName,
         },
         {
-          label: '发起时间',
+          label: '创建时间',
           value: this.workflow.startTime,
         },
+        // {
+        //   label: '应用项目',
+        //   value: this.$getMappingName(this.workflow.ascription),
+        // },
         {
-          label: '应用项目',
-          value: this.$getMappingName(this.workflow.ascription),
-        },
-        {
-          label: '流程类型',
+          label: '能源系统 ',
           value: this.$getMappingName(this.workflow.business),
         },
         {
