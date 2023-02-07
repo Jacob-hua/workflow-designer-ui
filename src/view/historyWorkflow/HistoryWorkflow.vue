@@ -60,11 +60,12 @@
     <div class="content-wrapper">
       <el-table :data="tableData">
         <el-table-column type="index" label="序号" width="180"> </el-table-column>
-        <el-table-column prop="processDeployName" label="名称" width="180"> </el-table-column>
-        <el-table-column prop="displayProcessDeployType" label="部署类型"> </el-table-column>
-        <el-table-column prop="starter" label="发起人"> </el-table-column>
-        <el-table-column prop="startTime" label="发起时间"> </el-table-column>
-        <el-table-column prop="displayAssignee" label="操作人"> </el-table-column>
+        <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" />
+        <el-table-column prop="processDeployName" label="工单类型" width="180"> </el-table-column>
+        <el-table-column prop="displayProcessDeployType" label="能源系统"> </el-table-column>
+        <el-table-column prop="starter" label="创建人"> </el-table-column>
+        <el-table-column prop="startTime" label="创建时间"> </el-table-column>
+        <!-- <el-table-column prop="displayAssignee" label="操作人"> </el-table-column> -->
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button
