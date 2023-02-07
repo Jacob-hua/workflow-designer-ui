@@ -22,14 +22,14 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="业务">
+        <el-form-item label="能源系统">
           <el-cascader
             v-model="searchForm.business"
             :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
             :props="cascaderProps"
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="发起时间">
+        <el-form-item label="时间选择">
           <el-date-picker
             v-model="searchForm.valueDate"
             :clearable="false"
