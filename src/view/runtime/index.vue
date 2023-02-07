@@ -12,6 +12,16 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="工单类型">
+          <el-select v-model="searchForm.processDeployName">
+            <el-option
+              v-for="({ label, value }, index) in deployNameList"
+              :key="index"
+              :label="label"
+              :value="value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="业务">
           <el-cascader
             v-model="searchForm.business"
@@ -143,7 +153,7 @@
 import RuntimeAdd from './component/RuntimeAdd.vue'
 import RuntimeImplement from './component/RuntimeImplement.vue'
 import Lookover from './component/lookover.vue'
-import { getTaskCountStatistic, postTaskCountStatistics, getExecuteList } from '@/api/unit/api.js'
+import { getTaskCountStatistic, postTaskCountStatistics, getExecuteList, getDeployNameList } from '@/api/unit/api.js'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 import { currentOneMonthAgo } from '@/util/date'
@@ -162,9 +172,11 @@ export default {
       runtimeImplementVisible: false,
       lookoverVisible: false,
       newTasks: [],
+      deployNameList: [],
       searchForm: {
         ascription: '',
         business: '',
+        processDeployName: null,
         valueDate: [start, end],
         taskType: 'all',
         order: 'desc',
@@ -265,6 +277,7 @@ export default {
   async mounted() {
     await this.dispatchRefreshOrganization()
     this.searchForm.ascription = this.currentOrganization
+    this.fetchDeployNameList()
     this.fetchNewTasks()
     this.fetchAmount()
     this.fetchDataNumber()
@@ -396,6 +409,33 @@ export default {
           return
         }
         this.taskTypeCounts = result
+      } catch (error) {}
+    },
+    async fetchDeployNameList() {
+      try {
+        const { errorInfo, result } = await getDeployNameList({
+          ascriptionCode: this.searchForm.ascription,
+          tenantId: this.tenantId,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMessage)
+          return
+        }
+        this.deployNameList = result.reduce(
+          (deployNameList, deployName) => [
+            ...deployNameList,
+            {
+              label: deployName,
+              value: deployName,
+            },
+          ],
+          [
+            {
+              label: '全部',
+              value: null,
+            },
+          ]
+        )
       } catch (error) {}
     },
   },
