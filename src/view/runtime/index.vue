@@ -2,7 +2,7 @@
   <div>
     <div class="search-wrapper">
       <el-form inline>
-        <el-form-item label="项目">
+        <el-form-item label="项目" style="display: none">
           <el-select v-model="searchForm.ascription">
             <el-option
               v-for="{ id, label, value } in rootOrganizations"
@@ -208,8 +208,8 @@ export default {
         },
         timedOut: {
           title: '超时',
-          className: 'table-step-rejected'
-        }
+          className: 'table-step-rejected',
+        },
       },
     }
   },
