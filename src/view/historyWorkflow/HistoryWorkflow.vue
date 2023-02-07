@@ -242,6 +242,7 @@ export default {
         tenantId: this.tenantId,
         ascription,
         business,
+        processDeployName: this.searchForm.processDeployName,
       })
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
@@ -265,6 +266,7 @@ export default {
           order: 'desc', // 排序方式
           ...pageInfo,
           tenantId: this.tenantId, // 租户id
+          processDeployName: this.searchForm.processDeployName,
         }),
         await getAllBusinessConfig({ tenantId: this.tenantId }),
       ])
