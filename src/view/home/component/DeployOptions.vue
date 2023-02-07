@@ -58,7 +58,12 @@
         </el-form-item>
         <el-form-item v-if="deployConfirmForm.isCycle" prop="ruleId" label="周期性规则">
           <el-select v-model="deployConfirmForm.ruleId">
-            <el-option></el-option>
+            <el-option
+              v-for="({ cronExpression, ruleId }, index) in ruleList"
+              :key="index"
+              :label="cronExpression"
+              :value="ruleId"
+            ></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -72,7 +77,13 @@
 
 <script>
 import WorkflowInfo from './WorkflowInfo.vue'
-import { postProcessDraft, putProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
+import {
+  postProcessDraft,
+  putProcessDraft,
+  designFormDesignServiceAll,
+  postDeployForOnline,
+  getCycleRuleList,
+} from '@/api/unit/api.js'
 import preview from '@/plugin/FormDesign/component/preview'
 import { mapState } from 'vuex'
 import BpmnShapeType from '../../../plugin/Bpmn/enum/shapeType'
@@ -101,6 +112,7 @@ export default {
       formList: [],
       formName: '',
       canLink: false,
+      ruleList: [],
       deployConfirmVisible: false,
       deployConfirmForm: {
         isCycle: false,
@@ -146,6 +158,9 @@ export default {
     workflow() {
       this.fetchFormList()
     },
+  },
+  mounted() {
+    this.fetchRuleList()
   },
   methods: {
     onCancel() {
@@ -281,6 +296,16 @@ export default {
         this.$message.error(errorInfo.errorMsg)
       }
       this.formList = formList.map(this.disableForm)
+    },
+    async fetchRuleList() {
+      try {
+        const { errorInfo, result } = await getCycleRuleList()
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.ruleList = result
+      } catch (error) {}
     },
     disableForm(form) {
       const newForm = { ...form }

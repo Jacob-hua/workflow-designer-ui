@@ -91,6 +91,9 @@ export const getDeleteDeployment = (params) => deletefn('/process/deploy/deleteD
 // api类型下拉框
 export const getApiTypeList = (params) => get('/config/global/apiTypeList', params)
 
+// 周期性规则列表
+export const getCycleRuleList = (params) => get('/periodicity/list', params)
+
 // 执行时
 
 export const getDeployNameList = (params) => get('/process/deploy/deployNameList', params)
