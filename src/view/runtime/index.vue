@@ -79,11 +79,12 @@
           <div>
             <el-table :data="newTasks">
               <el-table-column type="index" label="序号"> </el-table-column>
-              <el-table-column prop="processDeployName" label="名称" show-overflow-tooltip="" />
-              <el-table-column prop="displayEnergyType" label="部署类型" />
-              <el-table-column prop="starter" label="发起人" />
-              <el-table-column prop="startTime" label="发起时间" />
-              <el-table-column align="center" label="流程进度" min-width="250">
+              <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" />
+              <el-table-column prop="processDeployName" label="工单类型" show-overflow-tooltip="" />
+              <el-table-column prop="displayEnergyType" label="能源系统" />
+              <el-table-column prop="starter" label="填写人" />
+              <el-table-column prop="startTime" label="创建时间" />
+              <el-table-column align="center" label="执行进程" min-width="250">
                 <template slot-scope="{ row }">
                   <el-steps :active="row.displayTrackList.length" align-center process-status="success">
                     <el-step
