@@ -22,7 +22,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="业务">
+        <el-form-item label="能源系统">
           <el-cascader
             v-model="searchForm.business"
             :key="searchForm.ascription"
