@@ -51,6 +51,22 @@
         <el-button class="cancel-button" @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="部署类型" :visible="deployConfirmVisible">
+      <el-form ref="deployConfirmRef" :model="deployConfirmForm" :rules="deployConfirmRules" label-width="130px">
+        <el-form-item prop="isCycle" label="周期性">
+          <el-switch v-model="deployConfirmForm.isCycle" />
+        </el-form-item>
+        <el-form-item v-if="deployConfirmForm.isCycle" prop="ruleId" label="周期性规则">
+          <el-select v-model="deployConfirmForm.ruleId">
+            <el-option></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button class="save-button" @click="onDeployConfirmSubmit">确认</el-button>
+        <el-button class="cancel-button" @click="onDeployConfirmCancel">取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -85,6 +101,14 @@ export default {
       formList: [],
       formName: '',
       canLink: false,
+      deployConfirmVisible: false,
+      deployConfirmForm: {
+        isCycle: false,
+        ruleId: '',
+      },
+      deployConfirmRules: {
+        ruleId: [{ required: true, message: '周期性规则不能为空', trigger: 'change' }],
+      },
     }
   },
   computed: {
@@ -200,13 +224,21 @@ export default {
         processId,
       }
     },
-    async onDeploy() {
+    onDeploy() {
+      this.deployConfirmVisible = true
+    },
+    onDeployConfirmCancel() {
+      this.deployConfirmVisible = false
+      this.$refs.deployConfirmRef['resetFields'] && this.$refs.deployConfirmRef.resetFields()
+    },
+    async onDeployConfirmSubmit() {
       try {
+        this.$refs.deployConfirmRef['validate'] && (await this.$refs.deployConfirmRef.validate())
         const { file, processId } = await this.getXMLInfo()
         const workflowFormData = this.generateWorkflowFormData()
         workflowFormData.append('deployKey', processId)
         workflowFormData.append('processResource', file)
-
+        workflowFormData.append('ruleId', this.deployConfirmForm.ruleId)
         const { errorInfo } = await postDeployForOnline(workflowFormData)
         if (errorInfo.errorCode) {
           this.$message.error(this.errorInfo.errorMsg)
@@ -214,6 +246,7 @@ export default {
         }
         this.$message.success('部署成功')
         this.$emit('deployed')
+        this.onDeployConfirmCancel()
         this.onClose()
       } catch (error) {
         console.log(error)
