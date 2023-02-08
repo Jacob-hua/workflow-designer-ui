@@ -51,39 +51,12 @@
         <el-button class="cancel-button" @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="部署类型" :visible="deployConfirmVisible">
-      <el-form ref="deployConfirmRef" :model="deployConfirmForm" :rules="deployConfirmRules" label-width="130px">
-        <el-form-item prop="isCycle" label="周期性">
-          <el-switch v-model="deployConfirmForm.isCycle" />
-        </el-form-item>
-        <el-form-item v-if="deployConfirmForm.isCycle" prop="ruleId" label="周期性规则">
-          <el-select v-model="deployConfirmForm.ruleId">
-            <el-option
-              v-for="({ cronExpression, ruleId }, index) in ruleList"
-              :key="index"
-              :label="cronExpression"
-              :value="ruleId"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <span slot="footer">
-        <el-button class="save-button" @click="onDeployConfirmSubmit">确认</el-button>
-        <el-button class="cancel-button" @click="onDeployConfirmCancel">取消</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import WorkflowInfo from './WorkflowInfo.vue'
-import {
-  postProcessDraft,
-  putProcessDraft,
-  designFormDesignServiceAll,
-  postDeployForOnline,
-  getCycleRuleList,
-} from '@/api/unit/api.js'
+import { postProcessDraft, putProcessDraft, designFormDesignServiceAll, postDeployForOnline } from '@/api/unit/api.js'
 import preview from '@/plugin/FormDesign/component/preview'
 import { mapState } from 'vuex'
 import BpmnShapeType from '../../../plugin/Bpmn/enum/shapeType'
@@ -112,15 +85,6 @@ export default {
       formList: [],
       formName: '',
       canLink: false,
-      ruleList: [],
-      deployConfirmVisible: false,
-      deployConfirmForm: {
-        isCycle: false,
-        ruleId: '',
-      },
-      deployConfirmRules: {
-        ruleId: [{ required: true, message: '周期性规则不能为空', trigger: 'change' }],
-      },
     }
   },
   computed: {
@@ -158,9 +122,6 @@ export default {
     workflow() {
       this.fetchFormList()
     },
-  },
-  mounted() {
-    this.fetchRuleList()
   },
   methods: {
     onCancel() {
@@ -239,21 +200,15 @@ export default {
         processId,
       }
     },
-    onDeploy() {
-      this.deployConfirmVisible = true
-    },
-    onDeployConfirmCancel() {
-      this.deployConfirmVisible = false
-      this.$refs.deployConfirmRef['resetFields'] && this.$refs.deployConfirmRef.resetFields()
-    },
+    onDeploy() {},
+    onDeployConfirmCancel() {},
     async onDeployConfirmSubmit() {
       try {
-        this.$refs.deployConfirmRef['validate'] && (await this.$refs.deployConfirmRef.validate())
         const { file, processId } = await this.getXMLInfo()
         const workflowFormData = this.generateWorkflowFormData()
         workflowFormData.append('deployKey', processId)
         workflowFormData.append('processResource', file)
-        workflowFormData.append('ruleId', this.deployConfirmForm.ruleId)
+        workflowFormData.append('ruleId', this.workflow.ruleId)
         const { errorInfo } = await postDeployForOnline(workflowFormData)
         if (errorInfo.errorCode) {
           this.$message.error(this.errorInfo.errorMsg)
@@ -296,16 +251,6 @@ export default {
         this.$message.error(errorInfo.errorMsg)
       }
       this.formList = formList.map(this.disableForm)
-    },
-    async fetchRuleList() {
-      try {
-        const { errorInfo, result } = await getCycleRuleList()
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
-        this.ruleList = result
-      } catch (error) {}
     },
     disableForm(form) {
       const newForm = { ...form }
