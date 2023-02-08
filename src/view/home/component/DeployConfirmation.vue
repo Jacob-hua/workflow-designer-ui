@@ -40,13 +40,13 @@
         <el-form-item prop="isCycle" label="周期性">
           <el-switch v-model="formData.isCycle" />
         </el-form-item>
-        <el-form-item v-if="formData.isCycle" prop="ruleId" label="周期规则">
-          <el-select v-model="formData.ruleId" placeholder="请选择周期规则">
+        <el-form-item v-if="formData.isCycle" prop="rule" label="周期规则">
+          <el-select v-model="formData.rule" placeholder="请选择周期规则">
             <el-option
               v-for="({ cronExpression, ruleId }, index) in ruleList"
               :key="index"
               :label="cronExpression"
-              :value="ruleId"
+              :value="{ ruleId, cronExpression }"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -88,13 +88,13 @@ export default {
         systemType: '',
         deployName: '',
         isCycle: false,
-        ruleId: null,
+        rule: null,
       },
       formRules: {
         ascription: [{ required: true, message: '请选择应用项目', trigger: 'change' }],
         business: [{ required: true, message: '请选择流程类型', trigger: 'change' }],
         systemType: [{ required: true, message: '请选择部署类型', trigger: 'change' }],
-        ruleId: [{ required: true, message: '请选择周期性规则', trigger: 'change' }],
+        rule: [{ required: true, message: '请选择周期性规则', trigger: 'change' }],
         deployName: [
           {
             required: true,
@@ -131,6 +131,9 @@ export default {
       })
       return systemOption[0]?.children || []
     },
+  },
+  mounted() {
+    this.fetchRuleList()
   },
   methods: {
     onSubmit() {

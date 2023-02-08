@@ -90,6 +90,23 @@ export default {
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
     processDisplayInfo() {
+      const cycleInfo = this.workflow.isCycle
+        ? [
+            {
+              label: '周期性',
+              value: '是',
+            },
+            {
+              label: '周期规则',
+              value: this.workflow.rule.cronExpression,
+            },
+          ]
+        : [
+            {
+              label: '周期性',
+              value: '否',
+            },
+          ]
       return [
         {
           label: '流程编码',
@@ -111,6 +128,7 @@ export default {
           label: '流程类型',
           value: this.$getMappingName(this.workflow.business),
         },
+        ...cycleInfo,
         {
           label: '部署人',
           value: this.workflow.createBy,
@@ -200,15 +218,13 @@ export default {
         processId,
       }
     },
-    onDeploy() {},
-    onDeployConfirmCancel() {},
-    async onDeployConfirmSubmit() {
+    async onDeploy() {
       try {
         const { file, processId } = await this.getXMLInfo()
         const workflowFormData = this.generateWorkflowFormData()
         workflowFormData.append('deployKey', processId)
         workflowFormData.append('processResource', file)
-        workflowFormData.append('ruleId', this.workflow.ruleId)
+        workflowFormData.append('ruleId', this.workflow.rule.ruleId)
         const { errorInfo } = await postDeployForOnline(workflowFormData)
         if (errorInfo.errorCode) {
           this.$message.error(this.errorInfo.errorMsg)
@@ -216,7 +232,6 @@ export default {
         }
         this.$message.success('部署成功')
         this.$emit('deployed')
-        this.onDeployConfirmCancel()
         this.onClose()
       } catch (error) {
         console.log(error)
