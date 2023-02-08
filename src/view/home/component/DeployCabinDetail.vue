@@ -23,7 +23,9 @@
           <div v-else class="details">
             <div
               class="detail"
-              v-for="({ id, deployName, createBy, createTime, displayStatus }, index) in deployments"
+              v-for="(
+                { id, deployName, createBy, createTime, displayStatus, periodicityFlag, cronExpression }, index
+              ) in deployments"
               :key="id"
             >
               <div class="detail-button" @click="onClickDetail(index)">详情</div>
@@ -31,6 +33,14 @@
                 <div class="info">
                   <span>部署名称:</span>
                   <long-text contentStyle="margin-left: 10px; width: 130px;" :content="deployName" />
+                </div>
+                <div class="info">
+                  <span>周期性:</span>
+                  <span>{{ periodicityFlag ? '是' : '否' }}</span>
+                </div>
+                <div class="info" v-if="periodicityFlag">
+                  <span>周期规则:</span>
+                  <span>{{ cronExpression }}</span>
                 </div>
                 <div class="info">
                   <span>部署人:</span>
@@ -59,7 +69,7 @@ import BpmnInfo from '@/component/BpmnInfo.vue'
 import { mapGetters } from 'vuex'
 import { getDeployBasic } from '@/api/unit/api.js'
 import DeployDetail from './DeployDetail.vue'
-import longText from "../../../component/LongText.vue";
+import longText from '../../../component/LongText.vue'
 
 export default {
   name: 'DeployCabinDetail',
