@@ -178,7 +178,7 @@ export default {
           value: this.$getMappingName(this.workflow.business),
         },
         {
-          label: '部署人',
+          label: '填报人',
           value: this.workflow.starter,
         },
       ]
