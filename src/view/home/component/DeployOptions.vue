@@ -89,6 +89,9 @@ export default {
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
+    ruleId() {
+      return this.workflow.isCycle ? this.workflow.rule.ruleId : ''
+    },
     processDisplayInfo() {
       const cycleInfo = this.workflow.isCycle
         ? [
@@ -224,7 +227,7 @@ export default {
         const workflowFormData = this.generateWorkflowFormData()
         workflowFormData.append('deployKey', processId)
         workflowFormData.append('processResource', file)
-        workflowFormData.append('ruleId', this.workflow.rule?.ruleId ?? null)
+        workflowFormData.append('ruleId', this.ruleId)
         const { errorInfo } = await postDeployForOnline(workflowFormData)
         if (errorInfo.errorCode) {
           this.$message.error(this.errorInfo.errorMsg)
@@ -243,7 +246,7 @@ export default {
         const workflowFormData = this.generateWorkflowFormData()
         workflowFormData.append('deployKey', processId)
         workflowFormData.append('processFile', file)
-        workflowFormData.append('ruleId', this.workflow.rule?.ruleId ?? null)
+        workflowFormData.append('ruleId', this.ruleId)
 
         if (this.workflow.status === 'enabled') {
           await postProcessDraft(workflowFormData)
