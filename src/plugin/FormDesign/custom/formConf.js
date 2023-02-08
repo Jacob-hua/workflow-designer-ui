@@ -2,7 +2,7 @@
  * 表单配置
  */
 const formConf = {
-  version:'1.10',
+  version: '1.10',
   formRef: 'elForm',
   formModel: 'form',
   rules: 'rules',
@@ -12,9 +12,9 @@ const formConf = {
   formRules: 'rules',
   gutter: 15,
   disabled: false,
-  dynamicTableAllowed:true
-};
-export default formConf;
+  dynamicTableAllowed: true,
+}
+export default formConf
 
 //动态表单允许放入的组件
 export const dynamicTableAllowedItems = [
@@ -28,8 +28,9 @@ export const dynamicTableAllowedItems = [
   'slider',
   'rate',
   'date',
-  'time'
-];
+  'time',
+  'nfc',
+]
 
 //row允许放入的items
 export const rowAllowedItems = [
@@ -44,5 +45,5 @@ export const rowAllowedItems = [
   'slider',
   'rate',
   'date',
-  'time'
+  'time',
 ]
