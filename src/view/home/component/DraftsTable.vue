@@ -10,7 +10,7 @@
       </el-table-column>
       <el-table-column prop="periodicityFlag" label="周期性">
         <template slot-scope="scope">
-          <span>{{ scope.row.periodicityFlag ? '周期性' : '非周期性' }}</span>
+          <span>{{ scope.row.periodicityFlag ? '是' : '否' }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="createBy" label="创建人"> </el-table-column>
@@ -147,7 +147,15 @@ export default {
       this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page
     },
     onEditWorkflow(workflow) {
-      this.workflow = { ...workflow, status: 'drafted' }
+      this.workflow = {
+        ...workflow,
+        isCycle: workflow.ruleId,
+        rule: {
+          ruleId: workflow.ruleId,
+          cronExpression: workflow.cronExpression,
+        },
+        status: 'drafted',
+      }
       this.deployOptionsVisible = true
     },
   },
