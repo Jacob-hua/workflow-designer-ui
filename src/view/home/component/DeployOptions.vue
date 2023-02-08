@@ -224,7 +224,7 @@ export default {
         const workflowFormData = this.generateWorkflowFormData()
         workflowFormData.append('deployKey', processId)
         workflowFormData.append('processResource', file)
-        workflowFormData.append('ruleId', this.workflow.rule.ruleId)
+        workflowFormData.append('ruleId', this.workflow.rule?.ruleId ?? null)
         const { errorInfo } = await postDeployForOnline(workflowFormData)
         if (errorInfo.errorCode) {
           this.$message.error(this.errorInfo.errorMsg)
@@ -243,6 +243,7 @@ export default {
         const workflowFormData = this.generateWorkflowFormData()
         workflowFormData.append('deployKey', processId)
         workflowFormData.append('processFile', file)
+        workflowFormData.append('ruleId', this.workflow.rule?.ruleId ?? null)
 
         if (this.workflow.status === 'enabled') {
           await postProcessDraft(workflowFormData)

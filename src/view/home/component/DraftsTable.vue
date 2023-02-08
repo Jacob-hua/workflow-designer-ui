@@ -8,6 +8,11 @@
           <span class="file">{{ scope.row.deployName }}.bpmn</span>
         </template>
       </el-table-column>
+      <el-table-column prop="periodicityFlag" label="周期性">
+        <template slot-scope="scope">
+          <span>{{ scope.row.periodicityFlag ? '周期性' : '非周期性' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="createBy" label="创建人"> </el-table-column>
       <el-table-column prop="createTime" label="创建时间"> </el-table-column>
       <el-table-column prop="name" label="操作">
