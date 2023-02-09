@@ -29,7 +29,7 @@ pipeline {
 			steps {
 				echo "1.Clone Stage"
 				dir('workflow-designer-ui'){
-					git branch: 'develop', credentialsId: 'lulongchao', url: "${gitURL}"
+					git branch: "$Branch", credentialsId: 'lulongchao', url: "${gitURL}"
 					script {
 						build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 						commit_message = sh(returnStdout: true, script: 'git log --pretty=format:"[%cn] - %s - %b" -1 |  grep -v See | sed "/^\\$/d" ').trim()
