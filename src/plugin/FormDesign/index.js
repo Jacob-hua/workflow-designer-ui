@@ -3,6 +3,7 @@ import fancyEditor from '@/plugin/FormDesign/extend/fancyEditor'
 import fancyHtml from '@/plugin/FormDesign/extend/fancyHtml'
 import fancyText from '@/plugin/FormDesign/extend/fancyText'
 import fancyNFC from '@/plugin/FormDesign/extend/fancyNFC'
+import fancyMap from '@/plugin/FormDesign/extend/fancyMap'
 import fancyBarCode from 'vue-barcode'
 import fancyDialogList from '@/plugin/FormDesign/extend/fancyDialogList'
 import iconDialog from '@/plugin/FormDesign/component/iconDialog'
@@ -13,6 +14,7 @@ const plugins = {
     Vue.component('fancy-html', fancyHtml)
     Vue.component('fancy-text', fancyText)
     Vue.component('fancy-nfc', fancyNFC)
+    Vue.component('fancy-map', fancyMap)
     Vue.component('fancy-bar-code', fancyBarCode)
     Vue.component('fancy-dialog-list', fancyDialogList)
     Vue.component('icon-dialog', iconDialog)

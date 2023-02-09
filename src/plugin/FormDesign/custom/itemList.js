@@ -15,6 +15,7 @@ import { cascader } from './items/cascader'
 import { upload } from './items/upload'
 // import {dialogList} from "./items/dialogList";
 import { nfc } from './items/nfc'
+import { map } from './items/map'
 
 import { button } from './items/button'
 import { divider } from './items/divider'
@@ -41,6 +42,7 @@ export const formItems = [
   cascader,
   upload,
   nfc,
+  map,
 ]
 export const assistFormItems = [button, divider, link, text]
 export const layoutFormItems = [row]
