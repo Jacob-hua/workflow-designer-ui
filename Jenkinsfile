@@ -27,7 +27,7 @@ pipeline {
 
 		stage('Clone') {
 			steps {
-				echo "1.Clone Stage"
+				echo "1.Git Clone Stage"
 				dir('workflow-designer-ui'){
 					git branch: "${Branch}", credentialsId: 'lulongchao', url: "${gitURL}"
 					script {
