@@ -5,13 +5,13 @@ def quality = new org.devops.sonarQualityScanner()
 pipeline {
     agent any
     environment {
-		service="workflow-ui"
+		service="kms-workflow-ui"
 		def workspace = pwd()
-		namespace="workflow"
+		namespace="kms-dev"
 		Branch="${env.gitlabTargetBranch}"
 		starttime = getDateFormat()
 		BUILD_USER = getBuildUser()
-		project="workflow engine platform"
+		project="kms workflow engine platform"
 		gitURL="http://192.100.30.115:9000/job_workflow_platform/workflow-designer-ui.git"
 		environment="dev"
 		applicationType="webfront"
@@ -55,7 +55,7 @@ pipeline {
 				sh """
 				cat >Dockerfile<<-EOF
 					FROM nginx:alpine
-					ADD dist /usr/share/nginx/html/workflow
+					ADD dist /usr/share/nginx/html/${service}
 				EOF
 				cat Dockerfile 
 				cat >deployment.yaml<<-EOF
