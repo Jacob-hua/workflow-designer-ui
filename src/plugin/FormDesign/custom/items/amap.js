@@ -1,7 +1,7 @@
-export let map = {
+export let amap = {
   id: '',
   _id: '',
-  compType: 'map',
+  compType: 'amap',
   //控件名称
   compName: '地址',
   //element标签

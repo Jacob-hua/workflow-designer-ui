@@ -205,3 +205,5 @@ export const getGroupPermission = (params) => get('/permission/mapping/groupPerm
 //人员权限编辑
 export const mappingUser = (params) => post('/permission/mapping/user', params)
 export const mappingGroup = (params) => post('/permission/mapping/group', params)
+
+export const queryAddressInfo = (params) => post('/assembly/queryAddressInfo', params)
