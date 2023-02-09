@@ -20,7 +20,7 @@ pipeline {
 	stages {
 		stage('Clean'){
 			steps {
-				echo "0.Delete workspace before build starts"
+				echo "0.Delete workspace before build starts 1"
 				step([$class: 'WsCleanup'])
 			}
 		}
