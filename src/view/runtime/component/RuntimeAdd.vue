@@ -26,14 +26,14 @@
                 <div>部署名称:</div>
                 <long-text contentStyle="color: white; width: 180px" :content="process.deployName" />
               </div>
-              <div class="process-info">
+              <!-- <div class="process-info">
                 <div>部署人:</div>
                 <div>{{ process.user }}</div>
               </div>
               <div class="process-info">
                 <div>部署时间:</div>
                 <div>{{ process.createTime }}</div>
-              </div>
+              </div> -->
               <div class="button-wrapper">
                 <el-button plain @click="createTicket(process)">创建</el-button>
                 <!--el-button @click="detailsShow(process)">详情</el-button-->
@@ -55,7 +55,7 @@
         </div>
       </div>
     </el-dialog>
-    <runtime-creat-ticket
+    <runtime-create-ticket
       :visible="createTicketVisible"
       :process="process"
       @close="onCreateTicketVisible"
@@ -67,14 +67,14 @@
 <script>
 import { getProcessDefinitionList } from '@/api/unit/api.js'
 import { mapState, mapGetters } from 'vuex'
-import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
+import RuntimeCreateTicket from './RuntimeCreateTicket.vue'
 import PeTree from '@/component/PeTree.vue'
 import longText from '../../../component/LongText.vue'
 
 export default {
   name: 'RuntimeAdd',
   components: {
-    RuntimeCreatTicket,
+    RuntimeCreateTicket,
     PeTree,
     longText,
   },
@@ -182,16 +182,16 @@ export default {
 .process-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, 370px);
-  grid-template-rows: 229px;
+  grid-template-rows: 129px;
   row-gap: 20px;
   column-gap: 20px;
   padding: 20px;
-  height: 720px;
+  // height: 720px;
 }
 
 .process {
   width: 370px;
-  height: 229px;
+  height: 129px;
   background-color: $card-bg-color-1;
   display: flex;
   flex-direction: column;

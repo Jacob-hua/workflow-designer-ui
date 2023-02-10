@@ -4,13 +4,23 @@
       <el-form label-position="right" label-width="80px" ref="formData" :rules="formRules" :model="formData">
         <el-form-item label="应用项目" prop="ascription">
           <el-col :span="24">
-            <el-input :value="$getMappingName(formData.ascription)" placeholder="请输入应用项目" :disabled="true"></el-input>
+            <el-input
+              :value="$getMappingName(formData.ascription)"
+              placeholder="请输入应用项目"
+              :disabled="true"
+            ></el-input>
           </el-col>
         </el-form-item>
         <el-form-item label="流程类型" prop="business">
           <el-col :span="24">
-            <el-cascader v-model="formData.business" clearable :style="{ width: '100%' }"
-              :options="rootOrganizationChildren(formData.ascription)" :props="cascaderProps" :disabled="true">
+            <el-cascader
+              v-model="formData.business"
+              clearable
+              :style="{ width: '100%' }"
+              :options="rootOrganizationChildren(formData.ascription)"
+              :props="cascaderProps"
+              :disabled="true"
+            >
             </el-cascader>
           </el-col>
         </el-form-item>
@@ -27,6 +37,19 @@
             <el-input v-model="formData.deployName" placeholder="请输入部署名称"></el-input>
           </el-col>
         </el-form-item>
+        <el-form-item prop="isCycle" label="周期性">
+          <el-switch v-model="formData.isCycle" />
+        </el-form-item>
+        <el-form-item v-if="formData.isCycle" prop="rule" label="周期规则">
+          <el-select v-model="formData.rule" placeholder="请选择周期规则">
+            <el-option
+              v-for="({ cronExpression, ruleId }, index) in ruleList"
+              :key="index"
+              :label="cronExpression"
+              :value="{ ruleId, cronExpression }"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer">
         <el-button class="submit" @click="onSubmit">下一步</el-button>
@@ -38,6 +61,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import { getCycleRuleList } from '@/api/unit/api.js'
 
 export default {
   name: 'DeployConfirmation',
@@ -57,16 +81,20 @@ export default {
   },
   data() {
     return {
+      ruleList: [],
       formData: {
         ascription: this.ascription,
         business: this.business,
         systemType: '',
         deployName: '',
+        isCycle: false,
+        rule: null,
       },
       formRules: {
         ascription: [{ required: true, message: '请选择应用项目', trigger: 'change' }],
         business: [{ required: true, message: '请选择流程类型', trigger: 'change' }],
         systemType: [{ required: true, message: '请选择部署类型', trigger: 'change' }],
+        rule: [{ required: true, message: '请选择周期性规则', trigger: 'change' }],
         deployName: [
           {
             required: true,
@@ -104,6 +132,9 @@ export default {
       return systemOption[0]?.children || []
     },
   },
+  mounted() {
+    this.fetchRuleList()
+  },
   methods: {
     onSubmit() {
       this.$refs.formData &&
@@ -121,6 +152,16 @@ export default {
     onClose() {
       this.$refs.formData && this.$refs.formData.resetFields()
       this.$emit('update:visible', false)
+    },
+    async fetchRuleList() {
+      try {
+        const { errorInfo, result } = await getCycleRuleList()
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.ruleList = result
+      } catch (error) {}
     },
   },
 }

@@ -18,7 +18,7 @@ const getters = {
   rootOrganizationChildrenAndAll(state) {
     return (value) => {
       const children = state.organization.find(({ value: v }) => v === value)?.children ?? []
-      return [{ value: '', label: '全部业务' }, ...children]
+      return [{ value: '', label: '全部系统' }, ...children]
     }
   },
   findRootOrganizationByIndex(state) {

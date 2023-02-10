@@ -89,7 +89,27 @@ export default {
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
+    ruleId() {
+      return this.workflow.isCycle ? this.workflow.rule.ruleId : ''
+    },
     processDisplayInfo() {
+      const cycleInfo = this.workflow.isCycle
+        ? [
+            {
+              label: '周期性',
+              value: '是',
+            },
+            {
+              label: '周期规则',
+              value: this.workflow.rule.cronExpression,
+            },
+          ]
+        : [
+            {
+              label: '周期性',
+              value: '否',
+            },
+          ]
       return [
         {
           label: '流程编码',
@@ -111,6 +131,7 @@ export default {
           label: '流程类型',
           value: this.$getMappingName(this.workflow.business),
         },
+        ...cycleInfo,
         {
           label: '部署人',
           value: this.workflow.createBy,
@@ -206,7 +227,7 @@ export default {
         const workflowFormData = this.generateWorkflowFormData()
         workflowFormData.append('deployKey', processId)
         workflowFormData.append('processResource', file)
-
+        workflowFormData.append('ruleId', this.ruleId)
         const { errorInfo } = await postDeployForOnline(workflowFormData)
         if (errorInfo.errorCode) {
           this.$message.error(this.errorInfo.errorMsg)
@@ -225,6 +246,7 @@ export default {
         const workflowFormData = this.generateWorkflowFormData()
         workflowFormData.append('deployKey', processId)
         workflowFormData.append('processFile', file)
+        workflowFormData.append('ruleId', this.ruleId)
 
         if (this.workflow.status === 'enabled') {
           await postProcessDraft(workflowFormData)
