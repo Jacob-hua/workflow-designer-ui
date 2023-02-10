@@ -207,3 +207,6 @@ export const mappingUser = (params) => post('/permission/mapping/user', params)
 export const mappingGroup = (params) => post('/permission/mapping/group', params)
 
 export const queryAddressInfo = (params) => post('/assembly/queryAddressInfo', params)
+
+// 获取启动项表单
+export const getSelectStartForm = (params) => get(`/config/startConfig/selectProcessStartFormByNoDeployId`, params)

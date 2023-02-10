@@ -55,7 +55,7 @@
         </div>
       </div>
     </el-dialog>
-    <runtime-creat-ticket
+    <runtime-create-ticket
       :visible="createTicketVisible"
       :process="process"
       @close="onCreateTicketVisible"
@@ -67,14 +67,14 @@
 <script>
 import { getProcessDefinitionList } from '@/api/unit/api.js'
 import { mapState, mapGetters } from 'vuex'
-import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
+import RuntimeCreateTicket from './RuntimeCreateTicket.vue'
 import PeTree from '@/component/PeTree.vue'
 import longText from '../../../component/LongText.vue'
 
 export default {
   name: 'RuntimeAdd',
   components: {
-    RuntimeCreatTicket,
+    RuntimeCreateTicket,
     PeTree,
     longText,
   },
@@ -186,7 +186,7 @@ export default {
   row-gap: 20px;
   column-gap: 20px;
   padding: 20px;
-  height: 720px;
+  // height: 720px;
 }
 
 .process {

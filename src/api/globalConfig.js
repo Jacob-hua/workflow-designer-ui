@@ -108,4 +108,10 @@ export const selectProcessStartConfigByCode = (params) =>
 export const getGlobalUUID = () => get(`/config/global/uuid`)
 
 // 获取选中节点表单
-export const getSelectProcessStartForm = (params) => post(` /config/startConfig/selectProcessStartForm`, params)
+export const getSelectProcessStartForm = (params) => post(`/config/startConfig/selectProcessStartForm`, params)
+
+// 关联节点表单
+export const linkStartForm = (params) => post(`/config/startConfig/saveStartConfig`, params)
+
+// 移除表单
+export const removeStartForm = (params) => deletefn(`/config/startConfig/remove`, params)

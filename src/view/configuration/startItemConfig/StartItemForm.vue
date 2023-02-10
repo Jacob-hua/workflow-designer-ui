@@ -23,7 +23,7 @@
           <div class="form-preview">
             <div class="title">
               <div>启动项表单</div>
-              <el-button class="remove-button" v-if="formShow"> 移除表单 </el-button>
+              <el-button class="remove-button" v-if="formShow" @click="onRemoveForm"> 移除表单 </el-button>
             </div>
             <div class="content-wrapper form">
               <div v-if="formShow">
@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { getSelectProcessStartForm } from '@/api/globalConfig'
+import { getSelectProcessStartForm, linkStartForm, removeStartForm } from '@/api/globalConfig'
 import { designFormDesignServiceAll } from '@/api/unit/api.js'
 import preview from '@/plugin/FormDesign/component/preview'
 import { mapState } from 'vuex'
@@ -106,6 +106,8 @@ export default {
   },
   methods: {
     onClose() {
+      this.formList = []
+      this.formContent = {}
       this.$emit('update:visible', false)
     },
     handleNodeClick(data) {
@@ -115,11 +117,35 @@ export default {
         this.fetchStartFrom()
       }
     },
-    onLinked({ fields, config }) {
+    async onLinked({ id, fields, config }) {
+      const { errorInfo } = await linkStartForm({
+        businessConfigId: this.activeBusiness?.id,
+        formId: id,
+      })
+      if (errorInfo.errorCode) {
+        this.$message.error(errorInfo.errorMsg)
+        return
+      }
       this.formContent = {
         fields,
         config,
       }
+    },
+    onRemoveForm() {
+      this.$confirm(`此操作将解除${this.activeBusiness?.name}的启动项表单，是否继续？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
+        const { errorInfo } = await removeStartForm({
+          businessConfigId: this.activeBusiness?.id,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg)
+          return
+        }
+        this.formContent = {}
+      })
     },
     async fetchStartFrom() {
       const { errorInfo, result } = await getSelectProcessStartForm({
