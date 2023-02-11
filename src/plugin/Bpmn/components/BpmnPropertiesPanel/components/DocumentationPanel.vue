@@ -44,8 +44,11 @@ export default {
     },
   },
   watch: {
-    documentation(value) {
-      this.documentationForm = { documentation: value }
+    documentation: {
+      immediate: true,
+      handler(value) {
+        this.documentationForm = { documentation: value }
+      },
     },
     documentationForm: {
       deep: true,

@@ -191,6 +191,7 @@ const mutations = {
 
 const mutationsEffect = {
   updateBaseInfo: panelEffect.baseInfoEffect,
+  updateDocumentation: panelEffect.documentationEffect,
   addListener: panelEffect.listenerEffect,
   updateListener: panelEffect.listenerEffect,
   removeListener: panelEffect.listenerEffect,
