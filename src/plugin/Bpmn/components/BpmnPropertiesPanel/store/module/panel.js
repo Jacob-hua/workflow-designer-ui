@@ -8,6 +8,7 @@ const state = () => ({
     id: '',
     name: '',
   },
+  documentation: '',
   timer: {},
   condition: {
     type: '',
@@ -71,6 +72,9 @@ const getters = {
 const mutations = {
   updateBaseInfo(state, { newBaseInfo = {} }) {
     state.baseInfo = deepCopy(newBaseInfo)
+  },
+  updateDocumentation(state, { documentation = '' }) {
+    state.documentation = documentation
   },
   addListener(state, { listener }) {
     if (emptyPropertiesObject(listener)) {
