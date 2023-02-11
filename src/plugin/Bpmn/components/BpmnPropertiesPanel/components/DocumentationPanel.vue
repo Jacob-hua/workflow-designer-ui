@@ -2,7 +2,10 @@
   <div>
     <el-form :model="documentationForm" label-position="right" label-width="130px">
       <el-form-item :label="labels.documentation">
-        <el-input v-model="documentationForm.documentation"></el-input>
+        <el-radio-group v-model="documentationForm.documentation">
+          <el-radio label="">普通任务</el-radio>
+          <el-radio label="approval-task">审批任务</el-radio>
+        </el-radio-group>
       </el-form-item>
     </el-form>
   </div>
@@ -39,7 +42,7 @@ export default {
     },
     labels() {
       return {
-        documentation: `${zh[this.shapeType] ?? '流程'}描述`,
+        documentation: `${zh[this.shapeType] ?? '流程'}类型`,
       }
     },
   },

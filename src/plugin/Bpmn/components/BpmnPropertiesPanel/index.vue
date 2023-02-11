@@ -73,7 +73,7 @@ export default {
         component: BaseInfoPanel,
       },
       documentationPanelInfo: {
-        title: '描述',
+        title: '任务类型',
         component: DocumentationPanel,
       },
       timerPanelInfo: {
