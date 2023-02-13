@@ -23,7 +23,7 @@
           <div class="process-list">
             <div class="process" v-for="(process, index) in processList" :key="index">
               <div class="process-info">
-                <div>部署名称:</div>
+                <div>工单类型:</div>
                 <long-text contentStyle="color: white; width: 180px" :content="process.deployName" />
               </div>
               <!-- <div class="process-info">
@@ -216,7 +216,7 @@ export default {
     margin: 30px 30px 24px 0px;
     text-align: end;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 
     & > button {
       @include primaryPlainBtn;
