@@ -91,6 +91,7 @@ export default {
   },
   methods: {
     onDeployed() {
+      this.fetchWorkflows()
       this.$emit('deployed')
     },
     onSaved() {
