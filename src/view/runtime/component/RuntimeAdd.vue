@@ -117,6 +117,7 @@ export default {
   methods: {
     handleNodeClick(data) {
       this.getData.type = data.value
+      this.getData.page = 1
       this.getProcessList()
     },
     onCreateTicketVisible() {
