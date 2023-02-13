@@ -15,6 +15,7 @@
 import IBpmnModeler from '../../IBpmnModeler'
 import BpmnShapeType from '../../enum/shapeType'
 import BaseInfoPanel from './components/BaseInfoPanel.vue'
+import DocumentationPanel from './components/DocumentationPanel.vue'
 import ExecuteListenerPanel from './components/ExecuteListenerPanel.vue'
 import InputOutputPanel from './components/InputOutputPanel.vue'
 import SignalMessagePanel from './components/SignalMessagePanel.vue'
@@ -71,6 +72,10 @@ export default {
         title: '基础信息',
         component: BaseInfoPanel,
       },
+      documentationPanelInfo: {
+        title: '任务类型',
+        component: DocumentationPanel,
+      },
       timerPanelInfo: {
         title: '定时器',
         component: TimerPanel,
@@ -126,6 +131,7 @@ export default {
         [BpmnShapeType.END_EVENT]: [this.baseInfoPanelInfo, this.executeListenerPanelInfo, this.inputOutputPanelInfo],
         [BpmnShapeType.USER_TASK]: [
           this.baseInfoPanelInfo,
+          this.documentationPanelInfo,
           this.executeListenerPanelInfo,
           this.inputOutputPanelInfo,
           this.elementTaskPanelInfo,

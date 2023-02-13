@@ -106,6 +106,17 @@ function baseInfoParameter2State(iBpmnModeler = new IBpmnModeler()) {
   return baseInfo
 }
 
+function documentationParameter2State(iBpmnModeler = new IBpmnModeler()) {
+  let documentation = ''
+  if (
+    Array.isArray(iBpmnModeler.getSelectedShapeInfoByType('documentation')) &&
+    iBpmnModeler.getSelectedShapeInfoByType('documentation').length === 1
+  ) {
+    documentation = iBpmnModeler.getSelectedShapeInfoByType('documentation')[0].text
+  }
+  return documentation
+}
+
 function userTaskParameter2State(iBpmnModeler = new IBpmnModeler()) {
   const userTask = {
     displayAssignee: {},
@@ -214,11 +225,14 @@ function onSelectionChangedListener(_, commit, iBpmnModeler = new IBpmnModeler()
         id: iBpmnModeler.getRootShapeInfo().id,
       },
       shapeType: '',
+      documentation: '',
     })
     return
   }
 
   const baseInfo = baseInfoParameter2State(iBpmnModeler)
+
+  const documentation = documentationParameter2State(iBpmnModeler)
 
   const listeners = listenersParameter2State(iBpmnModeler)
 
@@ -239,6 +253,7 @@ function onSelectionChangedListener(_, commit, iBpmnModeler = new IBpmnModeler()
   commit('refreshState', {
     shapeType,
     baseInfo,
+    documentation,
     listeners,
     inputParameters,
     outputParameters,

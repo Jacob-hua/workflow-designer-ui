@@ -7,6 +7,7 @@ import actionsEffect from './actionsEffect'
 import multiInstanceEffect from './multiInstanceEffect'
 import timerEffect from './timerEffect'
 import conditionEffect from './conditionEffect'
+import documentationEffect from './documentationEffect'
 
 export default {
   baseInfoEffect,
@@ -18,4 +19,5 @@ export default {
   multiInstanceEffect,
   timerEffect,
   conditionEffect,
+  documentationEffect,
 }
