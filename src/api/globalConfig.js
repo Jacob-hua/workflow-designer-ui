@@ -118,3 +118,9 @@ export const removeStartForm = (params) => deletefn(`/config/startConfig/remove`
 
 // 文件上传
 export const uploadFile = (params) => post(`/file/upload`, params)
+
+// 文件下载
+export const downloadFile = (params) =>
+  post(`/file/download`, params, {
+    responseType: 'blob',
+  })

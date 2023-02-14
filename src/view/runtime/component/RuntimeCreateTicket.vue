@@ -7,8 +7,8 @@
           <preview
             :itemList="formContent.list"
             :formConf="formContent.config"
-            :uploadFun="uploadFile.bind(this)"
-            :downloadFun="downloadFile.bind(this)"
+            :uploadFun="uploadFileFun.bind(this)"
+            :downloadFun="downloadFileFun.bind(this)"
             v-if="formShow"
             ref="preview"
           ></preview>
@@ -25,8 +25,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import { getStartProcess, downloadTaskAttachmentFile, getSelectStartForm } from '@/api/unit/api.js'
-import { uploadFile } from '@/api/globalConfig.js'
+import { getStartProcess, getSelectStartForm } from '@/api/unit/api.js'
+import { uploadFile, downloadFile } from '@/api/globalConfig.js'
 import preview from '@/plugin/FormDesign/component/preview'
 
 export default {
@@ -83,7 +83,7 @@ export default {
       this.formShow = false
       this.$emit('close')
     },
-    async uploadFile({ name, raw: file }) {
+    async uploadFileFun({ name, raw: file }) {
       const uploadParameters = new FormData()
       uploadParameters.append('file', file)
       uploadParameters.append('fileName', name)
@@ -94,10 +94,9 @@ export default {
       }
       return result
     },
-    async downloadFile({ url }) {
-      // TODO: 缺少文件下载接口
-      return await downloadTaskAttachmentFile({
-        attachmentId: url,
+    async downloadFileFun({ url }) {
+      return await downloadFile({
+        contentId: url,
       })
     },
     async onSubmit() {
