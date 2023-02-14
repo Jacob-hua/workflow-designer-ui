@@ -25,12 +25,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import {
-  getStartProcess,
-  uploadTaskAttachmentFile,
-  downloadTaskAttachmentFile,
-  getSelectStartForm,
-} from '@/api/unit/api.js'
+import { getStartProcess, downloadTaskAttachmentFile, getSelectStartForm } from '@/api/unit/api.js'
+import { uploadFile } from '@/api/globalConfig.js'
 import preview from '@/plugin/FormDesign/component/preview'
 
 export default {
@@ -89,21 +85,17 @@ export default {
     },
     async uploadFile({ name, raw: file }) {
       const uploadParameters = new FormData()
-      uploadParameters.append('name', name)
-      uploadParameters.append('type', 'file')
       uploadParameters.append('file', file)
-      uploadParameters.append('description', '')
-      // uploadParameters.append('processInstanceId', this.workflow.processInstanceId)
-      // uploadParameters.append('taskId', this.workflow.newTaskId)
-      const { errorInfo, result } = await uploadTaskAttachmentFile(uploadParameters)
+      uploadParameters.append('fileName', name)
+      const { errorInfo, result } = await uploadFile(uploadParameters)
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
         return
       }
-      this.attachmentList = [result, ...this.attachmentList]
       return result
     },
     async downloadFile({ url }) {
+      // TODO: 缺少文件下载接口
       return await downloadTaskAttachmentFile({
         attachmentId: url,
       })
