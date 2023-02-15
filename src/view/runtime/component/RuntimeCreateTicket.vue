@@ -124,7 +124,7 @@ export default {
           startProcessId: this.process.id,
           variables: { ...formData },
           attachmentIds: this.attachmentIds,
-          startFormData: JSON.stringify(this.formContent),
+          startFormData: JSON.stringify({ ...this.formContent, data: { ...formData } }),
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
