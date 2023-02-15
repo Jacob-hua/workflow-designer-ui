@@ -1,7 +1,17 @@
 <template>
   <el-dialog title="工单详情" top="1vh" fullscreen :visible="visible" @close="onClose" :close-on-click-modal="false">
     <div class="container">
-      <bpmn-info :xml="workflow.processDeployResource" :processDisplayInfo="processDisplayInfo" />
+      <bpmn-info :xml="workflow.processDeployResource" :processDisplayInfo="processDisplayInfo">
+        <div>
+          <preview
+            :context="context"
+            :itemList="startFormContent.list"
+            :formData="startFormContent.data"
+            :formConf="startFormContent.config"
+            :downloadFun="startFormDownloadFile.bind(this)"
+          ></preview>
+        </div>
+      </bpmn-info>
       <div>
         <div class="title">工作流操作详情</div>
         <div class="process-content">
@@ -88,7 +98,7 @@
 import BpmnInfo from '@/component/BpmnInfo.vue'
 import preview from '@/plugin/FormDesign/component/preview'
 import { getExecuteDetail, downloadTaskAttachmentFile } from '@/api/unit/api.js'
-import { processVariable } from '@/api/globalConfig'
+import { processVariable, downloadFile } from '@/api/globalConfig'
 import { mapState } from 'vuex'
 
 export default {
@@ -123,6 +133,7 @@ export default {
     return {
       workflow: {},
       context: {},
+      startFormContent: {},
     }
   },
   computed: {
@@ -210,10 +221,18 @@ export default {
         attachmentId: result.url,
       })
     },
+    async startFormDownloadFile({ url }) {
+      return await downloadFile({
+        contentId: url,
+      })
+    },
     async fetchExecuteDetail() {
       try {
         const result = await Promise.resolve(this.detailFunc(this.processInstanceId, this.userInfo.account))
         this.workflow = result ?? {}
+        this.startFormContent = JSON.parse(result.startFormData)
+        this.startFormContent.config['disabled'] = true
+        this.startFormContent.config['readOnly'] = true
       } catch (error) {}
     },
   },

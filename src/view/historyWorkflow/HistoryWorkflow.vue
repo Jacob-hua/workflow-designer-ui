@@ -58,7 +58,7 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <el-table :data="tableData">
+      <el-table :data="tableData" v-loading="loading">
         <el-table-column type="index" label="序号" width="180"> </el-table-column>
         <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" />
         <el-table-column prop="processDeployName" label="工单类型" width="180"> </el-table-column>
@@ -116,6 +116,7 @@ export default {
   data() {
     const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
+      loading: false,
       deployNameList: [],
       searchForm: {
         valueDate: [start, end],
@@ -252,6 +253,7 @@ export default {
       this.headerNum = result
     },
     async fetchHistoryTasks(pageInfo) {
+      this.loading = true
       const {
         ascription,
         business,
@@ -273,8 +275,10 @@ export default {
       ])
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.erroMsg)
+        this.loading = false
         return
       }
+      this.loading = false
       if (!result?.dataList) {
         this.tableData = []
         return

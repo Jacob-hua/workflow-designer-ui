@@ -7,8 +7,9 @@
           <preview
             :itemList="formContent.list"
             :formConf="formContent.config"
-            :uploadFun="uploadFile.bind(this)"
-            :downloadFun="downloadFile.bind(this)"
+            :uploadFun="uploadFileFun.bind(this)"
+            :downloadFun="downloadFileFun.bind(this)"
+            :beforeDeleteFileFun="beforeDeleteFileFun.bind(this)"
             v-if="formShow"
             ref="preview"
           ></preview>
@@ -25,12 +26,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import {
-  getStartProcess,
-  uploadTaskAttachmentFile,
-  downloadTaskAttachmentFile,
-  getSelectStartForm,
-} from '@/api/unit/api.js'
+import { getStartProcess, getSelectStartForm } from '@/api/unit/api.js'
+import { uploadFile, downloadFile } from '@/api/globalConfig.js'
 import preview from '@/plugin/FormDesign/component/preview'
 
 export default {
@@ -59,6 +56,7 @@ export default {
       isSubmitting: false,
       isLoading: false,
       options: {},
+      attachmentIds: [],
     }
   },
   computed: {
@@ -87,26 +85,33 @@ export default {
       this.formShow = false
       this.$emit('close')
     },
-    async uploadFile({ name, raw: file }) {
+    async uploadFileFun({ name, raw: file }) {
       const uploadParameters = new FormData()
-      uploadParameters.append('name', name)
-      uploadParameters.append('type', 'file')
       uploadParameters.append('file', file)
-      uploadParameters.append('description', '')
-      // uploadParameters.append('processInstanceId', this.workflow.processInstanceId)
-      // uploadParameters.append('taskId', this.workflow.newTaskId)
-      const { errorInfo, result } = await uploadTaskAttachmentFile(uploadParameters)
+      uploadParameters.append('fileName', name)
+      const { errorInfo, result } = await uploadFile(uploadParameters)
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
         return
       }
-      this.attachmentList = [result, ...this.attachmentList]
+      this.attachmentIds.push(result)
       return result
     },
-    async downloadFile({ url }) {
-      return await downloadTaskAttachmentFile({
-        attachmentId: url,
+    async downloadFileFun({ url }) {
+      return await downloadFile({
+        contentId: url,
       })
+    },
+    beforeDeleteFileFun({ attachmentId }) {
+      try {
+        Array.prototype.splice.call(
+          this.attachmentIds,
+          this.attachmentIds.findIndex((value) => value === attachmentId)
+        )
+        return true
+      } catch (error) {
+        return false
+      }
     },
     async onSubmit() {
       try {
@@ -118,6 +123,8 @@ export default {
           createBy: this.userInfo.account,
           startProcessId: this.process.id,
           variables: { ...formData },
+          attachmentIds: this.attachmentIds,
+          startFormData: JSON.stringify({ ...this.formContent, data: { ...formData } }),
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)

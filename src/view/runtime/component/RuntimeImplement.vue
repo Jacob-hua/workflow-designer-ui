@@ -6,7 +6,17 @@
           :xml="workflow.processDeployResource"
           :processDisplayInfo="processDisplayInfo"
           @loaded="onBpmnInfoLoaded"
-        />
+        >
+          <div>
+            <preview
+              :context="context"
+              :itemList="startFormContent.list"
+              :formData="startFormContent.data"
+              :formConf="startFormContent.config"
+              :downloadFun="startFormDownloadFile.bind(this)"
+            ></preview>
+          </div>
+        </bpmn-info>
         <div class="action-wrapper" v-if="activeAction">
           <el-tabs v-model="activeAction" type="border-card" @tab-click="onSelectAction">
             <el-tab-pane
@@ -32,8 +42,8 @@
         <div class="form-preview">
           <preview
             :context="context"
-            :itemList="formContant.list"
-            :formConf="formContant.config"
+            :itemList="formContent.list"
+            :formConf="formContent.config"
             :uploadFun="uploadFile.bind(this)"
             :downloadFun="downloadFile.bind(this)"
             v-if="formShow"
@@ -67,7 +77,7 @@ import {
   uploadTaskAttachmentFile,
   downloadTaskAttachmentFile,
 } from '@/api/unit/api.js'
-import { processVariable } from '@/api/globalConfig'
+import { processVariable, downloadFile } from '@/api/globalConfig'
 import { mapState } from 'vuex'
 
 export default {
@@ -96,7 +106,8 @@ export default {
     return {
       attachmentList: [],
       workflow: {},
-      formContant: {},
+      formContent: {},
+      startFormContent: {},
       formShow: false,
       roleBoolean: true,
       activeAction: undefined,
@@ -369,7 +380,7 @@ export default {
     async onExecute() {
       if (this.formShow) {
         const { formData, metaDataList } = await this.$refs.preview.submit()
-        this.completeTask({ ...this.formContant, data: formData, list: metaDataList }, formData)
+        this.completeTask({ ...this.formContent, data: formData, list: metaDataList }, formData)
         return
       }
       if (this.noExecutor && (!Array.isArray(this.workflow.executors) || this.workflow.executors.length === 0)) {
@@ -419,10 +430,10 @@ export default {
         if (!Array.isArray(result)) {
           return
         }
-        this.formContant = JSON.parse(result[0]?.content ?? '{}')
+        this.formContent = JSON.parse(result[0]?.content ?? '{}')
         this.formShow = true
       } else {
-        this.formContant = {}
+        this.formContent = {}
         this.formShow = false
       }
     },
@@ -445,6 +456,11 @@ export default {
     async downloadFile({ url }) {
       return await downloadTaskAttachmentFile({
         attachmentId: url,
+      })
+    },
+    async startFormDownloadFile({ url }) {
+      return await downloadFile({
+        contentId: url,
       })
     },
     async fetchProcessNodeInfo() {
@@ -481,6 +497,9 @@ export default {
           ...result,
           newTaskId: this.calculateNewTaskId(result, this.userInfo.account),
         }
+        this.startFormContent = JSON.parse(result.startFormData)
+        this.startFormContent.config['disabled'] = true
+        this.startFormContent.config['readOnly'] = true
       } catch (error) {}
     },
     getCurTrack(workflow) {

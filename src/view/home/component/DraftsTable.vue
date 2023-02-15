@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%" v-loading="loading">
       <el-table-column type="index" label="序号"> </el-table-column>
       <el-table-column prop="deployName" label="名称"> </el-table-column>
       <el-table-column prop="docName" label="流程文件">
@@ -66,6 +66,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       deployOptionsVisible: false,
       pageInfo: {
         page: 1,
@@ -99,6 +100,7 @@ export default {
       this.$emit('saved')
     },
     async fetchWorkflows() {
+      this.loading = true
       const { errorInfo, result } = await postDraftlist({
         ...this.pageInfo,
         tenantId: this.tenantId,
@@ -110,10 +112,12 @@ export default {
       })
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
+        this.loading = false
         return
       }
       this.tableData = result.dataList
       this.pageInfo.total = +result.count
+      this.loading = false
       this.$emit('refreshTable', result.count)
     },
     onPageSizeChange(val) {

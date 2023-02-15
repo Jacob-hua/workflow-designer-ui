@@ -77,7 +77,7 @@
         <el-tab-pane v-for="({ label, display }, index) in taskTypeRadios" :key="index" :name="label">
           <span slot="label">{{ display }}</span>
           <div>
-            <el-table :data="newTasks">
+            <el-table :data="newTasks" v-loading="loading">
               <el-table-column type="index" label="序号"> </el-table-column>
               <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" />
               <el-table-column prop="processDeployName" label="工单类型" show-overflow-tooltip="" />
@@ -169,6 +169,7 @@ export default {
   data() {
     const { start, end } = currentOneMonthAgo('YYYY-MM-DD HH:mm:ss')
     return {
+      loading: false,
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
       lookoverVisible: false,
@@ -365,6 +366,7 @@ export default {
     },
     async fetchNewTasks() {
       try {
+        this.loading = true
         const { errorInfo, result } = await getExecuteList({
           ...this.searchForm,
           ...this.pageInfo,
@@ -377,11 +379,13 @@ export default {
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
+          this.loading = false
           return
         }
         const { dataList = [], count } = result
         this.newTasks = dataList.map((task) => handleDisplay.call(this, task))
         this.pageInfo.total = +count
+        this.loading = false
       } catch (error) {
         this.newTasks = []
       }

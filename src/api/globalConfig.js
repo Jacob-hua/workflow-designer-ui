@@ -115,3 +115,12 @@ export const linkStartForm = (params) => post(`/config/startConfig/saveStartConf
 
 // 移除表单
 export const removeStartForm = (params) => deletefn(`/config/startConfig/remove`, params)
+
+// 文件上传
+export const uploadFile = (params) => post(`/file/upload`, params)
+
+// 文件下载
+export const downloadFile = (params) =>
+  post(`/file/download`, params, {
+    responseType: 'blob',
+  })

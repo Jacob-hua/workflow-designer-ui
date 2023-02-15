@@ -7,6 +7,7 @@
         <span>{{ value }}</span>
       </div>
     </div>
+    <slot></slot>
     <div class="process-canvas">
       <bpmn-viewer
         :xml="xml"
@@ -53,7 +54,7 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   align-content: space-around;
   color: $font-color;
