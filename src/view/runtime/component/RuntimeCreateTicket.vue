@@ -9,6 +9,7 @@
             :formConf="formContent.config"
             :uploadFun="uploadFileFun.bind(this)"
             :downloadFun="downloadFileFun.bind(this)"
+            :beforeDeleteFileFun="beforeDeleteFileFun.bind(this)"
             v-if="formShow"
             ref="preview"
           ></preview>
@@ -55,6 +56,7 @@ export default {
       isSubmitting: false,
       isLoading: false,
       options: {},
+      attachmentIds: [],
     }
   },
   computed: {
@@ -92,12 +94,24 @@ export default {
         this.$message.error(errorInfo.errorMsg)
         return
       }
+      this.attachmentIds.push(result)
       return result
     },
     async downloadFileFun({ url }) {
       return await downloadFile({
         contentId: url,
       })
+    },
+    beforeDeleteFileFun({ attachmentId }) {
+      try {
+        Array.prototype.splice.call(
+          this.attachmentIds,
+          this.attachmentIds.findIndex((value) => value === attachmentId)
+        )
+        return true
+      } catch (error) {
+        return false
+      }
     },
     async onSubmit() {
       try {
@@ -109,6 +123,8 @@ export default {
           createBy: this.userInfo.account,
           startProcessId: this.process.id,
           variables: { ...formData },
+          attachmentIds: this.attachmentIds,
+          startFormData: JSON.stringify(this.formContent),
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)

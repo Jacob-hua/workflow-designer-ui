@@ -91,6 +91,10 @@ export default {
       type: Function,
       default: () => {},
     },
+    beforeDeleteFileFun: {
+      type: Function,
+      default: () => true,
+    },
     value: {
       type: Array,
       default: [],
@@ -154,7 +158,11 @@ export default {
       })
       this.displayList = this.value
     },
-    delFile(file) {
+    async delFile(file) {
+      const result = await this.beforeDeleteFileFun(this.value.find(({ uid }) => uid === file.uid))
+      if (!result) {
+        return
+      }
       this.value.splice(
         this.value.findIndex(({ uid }) => uid === file.uid),
         1
@@ -227,6 +235,7 @@ export default {
       const attachmentId = await Promise.resolve(this.uploadFun(file))
       const result = await Promise.resolve(this.downloadFun({ url: attachmentId }))
       file.url = attachmentId
+      file.attachmentId = attachmentId
       this.value.push(file)
 
       this.$emit('input', this.value)
@@ -243,6 +252,7 @@ export default {
         return false
       }
       file.url = await Promise.resolve(this.uploadFun(file))
+      file.attachmentId = file.url
       this.value.push(file)
       this.$emit('input', this.value)
     },
