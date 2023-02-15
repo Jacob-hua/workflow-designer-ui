@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="tableData">
+    <el-table :data="tableData" v-loading="loading">
       <el-table-column type="index" label="序号" width="180"> </el-table-column>
       <el-table-column prop="name" label="名称" width="180"> </el-table-column>
       <el-table-column prop="docName" label="流程文件">
@@ -75,6 +75,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       deployOptionsVisible: false,
       deployConfirmationVisible: false,
       deployCabinDetailVisible: false,
@@ -117,6 +118,7 @@ export default {
       this.$emit('saved')
     },
     async fetchWorkflows() {
+      this.loading = true
       const { errorInfo, result } = await postProcessDesignServicePage({
         ...this.pageInfo,
         tenantId: this.tenantId,
@@ -128,10 +130,12 @@ export default {
       })
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
+        this.loading = false
         return
       }
       this.tableData = result.list
       this.pageInfo.total = result.total
+      this.loading = false
       this.$emit('refreshTable', result.total)
     },
     onPageSizeChange(limit) {
