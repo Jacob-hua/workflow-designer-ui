@@ -47,7 +47,7 @@
                 </div>
                 <div class="operations">
                   <el-popover placement="right" width="400" trigger="click">
-                    <preview :itemList="fields" :formConf="config"></preview>
+                    <preview class="preview-popper" :itemList="fields" :formConf="config"></preview>
                     <span class="preview-button" slot="reference"> 查看 </span>
                   </el-popover>
                   <span class="link-button" @click="onLinked({ id, docName, fields, config })"> 关联 </span>
@@ -187,6 +187,17 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.preview-popper {
+  max-height: 500px;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+</style>
 
 <style scoped lang="scss">
 .btn-custom-cancel {
