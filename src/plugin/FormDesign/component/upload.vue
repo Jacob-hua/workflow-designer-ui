@@ -36,7 +36,7 @@
       :auto-upload="false"
     >
       <i slot="default" class="el-icon-plus"></i>
-      <div slot="file" slot-scope="{ file }">
+      <div slot="file" class="img-wrapper" slot-scope="{ file }">
         <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
         <span class="el-upload-list__item-actions">
           <span class="el-upload-list__item-preview" @click="previewImage(file)">
@@ -305,6 +305,10 @@ export default {
   text-overflow: ellipsis;
 
   -o-text-overflow: ellipsis;
+}
+.img-wrapper {
+  width: 100%;
+  height: 100%;
 }
 ul {
   li {
