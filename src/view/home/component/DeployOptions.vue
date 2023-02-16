@@ -28,7 +28,7 @@
               </div>
               <div class="operations">
                 <el-popover placement="right" width="400" trigger="click">
-                  <preview :itemList="fields" :formConf="config"></preview>
+                  <preview :itemList="fields" :formConf="config" class="preview-popper"></preview>
                   <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover>
                 <span class="link-button" v-if="canLink" @click="onLinked({ id, docName, fields, config })">
@@ -281,6 +281,17 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.preview-popper {
+  max-height: 500px;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+</style>
 
 <style scoped lang="scss">
 .deploy-wrapper {
