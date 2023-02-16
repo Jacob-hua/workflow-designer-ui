@@ -133,7 +133,11 @@ export default {
     return {
       workflow: {},
       context: {},
-      startFormContent: {},
+      startFormContent: {
+        list: [],
+        data: {},
+        config: {},
+      },
     }
   },
   computed: {

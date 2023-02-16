@@ -258,7 +258,7 @@ export default {
   props: ['itemList', 'formData', 'formConf', 'uploadFun', 'downloadFun', 'beforeDeleteFileFun', 'context'],
   components: { render, upload },
   data() {
-    const metaDataList = _.cloneDeep(this.itemList)
+    const metaDataList = _.cloneDeep(this.itemList) ?? []
     let form = {}
     const initForm = metaDataList.reduce(buildModel, {})
     if (this.formData) {
