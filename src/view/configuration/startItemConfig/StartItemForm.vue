@@ -135,17 +135,20 @@ export default {
       this.$confirm(`此操作将解除${this.activeBusiness?.name}的启动项表单，是否继续？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        cancelButtonClass: 'btn-custom-cancel',
         type: 'warning',
-      }).then(async () => {
-        const { errorInfo } = await removeStartForm({
-          businessConfigId: this.activeBusiness?.id,
-        })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
-        this.formContent = {}
       })
+        .then(async () => {
+          const { errorInfo } = await removeStartForm({
+            businessConfigId: this.activeBusiness?.id,
+          })
+          if (errorInfo.errorCode) {
+            this.$message.error(errorInfo.errorMsg)
+            return
+          }
+          this.formContent = {}
+        })
+        .catch(() => {})
     },
     async fetchStartFrom() {
       const { errorInfo, result } = await getSelectProcessStartForm({
@@ -186,6 +189,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.btn-custom-cancel {
+  float: right;
+  margin-left: 10px;
+}
+
 .start_container {
   display: flex;
 

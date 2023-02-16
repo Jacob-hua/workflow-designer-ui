@@ -19,7 +19,7 @@
             ></PeTree>
           </el-card>
         </div>
-        <div v-if="processList && processList.length !== 0">
+        <div v-if="processList && processList.length !== 0" v-loading="loading">
           <div class="process-list">
             <div class="process" v-for="(process, index) in processList" :key="index">
               <div class="process-info">
@@ -90,6 +90,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       processList: [],
       energyTree: [],
       getData: {
@@ -131,13 +132,17 @@ export default {
       this.$emit('close')
     },
     getProcessList() {
+      this.loading = true
       getProcessDefinitionList({
         ...this.getData,
         tenantId: this.tenantId,
-      }).then((res) => {
-        this.processList = res.result.dataList
-        this.getData.total = res.result.count * 1
       })
+        .then((res) => {
+          this.loading = false
+          this.processList = res.result.dataList
+          this.getData.total = res.result.count * 1
+        })
+        .catch(() => (this.loading = false))
     },
     onSizeChange() {
       this.getProcessList()
