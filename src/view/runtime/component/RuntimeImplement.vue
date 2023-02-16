@@ -107,7 +107,11 @@ export default {
       attachmentList: [],
       workflow: {},
       formContent: {},
-      startFormContent: {},
+      startFormContent: {
+        list: [],
+        data: {},
+        config: {},
+      },
       formShow: false,
       roleBoolean: true,
       activeAction: undefined,

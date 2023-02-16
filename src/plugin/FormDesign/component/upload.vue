@@ -24,6 +24,7 @@
       :file-list="value"
     >
       <el-button size="small" type="primary">点击上传</el-button>
+      <div v-if="fieldInfo.showTip" slot="tip" class="el-upload__tip">{{ fieldInfo.tips }}</div>
     </el-upload>
     <el-upload
       v-else
@@ -49,6 +50,7 @@
           </span>
         </span>
       </div>
+      <div v-if="fieldInfo.showTip" slot="tip" class="el-upload__tip">{{ fieldInfo.tips }}</div>
     </el-upload>
     <el-dialog :visible.sync="dialogVisible" append-to-body>
       <img width="100%" :src="dialogImageUrl" alt="" />
@@ -101,6 +103,12 @@ export default {
     },
     readOnly: {
       type: Boolean,
+    },
+    showTip: {
+      type: Boolean,
+    },
+    tips: {
+      type: String,
     },
   },
   data() {
@@ -289,13 +297,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/deep/ {
-  .el-form-item__content {
-    margin-left: 60px !important;
-  }
-}
 /deep/ .el-form-item__label {
-  width: 100px !important;
   overflow: hidden;
 
   white-space: nowrap;
