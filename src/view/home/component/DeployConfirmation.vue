@@ -37,10 +37,15 @@
             <el-input v-model="formData.deployName" placeholder="请输入部署名称"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item prop="isCycle" label="周期性">
-          <el-switch v-model="formData.isCycle" />
+        <el-form-item prop="triggerModel" label="触发模式">
+          <!-- <el-switch v-model="formData.isCycle" /> -->
+          <el-radio-group v-model="formData.triggerModel">
+            <el-radio label="1">周期部署</el-radio>
+            <el-radio label="2">固定触发</el-radio>
+            <el-radio label="3">无</el-radio>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="formData.isCycle" prop="rule" label="周期规则">
+        <el-form-item v-if="formData.triggerModel === '1'" prop="rule" label="周期规则">
           <el-select v-model="formData.rule" placeholder="请选择周期规则">
             <el-option
               v-for="({ cronExpression, ruleId }, index) in ruleList"
@@ -87,13 +92,14 @@ export default {
         business: this.business,
         systemType: '',
         deployName: '',
-        isCycle: false,
+        triggerModel: '3',
         rule: null,
       },
       formRules: {
         ascription: [{ required: true, message: '请选择应用项目', trigger: 'change' }],
         business: [{ required: true, message: '请选择流程类型', trigger: 'change' }],
         systemType: [{ required: true, message: '请选择部署类型', trigger: 'change' }],
+        triggerModel: [{ required: true, message: '请选择触发模式', trigger: 'change' }],
         rule: [{ required: true, message: '请选择周期性规则', trigger: 'change' }],
         deployName: [
           {
