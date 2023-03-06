@@ -35,4 +35,6 @@ export let nfc = {
   rules: [],
   //验证规则
   rulesType: 'default',
+  //nfc目标值
+  targetNFCs:[],
 }

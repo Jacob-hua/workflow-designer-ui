@@ -20,6 +20,26 @@
     <el-form-item label="禁用">
       <el-switch v-model="props.disabled"></el-switch>
     </el-form-item>
+    <el-divider>NFC目标</el-divider>
+    <div v-for="(item,index) in props.targetNFCs" :key="index">
+      <el-input v-model="props.targetNFCs[index]" placeholder="NFC目标值" size="small" />
+      <div
+        class="close-btn select-line-icon"
+        @click="props.targetNFCs.splice(index, 1)"
+      >
+        <i class="el-icon-remove-outline close-icon" />
+      </div>
+    </div>
+    <div style="margin-left: 20px">
+      <el-button
+        style="padding-bottom: 0"
+        icon="el-icon-circle-plus-outline"
+        type="text"
+        @click="addRuleItem"
+      >
+        添加NFC目标
+      </el-button>
+    </div>
   </div>
 </template>
 <script>
@@ -41,6 +61,10 @@ export default {
     handlerChangeLabel(val) {
       this.props.labelWidth = val ? '80' : '1'
     },
+
+    addRuleItem(){
+      this.props.targetNFCs.push('');
+    }
   },
 }
 </script>
