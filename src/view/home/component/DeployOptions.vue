@@ -128,7 +128,7 @@ export default {
       return this.workflow.triggerModel === '1' ? this.workflow.rule.ruleId : "";
     },
     processDisplayInfo() {
-      const cycleInfo = this.workflow.isCycle === '1'
+      const cycleInfo = this.workflow.triggerModel === '1'
         ? [
             {
               label: "周期性",

@@ -40,7 +40,7 @@
         <el-form-item prop="triggerModel" label="触发模式">
           <!-- <el-switch v-model="formData.isCycle" /> -->
           <el-radio-group v-model="formData.triggerModel">
-            <el-radio label="1">周期部署</el-radio>
+            <el-radio label="1">周期性</el-radio>
             <el-radio label="2">固定触发</el-radio>
             <el-radio label="3">无</el-radio>
           </el-radio-group>
