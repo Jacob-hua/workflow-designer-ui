@@ -82,7 +82,7 @@
               <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" />
               <el-table-column prop="processDeployName" label="工单类型" show-overflow-tooltip="" />
               <el-table-column prop="displayEnergyType" label="能源系统" />
-              <el-table-column prop="starter" label="填报人" />
+              <el-table-column prop="reporter" label="填报人" />
               <el-table-column prop="startTime" label="创建时间" />
               <el-table-column align="center" label="执行进程" min-width="250">
                 <template slot-scope="{ row }">

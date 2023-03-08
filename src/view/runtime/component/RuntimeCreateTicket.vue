@@ -116,7 +116,13 @@ export default {
     async onSubmit() {
       try {
         this.isSubmitting = true
-        const { formData } = await this.$refs.preview.submit()
+        let formData = [];
+        let startFormData = JSON.stringify({list:[],data:{}});
+        if(Object.keys(this.formContent).length>0){
+          const preview = await this.$refs.preview.submit();
+          formData = preview.formData;
+          startFormData = JSON.stringify({ ...this.formContent, data: { ...formData } })
+        }
         const { errorInfo } = await getStartProcess({
           businessKey: '',
           definitionKey: this.process.key,
@@ -124,7 +130,7 @@ export default {
           startProcessId: this.process.id,
           variables: { ...formData },
           attachmentIds: this.attachmentIds,
-          startFormData: JSON.stringify({ ...this.formContent, data: { ...formData } }),
+          startFormData: startFormData,
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
