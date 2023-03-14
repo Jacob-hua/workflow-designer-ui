@@ -241,6 +241,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
         <render
           key={fieldInfo.id}
           conf={fieldInfo}
+          formConf={this.formConf}
           value={_.get(this.form, fieldInfo.valuePath)}
           uploadFun={this.uploadFun}
           downloadFun={this.downloadFun}
