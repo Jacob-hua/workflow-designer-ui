@@ -27,6 +27,7 @@ const components = [
   'dynamicTable',
   'nfc',
   'amap',
+  'shoppingCart'
 ]
 
 let comps = []

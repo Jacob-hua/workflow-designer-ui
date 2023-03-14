@@ -210,3 +210,13 @@ export const queryAddressInfo = (params) => post('/assembly/queryAddressInfo', p
 
 // 获取启动项表单
 export const getSelectStartForm = (params) => get(`/config/startConfig/selectProcessStartFormByNoDeployId`, params)
+
+export const getSpareList = (params) => get('/inventoryfac/list',params)
+
+export const checkStock = (params) => post('./inventoryfac/checkStockAndUse',params)
+
+export const cancleStock = (params) => get('/inventoryfac/cancle',params)
+
+export const cancleWithSort = (params) => get('/inventoryfac/cancleWithSort',params)
+
+export const getSpareListByPage = (params) => post('./inventoryfac/page',params)
