@@ -36,21 +36,22 @@
             ><i
               @click="handleRemoveSpare(item, index)"
               class="el-icon-remove-outline remove-spare-spart"
+              :class="formConf.disabled ? 'is-disable' : ''"
           /></el-col>
         </el-row>
         <el-row type="flex" justify="end">
           <div class="input-number">
             <span
               class="number-descress icon-box"
-              :class="item.spareNum === 0 ? 'is-disable' : ''"
-              @click="handleChange(item, false)"
+              :class="item.spareNum === 0 || formConf.disabled ? 'is-disable' : ''"
+              @click="handleChange(item, index, false)"
               ><i class="el-icon-minus"
             /></span>
             <el-input type="text" v-model="item.spareNum" size="mini" />
             <span
               class="number-increase icon-box"
-              :class="item.hasStock ? '' : 'is-disable'"
-              @click="handleChange(item, true)"
+              :class="item.hasStock || !formConf.disabled ? '' : 'is-disable'"
+              @click="handleChange(item, index, true)"
               ><i class="el-icon-plus"
             /></span>
           </div>
@@ -65,6 +66,10 @@ import _ from "lodash";
 export default {
   name: "shoppingCart",
   props: {
+    value: {
+      type: Array,
+      default: () => [],
+    },
     checkStockFun: {
       type: Function,
       default: () => {},
@@ -73,35 +78,36 @@ export default {
       type: Function,
       default: () => {},
     },
-    // timeDelay: {
-    //   type: Number,
-    //   default: 30,
-    // },
+    formConf:{
+      type:Object,
+      default: () => {}
+    }
   },
   data() {
     return {
       options: [],
       selectedValue: "",
       loading: false,
-      spareParts: [],
+      spareParts: this.$props.value,
       spareNum: 0,
       page: 1,
       limit: 10,
       total: 0,
       description: "",
       hasStock: true,
+      selectedSpare: this.$props.value,
     };
   },
-  created() {},
-  mounted() {},
   methods: {
     handleSearch() {
       this.fetchSpareList();
     },
+
     handleFilter(value) {
       this.description = value;
       this.fetchSpareList();
     },
+
     async fetchSpareList() {
       const params = {
         page: this.page,
@@ -121,6 +127,7 @@ export default {
         return [];
       }
     },
+
     handleSelect(value) {
       if (this.spareParts.findIndex(({ itemnum }) => itemnum === value) != -1) {
         this.$message.warning("备件已存在");
@@ -129,11 +136,21 @@ export default {
       this.page = 1;
       this.description = "";
       let sparePart = this.options.find(({ itemnum }) => itemnum === value);
-      sparePart.spareNum = 0;
-      sparePart.hasStock = true;
-      this.spareParts.push(sparePart);
+      this.checkStockFun(sparePart.itemnum, true).then((res) => {
+        sparePart.hasStock = res;
+        if (res) {
+          sparePart.spareNum = 1;
+          this.spareParts.push(sparePart);
+        } else {
+          this.$message.warning("备件库存为0");
+        }
+      });
+      this.selectedValue = "";
+      this.$emit("input", this.spareParts);
     },
-    handleChange: _.throttle(function (spareSpart, flag) {
+
+    handleChange: _.throttle(function (spareSpart, index, flag) {
+      if (this.formConf.disabled) return;
       if (flag) {
         this.checkStockFun(spareSpart.itemnum, flag).then((res) => {
           spareSpart.hasStock = res;
@@ -143,18 +160,25 @@ export default {
           this.$forceUpdate();
         });
       } else {
-        if (spareSpart.spareNum === 0) return;
         this.checkStockFun(spareSpart.itemnum, flag).then((res) => {
           spareSpart.hasStock = res;
         });
         spareSpart.spareNum -= 1;
+        if (spareSpart.spareNum === 0) {
+          this.spareParts.splice(index, 1);
+        }
         this.$forceUpdate();
       }
+      this.$emit("input", this.spareParts);
     }, 30),
+
     handleRemoveSpare(sparePart, index) {
+      if (this.formConf.disabled) return;
       this.cancleStockFun(sparePart.itemnum, sparePart.spareNum);
       this.spareParts.splice(index, 1);
+      this.$emit("input", this.spareParts);
     },
+
     handleCurrentChange() {
       this.fetchSpareList();
     },

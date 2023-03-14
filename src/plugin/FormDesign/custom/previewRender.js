@@ -35,6 +35,7 @@ export default {
     });
     dataObject.props['checkStockFun'] = this.checkStockFun
     dataObject.props['cancleStockFun'] = this.cancleStockFun
+    dataObject.props['formConf'] = this.formConf
     /*调整赋值模式，规避cascader组件赋值props会出现覆盖预制参数的bug */
     vModel(this, dataObject);
     return h(confClone.ele, dataObject, children);
@@ -47,6 +48,7 @@ export default {
     "uploadFun",
     "downloadFun",
     "checkStockFun",
-    "cancleStockFun"
+    "cancleStockFun",
+    "formConf"
   ],
 };
