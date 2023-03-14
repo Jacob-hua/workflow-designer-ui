@@ -25,6 +25,7 @@ import { row } from './items/row'
 import { link } from './items/link'
 import { text } from './items/text'
 // import {barCode} from "./items/barCode";
+import {shoppingCart} from './items/shoppingCart'
 
 export const formItems = [
   input,
@@ -43,6 +44,7 @@ export const formItems = [
   upload,
   nfc,
   amap,
+  shoppingCart,
 ]
 export const assistFormItems = [button, divider, link, text]
 export const layoutFormItems = [row]

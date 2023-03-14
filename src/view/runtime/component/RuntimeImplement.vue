@@ -46,6 +46,8 @@
             :formConf="formContent.config"
             :uploadFun="uploadFile.bind(this)"
             :downloadFun="downloadFile.bind(this)"
+            :checkStockFun ="checkStock.bind(this)"
+            :cancleStockFun="cancleStock.bind(this)"
             v-if="formShow"
             ref="preview"
           ></preview>
@@ -76,6 +78,9 @@ import {
   getExecuteDetail,
   uploadTaskAttachmentFile,
   downloadTaskAttachmentFile,
+  checkStock,
+  cancleWithSort,
+  cancleStock
 } from '@/api/unit/api.js'
 import { processVariable, downloadFile } from '@/api/globalConfig'
 import { mapState } from 'vuex'
@@ -91,6 +96,7 @@ export default {
     RuntimeImplementReject,
     RuntimeImplementTermination,
     RuntimeImplementExecutor,
+    checkStock
   },
   props: {
     visible: {
@@ -329,7 +335,8 @@ export default {
     onTaskSuccess() {
       this.$emit('taskSuccess')
     },
-    onDialogClose() {
+    async onDialogClose() {
+      const {result} = await cancleStock({taskKey :this.workflow.taskKey});
       this.formShow = false
       this.$emit('close')
     },
@@ -538,6 +545,12 @@ export default {
         return workflow.curTrack.candidateUsers?.find(({ candidateUsers = [] }) => candidateUsers.includes(account))
       }
     },
+    async checkStock(itemnum,operationFlag ){
+      await checkStock({taskKey:this.workflow.taskKey, itemnum ,operationFlag});
+    },
+    async cancleStock(itemnum,currentNum){
+      await cancleWithSort({taskKey:this.workflow.taskKey, itemnum ,currentNum})
+    }
   },
 }
 </script>
