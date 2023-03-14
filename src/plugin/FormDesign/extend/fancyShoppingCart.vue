@@ -21,7 +21,7 @@
           @current-change="handleCurrentChange"
           :current-page.sync="page"
           :total="total"
-          :hide-on-single-page="value"
+          :hide-on-single-page="true"
         >
         </el-pagination>
       </el-select>
@@ -42,14 +42,15 @@
           <div class="input-number">
             <span
               class="number-descress icon-box"
-              :class="item.spareNum === 0 ? 'is-disbale' : ''"
-              @click="handleChange(item, index, false)"
+              :class="item.spareNum === 0 ? 'is-disable' : ''"
+              @click="handleChange(item, false)"
               ><i class="el-icon-minus"
             /></span>
             <el-input type="text" v-model="item.spareNum" size="mini" />
             <span
               class="number-increase icon-box"
-              @click="handleChange(item, index, true)"
+              :class="item.hasStock ? '' : 'is-disable'"
+              @click="handleChange(item, true)"
               ><i class="el-icon-plus"
             /></span>
           </div>
@@ -59,7 +60,8 @@
   </div>
 </template>
 <script>
-import { getSpareList, getSpareListByPage } from "../../../api/unit/api";
+import { getSpareListByPage } from "../../../api/unit/api";
+import _ from "lodash";
 export default {
   name: "shoppingCart",
   props: {
@@ -71,6 +73,10 @@ export default {
       type: Function,
       default: () => {},
     },
+    // timeDelay: {
+    //   type: Number,
+    //   default: 30,
+    // },
   },
   data() {
     return {
@@ -83,12 +89,11 @@ export default {
       limit: 10,
       total: 0,
       description: "",
+      hasStock: true,
     };
   },
   created() {},
-  mounted() {
-    // this.fetchSpareList();
-  },
+  mounted() {},
   methods: {
     handleSearch() {
       this.fetchSpareList();
@@ -125,21 +130,27 @@ export default {
       this.description = "";
       let sparePart = this.options.find(({ itemnum }) => itemnum === value);
       sparePart.spareNum = 0;
+      sparePart.hasStock = true;
       this.spareParts.push(sparePart);
     },
-    handleChange(spareSpart, index, flag) {
-      if (!flag && spareSpart.itemnum === 0) {
-        return;
-      }
+    handleChange: _.throttle(function (spareSpart, flag) {
       if (flag) {
-        spareSpart.spareNum += 1;
+        this.checkStockFun(spareSpart.itemnum, flag).then((res) => {
+          spareSpart.hasStock = res;
+          if (res) {
+            spareSpart.spareNum += 1;
+          }
+          this.$forceUpdate();
+        });
       } else {
+        if (spareSpart.spareNum === 0) return;
+        this.checkStockFun(spareSpart.itemnum, flag).then((res) => {
+          spareSpart.hasStock = res;
+        });
         spareSpart.spareNum -= 1;
+        this.$forceUpdate();
       }
-      this.$forceUpdate();
-      this.checkStockFun(spareSpart.itemnum, flag);
-    },
-
+    }, 30),
     handleRemoveSpare(sparePart, index) {
       this.cancleStockFun(sparePart.itemnum, sparePart.spareNum);
       this.spareParts.splice(index, 1);
@@ -215,7 +226,7 @@ export default {
   border-left: 1px solid #dcdfe6;
 }
 
-.is-disbale {
+.is-disable {
   cursor: not-allowed;
   color: #c0c4cc;
 }
