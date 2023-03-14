@@ -546,10 +546,11 @@ export default {
       }
     },
     async checkStock(itemnum,operationFlag ){
-      await checkStock({taskKey:this.workflow.taskKey, itemnum ,operationFlag});
+      const {result} = await checkStock({taskKey:this.workflow.newTaskId, itemnum ,operationFlag});
+      return result;
     },
     async cancleStock(itemnum,currentNum){
-      await cancleWithSort({taskKey:this.workflow.taskKey, itemnum ,currentNum})
+      await cancleWithSort({taskKey:this.workflow.newTaskId, itemnum ,currentNum})
     }
   },
 }
