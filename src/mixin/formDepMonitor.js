@@ -149,13 +149,13 @@ export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
     return fieldInfo
   }
 
-  if (!fieldInfo.variableSpace) {
-    const variableSpace = variableClassify({
-      variable: fieldInfo.id,
-      ...fieldInfo.dependValue,
-    })
-    fieldInfo.variableSpace = variableSpace
-  }
+  // if (!fieldInfo.variableSpace) {
+  const variableSpace = variableClassify({
+    variable: fieldInfo.id,
+    ...fieldInfo.dependValue,
+  })
+  fieldInfo.variableSpace = variableSpace
+  // }
 
   return watchExecute(fieldInfo, executeFunc, true)
 }
@@ -178,15 +178,16 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     return fieldInfo
   }
 
-  if (!fieldInfo.variableSpace) {
-    const variableSpace = variables.reduce(
-      (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
-      {
-        ...defaultVariableSpace(),
-      }
-    )
-    fieldInfo.variableSpace = variableSpace
-  }
+  // if (!fieldInfo.variableSpace) {
+  const variableSpace = variables.reduce(
+    (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
+    {
+      ...defaultVariableSpace(),
+      ...(fieldInfo.variableSpace ? fieldInfo.variableSpace : {}),
+    }
+  )
+  fieldInfo.variableSpace = variableSpace
+  // }
 
   return watchExecute(fieldInfo, (variableObj, fieldInfo, isDependDiffed) => {
     executeFunc(parameterHandler(variableObj), fieldInfo, isDependDiffed)

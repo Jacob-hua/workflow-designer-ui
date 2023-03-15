@@ -258,7 +258,17 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
 import upload from '@/plugin/FormDesign/component/upload'
 export default {
   name: 'preview',
-  props: ['itemList', 'formData', 'formConf', 'uploadFun', 'downloadFun', 'beforeDeleteFileFun', 'context','cancleStockFun','checkStockFun'],
+  props: [
+    'itemList',
+    'formData',
+    'formConf',
+    'uploadFun',
+    'downloadFun',
+    'beforeDeleteFileFun',
+    'context',
+    'cancleStockFun',
+    'checkStockFun',
+  ],
   components: { render, upload },
   data() {
     const metaDataList = _.cloneDeep(this.itemList) ?? []
