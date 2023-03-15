@@ -171,7 +171,7 @@ export default {
         this.$forceUpdate();
       }
       this.$emit("input", this.spareParts);
-    }, 30),
+    }, 500),
 
     handleRemoveSpare(sparePart, index) {
       if (this.formConf.disabled) return;
