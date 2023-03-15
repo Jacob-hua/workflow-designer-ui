@@ -50,7 +50,7 @@
             <el-input type="text" v-model="item.spareNum" size="mini" />
             <span
               class="number-increase icon-box"
-              :class="item.hasStock || !formConf.disabled ? '' : 'is-disable'"
+              :class="!item.hasStock || formConf.disabled ? 'is-disable' : ''"
               @click="handleChange(item, index, true)"
               ><i class="el-icon-plus"
             /></span>
@@ -152,6 +152,7 @@ export default {
     handleChange: _.throttle(function (spareSpart, index, flag) {
       if (this.formConf.disabled) return;
       if (flag) {
+        if(!spareSpart.hasStock) return;
         this.checkStockFun(spareSpart.itemnum, flag).then((res) => {
           spareSpart.hasStock = res;
           if (res) {
@@ -170,7 +171,7 @@ export default {
         this.$forceUpdate();
       }
       this.$emit("input", this.spareParts);
-    }, 30),
+    }, 500),
 
     handleRemoveSpare(sparePart, index) {
       if (this.formConf.disabled) return;
