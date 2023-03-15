@@ -41,19 +41,33 @@
         </el-row>
         <el-row type="flex" justify="end">
           <div class="input-number">
-            <span
+            <el-button
+              :disabled="item.spareNum === 0 || formConf.disabled"
+              :loading="item.loading"
+              class="number-descress icon-box"
+              icon="el-icon-minus"
+              @click="handleChange(item, index, false)"
+            ></el-button>
+            <!-- <span
               class="number-descress icon-box"
               :class="item.spareNum === 0 || formConf.disabled ? 'is-disable' : ''"
               @click="handleChange(item, index, false)"
               ><i class="el-icon-minus"
-            /></span>
+            /></span> -->
             <el-input type="text" v-model="item.spareNum" size="mini" />
-            <span
+            <el-button
+              :disabled="!item.hasStock || formConf.disabled"
+              :loading="item.loading"
+              class="number-increase icon-box"
+              icon="el-icon-plus"
+              @click="handleChange(item, index, true)"
+            ></el-button>
+            <!-- <span
               class="number-increase icon-box"
               :class="!item.hasStock || formConf.disabled ? 'is-disable' : ''"
               @click="handleChange(item, index, true)"
               ><i class="el-icon-plus"
-            /></span>
+            /></span> -->
           </div>
         </el-row>
       </div>
@@ -78,10 +92,10 @@ export default {
       type: Function,
       default: () => {},
     },
-    formConf:{
-      type:Object,
-      default: () => {}
-    }
+    formConf: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -149,10 +163,31 @@ export default {
       this.$emit("input", this.spareParts);
     },
 
-    handleChange: _.throttle(function (spareSpart, index, flag) {
+    async handleChange(spareSpart, index, flag) {
+      if (this.formConf.disabled) return;
+      if (flag && !spareSpart.hasStock) return;
+      spareSpart.loading = true;
+      this.$forceUpdate();
+      const result = await this.checkStockFun(spareSpart.itemnum, flag);
+      if (flag && result) {
+        spareSpart.spareNum += 1;
+      }
+      if (!flag) {
+        spareSpart.spareNum -= 1;
+        if (spareSpart.spareNum === 0) {
+          this.spareParts.splice(index, 1);
+        }
+      }
+      spareSpart.hasStock = result;
+      spareSpart.loading = false;
+      this.$forceUpdate();
+      this.$emit("input", this.spareParts);
+    },
+
+    handleChange1: _.throttle(function (spareSpart, index, flag) {
       if (this.formConf.disabled) return;
       if (flag) {
-        if(!spareSpart.hasStock) return;
+        if (!spareSpart.hasStock) return;
         this.checkStockFun(spareSpart.itemnum, flag).then((res) => {
           spareSpart.hasStock = res;
           if (res) {
@@ -183,6 +218,9 @@ export default {
     handleCurrentChange() {
       this.fetchSpareList();
     },
+  },
+  updated() {
+    console.log("update");
   },
 };
 </script>
@@ -237,6 +275,10 @@ export default {
   width: 28px;
   font-size: 12px;
   background-color: transparent;
+  border: none;
+  border-radius: 0;
+  line-height: 26px;
+  padding: 0;
 
   i {
     transform: scale(0.8);
@@ -254,5 +296,13 @@ export default {
 .is-disable {
   cursor: not-allowed;
   color: #c0c4cc;
+}
+
+::v-deep .el-button.is-loading {
+  color: #fff;
+}
+
+::v-deep .el-button.is-loading:before {
+  background-color: transparent;
 }
 </style>
