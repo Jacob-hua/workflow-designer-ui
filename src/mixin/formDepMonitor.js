@@ -149,13 +149,13 @@ export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
     return fieldInfo
   }
 
-  // if (!fieldInfo.variableSpace) {
-  const variableSpace = variableClassify({
-    variable: fieldInfo.id,
-    ...fieldInfo.dependValue,
-  })
-  fieldInfo.variableSpace = variableSpace
-  // }
+  if (!fieldInfo.variableSpace) {
+    const variableSpace = variableClassify({
+      variable: fieldInfo.id,
+      ...fieldInfo.dependValue,
+    })
+    fieldInfo.variableSpace = variableSpace
+  }
 
   return watchExecute(fieldInfo, executeFunc, true)
 }
