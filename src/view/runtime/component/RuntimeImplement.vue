@@ -336,11 +336,12 @@ export default {
       this.$emit('taskSuccess')
     },
     async onDialogClose() {
-      const {result} = await cancleStock({taskKey :this.workflow.taskKey});
+      const {result} = await cancleStock({taskKey :this.workflow.newTaskId});
       this.formShow = false
       this.$emit('close')
     },
-    onCancel() {
+    async onCancel() {
+      const {result} = await cancleStock({taskKey :this.workflow.newTaskId});
       this.$emit('close')
     },
     onSelectExecutor(value) {
