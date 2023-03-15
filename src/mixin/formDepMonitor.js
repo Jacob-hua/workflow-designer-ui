@@ -183,6 +183,7 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
     {
       ...defaultVariableSpace(),
+      ...(fieldInfo.variableSpace ? fieldInfo.variableSpace : {}),
     }
   )
   fieldInfo.variableSpace = variableSpace
