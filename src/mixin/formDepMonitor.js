@@ -65,7 +65,7 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
   return result
 }
 
-export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = false) {
+export function watchExecute(prefix, fieldInfo, executeFunc = () => {}, immediate = false) {
   const variableSpace = { ...defaultVariableSpace(), ...(fieldInfo.variableSpace ?? {}) }
 
   !fieldInfo.context && (fieldInfo.context = {})
@@ -87,7 +87,7 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
   return fieldInfo
 
   function calculateFuncKey(variableSpace) {
-    return Object.keys(variableSpace).reduce(
+    const key = Object.keys(variableSpace).reduce(
       (funcKey, space) => {
         return Object.keys(variableSpace[space]).reduce(
           (funcKey, key) => (funcKey ? `${funcKey}/${key}` : key),
@@ -96,6 +96,7 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
       },
       fieldInfo.valuePath ? `${fieldInfo.valuePath}` : ''
     )
+    return `${prefix}::${key}`
   }
 
   function calculateDependValue(data, fieldValuePath, dependValuePath) {
@@ -164,7 +165,7 @@ export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
     fieldInfo.variableSpace = variableSpace
   }
 
-  return watchExecute(fieldInfo, executeFunc, true)
+  return watchExecute('depend', fieldInfo, executeFunc, true)
 }
 
 export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
@@ -196,7 +197,7 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     fieldInfo.variableSpace = variableSpace
   }
 
-  return watchExecute(fieldInfo, (variableObj, fieldInfo, isDependDiffed) => {
+  return watchExecute('request', fieldInfo, (variableObj, fieldInfo, isDependDiffed) => {
     executeFunc(parameterHandler(variableObj), fieldInfo, isDependDiffed)
   })
 }
