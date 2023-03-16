@@ -150,9 +150,16 @@ export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
   }
 
   if (!fieldInfo.variableSpace) {
-    const variableSpace = variableClassify({
+    let variableSpace = variableClassify({
       variable: fieldInfo.id,
       ...fieldInfo.dependValue,
+    })
+    let variables = fieldInfo.requestConfig.variables
+    if (!variables) {
+      variables = makeVariables(fieldInfo.requestConfig)
+    }
+    variableSpace = variables.reduce((variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace), {
+      ...variableSpace,
     })
     fieldInfo.variableSpace = variableSpace
   }
@@ -178,28 +185,28 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     return fieldInfo
   }
 
-  // if (!fieldInfo.variableSpace) {
-  const variableSpace = variables.reduce(
-    (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
-    {
-      ...defaultVariableSpace(),
-      ...(fieldInfo.variableSpace ? fieldInfo.variableSpace : {}),
-    }
-  )
-  fieldInfo.variableSpace = variableSpace
-  // }
+  if (!fieldInfo.variableSpace) {
+    const variableSpace = variables.reduce(
+      (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
+      {
+        ...defaultVariableSpace(),
+        ...(fieldInfo.variableSpace ? fieldInfo.variableSpace : {}),
+      }
+    )
+    fieldInfo.variableSpace = variableSpace
+  }
 
   return watchExecute(fieldInfo, (variableObj, fieldInfo, isDependDiffed) => {
     executeFunc(parameterHandler(variableObj), fieldInfo, isDependDiffed)
   })
+}
 
-  function makeVariables(requestConfig = [], sourceType = 'form') {
-    return (variableFactory(requestConfig) ?? []).map((variable) => ({
-      variable,
-      sourceType,
-      source: variable,
-    }))
-  }
+function makeVariables(requestConfig = [], sourceType = 'form') {
+  return (variableFactory(requestConfig) ?? []).map((variable) => ({
+    variable,
+    sourceType,
+    source: variable,
+  }))
 }
 
 function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFields' }) {
