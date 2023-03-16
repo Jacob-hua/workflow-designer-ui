@@ -87,6 +87,61 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
   return result
 }
 
+function calculateFuncKey(prefix, fieldInfo, variableSpace) {
+  const key = Object.keys(variableSpace).reduce(
+    (funcKey, space) => {
+      return Object.keys(variableSpace[space]).reduce((funcKey, key) => (funcKey ? `${funcKey}/${key}` : key), funcKey)
+    },
+    fieldInfo.valuePath ? `${fieldInfo.valuePath}` : ''
+  )
+  return `${prefix}::${key}`
+}
+
+function calculateDependValue(data, fieldValuePath, dependValuePath) {
+  fieldValuePath = fieldValuePath ?? ''
+  const pathLastIndex = fieldValuePath.lastIndexOf('.')
+  const domainPath = fieldValuePath.substring(0, pathLastIndex)
+  const domain = _.get(data, domainPath, undefined)
+  if (Object.prototype.toString.call(domain) !== '[object Object]') {
+    return _.get(data, dependValuePath)
+  }
+  if (!_.has(domain, dependValuePath)) {
+    return calculateDependValue(data, domainPath, dependValuePath)
+  }
+  return _.get(domain, dependValuePath)
+}
+
+function diffDepObj(immediate, fieldInfo, dependObj, data) {
+  return Object.keys(dependObj).reduce((isDiffed, dependValuePath) => {
+    const dependValue = calculateDependValue(data, fieldInfo.valuePath, dependValuePath)
+    isDiffed = isDiffed || dependValue !== dependObj[dependValuePath].value
+    // 如果前后的dependValue都是假值，则默认为发生变化
+    if (immediate && !dependValue && !dependObj[dependValuePath].value) {
+      isDiffed = true
+    }
+    dependObj[dependValuePath].value = dependValue
+    return isDiffed
+  }, false)
+}
+
+function variableMix(fieldInfo, variableSpace) {
+  const formVariables = Object.values(variableSpace.form).reduce(
+    (formVariables, { variable, value }) => ({
+      ...formVariables,
+      [variable]: value,
+    }),
+    {}
+  )
+  const contextVariables = Object.values(variableSpace.context).reduce(
+    (contextVariables, contextFunc) => ({
+      ...contextVariables,
+      ...contextFunc(fieldInfo.context),
+    }),
+    {}
+  )
+  return { ...variableSpace.const, ...contextVariables, ...formVariables }
+}
+
 /**
  * 监听执行
  *
@@ -102,7 +157,7 @@ export function watchExecute(prefix, fieldInfo, executeFunc = () => {}, immediat
   !fieldInfo.context && (fieldInfo.context = {})
 
   if (Object.keys(variableSpace.form).length === 0) {
-    executeFunc(variableMix(variableSpace), fieldInfo, false)
+    executeFunc(variableMix(fieldInfo, variableSpace), fieldInfo, false)
     return fieldInfo
   }
 
@@ -110,70 +165,12 @@ export function watchExecute(prefix, fieldInfo, executeFunc = () => {}, immediat
     fieldInfo.executeFuncs = new Map()
   }
 
-  fieldInfo.executeFuncs.set(calculateFuncKey(variableSpace), (data) => {
-    if (diffDepObj(variableSpace.form, data)) {
-      executeFunc(variableMix(variableSpace), fieldInfo, true)
+  fieldInfo.executeFuncs.set(calculateFuncKey(prefix, fieldInfo, variableSpace), (data) => {
+    if (diffDepObj(immediate, fieldInfo, variableSpace.form, data)) {
+      executeFunc(variableMix(fieldInfo, variableSpace), fieldInfo, true)
     }
   })
   return fieldInfo
-
-  function calculateFuncKey(variableSpace) {
-    const key = Object.keys(variableSpace).reduce(
-      (funcKey, space) => {
-        return Object.keys(variableSpace[space]).reduce(
-          (funcKey, key) => (funcKey ? `${funcKey}/${key}` : key),
-          funcKey
-        )
-      },
-      fieldInfo.valuePath ? `${fieldInfo.valuePath}` : ''
-    )
-    return `${prefix}::${key}`
-  }
-
-  function calculateDependValue(data, fieldValuePath, dependValuePath) {
-    fieldValuePath = fieldValuePath ?? ''
-    const pathLastIndex = fieldValuePath.lastIndexOf('.')
-    const domainPath = fieldValuePath.substring(0, pathLastIndex)
-    const domain = _.get(data, domainPath, undefined)
-    if (Object.prototype.toString.call(domain) !== '[object Object]') {
-      return _.get(data, dependValuePath)
-    }
-    if (!_.has(domain, dependValuePath)) {
-      return calculateDependValue(data, domainPath, dependValuePath)
-    }
-    return _.get(domain, dependValuePath)
-  }
-
-  function diffDepObj(dependObj, data) {
-    return Object.keys(dependObj).reduce((isDiffed, dependValuePath) => {
-      const dependValue = calculateDependValue(data, fieldInfo.valuePath, dependValuePath)
-      isDiffed = isDiffed || dependValue !== dependObj[dependValuePath].value
-      // 如果前后的dependValue都是假值，则默认为发生变化
-      if (immediate && !dependValue && !dependObj[dependValuePath].value) {
-        isDiffed = true
-      }
-      dependObj[dependValuePath].value = dependValue
-      return isDiffed
-    }, false)
-  }
-
-  function variableMix(variableSpace) {
-    const formVariables = Object.values(variableSpace.form).reduce(
-      (formVariables, { variable, value }) => ({
-        ...formVariables,
-        [variable]: value,
-      }),
-      {}
-    )
-    const contextVariables = Object.values(variableSpace.context).reduce(
-      (contextVariables, contextFunc) => ({
-        ...contextVariables,
-        ...contextFunc(fieldInfo.context),
-      }),
-      {}
-    )
-    return { ...variableSpace.const, ...contextVariables, ...formVariables }
-  }
 }
 
 /**
