@@ -1,12 +1,21 @@
 import { ApiEnum } from '../enum'
 import _ from 'lodash'
 
+/**
+ * 默认的变量空间
+ */
 const defaultVariableSpace = () => ({
   const: {},
   context: {},
   form: {},
 })
 
+/**
+ * 变量处理工厂
+ *
+ * @param {*} param0
+ * @returns
+ */
 export function variableFactory({ method, parameter, body }) {
   const variablesHandlers = {
     [ApiEnum.API_TYPE_GET]: extractVariables(parameter),
@@ -19,6 +28,12 @@ export function variableFactory({ method, parameter, body }) {
   }
 }
 
+/**
+ * 请求参数处理
+ *
+ * @param {*} param0
+ * @returns
+ */
 export function parameterHandlerFactory({ method, parameter, body }) {
   const parameterHandlers = {
     [ApiEnum.API_TYPE_GET]: (payload) => {
@@ -43,6 +58,13 @@ export function parameterHandlerFactory({ method, parameter, body }) {
   }
 }
 
+/**
+ * 变量分类器
+ *
+ * @param {*} param0
+ * @param {*} variableSpace
+ * @returns
+ */
 export function variableClassify({ variable, sourceType, source }, variableSpace = {}) {
   const result = { ...defaultVariableSpace(), ...variableSpace }
   const classifier = {
@@ -65,6 +87,15 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
   return result
 }
 
+/**
+ * 监听执行
+ *
+ * @param {*} prefix
+ * @param {*} fieldInfo
+ * @param {*} executeFunc
+ * @param {*} immediate
+ * @returns
+ */
 export function watchExecute(prefix, fieldInfo, executeFunc = () => {}, immediate = false) {
   const variableSpace = { ...defaultVariableSpace(), ...(fieldInfo.variableSpace ?? {}) }
 
@@ -145,6 +176,13 @@ export function watchExecute(prefix, fieldInfo, executeFunc = () => {}, immediat
   }
 }
 
+/**
+ * 关联处理函数
+ *
+ * @param {*} fieldInfo
+ * @param {*} executeFunc
+ * @returns
+ */
 export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
   if (!fieldInfo.dependValue) {
     return fieldInfo
@@ -168,6 +206,13 @@ export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
   return watchExecute('depend', fieldInfo, executeFunc, true)
 }
 
+/**
+ * 请求处理函数
+ *
+ * @param {*} fieldInfo
+ * @param {*} executeFunc
+ * @returns
+ */
 export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
   if (!fieldInfo.requestConfig) {
     return fieldInfo
@@ -202,6 +247,13 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
   })
 }
 
+/**
+ * 获取请求参数
+ *
+ * @param {*} requestConfig
+ * @param {*} sourceType
+ * @returns
+ */
 function makeVariables(requestConfig = [], sourceType = 'form') {
   return (variableFactory(requestConfig) ?? []).map((variable) => ({
     variable,
@@ -210,6 +262,12 @@ function makeVariables(requestConfig = [], sourceType = 'form') {
   }))
 }
 
+/**
+ * 表单依赖处理器
+ *
+ * @param {*} props
+ * @returns
+ */
 function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFields' }) {
   const { formData, formFields } = props
   return {
