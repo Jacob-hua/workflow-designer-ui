@@ -29,6 +29,21 @@ export function variableFactory({ method, parameter, body }) {
 }
 
 /**
+ * 获取请求参数
+ *
+ * @param {*} requestConfig
+ * @param {*} sourceType
+ * @returns
+ */
+function makeVariables(requestConfig = [], sourceType = 'form') {
+  return (variableFactory(requestConfig) ?? []).map((variable) => ({
+    variable,
+    sourceType,
+    source: variable,
+  }))
+}
+
+/**
  * 请求参数处理
  *
  * @param {*} param0
@@ -87,6 +102,14 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
   return result
 }
 
+/**
+ * 计算处理函数的key
+ *
+ * @param {*} prefix
+ * @param {*} fieldInfo
+ * @param {*} variableSpace
+ * @returns
+ */
 function calculateFuncKey(prefix, fieldInfo, variableSpace) {
   const key = Object.keys(variableSpace).reduce(
     (funcKey, space) => {
@@ -97,6 +120,14 @@ function calculateFuncKey(prefix, fieldInfo, variableSpace) {
   return `${prefix}::${key}`
 }
 
+/**
+ * 计算依赖值
+ *
+ * @param {*} data
+ * @param {*} fieldValuePath
+ * @param {*} dependValuePath
+ * @returns
+ */
 function calculateDependValue(data, fieldValuePath, dependValuePath) {
   fieldValuePath = fieldValuePath ?? ''
   const pathLastIndex = fieldValuePath.lastIndexOf('.')
@@ -111,6 +142,15 @@ function calculateDependValue(data, fieldValuePath, dependValuePath) {
   return _.get(domain, dependValuePath)
 }
 
+/**
+ * 对比依赖对象
+ *
+ * @param {*} immediate
+ * @param {*} fieldInfo
+ * @param {*} dependObj
+ * @param {*} data
+ * @returns
+ */
 function diffDepObj(immediate, fieldInfo, dependObj, data) {
   return Object.keys(dependObj).reduce((isDiffed, dependValuePath) => {
     const dependValue = calculateDependValue(data, fieldInfo.valuePath, dependValuePath)
@@ -124,6 +164,13 @@ function diffDepObj(immediate, fieldInfo, dependObj, data) {
   }, false)
 }
 
+/**
+ * 混合变量
+ *
+ * @param {*} fieldInfo
+ * @param {*} variableSpace
+ * @returns
+ */
 function variableMix(fieldInfo, variableSpace) {
   const formVariables = Object.values(variableSpace.form).reduce(
     (formVariables, { variable, value }) => ({
@@ -165,10 +212,8 @@ export function watchExecute(prefix, fieldInfo, executeFunc = () => {}, immediat
     fieldInfo.executeFuncs = new Map()
   }
 
-  fieldInfo.executeFuncs.set(calculateFuncKey(prefix, fieldInfo, variableSpace), (data) => {
-    if (diffDepObj(immediate, fieldInfo, variableSpace.form, data)) {
-      executeFunc(variableMix(fieldInfo, variableSpace), fieldInfo, true)
-    }
+  fieldInfo.executeFuncs.set(calculateFuncKey(prefix, fieldInfo, variableSpace), () => {
+    executeFunc(variableMix(fieldInfo, variableSpace), fieldInfo, true)
   })
   return fieldInfo
 }
@@ -245,21 +290,6 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
 }
 
 /**
- * 获取请求参数
- *
- * @param {*} requestConfig
- * @param {*} sourceType
- * @returns
- */
-function makeVariables(requestConfig = [], sourceType = 'form') {
-  return (variableFactory(requestConfig) ?? []).map((variable) => ({
-    variable,
-    sourceType,
-    source: variable,
-  }))
-}
-
-/**
  * 表单依赖处理器
  *
  * @param {*} props
@@ -275,8 +305,10 @@ function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFi
         handler(data) {
           this.$nextTick(() => {
             const needExecutes = this[formFields]?.filter(({ executeFuncs }) => executeFuncs) ?? []
-            needExecutes.forEach(({ executeFuncs }) => {
-              executeFuncs.forEach((execute) => execute({ ...data }))
+            needExecutes.forEach((fieldInfo) => {
+              if (diffDepObj(true, fieldInfo, fieldInfo.variableSpace.form, data)) {
+                fieldInfo.executeFuncs.forEach((execute) => execute())
+              }
             })
           })
         },
