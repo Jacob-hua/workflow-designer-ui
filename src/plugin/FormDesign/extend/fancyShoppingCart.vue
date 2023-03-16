@@ -42,32 +42,18 @@
         <el-row type="flex" justify="end">
           <div class="input-number">
             <el-button
-              :disabled="item.spareNum === 0 || formConf.disabled"
               :loading="item.loading"
               class="number-descress icon-box"
               icon="el-icon-minus"
               @click="handleChange(item, index, false)"
             ></el-button>
-            <!-- <span
-              class="number-descress icon-box"
-              :class="item.spareNum === 0 || formConf.disabled ? 'is-disable' : ''"
-              @click="handleChange(item, index, false)"
-              ><i class="el-icon-minus"
-            /></span> -->
             <el-input type="text" v-model="item.spareNum" size="mini" />
             <el-button
-              :disabled="!item.hasStock || formConf.disabled"
               :loading="item.loading"
               class="number-increase icon-box"
               icon="el-icon-plus"
               @click="handleChange(item, index, true)"
             ></el-button>
-            <!-- <span
-              class="number-increase icon-box"
-              :class="!item.hasStock || formConf.disabled ? 'is-disable' : ''"
-              @click="handleChange(item, index, true)"
-              ><i class="el-icon-plus"
-            /></span> -->
           </div>
         </el-row>
       </div>
@@ -83,6 +69,10 @@ export default {
     value: {
       type: Array,
       default: () => [],
+    },
+    checkStockAndUseFun: {
+      type: Function,
+      default: () => {},
     },
     checkStockFun: {
       type: Function,
@@ -150,7 +140,7 @@ export default {
       this.page = 1;
       this.description = "";
       let sparePart = this.options.find(({ itemnum }) => itemnum === value);
-      this.checkStockFun(sparePart.itemnum, true).then((res) => {
+      this.checkStockAndUseFun(sparePart.itemnum, true).then((res) => {
         sparePart.hasStock = res;
         if (res) {
           sparePart.spareNum = 1;
@@ -165,10 +155,15 @@ export default {
 
     async handleChange(spareSpart, index, flag) {
       if (this.formConf.disabled) return;
-      if (flag && !spareSpart.hasStock) return;
       spareSpart.loading = true;
+      const hasStock = await this.checkStockFun(spareSpart.itemnum);
+      spareSpart.hasStock = hasStock;
       this.$forceUpdate();
-      const result = await this.checkStockFun(spareSpart.itemnum, flag);
+      if (flag && !hasStock) {
+        spareSpart.loading = false;
+        return;
+      };
+      const result = await this.checkStockAndUseFun(spareSpart.itemnum, flag);
       if (flag && result) {
         spareSpart.spareNum += 1;
       }
@@ -178,7 +173,6 @@ export default {
           this.spareParts.splice(index, 1);
         }
       }
-      spareSpart.hasStock = result;
       spareSpart.loading = false;
       this.$forceUpdate();
       this.$emit("input", this.spareParts);
@@ -188,7 +182,7 @@ export default {
       if (this.formConf.disabled) return;
       if (flag) {
         if (!spareSpart.hasStock) return;
-        this.checkStockFun(spareSpart.itemnum, flag).then((res) => {
+        this.checkStockAndUseFun(spareSpart.itemnum, flag).then((res) => {
           spareSpart.hasStock = res;
           if (res) {
             spareSpart.spareNum += 1;
@@ -210,7 +204,7 @@ export default {
 
     handleRemoveSpare(sparePart, index) {
       if (this.formConf.disabled) return;
-      this.cancleStockFun(sparePart.itemnum, sparePart.spareNum);
+      this.cancleStockFun([{itemnum:sparePart.itemnum, currentNum:sparePart.spareNum}]);
       this.spareParts.splice(index, 1);
       this.$emit("input", this.spareParts);
     },
@@ -219,9 +213,13 @@ export default {
       this.fetchSpareList();
     },
   },
-  updated() {
-    console.log("update");
-  },
+  beforeDestroy(){
+    if(this.formConf.isSubmit) return;
+    if(this.spareParts.length<=0) return;
+    const list = this.spareParts.map(({itemnum,spareNum}) => ({itemnum,currentNum:spareNum}));
+    this.$emit("input", []);
+    this.cancleStockFun(list);
+  }
 };
 </script>
 <style lang="scss" scoped>

@@ -28,6 +28,9 @@
         :max="100"
       />
     </el-form-item>
+    <el-form-item label="是否可折叠">
+      <el-switch v-model="props.isFold"></el-switch>
+    </el-form-item>
     <el-divider>列配置项</el-divider>
     <depend-value
       :currentField="props"

@@ -25,5 +25,6 @@ export let shoppingCart = {
 
   checkStockFun: Function,
   cancleStockFun: Function,
+  checkStockAndUseFun:Function,
 
 }

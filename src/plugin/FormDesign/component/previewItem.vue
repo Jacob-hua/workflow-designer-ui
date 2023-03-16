@@ -194,6 +194,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
         downloadFun={this.downloadFun}
         checkStockFun={this.checkStockFun}
         cancleStockFun={this.cancleStockFun}
+        checkStockAndUseFun={this.checkStockAndUseFun}
         onInput={(event) => {
           _.set(this.form, fieldInfo.valuePath, event);
         }}
@@ -212,6 +213,7 @@ export default {
     "processInstanceId",
     "cancleStockFun",
     "checkStockFun",
+    "checkStockAndUseFun"
   ],
   components: { render },
   data() {

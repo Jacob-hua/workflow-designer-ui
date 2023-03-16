@@ -213,10 +213,11 @@ export const getSelectStartForm = (params) => get(`/config/startConfig/selectPro
 
 export const getSpareList = (params) => get('/inventoryfac/list',params)
 
-export const checkStock = (params) => post('./inventoryfac/checkStockAndUse',params)
+export const checkStockAndUse = (params) => post('./inventoryfac/checkStockAndUse',params)
+export const checkStock = (params) => post('./inventoryfac/checkStock',params)
 
 export const cancleStock = (params) => get('/inventoryfac/cancle',params)
 
-export const cancleWithSort = (params) => get('/inventoryfac/cancleWithSort',params)
+export const cancleWithSort = (params) => post('/inventoryfac/cancleWithSort',params)
 
 export const getSpareListByPage = (params) => post('./inventoryfac/page',params)

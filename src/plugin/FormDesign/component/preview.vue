@@ -247,6 +247,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
           downloadFun={this.downloadFun}
           checkStockFun={this.checkStockFun}
           cancleStockFun={this.cancleStockFun}
+          checkStockAndUseFun={this.checkStockAndUseFun}
           onInput={(event) => {
             _.set(this.form, fieldInfo.valuePath, event)
           }}
@@ -258,17 +259,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
 import upload from '@/plugin/FormDesign/component/upload'
 export default {
   name: 'preview',
-  props: [
-    'itemList',
-    'formData',
-    'formConf',
-    'uploadFun',
-    'downloadFun',
-    'beforeDeleteFileFun',
-    'context',
-    'cancleStockFun',
-    'checkStockFun',
-  ],
+  props: ['itemList', 'formData', 'formConf', 'uploadFun', 'downloadFun', 'beforeDeleteFileFun', 'context','cancleStockFun','checkStockFun','checkStockAndUseFun'],
   components: { render, upload },
   data() {
     const metaDataList = _.cloneDeep(this.itemList) ?? []
