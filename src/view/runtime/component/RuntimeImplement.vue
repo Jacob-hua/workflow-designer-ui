@@ -48,6 +48,7 @@
             :downloadFun="downloadFile.bind(this)"
             :checkStockFun ="checkStock.bind(this)"
             :cancleStockFun="cancleStock.bind(this)"
+            :checkStockAndUseFun="checkStockAndUse.bind(this)"
             v-if="formShow"
             ref="preview"
           ></preview>
@@ -78,6 +79,7 @@ import {
   getExecuteDetail,
   uploadTaskAttachmentFile,
   downloadTaskAttachmentFile,
+  checkStockAndUse,
   checkStock,
   cancleWithSort,
   cancleStock
@@ -419,6 +421,7 @@ export default {
         this.$message.error(errorInfo.errorMsg)
         return
       }
+      this.formContent.config['isSubmit'] = true;
       this.formShow = false
       this.$message.success('操作成功')
       this.$emit('taskSuccess')
@@ -546,13 +549,17 @@ export default {
         return workflow.curTrack.candidateUsers?.find(({ candidateUsers = [] }) => candidateUsers.includes(account))
       }
     },
-    async checkStock(itemnum,operationFlag ){
-      const {result} = await checkStock({taskKey:this.workflow.newTaskId, itemnum ,operationFlag});
+    async checkStockAndUse(itemnum,operationFlag ){
+      const {result} = await checkStockAndUse({taskKey:this.workflow.newTaskId, itemnum ,operationFlag});
       return result;
     },
-    async cancleStock(itemnum,currentNum){
-      await cancleWithSort({taskKey:this.workflow.newTaskId, itemnum ,currentNum})
-    }
+    async cancleStock(list){
+      await cancleWithSort({taskKey:this.workflow.newTaskId, returnSpareDTOS:list})
+    },
+    async checkStock(itemnum){
+      const {result} = await checkStock({taskKey:this.workflow.newTaskId, itemnum});
+      return result;
+    },
   },
 }
 </script>
