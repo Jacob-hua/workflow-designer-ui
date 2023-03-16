@@ -18,9 +18,9 @@ function handleRequestDependChange(data, fieldInfo, isDependDiffed) {
       options = parserOptions(options, parserProp)
     }
     fieldInfo.options = options
-    if (isDependDiffed) {
-      _.set(this.form, fieldInfo.valuePath, fieldInfo.value)
-    }
+    // if (isDependDiffed) {
+    //   _.set(this.form, fieldInfo.valuePath, fieldInfo.value)
+    // }
   })
 
   function parserOptions(options, { label, value, children, optionPath }) {

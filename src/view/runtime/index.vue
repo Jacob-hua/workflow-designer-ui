@@ -28,7 +28,6 @@
             :key="searchForm.ascription"
             :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
             :props="cascaderProps"
-            @change="onBusinessChange"
           ></el-cascader>
         </el-form-item>
         <el-form-item label="时间选择">
@@ -43,7 +42,6 @@
             value-format="yyyy-MM-dd HH:mm:ss"
             :default-time="['00:00:00', '23:59:59']"
             :clearable="false"
-            @change="onTimeRangeChange"
           >
           </el-date-picker>
         </el-form-item>
@@ -270,7 +268,6 @@ export default {
   watch: {
     searchForm: {
       deep: true,
-      immediate: true,
       handler() {
         this.pageInfo.page = 1
         this.getAllApi()
@@ -281,18 +278,9 @@ export default {
     await this.dispatchRefreshOrganization()
     this.searchForm.ascription = this.currentOrganization
     this.fetchDeployNameList()
-    this.fetchNewTasks()
-    this.fetchAmount()
-    this.fetchDataNumber()
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
-    onBusinessChange() {
-      this.getAllApi()
-    },
-    onTimeRangeChange() {
-      this.getAllApi()
-    },
     onTaskTypeChange() {
       this.pageInfo = {
         page: 1,
