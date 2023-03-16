@@ -93,11 +93,10 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
  * @param {*} prefix
  * @param {*} fieldInfo
  * @param {*} executeFunc
- * @param {*} immediate
  * @returns
  */
-export function watchExecute(prefix, fieldInfo, executeFunc = () => {}, immediate = false) {
-  const variableSpace = { ...defaultVariableSpace(), ...(fieldInfo.variableSpace ?? {}) }
+export function watchExecute(prefix, fieldInfo, executeFunc = () => {}) {
+  const variableSpace = { ...defaultVariableSpace(), ...(fieldInfo[`${prefix}VariableSpace`] ?? {}) }
 
   !fieldInfo.context && (fieldInfo.context = {})
 
@@ -149,7 +148,7 @@ export function watchExecute(prefix, fieldInfo, executeFunc = () => {}, immediat
       const dependValue = calculateDependValue(data, fieldInfo.valuePath, dependValuePath)
       isDiffed = isDiffed || dependValue !== dependObj[dependValuePath].value
       // 如果前后的dependValue都是假值，则默认为发生变化
-      if (immediate && !dependValue && !dependObj[dependValuePath].value) {
+      if (prefix === 'depend' && !dependValue && !dependObj[dependValuePath].value) {
         isDiffed = true
       }
       dependObj[dependValuePath].value = dependValue
@@ -188,22 +187,14 @@ export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
     return fieldInfo
   }
 
-  if (!fieldInfo.variableSpace) {
-    let variableSpace = variableClassify({
+  if (!fieldInfo.dependVariableSpace) {
+    fieldInfo.dependVariableSpace = variableClassify({
       variable: fieldInfo.id,
       ...fieldInfo.dependValue,
     })
-    let variables = fieldInfo.requestConfig.variables
-    if (!variables) {
-      variables = makeVariables(fieldInfo.requestConfig)
-    }
-    variableSpace = variables.reduce((variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace), {
-      ...variableSpace,
-    })
-    fieldInfo.variableSpace = variableSpace
   }
 
-  return watchExecute('depend', fieldInfo, executeFunc, true)
+  return watchExecute('depend', fieldInfo, executeFunc)
 }
 
 /**
@@ -231,15 +222,11 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     return fieldInfo
   }
 
-  if (!fieldInfo.variableSpace) {
-    const variableSpace = variables.reduce(
+  if (!fieldInfo.requestVariableSpace) {
+    fieldInfo.requestVariableSpace = variables.reduce(
       (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
-      {
-        ...defaultVariableSpace(),
-        ...(fieldInfo.variableSpace ? fieldInfo.variableSpace : {}),
-      }
+      {}
     )
-    fieldInfo.variableSpace = variableSpace
   }
 
   return watchExecute('request', fieldInfo, (variableObj, fieldInfo, isDependDiffed) => {
