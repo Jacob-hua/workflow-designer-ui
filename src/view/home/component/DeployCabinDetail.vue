@@ -24,7 +24,17 @@
             <div
               class="detail"
               v-for="(
-                { id, deployName, createBy, createTime, displayStatus, periodicityFlag, cronExpression }, index
+                {
+                  id,
+                  deployName,
+                  createBy,
+                  createTime,
+                  displayStatus,
+                  periodicityFlag,
+                  cronExpression,
+                  displayTriggerModel,
+                },
+                index
               ) in deployments"
               :key="id"
             >
@@ -35,8 +45,8 @@
                   <long-text contentStyle="margin-left: 10px; width: 130px;" :content="deployName" />
                 </div>
                 <div class="info">
-                  <span>周期性:</span>
-                  <span>{{ periodicityFlag ? '是' : '否' }}</span>
+                  <span>触发模式:</span>
+                  <span>{{ displayTriggerModel }}</span>
                 </div>
                 <div class="info" v-if="periodicityFlag">
                   <span>周期规则:</span>
@@ -171,6 +181,8 @@ export default {
         this.deployments = (dataList ?? []).map((deployment) => ({
           ...deployment,
           displayStatus: deployment.status === 'activation' ? '已激活' : '未激活',
+          displayTriggerModel:
+            deployment.triggerModel === '1' ? '周期性' : deployment.triggerModel === '2' ? '固定触发' : '无',
         }))
         this.deployNumber = count
       } catch (error) {
