@@ -141,6 +141,7 @@ export default {
     },
 
     async handleSelect(value) {
+      if(!value) return;
       if (this.spareParts.findIndex(({ itemnum }) => itemnum === value) != -1) {
         this.$message.warning("备件已存在");
         return;
