@@ -230,6 +230,7 @@ export default {
     },
   },
   beforeDestroy() {
+    if (!this.formConf) return;
     if (this.formConf.isSubmit) return;
     if (this.spareParts.length <= 0) return;
     const list = this.spareParts.map(({ itemnum, spareNum }) => ({
