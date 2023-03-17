@@ -9,6 +9,7 @@
         @focus="handleSearch"
         :loading="loading"
         @change="handleSelect"
+        @visible-change="handleReset"
       >
         <el-option
           v-for="item in options"
@@ -129,6 +130,13 @@ export default {
         this.options = result.dataList;
       } catch (error) {
         return [];
+      }
+    },
+
+    handleReset(value) {
+      if (!value) {
+        this.page = 1;
+        this.description = "";
       }
     },
 
