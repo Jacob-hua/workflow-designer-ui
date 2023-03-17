@@ -137,7 +137,7 @@ export default {
         this.$message.warning("备件已存在");
         return;
       }
-      const hasStock = await this.checkStockFun(spareSpart.itemnum);
+      const hasStock = await this.checkStockFun(value);
       if (!hasStock) {
         this.$message.warning("备件已被领用完");
         this.selectedValue = "";
