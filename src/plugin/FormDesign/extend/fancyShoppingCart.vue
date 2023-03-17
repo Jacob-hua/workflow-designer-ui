@@ -132,9 +132,15 @@ export default {
       }
     },
 
-    handleSelect(value) {
+    async handleSelect(value) {
       if (this.spareParts.findIndex(({ itemnum }) => itemnum === value) != -1) {
         this.$message.warning("备件已存在");
+        return;
+      }
+      const hasStock = await this.checkStockFun(spareSpart.itemnum);
+      if (!hasStock) {
+        this.$message.warning("备件已被领用完");
+        this.selectedValue = "";
         return;
       }
       this.page = 1;
@@ -162,7 +168,7 @@ export default {
       if (flag && !hasStock) {
         spareSpart.loading = false;
         return;
-      };
+      }
       const result = await this.checkStockAndUseFun(spareSpart.itemnum, flag);
       if (flag && result) {
         spareSpart.spareNum += 1;
@@ -204,7 +210,9 @@ export default {
 
     handleRemoveSpare(sparePart, index) {
       if (this.formConf.disabled) return;
-      this.cancleStockFun([{itemnum:sparePart.itemnum, currentNum:sparePart.spareNum}]);
+      this.cancleStockFun([
+        { itemnum: sparePart.itemnum, currentNum: sparePart.spareNum },
+      ]);
       this.spareParts.splice(index, 1);
       this.$emit("input", this.spareParts);
     },
@@ -213,13 +221,16 @@ export default {
       this.fetchSpareList();
     },
   },
-  beforeDestroy(){
-    if(this.formConf.isSubmit) return;
-    if(this.spareParts.length<=0) return;
-    const list = this.spareParts.map(({itemnum,spareNum}) => ({itemnum,currentNum:spareNum}));
+  beforeDestroy() {
+    if (this.formConf.isSubmit) return;
+    if (this.spareParts.length <= 0) return;
+    const list = this.spareParts.map(({ itemnum, spareNum }) => ({
+      itemnum,
+      currentNum: spareNum,
+    }));
     this.$emit("input", []);
     this.cancleStockFun(list);
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>
