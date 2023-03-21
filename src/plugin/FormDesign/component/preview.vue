@@ -91,24 +91,24 @@ function buildModel(model, metaData) {
     return result;
   }
 
-  if (metaData.isCopy) {
-    result[metaData.id] = [];
-    let tempModel = {};
-    if (Array.isArray(metaData.columns)) {
-      metaData.columns.forEach(({ list }) => {
-        list.forEach((colMeta) => {
-          tempModel = buildModel(tempModel, colMeta);
-        });
+  // if (metaData.isCopy) {
+  result[metaData.id] = [];
+  let tempModel = {};
+  if (Array.isArray(metaData.columns)) {
+    metaData.columns.forEach(({ list }) => {
+      list.forEach((colMeta) => {
+        tempModel = buildModel(tempModel, colMeta);
       });
-    }
-    result[metaData.id].push(tempModel);
-    return result;
+    });
   }
-
-  metaData.columns.forEach(({ list }) => {
-    list.forEach((item) => (result = buildModel(result, item)));
-  });
+  result[metaData.id].push(tempModel);
   return result;
+  // }
+
+  // metaData.columns.forEach(({ list }) => {
+  //   list.forEach((item) => (result = buildModel(result, item)));
+  // });
+  // return result;
 }
 
 function buildColumnContainer(h, metaData, valuePath, usefulMeta = {}) {
@@ -132,7 +132,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     mixinDependFunction(fieldInfo, handleRowContainerDependChange.bind(this));
   }
 
-  if (!fieldInfo.isCopy) {
+  if (!fieldInfo.isCopy && !fieldInfo.isFold) {
     if (!fieldInfo.visible) {
       return <div></div>;
     }
@@ -170,6 +170,11 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     _.get(this.form, `${valuePath}`, []).splice(index, 1);
   };
 
+  const doFolded = (valuePath) => {
+    this.folded[`${valuePath}`] = !this.folded[`${valuePath}`];
+    this.$forceUpdate();
+  }
+
   const multipleDisabled = this.formConf.disabled || fieldInfo.disabled;
   const multipleRows = _.get(this.form, valuePath, []);
   const multipleRowElements = multipleRows.map((value, index) => {
@@ -177,6 +182,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
       <el-card
         body-style={{ padding: "0px" }}
         style={{ margin: "10px 3px" }}
+
         shadow="always"
       >
         <div slot="header" class="clearfix">
@@ -188,25 +194,37 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
             onClick={() => onDelete(index)}
             disabled={multipleDisabled}
           ></el-button>
-          <el-button
-            style="float: right; padding: 3px 0; margin: 0 10px;"
-            icon="el-icon-plus"
-            type="text"
-            onClick={() => onCopy(index)}
-            disabled={multipleDisabled}
-          ></el-button>
+          {fieldInfo.isCopy ? (
+            <el-button
+              style="float: right; padding: 3px 0; margin: 0 10px;"
+              icon="el-icon-plus"
+              type="text"
+              onClick={() => onCopy(index)}
+              disabled={multipleDisabled}
+            ></el-button>
+          ) : (
+            ""
+          )}
           {fieldInfo.isFold ? (
             <el-button
-              onClick={() => (this.folded = !this.folded)}
+              onClick={() => doFolded(valuePath)}
               type="text"
-              icon={this.folded ? "el-icon-arrow-up" : "el-icon-arrow-down"}
+              icon={
+                !this.folded[`${valuePath}`]
+                  ? "el-icon-arrow-up"
+                  : "el-icon-arrow-down"
+              }
             ></el-button>
           ) : (
             ""
           )}
         </div>
         <el-collapse-transition>
-          <el-row gutter={fieldInfo.gutter} v-show={this.folded} style={{padding: "10px 0px"}}>
+          <el-row
+            gutter={fieldInfo.gutter}
+            v-show={!this.folded[`${valuePath}`]}
+            style={{ padding: "10px 0px" }}
+          >
             <div>
               {buildColumnContainer.call(
                 this,
@@ -328,7 +346,7 @@ export default {
       usefulMeta: {},
       metaDataList,
       flatFields: [],
-      folded: true,
+      folded: {},
     };
   },
   watch: {
