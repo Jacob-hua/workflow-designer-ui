@@ -154,9 +154,10 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     const cloneObj = _.cloneDeep(
       _.get(this.initForm, `${valuePath}[0]`.replace(/\[(.*?)\]/g, "[0]"))
     );
+    cloneObj['key'] = Math.random()
     _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, cloneObj);
   };
-  const onDelete = (index) => {
+  const onDelete = (item,index) => {
     const value = _.get(this.form, `${valuePath}`, []);
     if (value.length <= 1) {
       return;
@@ -166,15 +167,15 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
       .forEach((key) => {
         this.$delete(this.usefulMeta, key);
       });
-
     _.get(this.form, `${valuePath}`, []).splice(index, 1);
+    this.folded[`${item.key?item.key:index}`] = false;
+    this.$forceUpdate();
   };
 
-  const doFolded = (valuePath) => {
-    this.folded[`${valuePath}`] = !this.folded[`${valuePath}`];
+  const doFolded = (value,index) => {
+    this.folded[`${value.key?value.key:index}`] = !this.folded[`${value.key?value.key:index}`];
     this.$forceUpdate();
-  }
-
+  };
   const multipleDisabled = this.formConf.disabled || fieldInfo.disabled;
   const multipleRows = _.get(this.form, valuePath, []);
   const multipleRowElements = multipleRows.map((value, index) => {
@@ -182,8 +183,8 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
       <el-card
         body-style={{ padding: "0px" }}
         style={{ margin: "10px 3px" }}
-
         shadow="always"
+        key={`${value.key?value.key:index}`}
       >
         <div slot="header" class="clearfix">
           {`#${index + 1}.${fieldInfo.title}`}
@@ -191,7 +192,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
             style="float: right; padding: 3px 0; margin: 0 10px;"
             icon="el-icon-delete"
             type="text"
-            onClick={() => onDelete(index)}
+            onClick={() => onDelete(value,index)}
             disabled={multipleDisabled}
           ></el-button>
           {fieldInfo.isCopy ? (
@@ -207,10 +208,10 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
           )}
           {fieldInfo.isFold ? (
             <el-button
-              onClick={() => doFolded(valuePath)}
+              onClick={() => doFolded(value,index)}
               type="text"
               icon={
-                !this.folded[`${valuePath}`]
+                !this.folded[`${value.key?value.key:index}`]
                   ? "el-icon-arrow-up"
                   : "el-icon-arrow-down"
               }
@@ -222,7 +223,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
         <el-collapse-transition>
           <el-row
             gutter={fieldInfo.gutter}
-            v-show={!this.folded[`${valuePath}`]}
+            v-show={!this.folded[`${value.key?value.key:index}`]}
             style={{ padding: "10px 0px" }}
           >
             <div>
@@ -269,7 +270,6 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   if (needRequestFunction) {
     mixinRequestFunction(fieldInfo, handleRequestDependChange.bind(this));
   }
-
   if (
     fieldInfo["list-type"] === "text" ||
     fieldInfo["list-type"] === "picture-card"
