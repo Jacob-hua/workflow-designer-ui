@@ -99,8 +99,6 @@ export default {
       limit: 10,
       total: 0,
       description: "",
-      hasStock: true,
-      selectedSpare: this.$props.value,
     };
   },
   methods: {
@@ -238,8 +236,8 @@ export default {
       itemnum,
       currentNum: spareNum,
     }));
-    this.$emit("input", []);
     this.cancleStockFun(list);
+    this.spareParts = [];
   },
 };
 </script>
