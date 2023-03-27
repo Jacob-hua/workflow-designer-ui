@@ -348,8 +348,50 @@ export default {
     await this.fetchExecuteDetail();
     await this.fetchProcessNodeInfo();
     this.context = await this.getContext();
+    window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e));
+    window.addEventListener("unload", this.updateHandler);
+    // window.addEventListener("beforeunload", () => {
+    //   // navigator.sendBeacon(
+    //   //   "http://k8s.isiact.com/kms-runtime-service/inventoryfac/cancle",
+    //   //   { taskKey: this.workflow.newTaskId }
+    //   // );
+    //   fetch(`http://k8s.isiact.com/kms-runtime-service/inventoryfac/cancle`, {
+    //     method: "POST",
+    //     body: JSON.stringify({ taskKey: this.workflow.newTaskId }),
+    //     headers: { "Content-Type": "application/json" },
+    //     keepalive: true,
+    //   });
+    //   localStorage.setItem("test", Math.round(Math.random() * 10));
+    // });
   },
   methods: {
+    beforeunloadHandler(e) {
+      e = e || window.event;
+      if (e) {
+        e.returnValue = "关闭提示";
+      }
+      return "关闭提示";
+    },
+    updateHandler() {
+      let userInfo =
+        (sessionStorage.getItem("loginData") &&
+          JSON.parse(sessionStorage.getItem("loginData"))) ||
+        "";
+      let url = process.env.VUE_APP_BASE_API
+        ? `${process.env.VUE_APP_BASE_API}/inventoryfac/cancle`
+        : "/inventoryfac/cancle";
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify({ taskKey: this.workflow.newTaskId }),
+        headers: {
+          "Content-Type": "application/json",
+          "X-SIACT-TOKEN": userInfo.token,
+          "X-SIACT-SOURCE": "PC",
+          "X-SIACT-TOKEN-TYPE": "1",
+        },
+        keepalive: true,
+      });
+    },
     async getContext() {
       if (!this.processInstanceId) {
         return {};
@@ -462,7 +504,7 @@ export default {
         this.$message.error(errorInfo.errorMsg);
         return;
       }
-      if (this.formContent&&this.formContent.config) {
+      if (this.formContent && this.formContent.config) {
         this.formContent.config["isSubmit"] = true;
       }
       this.formShow = false;
