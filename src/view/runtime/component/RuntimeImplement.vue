@@ -350,19 +350,6 @@ export default {
     this.context = await this.getContext();
     window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e));
     window.addEventListener("unload", this.updateHandler);
-    // window.addEventListener("beforeunload", () => {
-    //   // navigator.sendBeacon(
-    //   //   "http://k8s.isiact.com/kms-runtime-service/inventoryfac/cancle",
-    //   //   { taskKey: this.workflow.newTaskId }
-    //   // );
-    //   fetch(`http://k8s.isiact.com/kms-runtime-service/inventoryfac/cancle`, {
-    //     method: "POST",
-    //     body: JSON.stringify({ taskKey: this.workflow.newTaskId }),
-    //     headers: { "Content-Type": "application/json" },
-    //     keepalive: true,
-    //   });
-    //   localStorage.setItem("test", Math.round(Math.random() * 10));
-    // });
   },
   methods: {
     beforeunloadHandler(e) {
@@ -665,6 +652,10 @@ export default {
       return result;
     },
   },
+  beforeDestroy(){
+    window.removeEventListener('beforeunload');
+    window.removeEventListener('unload')
+  }
 };
 </script>
 
