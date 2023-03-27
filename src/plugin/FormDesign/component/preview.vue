@@ -157,7 +157,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     cloneObj['key'] = Math.random()
     _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, cloneObj);
   };
-  const onDelete = (item,index) => {
+  const onDelete = (item,index,infoId) => {
     const value = _.get(this.form, `${valuePath}`, []);
     if (value.length <= 1) {
       return;
@@ -168,7 +168,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
         this.$delete(this.usefulMeta, key);
       });
     _.get(this.form, `${valuePath}`, []).splice(index, 1);
-    this.folded[`${item.key?item.key:index}`] = false;
+    this.folded[`${item.key?item.key:infoId}`] = false;
     this.$forceUpdate();
   };
 
@@ -184,7 +184,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
         body-style={{ padding: "0px" }}
         style={{ margin: "10px 3px" }}
         shadow="always"
-        key={`${value.key?value.key:index}`}
+        key={`${value.key?value.key:fieldInfo.id}`}
       >
         <div slot="header" class="clearfix">
           {`#${index + 1}.${fieldInfo.title}`}
@@ -192,7 +192,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
             style="float: right; padding: 3px 0; margin: 0 10px;"
             icon="el-icon-delete"
             type="text"
-            onClick={() => onDelete(value,index)}
+            onClick={() => onDelete(value,index,fieldInfo.id)}
             disabled={multipleDisabled}
           ></el-button>
           {fieldInfo.isCopy ? (
@@ -208,10 +208,10 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
           )}
           {fieldInfo.isFold ? (
             <el-button
-              onClick={() => doFolded(value,index)}
+              onClick={() => doFolded(value,fieldInfo.id)}
               type="text"
               icon={
-                !this.folded[`${value.key?value.key:index}`]
+                !this.folded[`${value.key?value.key:fieldInfo.id}`]
                   ? "el-icon-arrow-up"
                   : "el-icon-arrow-down"
               }
@@ -223,7 +223,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
         <el-collapse-transition>
           <el-row
             gutter={fieldInfo.gutter}
-            v-show={!this.folded[`${value.key?value.key:index}`]}
+            v-show={!this.folded[`${value.key?value.key:fieldInfo.id}`]}
             style={{ padding: "10px 0px" }}
           >
             <div>
