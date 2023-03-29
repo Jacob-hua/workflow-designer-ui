@@ -97,6 +97,7 @@ export default {
   },
   methods: {
     close() {
+      this.postData.id = "";
       this.dialogVisible2 = false;
       this.$refs["form"].clearValidate();
       this.$refs["form"].resetFields();
@@ -106,7 +107,7 @@ export default {
     },
 
     addEnableForm() {
-      this.$refs["form"].validate( (valid) => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           let formDatas = {
             list: this.$refs.formDesigner.designList,
