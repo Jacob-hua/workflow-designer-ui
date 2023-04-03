@@ -1,26 +1,15 @@
 <!--文本扩展-->
 <template>
   <div class="form-list">
-    <el-button
-      @click.native="handlerShowDialog"
-      style="width: 100px"
-      :disabled="disabled"
-      type="primary"
-      >{{ title }}</el-button
-    >
+    <el-button @click.native="handlerShowDialog" type="primary">{{
+      title
+    }}</el-button>
     <el-table
       v-if="selectedData.length"
       :data="selectedData"
       border
-      :row-style="{ height: '10px' }"
-      :cell-style="{ padding: '5px 0' }"
-      :header-cell-style="{
-        'background-color': '#fafafa',
-        'border-bottom': '1px #e6f7ff solid',
-        color: '#00000085',
-      }"
       :highlight-current-row="!multi"
-      :max-height="height"
+      :max-height="`${height}px`"
     >
       <el-table-column
         :prop="item.prop"
@@ -45,16 +34,8 @@
         ref="dataTable"
         :data="gridData"
         border
-        :row-class-name="tableRowClassName"
-        :row-style="{ height: '10px' }"
-        :cell-style="{ padding: '5px 0' }"
-        :header-cell-style="{
-          'background-color': '#fafafa',
-          'border-bottom': '1px #e6f7ff solid',
-          color: '#00000065',
-        }"
         :highlight-current-row="!multi"
-        :max-height="height"
+        :max-height="`${height}px`"
         @selection-change="handleSelectionChange"
       >
         <el-table-column
@@ -67,6 +48,7 @@
           type="index"
           v-if="showIndex"
           align="center"
+          label="序号"
         ></el-table-column>
         <el-table-column
           :prop="item.prop"
@@ -90,7 +72,7 @@ export default {
   props: {
     value: {
       type: Array,
-      default: [],
+      default: () => [],
     },
     title: {
       type: String,
@@ -118,12 +100,12 @@ export default {
       default: "GET",
     },
     height: {
-      type: Number,
-      default: 600,
+      type: String,
+      default: "600",
     },
     tableColumn: {
       type: Array,
-      default: [],
+      default: () => [],
     },
     formConf: {
       type: Object,
@@ -162,13 +144,8 @@ export default {
         this.gridData = [];
         this.gridData = this.gridData.concat(res.data.result);
         this.dialogVisible = true;
+        this.selectedData.forEach((item) => this.$refs.dataTable.toggleRowSelection(item,true))
       });
-    },
-    tableRowClassName(v) {
-      if (v.rowIndex % 2 == 1) {
-        return "odd-row";
-      }
-      return "";
     },
     handleSelectionChange(val) {
       this.selectedData = val;
@@ -176,7 +153,6 @@ export default {
     handlerSelect() {
       this.dialogVisible = false;
       this.$emit("input", this.selectedData);
-      this.selectedData = [];
     },
     handlerHideDialog() {
       this.dialogVisible = false;
@@ -187,17 +163,13 @@ export default {
   computed: {},
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 /**#e6f7ff; */
 .form-list >>> .el-table--enable-row-hover .el-table__body tr:hover > td {
   background-color: #d1dfd5;
 }
-.search-text {
-  margin-bottom: 10px;
-}
-</style>
-<style>
-.el-table .odd-row {
-  background-color: #fafafa;
-}
+
+/deep/ .el-table {
+    border-bottom: 1px solid #ebeef5;
+  }
 </style>
