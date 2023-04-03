@@ -9,7 +9,7 @@ export let shoppingCart = {
   //element标签
   ele: 'fancy-shopping-cart',
   //图标
-  compIcon: 'select',
+  compIcon: 'cart',
   //展示表单的模式
   viewType: 'component',
   // 是否可配置

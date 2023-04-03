@@ -17,6 +17,19 @@
     <el-form-item label="标题">     
       <el-input size="small" v-model="props.title" />
     </el-form-item>
+    <el-form-item label="标签宽度">
+      <el-input-number
+        v-model="props.labelWidth"
+        :min="1"
+        :max="200"
+      ></el-input-number>
+    </el-form-item>
+    <el-form-item label="显示标签">
+      <el-switch
+        v-model="props.showLabel"
+        @change="handlerChangeLabel"
+      ></el-switch>
+    </el-form-item>
     <el-form-item label="请求地址">
       <el-input v-model="props.action"></el-input>
     </el-form-item>
@@ -29,7 +42,7 @@
     <el-form-item label="多选">
       <el-switch v-model="props.multi"></el-switch>
     </el-form-item>
-    <el-form-item label="列表高度">
+    <el-form-item label="最大高度">
       <el-input v-model="props.height"></el-input>
     </el-form-item>
     <el-divider>列配置项</el-divider>
@@ -76,6 +89,9 @@ export default {
         prop: '',
         checked:false
       });
+    },
+    handlerChangeLabel(val) {
+      this.props.labelWidth = val ? "80" : "1";
     },
   },
 };

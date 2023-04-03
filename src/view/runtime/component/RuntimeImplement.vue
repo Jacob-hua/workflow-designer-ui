@@ -395,6 +395,7 @@ export default {
       this.$emit("taskSuccess");
     },
     async onDialogClose() {
+      this.removeListener();
       const { result } = await cancleStock({
         taskKey: this.workflow.newTaskId,
       });
@@ -402,6 +403,7 @@ export default {
       this.$emit("close");
     },
     async onCancel() {
+      this.removeListener();
       const { result } = await cancleStock({
         taskKey: this.workflow.newTaskId,
       });
@@ -651,11 +653,16 @@ export default {
       });
       return result;
     },
+    removeListener() {
+      window.removeEventListener("beforeunload", (e) =>
+        this.beforeunloadHandler(e)
+      );
+      window.removeEventListener("unload", this.updateHandler);
+    },
   },
-  beforeDestroy(){
-    window.removeEventListener('beforeunload',(e) => this.beforeunloadHandler(e));
-    window.removeEventListener('unload',this.updateHandler)
-  }
+  beforeDestroy() {
+    this.removeListener();
+  },
 };
 </script>
 

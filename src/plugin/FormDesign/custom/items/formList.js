@@ -14,6 +14,9 @@ export let formList = {
   viewType:'component',
   // 是否可配置
   config: true,
+  showLabel: true,
+  label: '列表',
+  labelWidth: '80',
 
   // 请求地址
   action:'/applet/list',
@@ -28,6 +31,8 @@ export let formList = {
   
   //禁用
   disabled:false,
+
+  height:'600',
 
   flex: 'default',
   justify: 'start',
