@@ -57,7 +57,7 @@ function buildModel(model, metaData) {
     return result;
   }
 
-  // if (metaData.isCopy) {
+  if (metaData.isCopy) {
     result[metaData.id] = [];
     let tempModel = {};
     if (Array.isArray(metaData.columns)) {
@@ -69,12 +69,12 @@ function buildModel(model, metaData) {
     }
     result[metaData.id].push(tempModel);
     return result;
-  // }
+  }
 
-  // metaData.columns.forEach(({ list }) => {
-  //   list.forEach((item) => (result = buildModel(result, item)));
-  // });
-  // return result;
+  metaData.columns.forEach(({ list }) => {
+    list.forEach((item) => (result = buildModel(result, item)));
+  });
+  return result;
 }
 
 function buildColumnContainer(h, metaData, valuePath, usefulMeta = {}) {
@@ -97,7 +97,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     mixinDependFunction(fieldInfo, handleRowContainerDependChange.bind(this));
   }
 
-  if (!fieldInfo.isCopy&&!fieldInfo.isFold) {
+  if (!fieldInfo.isCopy && !fieldInfo.isFold) {
     if (!fieldInfo.visible) {
       return <div></div>;
     }
@@ -213,7 +213,7 @@ export default {
     "processInstanceId",
     "cancleStockFun",
     "checkStockFun",
-    "checkStockAndUseFun"
+    "checkStockAndUseFun",
   ],
   components: { render },
   data() {

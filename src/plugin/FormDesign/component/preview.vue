@@ -92,32 +92,27 @@ function buildModel(model, metaData) {
     return result;
   }
 
-  // if (metaData.isCopy) {
-  result[metaData.id] = [];
-  let tempModel = {};
-  if (Array.isArray(metaData.columns)) {
-    metaData.columns.forEach(({ list }) => {
-      list.forEach((colMeta) => {
-        tempModel = buildModel(tempModel, colMeta);
+  if (metaData.isCopy) {
+    result[metaData.id] = [];
+    let tempModel = {};
+    if (Array.isArray(metaData.columns)) {
+      metaData.columns.forEach(({ list }) => {
+        list.forEach((colMeta) => {
+          tempModel = buildModel(tempModel, colMeta);
+        });
       });
-    });
+    }
+    result[metaData.id].push(tempModel);
+    return result;
   }
-  result[metaData.id].push(tempModel);
-  return result;
-  // }
 
-  // metaData.columns.forEach(({ list }) => {
-  //   list.forEach((item) => (result = buildModel(result, item)));
-  // });
-  // return result;
+  metaData.columns.forEach(({ list }) => {
+    list.forEach((item) => (result = buildModel(result, item)));
+  });
+  return result;
 }
 
-function buildColumnContainer(
-  h,
-  metaData,
-  valuePath,
-  usefulMeta = {},
-) {
+function buildColumnContainer(h, metaData, valuePath, usefulMeta = {}) {
   return metaData.columns.map(({ list, span }) => {
     const formItems = list.map((item) =>
       buildFormItem.call(this, h, item, valuePath, usefulMeta)
@@ -163,15 +158,15 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     setKey(cloneObj);
     _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, cloneObj);
   };
-  const setKey = (childObj) =>{
+  const setKey = (childObj) => {
     childObj.key = _.uniqueId();
-    for(let k in childObj){
-      if(childObj[k] instanceof Array){
+    for (let k in childObj) {
+      if (childObj[k] instanceof Array) {
         childObj = childObj[k][0];
-        setKey(childObj)
+        setKey(childObj);
       }
     }
-  }
+  };
   const onDelete = (item, index) => {
     const value = _.get(this.form, `${valuePath}`, []);
     if (value.length <= 1) {
@@ -188,8 +183,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   };
 
   const doFolded = (value) => {
-    this.folded[`${value.key}`] =
-      !this.folded[`${value.key}`];
+    this.folded[`${value.key}`] = !this.folded[`${value.key}`];
     this.$forceUpdate();
   };
   const multipleDisabled = this.formConf.disabled || fieldInfo.disabled;
