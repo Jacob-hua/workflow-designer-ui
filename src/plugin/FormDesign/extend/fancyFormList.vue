@@ -4,12 +4,13 @@
     <el-button
       @click.native="handlerShowDialog"
       style="width: 100px"
+      :disabled="disabled"
       type="primary"
       >{{ title }}</el-button
     >
     <el-table
-      v-if="formConf.disabled"
-      :data="gridData"
+      v-if="selectedData.length"
+      :data="selectedData"
       border
       :row-style="{ height: '10px' }"
       :cell-style="{ padding: '5px 0' }"
@@ -26,7 +27,7 @@
         :label="item.label"
         align="center"
         :key="index"
-        v-for="(item, index) in columns"
+        v-for="(item, index) in tableColumn"
       />
     </el-table>
     <el-dialog
@@ -72,7 +73,7 @@
           :label="item.label"
           align="center"
           :key="index"
-          v-for="(item, index) in columns"
+          v-for="(item, index) in tableColumn"
         />
       </el-table>
       <span slot="footer" class="dialog-footer">
@@ -112,11 +113,15 @@ export default {
       type: String,
       default: "",
     },
+    actionMode: {
+      type: String,
+      default: "GET",
+    },
     height: {
       type: Number,
       default: 600,
     },
-    columns: {
+    tableColumn: {
       type: Array,
       default: [],
     },
@@ -127,10 +132,10 @@ export default {
   },
   data() {
     return {
-      selectedData: [],
+      selectedData: this.$props.value,
       dialogValue: "",
       dialogVisible: false,
-      gridData: this.$props.value,
+      gridData: [],
     };
   },
   mounted() {
@@ -142,19 +147,22 @@ export default {
         (sessionStorage.getItem("loginData") &&
           JSON.parse(sessionStorage.getItem("loginData"))) ||
         "";
-      this.$axios
-        .get(this.action, {
-          headers: {
-            "X-SIACT-TOKEN": userInfo.token,
-            "X-SIACT-SOURCE": "PC",
-            "X-SIACT-TOKEN-TYPE": "1",
-          },
-        })
-        .then((res) => {
-          this.gridData = [];
-          this.gridData = this.gridData.concat(res.data.result);
-          this.dialogVisible = true;
-        });
+      let url = process.env.VUE_APP_BASE_API
+        ? `${process.env.VUE_APP_BASE_API}${this.action}`
+        : this.action;
+      this.$axios({
+        url: url,
+        method: this.actionMode,
+        headers: {
+          "X-SIACT-TOKEN": userInfo.token,
+          "X-SIACT-SOURCE": "PC",
+          "X-SIACT-TOKEN-TYPE": "1",
+        },
+      }).then((res) => {
+        this.gridData = [];
+        this.gridData = this.gridData.concat(res.data.result);
+        this.dialogVisible = true;
+      });
     },
     tableRowClassName(v) {
       if (v.rowIndex % 2 == 1) {
@@ -167,12 +175,11 @@ export default {
     },
     handlerSelect() {
       this.dialogVisible = false;
-      if (this.disabled) return;
       this.$emit("input", this.selectedData);
+      this.selectedData = [];
     },
     handlerHideDialog() {
       this.dialogVisible = false;
-      if (this.disabled) return;
       this.selectedData = [];
       this.$emit("input", this.selectedData);
     },
