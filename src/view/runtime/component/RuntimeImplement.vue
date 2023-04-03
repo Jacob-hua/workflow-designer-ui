@@ -653,8 +653,8 @@ export default {
     },
   },
   beforeDestroy(){
-    window.removeEventListener('beforeunload');
-    window.removeEventListener('unload')
+    window.removeEventListener('beforeunload',(e) => this.beforeunloadHandler(e));
+    window.removeEventListener('unload',this.updateHandler)
   }
 };
 </script>

@@ -88,6 +88,7 @@ function buildModel(model, metaData) {
   let result = { ...model };
   if (metaData.compType !== "row") {
     result[metaData.id] = metaData.value;
+    result["key"] = _.uniqueId();
     return result;
   }
 
@@ -111,10 +112,16 @@ function buildModel(model, metaData) {
   // return result;
 }
 
-function buildColumnContainer(h, metaData, valuePath, usefulMeta = {}) {
+function buildColumnContainer(
+  h,
+  metaData,
+  valuePath,
+  usefulMeta = {},
+  key = ""
+) {
   return metaData.columns.map(({ list, span }) => {
     const formItems = list.map((item) =>
-      buildFormItem.call(this, h, item, valuePath, usefulMeta)
+      buildFormItem.call(this, h, item, valuePath, usefulMeta, key)
     );
     return <el-col span={span}>{formItems}</el-col>;
   });
@@ -154,10 +161,22 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
     const cloneObj = _.cloneDeep(
       _.get(this.initForm, `${valuePath}[0]`.replace(/\[(.*?)\]/g, "[0]"))
     );
-    cloneObj['key'] = Math.random()
+    console.log(_.get(cloneObj,'key'),'keys');
+    setKey(cloneObj);
+    // Object.keys(cloneObj)
+    // cloneObj["key"] = new Date().getTime();
     _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, cloneObj);
   };
-  const onDelete = (item,index,infoId) => {
+  const setKey = (childObj) =>{
+    childObj.key = _.uniqueId();
+    for(let k in childObj){
+      if(childObj[k] instanceof Array){
+        childObj = childObj[k][0];
+        setKey(childObj)
+      }
+    }
+  }
+  const onDelete = (item, index, infoId) => {
     const value = _.get(this.form, `${valuePath}`, []);
     if (value.length <= 1) {
       return;
@@ -167,13 +186,14 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
       .forEach((key) => {
         this.$delete(this.usefulMeta, key);
       });
+    this.folded[`${item.key ? item.key : infoId}`] = false;
     _.get(this.form, `${valuePath}`, []).splice(index, 1);
-    this.folded[`${item.key?item.key:infoId}`] = false;
-    this.$forceUpdate();
+    // this.$forceUpdate();
   };
 
-  const doFolded = (value,index) => {
-    this.folded[`${value.key?value.key:index}`] = !this.folded[`${value.key?value.key:index}`];
+  const doFolded = (value, index) => {
+    this.folded[`${value.key ? value.key : index}`] =
+      !this.folded[`${value.key ? value.key : index}`];
     this.$forceUpdate();
   };
   const multipleDisabled = this.formConf.disabled || fieldInfo.disabled;
@@ -184,7 +204,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
         body-style={{ padding: "0px" }}
         style={{ margin: "10px 3px" }}
         shadow="always"
-        key={`${value.key?value.key:fieldInfo.id}`}
+        key={`${value.key ? value.key : fieldInfo.id}`}
       >
         <div slot="header" class="clearfix">
           {`#${index + 1}.${fieldInfo.title}`}
@@ -192,7 +212,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
             style="float: right; padding: 3px 0; margin: 0 10px;"
             icon="el-icon-delete"
             type="text"
-            onClick={() => onDelete(value,index,fieldInfo.id)}
+            onClick={() => onDelete(value, index, fieldInfo.id)}
             disabled={multipleDisabled}
           ></el-button>
           {fieldInfo.isCopy ? (
@@ -208,10 +228,10 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
           )}
           {fieldInfo.isFold ? (
             <el-button
-              onClick={() => doFolded(value,fieldInfo.id)}
+              onClick={() => doFolded(value, fieldInfo.id)}
               type="text"
               icon={
-                !this.folded[`${value.key?value.key:fieldInfo.id}`]
+                !this.folded[`${value.key ? value.key : fieldInfo.id}`]
                   ? "el-icon-arrow-up"
                   : "el-icon-arrow-down"
               }
@@ -223,7 +243,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
         <el-collapse-transition>
           <el-row
             gutter={fieldInfo.gutter}
-            v-show={!this.folded[`${value.key?value.key:fieldInfo.id}`]}
+            v-show={!this.folded[`${value.key ? value.key : fieldInfo.id}`]}
             style={{ padding: "10px 0px" }}
           >
             <div>
@@ -232,7 +252,8 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
                 h,
                 fieldInfo,
                 `${valuePath}[${index}]`,
-                usefulMeta
+                usefulMeta,
+                value.key
               )}
             </div>
           </el-row>
@@ -244,7 +265,7 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   return <div>{multipleRowElements}</div>;
 }
 
-function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
+function buildFormItem(h, metaData, valuePath, usefulMeta = {}, key = "") {
   if (metaData.compType === "row") {
     return buildRowContainer.call(this, h, metaData, valuePath, usefulMeta);
   }
@@ -298,7 +319,11 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
         rules={rules}
       >
         <render
-          key={fieldInfo.id}
+          key={
+            key
+              ? `${fieldInfo.id}_${key}`
+              : `${fieldInfo.id}_${_.uniqueId()}`
+          }
           conf={fieldInfo}
           formConf={this.formConf}
           value={_.get(this.form, fieldInfo.valuePath)}
