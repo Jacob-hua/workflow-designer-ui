@@ -17,6 +17,10 @@ export let formList = {
 
   // 请求地址
   action:'/applet/list',
+  //请求方式
+  actionMode:'GET',
+  //请求头
+  actionHeader:'',
   //显示序号
   showIndex:false,
   //多选
@@ -30,6 +34,6 @@ export let formList = {
   align: 'top',
   gutter: 0,
   visible: true,
-  columns: [],
+  tableColumn: [],
   value:[]
 }

@@ -20,6 +20,9 @@
     <el-form-item label="请求地址">
       <el-input v-model="props.action"></el-input>
     </el-form-item>
+    <el-form-item label="请求方式">
+      <el-input v-model="props.actionMode"></el-input>
+    </el-form-item>
     <el-form-item label="显示序号">
       <el-switch v-model="props.showIndex"></el-switch>
     </el-form-item>
@@ -31,7 +34,7 @@
     </el-form-item>
     <el-divider>列配置项</el-divider>
     <div
-      v-for="(item, index) in props.columns"
+      v-for="(item, index) in props.tableColumn"
       :key="index"
       class="select-item"
     >
@@ -43,7 +46,7 @@
       <el-input v-model="item.prop" size="small" placeholder="属性" required></el-input>
       <div
         class="close-btn select-line-icon"
-        @click="props.columns.splice(index, 1)"
+        @click="props.tableColumn.splice(index, 1)"
       >
         <i class="el-icon-remove-outline" />
       </div>
@@ -68,7 +71,7 @@ export default {
   mixins: [changeId],
   methods: {
     handlerAddCol() {
-      this.props.columns.push({
+      this.props.tableColumn.push({
         label: '',
         prop: '',
         checked:false
