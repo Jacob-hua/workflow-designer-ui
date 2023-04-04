@@ -17,25 +17,23 @@
     <el-form-item label="标题">     
       <el-input size="small" v-model="props.title" />
     </el-form-item>
-    <el-form-item label="标签宽度">
+    <el-form-item label="左边距">
       <el-input-number
         v-model="props.labelWidth"
         :min="1"
         :max="200"
       ></el-input-number>
     </el-form-item>
-    <el-form-item label="显示标签">
+    <!-- <el-form-item label="显示标签">
       <el-switch
         v-model="props.showLabel"
         @change="handlerChangeLabel"
       ></el-switch>
-    </el-form-item>
-    <el-form-item label="请求地址">
+    </el-form-item> -->
+    <!-- <el-form-item label="请求地址">
       <el-input v-model="props.action"></el-input>
-    </el-form-item>
-    <el-form-item label="请求方式">
-      <el-input v-model="props.actionMode"></el-input>
-    </el-form-item>
+    </el-form-item> -->
+    <interface-parser :key="props._id" :currentField="props" @variableChange="onVariableChange" />
     <el-form-item label="显示序号">
       <el-switch v-model="props.showIndex"></el-switch>
     </el-form-item>
@@ -78,11 +76,21 @@
 </template>
 <script>
 import { changeId } from "../mixin";
+import { mapMutations } from 'vuex'
+import InterfaceParser from './component/InterfaceParser.vue'
 export default {
   name: "rowConfig",
   props: ["props", "getFormId"],
+  components: {
+    InterfaceParser,
+  },
   mixins: [changeId],
   methods: {
+    ...mapMutations('form', ['addThirdPartyApi']),
+    onVariableChange(requestConfig) {
+      this.props.requestConfig = requestConfig
+      this.addThirdPartyApi({ id: requestConfig.id })
+    },
     handlerAddCol() {
       this.props.tableColumn.push({
         label: '',

@@ -14,9 +14,9 @@ export let formList = {
   viewType:'component',
   // 是否可配置
   config: true,
-  showLabel: true,
+  showLabel: false,
   label: '列表',
-  labelWidth: '80',
+  labelWidth: '0',
 
   // 请求地址
   action:'/applet/list',

@@ -7,7 +7,6 @@
     <el-table
       v-if="selectedData.length"
       :data="selectedData"
-      border
       :highlight-current-row="!multi"
       :max-height="`${height}px`"
     >
@@ -22,7 +21,6 @@
     <el-dialog
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
-      :title="title"
       width="60%"
       center
       :append-to-body="true"
@@ -33,7 +31,6 @@
       <el-table
         ref="dataTable"
         :data="gridData"
-        border
         :highlight-current-row="!multi"
         :max-height="`${height}px`"
         @selection-change="handleSelectionChange"
@@ -67,6 +64,7 @@
 </template>
 
 <script>
+import { executeApi } from "@/api/globalConfig";
 export default {
   name: "fancyFormList",
   props: {
@@ -111,6 +109,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    requestConfig: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -120,31 +122,37 @@ export default {
       gridData: [],
     };
   },
-  mounted() {
-    this.$nextTick(() => {});
+  watch: {
+    gridData(tableList){
+      tableList.forEach(item => {
+        this.selectedData.forEach(({id}) => {
+          if(item.id === id){
+            this.$nextTick(() => {
+              this.$refs.dataTable.toggleRowSelection(item,true);
+            })
+          }
+        })
+      })
+    }
   },
   methods: {
     handlerShowDialog() {
-      let userInfo =
-        (sessionStorage.getItem("loginData") &&
-          JSON.parse(sessionStorage.getItem("loginData"))) ||
-        "";
-      let url = process.env.VUE_APP_BASE_API
-        ? `${process.env.VUE_APP_BASE_API}${this.action}`
-        : this.action;
-      this.$axios({
-        url: url,
-        method: this.actionMode,
-        headers: {
-          "X-SIACT-TOKEN": userInfo.token,
-          "X-SIACT-SOURCE": "PC",
-          "X-SIACT-TOKEN-TYPE": "1",
-        },
-      }).then((res) => {
-        this.gridData = [];
-        this.gridData = this.gridData.concat(res.data.result);
+      if (this.$props.tableColumn.length <= 0) {
         this.dialogVisible = true;
-        this.selectedData.forEach((item) => this.$refs.dataTable.toggleRowSelection(item,true))
+        return;
+      }
+      if (Object.keys(this.$props.requestConfig) === 0) {
+        this.dialogVisible = true;
+        return;
+      }
+      const { apiMark, sourceMark, parameter } = this.$props.requestConfig;
+      executeApi({
+        apiMark: apiMark,
+        sourceMark: sourceMark,
+        data: parameter,
+      }).then(({ result }) => {
+        this.gridData = result.result;
+        this.dialogVisible = true;
       });
     },
     handleSelectionChange(val) {
@@ -156,8 +164,7 @@ export default {
     },
     handlerHideDialog() {
       this.dialogVisible = false;
-      this.selectedData = [];
-      this.$emit("input", this.selectedData);
+      // this.$emit("input", this.selectedData);
     },
   },
   computed: {},
@@ -168,8 +175,4 @@ export default {
 .form-list >>> .el-table--enable-row-hover .el-table__body tr:hover > td {
   background-color: #d1dfd5;
 }
-
-/deep/ .el-table {
-    border-bottom: 1px solid #ebeef5;
-  }
 </style>
