@@ -5,7 +5,7 @@ export let shoppingCart = {
   _id: '',
   compType: 'shoppingCart',
   //控件名称
-  compName: '购物车 ',
+  compName: '备品备件',
   //element标签
   ele: 'fancy-shopping-cart',
   //图标
