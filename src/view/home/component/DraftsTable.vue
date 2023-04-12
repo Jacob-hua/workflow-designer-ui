@@ -8,9 +8,9 @@
           <span class="file">{{ scope.row.deployName }}.bpmn</span>
         </template>
       </el-table-column>
-      <el-table-column prop="periodicityFlag" label="周期性">
+      <el-table-column prop="triggerModel" label="触发模式">
         <template slot-scope="scope">
-          <span>{{ scope.row.periodicityFlag ? '是' : '否' }}</span>
+          <span>{{ handleTriggerModel(scope.row.triggerModel) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="createBy" label="创建人"> </el-table-column>
@@ -163,6 +163,14 @@ export default {
       }
       this.deployOptionsVisible = true
     },
+    handleTriggerModel(model){
+      const modelObj = {
+        0: '周期性',
+        1: '固定触发',
+        3: '无'
+      }
+      return modelObj[model];
+    }
   },
 }
 </script>

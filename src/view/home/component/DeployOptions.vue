@@ -125,26 +125,36 @@ export default {
   computed: {
     ...mapState("account", ["tenantId", "userInfo"]),
     ruleId() {
-      return this.workflow.triggerModel === '1' ? this.workflow.rule.ruleId : "";
+      return this.workflow.triggerModel === "1"
+        ? this.workflow.rule.ruleId
+        : "";
     },
     processDisplayInfo() {
-      const cycleInfo = this.workflow.triggerModel === '1'
-        ? [
-            {
-              label: "周期性",
-              value: "是",
-            },
-            {
-              label: "周期规则",
-              value: this.workflow.rule.cronExpression,
-            },
-          ]
-        : [
-            {
-              label: "周期性",
-              value: "否",
-            },
-          ];
+      const cycleInfo =
+        this.workflow.triggerModel === "1"
+          ? [
+              {
+                label: "触发模式",
+                value: "周期性",
+              },
+              {
+                label: "周期规则",
+                value: this.workflow.rule.cronExpression,
+              },
+            ]
+          : this.workflow.triggerModel === "2"
+          ? [
+              {
+                label: "触发模式",
+                value: "固定触发",
+              },
+            ]
+          : [
+              {
+                label: "触发模式",
+                value: "无",
+              },
+            ];
       return [
         {
           label: "流程编码",
