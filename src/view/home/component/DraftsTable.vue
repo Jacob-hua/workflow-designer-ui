@@ -165,9 +165,9 @@ export default {
     },
     handleTriggerModel(model){
       const modelObj = {
-        0: '周期性',
-        1: '固定触发',
-        3: '无'
+        '1': '周期性',
+        '2': '固定触发',
+        '3': '无'
       }
       return modelObj[model];
     }
