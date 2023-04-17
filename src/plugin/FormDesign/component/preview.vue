@@ -161,7 +161,11 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
   const setKey = (childObj) => {
     childObj.key = _.uniqueId();
     for (let k in childObj) {
-      if (childObj[k] instanceof Array) {
+      if (
+        childObj[k] instanceof Array &&
+        childObj[k].length > 0 &&
+        childObj[k][0] instanceof Object
+      ) {
         childObj = childObj[k][0];
         setKey(childObj);
       }
