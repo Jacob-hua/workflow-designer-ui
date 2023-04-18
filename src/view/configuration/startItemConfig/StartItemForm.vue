@@ -106,9 +106,10 @@ export default {
   },
   methods: {
     onClose() {
-      this.formList = []
-      this.formContent = {}
-      this.$emit('update:visible', false)
+      this.formName = '';
+      this.formList = [];
+      this.formContent = {};
+      this.$emit('update:visible', false);
     },
     handleNodeClick(data) {
       if (data.parentId !== '-1') {
@@ -185,6 +186,12 @@ export default {
       return newForm
     },
   },
+  watch:{
+    activeBusiness(newVal, oldVal){
+      if(newVal === oldVal)return;
+      this.formName = '';
+    }
+  }
 }
 </script>
 
