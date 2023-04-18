@@ -92,7 +92,7 @@ function buildModel(model, metaData) {
     return result;
   }
 
-  if (metaData.isCopy) {
+  if (metaData.isCopy || metaData.isFold) {
     result[metaData.id] = [];
     let tempModel = {};
     if (Array.isArray(metaData.columns)) {
