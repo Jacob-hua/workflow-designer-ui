@@ -23,11 +23,20 @@
           <div class="form-preview">
             <div class="title">
               <div>启动项表单</div>
-              <el-button class="remove-button" v-if="formShow" @click="onRemoveForm"> 移除表单 </el-button>
+              <el-button
+                class="remove-button"
+                v-if="formShow"
+                @click="onRemoveForm"
+              >
+                移除表单
+              </el-button>
             </div>
             <div class="content-wrapper form">
               <div v-if="formShow">
-                <preview :itemList="formContent.fields" :formConf="formContent.config"></preview>
+                <preview
+                  :itemList="formContent.fields"
+                  :formConf="formContent.config"
+                ></preview>
               </div>
               <div v-else class="empty-data">当前未关联表单</div>
             </div>
@@ -35,10 +44,23 @@
           <div class="form-list-wrapper">
             <div class="title">表单筛选</div>
             <div class="search-form">
-              <el-input v-model="formName" placeholder="请输入内容" @keyup.native.enter="fetchFormList"></el-input>
+              <el-input
+                v-model="formName"
+                placeholder="请输入内容"
+                @keyup.native.enter="fetchFormList"
+              ></el-input>
             </div>
             <div class="content-wrapper">
-              <div v-for="{ id, version, name, formContent: { list: fields, config }, docName } in formList" :key="id">
+              <div
+                v-for="{
+                  id,
+                  version,
+                  name,
+                  formContent: { list: fields, config },
+                  docName,
+                } in formList"
+                :key="id"
+              >
                 <div class="info">
                   <div>{{ name }}</div>
                   <div>
@@ -47,10 +69,19 @@
                 </div>
                 <div class="operations">
                   <el-popover placement="right" width="400" trigger="click">
-                    <preview class="preview-popper" :itemList="fields" :formConf="config"></preview>
+                    <preview
+                      class="preview-popper"
+                      :itemList="fields"
+                      :formConf="config"
+                    ></preview>
                     <span class="preview-button" slot="reference"> 查看 </span>
                   </el-popover>
-                  <span class="link-button" @click="onLinked({ id, docName, fields, config })"> 关联 </span>
+                  <span
+                    class="link-button"
+                    @click="onLinked({ id, docName, fields, config })"
+                  >
+                    关联
+                  </span>
                 </div>
               </div>
             </div>
@@ -62,14 +93,18 @@
 </template>
 
 <script>
-import { getSelectProcessStartForm, linkStartForm, removeStartForm } from '@/api/globalConfig'
-import { designFormDesignServiceAll } from '@/api/unit/api.js'
-import preview from '@/plugin/FormDesign/component/preview'
-import { mapState } from 'vuex'
-import PeTree from '@/component/PeTree.vue'
+import {
+  getSelectProcessStartForm,
+  linkStartForm,
+  removeStartForm,
+} from "@/api/globalConfig";
+import { designFormDesignServiceAll } from "@/api/unit/api.js";
+import preview from "@/plugin/FormDesign/component/preview";
+import { mapState } from "vuex";
+import PeTree from "@/component/PeTree.vue";
 
 export default {
-  name: 'DeployOptions',
+  name: "DeployOptions",
   components: {
     preview,
     PeTree,
@@ -89,110 +124,120 @@ export default {
     return {
       formContent: {},
       formList: [],
-      formName: '',
+      formName: "",
       tableData: [],
       peTreeProps: {
-        children: 'children',
-        label: 'name',
+        children: "children",
+        label: "name",
       },
       activeBusiness: null,
-    }
+    };
   },
   computed: {
-    ...mapState('account', ['userInfo', 'tenantId']),
+    ...mapState("account", ["userInfo", "tenantId"]),
     formShow() {
-      return Object.keys(this.formContent).length > 0
+      return Object.keys(this.formContent).length > 0;
     },
   },
   methods: {
     onClose() {
-      this.formName = '';
+      this.formName = "";
       this.formList = [];
       this.formContent = {};
-      this.$emit('update:visible', false);
+      this.$emit("update:visible", false);
     },
     handleNodeClick(data) {
-      if (data.parentId !== '-1') {
-        this.activeBusiness = data
-        this.fetchFormList()
-        this.fetchStartFrom()
+      if (data.parentId !== "-1") {
+        this.activeBusiness = data;
+        this.fetchFormList();
+        this.fetchStartFrom();
       }
     },
     async onLinked({ id, fields, config }) {
+      if (!this.activeBusiness || !this.activeBusiness.id) {
+        this.$message.warning("未选择业务！！！");
+        return;
+      }
       const { errorInfo } = await linkStartForm({
         businessConfigId: this.activeBusiness?.id,
         formId: id,
-      })
+      });
       if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
+        this.$message.error(errorInfo.errorMsg);
+        return;
       }
       this.formContent = {
         fields,
         config,
-      }
+      };
     },
     onRemoveForm() {
-      this.$confirm(`此操作将解除${this.activeBusiness?.name}的启动项表单，是否继续？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        cancelButtonClass: 'btn-custom-cancel',
-        type: 'warning',
-      })
+      this.$confirm(
+        `此操作将解除${this.activeBusiness?.name}的启动项表单，是否继续？`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          cancelButtonClass: "btn-custom-cancel",
+          type: "warning",
+        }
+      )
         .then(async () => {
           const { errorInfo } = await removeStartForm({
             businessConfigId: this.activeBusiness?.id,
-          })
+          });
           if (errorInfo.errorCode) {
-            this.$message.error(errorInfo.errorMsg)
-            return
+            this.$message.error(errorInfo.errorMsg);
+            return;
           }
-          this.formContent = {}
+          this.formContent = {};
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     async fetchStartFrom() {
       const { errorInfo, result } = await getSelectProcessStartForm({
         businessConfigId: this.activeBusiness?.id,
-      })
+      });
       if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
+        this.$message.error(errorInfo.errorMsg);
+        return;
       }
       if (!result) {
-        this.formContent = {}
-        return
+        this.formContent = {};
+        return;
       }
-      this.formContent = this.disableForm(result).formContent
+      this.formContent = this.disableForm(result).formContent;
     },
     async fetchFormList() {
-      const { errorInfo, result: formList = [] } = await designFormDesignServiceAll({
-        status: 'enabled',
-        tenantId: this.tenantId,
-        ascription: this.businessData[0]?.code,
-        business: this.activeBusiness?.code,
-        name: this.formName,
-      })
+      const { errorInfo, result: formList = [] } =
+        await designFormDesignServiceAll({
+          status: "enabled",
+          tenantId: this.tenantId,
+          ascription: this.businessData[0]?.code,
+          business: this.activeBusiness?.code,
+          name: this.formName,
+        });
       if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
+        this.$message.error(errorInfo.errorMsg);
       }
-      this.formList = formList.map(this.disableForm)
+      this.formList = formList.map(this.disableForm);
     },
     disableForm(form) {
-      const newForm = { ...form }
-      newForm.formContent = JSON.parse(newForm.content)
-      newForm.formContent.fields = newForm.formContent.list
-      newForm.formContent.config && (newForm.formContent.config.disabled = true)
-      return newForm
+      const newForm = { ...form };
+      newForm.formContent = JSON.parse(newForm.content);
+      newForm.formContent.fields = newForm.formContent.list;
+      newForm.formContent.config &&
+        (newForm.formContent.config.disabled = true);
+      return newForm;
     },
   },
-  watch:{
-    activeBusiness(newVal, oldVal){
-      if(newVal === oldVal)return;
-      this.formName = '';
-    }
-  }
-}
+  watch: {
+    activeBusiness(newVal, oldVal) {
+      if (newVal === oldVal) return;
+      this.formName = "";
+    },
+  },
+};
 </script>
 
 <style lang="scss">

@@ -1,14 +1,18 @@
 <!--文本扩展-->
 <template>
   <div class="form-list">
-    <el-button @click.native="handlerShowDialog" type="primary">{{
-      title
-    }}</el-button>
+    <el-button
+      v-if="!formConf || !formConf.disabled"
+      @click.native="handlerShowDialog"
+      type="primary"
+      >{{ title }}</el-button
+    >
     <el-table
       v-if="selectedData.length"
       :data="selectedData"
       :highlight-current-row="!multi"
       :max-height="`${height}px`"
+      style="width: 100%"
     >
       <el-table-column
         :prop="item.prop"
@@ -33,11 +37,11 @@
         :data="gridData"
         :highlight-current-row="!multi"
         :max-height="`${height}px`"
+        style="width: 100%"
         @selection-change="handleSelectionChange"
       >
         <el-table-column
           type="selection"
-          width="55"
           v-if="multi && !disabled"
           align="center"
         ></el-table-column>
@@ -123,17 +127,20 @@ export default {
     };
   },
   watch: {
-    gridData(tableList){
-      tableList.forEach(item => {
-        this.selectedData.forEach(({id}) => {
-          if(item.id === id){
+    gridData(tableList) {
+      tableList.forEach((item) => {
+        this.selectedData.forEach(({ id }) => {
+          if (item.id === id) {
             this.$nextTick(() => {
-              this.$refs.dataTable.toggleRowSelection(item,true);
-            })
+              this.$refs.dataTable.toggleRowSelection(item, true);
+            });
           }
-        })
-      })
-    }
+        });
+      });
+    },
+    value(val) {
+      this.selectedData = val;
+    },
   },
   methods: {
     handlerShowDialog() {
@@ -174,5 +181,21 @@ export default {
 /**#e6f7ff; */
 .form-list >>> .el-table--enable-row-hover .el-table__body tr:hover > td {
   background-color: #d1dfd5;
+}
+
+::v-deep .el-table__body-wrapper {
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    display: block;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #eee;
+    border-radius: 4px;
+  }
 }
 </style>

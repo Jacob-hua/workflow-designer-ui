@@ -267,7 +267,7 @@ export default {
     isTypeAnImage(file) {
       let patternFileExtension = /\.([0-9a-z]+)(?:[\?#]|$)/i
       let ext = file.name.match(patternFileExtension)[1]
-      return ['png', 'jpg', 'jpeg', 'gif', 'webp', 'psd', 'tiff'].indexOf(ext.toLowerCase()) !== -1
+      return ['png', 'jpg', 'jpeg', 'gif', 'psd', 'tiff'].indexOf(ext.toLowerCase()) !== -1
     },
     blobToBase64(blob) {
       const reader = new FileReader()
