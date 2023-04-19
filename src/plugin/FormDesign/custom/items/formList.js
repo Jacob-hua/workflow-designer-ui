@@ -27,7 +27,7 @@ export let formList = {
   //显示序号
   showIndex:false,
   //多选
-  multi:true,
+  multi:false,
   
   //禁用
   disabled:false,

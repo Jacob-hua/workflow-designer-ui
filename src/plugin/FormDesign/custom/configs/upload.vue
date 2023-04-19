@@ -68,7 +68,7 @@ export default {
       if (val === 'text') {
         this.props.accept = '.pdf, .doc, .docx, .xls, .xlsx'
       } else {
-        this.props.accept = '.png, .jpg, .jpeg, .gif, .webp'
+        this.props.accept = '.png, .jpg, .jpeg, .gif'
       }
     },
     handlerChangeLabel(val) {
