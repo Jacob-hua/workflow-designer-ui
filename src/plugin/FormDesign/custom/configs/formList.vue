@@ -24,25 +24,17 @@
         :max="200"
       ></el-input-number>
     </el-form-item>
-    <!-- <el-form-item label="显示标签">
-      <el-switch
-        v-model="props.showLabel"
-        @change="handlerChangeLabel"
-      ></el-switch>
-    </el-form-item> -->
-    <!-- <el-form-item label="请求地址">
-      <el-input v-model="props.action"></el-input>
-    </el-form-item> -->
     <interface-parser :key="props._id" :currentField="props" @variableChange="onVariableChange" />
     <el-form-item label="显示序号">
       <el-switch v-model="props.showIndex"></el-switch>
     </el-form-item>
-    <el-form-item label="多选">
+    <!-- <el-form-item label="多选">
       <el-switch v-model="props.multi"></el-switch>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="最大高度">
       <el-input v-model="props.height"></el-input>
     </el-form-item>
+    <depend-value :currentField="props" @dependChange="onDependChange" />
     <el-divider>列配置项</el-divider>
     <div
       v-for="(item, index) in props.tableColumn"
@@ -78,15 +70,20 @@
 import { changeId } from "../mixin";
 import { mapMutations } from 'vuex'
 import InterfaceParser from './component/InterfaceParser.vue'
+import DependValue from './component/DependValue.vue'
 export default {
   name: "rowConfig",
   props: ["props", "getFormId"],
   components: {
     InterfaceParser,
+    DependValue
   },
   mixins: [changeId],
   methods: {
     ...mapMutations('form', ['addThirdPartyApi']),
+    onDependChange(dependValue) {
+      this.props.dependValue = dependValue
+    },
     onVariableChange(requestConfig) {
       this.props.requestConfig = requestConfig
       this.addThirdPartyApi({ id: requestConfig.id })
