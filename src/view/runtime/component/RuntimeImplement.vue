@@ -681,7 +681,7 @@ export default {
   & > div:last-child {
     flex: 1;
     padding: 0px 20px;
-    overflow: scroll;
+    overflow: hidden;
   }
 }
 
