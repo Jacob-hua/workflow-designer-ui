@@ -42,7 +42,7 @@
       >
         <el-table-column
           type="selection"
-          v-if="multi && !disabled"
+          v-if="gridData.length && !disabled"
           align="center"
         ></el-table-column>
         <el-table-column
