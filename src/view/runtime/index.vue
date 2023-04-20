@@ -311,6 +311,7 @@ export default {
     },
     onAddSuccess() {
       this.runtimeAddVisible = false
+      this.pageInfo.page = 1
       this.getAllApi()
     },
     onAddTicket() {
