@@ -1,6 +1,6 @@
 import { Message } from 'element-ui'
 import { getProjectList } from '../../api/globalConfig'
-import router from '@/router'
+import { router } from '../../main'
 
 const state = {
   organization: [],

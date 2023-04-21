@@ -36,18 +36,17 @@ const store = new Vuex.Store({
   modules: stores,
 })
 
-let router = null
+export let router = new VueRouter({
+  // base: window.__POWERED_BY_QIANKUN__ ? '/ftkms-gdgl/#/' : '/',
+  mode: 'hash',
+  routes,
+})
 let instance = null
 function render(props = {}) {
   const { container } = props
   if (container) {
     actions.setActions(props)
   }
-  router = new VueRouter({
-    // base: window.__POWERED_BY_QIANKUN__ ? '/ftkms-gdgl/#/' : '/',
-    mode: 'hash',
-    routes,
-  })
   instance = new Vue({
     router,
     store,
