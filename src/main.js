@@ -31,22 +31,27 @@ Vue.use(Bpmn)
 import '@/directive/RoleDirective.js'
 
 Vue.use(Vuex)
+
+const store = new Vuex.Store({
+  modules: stores,
+})
+
 let router = null
 let instance = null
 function render(props = {}) {
   const { container } = props
-  if(container) {
+  if (container) {
     actions.setActions(props)
   }
   router = new VueRouter({
     // base: window.__POWERED_BY_QIANKUN__ ? '/ftkms-gdgl/#/' : '/',
     mode: 'hash',
-    routes
+    routes,
   })
   instance = new Vue({
     router,
-    stores,
-    render: (h) => h(App)
+    store,
+    render: (h) => h(App),
   }).$mount(container ? container.querySelector('#app') : '#app')
 }
 
