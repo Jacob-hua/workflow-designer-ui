@@ -71,7 +71,7 @@ export default {
         sessionStorage.setItem('loginData', JSON.stringify(res.result))
         res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
         this.getMapping(res.result.tenants[0]?.id)
-        this.$router.push('/home')
+        this.$router.push('/home/workflow')
       })
     },
     thirdLogin() {
@@ -93,7 +93,7 @@ export default {
             sessionStorage.setItem('loginData', JSON.stringify(res.result))
             res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
             this.getMapping(res.result.tenants[0]?.id)
-            this.$router.push('/home')
+            this.$router.push('/home/workflow')
             this.updateThirdLogin({ thirdLogin: true })
           })
           .catch(() => {

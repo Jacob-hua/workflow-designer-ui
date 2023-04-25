@@ -38,7 +38,7 @@ service.interceptors.response.use(
       const status = response.status
       const res = response.data
       if (res.errorInfo && res.errorInfo.errorCode) {
-        if (response.config.url !== '/config/global/executeApi'){
+        if (response.config.url !== '/config/global/executeApi') {
           Message({
             type: 'error',
             message: res.errorInfo.errorMsg,

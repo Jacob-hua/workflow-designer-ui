@@ -105,6 +105,11 @@ export default {
     }
 
     let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'))
+    if (!menuProjectList) {
+      this.$router.push('/home/noPermission')
+      this.$message.error('该账号无任何菜单访问权限')
+      return
+    }
 
     this.menuList = menuProjectList.filter((item) => {
       return item.projectList.length > 0
