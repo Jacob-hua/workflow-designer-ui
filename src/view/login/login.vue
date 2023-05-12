@@ -72,9 +72,8 @@ export default {
         res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
         this.getMapping(res.result.tenants[0]?.id)
         const pushRoute =
-          Array.isArray(res.result.menuProjectList) && res.result.menuProjectList[0]
-            ? res.result.menuProjectList[0].menuRoute
-            : 'Workflow'
+          Array.from(res.result.menuProjectList).find(({ projectList }) => projectList.length > 0)?.menuRoute ??
+          'Workflow'
         this.$router.push({
           name: pushRoute,
         })
@@ -101,9 +100,8 @@ export default {
             res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
             this.getMapping(res.result.tenants[0]?.id)
             const pushRoute =
-              Array.isArray(res.result.menuProjectList) && res.result.menuProjectList[0]
-                ? res.result.menuProjectList[0].menuRoute
-                : 'Workflow'
+              Array.from(res.result.menuProjectList).find(({ projectList }) => projectList.length > 0)?.menuRoute ??
+              'Workflow'
             this.$router.push({
               name: pushRoute,
             })
