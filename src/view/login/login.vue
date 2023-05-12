@@ -71,12 +71,19 @@ export default {
         sessionStorage.setItem('loginData', JSON.stringify(res.result))
         res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
         this.getMapping(res.result.tenants[0]?.id)
-        this.$router.push('/home/workflow')
+        const pushRoute =
+          Array.isArray(res.result.menuProjectList) && res.result.menuProjectList[0]
+            ? res.result.menuProjectList[0].menuRoute
+            : 'Workflow'
+        this.$router.push({
+          name: pushRoute,
+        })
       })
     },
     thirdLogin() {
       const userInfoString = sessionStorage.getItem('userInfo')
 
+      this.updateThirdLogin({ thirdLogin: true })
       if (!userInfoString) {
         this.$message.error('登录失败')
         return
@@ -93,8 +100,13 @@ export default {
             sessionStorage.setItem('loginData', JSON.stringify(res.result))
             res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
             this.getMapping(res.result.tenants[0]?.id)
-            this.$router.push('/home/workflow')
-            this.updateThirdLogin({ thirdLogin: true })
+            const pushRoute =
+              Array.isArray(res.result.menuProjectList) && res.result.menuProjectList[0]
+                ? res.result.menuProjectList[0].menuRoute
+                : 'Workflow'
+            this.$router.push({
+              name: pushRoute,
+            })
           })
           .catch(() => {
             this.$router.push('/home/noPermission')
