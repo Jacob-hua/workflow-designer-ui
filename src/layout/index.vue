@@ -19,7 +19,7 @@
           </div>
           <el-menu :default-active="$route.name" router v-if="!status" @select="onSelect">
             <el-menu-item :index="item.menuRoute" v-for="(item, index) in menuList" :key="index">
-              <div :class="menuClass">
+              <div class="menu">
                 <img class="menu-icon" :src="getMenuIcon(item.menuRoute)" />
                 <span>{{ menuListNameMapping[item.menuRoute].label }}</span>
               </div>
@@ -88,10 +88,6 @@ export default {
   },
   computed: {
     ...mapState('account', ['userInfo', 'thirdLogin']),
-    menuClass() {
-      // return this.thirdLogin ? 'third-menu' : ''
-      return ''
-    },
   },
   created() {
     let userInfo = sessionStorage.getItem('loginData')
@@ -239,6 +235,7 @@ $aside-logo-height: 320px;
   .el-menu-item {
     color: $menu-color;
     font-size: 16px;
+    font-family: '楷体', KaiTi, serif;
   }
 
   .is-active {
