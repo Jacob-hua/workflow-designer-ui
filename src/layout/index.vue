@@ -19,7 +19,7 @@
           </div>
           <el-menu :default-active="$route.name" router v-if="!status" @select="onSelect">
             <el-menu-item :index="item.menuRoute" v-for="(item, index) in menuList" :key="index">
-              <div class="menu">
+              <div>
                 <img class="menu-icon" :src="getMenuIcon(item.menuRoute)" />
                 <span>{{ menuListNameMapping[item.menuRoute].label }}</span>
               </div>
@@ -236,6 +236,7 @@ $aside-logo-height: 320px;
     color: $menu-color;
     font-size: 16px;
     font-family: '楷体', KaiTi, serif;
+    font-weight: bold;
   }
 
   .is-active {
