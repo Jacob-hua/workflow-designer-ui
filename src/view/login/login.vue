@@ -92,23 +92,19 @@ export default {
         thirdAuth({
           account: userInfo.account,
           thirdToken: userInfo.mark,
+        }).then((res) => {
+          res.result.account = userInfo.account
+          res.result.name = userInfo.account
+          sessionStorage.setItem('loginData', JSON.stringify(res.result))
+          res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
+          this.getMapping(res.result.tenants[0]?.id)
+          const pushRoute =
+            Array.from(res.result.menuProjectList).find(({ projectList }) => projectList.length > 0)?.menuRoute ??
+            'Workflow'
+          this.$router.push({
+            name: pushRoute,
+          })
         })
-          .then((res) => {
-            res.result.account = userInfo.account
-            res.result.name = userInfo.account
-            sessionStorage.setItem('loginData', JSON.stringify(res.result))
-            res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
-            this.getMapping(res.result.tenants[0]?.id)
-            const pushRoute =
-              Array.from(res.result.menuProjectList).find(({ projectList }) => projectList.length > 0)?.menuRoute ??
-              'Workflow'
-            this.$router.push({
-              name: pushRoute,
-            })
-          })
-          .catch(() => {
-            this.$router.push('/home/noPermission')
-          })
       } catch (error) {
         this.$message.error('登录失败')
       }
