@@ -324,7 +324,7 @@ export default {
   max-height: 70vh;
 
   .el-dialog__body {
-    overflow-y: scroll;
+    overflow: auto;
   }
 }
 
@@ -343,6 +343,10 @@ export default {
 
 .el-tree .is-current > .el-tree-node__content .custom-tree-node {
   background-color: unset !important;
+}
+
+/deep/ .el-tree-node__children {
+  overflow: inherit;
 }
 
 /deep/ .el-input--mini {
