@@ -47,7 +47,7 @@
         </span>
         <span>
           <i
-            v-if="editFlag && node.level < 3"
+            v-if="editFlag && node.level < 5"
             @click="(e) => append(data, node)"
             style="
               font-size: 20px !important;
@@ -318,6 +318,14 @@ export default {
 
 .cancel {
   @include cancelBtn;
+}
+
+/deep/ .el-dialog {
+  max-height: 70vh;
+
+  .el-dialog__body {
+    overflow-y: scroll;
+  }
 }
 
 /deep/ .el-tree-node__content:hover,
