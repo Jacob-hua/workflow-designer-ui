@@ -130,12 +130,9 @@ export default {
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
     ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
+    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren', 'findOrganizations']),
     systemTypeOptions() {
-      let systemOption = this.rootOrganizationChildren(this.formData.ascription).filter((item) => {
-        return item.value === this.formData.business
-      })
-      return systemOption[0]?.children || []
+      return this.findOrganizations(this.formData.business) || []
     },
   },
   mounted() {
