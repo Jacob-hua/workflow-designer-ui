@@ -7,14 +7,12 @@
           <span>部署类型</span>
           <span>
             <el-cascader
-              v-if="systemTypeOptions.length === 0"
-              v-model="business"
-              :options="rootOrganizationChildren(workflow.ascription)"
-              :disabled="true"
+              v-model="systemType"
+              clearable
+              :props="cascaderProps"
+              :options="systemTypeOptions"
+              @change="onSystemTypeChange"
             ></el-cascader>
-            <el-select v-else v-model="systemType" @change="onSystemTypeChange" clearable placeholder="请选择">
-              <el-option v-for="{ value, label } in systemTypeOptions" :key="value" :label="label" :value="value" />
-            </el-select>
           </span>
           <span> 已部署次数: {{ deployNumber }} </span>
         </div>
@@ -76,7 +74,7 @@
 
 <script>
 import BpmnInfo from '@/component/BpmnInfo.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { getDeployBasic } from '@/api/unit/api.js'
 import DeployDetail from './DeployDetail.vue'
 import longText from '../../../component/LongText.vue'
@@ -109,6 +107,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizationChildren', 'findOrganizations']),
     systemTypeOptions() {
       return this.findOrganizations(this.workflow.business)

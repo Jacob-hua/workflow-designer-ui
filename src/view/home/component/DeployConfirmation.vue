@@ -26,10 +26,15 @@
         </el-form-item>
         <el-form-item label="部署类型" prop="systemType" v-if="systemTypeOptions.length > 0">
           <el-col :span="24">
-            <el-select v-model="formData.systemType" placeholder="请选择部署类型">
-              <el-option v-for="{ value, label } in systemTypeOptions" :key="value" :label="label" :value="value">
-              </el-option>
-            </el-select>
+            <el-cascader
+              v-model="formData.systemType"
+              clearable
+              :style="{ width: '100%' }"
+              placeholder="请选择部署类型"
+              :props="cascaderProps"
+              :options="systemTypeOptions"
+            >
+            </el-cascader>
           </el-col>
         </el-form-item>
         <el-form-item label="部署名称" prop="deployName">
