@@ -25,10 +25,7 @@
               class="components-item"
               @click="addComponent(element)"
             >
-              <div
-                class="components-body"
-                :class="{ 'dynamicTable-tips': dynamicTableExist(element) }"
-              >
+              <div class="components-body" :class="{ 'dynamicTable-tips': dynamicTableExist(element) }">
                 <icon :code="element.compIcon" :text="element.compName" />
               </div>
             </div>
@@ -94,21 +91,17 @@
 /**
  * 1.0版本
  */
-import draggable from "vuedraggable";
-import {
-  formItems,
-  assistFormItems,
-  layoutFormItems,
-} from "../custom/itemList";
-import designer from "./designer";
-import Icon from "./icon";
-import { getSimpleId } from "../utils/IdGenerate";
-import formConf from "../custom/formConf";
-import { dynamicTableAllowedItems } from "../custom/formConf";
-let tempActiveData;
+import draggable from 'vuedraggable'
+import { formItems, assistFormItems, layoutFormItems } from '../custom/itemList'
+import designer from './designer'
+import Icon from './icon'
+import { getSimpleId } from '../utils/IdGenerate'
+import formConf from '../custom/formConf'
+import { dynamicTableAllowedItems } from '../custom/formConf'
+let tempActiveData
 
 export default {
-  name: "formDesigner",
+  name: 'formDesigner',
   components: {
     draggable,
     Icon,
@@ -122,89 +115,87 @@ export default {
       designList: [],
       activeData: {},
       formConfig: formConf,
-    };
+    }
   },
   props: {
     value: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   mounted() {},
   methods: {
     clear() {
-      this.designList = [];
-      this.$refs.designer.activeItem = {};
+      this.designList = []
+      this.$refs.designer.activeItem = {}
     },
     addComponent(element) {},
     cloneComponent(origin) {
-      const clone = JSON.parse(JSON.stringify(origin));
-      if (!clone.layout) clone.layout = "colItem";
-      if (clone.layout === "colItem" || clone.layout === "dynamicItem") {
-        let uId = "fd_" + getSimpleId();
-        clone.id = uId;
-        clone._id = uId;
-        tempActiveData = clone;
+      const clone = JSON.parse(JSON.stringify(origin))
+      if (!clone.layout) clone.layout = 'colItem'
+      if (clone.layout === 'colItem' || clone.layout === 'dynamicItem') {
+        let uId = 'fd_' + getSimpleId()
+        clone.id = uId
+        clone._id = uId
+        tempActiveData = clone
       } else {
-        let uId = "row_" + getSimpleId();
-        clone.id = uId;
-        clone._id = uId;
-        tempActiveData = clone;
+        let uId = 'row_' + getSimpleId()
+        clone.id = uId
+        clone._id = uId
+        tempActiveData = clone
       }
-      this.$refs.designer.activeItem = tempActiveData;
+      this.$refs.designer.activeItem = tempActiveData
     },
     onStart(obj) {},
     onEnd(obj) {
       if (obj.from !== obj.to) {
-        this.activeData = tempActiveData;
-        this.$refs.designer.activeItem = this.activeData;
-        if (obj.to.className.indexOf("row-drag") < 0) {
-          this.designList.splice(obj.newIndex, 0, this.activeData);
+        this.activeData = tempActiveData
+        this.$refs.designer.activeItem = this.activeData
+        if (obj.to.className.indexOf('row-drag') < 0) {
+          this.designList.splice(obj.newIndex, 0, this.activeData)
         }
       } else {
-        this.$refs.designer.activeItem = {};
+        this.$refs.designer.activeItem = {}
       }
     },
     getFormData() {
-      return this.formData;
+      return this.formData
     },
     handlerUpdateJSON(json) {
-      const jsonObject = JSON.parse(json);
-      this.designList = [];
-      this.designList = this.designList.concat(jsonObject.list);
+      const jsonObject = JSON.parse(json)
+      this.designList = []
+      this.designList = this.designList.concat(jsonObject.list)
     },
   },
   computed: {
     formData: function () {
-      const list = this.designList;
-      const config = this.formConfig;
-      let formData = {};
-      formData.list = list;
-      formData.config = config;
-      console.log(formData);
-      return JSON.stringify(formData);
+      const list = this.designList
+      const config = this.formConfig
+      let formData = {}
+      formData.list = list
+      formData.config = config
+      return JSON.stringify(formData)
     },
     dynamicTableExist() {
       return function (element) {
         return (
           this.formConfig.dynamicTableAllowed &&
-          this.designList.filter((item) => item.compType === "dynamicTable")
-            .length > 0 &&
+          this.designList.filter((item) => item.compType === 'dynamicTable').length > 0 &&
           dynamicTableAllowedItems.includes(element.compType)
-        );
-      };
+        )
+      }
     },
   },
   watch: {
     value(newVal) {
-      if (newVal !== "") {
-        const formData = JSON.parse(newVal);
-        this.designList = formData.list;
-        this.formConfig = formData.config;
+      if (newVal !== '') {
+        const formData = JSON.parse(newVal)
+        this.designList = formData.list
+        this.formConfig = formData.config
       }
     },
   },
-};
+}
 </script>
 <style scoped>
 .components-title {
