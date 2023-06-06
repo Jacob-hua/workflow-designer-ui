@@ -21,7 +21,8 @@ service.interceptors.request.use(
     }
     config.headers['X-SIACT-SOURCE'] = 'PC'
     let userInfo = (sessionStorage.getItem('loginData') && JSON.parse(sessionStorage.getItem('loginData'))) || ''
-    if (userInfo) {
+    const userInfoString = sessionStorage.getItem('userInfo')
+    if (!userInfoString && userInfo) {
       config.headers['X-SIACT-TOKEN'] = userInfo.token
       config.headers['X-SIACT-TOKEN-TYPE'] = '1'
     }
