@@ -1,12 +1,21 @@
 import { ApiEnum } from '../enum'
 import _ from 'lodash'
 
+/**
+ * 默认的变量空间
+ */
 const defaultVariableSpace = () => ({
   const: {},
   context: {},
   form: {},
 })
 
+/**
+ * 变量处理工厂
+ *
+ * @param {*} param0
+ * @returns
+ */
 export function variableFactory({ method, parameter, body }) {
   const variablesHandlers = {
     [ApiEnum.API_TYPE_GET]: extractVariables(parameter),
@@ -19,6 +28,12 @@ export function variableFactory({ method, parameter, body }) {
   }
 }
 
+/**
+ * 请求参数处理
+ *
+ * @param {*} param0
+ * @returns
+ */
 export function parameterHandlerFactory({ method, parameter, body }) {
   const parameterHandlers = {
     [ApiEnum.API_TYPE_GET]: (payload) => {
@@ -43,6 +58,13 @@ export function parameterHandlerFactory({ method, parameter, body }) {
   }
 }
 
+/**
+ * 变量分类器
+ *
+ * @param {*} param0
+ * @param {*} variableSpace
+ * @returns
+ */
 export function variableClassify({ variable, sourceType, source }, variableSpace = {}) {
   const result = { ...defaultVariableSpace(), ...variableSpace }
   const classifier = {
@@ -65,8 +87,16 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
   return result
 }
 
-export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = false) {
-  const variableSpace = { ...defaultVariableSpace(), ...(fieldInfo.variableSpace ?? {}) }
+/**
+ * 监听执行
+ *
+ * @param {*} prefix
+ * @param {*} fieldInfo
+ * @param {*} executeFunc
+ * @returns
+ */
+export function watchExecute(prefix, fieldInfo, executeFunc = () => {}) {
+  const variableSpace = { ...defaultVariableSpace(), ...(fieldInfo[`${prefix}VariableSpace`] ?? {}) }
 
   !fieldInfo.context && (fieldInfo.context = {})
 
@@ -87,7 +117,7 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
   return fieldInfo
 
   function calculateFuncKey(variableSpace) {
-    return Object.keys(variableSpace).reduce(
+    const key = Object.keys(variableSpace).reduce(
       (funcKey, space) => {
         return Object.keys(variableSpace[space]).reduce(
           (funcKey, key) => (funcKey ? `${funcKey}/${key}` : key),
@@ -96,6 +126,7 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
       },
       fieldInfo.valuePath ? `${fieldInfo.valuePath}` : ''
     )
+    return `${prefix}::${key}`
   }
 
   function calculateDependValue(data, fieldValuePath, dependValuePath) {
@@ -117,7 +148,7 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
       const dependValue = calculateDependValue(data, fieldInfo.valuePath, dependValuePath)
       isDiffed = isDiffed || dependValue !== dependObj[dependValuePath].value
       // 如果前后的dependValue都是假值，则默认为发生变化
-      if (immediate && !dependValue && !dependObj[dependValuePath].value) {
+      if (prefix === 'depend' && !dependValue && !dependObj[dependValuePath].value) {
         isDiffed = true
       }
       dependObj[dependValuePath].value = dependValue
@@ -144,22 +175,35 @@ export function watchExecute(fieldInfo, executeFunc = () => {}, immediate = fals
   }
 }
 
+/**
+ * 关联处理函数
+ *
+ * @param {*} fieldInfo
+ * @param {*} executeFunc
+ * @returns
+ */
 export function mixinDependFunction(fieldInfo, executeFunc = () => {}) {
   if (!fieldInfo.dependValue) {
     return fieldInfo
   }
 
-  if (!fieldInfo.variableSpace) {
-    const variableSpace = variableClassify({
+  if (!fieldInfo.dependVariableSpace) {
+    fieldInfo.dependVariableSpace = variableClassify({
       variable: fieldInfo.id,
       ...fieldInfo.dependValue,
     })
-    fieldInfo.variableSpace = variableSpace
   }
 
-  return watchExecute(fieldInfo, executeFunc, true)
+  return watchExecute('depend', fieldInfo, executeFunc)
 }
 
+/**
+ * 请求处理函数
+ *
+ * @param {*} fieldInfo
+ * @param {*} executeFunc
+ * @returns
+ */
 export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
   if (!fieldInfo.requestConfig) {
     return fieldInfo
@@ -178,29 +222,39 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
     return fieldInfo
   }
 
-  if (!fieldInfo.variableSpace) {
-    const variableSpace = variables.reduce(
+  if (!fieldInfo.requestVariableSpace) {
+    fieldInfo.requestVariableSpace = variables.reduce(
       (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
-      {
-        ...defaultVariableSpace(),
-      }
+      {}
     )
-    fieldInfo.variableSpace = variableSpace
   }
 
-  return watchExecute(fieldInfo, (variableObj, fieldInfo, isDependDiffed) => {
+  return watchExecute('request', fieldInfo, (variableObj, fieldInfo, isDependDiffed) => {
     executeFunc(parameterHandler(variableObj), fieldInfo, isDependDiffed)
   })
-
-  function makeVariables(requestConfig = [], sourceType = 'form') {
-    return (variableFactory(requestConfig) ?? []).map((variable) => ({
-      variable,
-      sourceType,
-      source: variable,
-    }))
-  }
 }
 
+/**
+ * 获取请求参数
+ *
+ * @param {*} requestConfig
+ * @param {*} sourceType
+ * @returns
+ */
+function makeVariables(requestConfig = [], sourceType = 'form') {
+  return (variableFactory(requestConfig) ?? []).map((variable) => ({
+    variable,
+    sourceType,
+    source: variable,
+  }))
+}
+
+/**
+ * 表单依赖处理器
+ *
+ * @param {*} props
+ * @returns
+ */
 function formDepMonitorMixin(props = { formData: 'formData', formFields: 'formFields' }) {
   const { formData, formFields } = props
   return {

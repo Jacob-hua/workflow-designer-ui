@@ -21,7 +21,8 @@ service.interceptors.request.use(
     }
     config.headers['X-SIACT-SOURCE'] = 'PC'
     let userInfo = (sessionStorage.getItem('loginData') && JSON.parse(sessionStorage.getItem('loginData'))) || ''
-    if (userInfo) {
+    const userInfoString = sessionStorage.getItem('userInfo')
+    if (!userInfoString && userInfo) {
       config.headers['X-SIACT-TOKEN'] = userInfo.token
       config.headers['X-SIACT-TOKEN-TYPE'] = '1'
     }
@@ -38,7 +39,7 @@ service.interceptors.response.use(
       const status = response.status
       const res = response.data
       if (res.errorInfo && res.errorInfo.errorCode) {
-        if (response.config.url !== '/config/global/executeApi'){
+        if (response.config.url !== '/config/global/executeApi') {
           Message({
             type: 'error',
             message: res.errorInfo.errorMsg,

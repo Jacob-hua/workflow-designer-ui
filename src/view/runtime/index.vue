@@ -2,7 +2,7 @@
   <div>
     <div class="search-wrapper">
       <el-form inline>
-        <el-form-item label="项目">
+        <el-form-item label="项目" style="display: none">
           <el-select v-model="searchForm.ascription">
             <el-option
               v-for="{ id, label, value } in rootOrganizations"
@@ -12,16 +12,25 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="业务">
+        <el-form-item label="工单类型">
+          <el-select v-model="searchForm.processDeployName">
+            <el-option
+              v-for="({ label, value }, index) in deployNameList"
+              :key="index"
+              :label="label"
+              :value="value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="能源系统">
           <el-cascader
             v-model="searchForm.business"
             :key="searchForm.ascription"
             :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
             :props="cascaderProps"
-            @change="onBusinessChange"
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="发起时间">
+        <el-form-item label="时间选择">
           <el-date-picker
             v-model="searchForm.valueDate"
             type="daterange"
@@ -33,7 +42,6 @@
             value-format="yyyy-MM-dd HH:mm:ss"
             :default-time="['00:00:00', '23:59:59']"
             :clearable="false"
-            @change="onTimeRangeChange"
           >
           </el-date-picker>
         </el-form-item>
@@ -67,13 +75,14 @@
         <el-tab-pane v-for="({ label, display }, index) in taskTypeRadios" :key="index" :name="label">
           <span slot="label">{{ display }}</span>
           <div>
-            <el-table :data="newTasks">
+            <el-table :data="newTasks" v-loading="loading">
               <el-table-column type="index" label="序号"> </el-table-column>
-              <el-table-column prop="processDeployName" label="名称" show-overflow-tooltip="" />
-              <el-table-column prop="displayEnergyType" label="部署类型" />
-              <el-table-column prop="starter" label="发起人" />
-              <el-table-column prop="startTime" label="发起时间" />
-              <el-table-column align="center" label="流程进度" min-width="250">
+              <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" />
+              <el-table-column prop="processDeployName" label="工单类型" show-overflow-tooltip="" />
+              <el-table-column prop="displayEnergyType" label="能源系统" />
+              <el-table-column prop="reporter" label="填报人" />
+              <el-table-column prop="startTime" label="创建时间" />
+              <el-table-column align="center" label="执行进程" min-width="250">
                 <template slot-scope="{ row }">
                   <el-steps :active="row.displayTrackList.length" align-center process-status="success">
                     <el-step
@@ -143,7 +152,7 @@
 import RuntimeAdd from './component/RuntimeAdd.vue'
 import RuntimeImplement from './component/RuntimeImplement.vue'
 import Lookover from './component/lookover.vue'
-import { getTaskCountStatistic, postTaskCountStatistics, getExecuteList } from '@/api/unit/api.js'
+import { getTaskCountStatistic, postTaskCountStatistics, getExecuteList, getDeployNameList } from '@/api/unit/api.js'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 import { currentOneMonthAgo } from '@/util/date'
@@ -158,13 +167,16 @@ export default {
   data() {
     const { start, end } = currentOneMonthAgo('YYYY-MM-DD HH:mm:ss')
     return {
+      loading: false,
       runtimeAddVisible: false,
       runtimeImplementVisible: false,
       lookoverVisible: false,
       newTasks: [],
+      deployNameList: [],
       searchForm: {
         ascription: '',
         business: '',
+        processDeployName: null,
         valueDate: [start, end],
         taskType: 'all',
         order: 'desc',
@@ -208,8 +220,8 @@ export default {
         },
         timedOut: {
           title: '超时',
-          className: 'table-step-rejected'
-        }
+          className: 'table-step-rejected',
+        },
       },
     }
   },
@@ -256,27 +268,19 @@ export default {
   watch: {
     searchForm: {
       deep: true,
-      immediate: true,
       handler() {
         this.pageInfo.page = 1
+        this.getAllApi()
       },
     },
   },
   async mounted() {
     await this.dispatchRefreshOrganization()
     this.searchForm.ascription = this.currentOrganization
-    this.fetchNewTasks()
-    this.fetchAmount()
-    this.fetchDataNumber()
+    this.fetchDeployNameList()
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
-    onBusinessChange() {
-      this.getAllApi()
-    },
-    onTimeRangeChange() {
-      this.getAllApi()
-    },
     onTaskTypeChange() {
       this.pageInfo = {
         page: 1,
@@ -307,6 +311,7 @@ export default {
     },
     onAddSuccess() {
       this.runtimeAddVisible = false
+      this.pageInfo.page = 1
       this.getAllApi()
     },
     onAddTicket() {
@@ -333,6 +338,7 @@ export default {
           startTime: this.searchForm.valueDate[0],
           endTime: this.searchForm.valueDate[1],
           tenantId: this.tenantId,
+          processDeployName: this.searchForm.processDeployName,
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
@@ -349,6 +355,7 @@ export default {
     },
     async fetchNewTasks() {
       try {
+        this.loading = true
         const { errorInfo, result } = await getExecuteList({
           ...this.searchForm,
           ...this.pageInfo,
@@ -357,14 +364,17 @@ export default {
           endTime: this.searchForm.valueDate[1],
           tenantId: this.tenantId,
           assignee: this.userInfo.account,
+          processDeployName: this.searchForm.processDeployName,
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMsg)
+          this.loading = false
           return
         }
         const { dataList = [], count } = result
         this.newTasks = dataList.map((task) => handleDisplay.call(this, task))
         this.pageInfo.total = +count
+        this.loading = false
       } catch (error) {
         this.newTasks = []
       }
@@ -390,12 +400,40 @@ export default {
           endTime: this.searchForm.valueDate[1],
           ascription: this.searchForm.ascription,
           tenantId: this.tenantId,
+          processDeployName: this.searchForm.processDeployName,
         })
         if (errorInfo.errorCode) {
           this.$message.error(errorInfo.errorMessage)
           return
         }
         this.taskTypeCounts = result
+      } catch (error) {}
+    },
+    async fetchDeployNameList() {
+      try {
+        const { errorInfo, result } = await getDeployNameList({
+          ascriptionCode: this.searchForm.ascription,
+          tenantId: this.tenantId,
+        })
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMessage)
+          return
+        }
+        this.deployNameList = result.reduce(
+          (deployNameList, deployName) => [
+            ...deployNameList,
+            {
+              label: deployName,
+              value: deployName,
+            },
+          ],
+          [
+            {
+              label: '全部',
+              value: null,
+            },
+          ]
+        )
       } catch (error) {}
     },
   },

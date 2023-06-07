@@ -14,6 +14,9 @@ export let row = {
   // 是否可配置
   config: true,
 
+  //是否可折叠
+  isFold:false,
+
   // 是否可复制
   isCopy: false,
   flex: 'default',

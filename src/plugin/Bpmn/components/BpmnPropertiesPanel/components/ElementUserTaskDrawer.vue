@@ -38,6 +38,7 @@
               :options="userGroupOptions"
               :props="{
                 emitPath: false,
+                checkStrictly: true
               }"
               :show-all-levels="false"
               clearable
@@ -155,11 +156,11 @@ export default {
         const findeOrganize = (organizes, target) => {
           for (let index = 0; index < organizes.length; index++) {
             const organize = organizes[index]
-            if (Array.isArray(organize.children)) {
-              return findeOrganize(organize.children, target)
-            }
             if (target === organize.value) {
               return organize
+            }
+            if (Array.isArray(organize.children)) {
+              return findeOrganize(organize.children, target)
             }
           }
         }

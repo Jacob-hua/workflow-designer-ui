@@ -7,14 +7,12 @@
           <span>部署类型</span>
           <span>
             <el-cascader
-              v-if="systemTypeOptions.length === 0"
-              v-model="business"
-              :options="rootOrganizationChildren(workflow.ascription)"
-              :disabled="true"
+              v-model="systemType"
+              clearable
+              :props="cascaderProps"
+              :options="systemTypeOptions"
+              @change="onSystemTypeChange"
             ></el-cascader>
-            <el-select v-else v-model="systemType" @change="onSystemTypeChange" clearable placeholder="请选择">
-              <el-option v-for="{ value, label } in systemTypeOptions" :key="value" :label="label" :value="value" />
-            </el-select>
           </span>
           <span> 已部署次数: {{ deployNumber }} </span>
         </div>
@@ -23,7 +21,19 @@
           <div v-else class="details">
             <div
               class="detail"
-              v-for="({ id, deployName, createBy, createTime, displayStatus }, index) in deployments"
+              v-for="(
+                {
+                  id,
+                  deployName,
+                  createBy,
+                  createTime,
+                  displayStatus,
+                  periodicityFlag,
+                  cronExpression,
+                  displayTriggerModel,
+                },
+                index
+              ) in deployments"
               :key="id"
             >
               <div class="detail-button" @click="onClickDetail(index)">详情</div>
@@ -31,6 +41,14 @@
                 <div class="info">
                   <span>部署名称:</span>
                   <long-text contentStyle="margin-left: 10px; width: 130px;" :content="deployName" />
+                </div>
+                <div class="info">
+                  <span>触发模式:</span>
+                  <span>{{ displayTriggerModel }}</span>
+                </div>
+                <div class="info" v-if="periodicityFlag">
+                  <span>周期规则:</span>
+                  <span>{{ cronExpression }}</span>
                 </div>
                 <div class="info">
                   <span>部署人:</span>
@@ -56,10 +74,10 @@
 
 <script>
 import BpmnInfo from '@/component/BpmnInfo.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { getDeployBasic } from '@/api/unit/api.js'
 import DeployDetail from './DeployDetail.vue'
-import longText from "../../../component/LongText.vue";
+import longText from '../../../component/LongText.vue'
 
 export default {
   name: 'DeployCabinDetail',
@@ -89,6 +107,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizationChildren', 'findOrganizations']),
     systemTypeOptions() {
       return this.findOrganizations(this.workflow.business)
@@ -161,6 +180,8 @@ export default {
         this.deployments = (dataList ?? []).map((deployment) => ({
           ...deployment,
           displayStatus: deployment.status === 'activation' ? '已激活' : '未激活',
+          displayTriggerModel:
+            deployment.triggerModel === '1' ? '周期性' : deployment.triggerModel === '2' ? '固定触发' : '无',
         }))
         this.deployNumber = count
       } catch (error) {

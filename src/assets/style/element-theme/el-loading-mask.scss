@@ -1,0 +1,13 @@
+$el-loading-mask-bg: #1b1e2d90;
+
+.el-loading-mask {
+  position: absolute;
+  z-index: 2000;
+  background-color: $el-loading-mask-bg;
+  margin: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transition: opacity 0.3s;
+}

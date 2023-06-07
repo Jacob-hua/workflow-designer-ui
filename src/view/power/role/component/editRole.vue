@@ -340,12 +340,14 @@ export default {
   padding: 20px 20px;
   margin-top: 20px;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .userGroup-item {
   @include primaryPlainBtn;
   width: 118px;
   height: 42px;
+  line-height: 100%;
   margin-right: 20px;
 }
 

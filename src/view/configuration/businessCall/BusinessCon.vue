@@ -47,7 +47,7 @@
         </span>
         <span>
           <i
-            v-if="editFlag && node.level < 3"
+            v-if="editFlag && node.level < 5"
             @click="(e) => append(data, node)"
             style="
               font-size: 20px !important;
@@ -320,6 +320,14 @@ export default {
   @include cancelBtn;
 }
 
+/deep/ .el-dialog {
+  max-height: 70vh;
+
+  .el-dialog__body {
+    overflow: auto;
+  }
+}
+
 /deep/ .el-tree-node__content:hover,
 .el-upload-list__item:hover {
   background-color: unset !important;
@@ -335,6 +343,10 @@ export default {
 
 .el-tree .is-current > .el-tree-node__content .custom-tree-node {
   background-color: unset !important;
+}
+
+/deep/ .el-tree-node__children {
+  overflow: inherit;
 }
 
 /deep/ .el-input--mini {

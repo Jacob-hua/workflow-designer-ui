@@ -8,7 +8,7 @@
   >
     <el-option
       v-for="item in options"
-      :key="item[key]"
+      :key="item[index]"
       :label="item[label]"
       :value="item[value]"
     >
@@ -28,7 +28,7 @@ export default {
     options: {
       type: Array,
     },
-    key: {
+    index: {
       type: String,
     },
     label: {

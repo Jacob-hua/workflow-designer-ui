@@ -5,7 +5,7 @@
           @clear="close"
         :requestConfig="currentField.requestConfig"
         :options="interFaceOption"
-        key="id"
+        index="id"
         label="name"
         value="id"
         @selectedChange="selectedChange"

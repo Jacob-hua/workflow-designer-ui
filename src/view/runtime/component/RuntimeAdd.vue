@@ -19,21 +19,21 @@
             ></PeTree>
           </el-card>
         </div>
-        <div v-if="processList && processList.length !== 0">
+        <div v-if="processList && processList.length !== 0" v-loading="loading">
           <div class="process-list">
             <div class="process" v-for="(process, index) in processList" :key="index">
               <div class="process-info">
-                <div>部署名称:</div>
+                <div>工单类型:</div>
                 <long-text contentStyle="color: white; width: 180px" :content="process.deployName" />
               </div>
-              <div class="process-info">
+              <!-- <div class="process-info">
                 <div>部署人:</div>
                 <div>{{ process.user }}</div>
               </div>
               <div class="process-info">
                 <div>部署时间:</div>
                 <div>{{ process.createTime }}</div>
-              </div>
+              </div> -->
               <div class="button-wrapper">
                 <el-button plain @click="createTicket(process)">创建</el-button>
                 <!--el-button @click="detailsShow(process)">详情</el-button-->
@@ -55,7 +55,7 @@
         </div>
       </div>
     </el-dialog>
-    <runtime-creat-ticket
+    <runtime-create-ticket
       :visible="createTicketVisible"
       :process="process"
       @close="onCreateTicketVisible"
@@ -67,14 +67,14 @@
 <script>
 import { getProcessDefinitionList } from '@/api/unit/api.js'
 import { mapState, mapGetters } from 'vuex'
-import RuntimeCreatTicket from './RuntimeCreatTicket.vue'
+import RuntimeCreateTicket from './RuntimeCreateTicket.vue'
 import PeTree from '@/component/PeTree.vue'
 import longText from '../../../component/LongText.vue'
 
 export default {
   name: 'RuntimeAdd',
   components: {
-    RuntimeCreatTicket,
+    RuntimeCreateTicket,
     PeTree,
     longText,
   },
@@ -90,6 +90,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       processList: [],
       energyTree: [],
       getData: {
@@ -117,6 +118,7 @@ export default {
   methods: {
     handleNodeClick(data) {
       this.getData.type = data.value
+      this.getData.page = 1
       this.getProcessList()
     },
     onCreateTicketVisible() {
@@ -130,13 +132,17 @@ export default {
       this.$emit('close')
     },
     getProcessList() {
+      this.loading = true
       getProcessDefinitionList({
         ...this.getData,
         tenantId: this.tenantId,
-      }).then((res) => {
-        this.processList = res.result.dataList
-        this.getData.total = res.result.count * 1
       })
+        .then((res) => {
+          this.loading = false
+          this.processList = res.result.dataList
+          this.getData.total = res.result.count * 1
+        })
+        .catch(() => (this.loading = false))
     },
     onSizeChange() {
       this.getProcessList()
@@ -182,16 +188,16 @@ export default {
 .process-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, 370px);
-  grid-template-rows: 229px;
+  grid-template-rows: 129px;
   row-gap: 20px;
   column-gap: 20px;
   padding: 20px;
-  height: 720px;
+  // height: 720px;
 }
 
 .process {
   width: 370px;
-  height: 229px;
+  height: 129px;
   background-color: $card-bg-color-1;
   display: flex;
   flex-direction: column;
@@ -215,7 +221,7 @@ export default {
     margin: 30px 30px 24px 0px;
     text-align: end;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 
     & > button {
       @include primaryPlainBtn;

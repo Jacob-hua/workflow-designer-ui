@@ -5,13 +5,13 @@ def quality = new org.devops.sonarQualityScanner()
 pipeline {
     agent any
     environment {
-		service="workflow-ui"
+		service="kms-workflow-ui"
 		def workspace = pwd()
-		namespace="workflow"
+		namespace="kms-dev"
 		Branch="${env.gitlabTargetBranch}"
 		starttime = getDateFormat()
 		BUILD_USER = getBuildUser()
-		project="workflow engine platform"
+		project="kms workflow engine platform"
 		gitURL="http://192.100.30.115:9000/job_workflow_platform/workflow-designer-ui.git"
 		environment="dev"
 		applicationType="webfront"
@@ -20,16 +20,16 @@ pipeline {
 	stages {
 		stage('Clean'){
 			steps {
-				echo "0.Delete workspace before build starts develop"
+				echo "0.Delete workspace before build starts 1"
 				step([$class: 'WsCleanup'])
 			}
 		}
 
 		stage('Clone') {
 			steps {
-				echo "1.Clone Stage"
+				echo "1.Git Clone Stage"
 				dir('workflow-designer-ui'){
-					git branch: "$Branch", credentialsId: 'lulongchao', url: "${gitURL}"
+					git branch: "${Branch}", credentialsId: 'lulongchao', url: "${gitURL}"
 					script {
 						build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 						commit_message = sh(returnStdout: true, script: 'git log --pretty=format:"[%cn] - %s - %b" -1 |  grep -v See | sed "/^\\$/d" ').trim()
@@ -55,7 +55,7 @@ pipeline {
 				sh """
 				cat >Dockerfile<<-EOF
 					FROM nginx:alpine
-					ADD dist /usr/share/nginx/html/workflow
+					ADD dist /usr/share/nginx/html/${service}
 				EOF
 				cat Dockerfile 
 				cat >deployment.yaml<<-EOF

@@ -1,11 +1,16 @@
 <template>
   <div>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%" v-loading="loading">
       <el-table-column type="index" label="序号"> </el-table-column>
       <el-table-column prop="deployName" label="名称"> </el-table-column>
       <el-table-column prop="docName" label="流程文件">
         <template slot-scope="scope">
           <span class="file">{{ scope.row.deployName }}.bpmn</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="triggerModel" label="触发模式">
+        <template slot-scope="scope">
+          <span>{{ handleTriggerModel(scope.row.triggerModel) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="createBy" label="创建人"> </el-table-column>
@@ -61,6 +66,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       deployOptionsVisible: false,
       pageInfo: {
         page: 1,
@@ -86,6 +92,7 @@ export default {
   },
   methods: {
     onDeployed() {
+      this.fetchWorkflows()
       this.$emit('deployed')
     },
     onSaved() {
@@ -93,6 +100,7 @@ export default {
       this.$emit('saved')
     },
     async fetchWorkflows() {
+      this.loading = true
       const { errorInfo, result } = await postDraftlist({
         ...this.pageInfo,
         tenantId: this.tenantId,
@@ -104,10 +112,12 @@ export default {
       })
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg)
+        this.loading = false
         return
       }
       this.tableData = result.dataList
       this.pageInfo.total = +result.count
+      this.loading = false
       this.$emit('refreshTable', result.count)
     },
     onPageSizeChange(val) {
@@ -142,9 +152,25 @@ export default {
       this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page
     },
     onEditWorkflow(workflow) {
-      this.workflow = { ...workflow, status: 'drafted' }
+      this.workflow = {
+        ...workflow,
+        isCycle: workflow.ruleId,
+        rule: {
+          ruleId: workflow.ruleId,
+          cronExpression: workflow.cronExpression,
+        },
+        status: 'drafted',
+      }
       this.deployOptionsVisible = true
     },
+    handleTriggerModel(model){
+      const modelObj = {
+        '1': '周期性',
+        '2': '固定触发',
+        '3': '无'
+      }
+      return modelObj[model];
+    }
   },
 }
 </script>

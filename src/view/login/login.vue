@@ -34,12 +34,10 @@
 </template>
 
 <script>
-import CONSTANT from '@/constant'
 import { userLogin } from '@/api/unit/api.js'
 import { getAllBusinessConfig, thirdAuth } from '@/api/globalConfig.js'
 import { mapMutations } from 'vuex'
 import { mapState } from 'vuex'
-import Cookies from 'js-cookie'
 
 export default {
   name: 'LoginPage',
@@ -54,7 +52,8 @@ export default {
     ...mapState('account', ['tenantId']),
   },
   created() {
-    if (Cookies.get('userInfo')) {
+    const userInfoString = sessionStorage.getItem('userInfo')
+    if (userInfoString && JSON.parse(userInfoString)) {
       this.thirdLogin()
     } else {
       sessionStorage.clear()
@@ -72,29 +71,43 @@ export default {
         sessionStorage.setItem('loginData', JSON.stringify(res.result))
         res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
         this.getMapping(res.result.tenants[0]?.id)
-        this.$router.push('/home')
+        const pushRoute =
+          Array.from(res.result.menuProjectList).find(({ projectList }) => projectList.length > 0)?.menuRoute ??
+          'Workflow'
+        this.$router.push({
+          name: pushRoute,
+        })
       })
     },
     thirdLogin() {
-      if (!Cookies.get('userInfo')) {
+      const userInfoString = sessionStorage.getItem('userInfo')
+
+      this.updateThirdLogin({ thirdLogin: true })
+      if (!userInfoString) {
         this.$message.error('登录失败')
         return
       }
-      const userInfo = JSON.parse(Cookies.get('userInfo'))
-      thirdAuth({
-        account: userInfo.account,
-        thirdToken: userInfo.mark,
-      }).then((res) => {
-        res.result.account = userInfo.account
-        res.result.name = userInfo.account
-        sessionStorage.setItem('loginData', JSON.stringify(res.result))
-        res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
-        this.getMapping(res.result.tenants[0]?.id)
-        this.$router.push('/home')
-        this.updateThirdLogin({ thirdLogin: true })
-      }).catch(() => {
-        this.$router.push('/home/noPermission')
-      })
+      try {
+        const userInfo = JSON.parse(userInfoString).accountInfo
+        thirdAuth({
+          account: userInfo.account,
+          thirdToken: userInfo.mark,
+        }).then((res) => {
+          res.result.account = userInfo.account
+          res.result.name = userInfo.account
+          sessionStorage.setItem('loginData', JSON.stringify(res.result))
+          res.result.tenants[0] && this.updateTenantId(res.result.tenants[0].id)
+          this.getMapping(res.result.tenants[0]?.id)
+          const pushRoute =
+            Array.from(res.result.menuProjectList).find(({ projectList }) => projectList.length > 0)?.menuRoute ??
+            'Workflow'
+          this.$router.push({
+            name: pushRoute,
+          })
+        })
+      } catch (error) {
+        this.$message.error('登录失败')
+      }
     },
     getMapping(tenantId) {
       getAllBusinessConfig({

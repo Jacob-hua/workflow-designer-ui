@@ -1,10 +1,10 @@
 {
-  "name": "workflow",
+  "name": "ftkms-gdgl",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --mode pro"
+    "build": "vue-cli-service build --mode production"
   },
   "dependencies": {
     "@bpmn-io/form-js-editor": "^0.7.0",
