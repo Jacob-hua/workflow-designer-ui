@@ -5,9 +5,9 @@ def quality = new org.devops.sonarQualityScanner()
 pipeline {
     agent any
     environment {
-		service="kms-workflow-ui"
+		service="workflow-ui"
 		def workspace = pwd()
-		namespace="kms-dev"
+		namespace="workflow"
 		Branch="${env.gitlabTargetBranch}"
 		starttime = getDateFormat()
 		BUILD_USER = getBuildUser()
