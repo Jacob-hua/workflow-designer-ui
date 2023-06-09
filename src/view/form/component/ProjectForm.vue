@@ -298,7 +298,7 @@ export default {
         endTime: this.valueDate[1] + " 23:59:59",
         ...this.getDataSecond,
       }).then((res) => {
-        this.formListSecond = res.result.dataList;
+        this.formListSecond = res.result.dataList || [];
         this.getDataSecond.total = res.result.count;
       });
     },
