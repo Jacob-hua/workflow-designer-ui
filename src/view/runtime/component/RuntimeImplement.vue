@@ -109,7 +109,6 @@ export default {
     RuntimeImplementReject,
     RuntimeImplementTermination,
     RuntimeImplementExecutor,
-    checkStock,
   },
   props: {
     visible: {
