@@ -208,7 +208,6 @@ export default {
     "uploadFun",
     "downloadFun",
     "processInstanceId",
-    "cancleStockFun",
   ],
   components: { render },
   data() {
