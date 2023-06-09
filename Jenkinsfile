@@ -55,7 +55,7 @@ pipeline {
 				sh """
 				cat >Dockerfile<<-EOF
 					FROM nginx:alpine
-					ADD dist /usr/share/nginx/html/${service}
+					ADD dist /usr/share/nginx/html/workflow
 				EOF
 				cat Dockerfile 
 				cat >deployment.yaml<<-EOF
