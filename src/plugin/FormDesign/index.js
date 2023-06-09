@@ -7,7 +7,6 @@ import fancyMap from '@/plugin/FormDesign/extend/fancyMap'
 import fancyBarCode from 'vue-barcode'
 import fancyDialogList from '@/plugin/FormDesign/extend/fancyDialogList'
 import iconDialog from '@/plugin/FormDesign/component/iconDialog'
-import fancyShoppingCart from '@/plugin/FormDesign/extend/fancyShoppingCart'
 import fancyFormList from '@/plugin/FormDesign/extend/fancyFormList'
 const plugins = {
   install: function (Vue) {
@@ -20,7 +19,6 @@ const plugins = {
     Vue.component('fancy-bar-code', fancyBarCode)
     Vue.component('fancy-dialog-list', fancyDialogList)
     Vue.component('icon-dialog', iconDialog)
-    Vue.component('fancy-shopping-cart', fancyShoppingCart)
     Vue.component('fancy-form-list', fancyFormList)
   },
 }
