@@ -8,7 +8,17 @@
       </div>
     </div>
     <slot></slot>
-    <div class="process-canvas">
+    <div class="tip-box" @click="handleShowProcess">
+      <div v-show="!showProcess">
+        <span>查看流程信息</span>
+        <i class="el-icon-arrow-right" />
+      </div>
+      <div v-show="showProcess">
+        <span>关闭流程信息</span>
+        <i class="el-icon-arrow-down" />
+      </div>
+    </div>
+    <div class="process-canvas" v-show="showProcess">
       <bpmn-viewer
         :xml="xml"
         :prop="{
@@ -27,26 +37,34 @@
 
 <script>
 export default {
-  name: 'BpmnInfo',
+  name: "BpmnInfo",
   props: {
     xml: {
       type: String,
-      default: '',
+      default: "",
     },
     processDisplayInfo: {
       type: Array,
       default: () => [],
     },
   },
+  data() {
+    return {
+      showProcess: true,
+    };
+  },
   methods: {
     onBpmnViewerLoaded(iBpmnViewer) {
-      this.$emit('loaded', iBpmnViewer)
+      this.$emit("loaded", iBpmnViewer);
     },
     onSelectedChange(shape, iBpmnViewer) {
-      this.$emit('selectedShape', shape, iBpmnViewer)
+      this.$emit("selectedShape", shape, iBpmnViewer);
+    },
+    handleShowProcess() {
+      this.showProcess = !this.showProcess;
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -59,6 +77,11 @@ export default {
   align-content: space-around;
   color: $font-color;
   line-height: 40px;
+}
+.tip-box {
+  cursor: pointer;
+  color: #009efb;
+  margin: 20px;
 }
 
 .process-canvas {
