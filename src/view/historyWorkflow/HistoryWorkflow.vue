@@ -60,7 +60,7 @@
     <div class="content-wrapper">
       <el-table :data="tableData" v-loading="loading">
         <el-table-column type="index" label="序号" width="180"> </el-table-column>
-        <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" />
+        <!-- <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" /> -->
         <el-table-column prop="processDeployName" label="工单类型" width="180"> </el-table-column>
         <el-table-column prop="displayProcessDeployType" label="能源系统"> </el-table-column>
         <el-table-column prop="starter" label="创建人"> </el-table-column>
