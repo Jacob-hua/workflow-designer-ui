@@ -341,6 +341,8 @@ export default {
   margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
+  grid-gap: 20px;
+  overflow: auto;
 }
 
 .userGroup-item {
@@ -348,7 +350,6 @@ export default {
   width: 118px;
   height: 42px;
   line-height: 100%;
-  margin-right: 20px;
 }
 
 .dialogMain {
