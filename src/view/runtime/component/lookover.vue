@@ -190,7 +190,7 @@ export default {
         // },
         {
           label: '能源系统 ',
-          value: this.$getMappingName(this.workflow.business),
+          value: this.$getMappingName(this.workflow.systemType),
         },
         {
           label: '创建人',
