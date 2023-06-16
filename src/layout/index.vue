@@ -21,7 +21,7 @@
             <el-menu-item :index="item.menuRoute" v-for="(item, index) in menuList" :key="index">
               <div>
                 <img class="menu-icon" :src="getMenuIcon(item.menuRoute)" />
-                <span>{{ menuListNameMapping[item.menuRoute].label }}</span>
+                <span class="menu-text">{{ menuListNameMapping[item.menuRoute].label }}</span>
               </div>
             </el-menu-item>
           </el-menu>
@@ -242,6 +242,12 @@ $aside-logo-height: 320px;
   .is-active {
     color: #ffffff;
     background-color: $menu-active-bg-color;
+
+    .menu-text {
+      color: transparent;
+      background-image: linear-gradient(0deg, #fff, #009cff);
+      -webkit-background-clip: text;
+    }
 
     ::after {
       content: '';
