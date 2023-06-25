@@ -468,7 +468,7 @@ export default {
       }
       this.$emit('refreshList', this.business)
     },
-    processPost( { method, configParams, body, url, headers } ) {
+    processPost( { method, configParams, host, path, body, url, headers } ) {
      body = configParams.reduce(( requestBody = {}, params ) => {
        requestBody[params.key] = params.value
        return requestBody
@@ -477,7 +477,7 @@ export default {
         body,
         headers,
         method,
-        url
+        url: `${host}${path}`
       }
     },
     processGet( { method, headers, host, path, parameter, configParams } ) {
