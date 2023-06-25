@@ -22,16 +22,16 @@
 </template>
 
 <script>
-import reg from '@/plugin/FormDesign/custom/register.js'
+import reg from "@/plugin/FormDesign/custom/register.js";
 
 export default {
-  name: 'configPanel',
+  name: "configPanel",
   data() {
     return {
-      currentTab: 'field',
+      currentTab: "field",
       cmps: reg,
       formIdArray: [],
-    }
+    };
   },
   props: {
     activeItem: {
@@ -45,31 +45,35 @@ export default {
   },
   created() {
     this.cmps.forEach((c) => {
-      c.content = require(`../custom/configs/${c.name}`).default
-    })
+      c.content = require(`../custom/configs/${c.name}`).default;
+    });
   },
   methods: {
     getFormId(itemId) {
-      this.formIdArray = []
+      this.formIdArray = [];
       Array.from(this.itemList, (item) => {
-        if (item.compType === 'row') {
+        if (item._id !== itemId) {
+          this.formIdArray.push(item.id);
+        }
+        if (item.compType === "row") {
           Array.from(item.columns, (column) => {
             Array.from(column.list, (col) => {
               if (col._id !== itemId) {
-                this.formIdArray.push(col.id)
+                this.formIdArray.push(col.id);
               }
-            })
-          })
-        } else {
-          if (item._id !== itemId) {
-            this.formIdArray.push(item.id)
-          }
+            });
+          });
         }
-      })
-      return this.formIdArray
+        // else {
+        //   if (item._id !== itemId) {
+        //     this.formIdArray.push(item.id)
+        //   }
+        // }
+      });
+      return this.formIdArray;
     },
   },
-}
+};
 </script>
 <style scoped lang="scss">
 /deep/ .el-tabs__content {
@@ -79,6 +83,6 @@ export default {
   overflow-x: hidden;
 }
 .right-board {
- width: 400px;
+  width: 400px;
 }
 </style>
