@@ -7,6 +7,7 @@
           <preview
             :itemList="formContent.list"
             :formConf="formContent.config"
+            :context="context"
             :uploadFun="uploadFileFun.bind(this)"
             :downloadFun="downloadFileFun.bind(this)"
             :beforeDeleteFileFun="beforeDeleteFileFun.bind(this)"
@@ -57,6 +58,7 @@ export default {
       isLoading: false,
       options: {},
       attachmentIds: [],
+      context: null,
     }
   },
   computed: {
@@ -168,6 +170,7 @@ export default {
         }
         this.formContent = JSON.parse(result.content ?? '{}')
         this.formShow = true
+        this.context = result.context
       } catch (error) {
         this.fromContent = {}
         this.formShow = false
