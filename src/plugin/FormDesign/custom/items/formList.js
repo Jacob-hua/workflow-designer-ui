@@ -40,5 +40,6 @@ export let formList = {
   gutter: 0,
   visible: true,
   tableColumn: [],
-  value:[]
+  value:[],
+  options: []
 }

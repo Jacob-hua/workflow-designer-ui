@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { executeApi } from "@/api/globalConfig";
+// import { executeApi } from "@/api/globalConfig";
 export default {
   name: "fancyFormList",
   props: {
@@ -113,9 +113,8 @@ export default {
       type: Object,
       default: () => {},
     },
-    requestConfig: {
-      type: Object,
-      default: () => {},
+    options: {
+      type: Array,
     },
   },
   data() {
@@ -148,19 +147,10 @@ export default {
         this.dialogVisible = true;
         return;
       }
-      if (Object.keys(this.$props.requestConfig) === 0) {
+      if (this.$props.options && this.$props.options.length > 0) {
+        this.gridData = this.$props.options;
         this.dialogVisible = true;
-        return;
       }
-      const { apiMark, sourceMark, parameter } = this.$props.requestConfig;
-      executeApi({
-        apiMark: apiMark,
-        sourceMark: sourceMark,
-        data: parameter,
-      }).then(({ result }) => {
-        this.gridData = result.result;
-        this.dialogVisible = true;
-      });
     },
     handleSelectionChange(val) {
       this.selectedData = val;
