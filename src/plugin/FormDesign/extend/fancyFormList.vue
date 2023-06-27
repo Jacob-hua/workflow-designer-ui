@@ -149,8 +149,8 @@ export default {
       }
       if (this.$props.options && this.$props.options.length > 0) {
         this.gridData = this.$props.options;
-        this.dialogVisible = true;
       }
+      this.dialogVisible = true;
     },
     handleSelectionChange(val) {
       this.selectedData = val;
