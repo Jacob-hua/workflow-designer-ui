@@ -57,7 +57,14 @@
           align="center"
           :key="index"
           v-for="(item, index) in tableColumn"
-        />
+        >
+          <!-- <template #default="scope">
+            <template v-if="(scope.column instanceof Array)">
+              <div v-for="(imgItem, index) in scope.column" :key="index" @click="">{{ imgItem.name }}</div>
+            </template>
+            <div v-else>{{ item.label }}</div>
+          </template> -->
+        </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="handlerSelect">确 定</el-button>
@@ -147,8 +154,8 @@ export default {
         this.dialogVisible = true;
         return;
       }
-      if (this.$props.options && this.$props.options.length > 0) {
-        this.gridData = this.$props.options;
+      if (this.$props.options.result && this.$props.options.result.length > 0) {
+        this.gridData = this.$props.options.result;
       }
       this.dialogVisible = true;
     },
