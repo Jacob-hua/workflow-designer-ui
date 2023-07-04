@@ -10,7 +10,6 @@
     <el-table
       v-if="selectedData.length"
       :data="selectedData"
-      :highlight-current-row="!multi"
       :max-height="`${height}px`"
       style="width: 100%"
     >
@@ -35,7 +34,6 @@
       <el-table
         ref="dataTable"
         :data="gridData"
-        :highlight-current-row="!multi"
         :max-height="`${height}px`"
         style="width: 100%"
         @selection-change="handleSelectionChange"
@@ -58,12 +56,19 @@
           :key="index"
           v-for="(item, index) in tableColumn"
         >
-          <!-- <template #default="scope">
-            <template v-if="(scope.column instanceof Array)">
-              <div v-for="(imgItem, index) in scope.column" :key="index" @click="">{{ imgItem.name }}</div>
+          <template #default="scope">
+            <template v-if="scope.row[item.prop] instanceof Array">
+              <div
+                class="column-item"
+                v-for="(imgItem, index) in scope.row[item.prop]"
+                :key="index"
+                @click="downloadImg(imgItem)"
+              >
+                {{ imgItem.attachmentFileName }}
+              </div>
             </template>
-            <div v-else>{{ item.label }}</div>
-          </template> -->
+            <div v-else>{{ scope.row[item.prop] }}</div>
+          </template>
         </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
@@ -114,14 +119,19 @@ export default {
     },
     tableColumn: {
       type: Array,
-      default: () => [],
+      default: [],
     },
     formConf: {
       type: Object,
-      default: () => {},
+      default: {},
     },
     options: {
-      type: Array,
+      type: Object,
+      default: {},
+    },
+    downloadFun: {
+      type: Function,
+      default: () => {},
     },
   },
   data() {
@@ -170,6 +180,19 @@ export default {
       this.dialogVisible = false;
       // this.$emit("input", this.selectedData);
     },
+    async downloadImg(imgItem) {
+      const result = await Promise.resolve(
+        this.$props.downloadFun({ url: imgItem.attachmentId })
+      );
+      const reader = new FileReader();
+      reader.readAsDataURL(result);
+      reader.onload = () => {
+        const a = document.createElement("a");
+        a.href = reader.result;
+        a.setAttribute("download", imgItem.attachmentFileName);
+        a.click();
+      };
+    },
   },
   computed: {},
 };
@@ -193,6 +216,13 @@ export default {
   &::-webkit-scrollbar-thumb {
     background: #eee;
     border-radius: 4px;
+  }
+  .column-item {
+    cursor: pointer;
+
+    &:hover {
+      color: #409eff;
+    }
   }
 }
 </style>

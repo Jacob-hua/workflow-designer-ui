@@ -41,5 +41,5 @@ export let formList = {
   visible: true,
   tableColumn: [],
   value:[],
-  options: []
+  options: {}
 }
