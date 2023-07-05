@@ -76,6 +76,18 @@
         <el-button @click="handlerHideDialog">取 消</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      :visible.sync="imgDialogVisible"
+      :append-to-body="true"
+      width="60%"
+      center
+      :destroy-on-close="true"
+      :lock-scroll="true"
+      :show-close="true"
+      :close-on-click-modal="false"
+    >
+      <img :src="previewImage" alt="Preview" style="width: 100%;height: 70vh;" />
+    </el-dialog>
   </div>
 </template>
 
@@ -140,6 +152,8 @@ export default {
       dialogValue: "",
       dialogVisible: false,
       gridData: [],
+      previewImage: null,
+      imgDialogVisible: false,
     };
   },
   watch: {
@@ -187,14 +201,15 @@ export default {
       const reader = new FileReader();
       reader.readAsDataURL(result);
       reader.onload = () => {
-        const a = document.createElement("a");
-        a.href = reader.result;
-        a.setAttribute("download", imgItem.attachmentFileName);
-        a.click();
+        this.previewImage = reader.result;
+        // const a = document.createElement("a");
+        // a.href = reader.result;
+        // a.setAttribute("download", imgItem.attachmentFileName);
+        // a.click();
       };
+        this.imgDialogVisible = true;
     },
   },
-  computed: {},
 };
 </script>
 <style scoped lang="scss">
@@ -219,9 +234,10 @@ export default {
   }
   .column-item {
     cursor: pointer;
+    color: #409eff;
 
     &:hover {
-      color: #409eff;
+      color: #ffffff;
     }
   }
 }
