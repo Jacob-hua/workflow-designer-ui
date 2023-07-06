@@ -26,6 +26,10 @@
                 <div>工单类型:</div>
                 <long-text contentStyle="color: white; width: 180px" :content="process.deployName" />
               </div>
+              <div class="process-info">
+                <div>能源系统:</div>
+                <long-text contentStyle="color: white; width: 180px" :content="process.systemTypeName" />
+              </div>
               <!-- <div class="process-info">
                 <div>部署人:</div>
                 <div>{{ process.user }}</div>
@@ -205,7 +209,7 @@ export default {
 
   .process-info {
     display: flex;
-    margin: 30px 30px 0px 32px;
+    margin: 15px 30px 0px 32px;
 
     & > div:first-child {
       width: 60px;
@@ -218,7 +222,7 @@ export default {
   }
 
   .button-wrapper {
-    margin: 30px 30px 24px 0px;
+    margin: 20px 30px 24px 0px;
     text-align: end;
     display: flex;
     justify-content: center;
