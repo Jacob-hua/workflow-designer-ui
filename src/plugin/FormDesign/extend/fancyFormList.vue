@@ -19,7 +19,21 @@
         align="center"
         :key="index"
         v-for="(item, index) in tableColumn"
-      />
+      >
+        <template #default="scope">
+          <template v-if="scope.row[item.prop] instanceof Array">
+            <div
+              class="column-item"
+              v-for="(imgItem, index) in scope.row[item.prop]"
+              :key="index"
+              @click="downloadImg(imgItem)"
+            >
+              {{ imgItem.attachmentFileName }}
+            </div>
+          </template>
+          <div v-else>{{ scope.row[item.prop] }}</div>
+        </template>
+      </el-table-column>
     </el-table>
     <el-dialog
       :visible.sync="dialogVisible"
@@ -85,8 +99,13 @@
       :lock-scroll="true"
       :show-close="true"
       :close-on-click-modal="false"
+      @close="hideImage"
     >
-      <img :src="previewImage" alt="Preview" style="width: 100%;height: 70vh;" />
+      <img
+        :src="previewImage"
+        alt="Preview"
+        style="width: 100%; height: 70vh"
+      />
     </el-dialog>
   </div>
 </template>
@@ -207,7 +226,10 @@ export default {
         // a.setAttribute("download", imgItem.attachmentFileName);
         // a.click();
       };
-        this.imgDialogVisible = true;
+      this.imgDialogVisible = true;
+    },
+    hideImage() {
+      this.previewImage = null;
     },
   },
 };
