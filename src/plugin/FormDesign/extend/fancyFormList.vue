@@ -173,6 +173,7 @@ export default {
       gridData: [],
       previewImage: null,
       imgDialogVisible: false,
+      historyData: [],
     };
   },
   watch: {
@@ -189,6 +190,7 @@ export default {
     },
     value(val) {
       this.selectedData = val;
+      this.historyData = val;
     },
   },
   methods: {
@@ -210,6 +212,7 @@ export default {
       this.$emit("input", this.selectedData);
     },
     handlerHideDialog() {
+      this.selectedData = this.historyData;
       this.dialogVisible = false;
       // this.$emit("input", this.selectedData);
     },
