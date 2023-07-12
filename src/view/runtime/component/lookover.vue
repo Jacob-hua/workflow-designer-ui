@@ -19,7 +19,7 @@
             <el-timeline-item
               :timestamp="taskName"
               placement="top"
-              v-for="{ taskName, formDataList, assigneeStatus, status, commentList, taskId } in trackList"
+              v-for="{ taskName, formDataList, assigneeStatus, status, commentList, taskId, assigneeInfoDTOList } in trackList"
               :key="taskId"
             >
               <div class="contant">
@@ -36,7 +36,8 @@
                   <div v-if="assigneeStatus[formAssignee] === 'run'" class="execute-info">
                     <div>
                       <i class="el-icon-check executing"></i>
-                      <span>{{ formAssignee }} 操作中</span>
+                      <span v-for="(assigner, index) in assigneeInfoDTOList" :key="index" :title="assigner.account" class="assigner-card">{{ assigner.username }}</span>
+                      <span>操作中</span>
                     </div>
                   </div>
                   <div v-if="assigneeStatus[formAssignee] === 'completed'" class="execute-info">
@@ -63,10 +64,6 @@
                   <div v-if="assigneeStatus[formAssignee] === 'rejected'">
                     <div v-for="({ comments, assignee: commentAssignee }, index) in commentList" :key="index">
                       <div v-if="commentAssignee === formAssignee">
-                        <div v-for="({ message }, index) in comments" :key="index">
-                          <i class="el-icon-warning-outline warning"></i>
-                          <span>{{ message }}</span>
-                        </div>
                         <div class="execute-info">
                           <div>
                             <i class="el-icon-close warning"></i>
@@ -74,15 +71,29 @@
                           </div>
                           <span>{{ time }}</span>
                         </div>
+                        <div v-for="({ message }, index) in comments" :key="index">
+                          <i class="el-icon-warning-outline warning"></i>
+                          <span>{{ message }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div v-if="undefineStatus(status)" class="execute-info">
-                    <div>
-                      <i class="el-icon-check warning"></i>
-                      <span>{{ formAssignee }} 终止</span>
+                  <div v-if="undefineStatus(status)">
+                    <div v-for="({ comments, assignee: commentAssignee }, index) in commentList" :key="index">
+                      <div v-if="commentAssignee === formAssignee">
+                        <div class="execute-info">
+                          <div>
+                            <i class="el-icon-close warning"></i>
+                            <span>{{ commentAssignee }} 终止 </span>
+                          </div>
+                          <span>{{ time }}</span>
+                        </div>
+                        <div v-for="({ message }, index) in comments" :key="index">
+                          <i class="el-icon-warning-outline warning"></i>
+                          <span>{{ message }}</span>
+                        </div>
+                      </div>
                     </div>
-                    <span>{{ time }}</span>
                   </div>
                 </div>
               </div>
@@ -332,5 +343,15 @@ export default {
   color: white;
   border-radius: 50%;
   border: none;
+}
+
+.assigner-card {
+  display: inline-block;
+  margin-right: 10px;
+  background-color: #009efb;
+  border: 1px solid #009efb;
+  border-radius: 4px;
+  line-height: 30px;
+  padding: 0 5px;
 }
 </style>
