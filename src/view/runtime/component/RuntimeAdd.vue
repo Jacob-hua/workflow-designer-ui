@@ -117,7 +117,7 @@ export default {
     ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
   },
   created() {
-    this.getProcessList()
+    // this.getProcessList()
   },
   methods: {
     handleNodeClick(data) {
@@ -164,6 +164,13 @@ export default {
       this.createTicketVisible = true
     },
   },
+  watch: {
+    dialogVisible(value) {
+      if(value){
+        this.getProcessList();
+      }
+    }
+  }
 }
 </script>
 
