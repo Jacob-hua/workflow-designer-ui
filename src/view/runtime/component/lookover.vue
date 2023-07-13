@@ -43,21 +43,24 @@
                   <div v-if="assigneeStatus[formAssignee] === 'completed'" class="execute-info">
                     <div>
                       <i class="el-icon-check success"></i>
-                      <span>{{ formAssignee }} 完成</span>
+                      <span v-for="(assigner, index) in assigneeInfoDTOList" :key="index" :title="assigner.account" class="assigner-card">{{ assigner.username }}</span>
+                      <span>完成</span>
                     </div>
                     <span>{{ time }}</span>
                   </div>
                   <div v-if="assigneeStatus[formAssignee] === 'hang'" class="execute-info">
                     <div>
                       <i class="el-icon-check warning"></i>
-                      <span>{{ formAssignee }} 挂起</span>
+                      <span v-for="(assigner, index) in assigneeInfoDTOList" :key="index" :title="assigner.account" class="assigner-card">{{ assigner.username }}</span>
+                      <span>挂起</span>
                     </div>
                     <span>{{ time }}</span>
                   </div>
                   <div v-if="assigneeStatus[formAssignee] === 'timedOut'" class="execute-info">
                     <div>
                       <i class="el-icon-time warning"></i>
-                      <span>{{ formAssignee }} 超时</span>
+                      <span v-for="(assigner, index) in assigneeInfoDTOList" :key="index" :title="assigner.account" class="assigner-card">{{ assigner.username }}</span>
+                      <span>超时</span>
                     </div>
                     <span>{{ time }}</span>
                   </div>
@@ -66,8 +69,8 @@
                       <div v-if="commentAssignee === formAssignee">
                         <div class="execute-info">
                           <div>
-                            <i class="el-icon-close warning"></i>
-                            <span>{{ commentAssignee }} 驳回 </span>
+                            <i class="el-icon-close warning"></i><span v-for="(assigner, index) in assigneeInfoDTOList" :key="index" :title="assigner.account" class="assigner-card">{{ assigner.username }}</span>
+                            <span>驳回 </span>
                           </div>
                           <span>{{ time }}</span>
                         </div>
@@ -83,8 +86,8 @@
                       <div v-if="commentAssignee === formAssignee">
                         <div class="execute-info">
                           <div>
-                            <i class="el-icon-close warning"></i>
-                            <span>{{ commentAssignee }} 终止 </span>
+                            <i class="el-icon-close warning"></i><span v-for="(assigner, index) in assigneeInfoDTOList" :key="index" :title="assigner.account" class="assigner-card">{{ assigner.username }}</span>
+                            <span>终止 </span>
                           </div>
                           <span>{{ time }}</span>
                         </div>
