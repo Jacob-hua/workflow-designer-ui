@@ -1,19 +1,37 @@
 <template>
   <div>
     <div class="container">
-      <div class="content" v-for="({ assignee, candidateUsers = [], taskId }, index) in agency" :key="index">
+      <div
+        class="content"
+        v-for="(
+          { assignee, candidateUsers = [], taskId, assigneeInfoDTOList }, index
+        ) in agency"
+        :key="index"
+      >
         <div v-show="assignee">{{ assignee }}:</div>
         <div class="info" v-if="candidateUsers.length > 0">
           <div>
-            <div class="user" v-for="userName in candidateUsers" :key="userName">
-              <long-text contentStyle="width: 80px" :content="userName" />
+            <div
+              class="user"
+              v-for="{ account, username } in assigneeInfoDTOList"
+              :key="account"
+            >
+              <span class="assigner-card" :title="account">{{ username }}</span>
+              <!-- <long-text contentStyle="width: 80px" :content="username" /> -->
             </div>
           </div>
-          <el-button v-if="assignee === userInfo.account" @click="onEditAgency(taskId, candidateUsers)">编辑</el-button>
+          <el-button
+            v-if="assignee === userInfo.account"
+            @click="onEditAgency(taskId, candidateUsers)"
+            >编辑</el-button
+          >
         </div>
         <div class="empty" v-else-if="candidateUsers.length === 0">
           <div>暂无代办</div>
-          <el-button @click="onAddAgency(taskId)" v-if="assignee === userInfo.account && candidateUsers.length == 0">
+          <el-button
+            @click="onAddAgency(taskId)"
+            v-if="assignee === userInfo.account && candidateUsers.length == 0"
+          >
             添加
           </el-button>
         </div>
@@ -29,12 +47,12 @@
 </template>
 
 <script>
-import RuntimePeople from './RuntimePeople.vue'
-import { getModifyCandidate } from '@/api/unit/api.js'
-import { mapState } from 'vuex'
-import LongText from '@/component/LongText'
+import RuntimePeople from "./RuntimePeople.vue";
+import { getModifyCandidate } from "@/api/unit/api.js";
+import { mapState } from "vuex";
+import LongText from "@/component/LongText";
 export default {
-  name: 'RuntimeImplementAgency',
+  name: "RuntimeImplementAgency",
   components: {
     RuntimePeople,
     LongText,
@@ -47,56 +65,56 @@ export default {
   },
   data() {
     return {
-      editTaskId: '',
+      editTaskId: "",
       runtimePeopleVisible: false,
       runtimePeopleSelected: [],
-    }
+    };
   },
   computed: {
-    ...mapState('account', ['userInfo']),
+    ...mapState("account", ["userInfo"]),
     agency() {
-      return this.workflow.curTrack?.candidateUsers ?? []
+      return this.workflow.curTrack?.candidateUsers ?? [];
     },
   },
   methods: {
     onAddAgency(taskId) {
-      this.editTaskId = taskId
-      this.runtimePeopleVisible = true
+      this.editTaskId = taskId;
+      this.runtimePeopleVisible = true;
     },
     onEditAgency(taskId, candidateUsers) {
-      this.editTaskId = taskId
+      this.editTaskId = taskId;
       this.runtimePeopleSelected = candidateUsers.map((userName) => ({
         userId: userName,
-      }))
-      this.runtimePeopleVisible = true
+      }));
+      this.runtimePeopleVisible = true;
     },
     async onRuntimePeopleSubmit({ addeds, removeds, selections }) {
       if (removeds.length) {
-        let strDelete = removeds.map(({ userId }) => userId).join(',')
+        let strDelete = removeds.map(({ userId }) => userId).join(",");
         await getModifyCandidate({
           dataList: strDelete,
-          operateType: 'user:delete',
+          operateType: "user:delete",
           taskId: this.editTaskId,
-        })
+        });
       }
       if (addeds.length) {
-        let strData = addeds.map(({ userId }) => userId).join(',')
+        let strData = addeds.map(({ userId }) => userId).join(",");
         await getModifyCandidate({
           dataList: strData,
-          operateType: 'user:add',
+          operateType: "user:add",
           taskId: this.editTaskId,
-        })
+        });
       }
-      this.runtimePeopleSelected = [...selections]
-      this.$message.success('代办成功')
-      this.$emit('completed')
+      this.runtimePeopleSelected = [...selections];
+      this.$message.success("代办成功");
+      this.$emit("completed");
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
-@import '../index.scss';
+@import "../index.scss";
 
 @include container;
 

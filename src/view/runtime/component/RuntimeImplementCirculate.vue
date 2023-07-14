@@ -16,10 +16,12 @@
           <div>
             <div
               class="user"
-              v-for="userName in circulations[0].unitList"
-              :key="userName"
+              v-for="{ account, username } in circulations[0]
+                .assigneeInfoDTOList"
+              :key="account"
             >
-              <long-text contentStyle="width: 80px" :content="userName" />
+              <span class="assigner-card" :title="account">{{ username }}</span>
+              <!-- <long-text contentStyle="width: 80px" :content="username" /> -->
             </div>
           </div>
           <el-button @click="onEditCirculate(taskId, circulations)">
@@ -111,7 +113,7 @@ export default {
           processInstanceId: this.workflow.processInstanceId,
         });
       }
-      this.runtimePeopleSelected = [...selections]
+      this.runtimePeopleSelected = [...selections];
       this.$message.success("传阅成功");
       this.$emit("completed");
     },
