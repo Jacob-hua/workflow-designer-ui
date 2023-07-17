@@ -61,7 +61,7 @@ $step-rejected-color: red;
   }
 
   .user {
-    width: 80px;
+    // width: 80px;
     height: 25px;
     line-height: 25px;
     margin-right: 20px;
@@ -69,6 +69,10 @@ $step-rejected-color: red;
     border: 1px solid $button-submit-bg-color;
     border-radius: 4px;
     color: $font-color;
+
+    .assigner-card {
+      padding: 0 5px;
+    }
   }
 
   .empty {
