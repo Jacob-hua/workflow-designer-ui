@@ -8,7 +8,7 @@
         ) in agency"
         :key="index"
       >
-        <div v-show="assignee">{{ assignee }}:</div>
+        <!-- <div v-show="assignee">{{ assignee }}:</div> -->
         <div class="info" v-if="candidateUsers.length > 0">
           <div>
             <div
