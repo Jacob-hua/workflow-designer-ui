@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="title" :visible="visible" top="5vh" @close="onCloseModal" :close-on-click-modal="false">
+    <el-dialog :title="title" :visible="visible" @close="onCloseModal" :close-on-click-modal="false">
       <el-skeleton v-if="isLoading" />
       <div v-else>
         <div class="form-preview">
@@ -183,8 +183,13 @@ export default {
 <style scoped lang="scss">
 /deep/ .el-dialog {
   @include formDialog;
-  width: 600px;
-  height: auto;
+  width: 50vw;
+  max-height: 70vh;
+
+  .el-dialog__body {
+    height: 100%;
+    overflow: auto;
+  }
 }
 
 .dialog-message {
