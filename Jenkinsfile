@@ -7,7 +7,7 @@ pipeline {
     environment {
 		service="workflow-ui"
 		def workspace = pwd()
-		namespace="workflow-shanqi"
+		namespace="workflow"
 		Branch="${env.gitlabTargetBranch}"
 		starttime = getDateFormat()
 		BUILD_USER = getBuildUser()
