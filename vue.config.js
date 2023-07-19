@@ -12,7 +12,10 @@ module.exports = {
     },
   },
   devServer: {
+    host: '0.0.0.0',
     port: 8818,
+    public: '192.100.4.26:8818',
+    disableHostCheck: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
