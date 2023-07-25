@@ -22,6 +22,7 @@ module.exports = {
         // target: 'http://192.100.4.25:8060', // 刘旺
         // target: "http://192.100.8.80:8060",
         target: 'http://k8s.isiact.com/workflow-runtime-service/workflow',
+        // target: 'http://k8s.isiact.com/workflow-shanqi/workflow',
         // target: 'http://k8s.isiact.com/kms-runtime-service/workflow', // 康明斯
         changeOrigin: true, //是否允许跨域
         pathRewrite(path) {
