@@ -122,8 +122,13 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
   },
   watch: {
-    selected(selected) {
-      this.multipleSelection = JSON.parse(JSON.stringify(selected))
+    // selected(selected) {
+    //   this.multipleSelection = JSON.parse(JSON.stringify(selected))
+    // },
+    visible(val) {
+      if(val) {
+        this.multipleSelection = JSON.parse(JSON.stringify(this.selected));
+      }
     },
     tableData(tableData) {
       tableData.forEach((row) => {
