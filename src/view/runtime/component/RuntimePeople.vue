@@ -155,14 +155,7 @@ export default {
         this.multipleSelection = []
         return
       }
-      rows.forEach((row) => {
-        const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
-        if (targetIndex === -1) {
-          this.multipleSelection.push(row)
-        } else {
-          this.multipleSelection.splice(targetIndex, 1, row)
-        }
-      })
+      this.multipleSelection = rows;
     },
     onSelectionChange(_, row) {
       const targetIndex = this.multipleSelection.findIndex(({ userId }) => row.userId === userId)
@@ -193,6 +186,7 @@ export default {
       this.$emit('update:visible', false)
     },
     onTreeSelectedChange(key) {
+      this.getData.page = 1;
       this.currentKey = key.groupId
       this.fetchPeopleList()
     },
@@ -303,7 +297,7 @@ export default {
 }
 
 .user-wrapper {
-  height: 150px;
+  min-height: 150px;
   border: 1px solid $border-color-1;
   border-radius: 4px;
 
@@ -320,6 +314,8 @@ export default {
 
 .users {
   display: flex;
+  flex-wrap: wrap;
+  row-gap: 15px;
   margin-top: 15px;
   color: $font-color;
   padding: 18px 20px;
