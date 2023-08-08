@@ -71,7 +71,7 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <el-tabs v-model="searchForm.taskType" type="border-card" @tab-click="onTaskTypeChange">
+      <el-tabs v-model="searchForm.taskType" type="border-card">
         <el-tab-pane v-for="({ label, display }, index) in taskTypeRadios" :key="index" :name="label">
           <span slot="label">{{ display }}</span>
           <div>
@@ -196,6 +196,7 @@ export default {
         all: 0,
         notice: 0,
         self: 0,
+        start: 0,
       },
       taskStatusConfig: {
         run: {
@@ -262,6 +263,10 @@ export default {
           label: 'notice',
           display: `告知（${this.taskTypeCounts['notice'] ?? 0}）`,
         },
+        {
+          label: 'start',
+          display: `我发起的任务（${this.taskTypeCounts['start'] ?? 0}）`,
+        },
       ]
     },
   },
@@ -281,14 +286,6 @@ export default {
   },
   methods: {
     ...mapActions('config', ['dispatchRefreshOrganization']),
-    onTaskTypeChange() {
-      this.pageInfo = {
-        page: 1,
-        limit: 10,
-        total: 0,
-      }
-      this.getAllApi()
-    },
     onExecute(row) {
       this.workflow = { ...row }
       this.runtimeImplementVisible = true
