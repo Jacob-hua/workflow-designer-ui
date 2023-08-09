@@ -77,7 +77,7 @@ export default {
   flex-direction: column;
 }
 .containers {
-  background-color: #ffffff;
+  background-color: transparent;
   width: 100%;
   height: 100%;
 }

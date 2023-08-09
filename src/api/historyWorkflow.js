@@ -10,3 +10,7 @@ export const postHistoryProcessCountStatistic = (params) => post('/execute/histo
 export const listHistoryTask = (params) => post('/history/newTaskList', params)
 
 export const getHistoryTaskDetail = (params) => get('/history/historyDetail', params)
+
+export const exportDetail = (params) => post('/report/proccess/export-detail', params, {
+  responseType: 'blob',
+})
