@@ -226,7 +226,13 @@
         </div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer" v-if="resource === 'runtime'&&userInfo.account === workflow.starterAssignee">
+    <span
+      slot="footer"
+      class="dialog-footer"
+      v-if="
+        resource === 'runtime' && userInfo.account === workflow.starterAssignee
+      "
+    >
       <el-button type="primary" @click="handleClickInvalidate">作 废</el-button>
       <!-- <el-button type="primary" @click="visible = false"
         >撤 回</el-button
@@ -252,6 +258,8 @@ import {
   putCancelInstance,
 } from "@/api/unit/api.js";
 import { processVariable, downloadFile } from "@/api/globalConfig";
+import { exportDetail } from "@/api/historyWorkflow";
+import { downloadFile as downBold } from '../../../util/file';
 import { mapState } from "vuex";
 
 export default {
@@ -426,13 +434,35 @@ export default {
         processInstanceId: this.workflow.processInstanceId,
         taskId: this.workflow.newTaskId,
         discard: true,
-        assignee: this.userInfo.account,
+        assignee: this.workflow.starterAssignee,
       }).then((res) => {
         this.$message.success("废弃成功");
         this.$emit("close");
       });
     },
-    handleExport(){},
+    handleExport() {
+      exportDetail({
+        processInstanceId: this.workflow.processInstanceId,
+        assignee: this.workflow.starterAssignee,
+      }).then((res) => {
+        console.log(res, "ddd");
+        // this.Download(res, 'test.pdf')
+        downBold(`${this.workflow.workOrderName}`, 'xlsx', res)
+      });
+    },
+    Download(content, filename) {
+      var eleLink = document.createElement("a");
+      eleLink.download = filename;
+      eleLink.style.display = "none";
+      // 字符内容转变成blob地址
+      var blob = new Blob([content]);
+      eleLink.href = URL.createObjectURL(blob);
+      // 触发点击
+      document.body.appendChild(eleLink);
+      eleLink.click();
+      // 然后移除
+      document.body.removeChild(eleLink);
+    },
   },
 };
 </script>
