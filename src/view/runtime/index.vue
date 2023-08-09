@@ -297,15 +297,17 @@ export default {
     },
     onLookoverClose() {
       this.lookoverVisible = false
+      this.getAllApi();
     },
     onPageSizeChange() {
-      this.getAllApi()
+      this.getAllApi();
     },
     onPageChange() {
-      this.getAllApi()
+      this.getAllApi();
     },
     onRuntimeImplementClose() {
       this.runtimeImplementVisible = false
+      this.getAllApi();
     },
     onAddSuccess() {
       this.runtimeAddVisible = false
@@ -317,6 +319,7 @@ export default {
     },
     onRuntimeAddClose() {
       this.runtimeAddVisible = false
+      this.getAllApi();
     },
     onTaskSuccess() {
       this.runtimeImplementVisible = false
