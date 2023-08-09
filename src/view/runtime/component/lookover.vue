@@ -426,7 +426,7 @@ export default {
         processInstanceId: this.workflow.processInstanceId,
         taskId: this.workflow.newTaskId,
         discard: true,
-        assignee: this.workflow.reporter,
+        assignee: this.userInfo.account,
       }).then((res) => {
         this.$message.success("废弃成功");
         this.$emit("close");
