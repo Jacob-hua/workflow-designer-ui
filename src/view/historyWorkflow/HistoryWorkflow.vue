@@ -94,6 +94,7 @@
     </div>
     <lookover
       v-if="lookoverVisible"
+      resource="history"
       :detailFunc="getHistoryTaskDetail"
       :visible.sync="lookoverVisible"
       :processInstanceId="processInstanceId"

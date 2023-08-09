@@ -141,6 +141,7 @@
     <lookover
       v-if="lookoverVisible"
       ref="lookover"
+      resource="runtime"
       :visible="lookoverVisible"
       :processInstanceId="workflow.processInstanceId"
       @close="onLookoverClose"
