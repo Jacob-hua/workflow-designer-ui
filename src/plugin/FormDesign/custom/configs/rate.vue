@@ -22,7 +22,6 @@
         v-model="props.labelWidth"
         :min="1"
         :max="200"
-        w
       ></el-input-number>
     </el-form-item>
     <el-form-item label="显示标签">
