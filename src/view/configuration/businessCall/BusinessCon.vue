@@ -88,6 +88,7 @@ import {
   updateBusinessConfig,
   businessConfigWithTreeCreate,
   deleteBusinessConfig,
+  getAllBusinessConfig
 } from "@/api/globalConfig";
 
 import { mapState } from "vuex";
@@ -159,6 +160,9 @@ export default {
           }
           this.currentNode.children.push(res.result);
           this.showinput = false;
+        }
+        if(res.result) {
+          this.getMapping();
         }
       });
     },
@@ -289,8 +293,18 @@ export default {
           const children = parent.data.children || parent.data;
           const index = children.findIndex((d) => d.id === data.id);
           children.splice(index, 1);
+          this.getMapping();
         });
       });
+    },
+    getMapping() {
+      getAllBusinessConfig({
+        tenantId: this.tenantId,
+      }).then((res) => {
+        if (res) {
+          sessionStorage.setItem('mapping', JSON.stringify(res.result || '[]'))
+        }
+      })
     },
   },
 };
