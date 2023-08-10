@@ -8,7 +8,7 @@ export let rate = {
   ele: 'el-rate',
   //控件名称(左侧显示)
   compName:'评分',
-
+  label: '',
   //图标
   compIcon:'rate',
   //展示表单的模式
