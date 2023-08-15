@@ -35,7 +35,7 @@
         <el-form
             :size="formConf.size"
             :label-position="formConf.labelPosition"
-            :disabled="formConf.disabled"
+            :disabled="true"
             :label-width="formConf.labelWidth + 'px'"
         >
           <draggable
