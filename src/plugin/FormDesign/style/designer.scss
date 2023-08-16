@@ -303,3 +303,23 @@ $lighterBlue: #409EFF;
   height: 120px;
   background-color: #409EFF;
 }
+.hour-time .el-time-spinner__wrapper {
+  width:100% !important;
+}
+.hour-time .el-time-spinner__wrapper:nth-of-type(2) {
+  display: none !important;
+}
+
+.hour-time .el-scrollbar {
+  width:100% !important;
+}
+.hour-time .el-scrollbar:nth-of-type(2) {
+  display: none !important;
+}
+
+.el-range-editor.is-disabled {
+  background-color: #212739;
+  border: 1px solid #333333;
+    color: #ffffff;
+}
+

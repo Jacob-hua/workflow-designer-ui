@@ -34,13 +34,16 @@ export let time = {
   readonly:false,
   value: '',
   rules:[],
+  editable: false,
   'picker-options': {
-    selectableRange: '00:00:00-23:59:59'
+    // selectableRange: '00:00:00-23:59:59',
+    format: 'HH:mm',
   },
-  'arrow-control':true,
+  // 'arrow-control':true,
   align:'left',
-  format: 'HH:mm:ss',
-  'value-format': 'HH:mm:ss',
+  // format: 'HH:mm:ss',
+  'value-format': 'HH:mm',
   'is-range':false,
-  'range-separator':'-'
+  'range-separator':'-',
+  'popper-class': ''
 }

@@ -7,9 +7,9 @@
         :filter-method="handleFilter"
         clearable
         @focus="handleSearch"
-        :loading="loading"
         @change="handleSelect"
         @visible-change="handleReset"
+        v-loadMore="loadMoreData"
       >
         <el-option
           v-for="item in options"
@@ -17,14 +17,6 @@
           :value="item.itemnum"
           :label="item.spareInfo"
         ></el-option>
-        <el-pagination
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
-          :current-page.sync="page"
-          :total="total"
-          :hide-on-single-page="true"
-        >
-        </el-pagination>
       </el-select>
     </div>
     <div class="cart-box" v-if="spareParts.length">
@@ -66,6 +58,19 @@ import { getSpareListByPage } from "../../../api/unit/api";
 import _ from "lodash";
 export default {
   name: "shoppingCart",
+  directives: {
+    'loadMore': {
+      bind(el, binding) {
+        const SELECTWRAP_DOM = el.querySelector('.el-select-dropdown .el-select-dropdown__wrap');
+        SELECTWRAP_DOM.addEventListener('scroll', function () {
+          const condition = this.scrollHeight - this.scrollTop <= this.clientHeight;
+          if (condition) {
+            binding.value();
+          }
+        });
+      }
+    }
+  },
   props: {
     value: {
       type: Array,
@@ -125,7 +130,7 @@ export default {
           return [];
         }
         this.total = +result.count;
-        this.options = result.dataList;
+        this.options = this.options.concat(result.dataList);
       } catch (error) {
         return [];
       }
@@ -224,7 +229,8 @@ export default {
       this.$emit("input", this.spareParts);
     },
 
-    handleCurrentChange() {
+    loadMoreData() {
+      this.page++;
       this.fetchSpareList();
     },
   },
