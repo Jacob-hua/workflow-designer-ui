@@ -20,6 +20,7 @@
     </div>
     <div class="process-canvas" v-show="showProcess">
       <bpmn-viewer
+        :visible="showProcess"
         :xml="xml"
         :prop="{
           bpmnRenderer: {
@@ -47,14 +48,20 @@ export default {
       type: Array,
       default: () => [],
     },
+    showProcess: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
-      showProcess: true,
+      showProcess: false,
+      iBpmnViewer: null,
     };
   },
   methods: {
     onBpmnViewerLoaded(iBpmnViewer) {
+      this.iBpmnViewer = iBpmnViewer;
       this.$emit("loaded", iBpmnViewer);
     },
     onSelectedChange(shape, iBpmnViewer) {

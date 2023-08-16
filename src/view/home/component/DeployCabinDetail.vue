@@ -2,7 +2,7 @@
   <div>
     <el-dialog title="查看工作流" fullscreen :visible="visible" @close="onClose">
       <div class="container">
-        <bpmn-info :processDisplayInfo="processDisplayInfo" :xml="workflow.content" />
+        <bpmn-info :processDisplayInfo="processDisplayInfo" :xml="workflow.content" :showProcess="true"/>
         <div class="search-wrapper">
           <span>部署类型</span>
           <span>

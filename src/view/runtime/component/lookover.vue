@@ -11,6 +11,7 @@
       <bpmn-info
         :xml="workflow.processDeployResource"
         :processDisplayInfo="processDisplayInfo"
+        :showProcess="true"
       >
         <div>
           <preview
@@ -471,7 +472,7 @@ export default {
 }
 
 .process-content {
-  height: 260px;
+  // height: 260px;
   overflow: auto;
   padding: 10px 10px;
 }
