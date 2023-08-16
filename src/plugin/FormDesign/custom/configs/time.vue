@@ -42,6 +42,20 @@
     <el-form-item label="禁用">
       <el-switch v-model="props.disabled"></el-switch>
     </el-form-item>
+    <el-form-item label="时间类型">
+      <el-select
+        class="input"
+        v-model="props['picker-options'].format"
+        @change="handlerFormatChange"
+      >
+        <el-option
+          v-for="item in timeType"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+    </el-form-item>
     <el-form-item label="范围选择">
       <el-switch @change="rangeChange" v-model="props['is-range']"></el-switch>
     </el-form-item>
@@ -50,11 +64,15 @@
     </el-form-item>
     <el-form-item label="默认值">
       <el-time-picker
+        :key="Math.random()*10"
+        placeholder="选择默认时间"
         :is-range="props['is-range']"
         class="input"
         v-model="props.value"
-        value-format="HH:mm:ss"
-        placeholder="选择默认时间"
+        :editable="false"
+        :value-format="props['value-format']"
+        :picker-options="props['picker-options']"
+        :popper-class="props['popper-class']"
       />
     </el-form-item>
   </div>
@@ -67,17 +85,44 @@ export default {
   mixins: [changeId],
   props: ["props", "getFormId"],
   data() {
-    return {};
+    return {
+      timeType: [
+        {
+          label: '时',
+          value: 'HH'
+        },
+        {
+          label: '时分',
+          value: 'HH:mm'
+        },
+        {
+          label: '时分秒',
+          value: 'HH:mm:ss'
+        }
+      ],
+    };
   },
 
   methods: {
     rangeChange(isRange) {
-      if (isRange) {
-        this.props.value = ["00:00:00", "23:59:59"];
-      } else {
+      if(!isRange){
         this.props.value = "";
       }
+      // if (isRange) {
+      //   this.props.value = ["00", "23"];
+      // } else {
+      //   this.props.value = "";
+      // }
     },
+    handlerFormatChange(val){
+      this.props['value-format'] = val;
+      this.props['picker-options'].format = val;
+      if(val === 'HH'){
+        this.props['popper-class'] = 'hour-time'
+      }else{
+        this.props['popper-class'] = ''
+      }
+    }
   },
   mounted() {},
 };
@@ -85,5 +130,19 @@ export default {
 <style scoped lang="scss">
 .input {
   width: 75%;
+}
+
+.hour-time .el-scrollbar {
+  width:100% !important;
+}
+.hour-time .el-scrollbar:nth-of-type(2) {
+  display: none !important;
+}
+
+.hour-time .el-time-spinner__wrapper {
+  width:100% !important;
+}
+.hour-time .el-time-spinner__wrapper:nth-of-type(2) {
+  display: none !important;
 }
 </style>
