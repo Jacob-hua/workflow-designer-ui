@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="containers" ref="containers"></div>
+    <div class="containers" ref="containers" v-if="visible"></div>
   </div>
 </template>
 
@@ -10,6 +10,10 @@ import IBpmnViewer from '../../IBpmnViewer'
 export default {
   name: 'BpmnViewer',
   props: {
+    visible: {
+      type: Boolean,
+      default: true,
+    },
     xml: {
       type: String,
     },
@@ -49,13 +53,26 @@ export default {
         })
       },
     },
+    visible: {
+      immediate: true,
+      handler() {
+        this.$nextTick(() => {
+          if (this.$refs.containers) {
+            this.iBpmnViewer.detach()
+            this.iBpmnViewer.attachTo(this.$refs.containers)
+            setTimeout(() => {
+              this.iBpmnViewer.canvasZoom('fit-viewport', 'auto')
+            })
+          }
+        })
+      }
+    }
   },
   mounted() {
     this.initBpmn()
   },
   methods: {
     initBpmn() {
-      this.iBpmnViewer.attachTo(this.$refs.containers)
       this.iBpmnViewer.on('selection.changed', () => {
         this.selectedChanged(this.iBpmnViewer.getSelectedShape(), this.iBpmnViewer)
       })
@@ -77,7 +94,7 @@ export default {
   flex-direction: column;
 }
 .containers {
-  background-color: transparent;
+  background-color: rgb(27, 30, 45);
   width: 100%;
   height: 100%;
 }

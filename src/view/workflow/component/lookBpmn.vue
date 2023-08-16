@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="查看" :visible="visible" fullscreen @close="close">
     <div>
-      <bpmn-info :xml="projectData.content" :processDisplayInfo="processDisplayInfo" />
+      <bpmn-info :xml="projectData.content" :processDisplayInfo="processDisplayInfo" :showProcess="true" />
     </div>
     <span slot="footer" v-if="footerVisible">
       <el-button

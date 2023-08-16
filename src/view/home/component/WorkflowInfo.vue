@@ -5,6 +5,7 @@
       :xml="xml"
       @loaded="onLoaded"
       @selectedShape="onSelectedShape"
+      :showProcess="true"
     />
     <div class="ticket-wrapper">
       <div class="ticket-info">
