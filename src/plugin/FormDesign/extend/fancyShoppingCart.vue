@@ -108,6 +108,8 @@ export default {
   },
   methods: {
     handleSearch() {
+      this.page = 1;
+      this.options = [];
       this.fetchSpareList();
     },
 
