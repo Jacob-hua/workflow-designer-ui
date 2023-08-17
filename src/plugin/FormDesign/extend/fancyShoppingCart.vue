@@ -113,6 +113,8 @@ export default {
 
     handleFilter(value) {
       this.description = value;
+      this.page = 1;
+      this.options = [];
       this.fetchSpareList();
     },
 
