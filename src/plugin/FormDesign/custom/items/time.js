@@ -41,7 +41,7 @@ export let time = {
   },
   // 'arrow-control':true,
   align:'left',
-  // format: 'HH:mm:ss',
+  format: 'HH:mm',
   'value-format': 'HH:mm',
   'is-range':false,
   'range-separator':'-',
