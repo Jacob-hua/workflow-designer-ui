@@ -115,6 +115,7 @@ export default {
       // }
     },
     handlerFormatChange(val){
+      this.props['format'] = val;
       this.props['value-format'] = val;
       this.props['picker-options'].format = val;
       if(val === 'HH'){
