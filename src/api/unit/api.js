@@ -104,6 +104,8 @@ export const getExecuteDetail = (params) => get('/execute/executeDetail', params
 // 获取执行时工作流列表
 export const getExecuteList = (params) => post('/execute/executeList', params)
 
+export const getUserTaskList = (params) => post('/execute/userTaskList', params)
+
 // 可创建实例列表
 export const getProcessDefinitionList = (params) => get('/execute/processDefinitionList', params)
 
@@ -142,6 +144,8 @@ export const putRejectTask = (params) => put('/execute/rejectTask', params)
 
 // 终止流程
 export const putCancelInstance = (params) => put('/execute/cancelInstance', params)
+
+export const putRevokeTask = (params) => put('/execute/revokeTask', params)
 
 // 传阅流程
 export const getCirculation = (params) => get('/execute/newCirculation', params)

@@ -36,15 +36,21 @@
                 assigneeStatus,
                 status,
                 commentList,
-                taskId,
-                assigneeInfoDTOList,
+                taskId
               } in trackList"
               :key="taskId"
             >
               <div class="contant">
                 <div
                   v-for="(
-                    { formContent, assignee: formAssignee, time }, index
+                    {
+                      formContent,
+                      assignee: formAssignee,
+                      time,
+                      assigneeName,
+                      assigneeInfoDTOList,
+                    },
+                    index
                   ) in formDataList"
                   :key="index"
                 >
@@ -79,13 +85,9 @@
                   >
                     <div>
                       <i class="el-icon-check success"></i>
-                      <span
-                        v-for="(assigner, index) in assigneeInfoDTOList"
-                        :key="index"
-                        :title="assigner.account"
-                        class="assigner-card"
-                        >{{ assigner.username }}</span
-                      >
+                      <span :title="formAssignee" class="assigner-card">{{
+                        assigneeName
+                      }}</span>
                       <span>完成</span>
                     </div>
                     <span>{{ time }}</span>
@@ -188,6 +190,38 @@
                       </div>
                     </div>
                   </div>
+                  <div v-if="assigneeStatus[formAssignee] === 'revoke'">
+                    <div
+                      v-for="(
+                        { comments, assignee: commentAssignee }, index
+                      ) in commentList"
+                      :key="index"
+                    >
+                      <div v-if="commentAssignee === formAssignee">
+                        <div class="execute-info">
+                          <div>
+                            <i class="el-icon-close warning"></i
+                            ><span
+                              v-for="(assigner, index) in assigneeInfoDTOList"
+                              :key="index"
+                              :title="assigner.account"
+                              class="assigner-card"
+                              >{{ assigner.username }}</span
+                            >
+                            <span>撤回 </span>
+                          </div>
+                          <span>{{ time }}</span>
+                        </div>
+                        <div
+                          v-for="({ message }, index) in comments"
+                          :key="index"
+                        >
+                          <i class="el-icon-warning-outline warning"></i>
+                          <span>{{ message }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <div v-if="undefineStatus(status)">
                     <div
                       v-for="(
@@ -230,22 +264,37 @@
     <span
       slot="footer"
       class="dialog-footer"
-      v-if="
-        resource === 'runtime' && userInfo.account === workflow.starterAssignee
-      "
+      v-if="taskType === 'start' || taskType === 'revoke'"
     >
-      <el-button type="primary" @click="handleClickInvalidate">作 废</el-button>
-      <!-- <el-button type="primary" @click="visible = false"
-        >撤 回</el-button
-      > -->
+      <el-button
+        type="primary"
+        v-show="taskType === 'start'"
+        @click="handleClickInvalidate"
+        >作 废</el-button
+      >
+      <el-button type="primary" @click="handleRevoke">撤 回</el-button>
     </span>
     <span slot="footer" class="dialog-footer" v-if="resource === 'history'">
       <el-button type="primary" @click="handleExport">导 出</el-button>
     </span>
     <RuntimeInvalidatedConfirmation
+      v-show="invalidatedConfirmationVisible"
       :visible.sync="invalidatedConfirmationVisible"
-      @submit="oninvalidatedConfirmationSubmit"
+      @submit="onInvalidatedConfirmationSubmit"
     ></RuntimeInvalidatedConfirmation>
+    <RuntimeRevokeConfirmation
+      v-show="revokeConfirmationVisible"
+      :visible.sync="revokeConfirmationVisible"
+      @submit="onRevokeConfirmationSubmit"
+    ></RuntimeRevokeConfirmation>
+    <RuntimeRevokeTicket
+      v-show="revokeTicketVisible"
+      :visible.sync="revokeTicketVisible"
+      :formContent="startFormContent"
+      :context="context"
+      :processInstanceId="processInstanceId"
+      @submit="onRevokeTicketSubmit"
+    ></RuntimeRevokeTicket>
   </el-dialog>
 </template>
 
@@ -253,14 +302,17 @@
 import BpmnInfo from "@/component/BpmnInfo.vue";
 import preview from "@/plugin/FormDesign/component/preview";
 import RuntimeInvalidatedConfirmation from "./RuntimeInvalidatedConfirmation.vue";
+import RuntimeRevokeConfirmation from "./RuntimeRevokeConfirmation.vue";
+import RuntimeRevokeTicket from "./RuntimeRevokeTicket.vue";
 import {
   getExecuteDetail,
   downloadTaskAttachmentFile,
   putCancelInstance,
+  putRevokeTask,
 } from "@/api/unit/api.js";
 import { processVariable, downloadFile } from "@/api/globalConfig";
 import { exportDetail } from "@/api/historyWorkflow";
-import { downloadFile as downBold } from '../../../util/file';
+import { downloadFile as downBold } from "../../../util/file";
 import { mapState } from "vuex";
 
 export default {
@@ -268,6 +320,8 @@ export default {
     BpmnInfo,
     preview,
     RuntimeInvalidatedConfirmation,
+    RuntimeRevokeConfirmation,
+    RuntimeRevokeTicket,
   },
   props: {
     visible: {
@@ -294,6 +348,9 @@ export default {
     resource: {
       type: String,
     },
+    taskType: {
+      type: String,
+    },
   },
   data() {
     return {
@@ -305,6 +362,8 @@ export default {
         config: {},
       },
       invalidatedConfirmationVisible: false,
+      revokeConfirmationVisible: false,
+      revokeTicketVisible: false,
     };
   },
   computed: {
@@ -429,7 +488,7 @@ export default {
     handleClickInvalidate() {
       this.invalidatedConfirmationVisible = true;
     },
-    oninvalidatedConfirmationSubmit({ invalidatedReason }) {
+    onInvalidatedConfirmationSubmit({ invalidatedReason }) {
       putCancelInstance({
         cancelReason: invalidatedReason,
         processInstanceId: this.workflow.processInstanceId,
@@ -447,8 +506,33 @@ export default {
         assignee: this.userInfo.account,
       }).then((res) => {
         console.log(res, "ddd");
-        downBold(`${this.workflow.workOrderName}`, 'xlsx', res)
+        downBold(`${this.workflow.workOrderName}`, "xlsx", res);
       });
+    },
+    handleRevoke() {
+      if (this.taskType === "revoke") {
+        this.revokeConfirmationVisible = true;
+      } else {
+        this.revokeTicketVisible = true;
+      }
+    },
+    onRevokeConfirmationSubmit({ revokeReason }) {
+      const params = {
+        message: revokeReason,
+        processInstanceId: this.workflow.processInstanceId,
+        userId: this.userInfo.account
+      }
+      putRevokeTask(params).then((res) => {
+        this.$message.success("撤回成功");
+        this.$emit("close");
+      }).catch((err) => {
+        this.$message.error("撤回失败", err);
+      })
+    },
+    onRevokeTicketSubmit(signal) {
+      if (signal) {
+        this.$emit('succseeRecreate')
+      }
     },
   },
 };

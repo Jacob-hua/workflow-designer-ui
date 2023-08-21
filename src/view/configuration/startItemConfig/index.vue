@@ -141,6 +141,7 @@ label {
   display: inline-block;
   margin-right: 40px;
   margin-bottom: 10px;
+  box-sizing: content-box;
 }
 
 .businessCall-main-list-add .el-icon-plus {
