@@ -416,6 +416,9 @@ export default {
         throw new Error(e.toString());
       }
     },
+    resetFields() {
+      this.$refs[this.formConf.formModel].resetFields();
+    }
   },
 };
 </script>

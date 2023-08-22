@@ -1,6 +1,12 @@
 <template>
   <div>
-    <el-dialog :title="title" :visible="visible" @close="onCancel" :close-on-click-modal="false" :append-to-body="true">
+    <el-dialog
+      :title="title"
+      :visible="visible"
+      @close="onCancel"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
       <el-skeleton v-if="isLoading" />
       <div v-else>
         <div class="form-preview">
@@ -16,7 +22,12 @@
         </div>
       </div>
       <span slot="footer">
-        <el-button class="submit-button" :loading="isSubmitting" @click="onSubmit">立即创建</el-button>
+        <el-button
+          class="submit-button"
+          :loading="isSubmitting"
+          @click="onSubmit"
+          >立即撤回</el-button
+        >
         <el-button class="cancel-button" @click="onCancel">取消</el-button>
       </span>
     </el-dialog>
@@ -24,126 +35,149 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { getStartProcess, putRevokeTask } from '@/api/unit/api.js'
-import { uploadFile, downloadFile } from '@/api/globalConfig.js'
-import preview from '@/plugin/FormDesign/component/preview'
+import { mapState } from "vuex";
+import { putRevokeTask } from "@/api/unit/api.js";
+import { uploadFile, downloadFile } from "@/api/globalConfig.js";
+import preview from "@/plugin/FormDesign/component/preview";
 
 export default {
-  name: 'RuntimeRevokeTicket',
+  name: "RuntimeRevokeTicket",
   components: {
     preview,
   },
   props: {
     title: {
       type: String,
-      default: '配置项',
+      default: "配置项",
     },
     visible: {
       type: Boolean,
       default: true,
     },
-    formContent: {
+    startFormContent: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     context: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     processInstanceId: {
       type: String,
       required: true,
-    }
+    },
+    revokeReason: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
       isSubmitting: false,
       isLoading: false,
-      options: {},
       attachmentIds: [],
-    }
+      formContent: {
+        list: [],
+        data: {},
+        config: {},
+      },
+    };
   },
   computed: {
-    ...mapState('account', ['tenantId', 'userInfo']),
+    ...mapState("account", ["tenantId", "userInfo"]),
     isEmptyConfig() {
-      return !Object.prototype.hasOwnProperty.call(this.formContent, 'fields')
+      return !Object.prototype.hasOwnProperty.call(this.formContent, "fields");
+    },
+  },
+  watch: {
+    visible(visible) {
+      if(!visible) return;
+      const config = {
+        ...this.startFormContent.config,
+        disabled: false,
+        readOnly: false,
+      };
+      this.formContent = { ...this.startFormContent, config };
     },
   },
   methods: {
     onCloseModal() {
       this.startConfigList = [];
-      this.formContent = {};
-      this.$emit('close')
+      this.$refs.preview.resetFields();
+      this.$emit("close");
     },
     async uploadFileFun({ name, raw: file }) {
-      const uploadParameters = new FormData()
-      uploadParameters.append('file', file)
-      uploadParameters.append('fileName', name)
-      const { errorInfo, result } = await uploadFile(uploadParameters)
+      const uploadParameters = new FormData();
+      uploadParameters.append("file", file);
+      uploadParameters.append("fileName", name);
+      const { errorInfo, result } = await uploadFile(uploadParameters);
       if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
+        this.$message.error(errorInfo.errorMsg);
+        return;
       }
-      this.attachmentIds.push(result)
-      return result
+      this.attachmentIds.push(result);
+      return result;
     },
     async downloadFileFun({ url }) {
       return await downloadFile({
         contentId: url,
-      })
+      });
     },
     beforeDeleteFileFun({ attachmentId }) {
       try {
         Array.prototype.splice.call(
           this.attachmentIds,
           this.attachmentIds.findIndex((value) => value === attachmentId)
-        )
-        return true
+        );
+        return true;
       } catch (error) {
-        return false
+        return false;
       }
     },
     async onSubmit() {
+      let _this = this;
       try {
-        this.isSubmitting = true
+        _this.isSubmitting = true;
         let formData = [];
-        let startFormData = JSON.stringify({list:[],data:{}});
-        if(Object.keys(this.formContent).length>0){
-          const preview = await this.$refs.preview.submit();
+        let startFormData = JSON.stringify({ list: [], data: {} });
+        if (Object.keys(_this.formContent).length > 0) {
+          const preview = await _this.$refs.preview.submit();
           formData = preview.formData;
-          startFormData = JSON.stringify({ ...this.formContent, data: { ...formData } })
+          startFormData = JSON.stringify({
+            ..._this.formContent,
+            data: { ...formData },
+          });
         }
         const { errorInfo } = await putRevokeTask({
           redo: true,
-          userId: this.userInfo.account,
-          processInstanceId: this.processInstanceId,
+          userId: _this.userInfo.account,
+          processInstanceId: _this.processInstanceId,
+          message: _this.revokeReason,
           variables: { ...formData },
           startFormData: startFormData,
-        })
+        });
         if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          this.$emit('submit', false)
-          return
+          _this.$message.error(errorInfo.errorMsg);
+          _this.$emit("submit", false);
+          return;
         }
-        this.$message({
-          type: 'success',
-          message: '创建成功',
-        })
-        this.$emit('submit', true)
-        this.onCloseModal()
+        _this.$message({
+          type: "success",
+          message: "创建成功",
+        });
+        _this.$emit("submit", true);
+        _this.onCloseModal();
       } catch (error) {
-        this.$emit('submit', false)
+        _this.$emit("submit", false);
       } finally {
-        this.isSubmitting = false
+        _this.isSubmitting = false;
       }
     },
     onCancel() {
-      this.$emit('update:visible', false)
-      this.$emit('close')
+      this.onCloseModal();
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

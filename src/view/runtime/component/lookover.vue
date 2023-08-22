@@ -36,7 +36,7 @@
                 assigneeStatus,
                 status,
                 commentList,
-                taskId
+                taskId,
               } in trackList"
               :key="taskId"
             >
@@ -264,7 +264,7 @@
     <span
       slot="footer"
       class="dialog-footer"
-      v-if="taskType === 'start' || taskType === 'revoke'"
+      v-if="taskType === 'start' || taskType === 'execute'"
     >
       <el-button
         type="primary"
@@ -290,10 +290,12 @@
     <RuntimeRevokeTicket
       v-show="revokeTicketVisible"
       :visible.sync="revokeTicketVisible"
-      :formContent="startFormContent"
+      :startFormContent="startFormContent"
       :context="context"
       :processInstanceId="processInstanceId"
+      :revokeReason="revokeReason"
       @submit="onRevokeTicketSubmit"
+      @close="onRevokeTicketClose"
     ></RuntimeRevokeTicket>
   </el-dialog>
 </template>
@@ -364,6 +366,7 @@ export default {
       invalidatedConfirmationVisible: false,
       revokeConfirmationVisible: false,
       revokeTicketVisible: false,
+      revokeReason: "",
     };
   },
   computed: {
@@ -457,6 +460,7 @@ export default {
               "hang",
               "timedOut",
               "discard",
+              'revoke'
             ].includes(status)
         );
     },
@@ -510,29 +514,41 @@ export default {
       });
     },
     handleRevoke() {
-      if (this.taskType === "revoke") {
-        this.revokeConfirmationVisible = true;
+      this.revokeConfirmationVisible = true;
+      // if (this.taskType === "execute") {
+      //   this.revokeConfirmationVisible = true;
+      // } else {
+      //   this.revokeTicketVisible = true;
+      // }
+    },
+    onRevokeConfirmationSubmit({ revokeReason }) {
+      if (this.taskType === "execute") {
+        const params = {
+          message: revokeReason,
+          processInstanceId: this.workflow.processInstanceId,
+          userId: this.userInfo.account,
+        };
+        putRevokeTask(params)
+          .then((res) => {
+            this.$message.success("撤回成功");
+            this.$emit("close");
+          })
+          .catch((err) => {
+            this.$message.error("撤回失败", err);
+          });
       } else {
+        this.revokeReason = revokeReason;
+        this.revokeConfirmationVisible = false;
         this.revokeTicketVisible = true;
       }
     },
-    onRevokeConfirmationSubmit({ revokeReason }) {
-      const params = {
-        message: revokeReason,
-        processInstanceId: this.workflow.processInstanceId,
-        userId: this.userInfo.account
-      }
-      putRevokeTask(params).then((res) => {
-        this.$message.success("撤回成功");
-        this.$emit("close");
-      }).catch((err) => {
-        this.$message.error("撤回失败", err);
-      })
-    },
     onRevokeTicketSubmit(signal) {
       if (signal) {
-        this.$emit('succseeRecreate')
+        this.$emit("succseeRecreate");
       }
+    },
+    onRevokeTicketClose() {
+      this.revokeTicketVisible = false;
     },
   },
 };
