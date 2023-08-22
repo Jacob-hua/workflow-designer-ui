@@ -9,18 +9,18 @@
     </div>
     <slot></slot>
     <div class="tip-box" @click="handleShowProcess">
-      <div v-show="!showProcess">
+      <div v-show="!showProcessMsg">
         <span>查看流程信息</span>
         <i class="el-icon-arrow-right" />
       </div>
-      <div v-show="showProcess">
+      <div v-show="showProcessMsg">
         <span>关闭流程信息</span>
         <i class="el-icon-arrow-down" />
       </div>
     </div>
-    <div class="process-canvas" v-show="showProcess">
+    <div class="process-canvas" v-show="showProcessMsg">
       <bpmn-viewer
-        :visible="showProcess"
+        :visible="showProcessMsg"
         :xml="xml"
         :prop="{
           bpmnRenderer: {
@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      showProcess: false,
+      showProcessMsg: this.showProcess,
       iBpmnViewer: null,
     };
   },
@@ -68,7 +68,7 @@ export default {
       this.$emit("selectedShape", shape, iBpmnViewer);
     },
     handleShowProcess() {
-      this.showProcess = !this.showProcess;
+      this.showProcessMsg = !this.showProcessMsg;
     },
   },
 };

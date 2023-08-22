@@ -150,15 +150,15 @@ export default {
     },
     tableColumn: {
       type: Array,
-      default: [],
+      default: () => [],
     },
     formConf: {
       type: Object,
-      default: {},
+      default: () => {},
     },
     options: {
       type: Object,
-      default: {},
+      default: () => {},
     },
     downloadFun: {
       type: Function,
@@ -167,7 +167,7 @@ export default {
   },
   data() {
     return {
-      selectedData: this.$props.value,
+      selectedData: this.value,
       dialogValue: "",
       dialogVisible: false,
       gridData: [],
@@ -195,12 +195,12 @@ export default {
   },
   methods: {
     handlerShowDialog() {
-      if (this.$props.tableColumn.length <= 0) {
+      if (this.tableColumn.length <= 0) {
         this.dialogVisible = true;
         return;
       }
-      if (this.$props.options.result && this.$props.options.result.length > 0) {
-        this.gridData = this.$props.options.result;
+      if (this.options.result && this.options.result.length > 0) {
+        this.gridData = this.options.result;
       }
       this.dialogVisible = true;
     },
@@ -218,7 +218,7 @@ export default {
     },
     async downloadImg(imgItem) {
       const result = await Promise.resolve(
-        this.$props.downloadFun({ url: imgItem.attachmentId })
+        this.downloadFun({ url: imgItem.attachmentId })
       );
       const reader = new FileReader();
       reader.readAsDataURL(result);

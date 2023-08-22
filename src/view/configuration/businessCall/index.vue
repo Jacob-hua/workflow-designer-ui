@@ -313,6 +313,7 @@ label {
   display: inline-block;
   margin-right: 40px;
   color: #fff;
+  box-sizing: content-box;
 }
 
 .businessCall-main-list-add .el-icon-plus {

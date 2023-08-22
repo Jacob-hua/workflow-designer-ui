@@ -49,7 +49,11 @@
     </div>
     <div class="statistics-wrapper">
       <div>
-        <div class="data-wrapper" v-for="({ label, value, icon }, index) in workflowStatistics" :key="index">
+        <div
+          class="data-wrapper"
+          v-for="({ label, value, icon }, index) in workflowStatistics"
+          :key="index"
+        >
           <div class="icon">
             <img :src="icon" />
           </div>
@@ -61,7 +65,13 @@
           </div>
         </div>
       </div>
-      <div v-role="{ id: 'RunTimeAdd', type: 'button', business: searchForm.ascription }">
+      <div
+        v-role="{
+          id: 'RunTimeAdd',
+          type: 'button',
+          business: searchForm.ascription,
+        }"
+      >
         <div class="data-wrapper" @click="onAddTicket">
           <div class="icon">
             <img :src="require('../../assets/image/runtime/create.svg')" />
@@ -72,21 +82,39 @@
     </div>
     <div class="content-wrapper">
       <el-tabs v-model="searchForm.taskType" type="border-card">
-        <el-tab-pane v-for="({ label, display }, index) in taskTypeRadios" :key="index" :name="label">
+        <el-tab-pane
+          v-for="({ label, display }, index) in taskTypeRadios"
+          :key="index"
+          :name="label"
+        >
           <span slot="label">{{ display }}</span>
           <div>
             <el-table :data="newTasks" v-loading="loading">
               <el-table-column type="index" label="序号"> </el-table-column>
-              <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" />
-              <el-table-column prop="processDeployName" label="工单类型" show-overflow-tooltip="" />
+              <el-table-column
+                prop="workOrderName"
+                label="工单名称"
+                show-overflow-tooltip=""
+              />
+              <el-table-column
+                prop="processDeployName"
+                label="工单类型"
+                show-overflow-tooltip=""
+              />
               <el-table-column prop="displayEnergyType" label="能源系统" />
               <el-table-column prop="reporter" label="填报人" />
               <el-table-column prop="startTime" label="创建时间" />
               <el-table-column align="center" label="执行进程" min-width="250">
                 <template slot-scope="{ row }">
-                  <el-steps :active="row.displayTrackList.length" align-center process-status="success">
+                  <el-steps
+                    :active="row.displayTrackList.length"
+                    align-center
+                    process-status="success"
+                  >
                     <el-step
-                      v-for="({ title, className, taskName }, index) in row.displayTrackList"
+                      v-for="(
+                        { title, className, taskName }, index
+                      ) in row.displayTrackList"
                       icon="el-icon-edit"
                       :key="index"
                       :title="taskName"
@@ -98,14 +126,23 @@
               </el-table-column>
               <el-table-column label="操作">
                 <template slot-scope="{ row }">
-                  <el-button v-if="row.canExecute" @click.native.prevent="onExecute(row)" type="text" size="small">
+                  <el-button
+                    v-if="row.canExecute"
+                    @click.native.prevent="onExecute(row)"
+                    type="text"
+                    size="small"
+                  >
                     操作
                   </el-button>
                   <el-button
                     @click.native.prevent="onDetail(row)"
                     type="text"
                     size="small"
-                    v-role="{ id: 'RunTimeLook', type: 'button', business: searchForm.ascription }"
+                    v-role="{
+                      id: 'RunTimeLook',
+                      type: 'button',
+                      business: searchForm.ascription,
+                    }"
                   >
                     查看
                   </el-button>
@@ -143,30 +180,38 @@
       ref="lookover"
       resource="runtime"
       :visible="lookoverVisible"
+      :taskType="searchForm.taskType"
       :processInstanceId="workflow.processInstanceId"
       @close="onLookoverClose"
+      @succseeRecreate="onRecreateTicket"
     ></lookover>
   </div>
 </template>
 
 <script>
-import RuntimeAdd from './component/RuntimeAdd.vue'
-import RuntimeImplement from './component/RuntimeImplement.vue'
-import Lookover from './component/lookover.vue'
-import { getTaskCountStatistic, postTaskCountStatistics, getExecuteList, getDeployNameList } from '@/api/unit/api.js'
-import { mapActions, mapGetters, mapState } from 'vuex'
+import RuntimeAdd from "./component/RuntimeAdd.vue";
+import RuntimeImplement from "./component/RuntimeImplement.vue";
+import Lookover from "./component/lookover.vue";
+import {
+  getTaskCountStatistic,
+  postTaskCountStatistics,
+  getExecuteList,
+  getUserTaskList,
+  getDeployNameList,
+} from "@/api/unit/api.js";
+import { mapActions, mapGetters, mapState } from "vuex";
 
-import { currentOneMonthAgo } from '@/util/date'
+import { currentOneMonthAgo } from "@/util/date";
 
 export default {
-  name: 'Runtime',
+  name: "Runtime",
   components: {
     RuntimeAdd,
     RuntimeImplement,
     Lookover,
   },
   data() {
-    const { start, end } = currentOneMonthAgo('YYYY-MM-DD HH:mm:ss')
+    const { start, end } = currentOneMonthAgo("YYYY-MM-DD HH:mm:ss");
     return {
       loading: false,
       runtimeAddVisible: false,
@@ -175,12 +220,12 @@ export default {
       newTasks: [],
       deployNameList: [],
       searchForm: {
-        ascription: '',
-        business: '',
+        ascription: "",
+        business: "",
         processDeployName: null,
         valueDate: [start, end],
-        taskType: 'all',
-        order: 'desc',
+        taskType: "all",
+        order: "desc",
       },
       pageInfo: {
         page: 1,
@@ -201,102 +246,109 @@ export default {
       },
       taskStatusConfig: {
         run: {
-          title: '激活',
-          className: '',
+          title: "激活",
+          className: "",
         },
         completed: {
-          title: '通过',
-          className: '',
+          title: "通过",
+          className: "",
         },
         hang: {
-          title: '挂起',
-          className: 'table-step-hang',
+          title: "挂起",
+          className: "table-step-hang",
         },
         rejected: {
-          title: '驳回',
-          className: 'table-step-rejected',
+          title: "驳回",
+          className: "table-step-rejected",
         },
         deleted: {
-          title: '删除',
-          className: 'table-step-rejected',
+          title: "删除",
+          className: "table-step-rejected",
         },
         timedOut: {
-          title: '超时',
-          className: 'table-step-rejected',
+          title: "超时",
+          className: "table-step-rejected",
         },
       },
-    }
+    };
   },
   computed: {
-    ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
-    ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
+    ...mapState("account", ["userInfo", "tenantId", "currentOrganization"]),
+    ...mapState("uiConfig", ["cascaderProps"]),
+    ...mapGetters("config", [
+      "rootOrganizations",
+      "rootOrganizationChildrenAndAll",
+    ]),
     workflowStatistics() {
       return [
         {
-          icon: require('../../assets/image/runtime/executed.svg'),
-          label: '操作工作流总数',
+          icon: require("../../assets/image/runtime/executed.svg"),
+          label: "操作工作流总数",
           value: this.workflowCounts.executionTotalProcessCount,
         },
         {
-          icon: require('../../assets/image/runtime/executing.svg'),
-          label: '操作中',
+          icon: require("../../assets/image/runtime/executing.svg"),
+          label: "操作中",
           value: this.workflowCounts.executionInProcessCount,
         },
         {
-          icon: require('../../assets/image/runtime/completed.svg'),
-          label: '已完成数量',
+          icon: require("../../assets/image/runtime/completed.svg"),
+          label: "已完成数量",
           value: this.workflowCounts.executionCompleteCount,
         },
-      ]
+      ];
     },
     taskTypeRadios() {
       return [
         {
-          label: 'all',
-          display: `全部任务（${this.taskTypeCounts['all'] ?? 0}）`,
+          label: "all",
+          display: `全部任务（${this.taskTypeCounts["all"] ?? 0}）`,
         },
         {
-          label: 'self',
-          display: `我的任务（${this.taskTypeCounts['self'] ?? 0}）`,
+          label: "self",
+          display: `我的任务（${this.taskTypeCounts["self"] ?? 0}）`,
         },
         {
-          label: 'notice',
-          display: `告知（${this.taskTypeCounts['notice'] ?? 0}）`,
+          label: "notice",
+          display: `告知（${this.taskTypeCounts["notice"] ?? 0}）`,
         },
         {
-          label: 'start',
-          display: `我发起的任务（${this.taskTypeCounts['start'] ?? 0}）`,
+          label: "start",
+          display: `我发起的任务（${this.taskTypeCounts["start"] ?? 0}）`,
         },
-      ]
+        {
+          label: "execute",
+          display: `已处理任务（${this.taskTypeCounts["execute"] ?? 0}）`,
+        },
+      ];
     },
   },
   watch: {
     searchForm: {
       deep: true,
       handler() {
-        this.pageInfo.page = 1
-        this.getAllApi()
+        this.pageInfo.page = 1;
+        this.getAllApi();
       },
     },
   },
   async mounted() {
-    await this.dispatchRefreshOrganization()
-    this.searchForm.ascription = this.currentOrganization
-    this.fetchDeployNameList()
+    await this.dispatchRefreshOrganization();
+    this.searchForm.ascription = this.currentOrganization;
+    this.fetchDeployNameList();
   },
   methods: {
-    ...mapActions('config', ['dispatchRefreshOrganization']),
+    ...mapActions("config", ["dispatchRefreshOrganization"]),
     onExecute(row) {
-      this.workflow = { ...row }
-      this.runtimeImplementVisible = true
+      this.workflow = { ...row };
+      this.runtimeImplementVisible = true;
     },
     onDetail(row) {
-      this.workflow = { ...row }
-      this.lookoverVisible = true
+      this.workflow = { ...row };
+      this.lookoverVisible = true;
     },
     onLookoverClose() {
-      this.lookoverVisible = false
+      this.lookoverVisible = false;
       this.getAllApi();
     },
     onPageSizeChange() {
@@ -306,29 +358,34 @@ export default {
       this.getAllApi();
     },
     onRuntimeImplementClose() {
-      this.runtimeImplementVisible = false
+      this.runtimeImplementVisible = false;
       this.getAllApi();
     },
     onAddSuccess() {
-      this.runtimeAddVisible = false
-      this.pageInfo.page = 1
-      this.getAllApi()
+      this.runtimeAddVisible = false;
+      this.pageInfo.page = 1;
+      this.getAllApi();
+    },
+    onRecreateTicket() {
+      this.lookoverVisible = false;
+      this.pageInfo.page = 1;
+      this.getAllApi();
     },
     onAddTicket() {
-      this.runtimeAddVisible = true
+      this.runtimeAddVisible = true;
     },
     onRuntimeAddClose() {
-      this.runtimeAddVisible = false
+      this.runtimeAddVisible = false;
       this.getAllApi();
     },
     onTaskSuccess() {
-      this.runtimeImplementVisible = false
-      this.getAllApi()
+      this.runtimeImplementVisible = false;
+      this.getAllApi();
     },
     async getAllApi() {
-      await this.fetchDataNumber()
-      await this.fetchNewTasks()
-      await this.fetchAmount()
+      await this.fetchDataNumber();
+      await this.fetchNewTasks();
+      await this.fetchAmount();
     },
     async fetchDataNumber() {
       try {
@@ -340,56 +397,87 @@ export default {
           endTime: this.searchForm.valueDate[1],
           tenantId: this.tenantId,
           processDeployName: this.searchForm.processDeployName,
-        })
+        });
         if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
+          this.$message.error(errorInfo.errorMsg);
+          return;
         }
-        this.workflowCounts = result
+        this.workflowCounts = result;
       } catch (error) {
         this.workflowCounts = {
           executionCount: 0,
           completeCount: 0,
           executionInCount: 0,
-        }
+        };
       }
     },
     async fetchNewTasks() {
-      try {
-        this.loading = true
-        const { errorInfo, result } = await getExecuteList({
-          ...this.searchForm,
-          ...this.pageInfo,
-          taskFilter: this.searchForm.taskType,
-          startTime: this.searchForm.valueDate[0],
-          endTime: this.searchForm.valueDate[1],
-          tenantId: this.tenantId,
-          assignee: this.userInfo.account,
-          processDeployName: this.searchForm.processDeployName,
-        })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          this.loading = false
-          return
+      const params = {
+        ...this.searchForm,
+        ...this.pageInfo,
+        taskFilter: this.searchForm.taskType,
+        startTime: this.searchForm.valueDate[0],
+        endTime: this.searchForm.valueDate[1],
+        tenantId: this.tenantId,
+        assignee: this.userInfo.account,
+        processDeployName: this.searchForm.processDeployName,
+      };
+      if (this.searchForm.taskType === "self") {
+        getUserTaskList;
+        try {
+          this.loading = true;
+          const { errorInfo, result } = await getUserTaskList(params);
+          if (errorInfo.errorCode) {
+            this.$message.error(errorInfo.errorMsg);
+            this.loading = false;
+            return;
+          }
+          const { dataList = [], count } = result;
+          this.newTasks = dataList.map((task) =>
+            handleDisplay.call(this, task)
+          );
+          this.pageInfo.total = +count;
+          this.loading = false;
+        } catch (error) {
+          this.newTasks = [];
         }
-        const { dataList = [], count } = result
-        this.newTasks = dataList.map((task) => handleDisplay.call(this, task))
-        this.pageInfo.total = +count
-        this.loading = false
-      } catch (error) {
-        this.newTasks = []
+      } else {
+        try {
+          this.loading = true;
+          const { errorInfo, result } = await getExecuteList(params);
+          if (errorInfo.errorCode) {
+            this.$message.error(errorInfo.errorMsg);
+            this.loading = false;
+            return;
+          }
+          const { dataList = [], count } = result;
+          this.newTasks = dataList.map((task) =>
+            handleDisplay.call(this, task)
+          );
+          this.pageInfo.total = +count;
+          this.loading = false;
+        } catch (error) {
+          this.newTasks = [];
+        }
       }
 
       function handleDisplay(task) {
-        const newTask = { ...task }
+        const newTask = { ...task };
 
-        newTask.displayTrackList = newTask.progressBarList.map(({ taskName, taskStatus }) => ({
-          taskName,
-          ...(this.taskStatusConfig[taskStatus] ?? { title: '多人操作', className: '' }),
-        }))
-        newTask.displayEnergyType = this.$getMappingName(newTask.processDeployType)
-        newTask.canExecute = task.taskUserSet.includes(this.userInfo.account)
-        return newTask
+        newTask.displayTrackList = newTask.progressBarList.map(
+          ({ taskName, taskStatus }) => ({
+            taskName,
+            ...(this.taskStatusConfig[taskStatus] ?? {
+              title: "多人操作",
+              className: "",
+            }),
+          })
+        );
+        newTask.displayEnergyType = this.$getMappingName(
+          newTask.processDeployType
+        );
+        newTask.canExecute = task.taskUserSet.includes(this.userInfo.account);
+        return newTask;
       }
     },
     async fetchAmount() {
@@ -402,12 +490,12 @@ export default {
           ascription: this.searchForm.ascription,
           tenantId: this.tenantId,
           processDeployName: this.searchForm.processDeployName,
-        })
+        });
         if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMessage)
-          return
+          this.$message.error(errorInfo.errorMessage);
+          return;
         }
-        this.taskTypeCounts = result
+        this.taskTypeCounts = result;
       } catch (error) {}
     },
     async fetchDeployNameList() {
@@ -415,10 +503,10 @@ export default {
         const { errorInfo, result } = await getDeployNameList({
           ascriptionCode: this.searchForm.ascription,
           tenantId: this.tenantId,
-        })
+        });
         if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMessage)
-          return
+          this.$message.error(errorInfo.errorMessage);
+          return;
         }
         this.deployNameList = result.reduce(
           (deployNameList, deployName) => [
@@ -430,19 +518,19 @@ export default {
           ],
           [
             {
-              label: '全部',
+              label: "全部",
               value: null,
             },
           ]
-        )
+        );
       } catch (error) {}
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
-@import './index.scss';
+@import "./index.scss";
 
 .search-wrapper {
   height: 106px;
