@@ -79,6 +79,9 @@ pipeline {
 				      containers:
 				        - image: <IMAGE>:<IMAGETAG>
 				          name: <SECNAME>
+				      nodeSelector:
+				        kubernetes.io/hostname: kubernetesw01
+
 				EOF
 				"""
 				echo "service:build_tag  ${service}:${build_tag}"
