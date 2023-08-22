@@ -618,7 +618,7 @@ export default {
       }
 
       function assigneInList(assigneeList, userAcc){
-        return assigneeList.filter(({ account}) => userAcc === account)
+        return assigneeList.some(({ account }) => userAcc === account)
       }
       return taskId;
     },
