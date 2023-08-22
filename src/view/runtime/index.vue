@@ -423,7 +423,6 @@ export default {
         processDeployName: this.searchForm.processDeployName,
       };
       if (this.searchForm.taskType === "self") {
-        getUserTaskList;
         try {
           this.loading = true;
           const { errorInfo, result } = await getUserTaskList(params);
