@@ -8,7 +8,7 @@
     @close="onCancel"
     append-to-body
   >
-    <bpmn-info :xml="workflow.processDeployResource" @selectedShape="onSelectedChanged" />
+    <bpmn-info :xml="workflow.processDeployResource" @selectedShape="onSelectedChanged" :showProcess="true"/>
     <div class="reason-wrapper">
       <el-form ref="rejectForm" :model="rejectForm" :rules="rejectRules">
         <el-form-item label="驳回原因" prop="rejectReason">
@@ -63,33 +63,34 @@ export default {
       this.$emit('cancel')
     },
     onSubmit() {
+      let _this = this;
       this.$refs.rejectForm['validate'] &&
         this.$refs.rejectForm.validate(async (valid) => {
           if (!valid) {
             return
           }
-          if (!this.taskKey) {
-            this.$message.error('请选择被驳回的节点')
+          if (!_this.taskKey) {
+            _this.$message.error('请选择被驳回的节点')
             return
           }
           const { errorInfo } = await putRejectTask({
-            message: this.rejectForm.rejectReason,
-            processInstanceId: this.workflow.processInstanceId,
-            taskKey: this.taskKey,
-            userId: this.userInfo.account,
-            currentTaskId: this.workflow.newTaskId,
-            processKey: this.workflow.processDeployKey,
-            currentTaskName: this.workflow.processDeployName,
-            currentTaskKey: this.workflow.taskKey,
-            createBy: this.userInfo.account,
+            message: _this.rejectForm.rejectReason,
+            processInstanceId: _this.workflow.processInstanceId,
+            taskKey: _this.taskKey,
+            userId: _this.userInfo.account,
+            currentTaskId: _this.workflow.newTaskId,
+            processKey: _this.workflow.processDeployKey,
+            currentTaskName: _this.workflow.processDeployName,
+            currentTaskKey: _this.workflow.taskKey,
+            createBy: _this.userInfo.account,
           })
           if (errorInfo.errorCode) {
-            this.$message.error(errorInfo.errorMsg)
+            _this.$message.error(errorInfo.errorMsg)
             return
           }
-          this.$message.success('驳回成功！')
-          this.$emit('rejected')
-          this.$emit('update:visible', false)
+          _this.$message.success('驳回成功！')
+          _this.$emit('rejected')
+          _this.$emit('update:visible', false)
         })
     },
     onSelectedChanged(selectedShape) {

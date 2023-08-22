@@ -104,6 +104,7 @@ import {
 } from "@/api/unit/api.js";
 import { processVariable, downloadFile } from "@/api/globalConfig";
 import { mapState } from "vuex";
+import { is } from "bpmn-js/lib/util/ModelUtil";
 
 export default {
   components: {
@@ -603,35 +604,54 @@ export default {
       return workflow.trackList.at(-1);
     },
     calculateNewTaskId(workflow, account) {
-      if (assigneesInclude(workflow, account)) {
-        return getTaskIdBy(workflow, account);
-      }
-      if (candidateUsersInclude(workflow, account)) {
-        return candidateUsersInclude(workflow, account).taskId;
-      }
-
-      function assigneesInclude(workflow, account) {
-        if (!workflow.curTrack) {
-          return;
+      const curTrack = workflow.curTrack.formDataList;
+      const taskId = undefined;
+      for(let tarck of curTrack){
+        if(tarck.assignee === account){
+          return tarck.taskId;
+        }else {
+          let  flag = assigneInList(tarck.assigneeInfoDTOList, account);
+          if(flag){
+            return tarck.taskId;
+          }
         }
-        return workflow.curTrack.assignee?.split(",").includes(account);
       }
 
-      function getTaskIdBy(workflow, account) {
-        return workflow.curTrack.taskId.split(",")[
-          workflow.curTrack.assignee?.split(",").indexOf(account)
-        ];
+      function assigneInList(assigneeList, userAcc){
+        return assigneeList.some(({ account }) => userAcc === account)
       }
-
-      function candidateUsersInclude(workflow, account) {
-        if (!workflow.curTrack) {
-          return;
-        }
-        return workflow.curTrack.candidateUsers?.find(
-          ({ candidateUsers = [] }) => candidateUsers.includes(account)
-        );
-      }
+      return taskId;
     },
+    // calculateNewTaskId(workflow, account) {
+    //   if (assigneesInclude(workflow, account)) {
+    //     return getTaskIdBy(workflow, account);
+    //   }
+    //   if (candidateUsersInclude(workflow, account)) {
+    //     return candidateUsersInclude(workflow, account).taskId;
+    //   }
+
+    //   function assigneesInclude(workflow, account) {
+    //     if (!workflow.curTrack) {
+    //       return;
+    //     }
+    //     return workflow.curTrack.assignee?.split(",").includes(account);
+    //   }
+
+    //   function getTaskIdBy(workflow, account) {
+    //     return workflow.curTrack.taskId.split(",")[
+    //       workflow.curTrack.assignee?.split(",").indexOf(account)
+    //     ];
+    //   }
+
+    //   function candidateUsersInclude(workflow, account) {
+    //     if (!workflow.curTrack) {
+    //       return;
+    //     }
+    //     return workflow.curTrack.candidateUsers?.find(
+    //       ({ candidateUsers = [] }) => candidateUsers.includes(account)
+    //     );
+    //   }
+    // },
     async checkStockAndUse(itemnum, operationFlag) {
       const { result } = await checkStockAndUse({
         taskKey: this.workflow.newTaskId,
