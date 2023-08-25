@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form-item label="第三方API">
+    <el-form-item :label="labelName">
       <seclect
           @clear="close"
         :requestConfig="currentField.requestConfig"
@@ -91,6 +91,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    labelName: {
+      type: String,
+      default: '第三方API'
+    }
   },
   data() {
     return {

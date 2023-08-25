@@ -622,36 +622,6 @@ export default {
       }
       return taskId;
     },
-    // calculateNewTaskId(workflow, account) {
-    //   if (assigneesInclude(workflow, account)) {
-    //     return getTaskIdBy(workflow, account);
-    //   }
-    //   if (candidateUsersInclude(workflow, account)) {
-    //     return candidateUsersInclude(workflow, account).taskId;
-    //   }
-
-    //   function assigneesInclude(workflow, account) {
-    //     if (!workflow.curTrack) {
-    //       return;
-    //     }
-    //     return workflow.curTrack.assignee?.split(",").includes(account);
-    //   }
-
-    //   function getTaskIdBy(workflow, account) {
-    //     return workflow.curTrack.taskId.split(",")[
-    //       workflow.curTrack.assignee?.split(",").indexOf(account)
-    //     ];
-    //   }
-
-    //   function candidateUsersInclude(workflow, account) {
-    //     if (!workflow.curTrack) {
-    //       return;
-    //     }
-    //     return workflow.curTrack.candidateUsers?.find(
-    //       ({ candidateUsers = [] }) => candidateUsers.includes(account)
-    //     );
-    //   }
-    // },
     async checkStockAndUse(itemnum, operationFlag) {
       const { result } = await checkStockAndUse({
         taskKey: this.workflow.newTaskId,

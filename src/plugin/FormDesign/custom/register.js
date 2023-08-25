@@ -28,7 +28,8 @@ const components = [
   'nfc',
   'amap',
   'shoppingCart',
-  'formList'
+  'formList',
+  'meterReading',
 ]
 
 let comps = []
