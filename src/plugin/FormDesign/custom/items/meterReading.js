@@ -14,14 +14,17 @@ export let meterReading = {
   viewType:'component',
   // 是否可配置
   config: true,
-  showLabel: true,
+  showLabel: false,
+  labelWidth: '0',
   
   //禁用
   disabled:false,
 
   preDisable: true,
   timeFlag: true,
-
+  curRequired: true,
+  datatypeRule: '',
+  dataRule: '',
   height:'600',
 
   flex: 'default',
@@ -29,7 +32,8 @@ export let meterReading = {
   align: 'top',
   gutter: 0,
   visible: true,
-  meterList: [],
+  meterList: [
+  ],
   value:[],
   options: {}
 }
