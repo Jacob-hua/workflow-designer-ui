@@ -18,6 +18,7 @@
 import RuntimeConfirmation from './RuntimeConfirmation.vue'
 import RuntimeTerminateConfirmation from './RuntimeTerminateConfirmation.vue'
 import { putCancelInstance } from '@/api/unit/api.js'
+import { mapState } from "vuex";
 
 export default {
   name: 'RuntimeImplementTermination',
@@ -34,6 +35,9 @@ export default {
       confirmationVisible: false,
     }
   },
+  computed: {
+    ...mapState("account", ["tenantId", "userInfo"]),
+  },
   methods: {
     onConfirmation() {
       this.confirmationVisible = true
@@ -46,6 +50,7 @@ export default {
         cancelReason: terminateReason,
         processInstanceId: this.workflow.processInstanceId,
         taskId: this.workflow.newTaskId,
+        assignee: this.userInfo.account
       }).then((res) => {
         this.$message.success('终止成功')
         this.$emit('terminated')

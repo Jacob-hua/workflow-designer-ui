@@ -21,11 +21,12 @@ module.exports = {
     },
     proxy: {
       [`${process.env.VUE_APP_BASE_API}`]: {
-        target: 'http://192.100.4.24:8060/workflow', // 刘旺
+        // target: 'http://192.100.4.24:8060/workflow', // 刘旺
         // target: 'http://192.100.4.35:8060/workflow/', //李柯
         // target: "http://192.100.8.80:8060",
         // target: 'http://k8s.isiact.com/workflow-runtime-service',
         // target: 'http://k8s.isiact.com/kms-runtime-service/workflow', // 康明斯
+        target: 'http://192.100.8.20/workflow/',
         changeOrigin: true, //是否允许跨域
         pathRewrite(path) {
           const reg = new RegExp(`${process.env.VUE_APP_BASE_API}`)

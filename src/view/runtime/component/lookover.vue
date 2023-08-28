@@ -288,7 +288,6 @@
       @submit="onRevokeConfirmationSubmit"
     ></RuntimeRevokeConfirmation>
     <RuntimeRevokeTicket
-      v-if="revokeTicketVisible"
       :visible.sync="revokeTicketVisible"
       :startFormContent="startFormContent"
       :context="context"
