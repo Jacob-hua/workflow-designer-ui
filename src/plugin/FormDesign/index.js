@@ -9,6 +9,7 @@ import fancyDialogList from '@/plugin/FormDesign/extend/fancyDialogList'
 import iconDialog from '@/plugin/FormDesign/component/iconDialog'
 import fancyShoppingCart from '@/plugin/FormDesign/extend/fancyShoppingCart'
 import fancyFormList from '@/plugin/FormDesign/extend/fancyFormList'
+import fancyMeterReading from '@/plugin/FormDesign/extend/fancyMeterReading'
 const plugins = {
   install: function (Vue) {
     Vue.component('form-designer', formDesigner)
@@ -22,6 +23,7 @@ const plugins = {
     Vue.component('icon-dialog', iconDialog)
     Vue.component('fancy-shopping-cart', fancyShoppingCart)
     Vue.component('fancy-form-list', fancyFormList)
+    Vue.component('fancy-meter-reading', fancyMeterReading)
   },
 }
 // 这一步判断window.Vue是否存在，因为直接引用vue.min.js， 它会把Vue绑到Window上，我们直接引用打包好的js才能正常跑起来。

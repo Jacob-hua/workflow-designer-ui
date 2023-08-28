@@ -27,6 +27,7 @@ import { text } from './items/text'
 // import {barCode} from "./items/barCode";
 import {shoppingCart} from './items/shoppingCart'
 import {formList} from './items/formList'
+import { meterReading } from './items/meterReading'
 
 export const formItems = [
   input,
@@ -46,7 +47,8 @@ export const formItems = [
   nfc,
   amap,
   shoppingCart,
-  formList
+  formList,
+  meterReading
 ]
 export const assistFormItems = [button, divider, link, text]
 export const layoutFormItems = [row]
