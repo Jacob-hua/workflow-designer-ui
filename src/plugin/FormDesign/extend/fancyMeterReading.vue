@@ -1,35 +1,47 @@
 <!--文本扩展-->
 <template>
   <div class="meter-reading">
-    <el-form :model="formModel" label-position="left">
-      <div v-for="{ flagId, nameString, devList } in meterReadingList">
-        <p>{{ nameString }}</p>
-        <div v-for="{ insCode, insName } in devList">
-          <p>{{ insName }}</p>
-          <el-form-item label="上次抄表数">
-            <el-input :disabled="preDisable" ></el-input>
-          </el-form-item>
-          <el-form-item label="本次抄表数">
-            <el-input @change="handleChange" placeholder="本次抄表数"></el-input>
-          </el-form-item>
-        </div>
+    <div
+      class="form-box"
+      v-for="({ flagId, nameString, devList }, meterIndex) in meterReadingList"
+      :key="flagId"
+    >
+      <p>{{ nameString }}</p>
+      <div
+        class="input-item"
+        v-for="({ insCode, insName }, devIndex) in devList"
+        :key="insCode"
+      >
+        <p>{{ insName }}</p>
+        <el-form-item label="上次抄表数" label-width="100px">
+          <el-input
+            v-model="meterReadingList[meterIndex].devList[devIndex].preMeter"
+            :disabled="preDisable"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="本次抄表数"
+          label-width="100px"
+          :rules="curMeterRules"
+        >
+          <el-input
+            v-model="meterReadingList[meterIndex].devList[devIndex].curMeter"
+            @change="handleChange(insCode,$event)"
+          ></el-input>
+        </el-form-item>
       </div>
-    </el-form>
+    </div>
   </div>
 </template>
 
 <script>
-// import { executeApi } from "@/api/globalConfig";
+import { formatDate } from "@/util/date.js";
 export default {
   name: "fancyMeterReading",
   props: {
-    meterList: {
+    value: {
       type: Array,
       default: () => [],
-    },
-    title: {
-      type: String,
-      default: "抄表",
     },
     options: {
       type: Object,
@@ -37,41 +49,78 @@ export default {
     },
     preDisable: {
       type: Boolean,
-      required: true
+      required: true,
     },
     curRequired: {
       type: Boolean,
-      required: true
+      required: true,
     },
     timeFlag: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      formModel: {},
-      meterReadingList: []
+      meterReadingList: this.$props.value,
+      curMeterRules: [
+        { required: true, message: "本次抄表数不能为空", trigger: "blur" },
+      ],
+      // meterReadingList: JSON.parse(JSON.stringify(this.meterList)),
     };
   },
   watch: {
-    meterList: {
-      immediate:true,
-      deep: true,
-      handler(meterList){
-        this.meterReadingList = meterList;
-      }
-    }
+    value: {
+      handler(meterList) {
+        this.meterReadingList = JSON.parse(JSON.stringify(meterList));
+      },
+    },
+    "options.result": {
+      handler(opt) {
+        if (!opt) return;
+        this.meterReadingList = this.meterReadingList.map((element) => {
+          element.devList = element.devList.map((item) => {
+            const devValueObj = opt.find(
+              ({ meterCode }) => meterCode === item.insCode
+            );
+            if (devValueObj) {
+              item.preMeter = devValueObj.value;
+              item.preTime = devValueObj.time;
+            }
+            return item;
+          });
+          return element;
+        });
+      },
+    },
   },
   methods: {
-    handleChange(){
+    handleChange(meterCode,event) {
+      this.meterReadingList = this.meterReadingList.map((element) => {
+        element.devList = element.devList.map((item) => {
+          if (item.insCode === meterCode) {
+            item.curMeter = Number(event);
+            if (this.timeFlag) {
+              item.curTime = formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss');
+            }
+          }
+          return item;
+        });
+        return element;
+      });
+      // console.log("value:", val);
+      console.log("event:", event);
       this.$emit("input", this.meterReadingList);
-    }
+    },
   },
 };
 </script>
 <style scoped lang="scss">
-.meter-reading{
-
+.meter-reading {
+  .input-item {
+    .el-form-item {
+      margin-bottom: 10px;
+    }
+  }
 }
 </style>

@@ -15,7 +15,7 @@
       </el-tooltip>
     </el-form-item>
     <el-form-item label="标题">
-      <el-input size="small" v-model="props.title" />
+      <el-input size="small" v-model="props.label" />
     </el-form-item>
     <el-form-item label="显示标签">
       <el-switch
@@ -106,6 +106,17 @@ export default {
       hasIn: false,
     };
   },
+  watch: {
+    'props.value': {
+      deep: true,
+      handler(value){
+        this.props.deviceInstanceCodeList = [];
+        value.forEach(({devList}) => {
+          devList.forEach(({insCode}) => this.props.deviceInstanceCodeList.push(insCode))
+        });
+      }
+    }
+  },
   methods: {
     ...mapMutations("form", ["addThirdPartyApi"]),
     onVariableChange(requestConfig) {
@@ -133,31 +144,30 @@ export default {
         return;
       }
       const halfCheckedNodes = checked.halfCheckedNodes;
-      console.log(checked, "halfchecked");
-      console.log(halfCheckedNodes, "half");
       let nameStr = halfCheckedNodes[0].insName;
       for (let i = 1; i < halfCheckedNodes.length; i++) {
         nameStr = `${nameStr}-${halfCheckedNodes[i].insName}`;
       }
-      this.props.meterList.push({
+      
+      this.props.value.push({
         flagId: this.flagId,
         nameString: nameStr + this.nameString,
         devList: this.devList,
       });
-      console.log(this.props.meterList);
+      // this.$set(this.props, 'value', this.props.meterList)
       this.flagId = null;
       (this.nameString = ""), (this.devList = []);
     },
     handleCheckChange(data, checked, immediate) {
-      console.log(data, checked, immediate);
+      // console.log(data, checked, immediate);
       if (checked) {
         if (data.type === "dev") {
-          let index = this.props.meterList.findIndex(
+          let index = this.props.value.findIndex(
             ({ flagId }) => flagId === data.parentId
           );
           if (index !== -1) {
             this.hasIn = true;
-            this.props.meterList[index].devList.push(data);
+            this.props.value[index].devList.push(data);
             return;
           }
           this.flagId = data.parentId;
@@ -167,15 +177,15 @@ export default {
         }
       } else {
         if (immediate) return;
-        let meterList = this.props.meterList;
-        let index = meterList.findIndex(({ flagId }) => flagId === data.parentId);
-        console.log(index);
-        let deviceList = meterList[index].devList;
+        let value = this.props.value;
+        let index = value.findIndex(({ flagId }) => flagId === data.parentId);
+        // console.log(index);
+        let deviceList = value[index].devList;
         let deviceIndex = deviceList.findIndex(({ id }) => id === data.id);
-        this.props.meterList[index].devList.splice(deviceIndex, 1);
+        this.props.value[index].devList.splice(deviceIndex, 1);
         this.hasIn = true;
-        if(this.props.meterList[index].devList.length<=0){
-          this.props.meterList.splice(index,1)
+        if(this.props.value[index].devList.length<=0){
+          this.props.value.splice(index,1)
         }
       }
     },

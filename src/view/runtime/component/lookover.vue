@@ -532,9 +532,6 @@ export default {
             this.$message.success("撤回成功");
             this.$emit("close");
           })
-          .catch((err) => {
-            this.$message.error("撤回失败", err);
-          });
       } else {
         this.revokeReason = revokeReason;
         this.revokeConfirmationVisible = false;
