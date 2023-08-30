@@ -26,7 +26,7 @@
     <interface-parser
       :key="props._id"
       labelName="表计API"
-      :currentField="props.meterApiConfig"
+      :currentField="props.meterTreeConfig"
       @variableChange="onMeterChange"
     />
     <el-button type="primary" @click="handleParse">解析</el-button>
@@ -51,7 +51,7 @@
           </el-form-item>
           <interface-parser
             :key="props._id"
-            :currentField="props"
+            :currentField="props.meterApiConfig"
             @variableChange="onVariableChange"
           />
         </el-tab-pane>
@@ -110,36 +110,55 @@ export default {
     };
   },
   watch: {
-    'props.value': {
-      deep: true,
-      handler(value){
-        this.props.deviceInstanceCodeList = [];
-        value.forEach(({devList}) => {
-          devList.forEach(({insCode}) => this.props.deviceInstanceCodeList.push(insCode))
-        });
+    'props.deviceInstanceCodeList': {
+      handler(){
+        this.handleQueryData();  
       }
     }
   },
   methods: {
     ...mapMutations("form", ["addThirdPartyApi"]),
     onVariableChange(requestConfig) {
-      this.props.requestConfig = requestConfig;
-      this.addThirdPartyApi({ id: requestConfig.id });
+      this.props.meterApiConfig.requestConfig = requestConfig;
+      this.handleQueryData();
     },
     handlerChangeLabel(val) {
       this.props.labelWidth = val ? "80" : "1";
     },
     onMeterChange(requestConfig) {
-      this.props.meterApiConfig.requestConfig = requestConfig;
+      this.props.meterTreeConfig.requestConfig = requestConfig;
     },
     async handleParse() {
       const { result } = await executeApi({
-        apiMark: this.props.meterApiConfig.requestConfig.apiMark,
-        sourceMark: this.props.meterApiConfig.requestConfig.sourceMark,
-        data: this.props.meterApiConfig.requestConfig.parameter,
+        apiMark: this.props.meterTreeConfig.requestConfig.apiMark,
+        sourceMark: this.props.meterTreeConfig.requestConfig.sourceMark,
+        data: this.props.meterTreeConfig.requestConfig.parameter,
       });
       const res = result.result;
       this.props.meterTree = res.DeviceTree;
+    },
+    async handleQueryData(){
+      if(!this.props.meterApiConfig.requestConfig) return;
+      if(this.props.deviceInstanceCodeList.length<=0) return;
+      const { result } = await executeApi({
+        apiMark: this.props.meterApiConfig.requestConfig.apiMark,
+        sourceMark: this.props.meterApiConfig.requestConfig.sourceMark,
+        data: {deviceInstanceCodeList: `${this.props.deviceInstanceCodeList.join(',')}`},
+      });
+      const res = result.result;
+      this.props.value = this.props.value.map((element) => {
+          element.devList = element.devList.map((item) => {
+            const devValueObj = res.find(
+              ({ meterCode }) => meterCode === item.insCode
+            );
+            if (devValueObj) {
+              item.preMeter = devValueObj.value;
+              item.preTime = devValueObj.time;
+            }
+            return item;
+          });
+          return element;
+        });
     },
     handleChecked(data, checked) {
       if (this.hasIn) {
@@ -162,7 +181,7 @@ export default {
       (this.nameString = ""), (this.devList = []);
     },
     handleCheckChange(data, checked, immediate) {
-      console.log(data, checked, immediate);
+      // console.log(data, checked, immediate);
       if (checked) {
         this.props.defaultCheckedKeys.push(data.id);
         if (data.type === "dev") {
@@ -172,10 +191,12 @@ export default {
           if (index !== -1) {
             this.hasIn = true;
             this.props.value[index].devList.push(data);
+            this.props.deviceInstanceCodeList.push(data.insCode);
             return;
           }
           this.flagId = data.parentId;
           this.devList.push(data);
+          this.props.deviceInstanceCodeList.push(data.insCode);
         } else {
           this.nameString = `${this.nameString}-${data.insName}`;
         }
@@ -194,6 +215,8 @@ export default {
         let deviceList = value[index].devList;
         let deviceIndex = deviceList.findIndex(({ id }) => id === data.id);
         this.props.value[index].devList.splice(deviceIndex, 1);
+        let insCodeIndex = this.props.deviceInstanceCodeList.findIndex((code) => code === data.insCode);
+        if(insCodeIndex !== -1) this.props.deviceInstanceCodeList.splice(insCodeIndex,1);
         this.hasIn = true;
         if(this.props.value[index].devList.length<=0){
           this.props.value.splice(index,1)
@@ -201,11 +224,11 @@ export default {
       }
     },
     handlerChangeRulesType(val) {
-      // const obj = datatypeRules[val];
-      // this.props.rules.push({
-      //   rule: obj.rule,
-      //   msg: obj.msg,
-      // });
+      const obj = datatypeRules[val];
+      this.props.rules.push({
+        rule: obj.rule,
+        msg: obj.msg,
+      });
     },
   },
 };

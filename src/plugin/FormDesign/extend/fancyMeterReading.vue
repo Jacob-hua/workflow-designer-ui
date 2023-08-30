@@ -66,31 +66,12 @@ export default {
       curMeterRules: [
         { required: true, message: "本次抄表数不能为空", trigger: "blur" },
       ],
-      // meterReadingList: JSON.parse(JSON.stringify(this.meterList)),
     };
   },
   watch: {
     value: {
       handler(meterList) {
         this.meterReadingList = JSON.parse(JSON.stringify(meterList));
-      },
-    },
-    "options.result": {
-      handler(opt) {
-        if (!opt) return;
-        this.meterReadingList = this.meterReadingList.map((element) => {
-          element.devList = element.devList.map((item) => {
-            const devValueObj = opt.find(
-              ({ meterCode }) => meterCode === item.insCode
-            );
-            if (devValueObj) {
-              item.preMeter = devValueObj.value;
-              item.preTime = devValueObj.time;
-            }
-            return item;
-          });
-          return element;
-        });
       },
     },
   },
@@ -105,7 +86,7 @@ export default {
             //   return;
             // }
             // item.curMeter = curMeter;
-            item.curMeter = Number(event);
+            item.curMeter = event;
             if (this.timeFlag) {
               item.curTime = formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss');
             }
@@ -114,8 +95,6 @@ export default {
         });
         return element;
       });
-      // console.log("value:", val);
-      console.log("event:", event);
       this.$emit("input", this.meterReadingList);
     },
   },
