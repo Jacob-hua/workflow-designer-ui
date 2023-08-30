@@ -35,7 +35,6 @@ export let meterReading = {
   visible: true,
   rules: [],
   options: {},
-  meterApiConfig: {},
   meterTreeConfig: {},
   meterTree: [],
   defaultCheckedKeys: [],

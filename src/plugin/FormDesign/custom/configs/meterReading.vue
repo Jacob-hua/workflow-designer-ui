@@ -51,7 +51,7 @@
           </el-form-item>
           <interface-parser
             :key="props._id"
-            :currentField="props.meterApiConfig"
+            :currentField="props"
             @variableChange="onVariableChange"
           />
         </el-tab-pane>
@@ -109,18 +109,11 @@ export default {
       hasIn: false,
     };
   },
-  watch: {
-    'props.deviceInstanceCodeList': {
-      handler(){
-        this.handleQueryData();  
-      }
-    }
-  },
   methods: {
     ...mapMutations("form", ["addThirdPartyApi"]),
     onVariableChange(requestConfig) {
-      this.props.meterApiConfig.requestConfig = requestConfig;
-      this.handleQueryData();
+      this.props.requestConfig = requestConfig;
+      this.addThirdPartyApi({ id: requestConfig.id });
     },
     handlerChangeLabel(val) {
       this.props.labelWidth = val ? "80" : "1";
@@ -136,29 +129,6 @@ export default {
       });
       const res = result.result;
       this.props.meterTree = res.DeviceTree;
-    },
-    async handleQueryData(){
-      if(!this.props.meterApiConfig.requestConfig) return;
-      if(this.props.deviceInstanceCodeList.length<=0) return;
-      const { result } = await executeApi({
-        apiMark: this.props.meterApiConfig.requestConfig.apiMark,
-        sourceMark: this.props.meterApiConfig.requestConfig.sourceMark,
-        data: {deviceInstanceCodeList: `${this.props.deviceInstanceCodeList.join(',')}`},
-      });
-      const res = result.result;
-      this.props.value = this.props.value.map((element) => {
-          element.devList = element.devList.map((item) => {
-            const devValueObj = res.find(
-              ({ meterCode }) => meterCode === item.insCode
-            );
-            if (devValueObj) {
-              item.preMeter = devValueObj.value;
-              item.preTime = devValueObj.time;
-            }
-            return item;
-          });
-          return element;
-        });
     },
     handleChecked(data, checked) {
       if (this.hasIn) {
@@ -176,12 +146,10 @@ export default {
         nameString: nameStr + this.nameString,
         devList: this.devList,
       });
-      // this.$set(this.props, 'value', this.props.meterList)
       this.flagId = null;
       (this.nameString = ""), (this.devList = []);
     },
     handleCheckChange(data, checked, immediate) {
-      // console.log(data, checked, immediate);
       if (checked) {
         this.props.defaultCheckedKeys.push(data.id);
         if (data.type === "dev") {

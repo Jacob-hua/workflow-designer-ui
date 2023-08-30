@@ -74,6 +74,24 @@ export default {
         this.meterReadingList = JSON.parse(JSON.stringify(meterList));
       },
     },
+    "options.result": {
+      handler(opt) {
+        if (!opt) return;
+        this.meterReadingList = this.meterReadingList.map((element) => {
+          element.devList = element.devList.map((item) => {
+            const devValueObj = opt.find(
+              ({ meterCode }) => meterCode === item.insCode
+            );
+            if (devValueObj) {
+              item.preMeter = devValueObj.value;
+              item.preTime = devValueObj.time;
+            }
+            return item;
+          });
+          return element;
+        });
+      },
+    },
   },
   methods: {
     handleChange(meterCode,event) {
