@@ -26,16 +26,18 @@
     <interface-parser
       :key="props._id"
       labelName="表计API"
-      :currentField="props"
+      :currentField="props.meterApiConfig"
       @variableChange="onMeterChange"
     />
     <el-button type="primary" @click="handleParse">解析</el-button>
     <el-divider>选择抄表范围</el-divider>
     <el-card>
       <el-tree
-        :data="meterTree"
+        :data="props.meterTree"
         :props="{ label: 'insName', children: 'children', id: 'insCode' }"
         show-checkbox
+        :default-checked-keys="props.defaultCheckedKeys"
+        node-key="id"
         @check="handleChecked"
         @check-change="handleCheckChange"
       ></el-tree>
@@ -58,10 +60,10 @@
             <el-switch v-model="props.curRequired"></el-switch>
           </el-form-item>
           <el-form-item label="数据格式校验">
-            <el-select v-model="props.datatypeRule">
+            <el-select v-model="props.datatypeRule" @change="handlerChangeRulesType">
               <el-option label="无" value="default" />
-              <el-option label="数字" value="phone" />
-              <el-option label="数字+字母" value="email" />
+              <el-option label="数字" value="number" />
+              <el-option label="数字+字母" value="numAndStr" />
             </el-select>
           </el-form-item>
           <el-form-item label="数值校验">
@@ -85,7 +87,10 @@ import { mapMutations } from "vuex";
 import InterfaceParser from "./component/InterfaceParser.vue";
 import DependValue from "./component/DependValue.vue";
 import { executeApi } from "@/api/globalConfig";
-const datatypeRules = {};
+const datatypeRules = {
+  number: { rule: "^[0-9]*$", msg: "您输入的内容不符合纯数字规则" },
+  numAndStr: { rule: "^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9]{1,50}$", msg: "您输入的内容不符合数字+字母规则"}
+};
 export default {
   name: "meterReading",
   props: ["props", "getFormId"],
@@ -97,9 +102,7 @@ export default {
   data() {
     return {
       requestConfig: {},
-      meterTree: [],
       activeName: "previous",
-      checkedList: [],
       flagId: null,
       devList: [],
       nameString: "",
@@ -127,16 +130,16 @@ export default {
       this.props.labelWidth = val ? "80" : "1";
     },
     onMeterChange(requestConfig) {
-      this.requestConfig = requestConfig;
+      this.props.meterApiConfig.requestConfig = requestConfig;
     },
     async handleParse() {
       const { result } = await executeApi({
-        apiMark: this.requestConfig.apiMark,
-        sourceMark: this.requestConfig.sourceMark,
-        data: this.requestConfig.parameter,
+        apiMark: this.props.meterApiConfig.requestConfig.apiMark,
+        sourceMark: this.props.meterApiConfig.requestConfig.sourceMark,
+        data: this.props.meterApiConfig.requestConfig.parameter,
       });
       const res = result.result;
-      this.meterTree = res.DeviceTree;
+      this.props.meterTree = res.DeviceTree;
     },
     handleChecked(data, checked) {
       if (this.hasIn) {
@@ -159,8 +162,9 @@ export default {
       (this.nameString = ""), (this.devList = []);
     },
     handleCheckChange(data, checked, immediate) {
-      // console.log(data, checked, immediate);
+      console.log(data, checked, immediate);
       if (checked) {
+        this.props.defaultCheckedKeys.push(data.id);
         if (data.type === "dev") {
           let index = this.props.value.findIndex(
             ({ flagId }) => flagId === data.parentId
@@ -176,7 +180,14 @@ export default {
           this.nameString = `${this.nameString}-${data.insName}`;
         }
       } else {
-        if (immediate) return;
+        if (immediate) {
+          let cancleIndex = this.props.defaultCheckedKeys.findIndex(id => id === data.id);
+          if(cancleIndex !== -1){
+            this.props.defaultCheckedKeys.splice(cancleIndex,1);
+          }
+          return;
+        };
+        if(data.type !== 'dev') return;
         let value = this.props.value;
         let index = value.findIndex(({ flagId }) => flagId === data.parentId);
         // console.log(index);
@@ -188,6 +199,13 @@ export default {
           this.props.value.splice(index,1)
         }
       }
+    },
+    handlerChangeRulesType(val) {
+      // const obj = datatypeRules[val];
+      // this.props.rules.push({
+      //   rule: obj.rule,
+      //   msg: obj.msg,
+      // });
     },
   },
 };

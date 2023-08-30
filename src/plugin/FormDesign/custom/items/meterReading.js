@@ -33,7 +33,11 @@ export let meterReading = {
   align: 'top',
   gutter: 0,
   visible: true,
+  rules: [],
   options: {},
+  meterApiConfig: {},
+  meterTree: [],
+  defaultCheckedKeys: [],
   deviceInstanceCodeList: [],
   value: []
 }

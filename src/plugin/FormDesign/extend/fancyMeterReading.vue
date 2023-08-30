@@ -99,6 +99,12 @@ export default {
       this.meterReadingList = this.meterReadingList.map((element) => {
         element.devList = element.devList.map((item) => {
           if (item.insCode === meterCode) {
+            // const curMeter = Number(event);
+            // if(curMeter<item.preMeter){
+            //   item.curMeter = "";
+            //   return;
+            // }
+            // item.curMeter = curMeter;
             item.curMeter = Number(event);
             if (this.timeFlag) {
               item.curTime = formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss');
