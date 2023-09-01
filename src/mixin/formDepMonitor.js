@@ -8,6 +8,7 @@ const defaultVariableSpace = () => ({
   const: {},
   context: {},
   form: {},
+  params: {}
 })
 
 /**
@@ -65,7 +66,7 @@ export function parameterHandlerFactory({ method, parameter, body }) {
  * @param {*} variableSpace
  * @returns
  */
-export function variableClassify({ variable, sourceType, source }, variableSpace = {}) {
+export function variableClassify({ variable, sourceType, source }, variableSpace = {}, fieldInfo) {
   const result = { ...defaultVariableSpace(), ...variableSpace }
   const classifier = {
     context: ({ variable, source }) => {
@@ -82,6 +83,9 @@ export function variableClassify({ variable, sourceType, source }, variableSpace
         value: '',
       }
     },
+    params: ({ variable, source }) => {
+      result.params[variable] = fieldInfo[source]
+    }
   }
   classifier[sourceType]({ variable, source })
   return result
@@ -101,6 +105,7 @@ export function watchExecute(prefix, fieldInfo, executeFunc = () => {}) {
   !fieldInfo.context && (fieldInfo.context = {})
 
   if (Object.keys(variableSpace.form).length === 0) {
+    console.log(variableMix(variableSpace));
     executeFunc(variableMix(variableSpace), fieldInfo, false)
     return fieldInfo
   }
@@ -171,7 +176,8 @@ export function watchExecute(prefix, fieldInfo, executeFunc = () => {}) {
       }),
       {}
     )
-    return { ...variableSpace.const, ...contextVariables, ...formVariables }
+    // const paramsVariables
+    return { ...variableSpace.const, ...contextVariables, ...formVariables, ...variableSpace.params }
   }
 }
 
@@ -224,7 +230,7 @@ export function mixinRequestFunction(fieldInfo, executeFunc = () => {}) {
 
   if (!fieldInfo.requestVariableSpace) {
     fieldInfo.requestVariableSpace = variables.reduce(
-      (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace),
+      (variableSpace, metaVariable) => variableClassify(metaVariable, variableSpace, fieldInfo),
       {}
     )
   }

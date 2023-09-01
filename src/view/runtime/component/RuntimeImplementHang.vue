@@ -19,11 +19,12 @@
 </template>
 
 <script>
-import RuntimeConfirmation from './RuntimeConfirmation.vue'
-import { putHangInstance, getActiveInstance } from '@/api/unit/api.js'
+import RuntimeConfirmation from "./RuntimeConfirmation.vue";
+import { putHangInstance, getActiveInstance } from "@/api/unit/api.js";
+import { mapState } from "vuex";
 
 export default {
-  name: 'RuntimeImplementHang',
+  name: "RuntimeImplementHang",
   components: {
     RuntimeConfirmation,
   },
@@ -36,47 +37,50 @@ export default {
   data() {
     return {
       confirmationVisible: false,
-      confirmationTitle: '',
-    }
+      confirmationTitle: "",
+    };
   },
   computed: {
+    ...mapState("account", ["userInfo"]),
     hang() {
-      return this.workflow.curTrack.status.split(',').includes('hang')
+      return this.workflow.curTrack.status.split(",").includes("hang");
     },
   },
   methods: {
     onConfirmation(title) {
-      this.confirmationVisible = true
-      this.confirmationTitle = title
+      this.confirmationVisible = true;
+      this.confirmationTitle = title;
     },
     onConfirmationValidate(validate) {
       if (!validate) {
-        return
+        return;
       }
       if (this.hang) {
         getActiveInstance({
           processInstanceId: this.workflow.processInstanceId,
           taskId: this.workflow.newTaskId,
+          assignee: this.userInfo.account,
         }).then((res) => {
-          this.$message.success('激活成功')
-          this.$emit('hang')
-        })
+          this.$message.success("激活成功");
+          this.$emit("hang");
+        });
       } else {
         putHangInstance({
           processInstanceId: this.workflow.processInstanceId,
           taskId: this.workflow.newTaskId,
+          assignee: this.userInfo.account,
         }).then((res) => {
-          this.$message.success('挂起成功')
-          this.$emit('hang')
-        })
+          this.$message.success("挂起成功");
+          this.$emit("hang");
+        });
       }
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
-@import '../index.scss';
+@import "../index.scss";
 
 @include container;
 

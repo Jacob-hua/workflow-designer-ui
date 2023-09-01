@@ -115,6 +115,11 @@ export default {
           label: "表单",
           value: "form",
         },
+        {
+          id: 3,
+          label: "配置变量",
+          value: "params"
+        }
       ],
       customParser: false,
       parserProp: defaultParserProp(),

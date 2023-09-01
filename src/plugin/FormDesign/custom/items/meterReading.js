@@ -15,6 +15,7 @@ export let meterReading = {
   // 是否可配置
   config: true,
   showLabel: false,
+  label: '抄表',
   labelWidth: '0',
   
   //禁用
@@ -32,8 +33,11 @@ export let meterReading = {
   align: 'top',
   gutter: 0,
   visible: true,
-  meterList: [
-  ],
-  value:[],
-  options: {}
+  rules: [],
+  options: {},
+  meterTreeConfig: {},
+  meterTree: [],
+  defaultCheckedKeys: [],
+  deviceInstanceCodeList: [],
+  value: []
 }

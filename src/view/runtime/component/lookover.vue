@@ -93,6 +93,23 @@
                     <span>{{ time }}</span>
                   </div>
                   <div
+                    v-if="assigneeStatus[formAssignee] === 'active'"
+                    class="execute-info"
+                  >
+                    <div>
+                      <i class="el-icon-check success"></i>
+                      <span
+                        v-for="(assigner, index) in assigneeInfoDTOList"
+                        :key="index"
+                        :title="assigner.account"
+                        class="assigner-card"
+                        >{{ assigner.username }}</span
+                      >
+                      <span>激活</span>
+                    </div>
+                    <span>{{ time }}</span>
+                  </div>
+                  <div
                     v-if="assigneeStatus[formAssignee] === 'hang'"
                     class="execute-info"
                   >
@@ -288,7 +305,6 @@
       @submit="onRevokeConfirmationSubmit"
     ></RuntimeRevokeConfirmation>
     <RuntimeRevokeTicket
-      v-if="revokeTicketVisible"
       :visible.sync="revokeTicketVisible"
       :startFormContent="startFormContent"
       :context="context"
@@ -460,7 +476,8 @@ export default {
               "hang",
               "timedOut",
               "discard",
-              'revoke'
+              "revoke",
+              "active"
             ].includes(status)
         );
     },
@@ -528,14 +545,10 @@ export default {
           processInstanceId: this.workflow.processInstanceId,
           userId: this.userInfo.account,
         };
-        putRevokeTask(params)
-          .then((res) => {
-            this.$message.success("撤回成功");
-            this.$emit("close");
-          })
-          .catch((err) => {
-            this.$message.error("撤回失败", err);
-          });
+        putRevokeTask(params).then((res) => {
+          this.$message.success("撤回成功");
+          this.$emit("close");
+        });
       } else {
         this.revokeReason = revokeReason;
         this.revokeConfirmationVisible = false;
