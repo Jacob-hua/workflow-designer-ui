@@ -16,17 +16,22 @@
         <el-form-item label="上次抄表数" label-width="100px">
           <el-input
             v-model="meterReadingList[meterIndex].devList[devIndex].preMeter"
+            placeholder="请输入上次抄表数"
             :disabled="preDisable"
           ></el-input>
         </el-form-item>
         <el-form-item
           label="本次抄表数"
           label-width="100px"
+          :prop="`${formId}.${meterIndex}.devList.${devIndex}.curMeter`"
           :rules="curMeterRules"
         >
           <el-input
-            v-model="meterReadingList[meterIndex].devList[devIndex].curMeter"
-            @change="handleChange(insCode,$event)"
+            v-model.trim="
+              meterReadingList[meterIndex].devList[devIndex].curMeter
+            "
+            placeholder="请输入本次抄表数"
+            @change="handleChange(insCode, $event)"
           ></el-input>
         </el-form-item>
       </div>
@@ -59,14 +64,51 @@ export default {
       type: Boolean,
       required: true,
     },
+    dataRule: {
+      type: String,
+    },
+    id: {
+      type: String,
+    },
   },
   data() {
     return {
       meterReadingList: this.$props.value,
+      correctFlag: true,
+      currentPreMeter: "",
+      currentInsCode: "",
       curMeterRules: [
         { required: true, message: "本次抄表数不能为空", trigger: "blur" },
+        {
+          validator: (rule, value, callback) => {
+            if (/^[0-9]*$/.test(value) === false) {
+              this.handleValueList(this.currentInsCode);
+              callback(new Error("请输入数字"));
+            } else if (
+              this.$props.dataRule === "larger" &&
+              value <= this.currentPreMeter
+            ) {
+              this.handleValueList(this.currentInsCode);
+              callback(new Error("本次抄表数必须大于上次抄表数"));
+            } else if (
+              this.$props.dataRule === "larger_amount" &&
+              value < this.currentPreMeter
+            ) {
+              this.handleValueList(this.currentInsCode);
+              callback(new Error("本次抄表数必须大于等于上次抄表数"));
+            } else {
+              callback();
+            }
+          },
+          trigger: "blur",
+        },
       ],
     };
+  },
+  computed: {
+    formId() {
+      return this.$props.id;
+    },
   },
   watch: {
     value: {
@@ -94,20 +136,44 @@ export default {
     },
   },
   methods: {
-    handleChange(meterCode,event) {
+    handleChange(meterCode, event) {
+      this.currentInsCode = meterCode;
       this.meterReadingList = this.meterReadingList.map((element) => {
         element.devList = element.devList.map((item) => {
           if (item.insCode === meterCode) {
-            // const curMeter = Number(event);
-            // if(curMeter<item.preMeter){
-            //   item.curMeter = "";
-            //   return;
-            // }
-            // item.curMeter = curMeter;
-            item.curMeter = event;
-            if (this.timeFlag) {
-              item.curTime = formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss');
+            if (/^[0-9]*$/.test(event) === false) {
+              this.correctFlag = false;
+            } else {
+              this.currentPreMeter = item.preMeter;
+              if (this.$props.dataRule === "larger") {
+                if (item.preMeter >= event) {
+                  this.correctFlag = false;
+                }
+              }
+              if (this.$props.dataRule === "larger_amount") {
+                if (item.preMeter > event) {
+                  this.correctFlag = false;
+                }
+              }
             }
+            if (this.correctFlag) {
+              if (this.timeFlag) {
+                item.curTime = formatDate(new Date(), "YYYY-MM-DD HH:mm:ss");
+              }
+            }
+          }
+          return item;
+        });
+        return element;
+      });
+      this.$emit("input", this.meterReadingList);
+    },
+    handleValueList(meterCode) {
+      this.meterReadingList = this.meterReadingList.map((element) => {
+        element.devList = element.devList.map((item) => {
+          if (item.insCode === meterCode) {
+            delete item.curMeter;
+            delete item.curTime;
           }
           return item;
         });

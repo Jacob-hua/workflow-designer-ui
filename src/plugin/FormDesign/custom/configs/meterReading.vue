@@ -69,8 +69,8 @@
           <el-form-item label="数值校验">
             <el-select v-model="props.dataRule">
               <el-option label="无" value="default" />
-              <el-option label="大于" value="phone" />
-              <el-option label="大于等于" value="email" />
+              <el-option label="大于" value="larger" />
+              <el-option label="大于等于" value="larger_amount" />
             </el-select>
           </el-form-item>
           <el-form-item label="时间标记">
@@ -192,11 +192,11 @@ export default {
       }
     },
     handlerChangeRulesType(val) {
-      const obj = datatypeRules[val];
-      this.props.rules.push({
-        rule: obj.rule,
-        msg: obj.msg,
-      });
+      // const obj = datatypeRules[val];
+      // this.props.rules.push({
+      //   rule: obj.rule,
+      //   msg: obj.msg,
+      // });
     },
   },
 };
