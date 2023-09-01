@@ -477,6 +477,7 @@ export default {
               "timedOut",
               "discard",
               "revoke",
+              "active"
             ].includes(status)
         );
     },
