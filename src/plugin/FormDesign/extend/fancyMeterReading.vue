@@ -74,32 +74,14 @@ export default {
   data() {
     return {
       meterReadingList: this.$props.value,
+      meterRule: this.$props.dataRule,
       correctFlag: true,
       currentPreMeter: "",
       currentInsCode: "",
       curMeterRules: [
         { required: true, message: "本次抄表数不能为空", trigger: "blur" },
         {
-          validator: (rule, value, callback) => {
-            if (/^[0-9]*$/.test(value) === false) {
-              this.handleValueList(this.currentInsCode);
-              callback(new Error("请输入数字"));
-            } else if (
-              this.$props.dataRule === "larger" &&
-              value <= this.currentPreMeter
-            ) {
-              this.handleValueList(this.currentInsCode);
-              callback(new Error("本次抄表数必须大于上次抄表数"));
-            } else if (
-              this.$props.dataRule === "larger_amount" &&
-              value < this.currentPreMeter
-            ) {
-              this.handleValueList(this.currentInsCode);
-              callback(new Error("本次抄表数必须大于等于上次抄表数"));
-            } else {
-              callback();
-            }
-          },
+          validator: this.meterValidator.bind(this),
           trigger: "blur",
         },
       ],
@@ -109,12 +91,18 @@ export default {
     formId() {
       return this.$props.id;
     },
+    // meterRule() {
+    //   return this.$props.dataRule;
+    // },
   },
   watch: {
     value: {
       handler(meterList) {
         this.meterReadingList = JSON.parse(JSON.stringify(meterList));
       },
+    },
+    dataRule(newVal) {
+      this.meterRule = newVal;
     },
     "options.result": {
       handler(opt) {
@@ -180,6 +168,22 @@ export default {
         return element;
       });
       this.$emit("input", this.meterReadingList);
+    },
+    meterValidator(rule, value, callback) {
+      const meterRule = this.meterRule;
+      const currentPreMeter = this.currentPreMeter;
+      if (/^[0-9]*$/.test(value) === false) {
+        this.handleValueList(this.currentInsCode);
+        callback(new Error("请输入数字"));
+      } else if (meterRule === "larger" && value <= currentPreMeter) {
+        this.handleValueList(this.currentInsCode);
+        callback(new Error("本次抄表数必须大于上次抄表数"));
+      } else if (meterRule === "larger_amount" && value < currentPreMeter) {
+        this.handleValueList(this.currentInsCode);
+        callback(new Error("本次抄表数必须大于等于上次抄表数"));
+      } else {
+        callback();
+      }
     },
   },
 };
