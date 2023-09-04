@@ -275,6 +275,10 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
   fieldInfo.valuePath = valuePath;
   const rules = checkRules(fieldInfo);
 
+  if(this.processInstanceId){
+    fieldInfo.processInstanceId = this.processInstanceId;
+  }
+
   const needDependFunction = !this.formConf.disabled && fieldInfo.dependValue;
   if (needDependFunction) {
     mixinDependFunction(fieldInfo, handleDependChange.bind(this));
@@ -345,6 +349,7 @@ export default {
     "cancleStockFun",
     "checkStockFun",
     "checkStockAndUseFun",
+    "processInstanceId"
   ],
   components: { render, upload },
   data() {

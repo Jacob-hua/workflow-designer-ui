@@ -305,6 +305,7 @@
       @submit="onRevokeConfirmationSubmit"
     ></RuntimeRevokeConfirmation>
     <RuntimeRevokeTicket
+      v-show="revokeTicketVisible"
       :visible.sync="revokeTicketVisible"
       :startFormContent="startFormContent"
       :context="context"
@@ -477,7 +478,7 @@ export default {
               "timedOut",
               "discard",
               "revoke",
-              "active"
+              "active",
             ].includes(status)
         );
     },
