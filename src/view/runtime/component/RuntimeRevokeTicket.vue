@@ -14,6 +14,7 @@
             :itemList="formContent.list"
             :formConf="formContent.config"
             :context="context"
+            :processInstanceId="processInstanceId"
             :uploadFun="uploadFileFun.bind(this)"
             :downloadFun="downloadFileFun.bind(this)"
             :beforeDeleteFileFun="beforeDeleteFileFun.bind(this)"
