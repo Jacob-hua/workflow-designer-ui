@@ -48,7 +48,11 @@
     </div>
     <div class="statistics-wrapper">
       <div v-for="(cardData, index) in statisticCards" :key="index">
-        <div class="data-wrapper" v-for="({ label, value, icon }, index) in cardData" :key="index">
+        <div
+          class="data-wrapper"
+          v-for="({ label, value, icon }, index) in cardData"
+          :key="index"
+        >
           <div class="icon">
             <img :src="icon" />
           </div>
@@ -58,11 +62,27 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <el-table :data="tableData" v-loading="loading">
-        <el-table-column type="index" label="序号" width="180"> </el-table-column>
-        <el-table-column prop="workOrderName" label="工单名称" show-overflow-tooltip="" />
-        <el-table-column prop="processDeployName" label="工单类型" width="180"> </el-table-column>
-        <el-table-column prop="displayProcessDeployType" label="能源系统"> </el-table-column>
+      <div class="operation-row">
+        <el-button type="primary" :disabled="exportBtnDisabled" @click="handleExportMulti">导出</el-button>
+      </div>
+      <el-table
+        ref="multipleTable"
+        :data="tableData"
+        v-loading="loading"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" align="center"></el-table-column>
+        <el-table-column type="index" label="序号" width="180">
+        </el-table-column>
+        <el-table-column
+          prop="workOrderName"
+          label="工单名称"
+          show-overflow-tooltip=""
+        />
+        <el-table-column prop="processDeployName" label="工单类型" width="180">
+        </el-table-column>
+        <el-table-column prop="displayProcessDeployType" label="能源系统">
+        </el-table-column>
         <el-table-column prop="starter" label="创建人"> </el-table-column>
         <el-table-column prop="startTime" label="创建时间"> </el-table-column>
         <!-- <el-table-column prop="displayAssignee" label="操作人"> </el-table-column> -->
@@ -102,164 +122,183 @@
   </div>
 </template>
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
-import { currentOneMonthAgo } from '@/util/date'
-import { getHistoryTaskDetail, listHistoryTask, postHistoryProcessCountStatistic } from '@/api/historyWorkflow.js'
-import { getAllBusinessConfig } from '@/api/globalConfig'
-import { getDeployNameList } from '@/api/unit/api.js'
-import Lookover from '@/view/runtime/component/lookover.vue'
+import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
+import { currentOneMonthAgo } from "@/util/date";
+import {
+  getHistoryTaskDetail,
+  listHistoryTask,
+  postHistoryProcessCountStatistic,
+  exportDetailMutil,
+} from "@/api/historyWorkflow.js";
+import { downloadFile } from "@/util/file.js";
+import { formatDate } from "@/util/date.js";
+import { getAllBusinessConfig } from "@/api/globalConfig";
+import { getDeployNameList } from "@/api/unit/api.js";
+import Lookover from "@/view/runtime/component/lookover.vue";
 
 export default {
-  name: 'HistoryWorkflow',
+  name: "HistoryWorkflow",
   components: {
     Lookover,
   },
   data() {
-    const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
+    const { start, end } = currentOneMonthAgo("yyyy-MM-DD HH:mm:ss");
     return {
       loading: false,
       deployNameList: [],
       searchForm: {
         valueDate: [start, end],
-        ascription: '',
-        business: '',
+        ascription: "",
+        business: "",
         processDeployName: null,
       },
       headerNum: {
         currentDayAccumulateProcessCount: 0,
-        currentDayAvgTime: '0时0分',
+        currentDayAvgTime: "0时0分",
         currentDayCompleteProcessCount: 0,
         currentMonthAccumulateProcessCount: 0,
-        currentMonthAvgTime: '0时0分',
+        currentMonthAvgTime: "0时0分",
         currentMonthCompleteProcessCount: 0,
       },
       lookoverVisible: false,
-      processInstanceId: '',
+      processInstanceId: "",
       tableData: [],
       pageInfo: {
         page: 1,
         limit: 10,
         total: 0,
       },
-    }
+      multipleSelection: [],
+      exportBtnDisabled: true
+    };
   },
   computed: {
-    ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
-    ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll']),
+    ...mapState("account", ["tenantId", "userInfo", "currentOrganization"]),
+    ...mapState("uiConfig", ["cascaderProps"]),
+    ...mapGetters("config", [
+      "rootOrganizations",
+      "rootOrganizationChildrenAndAll",
+    ]),
     statisticCards() {
       const currentMonthStatistic = [
         {
-          label: '当月累计工作流',
+          label: "当月累计工作流",
           value: this.headerNum.currentMonthAccumulateProcessCount,
-          icon: require('../../assets/image/history/total-month.svg'),
+          icon: require("../../assets/image/history/total-month.svg"),
         },
         {
-          label: '当月完成工作流',
+          label: "当月完成工作流",
           value: this.headerNum.currentMonthCompleteProcessCount,
-          icon: require('../../assets/image/history/completed-month.svg'),
+          icon: require("../../assets/image/history/completed-month.svg"),
         },
         {
-          label: '当月平均完成时长',
+          label: "当月平均完成时长",
           value: this.headerNum.currentMonthAvgTime,
-          icon: require('../../assets/image/history/online-month.svg'),
+          icon: require("../../assets/image/history/online-month.svg"),
         },
-      ]
+      ];
       const currentDayStatistic = [
         {
-          label: '当日累计工作流',
+          label: "当日累计工作流",
           value: this.headerNum.currentDayAccumulateProcessCount,
-          icon: require('../../assets/image/history/total-day.svg'),
+          icon: require("../../assets/image/history/total-day.svg"),
         },
         {
-          label: '当日完成工作流',
+          label: "当日完成工作流",
           value: this.headerNum.currentDayCompleteProcessCount,
-          icon: require('../../assets/image/history/completed-day.svg'),
+          icon: require("../../assets/image/history/completed-day.svg"),
         },
         {
-          label: '当日平均完成时长',
+          label: "当日平均完成时长",
           value: this.headerNum.currentDayAvgTime,
-          icon: require('../../assets/image/history/online-day.svg'),
+          icon: require("../../assets/image/history/online-day.svg"),
         },
-      ]
-      return [currentMonthStatistic, currentDayStatistic]
+      ];
+      return [currentMonthStatistic, currentDayStatistic];
     },
   },
   watch: {
-    'searchForm.ascription'(val) {
+    "searchForm.ascription"(val) {
       if (val === this.currentOrganization) {
-        return
+        return;
       }
-      this.updateCurrentOrganization({ currentOrganization: val })
+      this.updateCurrentOrganization({ currentOrganization: val });
     },
     searchForm: {
       deep: true,
       handler() {
-        this.pageInfo.page = 1
-        this.fetchHistoryTasks(this.pageInfo)
-        this.fetchHistoryStatistic()
+        this.pageInfo.page = 1;
+        this.fetchHistoryTasks(this.pageInfo);
+        this.fetchHistoryStatistic();
       },
     },
     currentOrganization: {
       immediate: true,
       handler(val) {
-        this.searchForm.ascription = val
+        this.searchForm.ascription = val;
       },
     },
+    multipleSelection(selections){
+      if(selections.length > 0){
+        this.exportBtnDisabled = false;
+      }else{
+        this.exportBtnDisabled = true;
+      }
+    }
   },
   mounted() {
-    this.fetchDeployNameList()
-    this.dispatchRefreshOrganization()
+    this.fetchDeployNameList();
+    this.dispatchRefreshOrganization();
   },
   methods: {
-    ...mapMutations('account', ['updateCurrentOrganization']),
-    ...mapActions('config', ['dispatchRefreshOrganization']),
+    ...mapMutations("account", ["updateCurrentOrganization"]),
+    ...mapActions("config", ["dispatchRefreshOrganization"]),
     async getHistoryTaskDetail(processInstanceId, assignee) {
       const { errorInfo, result } = await getHistoryTaskDetail({
         processInstanceId,
         assignee,
-      })
+      });
       if (errorInfo.errorCode) {
-        return
+        return;
       }
-      return result
+      return result;
     },
     onPageSizeChange(val) {
-      this.pageInfo.limit = val
-      this.fetchHistoryTasks(this.pageInfo)
-      this.fetchHistoryStatistic()
+      this.pageInfo.limit = val;
+      this.fetchHistoryTasks(this.pageInfo);
+      this.fetchHistoryStatistic();
     },
     onPageChange(val) {
-      this.pageInfo.page = val
-      this.fetchHistoryTasks(this.pageInfo)
-      this.fetchHistoryStatistic()
+      this.pageInfo.page = val;
+      this.fetchHistoryTasks(this.pageInfo);
+      this.fetchHistoryStatistic();
     },
     onClickDetail(row) {
-      this.lookoverVisible = true
-      this.processInstanceId = row.processInstanceId
+      this.lookoverVisible = true;
+      this.processInstanceId = row.processInstanceId;
     },
     async fetchHistoryStatistic() {
-      const { ascription, business } = this.searchForm
+      const { ascription, business } = this.searchForm;
       const { errorInfo, result } = await postHistoryProcessCountStatistic({
         assignee: this.userInfo.account,
         tenantId: this.tenantId,
         ascription,
         business,
         processDeployName: this.searchForm.processDeployName,
-      })
+      });
       if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
-        return
+        this.$message.error(errorInfo.errorMsg);
+        return;
       }
-      this.headerNum = result
+      this.headerNum = result;
     },
     async fetchHistoryTasks(pageInfo) {
-      this.loading = true
+      this.loading = true;
       const {
         ascription,
         business,
         valueDate: [startTime, endTime],
-      } = this.searchForm
+      } = this.searchForm;
       const [{ errorInfo, result }] = await Promise.all([
         await listHistoryTask({
           ascription,
@@ -267,42 +306,42 @@ export default {
           business,
           endTime, // 结束时间
           startTime, // 起始时间
-          order: 'desc', // 排序方式
+          order: "desc", // 排序方式
           ...pageInfo,
           tenantId: this.tenantId, // 租户id
           processDeployName: this.searchForm.processDeployName,
         }),
         await getAllBusinessConfig({ tenantId: this.tenantId }),
-      ])
+      ]);
       if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.erroMsg)
-        this.loading = false
-        return
+        this.$message.error(errorInfo.erroMsg);
+        this.loading = false;
+        return;
       }
-      this.loading = false
+      this.loading = false;
       if (!result?.dataList) {
-        this.tableData = []
-        return
+        this.tableData = [];
+        return;
       }
       this.tableData = result.dataList.map((row) => {
-        const displayAssignee = row.assigneeList?.join(' ') ?? ''
+        const displayAssignee = row.assigneeList?.join(" ") ?? "";
         return {
           ...row,
           displayProcessDeployType: this.$getMappingName(row.processDeployType),
           displayAssignee,
-        }
-      })
-      this.pageInfo.total = +result.count
+        };
+      });
+      this.pageInfo.total = +result.count;
     },
     async fetchDeployNameList() {
       try {
         const { errorInfo, result } = await getDeployNameList({
           ascriptionCode: this.searchForm.ascription,
           tenantId: this.tenantId,
-        })
+        });
         if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMessage)
-          return
+          this.$message.error(errorInfo.errorMessage);
+          return;
         }
         this.deployNameList = result.reduce(
           (deployNameList, deployName) => [
@@ -314,15 +353,30 @@ export default {
           ],
           [
             {
-              label: '全部',
+              label: "全部",
               value: null,
             },
           ]
-        )
+        );
       } catch (error) {}
     },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    handleExportMulti() {
+      const params = this.multipleSelection.map(({processInstanceId}) => {
+        return {
+          processInstanceId,
+          assignee: this.userInfo.account
+        }
+      })
+      const fileName = `${formatDate(new Date(), "YYYY-MM-DD")}-工单导出`
+      exportDetailMutil(params).then((res) => {
+        downloadFile(fileName, 'zip', res);
+      })
+    },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -430,6 +484,12 @@ export default {
   margin-top: 20px;
   background: $card-bg-color;
   padding: 20px;
+
+  .operation-row {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row-reverse;
+  }
 }
 
 .el-pagination {

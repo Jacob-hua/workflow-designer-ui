@@ -527,7 +527,6 @@ export default {
         processInstanceId: this.workflow.processInstanceId,
         assignee: this.userInfo.account,
       }).then((res) => {
-        console.log(res, "ddd");
         downBold(`${this.workflow.workOrderName}`, "xlsx", res);
       });
     },

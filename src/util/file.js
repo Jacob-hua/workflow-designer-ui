@@ -44,7 +44,8 @@ const mimes = {
   xml: 'application/bpmn20-xml',
   bpmn: 'application/bpmn20-xml',
   svg: 'image/svg+xml',
-  xlsx: 'application/vnd.ms-excel'
+  xlsx: 'application/vnd.ms-excel',
+  zip: 'application/zip'
 }
 
 export async function downloadFile(fileName, fileType, content, charset = 'utf-8') {

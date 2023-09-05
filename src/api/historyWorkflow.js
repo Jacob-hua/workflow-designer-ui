@@ -14,3 +14,7 @@ export const getHistoryTaskDetail = (params) => get('/history/historyDetail', pa
 export const exportDetail = (params) => post('/report/proccess/export-detail', params, {
   responseType: 'blob',
 })
+
+export const exportDetailMutil = (params) => post('/report/proccess/export-detail/mutil', params, {
+  responseType: 'blob',
+})
