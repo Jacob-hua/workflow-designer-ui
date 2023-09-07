@@ -146,6 +146,14 @@
                   >
                     查看
                   </el-button>
+                  <el-button
+                    v-if="searchForm.taskType === 'start'"
+                    @click.native.prevent="onInvalidated(row)"
+                    type="text"
+                    size="small"
+                  >
+                    作废
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -185,6 +193,11 @@
       @close="onLookoverClose"
       @succseeRecreate="onRecreateTicket"
     ></lookover>
+    <RuntimeInvalidatedConfirmation
+      v-show="invalidatedConfirmationVisible"
+      :visible.sync="invalidatedConfirmationVisible"
+      @submit="onInvalidatedConfirmationSubmit"
+    ></RuntimeInvalidatedConfirmation>
   </div>
 </template>
 
@@ -198,10 +211,12 @@ import {
   getExecuteList,
   getUserTaskList,
   getDeployNameList,
+  putCancelInstance
 } from "@/api/unit/api.js";
 import { mapActions, mapGetters, mapState } from "vuex";
 
 import { currentOneMonthAgo } from "@/util/date";
+import RuntimeInvalidatedConfirmation from './component/RuntimeInvalidatedConfirmation.vue';
 
 export default {
   name: "Runtime",
@@ -209,6 +224,7 @@ export default {
     RuntimeAdd,
     RuntimeImplement,
     Lookover,
+    RuntimeInvalidatedConfirmation
   },
   data() {
     const { start, end } = currentOneMonthAgo("YYYY-MM-DD HH:mm:ss");
@@ -270,6 +286,7 @@ export default {
           className: "table-step-rejected",
         },
       },
+      invalidatedConfirmationVisible: false
     };
   },
   computed: {
@@ -346,6 +363,22 @@ export default {
     onDetail(row) {
       this.workflow = { ...row };
       this.lookoverVisible = true;
+    },
+    onInvalidated(row){
+      this.workflow = { ...row }
+      this.invalidatedConfirmationVisible = true;
+    },
+    onInvalidatedConfirmationSubmit({invalidatedReason}){
+      putCancelInstance({
+        cancelReason: invalidatedReason,
+        processInstanceId: this.workflow.processInstanceId,
+        taskId: this.workflow.newTaskId,
+        discard: true,
+        assignee: this.workflow.starter,
+      }).then((res) => {
+        this.$message.success("废弃成功");
+        this.$emit("close");
+      });
     },
     onLookoverClose() {
       this.lookoverVisible = false;
