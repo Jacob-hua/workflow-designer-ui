@@ -16,6 +16,7 @@ export let alert = {
   // 控件左侧label内容
   showLabel:false,
   labelWidth: '0',
+  label: '警告',
   span:24,
   //标题
   title:'alert',     

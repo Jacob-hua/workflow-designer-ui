@@ -376,8 +376,8 @@ export default {
         discard: true,
         assignee: this.workflow.starter,
       }).then((res) => {
+        this.getAllApi();
         this.$message.success("废弃成功");
-        this.$emit("close");
       });
     },
     onLookoverClose() {

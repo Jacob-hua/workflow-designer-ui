@@ -11,6 +11,7 @@ export let dynamicTable = {
     layout:'dynamicItem',
     //图标
     compIcon:'table',
+    label: '动态表格',
     // 是否可配置
     //暂时默认为true，无法更改，后期考虑某些时候无法配置
     //显示标签
