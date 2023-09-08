@@ -8,6 +8,7 @@ export let link = {
     ele: 'el-link',
     compName:'文字链接',
     compIcon:'link',
+    label:'',
     //展示表单的模式
     viewType:'component',
     config: true,

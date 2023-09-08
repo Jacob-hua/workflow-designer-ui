@@ -14,6 +14,7 @@ export let text = {
   form: false,
   show: true,
   text: '文本',
+  label: '文本',
   align: 'left',
   color: '#fff',
   size: '14',
