@@ -215,7 +215,7 @@ export default {
 }
 
 .setting-box {
-  .el-tabs__item {
+  /deep/ .el-tabs__item {
     color: #fff;
 
     &:hover {
@@ -225,7 +225,7 @@ export default {
   .is-active {
     color: #409eff;
   }
-  .el-tabs__content {
+  /deep/ .el-tabs__content {
     padding: 10px !important;
   }
 }
