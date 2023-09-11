@@ -11,6 +11,7 @@
       <div v-else>
         <div class="form-preview">
           <preview
+            v-if="formShow"
             :itemList="formContent.list"
             :formConf="formContent.config"
             :context="context"
@@ -20,6 +21,9 @@
             :beforeDeleteFileFun="beforeDeleteFileFun.bind(this)"
             ref="preview"
           ></preview>
+        </div>
+        <div v-if="!formShow" class="dialog-message">
+          当前流程无启动项,是否继续？
         </div>
       </div>
       <span slot="footer">
@@ -82,6 +86,7 @@ export default {
         data: {},
         config: {},
       },
+      formShow: false,
     };
   },
   computed: {
@@ -91,8 +96,15 @@ export default {
     },
   },
   watch: {
+    startFormContent(startForm) {
+      if (startForm.list.length) {
+        this.formShow = true;
+      } else {
+        this.formShow = false;
+      }
+    },
     visible(visible) {
-      if(!visible) return;
+      if (!visible) return;
       const config = {
         ...this.startFormContent.config,
         disabled: false,
@@ -103,8 +115,10 @@ export default {
   },
   methods: {
     onCloseModal() {
-      this.startConfigList = [];
-      this.$refs.preview.resetFields();
+      if (this.formShow) {
+        this.startConfigList = [];
+        this.$refs.preview.resetFields();
+      }
       this.$emit("close");
     },
     async uploadFileFun({ name, raw: file }) {
@@ -141,7 +155,7 @@ export default {
         _this.isSubmitting = true;
         let formData = [];
         let startFormData = JSON.stringify({ list: [], data: {} });
-        if (Object.keys(_this.formContent).length > 0) {
+        if (this.formShow) {
           const preview = await _this.$refs.preview.submit();
           formData = preview.formData;
           startFormData = JSON.stringify({
@@ -164,7 +178,7 @@ export default {
         }
         _this.$message({
           type: "success",
-          message: "创建成功",
+          message: "撤回成功",
         });
         _this.$emit("submit", true);
         _this.onCloseModal();
