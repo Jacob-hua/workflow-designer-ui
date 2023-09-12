@@ -520,6 +520,8 @@ export default {
       }).then((res) => {
         this.$message.success("废弃成功");
         this.$emit("close");
+      }).catch((err) => {
+        this.$message.error("废弃失败");
       });
     },
     handleExport() {

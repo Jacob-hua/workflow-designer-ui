@@ -20,9 +20,12 @@
               <!-- <long-text contentStyle="width: 80px" :content="username" /> -->
             </div>
           </div>
-          <el-button
+          <!-- <el-button
             v-if="assignee === userInfo.account"
             @click="onEditAgency(taskId, candidateUsers)"
+            >编辑</el-button
+          > -->
+          <el-button @click="onEditAgency(taskId, candidateUsers)"
             >编辑</el-button
           >
         </div>
