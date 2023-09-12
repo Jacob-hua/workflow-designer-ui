@@ -415,10 +415,10 @@ export default {
       this.runtimeImplementVisible = false;
       this.getAllApi();
     },
-    async getAllApi() {
-      await this.fetchDataNumber();
-      await this.fetchNewTasks();
-      await this.fetchAmount();
+    getAllApi() {
+      this.fetchDataNumber();
+      this.fetchNewTasks();
+      this.fetchAmount();
     },
     async fetchDataNumber() {
       try {
