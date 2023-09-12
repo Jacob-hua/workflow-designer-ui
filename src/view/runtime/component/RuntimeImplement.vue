@@ -72,7 +72,7 @@
       </div>
     </div>
     <span slot="footer">
-      <el-button class="submit-button" @click="onExecute" :disabled="hang"
+      <el-button class="submit-button" @click="onExecute" :loading="executeLoading" :disabled="hang"
         >执 行</el-button
       >
       <el-button class="cancel-button" @click="onCancel">取 消</el-button>
@@ -239,6 +239,7 @@ export default {
       noExecutor: false,
       iBpmnViewer: {},
       context: {},
+      executeLoading: false
     };
   },
   computed: {
@@ -477,6 +478,7 @@ export default {
       this.completeTask();
     },
     async completeTask(formData = {}, data = {}) {
+      this.executeLoading = true;
       const { errorInfo } = await postCompleteTask({
         assignee: this.userInfo.account,
         nextAssignee: this.workflow.executors?.[0].userId,
@@ -499,6 +501,7 @@ export default {
       }
       this.formShow = false;
       this.$message.success("操作成功");
+      this.executeLoading = false;
       this.$emit("taskSuccess");
     },
     async fetchFormData(formKey) {
