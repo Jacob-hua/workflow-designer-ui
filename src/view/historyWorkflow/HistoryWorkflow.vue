@@ -63,7 +63,7 @@
     </div>
     <div class="content-wrapper">
       <div class="operation-row">
-        <el-button type="primary" :disabled="exportBtnDisabled" @click="handleExportMulti">导出</el-button>
+        <el-button type="primary" :disabled="exportBtnDisabled" :loading="exportBtnLoading" @click="handleExportMulti">导出</el-button>
       </div>
       <el-table
         ref="multipleTable"
@@ -169,7 +169,8 @@ export default {
         total: 0,
       },
       multipleSelection: [],
-      exportBtnDisabled: true
+      exportBtnDisabled: true,
+      exportBtnLoading: false,
     };
   },
   computed: {
@@ -364,6 +365,7 @@ export default {
       this.multipleSelection = val;
     },
     handleExportMulti() {
+      this.exportBtnLoading = true;
       const params = this.multipleSelection.map(({processInstanceId}) => {
         return {
           processInstanceId,
@@ -373,6 +375,9 @@ export default {
       const fileName = `${formatDate(new Date(), "YYYY-MM-DD")}-工单导出`
       exportDetailMutil(params).then((res) => {
         downloadFile(fileName, 'zip', res);
+        this.exportBtnLoading = false
+      }).catch((err) => {
+        this.exportBtnLoading = false
       })
     },
   },

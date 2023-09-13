@@ -25,7 +25,9 @@
             @click="onEditAgency(taskId, candidateUsers)"
             >编辑</el-button
           > -->
-          <el-button @click="onEditAgency(taskId, candidateUsers)"
+          <el-button
+            @click="onEditAgency(taskId, assigneeInfoDTOList)"
+            :disabled="operationDisable"
             >编辑</el-button
           >
         </div>
@@ -34,6 +36,7 @@
           <el-button
             @click="onAddAgency(taskId)"
             v-if="assignee === userInfo.account && candidateUsers.length == 0"
+            :disabled="operationDisable"
           >
             添加
           </el-button>
@@ -65,6 +68,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    operationDisable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -86,9 +93,12 @@ export default {
     },
     onEditAgency(taskId, candidateUsers) {
       this.editTaskId = taskId;
-      this.runtimePeopleSelected = candidateUsers.map((userName) => ({
-        userId: userName,
-      }));
+      this.runtimePeopleSelected = candidateUsers.map(
+        ({ account, username }) => ({
+          userId: account,
+          lastName: username,
+        })
+      );
       this.runtimePeopleVisible = true;
     },
     async onRuntimePeopleSubmit({ addeds, removeds, selections }) {
@@ -110,7 +120,7 @@ export default {
       }
       this.runtimePeopleSelected = [...selections];
       this.$message.success("代办成功");
-      this.$emit("completed");
+      this.$emit("completed", removeds);
     },
   },
 };

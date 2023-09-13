@@ -4,7 +4,7 @@
       <div class="content">
         <div class="empty" v-if="executors.length == 0">
           <span>后续任务未指定操作人，请选择操作人</span>
-          <el-button @click="onConfirmation">选择操作人</el-button>
+          <el-button @click="onConfirmation" :disabled="operationDisable">选择操作人</el-button>
         </div>
         <div class="info" v-else>
           <div>
@@ -12,7 +12,7 @@
               {{ userId }}
             </div>
           </div>
-          <el-button @click="onEditExecutor"> 编辑 </el-button>
+          <el-button @click="onEditExecutor" :disabled="operationDisable"> 编辑 </el-button>
         </div>
       </div>
     </div>
@@ -27,45 +27,49 @@
 </template>
 
 <script>
-import RuntimePeople from './RuntimePeople.vue'
+import RuntimePeople from "./RuntimePeople.vue";
 
 export default {
-  name: 'RuntimeImplementExecutor',
+  name: "RuntimeImplementExecutor",
   components: { RuntimePeople },
   props: {
     workflow: {
       type: Object,
       default: () => ({}),
     },
+    operationDisable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       runtimePeopleVisible: false,
       runtimePeopleSelected: [],
-    }
+    };
   },
   computed: {
     executors() {
-      return this.workflow?.executors ?? []
+      return this.workflow?.executors ?? [];
     },
   },
   methods: {
     onConfirmation() {
-      this.runtimePeopleVisible = true
+      this.runtimePeopleVisible = true;
     },
     onEditExecutor() {
-      this.runtimePeopleVisible = true
-      this.runtimePeopleSelected = this.executors
+      this.runtimePeopleVisible = true;
+      this.runtimePeopleSelected = this.executors;
     },
     onRuntimePeopleSubmit({ selections }) {
-      this.$emit('selectExecutor', selections)
+      this.$emit("selectExecutor", selections);
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
-@import '../index.scss';
+@import "../index.scss";
 
 @include container;
 
