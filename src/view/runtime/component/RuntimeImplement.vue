@@ -15,6 +15,7 @@
         >
           <div>
             <preview
+              v-if="startFormShow"
               :context="context"
               :itemList="startFormContent.list"
               :formData="startFormContent.data"
@@ -72,7 +73,11 @@
       </div>
     </div>
     <span slot="footer">
-      <el-button class="submit-button" @click="onExecute" :loading="executeLoading" :disabled="hang"
+      <el-button
+        class="submit-button"
+        @click="onExecute"
+        :loading="executeLoading"
+        :disabled="hang || operationDisable"
         >执 行</el-button
       >
       <el-button class="cancel-button" @click="onCancel">取 消</el-button>
@@ -104,7 +109,6 @@ import {
 } from "@/api/unit/api.js";
 import { processVariable, downloadFile } from "@/api/globalConfig";
 import { mapState } from "vuex";
-import { is } from "bpmn-js/lib/util/ModelUtil";
 
 export default {
   components: {
@@ -133,6 +137,7 @@ export default {
     return {
       attachmentList: [],
       workflow: {},
+      operationDisable: false,
       formContent: {},
       startFormContent: {
         list: [],
@@ -140,16 +145,18 @@ export default {
         config: {},
       },
       formShow: false,
+      startFormShow: false,
       roleBoolean: true,
       activeAction: undefined,
       actionsConfig: {
         Agency: {
           label: "代办",
           value: "Agency",
-          component: ({ workflow, onAgencyCompleted }) => ({
+          component: ({ workflow, onAgencyCompleted, operationDisable }) => ({
             name: "RuntimeImplementAgency",
             props: {
               workflow,
+              operationDisable
             },
             events: {
               completed: onAgencyCompleted,
@@ -159,10 +166,11 @@ export default {
         Circulate: {
           label: "传阅",
           value: "Circulate",
-          component: ({ workflow, onAgencyCompleted }) => ({
+          component: ({ workflow, onAgencyCompleted, operationDisable }) => ({
             name: "RuntimeImplementCirculate",
             props: {
               workflow,
+              operationDisable
             },
             events: {
               completed: onAgencyCompleted,
@@ -172,10 +180,11 @@ export default {
         Signature: {
           label: "加减签",
           value: "Signature",
-          component: ({ workflow, onAgencyCompleted }) => ({
+          component: ({ workflow, onAgencyCompleted, operationDisable }) => ({
             name: "RuntimeImplementSignature",
             props: {
               workflow,
+              operationDisable
             },
             events: {
               completed: onAgencyCompleted,
@@ -185,10 +194,11 @@ export default {
         Hang: {
           label: "挂起",
           value: "Hang",
-          component: ({ workflow, onTaskSuccess }) => ({
+          component: ({ workflow, onTaskSuccess, operationDisable }) => ({
             name: "RuntimeImplementHang",
             props: {
               workflow,
+              operationDisable
             },
             events: {
               hang: onTaskSuccess,
@@ -198,10 +208,11 @@ export default {
         Reject: {
           label: "驳回",
           value: "Reject",
-          component: ({ workflow, onTaskSuccess }) => ({
+          component: ({ workflow, onTaskSuccess, operationDisable }) => ({
             name: "RuntimeImplementReject",
             props: {
               workflow,
+              operationDisable
             },
             events: {
               rejected: onTaskSuccess,
@@ -211,10 +222,11 @@ export default {
         Terminate: {
           label: "终止",
           value: "Terminate",
-          component: ({ workflow, onTaskSuccess }) => ({
+          component: ({ workflow, onTaskSuccess, operationDisable }) => ({
             name: "RuntimeImplementTermination",
             props: {
               workflow,
+              operationDisable
             },
             events: {
               terminated: onTaskSuccess,
@@ -224,10 +236,11 @@ export default {
         NoExecutor: {
           label: "指定操作人",
           value: "NoExecutor",
-          component: ({ workflow, onSelectExecutor }) => ({
+          component: ({ workflow, onSelectExecutor, operationDisable }) => ({
             name: "RuntimeImplementExecutor",
             props: {
               workflow,
+              operationDisable
             },
             events: {
               selectExecutor: onSelectExecutor,
@@ -239,7 +252,8 @@ export default {
       noExecutor: false,
       iBpmnViewer: {},
       context: {},
-      executeLoading: false
+      executeLoading: false,
+      executePermission: false,
     };
   },
   computed: {
@@ -345,6 +359,13 @@ export default {
         this.activeAction = actions[0]?.value;
       }
     },
+    startFormContent(startForm) {
+      if (startForm.list.length) {
+        this.startFormShow = true;
+      } else {
+        this.startFormShow = false;
+      }
+    },
   },
   async mounted() {
     await this.fetchExecuteDetail();
@@ -390,7 +411,11 @@ export default {
       });
       return result;
     },
-    onAgencyCompleted() {
+    onAgencyCompleted(removeds) {
+      const index = removeds.findIndex(({userId}) => userId === this.userInfo.account);
+      if(index !== -1) {
+        this.operationDisable = true;
+      }
       this.fetchExecuteDetail();
     },
     onTaskSuccess() {
@@ -609,19 +634,19 @@ export default {
     calculateNewTaskId(workflow, account) {
       const curTrack = workflow.curTrack.formDataList;
       const taskId = undefined;
-      for(let tarck of curTrack){
-        if(tarck.assignee === account){
+      for (let tarck of curTrack) {
+        if (tarck.assignee === account) {
           return tarck.taskId;
-        }else {
-          let  flag = assigneInList(tarck.assigneeInfoDTOList, account);
-          if(flag){
+        } else {
+          let flag = assigneInList(tarck.assigneeInfoDTOList, account);
+          if (flag) {
             return tarck.taskId;
           }
         }
       }
 
-      function assigneInList(assigneeList, userAcc){
-        return assigneeList.some(({ account }) => userAcc === account)
+      function assigneInList(assigneeList, userAcc) {
+        return assigneeList.some(({ account }) => userAcc === account);
       }
       return taskId;
     },

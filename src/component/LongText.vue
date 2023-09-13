@@ -1,6 +1,11 @@
 <template>
   <div class="wrapper">
-    <el-tooltip :style="contentStyle" :content="content" :placement="placement" effect="light">
+    <el-tooltip
+      :style="contentStyle"
+      :content="title ? title : content"
+      :placement="placement"
+      effect="light"
+    >
       <span class="text-hidden">{{ content }}</span>
     </el-tooltip>
   </div>
@@ -9,24 +14,27 @@
 <script>
 export default {
   props: {
+    title: {
+      type: String,
+    },
     content: {
       type: String,
-      required: true
+      required: true,
     },
     placement: {
       type: String,
-      default: 'bottom'
+      default: "bottom",
     },
     contentStyle: {
       type: String,
-      default: 'width: 180px'
+      default: "width: 180px",
     },
     lineClamp: {
       type: Number,
-      default: 1
+      default: 1,
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -42,8 +50,4 @@ export default {
 .wrapper {
   display: inline-flex;
 }
-
 </style>
-
-
-

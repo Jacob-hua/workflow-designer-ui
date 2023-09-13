@@ -10,7 +10,7 @@
             </div>
           </div>
         </div>
-        <el-button @click="onEditSignature()">编辑</el-button>
+        <el-button @click="onEditSignature()" :disabled="operationDisable">编辑</el-button>
       </div>
     </div>
     <runtime-people
@@ -34,6 +34,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    operationDisable: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -43,13 +47,18 @@ export default {
   },
   computed: {
     signature() {
-      const assignees = this.workflow.curTrack?.assignee.split(',') ?? []
-      return assignees.reduce((signature, assignee) => [...signature, { userId: assignee }], [])
+      // const assignees = this.workflow.curTrack?.assignee.split(',') ?? []
+      // return assignees.reduce((signature, assignee) => [...signature, { userId: assignee }], [])
+      return this.workflow.curTrack?.assigneeInfoDTOList ?? [];
     },
   },
   methods: {
     onEditSignature() {
-      this.runtimePeopleSelected = this.signature
+      this.runtimePeopleSelected = this.signature.map(({account, username}) => ({
+        userId: account,
+        lastName:username
+      }));
+      // this.runtimePeopleSelected = this.signature
       this.runtimePeopleVisible = true
     },
     async onRuntimePeopleSubmit({ selections }) {

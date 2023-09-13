@@ -3,7 +3,7 @@
     <div class="container">
       <div>
         <div>当前流程正常运行，如需将流程驳回，请进行认证操作</div>
-        <el-button @click="onConfirmation">驳回</el-button>
+        <el-button @click="onConfirmation" :disabled="operationDisable">驳回</el-button>
       </div>
     </div>
     <runtime-confirmation title="驳回确认" :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
@@ -31,6 +31,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    operationDisable: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

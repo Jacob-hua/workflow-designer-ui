@@ -61,7 +61,7 @@
         <div class="title">已选择人员</div>
         <div class="users">
           <div class="users-item" v-for="(item, index) in multipleSelection" :key="index">
-            <long-text contentStyle="width: 80px" :content="item.userId" />
+            <long-text contentStyle="width: 80px" :title="item.userId" :content="item.lastName" />
             <i class="el-icon-remove-outline" @click="onDeletePeople(index)"></i>
           </div>
         </div>

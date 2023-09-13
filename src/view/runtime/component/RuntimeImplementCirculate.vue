@@ -24,7 +24,10 @@
               <!-- <long-text contentStyle="width: 80px" :content="username" /> -->
             </div>
           </div>
-          <el-button @click="onEditCirculate(taskId, circulations)">
+          <el-button
+            @click="onEditCirculate(taskId, circulations)"
+            :disabled="operationDisable"
+          >
             编辑
           </el-button>
         </div>
@@ -36,6 +39,7 @@
           <el-button
             @click="onAddCirculate(taskId)"
             v-if="assignee === userInfo.account"
+            :disabled="operationDisable"
           >
             添加
           </el-button>
@@ -64,6 +68,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    operationDisable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -85,9 +93,12 @@ export default {
     },
     onEditCirculate(taskId, circulations) {
       this.editTaskId = taskId;
-      this.runtimePeopleSelected = circulations[0].unitList.map((userName) => ({
-        userId: userName,
-      }));
+      this.runtimePeopleSelected = circulations[0].assigneeInfoDTOList.map(
+        ({ username, account }) => ({
+          userId: account,
+          lastName: username,
+        })
+      );
       this.runtimePeopleVisible = true;
     },
     async onRuntimePeopleSubmit({ addeds, removeds, selections }) {
