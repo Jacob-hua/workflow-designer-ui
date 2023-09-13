@@ -68,7 +68,7 @@ export default {
         },
         {
           label: '部署人',
-          value: this.workflow.createBy,
+          value: this.workflow.createName,
         },
       ]
     },
