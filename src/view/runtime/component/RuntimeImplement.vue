@@ -317,6 +317,7 @@ export default {
       function makeComponent(action) {
         const component = this.actionsConfig[action].component({
           workflow: this.workflow,
+          operationDisable: this.operationDisable,
           onAgencyCompleted: this.onAgencyCompleted,
           onSelectExecutor: this.onSelectExecutor,
           onTaskSuccess: this.onTaskSuccess,

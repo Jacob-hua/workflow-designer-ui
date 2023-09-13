@@ -10,7 +10,7 @@
             </div>
           </div>
         </div>
-        <el-button @click="onEditSignature()" :disabled="operationDisable">编辑</el-button>
+        <el-button @click="onEditSignature()" :disabled="editDiasble">编辑</el-button>
       </div>
     </div>
     <runtime-people
@@ -51,6 +51,9 @@ export default {
       // return assignees.reduce((signature, assignee) => [...signature, { userId: assignee }], [])
       return this.workflow.curTrack?.assigneeInfoDTOList ?? [];
     },
+    editDiasble() {
+      return this.operationDisable
+    }
   },
   methods: {
     onEditSignature() {

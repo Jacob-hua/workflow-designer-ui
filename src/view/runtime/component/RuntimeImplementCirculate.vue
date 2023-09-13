@@ -26,7 +26,7 @@
           </div>
           <el-button
             @click="onEditCirculate(taskId, circulations)"
-            :disabled="operationDisable"
+            :disabled="editDiasble"
           >
             编辑
           </el-button>
@@ -39,7 +39,7 @@
           <el-button
             @click="onAddCirculate(taskId)"
             v-if="assignee === userInfo.account"
-            :disabled="operationDisable"
+            :disabled="editDiasble"
           >
             添加
           </el-button>
@@ -85,6 +85,9 @@ export default {
     circulate() {
       return this.workflow.curTrack?.circulationList ?? [];
     },
+    editDiasble() {
+      return this.operationDisable
+    }
   },
   methods: {
     onAddCirculate(taskId) {
