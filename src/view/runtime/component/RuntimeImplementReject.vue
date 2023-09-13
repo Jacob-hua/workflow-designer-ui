@@ -3,10 +3,16 @@
     <div class="container">
       <div>
         <div>当前流程正常运行，如需将流程驳回，请进行认证操作</div>
-        <el-button @click="onConfirmation" :disabled="operationDisable">驳回</el-button>
+        <el-button @click="onConfirmation" :disabled="editDiasble"
+          >驳回</el-button
+        >
       </div>
     </div>
-    <runtime-confirmation title="驳回确认" :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
+    <runtime-confirmation
+      title="驳回确认"
+      :visible.sync="confirmationVisible"
+      @validate="onConfirmationValidate"
+    />
     <runtime-reject-confirmation
       v-if="rejectConfirmationVisible"
       :visible.sync="rejectConfirmationVisible"
@@ -17,11 +23,11 @@
 </template>
 
 <script>
-import RuntimeConfirmation from './RuntimeConfirmation.vue'
-import RuntimeRejectConfirmation from './RuntimeRejectConfirmation.vue'
+import RuntimeConfirmation from "./RuntimeConfirmation.vue";
+import RuntimeRejectConfirmation from "./RuntimeRejectConfirmation.vue";
 
 export default {
-  name: 'RuntimeImplementReject',
+  name: "RuntimeImplementReject",
   components: {
     RuntimeConfirmation,
     RuntimeRejectConfirmation,
@@ -33,31 +39,36 @@ export default {
     },
     operationDisable: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       rejectConfirmationVisible: false,
       confirmationVisible: false,
-    }
+    };
+  },
+  computed: {
+    editDiasble() {
+      return this.operationDisable;
+    },
   },
   methods: {
     onConfirmation() {
-      this.confirmationVisible = true
+      this.confirmationVisible = true;
     },
     onConfirmationValidate() {
-      this.rejectConfirmationVisible = true
+      this.rejectConfirmationVisible = true;
     },
     onRejected() {
-      this.$emit('rejected')
+      this.$emit("rejected");
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
-@import '../index.scss';
+@import "../index.scss";
 
 @include container;
 

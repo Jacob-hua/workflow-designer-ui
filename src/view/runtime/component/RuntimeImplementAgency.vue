@@ -27,7 +27,7 @@
           > -->
           <el-button
             @click="onEditAgency(taskId, assigneeInfoDTOList)"
-            :disabled="operationDisable"
+            :disabled="editDiasble"
             >编辑</el-button
           >
         </div>
@@ -36,7 +36,7 @@
           <el-button
             @click="onAddAgency(taskId)"
             v-if="assignee === userInfo.account && candidateUsers.length == 0"
-            :disabled="operationDisable"
+            :disabled="editDiasble"
           >
             添加
           </el-button>
@@ -85,6 +85,9 @@ export default {
     agency() {
       return this.workflow.curTrack?.candidateUsers ?? [];
     },
+    editDiasble() {
+      return this.operationDisable
+    }
   },
   methods: {
     onAddAgency(taskId) {
@@ -102,19 +105,19 @@ export default {
       this.runtimePeopleVisible = true;
     },
     async onRuntimePeopleSubmit({ addeds, removeds, selections }) {
-      if (removeds.length) {
-        let strDelete = removeds.map(({ userId }) => userId).join(",");
-        await getModifyCandidate({
-          dataList: strDelete,
-          operateType: "user:delete",
-          taskId: this.editTaskId,
-        });
-      }
       if (addeds.length) {
         let strData = addeds.map(({ userId }) => userId).join(",");
         await getModifyCandidate({
           dataList: strData,
           operateType: "user:add",
+          taskId: this.editTaskId,
+        });
+      }
+      if (removeds.length) {
+        let strDelete = removeds.map(({ userId }) => userId).join(",");
+        await getModifyCandidate({
+          dataList: strDelete,
+          operateType: "user:delete",
           taskId: this.editTaskId,
         });
       }

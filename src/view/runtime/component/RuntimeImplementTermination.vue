@@ -3,7 +3,7 @@
     <div class="container">
       <div>
         <div>当前流程正常运行，如需将流程终止，请进行认证操作</div>
-        <el-button @click="onConfirmation">终止</el-button>
+        <el-button @click="onConfirmation" :disabled="editDiasble">终止</el-button>
       </div>
     </div>
     <runtime-confirmation :visible.sync="confirmationVisible" @validate="onConfirmationValidate" />
@@ -28,6 +28,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    operationDisable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -37,6 +41,9 @@ export default {
   },
   computed: {
     ...mapState("account", ["tenantId", "userInfo"]),
+    editDiasble() {
+      return this.operationDisable
+    }
   },
   methods: {
     onConfirmation() {
