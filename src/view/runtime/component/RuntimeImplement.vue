@@ -156,7 +156,7 @@ export default {
             name: "RuntimeImplementAgency",
             props: {
               workflow,
-              operationDisable
+              operationDisable,
             },
             events: {
               completed: onAgencyCompleted,
@@ -170,7 +170,7 @@ export default {
             name: "RuntimeImplementCirculate",
             props: {
               workflow,
-              operationDisable
+              operationDisable,
             },
             events: {
               completed: onAgencyCompleted,
@@ -184,7 +184,7 @@ export default {
             name: "RuntimeImplementSignature",
             props: {
               workflow,
-              operationDisable
+              operationDisable,
             },
             events: {
               completed: onAgencyCompleted,
@@ -198,7 +198,7 @@ export default {
             name: "RuntimeImplementHang",
             props: {
               workflow,
-              operationDisable
+              operationDisable,
             },
             events: {
               hang: onTaskSuccess,
@@ -212,7 +212,7 @@ export default {
             name: "RuntimeImplementReject",
             props: {
               workflow,
-              operationDisable
+              operationDisable,
             },
             events: {
               rejected: onTaskSuccess,
@@ -226,7 +226,7 @@ export default {
             name: "RuntimeImplementTermination",
             props: {
               workflow,
-              operationDisable
+              operationDisable,
             },
             events: {
               terminated: onTaskSuccess,
@@ -240,7 +240,7 @@ export default {
             name: "RuntimeImplementExecutor",
             props: {
               workflow,
-              operationDisable
+              operationDisable,
             },
             events: {
               selectExecutor: onSelectExecutor,
@@ -412,9 +412,11 @@ export default {
       });
       return result;
     },
-    onAgencyCompleted(removeds) {
-      const index = removeds.findIndex(({userId}) => userId === this.userInfo.account);
-      if(index !== -1) {
+    onAgencyCompleted(removeds = []) {
+      const index = removeds.findIndex(
+        ({ userId }) => userId === this.userInfo.account
+      );
+      if (index !== -1) {
         this.operationDisable = true;
       }
       this.fetchExecuteDetail();

@@ -5,8 +5,8 @@
         <div>会签:</div>
         <div class="info">
           <div>
-            <div class="user" v-for="({ userId }, index) in signature" :key="index">
-              <long-text content-style="color: #fff" :content="userId"/>
+            <div class="user" v-for="({ username, account }, index) in signature" :key="index">
+              <long-text content-style="color: #fff" :content="username" :title="account"/>
             </div>
           </div>
         </div>
