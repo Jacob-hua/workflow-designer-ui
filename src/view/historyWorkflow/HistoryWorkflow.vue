@@ -61,14 +61,19 @@
         </div>
       </div>
     </div>
-    <div class="content-wrapper">
+    <div class="content-wrapper" v-loading="loading">
       <div class="operation-row">
-        <el-button type="primary" :disabled="exportBtnDisabled" :loading="exportBtnLoading" @click="handleExportMulti">导出</el-button>
+        <el-button
+          type="primary"
+          :disabled="exportBtnDisabled"
+          :loading="exportBtnLoading"
+          @click="handleExportMulti"
+          >导出</el-button
+        >
       </div>
       <el-table
         ref="multipleTable"
         :data="tableData"
-        v-loading="loading"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" align="center"></el-table-column>
@@ -239,13 +244,13 @@ export default {
         this.searchForm.ascription = val;
       },
     },
-    multipleSelection(selections){
-      if(selections.length > 0){
+    multipleSelection(selections) {
+      if (selections.length > 0) {
         this.exportBtnDisabled = false;
-      }else{
+      } else {
         this.exportBtnDisabled = true;
       }
-    }
+    },
   },
   mounted() {
     this.fetchDeployNameList();
@@ -366,19 +371,21 @@ export default {
     },
     handleExportMulti() {
       this.exportBtnLoading = true;
-      const params = this.multipleSelection.map(({processInstanceId}) => {
+      const params = this.multipleSelection.map(({ processInstanceId }) => {
         return {
           processInstanceId,
-          assignee: this.userInfo.account
-        }
-      })
-      const fileName = `${formatDate(new Date(), "YYYY-MM-DD")}-工单导出`
-      exportDetailMutil(params).then((res) => {
-        downloadFile(fileName, 'zip', res);
-        this.exportBtnLoading = false
-      }).catch((err) => {
-        this.exportBtnLoading = false
-      })
+          assignee: this.userInfo.account,
+        };
+      });
+      const fileName = `${formatDate(new Date(), "YYYY-MM-DD")}-工单导出`;
+      exportDetailMutil(params)
+        .then((res) => {
+          downloadFile(fileName, "zip", res);
+          this.exportBtnLoading = false;
+        })
+        .catch((err) => {
+          this.exportBtnLoading = false;
+        });
     },
   },
 };

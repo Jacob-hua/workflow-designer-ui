@@ -88,8 +88,8 @@
           :name="label"
         >
           <span slot="label">{{ display }}</span>
-          <div>
-            <el-table :data="newTasks" v-loading="loading">
+          <div v-loading="loading">
+            <el-table :data="newTasks">
               <el-table-column type="index" label="序号"> </el-table-column>
               <el-table-column
                 prop="workOrderName"
