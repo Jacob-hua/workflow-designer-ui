@@ -63,9 +63,6 @@
             :formConf="formContent.config"
             :uploadFun="uploadFile.bind(this)"
             :downloadFun="downloadFile.bind(this)"
-            :checkStockFun="checkStock.bind(this)"
-            :cancleStockFun="cancleStock.bind(this)"
-            :checkStockAndUseFun="checkStockAndUse.bind(this)"
             v-if="formShow"
             ref="preview"
           ></preview>
@@ -102,10 +99,6 @@ import {
   getExecuteDetail,
   uploadTaskAttachmentFile,
   downloadTaskAttachmentFile,
-  checkStockAndUse,
-  checkStock,
-  cancleWithSort,
-  cancleStock,
 } from "@/api/unit/api.js";
 import { processVariable, downloadFile } from "@/api/globalConfig";
 import { mapState } from "vuex";
@@ -121,7 +114,6 @@ export default {
     RuntimeImplementReject,
     RuntimeImplementTermination,
     RuntimeImplementExecutor,
-    checkStock,
   },
   props: {
     visible: {
@@ -372,37 +364,8 @@ export default {
     await this.fetchExecuteDetail();
     await this.fetchProcessNodeInfo();
     this.context = await this.getContext();
-    window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e));
-    window.addEventListener("unload", this.updateHandler);
   },
   methods: {
-    beforeunloadHandler(e) {
-      e = e || window.event;
-      if (e) {
-        e.returnValue = "关闭提示";
-      }
-      return "关闭提示";
-    },
-    updateHandler() {
-      let userInfo =
-        (sessionStorage.getItem("loginData") &&
-          JSON.parse(sessionStorage.getItem("loginData"))) ||
-        "";
-      let url = process.env.VUE_APP_BASE_API
-        ? `${process.env.VUE_APP_BASE_API}/inventoryfac/cancle`
-        : "/inventoryfac/cancle";
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify({ taskKey: this.workflow.newTaskId }),
-        headers: {
-          "Content-Type": "application/json",
-          "X-SIACT-TOKEN": userInfo.token,
-          "X-SIACT-SOURCE": "PC",
-          "X-SIACT-TOKEN-TYPE": "1",
-        },
-        keepalive: true,
-      });
-    },
     async getContext() {
       if (!this.processInstanceId) {
         return {};
@@ -425,18 +388,10 @@ export default {
       this.$emit("taskSuccess");
     },
     async onDialogClose() {
-      this.removeListener();
-      const { result } = await cancleStock({
-        taskKey: this.workflow.newTaskId,
-      });
       this.formShow = false;
       this.$emit("close");
     },
     async onCancel() {
-      this.removeListener();
-      const { result } = await cancleStock({
-        taskKey: this.workflow.newTaskId,
-      });
       this.$emit("close");
     },
     onSelectExecutor(value) {
@@ -653,36 +608,6 @@ export default {
       }
       return taskId;
     },
-    async checkStockAndUse(itemnum, operationFlag) {
-      const { result } = await checkStockAndUse({
-        taskKey: this.workflow.newTaskId,
-        itemnum,
-        operationFlag,
-      });
-      return result;
-    },
-    async cancleStock(list) {
-      await cancleWithSort({
-        taskKey: this.workflow.newTaskId,
-        returnSpareDTOS: list,
-      });
-    },
-    async checkStock(itemnum) {
-      const { result } = await checkStock({
-        taskKey: this.workflow.newTaskId,
-        itemnum,
-      });
-      return result;
-    },
-    removeListener() {
-      window.removeEventListener("beforeunload", (e) =>
-        this.beforeunloadHandler(e)
-      );
-      window.removeEventListener("unload", this.updateHandler);
-    },
-  },
-  beforeDestroy() {
-    this.removeListener();
   },
 };
 </script>
