@@ -77,8 +77,7 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" align="center"></el-table-column>
-        <el-table-column type="index" label="序号">
-        </el-table-column>
+        <el-table-column type="index" label="序号"> </el-table-column>
         <el-table-column
           prop="workOrderName"
           label="工单名称"
@@ -252,9 +251,10 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
+    await this.dispatchRefreshOrganization();
+    // this.searchForm.ascription = this.currentOrganization;
     this.fetchDeployNameList();
-    this.dispatchRefreshOrganization();
   },
   methods: {
     ...mapMutations("account", ["updateCurrentOrganization"]),
