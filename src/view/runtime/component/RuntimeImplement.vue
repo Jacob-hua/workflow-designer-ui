@@ -477,6 +477,7 @@ export default {
       });
       if (errorInfo.errorCode) {
         this.$message.error(errorInfo.errorMsg);
+        this.executeLoading = false;
         return;
       }
       if (this.formContent && this.formContent.config) {
