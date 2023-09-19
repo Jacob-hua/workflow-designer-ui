@@ -170,7 +170,7 @@ export default {
 
     handleChange(spareSpart, index, flag) {
       if (this.formConf.disabled) return
-      if (flag && spareSpart.allowance > spareSpart.spareNum) {
+      if (flag) {
         spareSpart.spareNum += 1;
       }
       if (!flag) {
