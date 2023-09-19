@@ -253,7 +253,6 @@ export default {
   },
   async mounted() {
     await this.dispatchRefreshOrganization();
-    // this.searchForm.ascription = this.currentOrganization;
     this.fetchDeployNameList();
   },
   methods: {
@@ -286,7 +285,7 @@ export default {
     async fetchHistoryStatistic() {
       const { ascription, business } = this.searchForm;
       const { errorInfo, result } = await postHistoryProcessCountStatistic({
-        assignee: this.userInfo.account,
+        // assignee: this.userInfo.account,
         tenantId: this.tenantId,
         ascription,
         business,
@@ -308,7 +307,7 @@ export default {
       const [{ errorInfo, result }] = await Promise.all([
         await listHistoryTask({
           ascription,
-          assignee: this.userInfo.account, // 执行人
+          // assignee: this.userInfo.account, // 执行人
           business,
           endTime, // 结束时间
           startTime, // 起始时间
