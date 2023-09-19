@@ -77,7 +77,7 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" align="center"></el-table-column>
-        <el-table-column type="index" label="序号" width="180">
+        <el-table-column type="index" label="序号">
         </el-table-column>
         <el-table-column
           prop="workOrderName"

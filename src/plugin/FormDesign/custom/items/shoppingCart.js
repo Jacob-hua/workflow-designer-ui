@@ -21,10 +21,6 @@ export let shoppingCart = {
 
   showLabel:true,
 
-  value:undefined,
-
-  checkStockFun: Function,
-  cancleStockFun: Function,
-  checkStockAndUseFun:Function,
+  value:[],
 
 }

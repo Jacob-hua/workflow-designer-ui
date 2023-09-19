@@ -35,14 +35,12 @@
         <el-row type="flex" justify="end">
           <div class="input-number">
             <el-button
-              :loading="item.loading"
               class="number-descress icon-box"
               icon="el-icon-minus"
               @click="handleChange(item, index, false)"
             ></el-button>
             <el-input type="text" v-model="item.spareNum" size="mini" />
             <el-button
-              :loading="item.loading"
               class="number-increase icon-box"
               icon="el-icon-plus"
               @click="handleChange(item, index, true)"
@@ -59,17 +57,20 @@ import _ from "lodash";
 export default {
   name: "shoppingCart",
   directives: {
-    'loadMore': {
+    loadMore: {
       bind(el, binding) {
-        const SELECTWRAP_DOM = el.querySelector('.el-select-dropdown .el-select-dropdown__wrap');
-        SELECTWRAP_DOM.addEventListener('scroll', function () {
-          const condition = this.scrollHeight - this.scrollTop <= this.clientHeight;
+        const SELECTWRAP_DOM = el.querySelector(
+          ".el-select-dropdown .el-select-dropdown__wrap"
+        );
+        SELECTWRAP_DOM.addEventListener("scroll", function () {
+          const condition =
+            this.scrollHeight - this.scrollTop <= this.clientHeight;
           if (condition) {
             binding.value();
           }
         });
-      }
-    }
+      },
+    },
   },
   props: {
     value: {
@@ -147,46 +148,29 @@ export default {
       }
     },
 
-    async handleSelect(value) {
-      if(!value) return;
+    handleSelect(value) {
+      if (!value) return;
       if (this.spareParts.findIndex(({ itemnum }) => itemnum === value) != -1) {
         this.$message.warning("备件已存在");
         return;
       }
-      const hasStock = await this.checkStockFun(value);
-      if (!hasStock) {
+      let sparePart = this.options.find(({ itemnum }) => itemnum === value);
+      if (sparePart.allowance <= 0) {
         this.$message.warning("备件已被领用完");
         this.selectedValue = "";
         return;
       }
       this.page = 1;
       this.description = "";
-      let sparePart = this.options.find(({ itemnum }) => itemnum === value);
-      this.checkStockAndUseFun(sparePart.itemnum, true).then((res) => {
-        sparePart.hasStock = res;
-        if (res) {
-          sparePart.spareNum = 1;
-          this.spareParts.push(sparePart);
-        } else {
-          this.$message.warning("备件库存为0");
-        }
-      });
+      sparePart.spareNum = 1;
+      this.spareParts.push(sparePart);
       this.selectedValue = "";
       this.$emit("input", this.spareParts);
     },
 
-    async handleChange(spareSpart, index, flag) {
-      if (this.formConf.disabled) return;
-      spareSpart.loading = true;
-      const hasStock = await this.checkStockFun(spareSpart.itemnum);
-      spareSpart.hasStock = hasStock;
-      this.$forceUpdate();
-      if (flag && !hasStock) {
-        spareSpart.loading = false;
-        return;
-      }
-      const result = await this.checkStockAndUseFun(spareSpart.itemnum, flag);
-      if (flag && result) {
+    handleChange(spareSpart, index, flag) {
+      if (this.formConf.disabled) return
+      if (flag && spareSpart.allowance > spareSpart.spareNum) {
         spareSpart.spareNum += 1;
       }
       if (!flag) {
@@ -195,40 +179,12 @@ export default {
           this.spareParts.splice(index, 1);
         }
       }
-      spareSpart.loading = false;
       this.$forceUpdate();
       this.$emit("input", this.spareParts);
     },
 
-    handleChange1: _.throttle(function (spareSpart, index, flag) {
-      if (this.formConf.disabled) return;
-      if (flag) {
-        if (!spareSpart.hasStock) return;
-        this.checkStockAndUseFun(spareSpart.itemnum, flag).then((res) => {
-          spareSpart.hasStock = res;
-          if (res) {
-            spareSpart.spareNum += 1;
-          }
-          this.$forceUpdate();
-        });
-      } else {
-        this.checkStockFun(spareSpart.itemnum, flag).then((res) => {
-          spareSpart.hasStock = res;
-        });
-        spareSpart.spareNum -= 1;
-        if (spareSpart.spareNum === 0) {
-          this.spareParts.splice(index, 1);
-        }
-        this.$forceUpdate();
-      }
-      this.$emit("input", this.spareParts);
-    }, 500),
-
     handleRemoveSpare(sparePart, index) {
       if (this.formConf.disabled) return;
-      this.cancleStockFun([
-        { itemnum: sparePart.itemnum, currentNum: sparePart.spareNum },
-      ]);
       this.spareParts.splice(index, 1);
       this.$emit("input", this.spareParts);
     },
@@ -242,11 +198,6 @@ export default {
     if (!this.formConf) return;
     if (this.formConf.isSubmit) return;
     if (this.spareParts.length <= 0) return;
-    const list = this.spareParts.map(({ itemnum, spareNum }) => ({
-      itemnum,
-      currentNum: spareNum,
-    }));
-    this.cancleStockFun(list);
     this.spareParts = [];
   },
 };
