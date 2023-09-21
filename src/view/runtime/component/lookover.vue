@@ -57,7 +57,6 @@
                 >
                   <div v-if="formContent" class="form">
                     <preview
-                      v-if="formContent.list.length"
                       :context="context"
                       :itemList="formContent.list"
                       :formData="formContent.data"
