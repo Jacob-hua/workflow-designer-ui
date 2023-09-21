@@ -127,7 +127,8 @@ export default {
   mounted() {
     if (this.readOnly) {
       this.displayNoneDom()
-      this.mappingProcess()
+      // this.mappingProcess()
+      this.displayList = this.value
     } else {
       this.value.forEach(async (file) => {
         if (this.isTypeAnImage(file)) {
