@@ -33,7 +33,7 @@
     <el-divider>选择抄表范围</el-divider>
     <el-card>
       <el-tree
-        :data="props.meterTree"
+        :data="meterTree"
         :props="{ label: 'insName', children: 'children', id: 'insCode' }"
         show-checkbox
         :default-checked-keys="props.defaultCheckedKeys"
@@ -107,6 +107,7 @@ export default {
       devList: [],
       nameString: "",
       hasIn: false,
+      meterTree: []
     };
   },
   methods: {
@@ -128,7 +129,7 @@ export default {
         data: this.props.meterTreeConfig.requestConfig.parameter,
       });
       const res = result.result;
-      this.props.meterTree = res.DeviceTree;
+      this.meterTree = res.DeviceTree;
     },
     handleChecked(data, checked) {
       if (this.hasIn) {
@@ -192,11 +193,6 @@ export default {
       }
     },
     handlerChangeRulesType(val) {
-      // const obj = datatypeRules[val];
-      // this.props.rules.push({
-      //   rule: obj.rule,
-      //   msg: obj.msg,
-      // });
     },
   },
 };
