@@ -15,6 +15,7 @@
       >
         <div>
           <preview
+            v-if="startFormContent.list.length"
             :context="context"
             :itemList="startFormContent.list"
             :formData="startFormContent.data"
@@ -517,12 +518,14 @@ export default {
         taskId: this.workflow.newTaskId,
         discard: true,
         assignee: this.workflow.starterAssignee,
-      }).then((res) => {
-        this.$message.success("废弃成功");
-        this.$emit("close");
-      }).catch((err) => {
-        this.$message.error("废弃失败");
-      });
+      })
+        .then((res) => {
+          this.$message.success("废弃成功");
+          this.$emit("close");
+        })
+        .catch((err) => {
+          this.$message.error("废弃失败");
+        });
     },
     handleExport() {
       exportDetail({

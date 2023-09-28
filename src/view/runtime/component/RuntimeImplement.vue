@@ -461,8 +461,8 @@ export default {
       this.completeTask();
     },
     async completeTask(formData = {}, data = {}) {
-      this.executeLoading = true;
-      const { errorInfo } = await postCompleteTask({
+      this.executeLoading = true;      
+      postCompleteTask({
         assignee: this.userInfo.account,
         nextAssignee: this.workflow.executors?.[0].userId,
         commentList: [],
@@ -474,19 +474,23 @@ export default {
         taskKey: this.workflow.taskKey,
         taskName: this.workflow.processDeployName,
         variable: data,
-      });
-      if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg);
+      }).then((res) => {
+        const { errorInfo } = res;
+        if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg);
+          this.executeLoading = false;
+          return;
+        }
+        if (this.formContent && this.formContent.config) {
+          this.formContent.config["isSubmit"] = true;
+        }
+        this.formShow = false;
+        this.$message.success("操作成功");
         this.executeLoading = false;
-        return;
-      }
-      if (this.formContent && this.formContent.config) {
-        this.formContent.config["isSubmit"] = true;
-      }
-      this.formShow = false;
-      this.$message.success("操作成功");
-      this.executeLoading = false;
-      this.$emit("taskSuccess");
+        this.$emit("taskSuccess");
+      }).catch((err) => {
+        this.executeLoading = false;
+      })
     },
     async fetchFormData(formKey) {
       if (formKey) {

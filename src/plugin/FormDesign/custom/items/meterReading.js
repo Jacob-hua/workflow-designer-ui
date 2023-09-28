@@ -36,7 +36,6 @@ export let meterReading = {
   rules: [],
   options: {},
   meterTreeConfig: {},
-  meterTree: [],
   defaultCheckedKeys: [],
   deviceInstanceCodeList: [],
   value: []
