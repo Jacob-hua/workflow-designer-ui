@@ -14,6 +14,15 @@ $date-picker-border-color: #999999 !default;
 .el-picker-panel {
   background-color: $date-editor-bg-color;
   border: 1px solid $date-picker-border-color;
+  .el-date-range-picker__header {
+    .el-picker-panel__icon-btn{
+      color: #bbb;
+    }
+    .is-disabled {
+      color: #303133;
+    }
+  }
+
 }
 
 .el-date-range-picker__content.is-left {

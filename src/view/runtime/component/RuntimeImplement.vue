@@ -518,6 +518,7 @@ export default {
           return;
         }
         this.formContent = JSON.parse(result[0]?.content ?? '{}');
+        await this.fetchCurrentTaskFormData();
         this.formShow = true;
       } else {
         this.formContent = {};

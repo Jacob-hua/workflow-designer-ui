@@ -14,6 +14,7 @@
         <el-input
           v-model.trim="meterReading.priceList[index].price"
           placeholder="请输入单价"
+          @change="handleChangePrice"
         >
           <template slot="append">m³/元</template>
         </el-input>
@@ -65,6 +66,10 @@
 export default {
   name: 'fancyGasMeterReading',
   props: {
+    formConf: {
+      type: Object,
+      default: () => {},
+    },
     value: {
       type: Object
     },
@@ -135,6 +140,7 @@ export default {
     'options.result': {
       handler(opt) {
         if (!opt || !opt.length) return;
+        if (this.$props.formConf.disabled) return;
         this.meterReading.priceList = opt.map(item => {
           if(item.type === 'boiler'){
             item.name = '锅炉'
@@ -152,8 +158,7 @@ export default {
       this.currentInsCode = meterCode;
       this.$emit('input', this.meterReading);
     },
-    handleMarginChange(meterCode) {
-      this.currentInsCode = meterCode;
+    handleChangePrice() {
       this.$emit('input', this.meterReading);
     },
     handleValueList(meterCode, type) {
@@ -176,8 +181,7 @@ export default {
     totalValidator(rule, value, callback) {
       if(!value){
         callback()
-      }
-      if (/^[0-9]*$/.test(value) === false) {
+      }else if (/^[0-9]*$/.test(value) === false) {
         this.handleValueList(this.currentInsCode, 'total');
         callback(new Error('请输入数字'));
       } else {
@@ -187,8 +191,7 @@ export default {
     marginValidator(rule, value, callback) {
       if(!value){
         callback()
-      }
-      if (/^[0-9]*$/.test(value) === false) {
+      }else if (/^[0-9]*$/.test(value) === false) {
         this.handleValueList(this.currentInsCode, 'margin');
         callback(new Error('请输入数字'));
       } else {

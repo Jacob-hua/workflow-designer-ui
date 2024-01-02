@@ -91,8 +91,8 @@ service.interceptors.response.use(
         })
         break
       case 401:
-        sessionStorage.clear()
-        router.push('/')
+        sessionStorage.clear();
+        router.push('/login');
         break
       default:
         Message({
