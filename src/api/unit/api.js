@@ -226,3 +226,5 @@ export const cancleStock = (params) => post('/inventoryfac/cancle',params)
 export const cancleWithSort = (params) => post('/inventoryfac/cancleWithSort',params)
 
 export const getSpareListByPage = (params) => post('./inventoryfac/page',params)
+
+export const getCurrentTaskFormData = (params) => get('./execute/currentTaskFormData',params)

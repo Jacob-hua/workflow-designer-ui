@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
-import router from '@/router'
+import {router} from '../../main'
 
 // create an axios instance
 export const service = axios.create({
@@ -91,8 +91,8 @@ service.interceptors.response.use(
         })
         break
       case 401:
-        sessionStorage.clear()
-        router.push('/')
+        sessionStorage.clear();
+        router.push('/login');
         break
       default:
         Message({

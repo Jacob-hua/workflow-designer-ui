@@ -94,6 +94,7 @@
       <el-select v-model="props.rulesType" @change="handlerChangeRulesType">
         <el-option label="无" value="default" />
         <el-option label="电话" value="phone" />
+        <el-option label="座机" value="landline"></el-option>
         <el-option label="邮箱" value="email" />
         <el-option label="纯数字" value="number" />
         <el-option label="身份证" value="idcard" />
@@ -148,6 +149,10 @@ const defaultRules = {
     rule: "\\d{17}[\\d|x]|\\d{15}",
     msg: "您输入的身份证号码不符合规则",
   },
+  landline: {
+    rule: "^\\d{4}$|^\\d{8}$|^\\d{11}$",
+    msg: "您输入的座机号码不符合规则"
+  }
 };
 /**
  * input的配置项

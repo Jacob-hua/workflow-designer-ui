@@ -30,6 +30,7 @@ const components = [
   'shoppingCart',
   'formList',
   'meterReading',
+  'gasMeterReading'
 ]
 
 let comps = []

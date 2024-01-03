@@ -59,8 +59,9 @@
         <div class="form-preview">
           <preview
             :context="context"
-            :itemList="formContent.list"
             :formConf="formContent.config"
+            :formData="currentTaskFormData"
+            :itemList="formContent.list"
             :uploadFun="uploadFile.bind(this)"
             :downloadFun="downloadFile.bind(this)"
             v-if="formShow"
@@ -83,15 +84,15 @@
 </template>
 
 <script>
-import BpmnInfo from "@/component/BpmnInfo.vue";
-import RuntimeImplementAgency from "./RuntimeImplementAgency.vue";
-import RuntimeImplementCirculate from "./RuntimeImplementCirculate.vue";
-import RuntimeImplementSignature from "./RuntimeImplementSignature.vue";
-import RuntimeImplementHang from "./RuntimeImplementHang.vue";
-import RuntimeImplementReject from "./RuntimeImplementReject.vue";
-import RuntimeImplementTermination from "./RuntimeImplementTermination.vue";
-import RuntimeImplementExecutor from "./RuntimeImplementExecutor.vue";
-import preview from "@/plugin/FormDesign/component/preview";
+import BpmnInfo from '@/component/BpmnInfo.vue';
+import RuntimeImplementAgency from './RuntimeImplementAgency.vue';
+import RuntimeImplementCirculate from './RuntimeImplementCirculate.vue';
+import RuntimeImplementSignature from './RuntimeImplementSignature.vue';
+import RuntimeImplementHang from './RuntimeImplementHang.vue';
+import RuntimeImplementReject from './RuntimeImplementReject.vue';
+import RuntimeImplementTermination from './RuntimeImplementTermination.vue';
+import RuntimeImplementExecutor from './RuntimeImplementExecutor.vue';
+import preview from '@/plugin/FormDesign/component/preview';
 import {
   designFormDesignServiceAll,
   postCompleteTask,
@@ -99,9 +100,10 @@ import {
   getExecuteDetail,
   uploadTaskAttachmentFile,
   downloadTaskAttachmentFile,
-} from "@/api/unit/api.js";
-import { processVariable, downloadFile } from "@/api/globalConfig";
-import { mapState } from "vuex";
+  getCurrentTaskFormData,
+} from '@/api/unit/api.js';
+import { processVariable, downloadFile } from '@/api/globalConfig';
+import { mapState } from 'vuex';
 
 export default {
   components: {
@@ -142,10 +144,10 @@ export default {
       activeAction: undefined,
       actionsConfig: {
         Agency: {
-          label: "代办",
-          value: "Agency",
+          label: '代办',
+          value: 'Agency',
           component: ({ workflow, onAgencyCompleted, operationDisable }) => ({
-            name: "RuntimeImplementAgency",
+            name: 'RuntimeImplementAgency',
             props: {
               workflow,
               operationDisable,
@@ -156,10 +158,10 @@ export default {
           }),
         },
         Circulate: {
-          label: "传阅",
-          value: "Circulate",
+          label: '传阅',
+          value: 'Circulate',
           component: ({ workflow, onAgencyCompleted, operationDisable }) => ({
-            name: "RuntimeImplementCirculate",
+            name: 'RuntimeImplementCirculate',
             props: {
               workflow,
               operationDisable,
@@ -170,10 +172,10 @@ export default {
           }),
         },
         Signature: {
-          label: "加减签",
-          value: "Signature",
+          label: '加减签',
+          value: 'Signature',
           component: ({ workflow, onAgencyCompleted, operationDisable }) => ({
-            name: "RuntimeImplementSignature",
+            name: 'RuntimeImplementSignature',
             props: {
               workflow,
               operationDisable,
@@ -184,10 +186,10 @@ export default {
           }),
         },
         Hang: {
-          label: "挂起",
-          value: "Hang",
+          label: '挂起',
+          value: 'Hang',
           component: ({ workflow, onTaskSuccess, operationDisable }) => ({
-            name: "RuntimeImplementHang",
+            name: 'RuntimeImplementHang',
             props: {
               workflow,
               operationDisable,
@@ -198,10 +200,10 @@ export default {
           }),
         },
         Reject: {
-          label: "驳回",
-          value: "Reject",
+          label: '驳回',
+          value: 'Reject',
           component: ({ workflow, onTaskSuccess, operationDisable }) => ({
-            name: "RuntimeImplementReject",
+            name: 'RuntimeImplementReject',
             props: {
               workflow,
               operationDisable,
@@ -212,10 +214,10 @@ export default {
           }),
         },
         Terminate: {
-          label: "终止",
-          value: "Terminate",
+          label: '终止',
+          value: 'Terminate',
           component: ({ workflow, onTaskSuccess, operationDisable }) => ({
-            name: "RuntimeImplementTermination",
+            name: 'RuntimeImplementTermination',
             props: {
               workflow,
               operationDisable,
@@ -226,10 +228,10 @@ export default {
           }),
         },
         NoExecutor: {
-          label: "指定操作人",
-          value: "NoExecutor",
+          label: '指定操作人',
+          value: 'NoExecutor',
           component: ({ workflow, onSelectExecutor, operationDisable }) => ({
-            name: "RuntimeImplementExecutor",
+            name: 'RuntimeImplementExecutor',
             props: {
               workflow,
               operationDisable,
@@ -246,53 +248,54 @@ export default {
       context: {},
       executeLoading: false,
       executePermission: false,
+      currentTaskFormData: null,
     };
   },
   computed: {
-    ...mapState("account", ["tenantId", "userInfo"]),
+    ...mapState('account', ['tenantId', 'userInfo']),
     hang() {
       if (!this.workflow.curTrack) {
         return false;
       }
-      return this.workflow.curTrack.status.split(",").includes("hang");
+      return this.workflow.curTrack.status.split(',').includes('hang');
     },
     reject() {
       if (!this.workflow.curTrack) {
         return false;
       }
-      return this.workflow.curTrack.status.split(",").includes("reject");
+      return this.workflow.curTrack.status.split(',').includes('reject');
     },
     terminate() {
       if (!this.workflow.curTrack) {
         return false;
       }
-      return this.workflow.curTrack.status.split(",").includes("terminate");
+      return this.workflow.curTrack.status.split(',').includes('terminate');
     },
     actions() {
       if (!this.curExecuteShape) {
         return [];
       }
       if (this.hang) {
-        return [makeComponent.call(this, "Hang")];
+        return [makeComponent.call(this, 'Hang')];
       }
       const temps = [];
       if (this.noExecutor) {
-        temps.push(makeComponent.call(this, "NoExecutor"));
+        temps.push(makeComponent.call(this, 'NoExecutor'));
       }
       let shapeActions =
         this.iBpmnViewer
           .getShapeInfo(this.curExecuteShape)
-          ["actions"]?.split(",") ?? [];
+          ['actions']?.split(',') ?? [];
       if (curTaskIsFirstTask.call(this)) {
-        shapeActions = shapeActions.filter((action) => action !== "Reject");
+        shapeActions = shapeActions.filter((action) => action !== 'Reject');
       }
       const actions = [
-        "Agency",
-        "Circulate",
-        "Signature",
-        "Hang",
-        "Reject",
-        "Terminate",
+        'Agency',
+        'Circulate',
+        'Signature',
+        'Hang',
+        'Reject',
+        'Terminate',
       ];
       return actions
         .filter((action) => shapeActions.includes(action))
@@ -301,7 +304,7 @@ export default {
 
       function curTaskIsFirstTask() {
         const curTaskIndex = this.iBpmnViewer
-          .elementRegistryFilter(({ type }) => type === "bpmn:UserTask")
+          .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
           .findIndex(({ id }) => id === this.workflow.taskKey);
         return curTaskIndex === 0;
       }
@@ -320,15 +323,15 @@ export default {
     processDisplayInfo() {
       return [
         {
-          label: "工单编码",
+          label: '工单编码',
           value: this.workflow.processNumber,
         },
         {
-          label: "工单类型",
+          label: '工单类型',
           value: this.workflow.processDeployName,
         },
         {
-          label: "创建时间",
+          label: '创建时间',
           value: this.workflow.startTime,
         },
         // {
@@ -336,11 +339,11 @@ export default {
         //   value: this.$getMappingName(this.workflow.ascription),
         // },
         {
-          label: "能源系统",
+          label: '能源系统',
           value: this.$getMappingName(this.workflow.systemType),
         },
         {
-          label: "创建人",
+          label: '创建人',
           value: this.workflow.starter,
         },
       ];
@@ -371,7 +374,7 @@ export default {
         return {};
       }
       const { result } = await processVariable({
-        processInstanceId: this.processInstanceId ?? "",
+        processInstanceId: this.processInstanceId ?? '',
       });
       return result;
     },
@@ -385,28 +388,28 @@ export default {
       this.fetchExecuteDetail();
     },
     onTaskSuccess() {
-      this.$emit("taskSuccess");
+      this.$emit('taskSuccess');
     },
     async onDialogClose() {
       this.formShow = false;
-      this.$emit("close");
+      this.$emit('close');
     },
     async onCancel() {
-      this.$emit("close");
+      this.$emit('close');
     },
     onSelectExecutor(value) {
-      this.$set(this.workflow, "executors", value);
+      this.$set(this.workflow, 'executors', value);
     },
     onSelectAction() {
-      let { permissions } = JSON.parse(sessionStorage.getItem("loginData"));
+      let { permissions } = JSON.parse(sessionStorage.getItem('loginData'));
       let proJectRole =
         permissions.filter((item) => {
           return item.projectCode === this.workflow.ascription;
         })[0]?.permissionSet || [];
       let findEle = proJectRole.findIndex((item) => {
-        return item.frontRoute === "RunTime" + this.activeAction;
+        return item.frontRoute === 'RunTime' + this.activeAction;
       });
-      if (findEle === -1 && this.activeAction !== "NoExecutor") {
+      if (findEle === -1 && this.activeAction !== 'NoExecutor') {
         this.roleBoolean = false;
       } else {
         this.roleBoolean = true;
@@ -421,17 +424,17 @@ export default {
         .filter(({ taskKey }) => taskKey !== this.workflow.taskKey)
         .map(({ taskKey }) => taskKey);
       iBpmnViewer
-        .elementRegistryFilter(({ type }) => type === "bpmn:UserTask")
+        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
         .forEach((element) => {
           if (element.id === this.workflow.taskKey) {
-            iBpmnViewer.canvasAddMarker(element, "svgOncomplete");
+            iBpmnViewer.canvasAddMarker(element, 'svgOncomplete');
             return;
           }
           if (completedTaskList.includes(element.id)) {
-            iBpmnViewer.canvasAddMarker(element, "svgComplete");
+            iBpmnViewer.canvasAddMarker(element, 'svgComplete');
             return;
           }
-          iBpmnViewer.canvasAddMarker(element, "svgIncomplete");
+          iBpmnViewer.canvasAddMarker(element, 'svgIncomplete');
         });
       const value = iBpmnViewer.elementRegistryFind(
         ({ id }) => id === this.workflow.taskKey
@@ -439,6 +442,7 @@ export default {
       this.curExecuteShape = value;
       if (value) {
         this.fetchFormData(value.businessObject.formKey);
+        this.fetchCurrentTaskFormData();
       }
     },
     async onExecute() {
@@ -455,13 +459,13 @@ export default {
         (!Array.isArray(this.workflow.executors) ||
           this.workflow.executors.length === 0)
       ) {
-        this.$message.error("后续操作人为空！");
+        this.$message.error('后续操作人为空！');
         return;
       }
       this.completeTask();
     },
     async completeTask(formData = {}, data = {}) {
-      this.executeLoading = true;      
+      this.executeLoading = true;
       postCompleteTask({
         assignee: this.userInfo.account,
         nextAssignee: this.workflow.executors?.[0].userId,
@@ -474,34 +478,36 @@ export default {
         taskKey: this.workflow.taskKey,
         taskName: this.workflow.processDeployName,
         variable: data,
-      }).then((res) => {
-        const { errorInfo } = res;
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg);
-          this.executeLoading = false;
-          return;
-        }
-        if (this.formContent && this.formContent.config) {
-          this.formContent.config["isSubmit"] = true;
-        }
-        this.formShow = false;
-        this.$message.success("操作成功");
-        this.executeLoading = false;
-        this.$emit("taskSuccess");
-      }).catch((err) => {
-        this.executeLoading = false;
       })
+        .then((res) => {
+          const { errorInfo } = res;
+          if (errorInfo.errorCode) {
+            this.$message.error(errorInfo.errorMsg);
+            this.executeLoading = false;
+            return;
+          }
+          if (this.formContent && this.formContent.config) {
+            this.formContent.config['isSubmit'] = true;
+          }
+          this.formShow = false;
+          this.$message.success('操作成功');
+          this.executeLoading = false;
+          this.$emit('taskSuccess');
+        })
+        .catch((err) => {
+          this.executeLoading = false;
+        });
     },
     async fetchFormData(formKey) {
       if (formKey) {
-        let docName = formKey.split(":")[2];
+        let docName = formKey.split(':')[2];
         const { errorInfo, result } = await designFormDesignServiceAll({
-          status: "enabled,deleted",
+          status: 'enabled,deleted',
           tenantId: this.tenantId,
           ascription: this.workflow.ascription,
           business: this.workflow.business,
-          numberCode: "",
-          name: "",
+          numberCode: '',
+          name: '',
           docName: docName,
         });
         if (errorInfo.errorCode) {
@@ -511,24 +517,36 @@ export default {
         if (!Array.isArray(result)) {
           return;
         }
-        this.formContent = JSON.parse(result[0]?.content ?? "{}");
+        this.formContent = JSON.parse(result[0]?.content ?? '{}');
+        await this.fetchCurrentTaskFormData();
         this.formShow = true;
       } else {
         this.formContent = {};
         this.formShow = false;
       }
     },
+    async fetchCurrentTaskFormData() {
+      const { errorInfo, result } = await getCurrentTaskFormData({
+        processInstanceId: this.workflow.processInstanceId,
+      });
+      if (errorInfo.errorCode) {
+          this.$message.error(errorInfo.errorMsg);
+          return;
+        }
+        if(!result.lastFormData) return;
+        this.currentTaskFormData = JSON.parse(result.lastFormData);
+    },
     async uploadFile({ name, raw: file }) {
       const uploadParameters = new FormData();
-      uploadParameters.append("name", name);
-      uploadParameters.append("type", "file");
-      uploadParameters.append("file", file);
-      uploadParameters.append("description", "");
+      uploadParameters.append('name', name);
+      uploadParameters.append('type', 'file');
+      uploadParameters.append('file', file);
+      uploadParameters.append('description', '');
       uploadParameters.append(
-        "processInstanceId",
+        'processInstanceId',
         this.workflow.processInstanceId
       );
-      uploadParameters.append("taskId", this.workflow.newTaskId);
+      uploadParameters.append('taskId', this.workflow.newTaskId);
       const { errorInfo, result } = await uploadTaskAttachmentFile(
         uploadParameters
       );
@@ -565,7 +583,7 @@ export default {
           assignee === null && candidateGroup === null && candidateUser === null
       );
       if (this.noExecutor) {
-        this.$message.warning("下一步无操作人");
+        this.$message.warning('下一步无操作人');
       }
     },
     async fetchExecuteDetail() {
@@ -584,8 +602,8 @@ export default {
           newTaskId: this.calculateNewTaskId(result, this.userInfo.account),
         };
         this.startFormContent = JSON.parse(result.startFormData);
-        this.startFormContent.config["disabled"] = true;
-        this.startFormContent.config["readOnly"] = true;
+        this.startFormContent.config['disabled'] = true;
+        this.startFormContent.config['readOnly'] = true;
       } catch (error) {}
     },
     getCurTrack(workflow) {
@@ -618,7 +636,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../index.scss";
+@import '../index.scss';
 
 @include paneContainer;
 

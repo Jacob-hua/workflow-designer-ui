@@ -28,6 +28,7 @@ import { text } from './items/text'
 import {shoppingCart} from './items/shoppingCart'
 import {formList} from './items/formList'
 import { meterReading } from './items/meterReading'
+import { gasMeterReading } from './items/gasMeterReading'
 
 export const formItems = [
   input,
@@ -48,7 +49,8 @@ export const formItems = [
   amap,
   shoppingCart,
   formList,
-  meterReading
+  meterReading,
+  gasMeterReading
 ]
 export const assistFormItems = [button, divider, link, text]
 export const layoutFormItems = [row]

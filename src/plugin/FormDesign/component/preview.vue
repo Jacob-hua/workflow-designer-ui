@@ -7,6 +7,7 @@ import formDepMonitorMixin, {
 import _ from "lodash";
 import render from "../custom/previewRender";
 import checkRules from "../custom/rule";
+import {getSimpleId} from "../utils/IdGenerate"
 
 function handleRequestDependChange(data, fieldInfo, isDependDiffed) {
   const {
@@ -152,9 +153,20 @@ function buildRowContainer(h, metaData, valuePath, usefulMeta = {}) {
 
   const onCopy = (index) => {
     // 从初始的form对象中找到对应的对象进行复制
-    const cloneObj = _.cloneDeep(
+    let cloneObj = _.cloneDeep(
       _.get(this.initForm, `${valuePath}[0]`.replace(/\[(.*?)\]/g, "[0]"))
     );
+    // const newObj = Object.keys(cloneObj).reduce((newData,key) => {
+    //   if(key.startsWith("fd")){
+    //     let newKey = "fd_"+getSimpleId();
+    //     newData[newKey] = cloneObj[key];
+    //   }else {
+    //     newData[key] = cloneObj[key];
+    //   }
+    //   return newData;
+    // },{})
+    // setKey(newObj);
+    // _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, newObj);
     setKey(cloneObj);
     _.get(this.form, `${valuePath}`, []).splice(index + 1, 0, cloneObj);
   };
@@ -325,6 +337,7 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
           uploadFun={this.uploadFun}
           downloadFun={this.downloadFun}
           onInput={(event) => {
+            console.log(this.form,'----',fieldInfo)
             _.set(this.form, fieldInfo.valuePath, event);
           }}
         />
