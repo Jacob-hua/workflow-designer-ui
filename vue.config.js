@@ -14,7 +14,6 @@ module.exports = {
   devServer: {
     host: '0.0.0.0',
     port: 8818,
-    // public: '192.100.4.34:8818',
     public: require("os").networkInterfaces()[Object.keys(require("os").networkInterfaces())[0]][1].address + ":8818",
     disableHostCheck: true,
     headers: {
@@ -27,7 +26,7 @@ module.exports = {
         // target: "http://192.100.8.20:8060",
         // target: 'http://k8s.isiact.com/workflow-runtime-service',
         // target: 'http://k8s.isiact.com/kms-runtime-service/workflow', // 康明斯
-        target: 'http://192.100.8.20:8060/workflow/',
+        target: 'http://workflow-dev.isiact.com/kms/workflow/',
         changeOrigin: true, //是否允许跨域
         pathRewrite(path) {
           const reg = new RegExp(`${process.env.VUE_APP_BASE_API}`)

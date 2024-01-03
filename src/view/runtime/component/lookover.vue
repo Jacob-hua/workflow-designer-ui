@@ -11,7 +11,6 @@
       <bpmn-info
         :xml="workflow.processDeployResource"
         :processDisplayInfo="processDisplayInfo"
-        :showProcess="true"
       >
         <div>
           <preview
