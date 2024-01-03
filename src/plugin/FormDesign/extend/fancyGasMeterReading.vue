@@ -113,7 +113,11 @@ export default {
         },
       ],
       priceRule: [
-      { required: true, message: '单价不能为空', trigger: 'blur' }
+        { required: true, message: '单价不能为空', trigger: 'blur' },
+        {
+          validator: this.priceValidator.bind(this),
+          trigger: 'blur',
+        },
       ]
     };
   },
@@ -181,9 +185,9 @@ export default {
     totalValidator(rule, value, callback) {
       if(!value){
         callback()
-      }else if (/^[0-9]*$/.test(value) === false) {
+      }else if (/^[0-9]+(\.[0-9]{1,4})?$/.test(value) === false) {
         this.handleValueList(this.currentInsCode, 'total');
-        callback(new Error('请输入数字'));
+        callback(new Error('请输入小数不超过四位的数字'));
       } else {
         callback();
       }
@@ -191,13 +195,23 @@ export default {
     marginValidator(rule, value, callback) {
       if(!value){
         callback()
-      }else if (/^[0-9]*$/.test(value) === false) {
+      }else if (/^[0-9]+(\.[0-9]{1,4})?$/.test(value) === false) {
         this.handleValueList(this.currentInsCode, 'margin');
-        callback(new Error('请输入数字'));
+        callback(new Error('请输入小数不超过四位的数字'));
       } else {
         callback();
       }
     },
+    priceValidator(rule, value, callback) {
+      if(!value){
+        callback()
+      }else if (/^[0-9]+(\.[0-9]{1,4})?$/.test(value) === false) {
+        this.handleValueList(this.currentInsCode, 'margin');
+        callback(new Error('请输入小数不超过四位的数字'));
+      } else {
+        callback();
+      }
+    }
   },
 };
 </script>
