@@ -24,7 +24,8 @@ export let meterReading = {
   preDisable: true,
   timeFlag: true,
   curRequired: true,
-  datatypeRule: 'default',
+  datatypeRule: '',
+  datatypeRuleMsg: '',
   dataRule: 'larger',
   height:'600',
 

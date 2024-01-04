@@ -61,9 +61,7 @@
           </el-form-item>
           <el-form-item label="数据格式校验">
             <el-select v-model="props.datatypeRule" @change="handlerChangeRulesType">
-              <el-option label="无" value="default" />
-              <el-option label="数字" value="number" />
-              <el-option label="数字+字母" value="numAndStr" />
+              <el-option v-for="{label, rule}, index in datatypeRuleOptions" :key="index" :label="label" :value="rule" />
             </el-select>
           </el-form-item>
           <el-form-item label="数值校验">
@@ -87,10 +85,7 @@ import { mapMutations } from "vuex";
 import InterfaceParser from "./component/InterfaceParser.vue";
 import DependValue from "./component/DependValue.vue";
 import { executeApi } from "@/api/globalConfig";
-const datatypeRules = {
-  number: { rule: "^[0-9]*$", msg: "您输入的内容不符合纯数字规则" },
-  numAndStr: { rule: "^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9]{1,50}$", msg: "您输入的内容不符合数字+字母规则"}
-};
+
 export default {
   name: "meterReading",
   props: ["props", "getFormId"],
@@ -107,7 +102,24 @@ export default {
       devList: [],
       nameString: "",
       hasIn: false,
-      meterTree: []
+      meterTree: [],
+      datatypeRuleOptions: [
+        {
+          label: '无',
+          rule: '',
+          msg: '',
+        },
+        {
+          label: '数字',
+          rule: '^[0-9]+(\.[0-9]{1,4})?$',
+          msg: '您输入的内容不符合数字规则',
+        },
+        {
+          label: '数字+字母',
+          rule: '^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9]{1,50}$',
+          msg: '您输入的内容不符合数字+字母规则',
+        },
+      ]
     };
   },
   methods: {
@@ -193,6 +205,8 @@ export default {
       }
     },
     handlerChangeRulesType(val) {
+      const datatypeRule = this.datatypeRuleOptions.find(({rule}) => rule === val);
+      this.props.datatypeRuleMsg = datatypeRule.msg;
     },
   },
 };

@@ -67,6 +67,12 @@ export default {
     dataRule: {
       type: String,
     },
+    datatypeRule: {
+      type: String,
+    },
+    datatypeRuleMsg: {
+      type: String,
+    },
     id: {
       type: String,
     },
@@ -172,9 +178,9 @@ export default {
     meterValidator(rule, value, callback) {
       const meterRule = this.meterRule;
       const currentPreMeter = this.currentPreMeter;
-      if (/^[0-9]*$/.test(value) === false) {
+      if (new RegExp(this.$props.datatypeRule).test(value) === false) {
         this.handleValueList(this.currentInsCode);
-        callback(new Error("请输入数字"));
+        callback(new Error(this.$props.datatypeRuleMsg));
       } else if (meterRule === "larger" && value <= currentPreMeter) {
         this.handleValueList(this.currentInsCode);
         callback(new Error("本次抄表数必须大于上次抄表数"));
