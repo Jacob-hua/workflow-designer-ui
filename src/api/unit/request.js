@@ -13,6 +13,8 @@ axios.defaults.withCredentials = true
 
 service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' //设置编码
 
+let count = 0;
+
 //请求拦截
 service.interceptors.request.use(
   (config) => {
@@ -47,6 +49,7 @@ service.interceptors.response.use(
         reject(res)
       }
       if (status === 200) {
+        count = 0;
         resolve(res)
       } else {
         reject(res)
@@ -91,8 +94,15 @@ service.interceptors.response.use(
         })
         break
       case 401:
-        sessionStorage.clear();
-        router.push('/login');
+        if(count === 0){
+          sessionStorage.clear();
+          Message({
+            type: 'warning',
+            message: '会话已过期，请重新登录',
+          })
+          router.push('/login');
+        }
+        count++;
         break
       default:
         Message({

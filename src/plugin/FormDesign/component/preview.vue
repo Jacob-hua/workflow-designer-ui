@@ -52,7 +52,7 @@ function handleRequestDependChange(data, fieldInfo, isDependDiffed) {
 }
 
 function handleDependChange(data, fieldInfo) {
-  if (!fieldInfo.dependValue.withLabel) {
+  if (!fieldInfo.dependValue.withLabel && !fieldInfo.dependValue.customize) {
     _.set(this.form, fieldInfo.valuePath, data[fieldInfo.id]);
     fieldInfo.text = data[fieldInfo.id];
     return;
@@ -68,10 +68,24 @@ function handleDependChange(data, fieldInfo) {
     fieldInfo.text = this.form[fieldInfo.id];
     return;
   }
-  this.form[fieldInfo.id] = sourceField.options?.find(
+  const targetValue = sourceField.options?.find(
     ({ value }) => value === data[fieldInfo.id]
-  )?.label;
-  fieldInfo.text = this.form[fieldInfo.id];
+  )
+  if(fieldInfo.dependValue.customize) {
+    if(fieldInfo.dependValue.targetField) {
+      this.form[fieldInfo.id] = targetValue?targetValue[fieldInfo.dependValue.targetField]:'';
+    } else {
+      this.form[fieldInfo.id] = '';
+    }
+    fieldInfo.text = this.form[fieldInfo.id];
+    return;
+  } else {
+    this.form[fieldInfo.id] = targetValue?targetValue.label:'';
+    fieldInfo.text = this.form[fieldInfo.id];
+  }
+  // this.form[fieldInfo.id] = sourceField.options?.find(
+  //   ({ value }) => value === data[fieldInfo.id]
+  // )?.label;
 }
 
 function handleRowContainerDependChange(data, fieldInfo) {
