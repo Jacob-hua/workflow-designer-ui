@@ -178,7 +178,10 @@ export default {
     meterValidator(rule, value, callback) {
       const meterRule = this.meterRule;
       const currentPreMeter = this.currentPreMeter;
-      if (new RegExp(this.$props.datatypeRule).test(value) === false) {
+      if (['number'].includes(this.$props.datatypeRule) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === false) {
+        this.handleValueList(this.currentInsCode);
+        callback(new Error('您输入的内容不符合数字规则'));
+      } else if (new RegExp(this.$props.datatypeRule).test(value) === false) {
         this.handleValueList(this.currentInsCode);
         callback(new Error(this.$props.datatypeRuleMsg));
       } else if (meterRule === "larger" && value <= currentPreMeter) {
