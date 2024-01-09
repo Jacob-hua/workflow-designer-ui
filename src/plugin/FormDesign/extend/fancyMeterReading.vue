@@ -180,7 +180,7 @@ export default {
       const currentPreMeter = this.currentPreMeter;
       if (['number'].includes(this.$props.datatypeRule) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === false) {
         this.handleValueList(this.currentInsCode);
-        callback(new Error(this.$props.datatypeRuleMsg));
+        callback(new Error('您输入的内容不符合数字规则'));
       } else if (new RegExp(this.$props.datatypeRule).test(value) === false) {
         this.handleValueList(this.currentInsCode);
         callback(new Error(this.$props.datatypeRuleMsg));
