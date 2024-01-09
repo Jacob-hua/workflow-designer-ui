@@ -106,12 +106,12 @@
       <el-input v-model="item.msg" placeholder="自定义提示" size="small" />
       <div
         class="close-btn select-line-icon"
-        @click="props.rules.splice(index, 1)"
+        @click="() => {props.rules.splice(index, 1); props.rulesType = 'default'}"
       >
         <i class="el-icon-remove-outline close-icon" />
       </div>
     </div>
-    <div style="margin-left: 20px">
+    <!-- <div style="margin-left: 20px">
       <el-button
         style="padding-bottom: 0"
         icon="el-icon-circle-plus-outline"
@@ -120,7 +120,7 @@
       >
         添加选项
       </el-button>
-    </div>
+    </div> -->
     <icon-dialog
       v-model="props['suffix-icon']"
       :visible.sync="iconDialogVisible_suffix"
@@ -185,18 +185,19 @@ export default {
     handlerPrefixSelectIcon() {
       this.iconDialogVisible_prefix = true;
     },
-    addRuleItem() {
-      this.props.rules.push({
-        rule: "",
-        msg: "",
-      });
-    },
+    // addRuleItem() {
+    //   this.props.rules.push({
+    //     rule: "",
+    //     msg: "",
+    //   });
+    // },
     handlerChangeRulesType(val) {
       const obj = defaultRules[val];
-      this.props.rules.push({
-        rule: obj.rule,
-        msg: obj.msg,
-      });
+      if(!obj){
+        this.props.rules.splice(0,1);
+        return;
+      }
+      this.props.rules.splice(0,1,{...obj});
     },
   },
 };

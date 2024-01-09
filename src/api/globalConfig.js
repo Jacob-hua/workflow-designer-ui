@@ -119,8 +119,11 @@ export const removeStartForm = (params) => deletefn(`/config/startConfig/remove`
 // 文件上传
 export const uploadFile = (params) => post(`/file/upload`, params)
 
+export const getWorkFlowNodeClassify = (params) => get('/config/dicData/getDicDataByClassify',params)
+
 // 文件下载
 export const downloadFile = (params) =>
   post(`/file/download`, params, {
     responseType: 'blob',
   })
+

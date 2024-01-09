@@ -285,7 +285,7 @@ export default {
     async fetchHistoryStatistic() {
       const { ascription, business } = this.searchForm;
       const { errorInfo, result } = await postHistoryProcessCountStatistic({
-        // assignee: this.userInfo.account,
+        assignee: this.userInfo.account,
         tenantId: this.tenantId,
         ascription,
         business,

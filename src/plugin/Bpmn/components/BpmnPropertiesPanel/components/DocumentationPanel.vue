@@ -2,10 +2,18 @@
   <div>
     <el-form :model="documentationForm" label-position="right" label-width="130px">
       <el-form-item :label="labels.documentation">
-        <el-radio-group v-model="documentationForm.documentation">
+        <!-- <el-radio-group v-model="documentationForm.documentation">
           <el-radio label="">普通任务</el-radio>
           <el-radio label="approval-task">审批任务</el-radio>
-        </el-radio-group>
+        </el-radio-group> -->
+        <el-select v-model="documentationForm.documentation">
+          <el-option
+            v-for="{id,code,name} in documentationList"
+            :key="id"
+            :label="name"
+            :value="code"
+          ></el-option>
+        </el-select>
       </el-form-item>
     </el-form>
   </div>
@@ -13,6 +21,7 @@
 
 <script>
 import zh from '../../../i18n/zh'
+import { getWorkFlowNodeClassify } from '@/api/globalConfig';
 
 export default {
   name: 'Documentation',
@@ -28,11 +37,12 @@ export default {
       documentationForm: {
         documentation: '',
       },
+      documentationList: []
     }
   },
   computed: {
     documentation() {
-      return this.$store.state[this.namespace].panel.documentation
+      return this.$store.state[this.namespace].panel.documentation||'normal-task'
     },
     shapeType() {
       return this.$store.state[this.namespace].panel.shapeType
@@ -68,11 +78,21 @@ export default {
     this.documentationForm = {
       documentation: this.documentation,
     }
+    this.getDocumentation();
   },
   methods: {
     updateDocumentation(payload) {
       this.$store.commit(`${this.namespace}/panel/updateDocumentation`, payload)
     },
+    getDocumentation(){
+      getWorkFlowNodeClassify({classify: 'processNodeType'}).then(({errorInfo, result}) => {
+        if(errorInfo.errorCode){
+          this.$message.error(errorInfo.errorMsg);
+          return;
+        }
+        this.documentationList = result
+      });
+    }
   },
 }
 </script>
