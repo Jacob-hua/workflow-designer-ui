@@ -26,7 +26,13 @@
         </el-row>
       </div>
       <el-form-item v-if="isFormDepend" label="采用显示文本">
-        <el-switch v-model="dependValue.withLabel"></el-switch>
+        <el-switch @change="handleChangeWithLabel" v-model="dependValue.withLabel"></el-switch>
+      </el-form-item>
+      <el-form-item v-if="isFormDepend" label="自定义显示">
+        <el-switch @change="handleChangeCustomize" v-model="dependValue.customize"></el-switch>
+      </el-form-item>
+      <el-form-item v-if="isFormDepend && dependValue.customize" label="目标字段">
+        <el-input v-model="dependValue.targetField" />
       </el-form-item>
       <el-form-item v-if="needTargetValue" label="目标值">
         <el-input v-model="dependValue.targetValue" />
@@ -108,6 +114,21 @@ export default {
     onSourceTypeChange() {
       this.dependValue.source = ''
     },
+    handleChangeCustomize(val) {
+      if(val){
+        delete this.dependValue.withLabel;
+        // this.dependValue.withLabel = false;
+      }else {
+        delete this.dependValue.targetField;
+      }
+    },
+    handleChangeWithLabel(val){
+      if(val) {
+        delete this.dependValue.customize;
+        // this.dependValue.customize = false;
+        delete this.dependValue.targetField;
+      }
+    }
   },
 }
 </script>
