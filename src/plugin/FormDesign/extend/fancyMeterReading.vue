@@ -180,8 +180,8 @@ export default {
       const currentPreMeter = this.currentPreMeter;
       if (['number'].includes(this.$props.datatypeRule) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === false) {
         this.handleValueList(this.currentInsCode);
-        callback(new Error('您输入的内容不符合数字规则'));
-      } else if (new RegExp(this.$props.datatypeRule).test(value) === false) {
+        callback(new Error('请输入整数或者不超过小数点后四位的小数'));
+      } else if (!['number'].includes(this.$props.datatypeRule) && new RegExp(this.$props.datatypeRule).test(value) === false) {
         this.handleValueList(this.currentInsCode);
         callback(new Error(this.$props.datatypeRuleMsg));
       } else if (meterRule === "larger" && value <= currentPreMeter) {
