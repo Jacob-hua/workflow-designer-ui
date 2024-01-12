@@ -351,7 +351,6 @@ function buildFormItem(h, metaData, valuePath, usefulMeta = {}) {
           uploadFun={this.uploadFun}
           downloadFun={this.downloadFun}
           onInput={(event) => {
-            console.log(this.form,'----',fieldInfo)
             _.set(this.form, fieldInfo.valuePath, event);
           }}
         />
