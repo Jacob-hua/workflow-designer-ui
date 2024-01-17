@@ -82,6 +82,7 @@ export default {
   },
   methods: {
     updateDocumentation(payload) {
+      this.$store.commit(`${this.namespace}/panel/updateParentDocumentation`, payload)
       this.$store.commit(`${this.namespace}/panel/updateDocumentation`, payload)
     },
     getDocumentation(){
