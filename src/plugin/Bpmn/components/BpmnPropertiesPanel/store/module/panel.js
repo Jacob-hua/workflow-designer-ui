@@ -9,6 +9,7 @@ const state = () => ({
     name: '',
   },
   documentation: '',
+  parentDocumentation: '',
   timer: {},
   condition: {
     type: '',
@@ -75,6 +76,9 @@ const mutations = {
   },
   updateDocumentation(state, { documentation = '' }) {
     state.documentation = documentation
+  },
+  updateParentDocumentation(state, { documentation = '' }) {
+    state.parentDocumentation = documentation
   },
   addListener(state, { listener }) {
     if (emptyPropertiesObject(listener)) {
@@ -192,6 +196,7 @@ const mutations = {
 const mutationsEffect = {
   updateBaseInfo: panelEffect.baseInfoEffect,
   updateDocumentation: panelEffect.documentationEffect,
+  updateParentDocumentation: panelEffect.parentDocumentationEffect,
   addListener: panelEffect.listenerEffect,
   updateListener: panelEffect.listenerEffect,
   removeListener: panelEffect.listenerEffect,

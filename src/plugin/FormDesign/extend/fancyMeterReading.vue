@@ -41,6 +41,7 @@
 
 <script>
 import { formatDate } from "@/util/date.js";
+import _ from 'lodash';
 export default {
   name: "fancyMeterReading",
   props: {
@@ -135,7 +136,7 @@ export default {
       this.meterReadingList = this.meterReadingList.map((element) => {
         element.devList = element.devList.map((item) => {
           if (item.insCode === meterCode) {
-            if (/^[0-9]*$/.test(event) === false) {
+            if (['number'].includes(this.$props.datatypeRule) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(event) === false) {
               this.correctFlag = false;
             } else {
               this.currentPreMeter = item.preMeter;
@@ -176,15 +177,22 @@ export default {
       this.$emit("input", this.meterReadingList);
     },
     meterValidator(rule, value, callback) {
+      if(['default'].includes(this.$props.datatypeRule)){
+        callback();
+        return;
+      }
       const meterRule = this.meterRule;
-      const currentPreMeter = this.currentPreMeter;
-      if (['number'].includes(this.$props.datatypeRule) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === false) {
+      const devicePath = rule.field.split('.');
+      const currentPreMeter = this.meterReadingList[devicePath[1]].devList[devicePath[3]].preMeter;
+      if (!_.isNumber(this.currentPreMeter) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === true) {
+        callback();
+      } else if (['number'].includes(this.$props.datatypeRule) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === false) {
         this.handleValueList(this.currentInsCode);
-        callback(new Error('您输入的内容不符合数字规则'));
-      } else if (new RegExp(this.$props.datatypeRule).test(value) === false) {
+        callback(new Error('请输入整数或者不超过小数点后四位的小数'));
+      } else if (!['number'].includes(this.$props.datatypeRule) && new RegExp(this.$props.datatypeRule).test(value) === false) {
         this.handleValueList(this.currentInsCode);
         callback(new Error(this.$props.datatypeRuleMsg));
-      } else if (meterRule === "larger" && value <= currentPreMeter) {
+      } else if ( meterRule === "larger" && value <= currentPreMeter) {
         this.handleValueList(this.currentInsCode);
         callback(new Error("本次抄表数必须大于上次抄表数"));
       } else if (meterRule === "larger_amount" && value < currentPreMeter) {

@@ -159,6 +159,9 @@ export default {
             id: this.iBpmnModeler.getRootShapeInfo().id,
           },
         })
+        this.updateParentDocumentationInfo({
+          documentation: this.iBpmnModeler.getRootShapeInfo().parentDocumentation
+        })
       },
     },
     userGroup(userGroup) {
@@ -186,6 +189,9 @@ export default {
         ...payload,
       })
     },
+    updateParentDocumentationInfo(payload) {
+      this.$store.commit(`${this.namespace}/panel/updateParentDocumentation`, payload)
+    }
   },
 }
 </script>
