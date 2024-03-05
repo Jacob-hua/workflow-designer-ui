@@ -1,11 +1,16 @@
 <template>
   <div>
     <div class="process-title">
-      <div v-for="({ label, value }, index) in processDisplayInfo" :key="index">
-        <span>{{ label }}</span>
-        :
-        <span>{{ value }}</span>
-      </div>
+      <el-card class="process-base-info">
+        <div
+          v-for="({ label, value }, index) in processDisplayInfo"
+          :key="index"
+        >
+          <span>{{ label }}</span>
+          :
+          <span>{{ value }}</span>
+        </div>
+      </el-card>
     </div>
     <slot></slot>
     <div class="tip-box" @click="handleShowProcess">
@@ -38,11 +43,11 @@
 
 <script>
 export default {
-  name: "BpmnInfo",
+  name: 'BpmnInfo',
   props: {
     xml: {
       type: String,
-      default: "",
+      default: '',
     },
     processDisplayInfo: {
       type: Array,
@@ -51,7 +56,7 @@ export default {
     showProcess: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   data() {
     return {
@@ -62,10 +67,10 @@ export default {
   methods: {
     onBpmnViewerLoaded(iBpmnViewer) {
       this.iBpmnViewer = iBpmnViewer;
-      this.$emit("loaded", iBpmnViewer);
+      this.$emit('loaded', iBpmnViewer);
     },
     onSelectedChange(shape, iBpmnViewer) {
-      this.$emit("selectedShape", shape, iBpmnViewer);
+      this.$emit('selectedShape', shape, iBpmnViewer);
     },
     handleShowProcess() {
       this.showProcessMsg = !this.showProcessMsg;
@@ -94,5 +99,17 @@ export default {
 .process-canvas {
   height: 400px;
   border: 1px solid $border-color;
+}
+
+.process-base-info{
+  width: 100%;
+  color: #fff;
+
+  /deep/.el-card__body{
+    display: grid;
+    grid-template-columns: repeat(3,auto);
+    border-radius: 10px;
+    background-color: #272938;
+  }
 }
 </style>

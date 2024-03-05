@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="新建工作流" :close-on-click-modal="false" :visible="visible" @close="onClose">
     <el-form label-position="right" label-width="80px" ref="formData" :model="formData" :rules="formRules">
-      <el-form-item label="应用项目" prop="ascription">
+      <!-- <el-form-item label="应用项目" prop="ascription">
         <el-col :span="24">
           <el-select v-model="formData.ascription" disabled>
             <el-option
@@ -12,22 +12,29 @@
             ></el-option>
           </el-select>
         </el-col>
-      </el-form-item>
-      <el-form-item label="流程类型" prop="business">
+      </el-form-item> -->
+      <el-form-item label="应用项目" prop="business">
         <el-col :span="24">
           <el-cascader
             v-model="formData.business"
             clearable
             :style="{ width: '100%' }"
-            :key="formData.ascription"
-            :options="rootOrganizationChildren(formData.ascription)"
-            :props="cascaderProps"
+            :options="projectOrganizations()"
+            :props="{
+              emitPath: true,
+              checkStrictly: true,
+            }"
           ></el-cascader>
         </el-col>
       </el-form-item>
-      <el-form-item label="流程名称" prop="name">
+      <el-form-item label="流程名称" prop="processName">
         <el-col :span="24">
-          <el-input v-model="formData.name" placeholder="请输入流程名称"></el-input>
+          <el-input v-model="formData.processName" placeholder="请输入流程名称"></el-input>
+        </el-col>
+      </el-form-item>
+      <el-form-item label="流程描述" prop="processDesc">
+        <el-col :span="24">
+          <el-input type="textarea" v-model="formData.processDesc" placeholder="请输入流程藐视"></el-input>
         </el-col>
       </el-form-item>
     </el-form>
@@ -52,13 +59,13 @@ export default {
     return {
       formData: {
         ascription: '',
-        business: '',
-        name: '',
+        business: [],
+        processName: '',
+        processDesc: ''
       },
       formRules: {
-        ascription: [{ required: true, message: '请选择应用项目', trigger: 'change' }],
-        business: [{ required: true, message: '请选择流程类型', trigger: 'change' }],
-        name: [
+        business: [{ required: true, message: '请选择应用项目', trigger: 'change' }],
+        processName: [
           {
             required: true,
             trigger: 'blur, change',
@@ -79,17 +86,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('account', ['currentOrganization']),
-    ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildren']),
-  },
-  watch: {
-    currentOrganization: {
-      immediate: true,
-      handler(value) {
-        this.formData.ascription = value
-      },
-    },
+    ...mapGetters('config', ['projectOrganizations']),
   },
   methods: {
     onClose() {

@@ -1,9 +1,10 @@
 <template>
   <div class="bpmn-wrapper">
     <bpmn-editor
-      :id="projectData.code"
-      :name="projectData.name"
-      :xml="projectData.content"
+      :id="projectData.processId"
+      :name="projectData.processName"
+      :desc="projectData.processDesc"
+      :xml="projectData.processFile"
       :generateIdFunc="fetchUUID"
       :prop="{
         bpmnRenderer: {
@@ -17,8 +18,9 @@
     <bpmn-properties-panel
       ref="propertiesPanel"
       :iBpmnModeler="iBpmnModeler"
-      :userGroup="userGroup"
+      :projectData="projectData"
       :lazyLoadUser="fetchUser"
+      @getBaseInfo="getBaseInfo"
     />
   </div>
 </template>
@@ -65,18 +67,22 @@ export default {
     return {
       iBpmnModeler: new IBpmnModeler(),
       userGroup: [],
+      rootBaseInfo: {
+        processName: '',
+        processId: ''
+      }
     }
   },
   computed: {
     ...mapState('account', ['tenantId', 'currentOrganization']),
   },
   mounted() {
-    this.fetchUserGroup({
-      projectCode: this.currentOrganization,
-      displayType: 'tree',
-    }).then((res) => {
-      this.userGroup = res
-    })
+    // this.fetchUserGroup({
+    //   projectCode: this.currentOrganization,
+    //   displayType: 'tree',
+    // }).then((res) => {
+    //   this.userGroup = res
+    // })
   },
   methods: {
     onEditorLoaded(iBpmnModeler) {
@@ -123,6 +129,10 @@ export default {
         return
       }
     },
+    getBaseInfo(rootBaseInfo){
+      this.rootBaseInfo = rootBaseInfo;
+      this.$emit('getRootInfo', this.rootBaseInfo)
+    }
   },
 }
 </script>

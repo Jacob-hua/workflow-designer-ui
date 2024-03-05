@@ -1,9 +1,10 @@
 import { Message } from 'element-ui'
-import { getProjectList } from '../../api/globalConfig'
+import { getProjectList, getOrganizations } from '../../api/globalConfig'
 import { router } from '../../main'
 
 const state = {
   organization: [],
+  organizations: []
 }
 
 const getters = {
@@ -46,12 +47,20 @@ const getters = {
       }
     }
   },
+  projectOrganizations(state) {
+    return () => {
+      return state.organizations
+    }
+  }
 }
 
 const mutations = {
   updateOrganization(state, { organization }) {
     state.organization = organization
   },
+  updateOrganizations(state, {organizations}) {
+    state.organizations = organizations;
+  }
 }
 
 const actions = {
@@ -90,6 +99,29 @@ const actions = {
       return result
     }
   },
+  async dispatchProjectOriganizations({commit}){
+    const {data, code, msg} = await getOrganizations();
+    if(code!=='200'){
+      Message.error(msg)
+    }
+
+    commit('updateOrganizations', { organizations: organizationCascaderData(data ?? []) })
+
+    function organizationCascaderData(data) {
+      if (Array.isArray(data)) {
+        return data.map(organizationCascaderData)
+      }
+      const result = {
+        id: data.id,
+        value: data.id,
+        label: data.name,
+      }
+      if (Array.isArray(data.children) && data.children.length > 0) {
+        result['children'] = data.children.map(organizationCascaderData)
+      }
+      return result
+    }
+  }
 }
 
 export default {

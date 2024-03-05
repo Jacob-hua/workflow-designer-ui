@@ -1,20 +1,27 @@
 <template>
   <div>
     <el-form :model="baseInfoForm" label-position="right" label-width="130px">
-      <el-form-item :label="labels.id">
+      <!-- <el-form-item :label="labels.id">
         <el-input v-model="baseInfoForm.id" disabled></el-input>
+      </el-form-item> -->
+      <el-form-item :label="labels.processName">
+        <el-input v-model="baseInfoForm.processName" clearable></el-input>
       </el-form-item>
-      <el-form-item :label="labels.name">
-        <el-input v-model="baseInfoForm.name" clearable></el-input>
+      <el-form-item v-if="!this.shapeType" :label="labels.processDesc">
+        <el-input
+          type="textarea"
+          v-model="baseInfoForm.processDesc"
+          clearable
+        ></el-input>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-import shapeType from '../../../enum/shapeType'
-import zh from '../../../i18n/zh'
-import { deepCopy, deepEquals } from '../../../utils/object'
+import shapeType from '../../../enum/shapeType';
+import zh from '../../../i18n/zh';
+import { deepCopy, deepEquals } from '../../../utils/object';
 
 export default {
   name: 'BaseInfo',
@@ -28,45 +35,54 @@ export default {
   data() {
     return {
       baseInfoForm: {},
-    }
+    };
   },
   computed: {
     baseInfo() {
-      return this.$store.state[this.namespace].panel.baseInfo
+      return this.$store.state[this.namespace].panel.baseInfo;
+    },
+    rootBaseInfo() {
+      return this.$store.state[this.namespace].panel.rootBaseInfo;
     },
     shapeType() {
-      return this.$store.state[this.namespace].panel.shapeType
+      return this.$store.state[this.namespace].panel.shapeType;
     },
     listeners() {
-      return this.$store.state[this.namespace].panel.listeners
+      return this.$store.state[this.namespace].panel.listeners;
     },
     labels() {
       return {
-        id: `${zh[this.shapeType] ?? '流程'}ID`,
-        name: `${zh[this.shapeType] ?? '流程'}名称`,
-      }
+        // id: `${zh[this.shapeType] ?? '流程'}ID`,
+        processName: `${zh[this.shapeType] ?? '流程'}名称`,
+        processDesc: `${zh[this.shapeType] ?? '流程'}描述`,
+      };
     },
   },
   watch: {
     shapeType(value) {
+      if(!value){
+        this.baseInfoForm = this.rootBaseInfo;
+      }
       const existedListener = (listener) =>
         this.listeners.find(
           (item) =>
             item.event === listener.event &&
             item.listenerType === listener.listenerType &&
             item.class === listener.class
-        )
+        );
       const listener = {
         event: 'start',
         listenerType: 'class',
         class: '',
-      }
+      };
       if ([shapeType.TIMER_START_EVENT].includes(value)) {
-        this.clearListener()
-        listener.class = 'com.siact.product.jwp.listener.ScheduleStartListener'
-      } else if ([shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)) {
-        this.clearListener()
-        listener.class = 'com.siact.product.jwp.listener.TimeOutListener'
+        this.clearListener();
+        listener.class = 'com.siact.product.jwp.listener.ScheduleStartListener';
+      } else if (
+        [shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)
+      ) {
+        this.clearListener();
+        listener.class = 'com.siact.product.jwp.listener.TimeOutListener';
       } else if (
         [
           shapeType.START_EVENT, // 开始事件
@@ -90,48 +106,67 @@ export default {
           shapeType.COMPENSATE_BOUNDARY_EVENT, // 补偿边界事件
         ].includes(value)
       ) {
-        this.clearListener()
-        return
+        this.clearListener();
+        return;
       }
       if (listener.class === '' || existedListener(listener)) {
-        return
+        return;
       }
-      this.addListener({ listener })
+      this.addListener({ listener });
     },
     baseInfo(value) {
-      this.baseInfoForm = { ...value }
+      if (this.shapeType) {
+        this.baseInfoForm = { processName: value.name };
+      }
+    },
+    rootBaseInfo(value) {
+      if (!this.shapeType) {
+        this.baseInfoForm = { ...value };
+      }
     },
     baseInfoForm: {
       deep: true,
       immediate: true,
       handler(value) {
-        if (deepEquals(value, this.baseInfo)) {
+        if (this.shapeType && value.processName === this.baseInfo.name) {
+          return;
+        }
+        if(!this.shapeType && deepEquals(value, this.rootBaseInfo)){
           return
         }
-        this.updateBaseInfo({ newBaseInfo: deepCopy(value) })
+        if(shapeType){
+          this.updateBaseInfo({ newBaseInfo: {id: this.baseInfo.id, name: value.processName} });          
+        }else{
+          this.updateRootBaseInfo({rootBaseInfo: deepCopy(value)})
+        }
       },
     },
   },
   mounted() {
-    this.baseInfoForm = deepCopy(this.baseInfo)
+    this.baseInfoForm = deepCopy(this.baseInfo);
   },
   methods: {
     updateBaseInfo(payload) {
-      this.$store.commit(`${this.namespace}/panel/updateBaseInfo`, payload)
+      this.$store.commit(`${this.namespace}/panel/updateBaseInfo`, payload);
+    },
+    updateRootBaseInfo(payload) {
+      this.$store.commit({
+        type: `${this.namespace}/panel/updateRootBaseInfo`, payload,
+      });
     },
     addListener(payload) {
       this.$store.commit({
         type: `${this.namespace}/panel/addListener`,
         ...payload,
-      })
+      });
     },
     clearListener() {
       this.$store.commit({
         type: `${this.namespace}/panel/clearListener`,
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style></style>

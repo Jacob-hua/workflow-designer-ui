@@ -1,40 +1,27 @@
 <template>
   <div>
     <el-form :model="conditionForm" label-position="right" label-width="130px">
-      <el-form-item label="条件类型">
-        <el-select v-model="conditionForm.type">
+      <el-form-item label="判断类型">
+        <el-select v-model="conditionForm.judgment">
           <el-option
-            v-for="({ label, value }, index) in conditionTypeOpstions"
+            v-for="({ label, value }, index) in judgmentTypeOpstions"
             :key="index"
             :label="label"
             :value="value"
           />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="conditionTypeIs('expression')" label="表达式">
-        <el-input v-model="conditionForm.expression"></el-input>
+      <el-form-item  label="目标值">
+        <!-- <el-input v-model="conditionForm.target"></el-input> -->
+        <el-select allow-create filterable v-model="conditionForm.conditionTarget">
+          <el-option
+            v-for="({ label, value }, index) in conditionTragetOptions"
+            :key="index"
+            :label="label"
+            :value="value"
+          />
+        </el-select>
       </el-form-item>
-      <template v-if="conditionTypeIs('script')">
-        <el-form-item label="脚本格式">
-          <el-input v-model="conditionForm.scriptFormat"></el-input>
-        </el-form-item>
-        <el-form-item label="脚本类型">
-          <el-select v-model="conditionForm.scriptType">
-            <el-option
-              v-for="({ label, value }, index) in conditionScriptTypeOptions"
-              :key="index"
-              :label="label"
-              :value="value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="scriptTypeIs('external')" label="资源地址">
-          <el-input v-model="conditionForm.scriptResource" />
-        </el-form-item>
-        <el-form-item v-if="scriptTypeIs('inline')" label="脚本">
-          <el-input v-model="conditionForm.script" type="textarea" :rows="3"></el-input>
-        </el-form-item>
-      </template>
     </el-form>
   </div>
 </template>
@@ -60,11 +47,11 @@ export default {
     condition() {
       return this.$store.state[this.namespace].panel.condition
     },
-    conditionTypeOpstions() {
-      return this.$store.state[this.namespace].config.conditionTypeOpstions
+    judgmentTypeOpstions() {
+      return this.$store.state[this.namespace].config.judgmentTypeOpstions
     },
-    conditionScriptTypeOptions() {
-      return this.$store.state[this.namespace].config.conditionScriptTypeOptions
+    conditionTragetOptions() {
+      return this.$store.state[this.namespace].config.conditionTragetOptions
     },
   },
   watch: {
@@ -89,12 +76,6 @@ export default {
   methods: {
     updateCondition(payload) {
       this.$store.commit(`${this.namespace}/panel/updateCondition`, payload)
-    },
-    conditionTypeIs(type) {
-      return this.conditionForm['type'] && this.conditionForm['type'] === type
-    },
-    scriptTypeIs(type) {
-      return this.conditionForm['scriptType'] && this.conditionForm['scriptType'] === type
     },
   },
 }

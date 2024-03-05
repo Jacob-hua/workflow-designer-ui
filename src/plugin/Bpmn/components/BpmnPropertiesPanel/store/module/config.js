@@ -63,6 +63,38 @@ const state = () => ({
       value: 'outside',
     },
   ],
+  judgmentTypeOpstions: [
+    {
+      label: '等于',
+      value: '=='
+    },
+    {
+      label: '大于',
+      value: '>'
+    },
+    {
+      label: '小于',
+      value: '<'
+    },
+    {
+      label: '大于等于',
+      value: '>='
+    },
+    {
+      label: '小于等于',
+      value: '<='
+    },
+  ],
+  conditionTragetOptions: [
+    {
+      label: 'true',
+      value: true
+    },
+    {
+      label: 'false',
+      value: false
+    },
+  ],
   conditionTypeOpstions: [
     {
       label: '脚本',

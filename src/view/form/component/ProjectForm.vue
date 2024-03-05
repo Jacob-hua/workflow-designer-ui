@@ -188,7 +188,7 @@ import {
   postFormDesignRecordFormDesignRecordInfo,
 } from "@/api/unit/api.js";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
-import { getProjectList } from "@/api/globalConfig";
+// import { getProjectList } from "@/api/globalConfig";
 import router from "@/router";
 import { currentOneMonthAgo } from "@/util/date";
 import longText from "../../../component/LongText.vue";

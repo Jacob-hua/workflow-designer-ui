@@ -1,10 +1,15 @@
 <template>
   <el-dialog :title="title" :visible="visible" @close="onClose" fullscreen>
     <div class="editor-wrapper">
-      <bpmn-designer v-if="visible" :projectData="projectData" @loaded="onBpmnDesignerLoaded" />
+      <bpmn-designer
+        v-if="visible"
+        :projectData="projectData"
+        @loaded="onBpmnDesignerLoaded"
+        @getRootInfo="getRootBaseInfo"
+      />
     </div>
     <div slot="footer">
-      <el-button class="publish" @click="onPublish">发布</el-button>
+      <!-- <el-button class="publish" @click="onPublish">发布</el-button> -->
       <el-button class="save" @click="onSave">保存</el-button>
       <el-button class="cancel" @click="onClose">取消</el-button>
     </div>
@@ -12,9 +17,14 @@
 </template>
 
 <script>
-import { updateWorkFlow, createWorkFlow, publishWorkflow } from '@/api/managerWorkflow'
-import BpmnDesigner from '@/component/BpmnDesigner.vue'
-import { mapState } from 'vuex'
+import {
+  updateWorkFlow,
+  createWorkFlow,
+  publishWorkflow,
+} from '@/api/managerWorkflow';
+import { saveWorkflow, updateWorkflow } from '../../../api/workflow';
+import BpmnDesigner from '@/component/BpmnDesigner.vue';
+import { mapState } from 'vuex';
 
 export default {
   components: {
@@ -33,121 +43,90 @@ export default {
       type: String,
       default: '',
     },
+    bindType: {
+      type: String,
+      default: 'bind',
+    },
   },
   data() {
     return {
       iBpmnModeler: {},
-    }
+      rootBaseInfo: {},
+    };
   },
   computed: {
     ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
     title() {
-      return this.projectData.id ? '编辑流程' : '新建流程'
+      return this.projectData.processId ? '编辑流程' : '新建流程';
     },
   },
   methods: {
     onBpmnDesignerLoaded(iBpmnModeler) {
-      this.iBpmnModeler = iBpmnModeler
+      this.iBpmnModeler = iBpmnModeler;
+    },
+    getRootBaseInfo(rootBaseInfo) {
+      this.rootBaseInfo = rootBaseInfo;
     },
     processFormData() {
       // TODO: 此处的文件名和文件id应该以addProject.vue中设置的参数为主
-      const { name: processName, id: processId } = this.iBpmnModeler.getRootShapeInfo()
-      let processFormData = new FormData()
+      const { processName, processDesc } = this.rootBaseInfo;
+      let processFormData = new FormData();
       if (this.projectData.id) {
-        processFormData.set('id', this.projectData.id)
+        processFormData.set('processId', this.projectData.id);
       }
-      processFormData.set('name', processName)
-      processFormData.set('docName', processName + '.bpmn')
+      processFormData.set('processName', processName);
+      // processFormData.set('docName', processName + '.bpmn')
       if (this.publick) {
-        processFormData.set('ascription', 'public')
+        processFormData.set('ascription', 'public');
       } else {
-        processFormData.set('ascription', this.currentOrganization)
-        processFormData.set('business', this.projectData.business)
+        processFormData.set('ascription', '');
+        processFormData.set('business', this.projectData.business);
       }
-      processFormData.set('code', processId)
-      processFormData.set('createBy', this.userInfo.account)
-      processFormData.set('updateBy', this.userInfo.account)
-      processFormData.set('tenantId', this.tenantId)
-      return processFormData
-    },
-    async onPublish() {
-      const { error } = await this.iBpmnModeler.validate()
-      if (error.length > 0) {
-        this.$message.error('流程设计存在错误/警告')
-        return
-      }
-
-      try {
-        const { xml } = await this.iBpmnModeler.saveXML({
-          format: true,
-        })
-        const processFormData = this.processFormData()
-        processFormData.set(
-          'file',
-          new File([xml], processFormData.name + '.bpmn', {
-            type: 'bpmn20-xml',
-          })
-        )
-        processFormData.set('status', 'enabled')
-        let promise
-        // 如果projectData存在id，则走修改的流程
-        if (this.projectData.id) {
-          promise = updateWorkFlow(processFormData)
-        } else {
-          // 如果projectData不存在id，则走发布的流程（）
-          promise = publishWorkflow(processFormData)
-        }
-        const { errorInfo } = await Promise.resolve(promise)
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
-        this.$message.success('发布成功')
-        this.$emit('submit', 'enabled,disabled')
-        this.onClose()
-      } catch (e) {}
+      processFormData.set('processDesc', processDesc);
+      processFormData.set('bindType', this.projectData.bindType);
+      return processFormData;
     },
     onClose() {
-      this.$emit('close')
-      this.$emit('update:visible', false)
+      this.$emit('close');
+      this.$emit('update:visible', false);
     },
     async onSave() {
-      const { error } = await this.iBpmnModeler.validate()
+      const { error } = await this.iBpmnModeler.validate();
       if (error.length > 0) {
-        this.$message.error('流程设计存在错误/警告')
-        return
+        this.$message.error('流程设计存在错误/警告');
+        return;
       }
       try {
         const { xml } = await this.iBpmnModeler.saveXML({
           format: true,
-        })
-        const processFormData = this.processFormData()
+        });
+        const processFormData = this.processFormData();
         processFormData.set(
-          'file',
-          new File([xml], processFormData.name + '.bpmn', {
+          'processId',
+          new File([xml], processFormData.processName + '.bpmn', {
             type: 'bpmn20-xml',
           })
-        )
-        processFormData.set('status', 'drafted')
-        let promise
+        );
+        processFormData.set('status', 'drafted');
+        let promise;
         // 如果projectData存在id，则走修改的流程
         if (this.projectData.id) {
-          promise = updateWorkFlow(processFormData)
+          promise = updateWorkFlow(processFormData);
         } else {
-          promise = createWorkFlow(processFormData)
+          promise = saveWorkflow(processFormData);
         }
-        const { errorInfo } = await Promise.resolve(promise)
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
+        const { code, msg } = await Promise.resolve(promise);
+        if (code!=='200') {
+          this.$message.error(msg);
+          return;
         }
-        this.$message.success('保存成功')
-        this.$emit('submit', 'drafted')
-        this.onClose()
+        this.$message.success('保存成功');
+        this.$emit('submit', 'drafted');
+        this.onClose();
       } catch (error) {}
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

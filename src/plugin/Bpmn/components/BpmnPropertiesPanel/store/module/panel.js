@@ -4,6 +4,10 @@ import panelListener from '../listener'
 
 const state = () => ({
   shapeType: '',
+  rootBaseInfo: {
+    processName:'',
+    processDesc: ''
+  },
   baseInfo: {
     id: '',
     name: '',
@@ -12,12 +16,10 @@ const state = () => ({
   parentDocumentation: '',
   timer: {},
   condition: {
-    type: '',
-    expression: '',
-    scriptFormat: '',
-    scriptType: '',
-    scriptResource: '',
-    script: '',
+    type: 'expression',
+    sourceRef: '',
+    judgment: '',
+    conditionTarget: ''
   },
   messages: [],
   signals: [],
@@ -73,6 +75,9 @@ const getters = {
 const mutations = {
   updateBaseInfo(state, { newBaseInfo = {} }) {
     state.baseInfo = deepCopy(newBaseInfo)
+  },
+  updateRootBaseInfo(state, {rootBaseInfo = {}}){
+    state.rootBaseInfo = deepCopy(rootBaseInfo)
   },
   updateDocumentation(state, { documentation = '' }) {
     state.documentation = documentation

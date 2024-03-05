@@ -1,20 +1,22 @@
 <template>
   <el-dialog title="查看" :visible="visible" fullscreen @close="close">
     <div>
-      <bpmn-info :xml="projectData.content" :processDisplayInfo="processDisplayInfo" :showProcess="true" />
+      <bpmn-info
+        :xml="projectData.processFile"
+        :processDisplayInfo="processDisplayInfo"
+        :showProcess="true"
+      />
     </div>
     <span slot="footer" v-if="footerVisible">
       <el-button
         class="editor-button"
         @click="onEdit"
-        v-role="{ id: 'WorkflowEdit', type: 'button', business: projectData.business }"
       >
         编辑
       </el-button>
       <el-button
         class="status-button"
         @click="onDeactivate"
-        v-role="{ id: 'WorkflowStart', type: 'button', business: projectData.business }"
       >
         {{ statusButtonLabel }}
       </el-button>
@@ -23,9 +25,9 @@
 </template>
 
 <script>
-import BpmnInfo from '@/component/BpmnInfo.vue'
-import { updateWorkFlow } from '@/api/managerWorkflow'
-import { mapState } from 'vuex'
+import BpmnInfo from '@/component/BpmnInfo.vue';
+import { updateWorkFlow } from '@/api/managerWorkflow';
+import { mapState } from 'vuex';
 
 export default {
   name: 'LookBpmn',
@@ -49,91 +51,109 @@ export default {
   computed: {
     ...mapState('account', ['userInfo', 'currentOrganization']),
     isPublicProject() {
-      return this.projectData.ascription === 'public'
+      return this.projectData.ascription === 'public';
     },
     statusButtonLabel() {
-      return this.projectData.status === 'enabled' ? '停用' : '启用'
+      return this.projectData.status === 'enabled' ? '停用' : '启用';
     },
     processDisplayInfo() {
       if (this.isPublicProject) {
         return [
           {
             label: '流程编码',
-            value: this.projectData.numberCode,
+            value: this.projectData.processCode,
           },
           {
             label: '流程名称',
-            value: this.projectData.name,
+            value: this.projectData.processName,
           },
           {
             label: '创建时间',
             value: this.projectData.createTime,
           },
-        ]
+          {
+            label: '创建人',
+            value: this.projectData.creatorName,
+          },
+          {
+            label: '流程描述',
+            value: this.projectData.processDesc,
+          },
+        ];
       }
       return [
         {
-          label: '项目',
-          value: this.$getMappingName(this.projectData.ascription),
-        },
-        {
-          label: '业务类型',
-          value: this.$getMappingName(this.projectData.business),
-        },
-        {
           label: '流程编码',
-          value: this.projectData.numberCode,
+          value: this.projectData.processCode,
         },
         {
           label: '流程名称',
-          value: this.projectData.name,
+          value: this.projectData.processName,
         },
         {
           label: '创建时间',
           value: this.projectData.createTime,
         },
-      ]
+        {
+          label: '创建人',
+          value: this.projectData.creatorName,
+        },
+        {
+          label: '应用项目',
+          value: this.projectData.applicationName,
+        },
+        {
+          label: '流程描述',
+          value: this.projectData.processDesc,
+        },
+      ];
     },
   },
   methods: {
     onEdit() {
-      this.$emit('edit', this.projectData, '查看')
+      this.$emit('edit', this.projectData, '查看');
     },
     onDeactivate() {
-      const file1 = new File([this.projectData.content], this.projectData.name + '.bpmn', {
-        type: 'bpmn20-xml',
-      })
-      let formData = new FormData()
-      formData.set('id', this.projectData.id)
-      formData.set('name', this.projectData.name)
-      formData.set('docName', this.projectData.name + '.bpmn')
+      const file1 = new File(
+        [this.projectData.processFile],
+        this.projectData.processName + '.bpmn',
+        {
+          type: 'bpmn20-xml',
+        }
+      );
+      let formData = new FormData();
+      formData.set('id', this.projectData.id);
+      formData.set('name', this.projectData.name);
+      formData.set('docName', this.projectData.name + '.bpmn');
       if (this.projectData.ascription) {
-        formData.set('ascription', this.projectData.ascription)
+        formData.set('ascription', this.projectData.ascription);
       } else {
-        formData.set('ascription', this.currentOrganization)
+        formData.set('ascription', this.currentOrganization);
       }
-      formData.set('code', this.projectData.code)
-      formData.set('business', this.projectData.business)
+      formData.set('code', this.projectData.code);
+      formData.set('business', this.projectData.business);
       if (this.projectData.status === 'disabled') {
-        formData.set('status', 'enabled')
+        formData.set('status', 'enabled');
       } else {
-        formData.set('status', 'disabled')
+        formData.set('status', 'disabled');
       }
-      formData.set('createBy', this.userInfo.account)
-      formData.set('updateBy', this.userInfo.account)
-      formData.set('tenantId', '18')
-      formData.set('file', file1)
+      formData.set('createBy', this.userInfo.account);
+      formData.set('updateBy', this.userInfo.account);
+      formData.set('tenantId', '18');
+      formData.set('file', file1);
       updateWorkFlow(formData).then(() => {
-        this.$message.success(this.projectData.status === 'disabled' ? '启用成功' : '停用成功')
-        this.close()
-      })
+        this.$message.success(
+          this.projectData.status === 'disabled' ? '启用成功' : '停用成功'
+        );
+        this.close();
+      });
     },
     close() {
-      this.$emit('close')
-      this.$emit('update:visible', false)
+      this.$emit('close');
+      this.$emit('update:visible', false);
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
