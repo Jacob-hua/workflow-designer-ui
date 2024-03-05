@@ -30,31 +30,21 @@
       <div class="tool-wrapper">
         <el-button class="create-button" @click="onAddBpmnShow">新建工作流</el-button>
       </div>
-      <el-tabs v-model="activeName" type="border-card" @tab-click="onChangeActiveName">
-        <el-tab-pane name="enabled,disabled">
-          <span slot="label">工作流({{ processCount }})</span>
-          <projectTable
+      <div class="project-table">
+        <projectTable
             :business="projectValue"
             :searchForm="searchFormData"
+            bindType="common"
             @lookBpmnShow="onLookBpmnShow"
             @deleteRow="onProjectDeleteRow"
           ></projectTable>
-        </el-tab-pane>
-        <el-tab-pane name="drafted">
-          <span slot="label">草稿箱({{ draftProcessCount }})</span>
-          <draftTable
-            :business="projectValue"
-            :searchForm="searchFormData"
-            @draftTableEdit="onDraftTableEdit"
-            @deleteRow="onDraftDeleteRow"
-          ></draftTable>
-        </el-tab-pane>
-      </el-tabs>
+      </div>
     </div>
     <addBpmn
       publick="publick"
       :visible="addBpmnVisible"
       :projectData="projectData"
+      bindType="common"
       @close="onAddBpmnClose"
       @submit="onAddBpmnSubmit"
     ></addBpmn>
@@ -92,11 +82,11 @@ export default {
     return {
       searchForm: {
         ascription: 'public',
-        valueDate: [start, end],
-        name: '',
+        valueDate: [],
+        processName: '',
       },
       searchFormData: {},
-      projectValue: '',
+      projectValue: [],
       projectData: {},
       activeName: 'enabled,disabled',
       addBpmnVisible: false,
@@ -113,20 +103,14 @@ export default {
   },
   methods: {
     async onAddBpmnShow() {
-      const uuid = await this.$generateUUID()
       this.addBpmnVisible = true
       this.resetProjectData()
-      this.setProjectData({
-        code: `process_${uuid}`,
-        name: uuid,
-      })
     },
     onReset() {
-      const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
       this.searchForm = {
         ...this.searchForm,
-        valueDate: [start, end],
-        name: '',
+        valueDate: [],
+        processName: '',
       }
       this.refreshWorkFlowRecord()
     },
@@ -161,10 +145,8 @@ export default {
       this.refreshWorkFlowRecord()
     },
     onProjectDeleteRow() {
-      this.fetchDesignProcessCountStatistics()
     },
     onDraftDeleteRow() {
-      this.fetchDesignProcessCountStatistics()
     },
     resetProjectData() {
       this.projectData = {}
@@ -173,31 +155,11 @@ export default {
       this.projectData = { ...this.projectData, ...data }
     },
     async refreshWorkFlowRecord() {
-      await this.fetchDesignProcessCountStatistics()
       this.searchFormData = {
         ...this.searchForm,
         startTime: this.searchForm.valueDate[0],
         endTime: this.searchForm.valueDate[1],
       }
-    },
-    async fetchDesignProcessCountStatistics() {
-      try {
-        const { errorInfo, result } = await designProcessCountStatistics({
-          tenantId: this.tenantId,
-          ascription: 'public',
-          startTime: this.searchForm.valueDate[0],
-          endTime: this.searchForm.valueDate[1],
-          createBy: this.userInfo.account,
-          name: this.searchForm.name,
-        })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
-
-        this.draftProcessCount = result.draftProcessCount
-        this.processCount = result.processCount
-      } catch (error) {}
     },
   },
 }
@@ -222,19 +184,21 @@ export default {
 }
 
 .content-wrapper {
-  margin-top: 40px;
 
   @include contentTab;
 
   .tool-wrapper {
-    float: right;
-    position: relative;
-    z-index: 99;
     display: flex;
+    justify-content: flex-end
   }
 
   .create-button {
     @include primaryPlainBtn;
+  }
+
+  .project-table{
+    border: 1px solid #333333;
+    margin-top: 10px;
   }
 }
 </style>

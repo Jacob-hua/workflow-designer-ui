@@ -1,8 +1,16 @@
 $textarea-bg-color: #212739;
-$textarea-text-color: #fff;
+$textarea-text-color: #ffffff;
+$textarea-inner-border-color: #333333;
+$textarea-placeholder-color: #666666;
+.el-textarea{
+  ::placeholder{
+    color: $textarea-placeholder-color;
+  }
+}
 .el-textarea__inner {
   background-color: $textarea-bg-color;
   color: $textarea-text-color;
+  border: 1px solid $textarea-inner-border-color;
 }
 .el-textarea.is-disabled .el-textarea__inner {
 background-color: unset;

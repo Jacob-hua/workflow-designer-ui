@@ -18,7 +18,6 @@
         <template slot-scope="scope">
           <el-button
             @click.native.prevent="draftTableEdit(scope.row)"
-            v-role="{ id: 'WorkflowEdit', type: 'button', business: business }"
             type="text"
             size="small"
             class="button1"
@@ -27,7 +26,6 @@
           </el-button>
           <el-button
             @click.native.prevent="onDeleteRow(scope.row)"
-            v-role="{ id: 'WorkflowDelete', type: 'button', business: business }"
             type="text"
             size="small"
           >
@@ -145,7 +143,7 @@ export default {
           return
         }
 
-        this.pageInfo.total = result.total
+        this.pageInfo.total = Number(result.total);
         this.listData = result.list
       } catch (error) {}
     },

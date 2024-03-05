@@ -2,29 +2,20 @@
   <div>
     <el-table :data="listData">
       <el-table-column type="index" label="序号" width="180"> </el-table-column>
-      <el-table-column prop="name" label="名称" width="180"> </el-table-column>
-      <el-table-column prop="docName" label="流程文件">
+      <el-table-column prop="processName" label="名称" width="180"> </el-table-column>
+      <el-table-column prop="processName" label="流程文件">
         <template slot-scope="scope">
-          <span class="file">{{ scope.row.docName }}</span>
+          <span class="file">{{ scope.row.processName }}.bpmn</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createBy" label="创建人"> </el-table-column>
+      <el-table-column prop="creatorName" label="创建人"> </el-table-column>
       <el-table-column prop="createTime" label="创建时间"> </el-table-column>
-      <el-table-column prop="displayStatus" label="状态">
-        <template slot-scope="scope">
-          <span class="status" :class="scope.row.status === 'enabled' ? '' : 'status-failed'">{{
-            scope.row.displayStatus
-          }}</span>
-        </template>
-      </el-table-column>
       <el-table-column
         label="操作"
-        v-role="{ id: ['WorkflowLook', 'WorkflowDelete'], type: 'contain', business: business }"
       >
         <template slot-scope="scope">
           <el-button
             @click.native.prevent="lookBpmnShow(scope.row)"
-            v-role="{ id: 'WorkflowLook', type: 'button', business: business }"
             type="text"
             size="small"
           >
@@ -32,7 +23,6 @@
           </el-button>
           <el-button
             @click.native.prevent="onDeleteRow(scope.row)"
-            v-role="{ id: 'WorkflowDelete', type: 'button', business: business }"
             type="text"
             size="small"
           >
@@ -55,18 +45,23 @@
 
 <script>
 import { workFlowRecord, deleteWorkflow, listWorkflowQuote } from '@/api/managerWorkflow'
+import { fetchWorkflowList } from '../../../api/workflow'
 import { mapState } from 'vuex'
 
 export default {
   props: {
     business: {
-      type: String,
-      default: '',
+      type: Array,
+      default: [],
     },
     searchForm: {
       type: Object,
       default: () => ({}),
     },
+    bindType: {
+      type: String,
+      default: 'bind'
+    }
   },
   data() {
     return {
@@ -87,7 +82,7 @@ export default {
       handler(value) {
         if (Object.keys(value).length) {
           this.pageInfo.page = 1
-          this.findWorkFlowRecord()
+          this.fetchWorkflowList()
         }
       },
     },
@@ -123,18 +118,18 @@ export default {
           return
         }
         this.updatePageNum()
-        await this.findWorkFlowRecord()
+        await this.fetchWorkflowList()
         this.$message.success('删除成功!')
         this.$emit('deleteRow', row)
       } catch (error) {}
     },
     onSizeChange(val) {
       this.pageInfo.limit = val
-      this.findWorkFlowRecord()
+      this.fetchWorkflowList()
     },
     onPageChange(val) {
       this.pageInfo.page = val
-      this.findWorkFlowRecord()
+      this.fetchWorkflowList()
     },
     updatePageNum() {
       const totalPage = Math.ceil((this.pageInfo.total - 1) / this.pageInfo.limit)
@@ -157,7 +152,7 @@ export default {
           return
         }
 
-        this.pageInfo.total = result.total
+        this.pageInfo.total = result.total;
         this.listData = result.list?.map((project) => {
           if (project.ascription === 'public') {
             project.displayStatus = project.status === 'enabled' ? '可关联' : '不可关联'
@@ -168,6 +163,23 @@ export default {
         })
       } catch (error) {}
     },
+
+    async fetchWorkflowList(){
+      const {data, code, msg} = await fetchWorkflowList({
+        tenantId: '18',
+        projectId: '9',
+        applicationId: '209',
+        bindType: this.bindType,
+        limit: this.pageInfo.limit,
+        page: this.pageInfo.page
+      })
+      if(code!=='200'){
+        this.$message.error(msg);
+        return;
+      }
+      this.listData = data.dataList;
+      this.pageInfo.total = Number(data.total);
+    }
   },
 }
 </script>
@@ -175,7 +187,7 @@ export default {
 <style lang="scss" scoped>
 .el-pagination {
   text-align: right;
-  padding: 34px 0;
+  padding: 34px 10px;
 }
 
 .file {
