@@ -127,3 +127,6 @@ export const downloadFile = (params) =>
     responseType: 'blob',
   })
 
+//获取组织结构
+export const getOrganizations = () => get('/workflow/design/common/user/permission/orgs')
+
