@@ -44,39 +44,39 @@ const createRouter = () => {
     mode: 'hash',
     routes,
   })
-  router.beforeEach((to, from, next) => {
-    try {
-      if (['login', 'noPermission', 'WorkflowViewer'].includes(to.name)) {
-        next()
-        return
-      }
-      let routerName = to.name
+  // router.beforeEach((to, from, next) => {
+  //   try {
+  //     if (['login', 'noPermission', 'WorkflowViewer'].includes(to.name)) {
+  //       next()
+  //       return
+  //     }
+  //     let routerName = to.name
 
-      let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'))
+  //     let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'))
 
-      if (!menuProjectList) {
-        next('/home/noPermission')
-        return
-      }
+  //     if (!menuProjectList) {
+  //       next('/home/noPermission')
+  //       return
+  //     }
 
-      let menuList = menuProjectList.filter((item) => {
-        return item.projectList.length > 0
-      })
+  //     let menuList = menuProjectList.filter((item) => {
+  //       return item.projectList.length > 0
+  //     })
 
-      let findEle = menuList.findIndex((item) => {
-        return item.menuRoute === routerName
-      })
-      if (findEle === -1) {
-        // TODO: 在没有权限的时候应该抛出响应的无权限提示
-        // next('/home/noPermission')
-        next('/home/noPermission')
-      } else {
-        next()
-      }
-    } catch (error) {
-      next('/login')
-    }
-  })
+  //     let findEle = menuList.findIndex((item) => {
+  //       return item.menuRoute === routerName
+  //     })
+  //     if (findEle === -1) {
+  //       // TODO: 在没有权限的时候应该抛出响应的无权限提示
+  //       // next('/home/noPermission')
+  //       next('/home/noPermission')
+  //     } else {
+  //       next()
+  //     }
+  //   } catch (error) {
+  //     next('/login')
+  //   }
+  // })
   return router
 }
 

@@ -3,8 +3,8 @@
     <el-container>
       <el-header class="header">
         <div v-if="!status && !thirdLogin" class="user-info">
-          <span>{{ userInfo.name }}</span>
-          <img :src="require('../assets/image/header/quit.svg')" @click="exitProject()" />
+          <!-- <span>{{ userInfo.name }}</span>
+          <img :src="require('../assets/image/header/quit.svg')" @click="exitProject()" /> -->
         </div>
       </el-header>
       <el-container>
@@ -17,11 +17,21 @@
               <span>Workflow Engine Platform</span>
             </div>
           </div>
-          <el-menu :default-active="$route.name" router v-if="!status" @select="onSelect">
-            <el-menu-item :index="item.menuRoute" v-for="(item, index) in menuList" :key="index">
+          <el-menu
+            :default-active="$route.name"
+            router
+            @select="onSelect"
+          >
+            <el-menu-item
+              :index="item.menuRoute"
+              v-for="(item, index) in menuList"
+              :key="index"
+            >
               <div>
                 <img class="menu-icon" :src="getMenuIcon(item.menuRoute)" />
-                <span class="menu-text">{{ menuListNameMapping[item.menuRoute].label }}</span>
+                <span class="menu-text">{{
+                  menuListNameMapping[item.menuRoute].label
+                }}</span>
               </div>
             </el-menu-item>
           </el-menu>
@@ -37,16 +47,33 @@
 </template>
 
 <script>
-import CONSTANT from '@/constant'
-import { mapMutations, mapState } from 'vuex'
-import Cookies from 'js-cookie'
+import CONSTANT from '@/constant';
+import { mapMutations, mapState } from 'vuex';
+import Cookies from 'js-cookie';
 
 export default {
   data() {
     return {
       status: false,
       activeMenu: '',
-      menuList: [],
+      menuList: [
+        {
+          menuRoute: 'Workflow',
+          projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
+        },
+        {
+          menuRoute: 'Form',
+          projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
+        },
+        {
+          menuRoute: 'Home',
+          projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
+        },
+        {
+          menuRoute: 'Configuration',
+          projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
+        },
+      ],
       menuListNameMapping: {
         Workflow: {
           icon: require('../assets/image/menu/workflow.svg'),
@@ -84,65 +111,64 @@ export default {
           label: '权限管理',
         },
       },
-    }
+    };
   },
   computed: {
     ...mapState('account', ['userInfo', 'thirdLogin']),
   },
   created() {
-    let userInfo = sessionStorage.getItem('loginData')
-    this.status = sessionStorage.getItem('status') === CONSTANT.LOGIN_FROM_WORKFLOW_ITSELF
-    if (userInfo) {
-      this.updateUserInfo({
-        userInfo: JSON.parse(userInfo),
-      })
-    } else {
-      this.$router.push('/')
-    }
-
-    let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'))
-    if (!menuProjectList) {
-      this.$router.push('/home/noPermission')
-      this.$message.error('该账号无任何菜单访问权限')
-      return
-    }
-
-    this.menuList = menuProjectList.filter((item) => {
-      return item.projectList.length > 0
-    })
-    if (this.menuList.length > 0) {
+    // let userInfo = sessionStorage.getItem('loginData')
+    // this.status = sessionStorage.getItem('status') === CONSTANT.LOGIN_FROM_WORKFLOW_ITSELF
+    // if (userInfo) {
+    //   this.updateUserInfo({
+    //     userInfo: JSON.parse(userInfo),
+    //   })
+    // } else {
+    //   this.$router.push('/')
+    // }
+    // let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'))
+    // if (!menuProjectList) {
+    //   this.$router.push('/home/noPermission')
+    //   this.$message.error('该账号无任何菜单访问权限')
+    //   return
+    // }
+    // this.menuList = menuProjectList.filter((item) => {
+    //   return item.projectList.length > 0
+    // })
+    // if (this.menuList.length > 0) {
+    //   let findRole = this.menuList.filter((item) => {
+    //     return item.menuRoute === this.$route.name
+    //   })
+    //   if (findRole.length === 0) {
+    //     this.$router.push({ name: this.menuList[0].menuRoute })
+    //   }
+    // } else {
+    //   this.$router.push('/home/noPermission')
+    //   this.$message.error('该账号无任何菜单访问权限')
+    // }
       let findRole = this.menuList.filter((item) => {
         return item.menuRoute === this.$route.name
       })
       if (findRole.length === 0) {
         this.$router.push({ name: this.menuList[0].menuRoute })
       }
-    } else {
-      this.$router.push('/home/noPermission')
-      this.$message.error('该账号无任何菜单访问权限')
-    }
   },
   mounted() {
-    this.activeMenu = this.$route.name
+    this.activeMenu = this.$route.name;
   },
   methods: {
     ...mapMutations('account', ['updateUserInfo']),
     getMenuIcon(index) {
       if (index === this.activeMenu) {
-        return this.menuListNameMapping[index].activeIcon
+        return this.menuListNameMapping[index].activeIcon;
       }
-      return this.menuListNameMapping[index].icon
+      return this.menuListNameMapping[index].icon;
     },
     onSelect(activeMenu) {
-      this.activeMenu = activeMenu
-    },
-    exitProject() {
-      Cookies.remove('userInfo')
-      sessionStorage.clear()
-      this.$router.push('/')
+      this.activeMenu = activeMenu;
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
