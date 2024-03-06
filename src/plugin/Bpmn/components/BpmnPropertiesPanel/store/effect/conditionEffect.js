@@ -17,15 +17,18 @@ function conditionEffect({ condition }, iBpmnModeler = new IBpmnModeler()) {
   // }
 
   if (condition.type) {
+    if(!condition.judgment || !condition.conditionTarget) return;
     iBpmnModeler.updateSelectedShapeProperties({
       conditionExpression: iBpmnModeler.createBpmnModdleInstance('FormalExpression', {
         body: '${'+condition.sourceRef+condition.judgment+condition.conditionTarget+'}',
       }),
-      judgment: condition.judgment,
-      conditionTarget: condition.conditionTarget
+      'camunda:judgment': condition.judgment,
+      'camunda:conditionTarget': condition.conditionTarget
     })
   } else {
     delete iBpmnModeler.getSelectedShapeInfo().conditionExpression
+    delete iBpmnModeler.getSelectedShapeInfo()['camunda:judgment']
+    delete iBpmnModeler.getSelectedShapeInfo()['camunda:conditionTarget']
   }
 
   // function handlerScript(condition) {

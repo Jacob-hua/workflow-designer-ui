@@ -44,8 +44,7 @@
 </template>
 
 <script>
-import { workFlowRecord, deleteWorkflow, listWorkflowQuote } from '@/api/managerWorkflow'
-import { fetchWorkflowList } from '../../../api/workflow'
+import { fetchWorkflowList, deleteWorkflow } from '../../../api/workflow'
 import { mapState } from 'vuex'
 
 export default {
@@ -93,28 +92,18 @@ export default {
     },
     async onDeleteRow(row) {
       try {
-        const quoteRes = await listWorkflowQuote({
-          id: row.id,
-          tenantId: this.tenantId,
-        })
-        if (quoteRes.errorInfo.errorCode) {
-          this.$message.error(quoteRes.errorInfo.errorMsg)
-          return
-        }
-        const confirmMsg = quoteRes.result?.msg ?? '删除不可恢复, 请确认是否继续?'
+        const confirmMsg = '删除不可恢复, 请确认是否继续?'
         await this.$confirm(confirmMsg, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           cancelButtonClass: 'btn-custom-cancel',
           type: 'warning',
         })
-        const { errorInfo } = await deleteWorkflow({
-          id: row.id,
-          tenantId: this.tenantId,
-          updateBy: this.userInfo.account,
+        const { code, msg } = await deleteWorkflow({
+          processId: row.processId
         })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
+        if (code!=='200') {
+          this.$message.error(msg)
           return
         }
         this.updatePageNum()
@@ -135,33 +124,6 @@ export default {
       const totalPage = Math.ceil((this.pageInfo.total - 1) / this.pageInfo.limit)
       this.pageInfo.page = this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page
       this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page
-    },
-    // 查询项目流程
-    async findWorkFlowRecord() {
-      try {
-        const { errorInfo, result } = await workFlowRecord({
-          ...this.searchForm,
-          tenantId: this.tenantId,
-          status: 'enabled,disabled',
-          createBy: this.userInfo.account,
-          page: this.pageInfo.page,
-          limit: this.pageInfo.limit,
-        })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
-
-        this.pageInfo.total = result.total;
-        this.listData = result.list?.map((project) => {
-          if (project.ascription === 'public') {
-            project.displayStatus = project.status === 'enabled' ? '可关联' : '不可关联'
-          } else {
-            project.displayStatus = project.status === 'enabled' ? '可部署' : '不可部署'
-          }
-          return project
-        })
-      } catch (error) {}
     },
 
     async fetchWorkflowList(){

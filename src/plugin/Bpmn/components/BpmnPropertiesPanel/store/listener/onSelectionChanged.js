@@ -213,8 +213,8 @@ function condition2State(iBpmnModeler = new IBpmnModeler()) {
   if(iBpmnModeler.getSelectedShapeInfo()){
     const shapeInfo = iBpmnModeler.getSelectedShapeInfo();
     state.sourceRef = shapeInfo?.sourceRef?.id;
-    state.judgment = shapeInfo?.$attrs?.judgment;
-    state.conditionTarget = shapeInfo?.$attrs?.conditionTarget;
+    state.judgment = shapeInfo?.$attrs['camunda:judgment'];
+    state.conditionTarget = shapeInfo?.$attrs['camunda:conditionTarget'];
   }
 
   const temp = iBpmnModeler.getSelectedShapeInfoByType(

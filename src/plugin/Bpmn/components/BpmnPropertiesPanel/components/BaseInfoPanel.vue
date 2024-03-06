@@ -134,10 +134,10 @@ export default {
         if(!this.shapeType && deepEquals(value, this.rootBaseInfo)){
           return
         }
-        if(shapeType){
+        if(this.shapeType){
           this.updateBaseInfo({ newBaseInfo: {id: this.baseInfo.id, name: value.processName} });          
         }else{
-          this.updateRootBaseInfo({rootBaseInfo: deepCopy(value)})
+          this.updateRootBaseInfo({rootBaseInfo: value})
         }
       },
     },
@@ -150,9 +150,7 @@ export default {
       this.$store.commit(`${this.namespace}/panel/updateBaseInfo`, payload);
     },
     updateRootBaseInfo(payload) {
-      this.$store.commit({
-        type: `${this.namespace}/panel/updateRootBaseInfo`, payload,
-      });
+      this.$store.commit(`${this.namespace}/panel/updateRootBaseInfo`, payload);
     },
     addListener(payload) {
       this.$store.commit({

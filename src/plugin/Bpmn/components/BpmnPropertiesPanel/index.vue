@@ -24,12 +24,8 @@ import IBpmnModeler from '../../IBpmnModeler';
 import BpmnShapeType from '../../enum/shapeType';
 import BaseInfoPanel from './components/BaseInfoPanel.vue';
 import DocumentationPanel from './components/DocumentationPanel.vue';
-import ExecuteListenerPanel from './components/ExecuteListenerPanel.vue';
-import InputOutputPanel from './components/InputOutputPanel.vue';
 import SignalMessagePanel from './components/SignalMessagePanel.vue';
-import ElementTaskPanel from './components/ElementTaskPanel.vue';
 import MultiInstancePanel from './components/MultiInstancePanel.vue';
-import ActionButtonPanel from './components/ActionButtonPanel.vue';
 import TimerPanel from './components/TimerPanel.vue';
 import ConditionPanel from './components/ConditionPanel.vue';
 import bridgingBpmn, { generateNamespace } from '../../utils/bridging-bpmn';
@@ -41,12 +37,8 @@ export default {
   name: 'BpmnPropertiesPanel',
   components: {
     BaseInfoPanel,
-    ExecuteListenerPanel,
     SignalMessagePanel,
-    InputOutputPanel,
-    ElementTaskPanel,
     MultiInstancePanel,
-    ActionButtonPanel,
     TimerPanel,
     ConditionPanel,
   },

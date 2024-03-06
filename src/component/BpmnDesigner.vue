@@ -26,33 +26,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { getSystemGroupTree, postPersonUser } from '../api/unit/api'
-import { getGlobalUUID } from '../api/globalConfig'
-import IBpmnModeler from '../plugin/Bpmn/IBpmnModeler'
-
-function groupTree2CascaderData(data) {
-  if (Array.isArray(data)) {
-    return data.map(groupTree2CascaderData)
-  }
-  const result = {
-    value: data.groupId,
-    label: data.groupName,
-  }
-  if (Array.isArray(data.children) && data.children.length > 0) {
-    result['children'] = data.children.map(groupTree2CascaderData)
-  }
-  return result
-}
+import { mapState } from 'vuex';
+import { postPersonUser } from '../api/unit/api';
+import { getGlobalUUID } from '../api/globalConfig';
+import IBpmnModeler from '../plugin/Bpmn/IBpmnModeler';
 
 function users2CascaderData(data) {
   if (Array.isArray(data)) {
-    return data.map(users2CascaderData)
+    return data.map(users2CascaderData);
   }
   return {
     value: data.userId,
     label: `${data.firstName} ${data.lastName}`,
-  }
+  };
 }
 
 export default {
@@ -69,36 +55,17 @@ export default {
       userGroup: [],
       rootBaseInfo: {
         processName: '',
-        processId: ''
-      }
-    }
+        processId: '',
+      },
+    };
   },
   computed: {
     ...mapState('account', ['tenantId', 'currentOrganization']),
   },
-  mounted() {
-    // this.fetchUserGroup({
-    //   projectCode: this.currentOrganization,
-    //   displayType: 'tree',
-    // }).then((res) => {
-    //   this.userGroup = res
-    // })
-  },
   methods: {
     onEditorLoaded(iBpmnModeler) {
-      this.iBpmnModeler = iBpmnModeler
-      this.$emit('loaded', iBpmnModeler)
-    },
-    async fetchUserGroup(params) {
-      try {
-        const { errorInfo, result } = await getSystemGroupTree(params)
-        if (errorInfo.errorCode) {
-          return []
-        }
-        return groupTree2CascaderData(result) ?? []
-      } catch (error) {
-        return []
-      }
+      this.iBpmnModeler = iBpmnModeler;
+      this.$emit('loaded', iBpmnModeler);
     },
     async fetchUser({ value }) {
       try {
@@ -109,32 +76,32 @@ export default {
           page: 1,
           tenantId: this.tenantId,
           userId: 'admin',
-        })
+        });
         if (errorInfo.errorCode) {
-          return []
+          return [];
         }
-        return users2CascaderData(result?.dataList ?? [])
+        return users2CascaderData(result?.dataList ?? []);
       } catch (error) {
-        return []
+        return [];
       }
     },
     async fetchUUID() {
       try {
-        const { errorInfo, result } = await getGlobalUUID()
+        const { errorInfo, result } = await getGlobalUUID();
         if (errorInfo.errorCode) {
-          return
+          return;
         }
-        return result
+        return result;
       } catch (error) {
-        return
+        return;
       }
     },
-    getBaseInfo(rootBaseInfo){
+    getBaseInfo(rootBaseInfo) {
       this.rootBaseInfo = rootBaseInfo;
-      this.$emit('getRootInfo', this.rootBaseInfo)
-    }
+      this.$emit('getRootInfo', this.rootBaseInfo);
+    },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

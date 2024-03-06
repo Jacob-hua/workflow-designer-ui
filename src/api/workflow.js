@@ -4,7 +4,7 @@ import {get,post} from './unit/request'
 export const fetchWorkflowList = (params) => post('/workflow/design/process/list',params)
 
 //删除流程
-export const deleteWorkflow = (params) => post('/workflow/design/process/delete',params)
+export const deleteWorkflow = (params) => get('/workflow/design/process/delete',params)
 
 //新增流程
 export const saveWorkflow = (params) => post('/workflow/design/process/save',params)

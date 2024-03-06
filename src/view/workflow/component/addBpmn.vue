@@ -17,14 +17,10 @@
 </template>
 
 <script>
-import {
-  updateWorkFlow,
-  createWorkFlow,
-  publishWorkflow,
-} from '@/api/managerWorkflow';
 import { saveWorkflow, updateWorkflow } from '../../../api/workflow';
 import BpmnDesigner from '@/component/BpmnDesigner.vue';
 import { mapState } from 'vuex';
+import md5 from 'md5';
 
 export default {
   components: {
@@ -71,19 +67,17 @@ export default {
       // TODO: 此处的文件名和文件id应该以addProject.vue中设置的参数为主
       const { processName, processDesc } = this.rootBaseInfo;
       let processFormData = new FormData();
-      if (this.projectData.id) {
-        processFormData.set('processId', this.projectData.id);
+      if (!this.projectData.processId) {
+        processFormData.set('tenantId', this.projectData.business[0]) ?? '';
+        processFormData.set('projectId', this.projectData.business[1] ?? '');
+        processFormData.set('applicationId', this.projectData.business[2]) ??
+          '';
+        processFormData.set('bindType', this.bindType);
+      } else {
+        processFormData.set('processId', this.projectData.processId);
       }
       processFormData.set('processName', processName);
-      // processFormData.set('docName', processName + '.bpmn')
-      if (this.publick) {
-        processFormData.set('ascription', 'public');
-      } else {
-        processFormData.set('ascription', '');
-        processFormData.set('business', this.projectData.business);
-      }
       processFormData.set('processDesc', processDesc);
-      processFormData.set('bindType', this.projectData.bindType);
       return processFormData;
     },
     onClose() {
@@ -102,21 +96,29 @@ export default {
         });
         const processFormData = this.processFormData();
         processFormData.set(
-          'processId',
+          'processFile',
           new File([xml], processFormData.processName + '.bpmn', {
             type: 'bpmn20-xml',
           })
         );
-        processFormData.set('status', 'drafted');
         let promise;
         // 如果projectData存在id，则走修改的流程
-        if (this.projectData.id) {
-          promise = updateWorkFlow(processFormData);
+        if (this.projectData.processId) {
+          if (md5(this.projectData.processFile) === md5(xml)) {
+            const { processName, processDesc } = this.rootBaseInfo;
+            promise = updateWorkflow({
+              processId: this.projectData.processId,
+              processName: processName,
+              processDesc: processDesc,
+            });
+          } else {
+            promise = saveWorkflow(processFormData);
+          }
         } else {
           promise = saveWorkflow(processFormData);
         }
         const { code, msg } = await Promise.resolve(promise);
-        if (code!=='200') {
+        if (code !== '200') {
           this.$message.error(msg);
           return;
         }
