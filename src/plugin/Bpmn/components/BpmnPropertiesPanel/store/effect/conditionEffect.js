@@ -17,7 +17,7 @@ function conditionEffect({ condition }, iBpmnModeler = new IBpmnModeler()) {
   // }
 
   if (condition.type) {
-    if(!condition.judgment || !condition.conditionTarget) return;
+    if(!condition.judgment || condition.conditionTarget === '') return;
     iBpmnModeler.updateSelectedShapeProperties({
       conditionExpression: iBpmnModeler.createBpmnModdleInstance('FormalExpression', {
         body: '${'+condition.sourceRef+condition.judgment+condition.conditionTarget+'}',

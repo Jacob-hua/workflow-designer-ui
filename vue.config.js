@@ -1,7 +1,8 @@
 const { name } = require('./package')
+const webpack = require('webpack')
 
 module.exports = {
-  publicPath: './',
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   runtimeCompiler: true,
   configureWebpack: {
     devtool: 'source-map',
@@ -10,6 +11,14 @@ module.exports = {
       libraryTarget: 'umd', // 把微应用打包成 umd 库格式
       jsonpFunction: `webpackJsonp_${name}`,
     },
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+          QIAN_KUN_URL: JSON.stringify(process.env.QIAN_KUN_URL),
+        },
+      }),
+    ]
   },
   devServer: {
     host: '0.0.0.0',
@@ -41,6 +50,16 @@ module.exports = {
       scss: {
         additionalData: `@import '~@/assets/style/index.scss';`,
       },
+      less: {
+        lessOptions: {
+          javascriptEnabled: true,
+          modifyVars: {
+            "@heading-color": '#bfbfbf',
+            "@input-bg": ''
+          }
+        }
+        // modif
+      }
     },
   },
   chainWebpack: (config) => {

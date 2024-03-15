@@ -18,7 +18,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="工作流">
-          <el-input v-model="searchForm.name" placeholder="请输入工作流名称"></el-input>
+          <el-input v-model="searchForm.processName" placeholder="请输入工作流名称"></el-input>
         </el-form-item>
       </el-form>
       <div class="button-wrapper">
@@ -65,7 +65,6 @@ import draftTable from './draftTable.vue'
 import addProject from './addProject.vue'
 import addBpmn from './addBpmn.vue'
 import lookBpmn from './lookBpmn.vue'
-import { designProcessCountStatistics } from '@/api/managerWorkflow'
 import { mapState } from 'vuex'
 import { currentOneMonthAgo } from '@/util/date'
 
@@ -78,7 +77,6 @@ export default {
     addProject,
   },
   data() {
-    const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
       searchForm: {
         ascription: 'public',

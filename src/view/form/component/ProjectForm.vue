@@ -3,21 +3,14 @@
     <div class="projectHeader">
       <div class="PublicForm-title"></div>
       <div class="datePick">
-        <span class="text">项目</span>
-        <el-select v-model="projectCode">
-          <el-option
-            v-for="{ id, label, value } in rootOrganizations"
-            :key="id"
-            :label="label"
-            :value="value"
-          ></el-option>
-        </el-select>
         <span class="text">业务</span>
         <el-cascader
-          v-model="projectValue"
-          :key="projectCode"
-          :options="rootOrganizationChildrenAndAll(projectCode)"
-          :props="cascaderProps"
+          v-model="business"
+          :options="projectOrganizations()"
+          :props="{
+            emitPath: true,
+            checkStrictly: true,
+          }"
         ></el-cascader>
         <span class="text">创建时间</span>
         <el-date-picker
@@ -33,11 +26,14 @@
         >
         </el-date-picker>
         <span class="text">表单</span>
-        <el-input v-model="input" placeholder="请输入表单名称或编号"></el-input>
+        <el-input
+          v-model="formName"
+          placeholder="请输入表单名称或编号"
+        ></el-input>
       </div>
 
       <div class="PublicForm-title-input">
-        <el-button class="search" @click="getManyData()">查询</el-button>
+        <el-button class="search" @click="getData()">查询</el-button>
       </div>
       <div class="PublicForm-title-input">
         <el-button class="reset" @click="reset()" type="primary"
@@ -47,391 +43,245 @@
     </div>
     <div>
       <div class="PublicForm-title-button">
-        <el-button
-          class="boxBtn"
-          @click="application()"
-          v-role="{ id: 'FromUse', type: 'button', business: projectCode }"
-        >
-          关联表单
-        </el-button>
+        <el-button class="boxBtn" @click="application()"> 关联表单 </el-button>
       </div>
       <div class="PublicForm-title-button">
-        <el-button
-          class="boxBtn"
-          @click="addForm()"
-          v-role="{ id: 'FromAdd', type: 'button', business: projectCode }"
-        >
-          新建表单
-        </el-button>
+        <el-button class="boxBtn" @click="addForm()"> 新建表单 </el-button>
       </div>
     </div>
     <div class="content-wrapper">
-      <el-tabs
-        type="border-card"
-        v-model="formStatus"
-        @tab-click="changeActiveName"
+      <div
+        class="home-table-card"
+        v-for="(item, index) in projectFormList"
+        :key="index"
       >
-        <el-tab-pane name="enabled">
-          <span slot="label">可用表单({{ getDataFirst.total }})</span>
-          <div
-            class="home-table-card"
-            v-for="(item, index) in formListFirst"
-            :key="index"
-          >
-            <div class="card-title">
-              <span class="title">{{ item.numberCode }}</span>
-              <span
-                class="detailWord"
-                @click="detailsDiolog(item)"
-                v-role="{
-                  id: 'FromLook',
-                  type: 'button',
-                  business: projectCode,
-                }"
-                >详情</span
-              >
-            </div>
-            <div class="card-main">
-              <div class="card-main-item">
-                <span class="label">表单名称:</span>
-                <long-text
-                  contentStyle="color: white; width: 180px"
-                  :content="item.name"
-                />
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建人:</span>
-                <span class="value">{{
-                  item.createBy == -1 ? "系统" : item.createBy
-                }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建时间:</span>
-                <span class="value">{{ item.createTime }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">发布次数:</span>
-                <span class="value">{{ item.count }}</span>
-              </div>
-            </div>
+        <div class="card-title">
+          <span class="title">{{ item.formCode }}</span>
+          <span class="detailWord" @click="detailsDiolog(item)">详情</span>
+        </div>
+        <div class="card-main">
+          <div class="card-main-item">
+            <span class="label">表单名称:</span>
+            <long-text
+              contentStyle="color: white; width: 180px"
+              :content="item.formName"
+            />
           </div>
-          <div class="noData" v-if="formListFirst.length === 0">暂无数据</div>
-        </el-tab-pane>
-        <el-tab-pane name="drafted">
-          <span slot="label">草稿箱({{ getDataSecond.total }})</span>
-          <div
-            class="home-table-card"
-            v-for="(item, index) in formListSecond"
-            :key="index"
-          >
-            <div class="card-title">
-              <span class="title">{{ item.numberCode }}</span>
-              <span class="detailWord" @click="detailsDiolog(item)">详情</span>
-            </div>
-            <div class="card-main">
-              <div class="card-main-item">
-                <span class="label">表单名称:</span>
-                <long-text
-                  contentStyle="color: white; width: 180px"
-                  :content="item.name"
-                />
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建人:</span>
-                <span class="value">{{ item.createBy }}</span>
-              </div>
-              <div class="card-main-item">
-                <span class="label">创建时间:</span>
-                <span class="value">{{ item.createTime }}</span>
-              </div>
-            </div>
+          <div class="card-main-item">
+            <span class="label">创建人:</span>
+            <span class="value">{{ item.creatorName }}</span>
           </div>
-          <div class="noData" v-if="formListSecond.length === 0">暂无数据</div>
-        </el-tab-pane>
-      </el-tabs>
+          <div class="card-main-item">
+            <span class="label">创建时间:</span>
+            <span class="value">{{ item.createTime }}</span>
+          </div>
+          <div class="card-main-item">
+            <span class="label">版本个数:</span>
+            <span class="value">{{ item.versionNum }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="noData" v-if="pageInfo.total === 0">暂无数据</div>
+      <el-pagination
+        v-if="this.pageInfo.total"
+        @size-change="onSizeChange"
+        @current-change="onPageChange"
+        :current-page="pageInfo.page"
+        :page-size="pageInfo.limit"
+        layout="prev, pager, next, jumper"
+        :total="pageInfo.total"
+      >
+      </el-pagination>
     </div>
     <projectFormDiolog
-      title="新建表单"
+      :title="projectFormTitle"
+      :formInfo="formInfo"
+      :addFormDialogVisible="addFormDialogVisible"
+      :formDesignerVisible="formDesignerVisible"
       ref="projectFormDiolog"
       @addSuccess="addSuccess()"
-      :formStatus="formStatus"
-      :projectOption="projectOption"
-      :systemOption="systemOption"
-      :sysProps="sysProps"
+      @changeAddFormVisible="changeAddFormVisible"
+      @changeFormDesignerVisible="changeFormDesignerVisible"
     ></projectFormDiolog>
     <detailsDiologForm
       tileText="编辑表单"
+      :visible="detailDialogVisible"
       ref="detailsDiolog"
       :formDatas="formData"
+      @handleCloseDetail="handleCloseDetail"
       @editForm="editForm"
-      quote="delete"
-      :status="formStatus"
       @deleteSuccsee="deleteSuccsee()"
     ></detailsDiologForm>
     <application
       ref="application"
       :dialogVisible="dialogVisible"
-      :projectCode="projectCode"
-      :projectValue="projectValue"
       @close="close()"
     ></application>
   </div>
 </template>
 
 <script>
-import projectFormDiolog from "./projectFormComponent/index.vue";
-import detailsDiologForm from "./details.vue";
-import application from "./projectFormComponent/application.vue";
-import {
-  postFormDesignRecordDraftInfo,
-  postFormDesignBasicFormRecord,
-  postFormDesignRecordFormDesignRecordInfo,
-} from "@/api/unit/api.js";
-import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
-// import { getProjectList } from "@/api/globalConfig";
-import router from "@/router";
-import { currentOneMonthAgo } from "@/util/date";
-import longText from "../../../component/LongText.vue";
+import projectFormDiolog from './projectFormComponent/index.vue';
+import detailsDiologForm from './details.vue';
+import application from './projectFormComponent/application.vue';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
+import longText from '../../../component/LongText.vue';
+import { fetchFormList } from '../../../api/workflowForm';
 
 export default {
+  components: {
+    projectFormDiolog,
+    detailsDiologForm,
+    application,
+    longText,
+  },
   data() {
-    const { start, end } = currentOneMonthAgo("yyyy-MM-DD HH:mm:ss");
     return {
-      sysProps: {
-        label: "name",
-        value: "code",
-        checkStrictly: true,
-        emitPath: false,
+      pageInfo: {
+        page: 1,
+        limit: 6,
+        total: 0,
       },
-      systemOption: [],
       formData: {},
-      projectValue: "",
-      projectOption: [],
-      formStatus: "enabled",
-      projectCode: "",
-      valueDate: [start, end],
-      input: "",
-      formListFirst: [],
-      formListSecond: [],
-      getDataFirst: {
-        page: 1,
-        limit: 9999999,
-        total: 0,
-      },
-      getDataSecond: {
-        page: 1,
-        limit: 9999999,
-        total: 0,
-      },
+      business: [],
+      valueDate: [],
+      formName: '',
+      projectFormList: [],
       dialogVisible: false,
+      detailDialogVisible: false,
+      projectFormTitle: '新建表单',
+      addFormDialogVisible: false,
+      formDesignerVisible: false,
+      formInfo: null
     };
   },
+  async mounted() {
+    await this.dispatchProjectOriganizations();
+    this.setDefaultorganization();
+    await this.getFormList();
+  },
   computed: {
-    ...mapState("account", ["tenantId", "userInfo", "currentOrganization"]),
-    ...mapState("uiConfig", ["cascaderProps"]),
-    ...mapGetters("config", [
-      "rootOrganizations",
-      "rootOrganizationChildrenAndAll",
+    ...mapGetters('config', [
+      'rootOrganizations',
+      'rootOrganizationChildrenAndAll',
+      'projectOrganizations',
     ]),
   },
-  watch: {
-    projectCode(value) {
-      if (value === this.currentOrganization) {
-        return;
-      }
-      this.updateCurrentOrganization({ currentOrganization: value });
-    },
-    currentOrganization: {
-      immediate: true,
-      handler(value) {
-        this.projectCode = value;
-      },
-    },
-  },
+  watch: {},
   methods: {
-    ...mapActions("config", ["dispatchRefreshOrganization"]),
-    ...mapMutations("account", ["updateCurrentOrganization"]),
-    async init() {
-      await this.dispatchRefreshOrganization();
-      await this.getDraftData();
-      await this.getEnableData();
+    ...mapActions('config', ['dispatchProjectOriganizations']),
+    ...mapMutations('account', ['updateCurrentOrganization']),
+    setDefaultorganization() {
+      const options = this.projectOrganizations();
+      if (options.length <= 0) return;
+      this.business = defaultOrg(options[0]);
+      function defaultOrg(data) {
+        let res = [];
+        res.push(data.value);
+        if (data.children) {
+          res = res.concat(defaultOrg(data.children[0]));
+        }
+        return res;
+      }
     },
     reset() {
-      this.input = "";
-      this.projectValue = "";
-      this.getManyData();
-    },
-
-    deleteEmptyChildren(arr) {
-      for (let i = 0; i < arr.length; i++) {
-        const arrElement = arr[i];
-        if (!arrElement.children.length) {
-          delete arrElement.children;
-          continue;
-        }
-        if (arrElement.children) {
-          this.deleteEmptyChildren(arrElement.children);
-        }
-      }
+      this.formName = '';
+      this.valueDate = [];
+      this.setDefaultorganization();
+      this.getFormList();
     },
     application() {
       this.dialogVisible = true;
     },
     close() {
       this.dialogVisible = false;
-      this.getData();
+      this.getFormList();
     },
-    // 查询草稿箱
-    getDraftData() {
-      postFormDesignRecordDraftInfo({
-        tenantId: this.tenantId,
-        status: "drafted",
-        ascription: this.projectCode,
-        business:
-          typeof this.projectValue === "string"
-            ? this.projectValue
-            : this.projectValue.at(-1),
-        createBy: this.userInfo.account,
-        numberCode: "",
-        name: this.input,
-        startTime: this.valueDate[0] + " 00:00:00",
-        endTime: this.valueDate[1] + " 23:59:59",
-        ...this.getDataSecond,
-      }).then((res) => {
-        this.formListSecond = res.result.dataList;
-        this.getDataSecond.total = res.result.count;
+    async getFormList() {
+      const { data, code, msg } = await fetchFormList({
+        tenantId: this.business[0] ?? '',
+        projectId: this.business[1] ?? '',
+        applicationId: this.business[2] ?? '',
+        bindType: 'bind',
+        processName: this.formName ?? '',
+        startTime: this.valueDate[0] ?? '',
+        endTime: this.valueDate[1] ?? '',
+        limit: this.pageInfo.limit,
+        page: this.pageInfo.page,
       });
-    },
-    // 查询可部署流程
-    getEnableData() {
-      postFormDesignBasicFormRecord({
-        tenantId: this.tenantId,
-        status: "enabled",
-        ascription: this.projectCode,
-        business:
-          typeof this.projectValue === "string"
-            ? this.projectValue
-            : this.projectValue.at(-1),
-        createBy: this.userInfo.account,
-        numberCode: "",
-        name: this.input,
-        startTime: this.valueDate[0] + " 00:00:00",
-        endTime: this.valueDate[1] + " 23:59:59",
-        ...this.getDataFirst,
-      }).then((res) => {
-        this.formListFirst = res.result.dataList;
-        this.getDataFirst.total = res.result.count;
-      });
+      if (code !== '200') {
+        this.$message.error(msg);
+      }
+      this.projectFormList = data.dataList;
+      this.pageInfo.total = Number(data.total);
     },
 
-    getManyData() {
-      this.getEnableData();
-      this.getDraftData();
+    onSizeChange(val) {
+      this.pageInfo.limit = val;
+      this.getFormList();
+    },
+    onPageChange(val) {
+      this.pageInfo.page = val;
+      this.getFormList();
+    },
+    updatePageNum() {
+      const totalPage = Math.ceil(
+        (this.pageInfo.total - 1) / this.pageInfo.limit
+      );
+      this.pageInfo.page =
+        this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page;
+      this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page;
     },
 
     getData() {
-      switch (this.formStatus) {
-        case "enabled":
-          this.getEnableData();
-          break;
-        case "drafted":
-          this.getDraftData();
-          break;
-        default:
-          break;
-      }
+      this.getFormList();
     },
 
     changeActiveName() {
-      this.getManyData();
+      this.getFormList();
     },
 
     deleteSuccsee() {
-      this.$refs.detailsDiolog.dialogVisible2 = false;
-      this.getManyData();
+      this.detailDialogVisible = false;
+      this.getFormList();
     },
 
     addSuccess() {
-      this.$refs.detailsDiolog.dialogVisible2 = false;
-      this.$refs.projectFormDiolog.dialogVisible2 = false;
-      this.getManyData();
+      this.detailDialogVisible = false;
+      this.addFormDialogVisible = false;
+      localStorage.removeItem('formVersionFile')
+      this.getFormList();
     },
 
-    changProjectCode(code) {
-      this.projectCode = code;
-      this.getManyData();
+    changeAddFormVisible(visible){
+      this.addFormDialogVisible = visible;
+    },
+
+    changeFormDesignerVisible(visible){
+      this.formDesignerVisible = visible
     },
     addForm() {
-      this.$refs.projectFormDiolog.dialogVisible1 = true;
-      this.$refs.projectFormDiolog.title = "新建表单";
-      this.$refs.projectFormDiolog.postData = {
-        ascriptionName: "",
-        ascName: "",
-        ascription: "",
-        business: "",
-        energy: "",
-        name: "",
-      };
-      this.$refs.projectFormDiolog.postData.ascription = this.projectCode;
-      this.$refs.projectFormDiolog.postData.ascriptionName = this.ascriptionName;
+      this.addFormDialogVisible = true;
+      this.projectFormTitle = '新建表单';
     },
 
     addForm2(item, tileText) {
-      let content = JSON.parse(item.content);
-      this.$refs.projectFormDiolog.dialogVisible2 = true;
+      this.formDesignerVisible = true;
+      this.formInfo = item;
       this.$nextTick(() => {
-        this.$refs.projectFormDiolog.title = tileText;
-        this.$refs.projectFormDiolog.$refs.formDesigner.designList =
-          content.list;
-        this.$refs.projectFormDiolog.$refs.formDesigner.formConfig =
-          content.config;
-        this.$refs.projectFormDiolog.postData = {
-          ...item,
-          ascriptionName: "",
-          ascName: this.$getMappingName(item.business),
-        };
+        this.projectFormTitle = tileText;
       });
     },
     detailsDiolog(item) {
-      let _this = this;
-
-      postFormDesignRecordFormDesignRecordInfo({
-        id: item.id,
-        status: this.formStatus,
-        tenantId: this.tenantId,
-        ascription: this.projectCode,
-        business:
-          typeof this.projectValue === "string"
-            ? this.projectValue
-            : this.projectValue.at(-1),
-        createBy: this.userInfo.account,
-      }).then((res) => {
-        _this.$refs.detailsDiolog.dialogVisible2 = true;
-        _this.formData = res.result;
-        let arr = [];
-        res.result.versions.forEach((item, index) => {
-          arr.push({
-            value: res.result.childIds[index],
-            label: item,
-          });
-        });
-        _this.$refs.detailsDiolog.options = arr;
-        _this.$refs.detailsDiolog.value = res.result.childIds[0];
-        _this.$refs.detailsDiolog.getAllBusinessConfig(res.result);
-      });
+      this.formData = item;
+      this.detailDialogVisible = true
     },
     editForm(item, tileText) {
       this.addForm2(item, tileText);
     },
-  },
-  mounted() {
-    this.init();
-  },
-  components: {
-    projectFormDiolog,
-    detailsDiologForm,
-    application,
-    longText,
+    handleCloseDetail(){
+      this.detailDialogVisible = false;
+    }
   },
 };
 </script>

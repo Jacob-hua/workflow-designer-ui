@@ -127,14 +127,25 @@ export default {
     },
 
     async fetchWorkflowList(){
-      const {data, code, msg} = await fetchWorkflowList({
-        tenantId: '18',
-        projectId: '9',
-        applicationId: '209',
+      const params = this.bindType === 'bind' ? {
+        tenantId: this.business[0]??"",
+        projectId: this.business[1]??"",
+        applicationId: this.business[2]??"",
         bindType: this.bindType,
         limit: this.pageInfo.limit,
-        page: this.pageInfo.page
-      })
+        page: this.pageInfo.page,
+        processName: this.searchForm.processName??'',
+        startTime: this.searchForm.valueDate[0]??'',
+        endTime: this.searchForm.valueDate[1]??''
+      } : {
+        bindType: this.bindType,
+        limit: this.pageInfo.limit,
+        page: this.pageInfo.page,
+        processName: this.searchForm.processName??'',
+        startTime: this.searchForm.valueDate[0]??'',
+        endTime: this.searchForm.valueDate[1]??''
+      }
+      const {data, code, msg} = await fetchWorkflowList(params)
       if(code!=='200'){
         this.$message.error(msg);
         return;

@@ -21,8 +21,25 @@ import { Bpmn, FormPlugin } from './plugin'
 // 引入 actions 实例
 import actions from '@/util/qiankunActions.js'
 import '@/directive/RoleDirective.js'
-
+// import VueCompositionAPI from '@vue/composition-api'
+// import { registerMicroApps, start } from 'qiankun'
 Vue.config.productionTip = false
+
+// registerMicroApps([
+//   {
+//     name: "formDesigner",
+//     entry: `${
+//       process.env.QIAN_KUN_URL
+//         ? process.env.QIAN_KUN_URL
+//         : "http://localhost:3000"
+//     }`,
+//     container: "#designer-app",
+//     activeRule: "/formDesigner",
+//     props:{}
+//   }
+// ])
+
+// start({prefetch: true})
 
 Vue.use(ElementUI)
 Vue.use(JsonViewer)
@@ -33,6 +50,8 @@ Vue.use(VueRouter)
 
 Vue.use(Vuex)
 
+// Vue.use(VueCompositionAPI)
+
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch((err) => err)
@@ -41,7 +60,7 @@ VueRouter.prototype.push = function push(location) {
 const createRouter = () => {
   const router = new VueRouter({
     // base: window.__POWERED_BY_QIANKUN__ ? '/ftkms-gdgl/#/' : '/',
-    mode: 'hash',
+    mode: 'history',
     routes,
   })
   // router.beforeEach((to, from, next) => {

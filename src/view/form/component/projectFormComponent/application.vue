@@ -11,23 +11,27 @@
     >
       <div class="diologMain">
         <div class="diologMain-right">
-          <el-scrollbar class="center-scrollbar" >
+          <el-scrollbar class="center-scrollbar">
             <div
-                class="processList-item"
-                v-for="(item, index) in formList"
-                :key="index"
+              class="processList-item"
+              v-for="(item, index) in formList"
+              :key="index"
             >
               <div class="processList-item-word">
                 <p>表单名称:</p>
-                <span>{{ item.name }}</span>
+                <span>{{ item.formName }}</span>
               </div>
               <div class="processList-item-word">
+                <p>版本名称:</p>
+                <span>{{ item.formVersionTag }}</span>
+              </div>
+              <div class="processList-item-wor d">
                 <p>版本:</p>
-                <span>{{ item.version }}</span>
+                <span>{{ item.formVersion }}</span>
               </div>
               <div class="processList-item-word">
                 <p>创建人:</p>
-                <span>{{ item.createBy == -1 ? "系统" : item.createBy }}</span>
+                <span>{{item.creatorName }}</span>
               </div>
               <div class="processList-item-word">
                 <p>创建时间:</p>
@@ -52,38 +56,54 @@
               <el-form
                 ref="form"
                 :rules="rules"
-                label-width="80px"
+                label-width="120px"
                 label-position="right"
                 :model="postData"
               >
-                <el-form-item label="应用项目" prop="ascription">
-                  <el-select v-model="postData.ascription" disabled>
-                    <el-option
-                      v-for="{ id, label, value } in rootOrganizations"
-                      :key="id"
-                      :label="label"
-                      :value="value"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-
                 <div class="from-item">
                   <el-form-item label="表单类型" prop="business">
                     <el-cascader
                       v-model="postData.business"
                       clearable
                       :style="{ width: '100%' }"
-                      :options="rootOrganizationChildren(postData.ascription)"
-                      :props="cascaderProps"
+                      :options="projectOrganizations()"
+                      :props="{
+                        emitPath: true,
+                        checkStrictly: true,
+                      }"
                     >
                     </el-cascader>
                   </el-form-item>
                 </div>
                 <div class="from-item">
-                  <el-form-item label="表单名称" prop="name">
+                  <el-form-item label="表单名称" prop="formName">
                     <el-input
-                      v-model="postData.name"
+                      v-model="postData.formName"
                       placeholder="请输入表单名称"
+                    ></el-input>
+                  </el-form-item>
+                </div>
+                <div class="from-item">
+                  <el-form-item label="表单描述" prop="formDesc">
+                    <el-input
+                      v-model="postData.formDesc"
+                      placeholder="请输入表单描述"
+                    ></el-input>
+                  </el-form-item>
+                </div>
+                <div class="from-item">
+                  <el-form-item label="表单版本名称" prop="formVersionTag">
+                    <el-input
+                      v-model="postData.formVersionTag"
+                      placeholder="请输入表单版本名称"
+                    ></el-input>
+                  </el-form-item>
+                </div>
+                <div class="from-item">
+                  <el-form-item label="表单版本描述" prop="formVersionDesc">
+                    <el-input
+                      v-model="postData.formVersionDesc"
+                      placeholder="请输入表单版本描述"
                     ></el-input>
                   </el-form-item>
                 </div>
@@ -101,14 +121,8 @@
 </template>
 
 <script>
-import {
-  designFormDesignServiceAll,
-  postFormDesignServiceRealiseProcessData,
-  associationForm,
-} from "@/api/unit/api.js";
-import { mapGetters, mapState } from "vuex";
-import { getProjectList } from "@/api/globalConfig";
-import router from "@/router";
+import { mapGetters } from 'vuex';
+import { fetchFormVersionList, bindCommonFormToBussiness } from '../../../../api/workflowForm';
 
 export default {
   props: {
@@ -116,161 +130,107 @@ export default {
       type: Boolean,
       default: false,
     },
-    projectCode: {
-      type: String,
-      default: "",
-    },
-    projectValue: {
-      default: "",
-    },
   },
   data() {
     return {
       rules: {
-        ascription: [
-          { required: true, message: "请输入资源名称", trigger: "blur" },
-        ],
         business: [
-          { required: true, message: "请输入资源标识", trigger: "change" },
+          { required: true, message: '请输入资源标识', trigger: 'change' },
         ],
-        name: [
-          { required: true, message: "请输入表单名称", trigger: "blur" },
+        formName: [
+          { required: true, message: '请输入表单名称', trigger: 'blur' },
           {
             min: 0,
             max: 100,
-            message: "长度在 0 到 100 个字符",
-            trigger: "blur",
+            message: '长度在 0 到 100 个字符',
+            trigger: 'blur',
           },
         ],
-      },
-      sysProps: {
-        label: "name",
-        value: "code",
-        checkStrictly: true,
-        emitPath: false,
+        formVersionTag: [
+        { required: true, message: '请输入表单版本名称', trigger: 'blur' },
+          {
+            min: 0,
+            max: 100,
+            message: '长度在 0 到 100 个字符',
+            trigger: 'blur',
+          },
+        ]
       },
       dialogVisibleModal: false,
-      projectOption: [],
-      systemOption: [],
       postData: {
-        ascription: "",
-        business: "",
-        name: "",
+        formDesc: '',
+        business: [],
+        formName: '',
+        formVersionDesc:'',
+        formVersionTag: ''
       },
-      input: "",
-      getData: {
+      pageInfo: {
         page: 1,
-        limit: 10,
-        total: 1,
+        limit: 9999,
       },
       formList: [],
+      currentData: null,
     };
   },
   computed: {
-    ...mapState("account", ["tenantId", "userInfo", "currentOrganization"]),
-    ...mapState("uiConfig", ["cascaderProps"]),
-    ...mapGetters("config", [
-      "rootOrganizations",
-      "rootOrganizationChildren",
-      "rootOrganizationChildrenAndAll",
-    ]),
+    ...mapGetters('config', ['projectOrganizations']),
   },
   watch: {
-    "postData.ascription"(value) {
-      if (value === this.currentOrganization) {
-        return;
+    dialogVisible(value){
+      if(value){
+        this.getFormList();
       }
-      this.updateCurrentOrganization({ currentOrganization: value });
-    },
-    currentOrganization: {
-      immediate: true,
-      handler(value) {
-        this.postData.ascription = value;
-      },
-    },
+    }
   },
   methods: {
     close() {
       this.dialogVisibleModal = false;
+      this.currentData = null;
       this.$refs.form.clearValidate();
       this.$refs.form.resetFields();
     },
-    deleteEmptyChildren(arr) {
-      for (let i = 0; i < arr.length; i++) {
-        const arrElement = arr[i];
-        if (!arrElement.children.length) {
-          delete arrElement.children;
-          continue;
-        }
-        if (arrElement.children) {
-          this.deleteEmptyChildren(arrElement.children);
-        }
-      }
-    },
     handleClose() {
-      this.$emit("close");
+      this.$emit('close');
     },
-    handleSizeChange() {},
-    handleCurrentChange() {},
-    getFormList() {
-      designFormDesignServiceAll({
-        status: "enabled",
-        tenantId: this.tenantId,
-        currentData: {},
-        ascription: "public",
-        business: "",
-        numberCode: "",
-        name: "",
-        docName: "",
-      }).then((res) => {
-        this.formList = res.result;
+    async getFormList() {
+      const {data,code,msg} = await fetchFormVersionList({
+        limit: this.pageInfo.limit,
+        page: this.pageInfo.page,
+        bindType: 'common'
       });
+
+      if(code!=='200'){
+        this.$message.error(msg);
+        return;
+      }
+      this.formList = data.dataList;
     },
-    onSure() {
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          let _this = this;
-          const id = "form_" + Date.parse(new Date());
-          var file1 = new File([_this.currentData.content], "test.json", {
-            type: "text/xml",
-          });
-          if (this.postData.id) {
-            formData.append("sourceId", this.postData.sourceId);
-            if (this.postData.status !== "enabled") {
-              formData.append("id", this.postData.id);
-            }
-          }
-          let formData = new FormData();
-          formData.append("name", this.postData.name);
-          formData.append("docName", this.postData.name + ".json");
-          formData.append("docType", "json");
-          formData.append("ascription", this.postData.ascription);
-          formData.append("code", id);
-          formData.append("business", this.postData.business);
-          formData.append("status", "enabled");
-          formData.append("createBy", this.userInfo.account);
-          formData.append("createName", this.userInfo.name);
-          formData.append("tenantId", this.tenantId);
-          formData.append("file", file1);
-          associationForm(formData).then((res) => {
-            this.$message.success("应用至项目表单成功");
-            this.dialogVisibleModal = false;
-          });
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
+    async onSure() {
+      await this.$refs['form'].validate();
+      const {code, msg} = await bindCommonFormToBussiness({
+        tenantId: this.postData.business[0]??'',
+        projectId: this.postData.business[1]??'',
+        applicationId: this.postData.business[2]??'',
+        formName: this.postData.formName,
+        formDesc: this.postData.formDesc,
+        formVersionTag: this.postData.formVersionTag,
+        formVersionDesc: this.postData.formVersionDesc,
+        commonFormVersionId: this.currentData.formVersionId
       });
+      if(code!=='200'){
+        this.$message.error(msg);
+        return;
+      }
+      this.close();
+      this.$message.success("关联成功");
     },
     open(item) {
       this.currentData = item;
       this.dialogVisibleModal = true;
-      this.postData.name = "";
-      this.postData.business = "";
     },
   },
   mounted() {
-    this.getFormList();
+    // this.getFormList();
   },
 };
 </script>
@@ -292,6 +252,10 @@ export default {
 }
 /deep/ .el-dialog {
   @include formDialog;
+
+  .el-dialog__body {
+    padding: 20px;
+  }
 }
 .next {
   @include primaryBtn;
@@ -305,7 +269,6 @@ export default {
 .refence {
   cursor: pointer;
   color: #0dd5ef;
-  padding-top: 15px;
   padding-left: 180px;
 }
 .diologMain-left {

@@ -29,7 +29,7 @@
         </el-form-item>
         <el-form-item label="工作流">
           <el-input
-            v-model="searchForm.name"
+            v-model="searchForm.processName"
             placeholder="请输入工作流名称"
           ></el-input>
         </el-form-item>
@@ -134,10 +134,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('account', ['tenantId', 'userInfo', 'currentOrganization']),
-    ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['projectOrganizations']),
-    ...mapState('config', ['organizations']),
   },
   watch: {},
   async mounted() {
@@ -146,9 +143,7 @@ export default {
     this.setDefaultorganization();
   },
   methods: {
-    ...mapMutations('account', ['updateCurrentOrganization']),
     ...mapActions('config', [
-      'dispatchRefreshOrganization',
       'dispatchProjectOriganizations',
     ]),
     setDefaultorganization() {
@@ -183,7 +178,7 @@ export default {
         ...this.searchForm,
         business: '',
         valueDate: [],
-        name: '',
+        processName: '',
       };
       this.refreshWorkFlowRecord();
     },

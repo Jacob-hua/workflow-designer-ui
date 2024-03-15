@@ -1,18 +1,6 @@
 <template>
   <el-dialog title="新建工作流" :close-on-click-modal="false" :visible="visible" @close="onClose">
     <el-form label-position="right" label-width="80px" ref="formData" :model="formData" :rules="formRules">
-      <!-- <el-form-item label="应用项目" prop="ascription">
-        <el-col :span="24">
-          <el-select v-model="formData.ascription" disabled>
-            <el-option
-              v-for="{ id, label, value } in rootOrganizations"
-              :key="id"
-              :label="label"
-              :value="value"
-            ></el-option>
-          </el-select>
-        </el-col>
-      </el-form-item> -->
       <el-form-item label="应用项目" prop="business">
         <el-col :span="24">
           <el-cascader

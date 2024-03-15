@@ -72,10 +72,14 @@ export default {
         processFormData.set('projectId', this.projectData.business[1] ?? '');
         processFormData.set('applicationId', this.projectData.business[2]) ??
           '';
-        processFormData.set('bindType', this.bindType);
       } else {
         processFormData.set('processId', this.projectData.processId);
+        processFormData.set('tenantId', this.projectData.tenantId ?? '');
+        processFormData.set('projectId', this.projectData.projectId ?? '');
+        processFormData.set('applicationId', this.projectData.applicationId) ??
+          '';
       }
+      processFormData.set('bindType', this.bindType);
       processFormData.set('processName', processName);
       processFormData.set('processDesc', processDesc);
       return processFormData;
