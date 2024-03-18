@@ -22,24 +22,7 @@ import { Bpmn, FormPlugin } from './plugin'
 import actions from '@/util/qiankunActions.js'
 import '@/directive/RoleDirective.js'
 // import VueCompositionAPI from '@vue/composition-api'
-// import { registerMicroApps, start } from 'qiankun'
 Vue.config.productionTip = false
-
-// registerMicroApps([
-//   {
-//     name: "formDesigner",
-//     entry: `${
-//       process.env.QIAN_KUN_URL
-//         ? process.env.QIAN_KUN_URL
-//         : "http://localhost:3000"
-//     }`,
-//     container: "#designer-app",
-//     activeRule: "/formDesigner",
-//     props:{}
-//   }
-// ])
-
-// start({prefetch: true})
 
 Vue.use(ElementUI)
 Vue.use(JsonViewer)

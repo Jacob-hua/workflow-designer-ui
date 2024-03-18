@@ -2,15 +2,15 @@
   <div>
     <el-table :data="tableData" v-loading="loading">
       <el-table-column type="index" label="序号" width="180"> </el-table-column>
-      <el-table-column prop="name" label="名称" width="180"> </el-table-column>
-      <el-table-column prop="docName" label="流程文件">
+      <el-table-column prop="processName" label="名称" width="180"> </el-table-column>
+      <el-table-column prop="processName" label="流程文件">
         <template slot-scope="scope">
-          <span class="fileStyle">{{ scope.row.docName }}</span>
+          <span class="fileStyle">{{ scope.row.processName }}.bpmn</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createBy" label="创建人"> </el-table-column>
+      <el-table-column prop="creatorName" label="创建人"> </el-table-column>
       <el-table-column prop="createTime" label="创建时间"> </el-table-column>
-      <el-table-column prop="count" label="已部署次数"> </el-table-column>
+      <el-table-column prop="modelCount" label="已部署次数"> </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
@@ -18,7 +18,6 @@
             type="text"
             size="small"
             class="button1"
-            v-role="{ id: 'HomeDeploy', type: 'button', business: searchForm.business }"
           >
             部署
           </el-button>
@@ -26,7 +25,6 @@
             @click="onDetails(scope.row)"
             type="text"
             size="small"
-            v-role="{ id: 'HomeLook', type: 'button', business: searchForm.business }"
           >
             查看
           </el-button>
@@ -43,10 +41,9 @@
     >
     </el-pagination>
     <deploy-confirmation
-      :visible.sync="deployConfirmationVisible"
-      :ascription="workflow.ascription"
-      :business="workflow.business"
+      :visible="deployConfirmationVisible"
       @submit="onConfirmationSubmit"
+      @cancel="handleCloseConfirmation"
     />
     <deploy-options :visible.sync="deployOptionsVisible" :workflow="workflow" @deployed="onDeployed" @saved="onSaved" />
     <deploy-cabin-detail :visible.sync="deployCabinDetailVisible" :workflow="workflow" @deleted="onDeletedDeploy" />
@@ -54,7 +51,7 @@
 </template>
 
 <script>
-import { postProcessDesignServicePage } from '@/api/unit/api.js'
+import { fetchWorkflowList } from '../../../api/workflow'
 import { mapState } from 'vuex'
 import DeployConfirmation from './DeployConfirmation.vue'
 import DeployCabinDetail from './DeployCabinDetail.vue'
@@ -83,14 +80,12 @@ export default {
         page: 1,
         limit: 10,
         total: 0,
-        status: 'enabled',
       },
       tableData: [],
       workflow: {},
     }
   },
   computed: {
-    ...mapState('account', ['userInfo', 'tenantId']),
   },
   watch: {
     searchForm: {
@@ -106,6 +101,9 @@ export default {
       this.workflow = { ...this.workflow, ...workflow }
       this.deployOptionsVisible = true
     },
+    handleCloseConfirmation(){
+      this.deployConfirmationVisible = false;
+    },
     onDeletedDeploy() {
       this.fetchWorkflows()
       this.$emit('deleted')
@@ -119,24 +117,25 @@ export default {
     },
     async fetchWorkflows() {
       this.loading = true
-      const { errorInfo, result } = await postProcessDesignServicePage({
-        ...this.pageInfo,
-        tenantId: this.tenantId,
-        createBy: this.userInfo.account,
+      const { data, code, msg } = await fetchWorkflowList({
+        page: this.pageInfo.page,
+        limit: this.pageInfo.limit,
+        bindType: 'bind',
+        tenantId: this.searchForm.business[0]??'',
+        projectId: this.searchForm.business[1]??'',
+        applicationId: this.searchForm.business[2]??'',
         startTime: this.searchForm.valueDate[0],
         endTime: this.searchForm.valueDate[1],
-        business: this.searchForm.business,
-        ascription: this.searchForm.ascription,
       })
-      if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg)
+      if (code!=='200') {
+        this.$message.error(msg)
         this.loading = false
         return
       }
-      this.tableData = result.list
-      this.pageInfo.total = result.total
+      this.tableData = data.dataList;
+      this.pageInfo.total = Number(data.total);
       this.loading = false
-      this.$emit('refreshTable', result.total)
+      this.$emit('refreshTable', Number(data.total))
     },
     onPageSizeChange(limit) {
       this.pageInfo.limit = limit

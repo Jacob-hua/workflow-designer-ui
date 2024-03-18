@@ -16,5 +16,10 @@ export const updateWorkflow = (params) => post('/workflow/design/process/update'
 export const bindWorkflow = (params) => post('/workflow/design/process/bind',params)
 
 //获取流程信息
-export const getWorkflowInfo = (params) => get('/workflow/design/process/get',params)
+export const fetchWorkflowInfo = (params) => get('/workflow/design/process/get',params)
+
+//获取任务节点列表
+export const fetchTaskNodeList = (params) => post('/workflow/design/process/task/before/list', params)
+
+
 

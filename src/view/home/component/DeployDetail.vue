@@ -1,12 +1,15 @@
 <template>
   <div>
     <el-dialog title="部署详情" fullscreen :visible="visible" @close="onCancel">
-      <workflow-info :workflow="workflow" :xml="workflow.processResource" :processDisplayInfo="processDisplayInfo" />
+      <workflow-info
+        :workflow="workflow"
+        :xml="workflow.processResource"
+        :processDisplayInfo="processDisplayInfo"
+      />
       <span slot="footer">
         <el-button
           class="remove-button"
           @click="onDeleteClick"
-          v-role="{ id: 'HomeDelete', type: 'button', business: workflow.business }"
         >
           删除
         </el-button>
@@ -16,9 +19,12 @@
 </template>
 
 <script>
-import { getDeleteDeployment, getDeployAndProcessInfo } from '@/api/unit/api.js'
-import { mapState } from 'vuex'
-import WorkflowInfo from './WorkflowInfo.vue'
+import {
+  getDeleteDeployment,
+  getDeployAndProcessInfo,
+} from '@/api/unit/api.js';
+import { mapState } from 'vuex';
+import WorkflowInfo from './WorkflowInfo.vue';
 
 export default {
   name: 'DeployDetail',
@@ -40,7 +46,7 @@ export default {
   data() {
     return {
       workflow: {},
-    }
+    };
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
@@ -48,88 +54,91 @@ export default {
       return [
         {
           label: '流程编码',
-          value: this.workflow.numberCode,
+          value: this.workflow.processCode,
         },
         {
-          label: '部署名称',
+          label: '模型名称',
           value: this.workflow.deployName,
         },
-        {
-          label: '部署时间',
-          value: this.workflow.createTime,
-        },
+        // {
+        //   label: '部署时间',
+        //   value: this.workflow.createTime,
+        // },
         {
           label: '应用项目',
-          value: this.$getMappingName(this.workflow.ascription),
+          value: this.workflow.projectName,
         },
-        {
-          label: '流程类型',
-          value: this.$getMappingName(this.workflow.business),
-        },
-        {
-          label: '部署人',
-          value: this.workflow.createName,
-        },
-      ]
+        // {
+        //   label: '部署人',
+        //   value: this.workflow.createName,
+        // },
+      ];
     },
   },
   watch: {
+    visible(value) {
+      if (value) {
+        this.fetchDeployedWorkflow();
+      }
+    },
     deployedId: {
       immediate: true,
       handler(deployedId) {
         if (!deployedId) {
-          return
+          return;
         }
-        this.fetchDeployedWorkflow()
+        // this.fetchDeployedWorkflow();
       },
     },
   },
   methods: {
     onCancel() {
-      this.$emit('cancel')
-      this.colse()
+      this.$emit('cancel');
+      this.colse();
     },
     async onDeleteClick() {
       try {
         await this.$confirm('删除后不可恢复, 请确认是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          cancelButtonClass: "btn-custom-cancel",
+          cancelButtonClass: 'btn-custom-cancel',
           type: 'warning',
-        })
+        });
         const { errorInfo, result } = await getDeleteDeployment({
           id: this.workflow.deployRecordId,
           cascade: false,
-        })
+        });
         if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
+          this.$message.error(errorInfo.errorMsg);
+          return;
         }
         this.$message({
           type: 'success',
           message: '删除成功!',
-        })
-        this.$emit('deleted')
-        this.colse()
+        });
+        this.$emit('deleted');
+        this.colse();
       } catch (error) {}
     },
     colse() {
-      this.$emit('update:visible', false)
+      this.$emit('update:visible', false);
     },
     async fetchDeployedWorkflow() {
       try {
-        const { errorInfo, result } = await getDeployAndProcessInfo(this.deployedId)
+        const { errorInfo, result } = await getDeployAndProcessInfo(
+          this.deployedId
+        );
         if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
+          this.$message.error(errorInfo.errorMsg);
+          return;
         }
-        this.workflow = result
+        this.workflow = result;
       } catch (error) {
-        this.workflow = {}
+        this.workflow = {};
       }
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -139,7 +148,6 @@ export default {
 </style>
 
 <style lang="scss">
-
 .btn-custom-cancel {
   @include cancelbutton;
 }

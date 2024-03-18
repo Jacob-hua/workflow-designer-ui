@@ -10,7 +10,7 @@
         <div>
           <workflow-info
             :form="formContent"
-            :xml="workflow.content"
+            :xml="workflow.processFile"
             :workflow="workflow"
             :processDisplayInfo="processDisplayInfo"
             canRemoveForm
@@ -29,28 +29,26 @@
           </div>
           <div class="content-wrapper">
             <div
-              v-for="{
-                id,
-                version,
-                name,
-                formContent: { list: fields, config },
-                docName,
-              } in formList"
-              :key="id"
+              v-for="(ele) in formList"
+              :key="ele.formId"
             >
-              <div class="info">
-                <div>{{ name }}</div>
-                <div>
-                  {{ version }}
-                </div>
-              </div>
+            {{ ele.formName }}
+              <el-select v-model="formList[index].selectedVersion" @change="handleChangeVersion(ele)">
+                <div slot="prefix">{{ ele.formName }}</div>
+                <el-option
+                v-for="(item, index) in ele.versionList"
+                :key="index"
+                :label="item.label"
+                :value="item.value"
+                ></el-option>
+              </el-select>
               <div class="operations">
                 <el-popover placement="right" width="400" trigger="click">
-                  <preview
+                  <!-- <preview
                     :itemList="fields"
                     :formConf="config"
                     class="preview-popper"
-                  ></preview>
+                  ></preview> -->
                   <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover>
                 <span
@@ -62,21 +60,21 @@
                 </span>
               </div>
             </div>
+            <el-pagination
+              v-if="pageInfo.total"
+              @size-change="onSizeChange"
+              @current-change="onPageChange"
+              :current-page="pageInfo.page"
+              :page-size="pageInfo.limit"
+              layout="prev, pager, next, jumper"
+              :total="pageInfo.total"
+            >
+            </el-pagination>
           </div>
         </div>
       </div>
       <span slot="footer">
-        <el-button
-          class="deploy-button"
-          @click="onDeploy"
-          v-role="{
-            id: 'HomeDeploy',
-            type: 'button',
-            business: workflow.business,
-          }"
-        >
-          部署
-        </el-button>
+        <el-button class="deploy-button" @click="onDeploy"> 部署 </el-button>
         <el-button class="save-button" @click="onSave">保存</el-button>
         <el-button class="cancel-button" @click="onCancel">取消</el-button>
       </span>
@@ -85,21 +83,18 @@
 </template>
 
 <script>
-import WorkflowInfo from "./WorkflowInfo.vue";
+import WorkflowInfo from './WorkflowInfo.vue';
+import { mapState } from 'vuex';
+import BpmnShapeType from '../../../plugin/Bpmn/enum/shapeType';
 import {
-  postProcessDraft,
-  putProcessDraft,
-  designFormDesignServiceAll,
-  postDeployForOnline,
-} from "@/api/unit/api.js";
-import preview from "@/plugin/FormDesign/component/preview";
-import { mapState } from "vuex";
-import BpmnShapeType from "../../../plugin/Bpmn/enum/shapeType";
+  fetchFormList,
+  fetchFormVersionList,
+  fetchFormVersion,
+} from '../../../api/workflowForm';
 
 export default {
-  name: "DeployOptions",
+  name: 'DeployOptions',
   components: {
-    preview,
     WorkflowInfo,
   },
   props: {
@@ -118,80 +113,52 @@ export default {
       iBpmn: {},
       formContent: {},
       formList: [],
-      formName: "",
+      formName: '',
       canLink: false,
+      pageInfo: {
+        limit: 10,
+        page: 1,
+        total: 0,
+      },
     };
   },
   computed: {
-    ...mapState("account", ["tenantId", "userInfo"]),
-    ruleId() {
-      return this.workflow.triggerModel === "1"
-        ? this.workflow.rule.ruleId
-        : "";
-    },
+    ...mapState('account', ['tenantId', 'userInfo']),
     processDisplayInfo() {
-      const cycleInfo =
-        this.workflow.triggerModel === "1"
-          ? [
-              {
-                label: "触发模式",
-                value: "周期性",
-              },
-              {
-                label: "周期规则",
-                value: this.workflow.rule.cronExpression,
-              },
-            ]
-          : this.workflow.triggerModel === "2"
-          ? [
-              {
-                label: "触发模式",
-                value: "固定触发",
-              },
-            ]
-          : [
-              {
-                label: "触发模式",
-                value: "无",
-              },
-            ];
       return [
         {
-          label: "流程编码",
-          value: this.workflow.numberCode,
+          label: '流程编码',
+          value: this.workflow.processCode,
         },
         {
-          label: "部署名称",
-          value: this.workflow.deployName,
+          label: '模型名称',
+          value: this.workflow.modelName,
         },
+        // {
+        //   label: "部署时间",
+        //   value: this.workflow.createTime,
+        // },
         {
-          label: "部署时间",
-          value: this.workflow.createTime,
+          label: '应用项目',
+          value: this.workflow.projectName,
         },
-        {
-          label: "应用项目",
-          value: this.$getMappingName(this.workflow.ascription),
-        },
-        {
-          label: "流程类型",
-          value: this.$getMappingName(this.workflow.business),
-        },
-        ...cycleInfo,
-        {
-          label: "部署人",
-          value: this.workflow.createBy,
-        },
+        // {
+        //   label: "部署人",
+        //   value: this.workflow.createBy,
+        // },
       ];
     },
   },
   watch: {
-    workflow() {
-      this.fetchFormList();
+    visible(value) {
+      if (value) {
+        this.fetchFormList();
+      }
     },
   },
   methods: {
     onCancel() {
-      this.$emit("cancel");
+      this.$emit('cancel');
       this.onClose();
     },
     onLinked({ id, docName, fields, config }) {
@@ -199,10 +166,10 @@ export default {
         return;
       }
       this.iBpmn.updateSelectedShapeProperties({
-        "camunda:formKey": "camunda-forms:deployment:" + docName,
+        'camunda:formKey': 'camunda-forms:deployment:' + docName,
       });
       this.iBpmn.updateSelectedShapeProperties({
-        "camunda:formId": id,
+        'camunda:formId': id,
       });
       this.formContent = {
         fields,
@@ -223,41 +190,41 @@ export default {
       this.iBpmn = iBpmn;
     },
     onClose() {
-      this.formName = "";
+      this.formName = '';
       this.formContent = {};
-      this.$emit("update:visible", false);
+      this.$emit('update:visible', false);
     },
     generateWorkflowFormData() {
       const formIds = this.iBpmn
-        .elementRegistryFilter(({ type }) => type === "bpmn:UserTask")
-        .map((element) => this.iBpmn.getShapeInfo(element)["formId"])
+        .elementRegistryFilter(({ type }) => type === 'bpmn:UserTask')
+        .map((element) => this.iBpmn.getShapeInfo(element)['formId'])
         .filter((formId) => formId)
-        .join(",");
+        .join(',');
 
       const formData = new FormData();
       const formDataFactory = {
         enabled: (formData) => {
-          formData.append("processId", this.workflow.id);
+          formData.append('processId', this.workflow.id);
         },
         drafted: (formData) => {
-          formData.append("processId", this.workflow.processId);
-          formData.append("id", this.workflow.id);
+          formData.append('processId', this.workflow.processId);
+          formData.append('id', this.workflow.id);
         },
       };
       formDataFactory[this.workflow.status](formData);
-      formData.append("createBy", this.userInfo.account);
-      formData.append("deployName", this.workflow.deployName);
-      formData.append("draftId", this.workflow.id);
-      formData.append("operatorId", "1");
-      formData.append("operatorName", this.userInfo.account);
+      formData.append('createBy', this.userInfo.account);
+      formData.append('deployName', this.workflow.deployName);
+      formData.append('draftId', this.workflow.id);
+      formData.append('operatorId', '1');
+      formData.append('operatorName', this.userInfo.account);
       formData.append(
-        "systemType",
+        'systemType',
         this.workflow.systemType || this.workflow.business
       );
-      formData.append("updateBy", this.userInfo.account);
-      formData.append("tenantId", this.tenantId);
-      formData.append("formIds", formIds);
-      formData.append("triggerModel", this.workflow.triggerModel);
+      formData.append('updateBy', this.userInfo.account);
+      formData.append('tenantId', this.tenantId);
+      formData.append('formIds', formIds);
+      formData.append('triggerModel', this.workflow.triggerModel);
       return formData;
     },
     async getXMLInfo() {
@@ -266,8 +233,8 @@ export default {
       const { xml } = await this.iBpmn.saveXML({ format: true });
       const { name: processName, id: processId } =
         this.iBpmn.getRootShapeInfo();
-      const file = new File([xml], processName + ".bpmn", {
-        type: "bpmn20-xml",
+      const file = new File([xml], processName + '.bpmn', {
+        type: 'bpmn20-xml',
       });
       return {
         file,
@@ -275,56 +242,60 @@ export default {
       };
     },
     async onDeploy() {
-      try {
-        const { file, processId } = await this.getXMLInfo();
-        const workflowFormData = this.generateWorkflowFormData();
-        workflowFormData.append("deployKey", processId);
-        workflowFormData.append("processResource", file);
-        workflowFormData.append("ruleId", this.ruleId);
-        const { errorInfo } = await postDeployForOnline(workflowFormData);
-        if (errorInfo.errorCode) {
-          this.$message.error(this.errorInfo.errorMsg);
-          return;
-        }
-        this.$message.success("部署成功");
-        this.$emit("deployed");
-        this.onClose();
-      } catch (error) {
-        console.log(error);
-      }
     },
     async onSave() {
-      try {
-        const { file, processId } = await this.getXMLInfo();
-        const workflowFormData = this.generateWorkflowFormData();
-        workflowFormData.append("deployKey", processId);
-        workflowFormData.append("processFile", file);
-        workflowFormData.append("ruleId", this.ruleId);
-
-        if (this.workflow.status === "enabled") {
-          await postProcessDraft(workflowFormData);
-        } else {
-          await putProcessDraft(workflowFormData);
-        }
-        this.$message.success("保存成功");
-        this.$emit("saved");
-        this.onClose();
-      } catch (error) {}
     },
     async fetchFormList() {
-      const { errorInfo, result: formList = [] } =
-        await designFormDesignServiceAll({
-          status: "enabled",
-          tenantId: this.tenantId,
-          ascription: this.workflow.ascription,
-          business: this.workflow.business,
-          name: this.formName,
-        });
-      if (errorInfo.errorCode) {
-        this.$message.error(errorInfo.errorMsg);
+      console.log(this.workflow, 'adada');
+      const { data, code, msg } = await fetchFormList({
+        tenantId: this.workflow.tenantId,
+        projectId: this.workflow.projectId,
+        applicationId: this.workflow.projectId,
+        bindType: 'bind',
+        formName: this.formName,
+        limit: this.pageInfo.limit,
+        page: this.pageInfo.page,
+      });
+      if (code !== '200') {
+        this.$message.error(msg);
+        return;
       }
-      this.formList = formList.map(this.disableForm);
+      const dataList = data.dataList;
+      this.formList = dataList.map(async (item) => {
+        const versionList = await fetchFormVersionList(item.formId);
+        return {
+          ...item,
+          selectedVersion: versionList[0].value,
+          versionList,
+        };
+      });
+      this.pageInfo.total = Number(data.total);
     },
+    async fetchFormVersionList(formId) {
+      const { data, code, msg } = await fetchFormVersionList({
+        formId: formId,
+        limit: 9999,
+        page: 1,
+      });
+      if (code !== '200') {
+        this.$message.error(msg);
+        return [];
+      }
+      return data.dataList.map(
+        ({ formVersionId, formVersion, formVersionTag, formVersionFile }) => {
+          const versionInfo = {
+            formVersionId,
+            formVersionFile: JSON.parse(formVersionFile),
+          };
+          return {
+            label: `${formVersionTag}_${formVersion}`,
+            value: JSON.stringify(versionInfo),
+          };
+        }
+      );
+    },
+
+    async fetchFormVersion() {},
     disableForm(form) {
       const newForm = { ...form };
       newForm.formContent = JSON.parse(newForm.content);
@@ -332,6 +303,23 @@ export default {
       newForm.formContent.config &&
         (newForm.formContent.config.disabled = true);
       return newForm;
+    },
+
+    onSizeChange(val) {
+      this.pageInfo.limit = val;
+      // this.fetchWorkflowList()
+    },
+    onPageChange(val) {
+      this.pageInfo.page = val;
+      // this.fetchWorkflowList()
+    },
+    updatePageNum() {
+      const totalPage = Math.ceil(
+        (this.pageInfo.total - 1) / this.pageInfo.limit
+      );
+      this.pageInfo.page =
+        this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page;
+      this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page;
     },
   },
 };

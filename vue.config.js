@@ -28,6 +28,7 @@ module.exports = {
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
+    hot: true,
     proxy: {
       [`${process.env.VUE_APP_BASE_API}`]: {
         // target: 'http://192.100.4.24:8060/workflow', // 刘旺
@@ -51,14 +52,13 @@ module.exports = {
         additionalData: `@import '~@/assets/style/index.scss';`,
       },
       less: {
+        // modifyVars: {
+        //   "@heading-color": '#bfbfbf',
+        //   "@input-bg": '#eee'
+        // },
         lessOptions: {
           javascriptEnabled: true,
-          modifyVars: {
-            "@heading-color": '#bfbfbf',
-            "@input-bg": ''
-          }
         }
-        // modif
       }
     },
   },
@@ -75,5 +75,6 @@ module.exports = {
       .end()
     config.module.rule('fonts').use('url-loader').loader('url-loader').options({}).end()
     config.module.rule('images').use('url-loader').loader('url-loader').options({}).end()
+    // config.module.rule('css').test(/\.less$/).use('less-loader').loader('less-loader').end()
   },
 }

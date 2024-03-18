@@ -32,35 +32,35 @@ const routes = [
         name: 'Home',
         component: () => import('@/view/home/index'),
       },
-      {
-        path: '/home/History',
-        name: 'History',
-        component: () => import('@/view/historyWorkflow/HistoryWorkflow'),
-      },
-      {
-        path: '/home/RunTime',
-        name: 'RunTime',
-        component: () => import('@/view/runtime/index'),
-        hidden: true,
-      },
-      {
-        path: '/home/noPermission',
-        name: 'noPermission',
-        component: () => import('@/component/permission/index'),
-        hidden: true,
-      },
+      // {
+      //   path: '/home/History',
+      //   name: 'History',
+      //   component: () => import('@/view/historyWorkflow/HistoryWorkflow'),
+      // },
+      // {
+      //   path: '/home/RunTime',
+      //   name: 'RunTime',
+      //   component: () => import('@/view/runtime/index'),
+      //   hidden: true,
+      // },
+      // {
+      //   path: '/home/noPermission',
+      //   name: 'noPermission',
+      //   component: () => import('@/component/permission/index'),
+      //   hidden: true,
+      // },
       {
         path: '/home/Configuration',
         name: 'Configuration',
         component: () => import('@/view/configuration'),
         hidden: true,
       },
-      {
-        path: '/home/Power',
-        name: 'Power',
-        component: () => import('@/view/power'),
-        hidden: true,
-      },
+      // {
+      //   path: '/home/Power',
+      //   name: 'Power',
+      //   component: () => import('@/view/power'),
+      //   hidden: true,
+      // },
     ],
   },
   {

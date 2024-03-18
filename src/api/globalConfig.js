@@ -130,3 +130,9 @@ export const downloadFile = (params) =>
 //获取组织结构
 export const getOrganizations = () => get('/workflow/design/common/user/permission/orgs')
 
+//查询任务节点允许配置的操作权限枚举
+export const taskOperationsList = (params) => get('/workflow/design/common/allow/actions', params)
+
+//查询指定有指定组织结构权限的用户列表
+export const fetchUserByOrg = (params) => post('/workflow/design/common/org/permission/users', params)
+

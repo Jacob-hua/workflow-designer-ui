@@ -2,22 +2,15 @@
   <div>
     <div class="search-wrapper">
       <el-form :inline="true">
-        <el-form-item label="项目">
-          <el-select v-model="searchForm.ascription">
-            <el-option
-              v-for="{ id, label, value } in rootOrganizations"
-              :key="id"
-              :label="label"
-              :value="value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="业务">
           <el-cascader
             style="margin-right: 10px"
             v-model="searchForm.business"
-            :options="rootOrganizationChildrenAndAll(searchForm.ascription)"
-            :props="cascaderProps"
+            :options="projectOrganizations()"
+            :props="{
+              emitPath: true,
+              checkStrictly: true,
+            }"
             clearable
           ></el-cascader>
         </el-form-item>
@@ -60,14 +53,18 @@
           <div class="icon">
             <img :src="require('../../assets/image/home/executed.svg')" />
           </div>
-          <div class="title">{{ workflowContents.executionTotalProcessCount }}</div>
+          <div class="title">
+            {{ workflowContents.executionTotalProcessCount }}
+          </div>
           <div class="label">操作工作流总数</div>
         </div>
         <div class="data-wrapper">
           <div class="icon">
             <img :src="require('../../assets/image/home/executing.svg')" />
           </div>
-          <div class="title">{{ workflowContents.executionInProcessCount }}</div>
+          <div class="title">
+            {{ workflowContents.executionInProcessCount }}
+          </div>
           <div class="label">操作中</div>
         </div>
         <div class="data-wrapper">
@@ -88,54 +85,32 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <el-tabs v-model="activeName" type="border-card" @tab-click="changeAction">
-        <el-tab-pane name="workflow">
-          <span slot="label"> 工作流({{ WorkflowTableNum }}) </span>
-          <workflow-table
-            v-show="activeName === 'workflow'"
-            :searchForm="searchForm"
-            ref="workflow"
-            @refreshTable="onWorkflowRefresh"
-            @deployed="onWorkflowDeployed"
-            @saved="onWorkflowSaved"
-            @deleted="onWorkflowDeleted"
-          ></workflow-table>
-        </el-tab-pane>
-        <el-tab-pane name="drafts">
-          <span slot="label"> 草稿箱({{ draftsTableNum }}) </span>
-          <drafts-table
-            v-show="activeName === 'drafts'"
-            :searchForm="searchForm"
-            ref="drafts"
-            @refreshTable="onDraftsRefresh"
-            @deployed="onDraftsDeployed"
-            @saved="onDraftsSaved"
-          ></drafts-table>
-        </el-tab-pane>
-      </el-tabs>
+      <workflow-table
+        :searchForm="searchForm"
+        ref="workflow"
+        @refreshTable="onWorkflowRefresh"
+        @deployed="onWorkflowDeployed"
+        @saved="onWorkflowSaved"
+        @deleted="onWorkflowDeleted"
+      ></workflow-table>
     </div>
   </div>
 </template>
 
 <script>
-import WorkflowTable from './component/WorkflowTable.vue'
-import DraftsTable from './component/DraftsTable.vue'
-import { getDeployCount, getTaskCountStatistic } from '@/api/unit/api.js'
-import { mapState, mapGetters, mapActions } from 'vuex'
-import { currentOneMonthAgo } from '@/util/date'
+import WorkflowTable from './component/WorkflowTable.vue';
+import { getDeployCount, getTaskCountStatistic } from '@/api/unit/api.js';
+import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     WorkflowTable,
-    DraftsTable,
   },
   data() {
-    const { start, end } = currentOneMonthAgo('yyyy-MM-DD HH:mm:ss')
     return {
       searchForm: {
-        ascription: '',
-        business: '',
-        valueDate: [start, end],
+        business: [],
+        valueDate: [],
       },
       workflowContents: {
         executionCompleteCount: 0,
@@ -146,47 +121,51 @@ export default {
       WorkflowTableNum: 0,
       draftsTableNum: 0,
       deployedWorkflowContents: 0,
-    }
+    };
   },
   computed: {
-    ...mapState('account', ['userInfo', 'tenantId']),
-    ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizations', 'rootOrganizationChildrenAndAll', 'findRootOrganizationByIndex']),
+    ...mapGetters('config', ['projectOrganizations']),
   },
-  watch: {
-    searchForm: {
-      deep: true,
-      handler() {
-        this.getManyData()
-      },
-    },
-  },
-  async created() {
-    await this.dispatchRefreshOrganization()
-    this.searchForm.ascription = this.findRootOrganizationByIndex(0).value
+  watch: {},
+  async mounted() {
+    await this.dispatchProjectOriganizations();
+    this.setDefaultorganization();
   },
   methods: {
-    ...mapActions('config', ['dispatchRefreshOrganization']),
+    ...mapActions('config', ['dispatchProjectOriganizations']),
+    setDefaultorganization() {
+      const options = this.projectOrganizations();
+      if (options.length <= 0) return;
+      this.searchForm.business = defaultOrg(options[0]);
+      function defaultOrg(data) {
+        let res = [];
+        res.push(data.value);
+        if (data.children) {
+          res = res.concat(defaultOrg(data.children[0]));
+        }
+        return res;
+      }
+    },
     gotoWorkflow() {
-      let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'))
+      let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'));
 
       this.menuList = menuProjectList.filter((item) => {
-        return item.projectList.length > 0
-      })
+        return item.projectList.length > 0;
+      });
       let isWorkflowRole = this.menuList.findIndex((item) => {
-        return item.menuRoute === 'Workflow'
-      })
+        return item.menuRoute === 'Workflow';
+      });
       if (isWorkflowRole === -1) {
-        this.$message.error('无权限')
+        this.$message.error('无权限');
       } else {
-        this.$router.push('/home/Workflow')
+        this.$router.push('/home/Workflow');
       }
     },
     totalChange(value, key) {
-      this[key] = value
+      this[key] = value;
     },
     changeAction(vnode) {
-      this.$refs[vnode.name]?.fetchWorkflows()
+      this.$refs[vnode.name]?.fetchWorkflows();
     },
     getDeployCountList() {
       getDeployCount({
@@ -197,35 +176,35 @@ export default {
         status: 'activation',
         tenantId: this.tenantId,
       }).then((res) => {
-        this.deployedWorkflowContents = res.result
-      })
+        this.deployedWorkflowContents = res.result;
+      });
     },
     onWorkflowRefresh(count) {
-      this.WorkflowTableNum = count
+      this.WorkflowTableNum = count;
     },
     onDraftsRefresh(count) {
-      this.draftsTableNum = count
+      this.draftsTableNum = count;
     },
     onWorkflowDeployed() {
-      this.getManyData()
+      this.getManyData();
     },
     onWorkflowSaved() {
-      this.getManyData()
-      this.$refs.drafts.fetchWorkflows()
+      this.getManyData();
+      this.$refs.drafts.fetchWorkflows();
     },
     onWorkflowDeleted() {
-      this.getManyData()
+      this.getManyData();
     },
     onDraftsDeployed() {
-      this.getManyData()
-      this.$refs.workflow.fetchWorkflows()
+      this.getManyData();
+      this.$refs.workflow.fetchWorkflows();
     },
     onDraftsSaved() {
-      this.getManyData()
+      this.getManyData();
     },
     getManyData() {
-      this.getDataNumber()
-      this.getDeployCountList()
+      this.getDataNumber();
+      this.getDeployCountList();
     },
     getDataNumber() {
       getTaskCountStatistic({
@@ -237,18 +216,18 @@ export default {
         tenantId: this.tenantId,
       }).then((res) => {
         if (res) {
-          this.workflowContents = res.result
+          this.workflowContents = res.result;
         } else {
           this.workflowContents = {
             executionCompleteCount: 0,
             executionInProcessCount: 0,
             executionTotalProcessCount: 0,
-          }
+          };
         }
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

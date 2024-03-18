@@ -1,8 +1,17 @@
 <template>
   <div>
-    <el-dialog title="查看工作流" fullscreen :visible="visible" @close="onClose">
+    <el-dialog
+      title="查看工作流"
+      fullscreen
+      :visible="visible"
+      @close="onClose"
+    >
       <div class="container">
-        <bpmn-info :processDisplayInfo="processDisplayInfo" :xml="workflow.content" :showProcess="true"/>
+        <bpmn-info
+          :processDisplayInfo="processDisplayInfo"
+          :xml="workflow.content"
+          :showProcess="true"
+        />
         <div class="search-wrapper">
           <span>部署类型</span>
           <span>
@@ -22,33 +31,20 @@
             <div
               class="detail"
               v-for="(
-                {
-                  id,
-                  deployName,
-                  createBy,
-                  createTime,
-                  displayStatus,
-                  periodicityFlag,
-                  cronExpression,
-                  displayTriggerModel,
-                },
-                index
+                { id, deployName, createBy, createTime, displayStatus }, index
               ) in deployments"
               :key="id"
             >
-              <div class="detail-button" @click="onClickDetail(index)">详情</div>
+              <div class="detail-button" @click="onClickDetail(index)">
+                详情
+              </div>
               <div>
                 <div class="info">
                   <span>部署名称:</span>
-                  <long-text contentStyle="margin-left: 10px; width: 130px;" :content="deployName" />
-                </div>
-                <div class="info">
-                  <span>触发模式:</span>
-                  <span>{{ displayTriggerModel }}</span>
-                </div>
-                <div class="info" v-if="periodicityFlag">
-                  <span>周期规则:</span>
-                  <span>{{ cronExpression }}</span>
+                  <long-text
+                    contentStyle="margin-left: 10px; width: 130px;"
+                    :content="deployName"
+                  />
                 </div>
                 <div class="info">
                   <span>部署人:</span>
@@ -68,16 +64,20 @@
         </div>
       </div>
     </el-dialog>
-    <deploy-detail :visible.sync="deployDetailVisible" :deployedId="deployedId" @deleted="onDeletedDeploy" />
+    <deploy-detail
+      :visible.sync="deployDetailVisible"
+      :deployedId="deployedId"
+      @deleted="onDeletedDeploy"
+    />
   </div>
 </template>
 
 <script>
-import BpmnInfo from '@/component/BpmnInfo.vue'
-import { mapGetters, mapState } from 'vuex'
-import { getDeployBasic } from '@/api/unit/api.js'
-import DeployDetail from './DeployDetail.vue'
-import longText from '../../../component/LongText.vue'
+import BpmnInfo from '../../../component/BpmnInfo.vue';
+import { mapGetters, mapState } from 'vuex';
+import { getDeployBasic } from '@/api/unit/api.js';
+import DeployDetail from './DeployDetail.vue';
+import longText from '../../../component/LongText.vue';
 
 export default {
   name: 'DeployCabinDetail',
@@ -104,13 +104,13 @@ export default {
       systemType: null,
       deployDetailVisible: false,
       deployedId: '',
-    }
+    };
   },
   computed: {
     ...mapState('uiConfig', ['cascaderProps']),
     ...mapGetters('config', ['rootOrganizationChildren', 'findOrganizations']),
     systemTypeOptions() {
-      return this.findOrganizations(this.workflow.business)
+      return this.findOrganizations(this.workflow.business);
     },
     processDisplayInfo() {
       return [
@@ -119,78 +119,56 @@ export default {
           value: this.workflow.numberCode,
         },
         {
-          label: '流程名称',
-          value: this.workflow.name,
+          label: '模型名称',
+          value: this.workflow.modelName,
         },
-        {
-          label: '创建时间',
-          value: this.workflow.createTime,
-        },
+        // {
+        //   label: '创建时间',
+        //   value: this.workflow.createTime,
+        // },
         {
           label: '应用项目',
-          value: this.$getMappingName(this.workflow.ascription),
+          value: this.workflow.processCode,
         },
-        {
-          label: '流程类型',
-          value: this.$getMappingName(this.workflow.business),
-        },
-        {
-          label: '部署人',
-          value: this.workflow.createBy,
-        },
-      ]
+        // {
+        //   label: '部署人',
+        //   value: this.workflow.createBy,
+        // },
+      ];
     },
   },
   watch: {
+    visible(value) {
+      if (value) {
+        this.fetchDeployDetails();
+      }
+    },
     workflow(workflow) {
-      this.business = workflow.business
-      this.fetchDeployDetails()
+      this.business = workflow.business;
+      // this.fetchDeployDetails()
     },
   },
   methods: {
     onDeletedDeploy() {
-      this.fetchDeployDetails()
-      this.$emit('deleted')
+      this.fetchDeployDetails();
+      this.$emit('deleted');
     },
     onClose() {
-      this.systemType = null
-      this.$emit('cloase')
-      this.$emit('update:visible', false)
+      this.systemType = null;
+      this.$emit('cloase');
+      this.$emit('update:visible', false);
     },
     onSystemTypeChange() {
-      this.fetchDeployDetails()
+      this.fetchDeployDetails();
     },
     onClickDetail(index) {
-      this.deployedId = this.deployments[index].id
-      this.deployDetailVisible = true
+      this.deployedId = this.deployments[index].id;
+      this.deployDetailVisible = true;
     },
     async fetchDeployDetails() {
-      try {
-        const {
-          errorInfo,
-          result: { dataList, count },
-        } = await getDeployBasic({
-          processId: this.workflow.id,
-          systemType: this.systemType,
-        })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
-          return
-        }
-        this.deployments = (dataList ?? []).map((deployment) => ({
-          ...deployment,
-          displayStatus: deployment.status === 'activation' ? '已激活' : '未激活',
-          displayTriggerModel:
-            deployment.triggerModel === '1' ? '周期性' : deployment.triggerModel === '2' ? '固定触发' : '无',
-        }))
-        this.deployNumber = count
-      } catch (error) {
-        this.deployments = []
-        this.deployNumber = 0
-      }
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

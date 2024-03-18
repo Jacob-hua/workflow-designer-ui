@@ -162,15 +162,12 @@ export default {
   },
   computed: {
     ...mapGetters('config', [
-      'rootOrganizations',
-      'rootOrganizationChildrenAndAll',
       'projectOrganizations',
     ]),
   },
   watch: {},
   methods: {
     ...mapActions('config', ['dispatchProjectOriganizations']),
-    ...mapMutations('account', ['updateCurrentOrganization']),
     setDefaultorganization() {
       const options = this.projectOrganizations();
       if (options.length <= 0) return;
@@ -329,9 +326,6 @@ export default {
 }
 .PublicForm {
   width: 1500px;
-}
-
-.PublicForm-title {
 }
 
 .checkPro {
