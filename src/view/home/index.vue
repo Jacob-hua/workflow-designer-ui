@@ -25,7 +25,7 @@
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd HH:mm:ss"
             :default-time="['00:00:00', '23:59:59']"
-            :clearable="false"
+            :clearable="true"
           >
           </el-date-picker>
         </el-form-item>
@@ -147,25 +147,10 @@ export default {
       }
     },
     gotoWorkflow() {
-      let { menuProjectList } = JSON.parse(sessionStorage.getItem('loginData'));
-
-      this.menuList = menuProjectList.filter((item) => {
-        return item.projectList.length > 0;
-      });
-      let isWorkflowRole = this.menuList.findIndex((item) => {
-        return item.menuRoute === 'Workflow';
-      });
-      if (isWorkflowRole === -1) {
-        this.$message.error('无权限');
-      } else {
-        this.$router.push('/home/Workflow');
-      }
+      this.$router.push('/home/Workflow');
     },
     totalChange(value, key) {
       this[key] = value;
-    },
-    changeAction(vnode) {
-      this.$refs[vnode.name]?.fetchWorkflows();
     },
     getDeployCountList() {
       getDeployCount({

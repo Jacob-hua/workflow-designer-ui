@@ -10,7 +10,7 @@
       </el-table-column>
       <el-table-column prop="creatorName" label="创建人"> </el-table-column>
       <el-table-column prop="createTime" label="创建时间"> </el-table-column>
-      <el-table-column prop="modelCount" label="已部署次数"> </el-table-column>
+      <el-table-column prop="modelCount" label="模型数量"> </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
@@ -124,8 +124,8 @@ export default {
         tenantId: this.searchForm.business[0]??'',
         projectId: this.searchForm.business[1]??'',
         applicationId: this.searchForm.business[2]??'',
-        startTime: this.searchForm.valueDate[0],
-        endTime: this.searchForm.valueDate[1],
+        startTime: this.searchForm.valueDate[0]??'',
+        endTime: this.searchForm.valueDate[1]??'',
       })
       if (code!=='200') {
         this.$message.error(msg)

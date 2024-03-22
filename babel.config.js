@@ -10,6 +10,7 @@ module.exports = {
         "styleLibraryName": "es",
         "style": true
       },
+      'ant-design-vue'
     ],
     [
       "import",

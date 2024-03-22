@@ -83,11 +83,15 @@
 import WorkflowInfo from './WorkflowInfo.vue';
 import { mapState, mapMutations } from 'vuex';
 import BpmnShapeType from '../../../plugin/Bpmn/enum/shapeType';
-import { fetchFormList, fetchFormVersionList } from '../../../api/workflowForm';
-import { saveModel } from '../../../api/workflowModel';
+import {
+  fetchFormList,
+  fetchFormVersionList,
+  fetchFormVersion,
+} from '../../../api/workflowForm';
+import { fetchModelInfo, updateModel } from '../../../api/workflowModel';
 
 export default {
-  name: 'DeployOptions',
+  name: 'ModelEditor',
   components: {
     WorkflowInfo,
   },
@@ -101,12 +105,15 @@ export default {
       default: () => ({}),
       required: true,
     },
+    modelId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
       iBpmn: {},
       formContent: {},
-      formContents: [],
       formList: [],
       formName: '',
       canLink: false,
@@ -126,6 +133,7 @@ export default {
       },
       shapeType: null,
       startFormVersionId: '',
+      modelInfo: {},
     };
   },
   computed: {
@@ -159,6 +167,7 @@ export default {
     visible(value) {
       if (value) {
         this.fetchFormList();
+        this.fetchModelInfo();
       }
     },
     changeTaskConfigs: {
@@ -173,7 +182,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('model', ['updateModelTaskConfigs','updateStartFormVersionId']),
+    ...mapMutations('model', ['updateModelTaskConfigs']),
     resetModelTaskConfig(taskDefKey = '') {
       this.modelTaskConfig = {
         caUserConfig: [],
@@ -206,7 +215,6 @@ export default {
       );
       if (this.shapeType === BpmnShapeType.START_EVENT) {
         this.startFormVersionId = formVersionInfo.formVersionFile;
-        this.updateStartFormVersionId({startFormVersionId: this.startFormVersionId})
       } else {
         const index = this.modelTaskConfigs.findIndex(
           ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
@@ -220,6 +228,7 @@ export default {
           this.modelTaskConfigs.push(this.modelTaskConfig);
         }
       }
+      // this.modelTaskConfig.taskFormVersionId = formVersionInfo.formVersionId;
     },
     onSelectedShape(element) {
       if (
@@ -239,6 +248,7 @@ export default {
         this.resetModelTaskConfig(element.id);
       }
       this.canLink = true;
+      this.fetchFormVersion();
     },
     onCanvasLoaded(iBpmn) {
       this.iBpmn = iBpmn;
@@ -246,15 +256,10 @@ export default {
     onClose() {
       this.formName = '';
       this.formContent = {};
-      this.modelTaskConfigs = [];
-      this.resetModelTaskConfig();
-        this.updateStartFormVersionId({startFormVersionId: ''})
-      this.updateModelTaskConfigs({ modelTaskConfigs: [] });
       this.$emit('update:visible', false);
+      this.updateModelTaskConfigs({ modelTaskConfigs: [] });
     },
     changeTaskConfigs({ type, mode, data }) {
-      if(!data) return
-      if(data instanceof Array && !data.length) return
       if (mode === 'push') {
         for (let ele of data) {
           const index = this.modelTaskConfig[type].findIndex(
@@ -279,10 +284,11 @@ export default {
       }
     },
     async onSave() {
-      const { code, msg } = await saveModel({
+      const { code, msg } = await updateModel({
         tenantId: this.workflow.tenantId,
         projectId: this.workflow.projectId,
         applicationId: this.workflow.applicationId,
+        modeId: this.modelId,
         modelInfoConfig: {
           modelDesc: this.workflow.modelDesc,
           modelName: this.workflow.modelName,
@@ -298,8 +304,18 @@ export default {
       this.$message.success('保存成功');
       this.onClose();
     },
+    async fetchModelInfo() {
+      const { data, code, msg } = await fetchModelInfo({
+        modelId: this.modelId,
+      });
+      if (code !== '200') {
+        this.$message.error(msg);
+        return;
+      }
+      this.modelTaskConfigs = Object.values(data.modelTasks);
+      this.modelInfo = data.modelInfo;
+    },
     async fetchFormList() {
-      console.log(this.workflow, 'adada');
       const { data, code, msg } = await fetchFormList({
         tenantId: this.workflow.tenantId,
         projectId: this.workflow.projectId,
@@ -348,6 +364,23 @@ export default {
             value: JSON.stringify(versionInfo),
           };
         }
+      );
+    },
+    async fetchFormVersion() {
+      const { data, code, msg } = await fetchFormVersion({
+        formVersionId:
+          this.shapeType === BpmnShapeType.START_EVENT
+            ? this.modelInfo.startFormVersionId
+            : this.modelTaskConfig.taskFormVersionId,
+      });
+      if (code !== '200') {
+        this.$message.error(msg);
+        return;
+      }
+      this.$set(
+        this.formContent,
+        this.modelTaskConfig.taskDefKey,
+        data.formVersionFile
       );
     },
 

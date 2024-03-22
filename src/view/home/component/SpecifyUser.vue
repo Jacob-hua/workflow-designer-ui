@@ -1,5 +1,10 @@
 <template>
-  <el-dialog :title="执行人员选择" :visible.sync="userDialogVisible" @close="clost">
+  <el-dialog
+    title="执行人员选择"
+    :visible.sync="userDialogVisible"
+    @close="close"
+    append-to-body
+  >
     <el-transfer
       filterable
       :data="userList"
@@ -20,6 +25,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    selectedFixed: {
+      type: Array,
+      default: [],
+    },
     organization: {
       type: Object,
       default: () => ({}),
@@ -37,6 +46,9 @@ export default {
         this.fetchUserList();
       }
     },
+    selectedFixed(value){
+      this.selectedUser = value.map(({ key }) => key);
+    }
   },
   methods: {
     async fetchUserList() {
@@ -56,8 +68,17 @@ export default {
         };
       });
     },
-    save(){},
-    close(){},
+    save() {
+      const user = this.selectedUser.map((item) => {
+        return this.userList.find(({ key }) => key === item);
+      });
+      this.$emit('saveUser', user);
+      this.close()
+    },
+    close() {
+      this.selectedUser = []
+      this.$emit('closeUserDialog');
+    },
   },
 };
 </script>
@@ -67,5 +88,23 @@ export default {
 }
 .cancel {
   @include cancelBtn;
+}
+
+/deep/.el-transfer-panel {
+  background: #1b1e2d;
+  width: 40%;
+
+  .el-transfer-panel__header {
+    background: #1b1e2d;
+    .el-checkbox__label {
+      color: #fff;
+    }
+  }
+  .el-transfer-panel__list::-webkit-scrollbar {
+    display: none;
+  }
+  .el-transfer-panel__item.el-checkbox {
+    color: #fff;
+  }
 }
 </style>

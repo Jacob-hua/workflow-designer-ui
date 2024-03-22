@@ -9,54 +9,54 @@
       <div class="container">
         <bpmn-info
           :processDisplayInfo="processDisplayInfo"
-          :xml="workflow.content"
+          :xml="workflow.processFile"
           :showProcess="true"
         />
         <div class="search-wrapper">
-          <span>部署类型</span>
-          <span>
-            <el-cascader
-              v-model="systemType"
-              clearable
-              :props="cascaderProps"
-              :options="systemTypeOptions"
-              @change="onSystemTypeChange"
-            ></el-cascader>
-          </span>
-          <span> 已部署次数: {{ deployNumber }} </span>
+          <div class="input-box">
+            <el-input
+              v-model="modelName"
+              prefix-icon="el-icon-search"
+              placeholder="请输入模型名称"
+            ></el-input>
+          </div>
         </div>
         <div class="detail-wrapper">
-          <div v-if="!deployments.length">暂无数据</div>
+          <div v-if="totalModel <= 0">暂无数据</div>
           <div v-else class="details">
             <div
               class="detail"
-              v-for="(
-                { id, deployName, createBy, createTime, displayStatus }, index
-              ) in deployments"
-              :key="id"
+              v-for="{
+                modelId,
+                modelName,
+                creatorName,
+                createTime,
+              } in modelList"
+              :key="modelId"
             >
-              <div class="detail-button" @click="onClickDetail(index)">
-                详情
+              <div class="operation-box">
+                <div class="detail-button" @click="onClickDetail(modelId)">
+                  详情
+                </div>
+                <div class="edit-button" @click="onClickEdit(modelId)">
+                  编辑
+                </div>
               </div>
               <div>
                 <div class="info">
-                  <span>部署名称:</span>
+                  <span>模型名称:</span>
                   <long-text
                     contentStyle="margin-left: 10px; width: 130px;"
-                    :content="deployName"
+                    :content="modelName"
                   />
                 </div>
                 <div class="info">
                   <span>部署人:</span>
-                  <span>{{ createBy }}</span>
+                  <span>{{ creatorName }}</span>
                 </div>
                 <div class="info">
                   <span>部署时间:</span>
                   <span>{{ createTime }}</span>
-                </div>
-                <div class="info">
-                  <span>状态:</span>
-                  <span>{{ displayStatus }}</span>
                 </div>
               </div>
             </div>
@@ -66,18 +66,24 @@
     </el-dialog>
     <deploy-detail
       :visible.sync="deployDetailVisible"
-      :deployedId="deployedId"
+      :modelId="modelId"
+      :xml="workflow.processFile"
       @deleted="onDeletedDeploy"
     />
+    <model-editor
+      :visible.sync="modelEditorVisible"
+      :modelId="modelId"
+      :workflow="workflow"
+    ></model-editor>
   </div>
 </template>
 
 <script>
 import BpmnInfo from '../../../component/BpmnInfo.vue';
-import { mapGetters, mapState } from 'vuex';
-import { getDeployBasic } from '@/api/unit/api.js';
 import DeployDetail from './DeployDetail.vue';
+import ModelEditor from './ModelEditor.vue';
 import longText from '../../../component/LongText.vue';
+import { fetchModelList } from '../../../api/workflowModel';
 
 export default {
   name: 'DeployCabinDetail',
@@ -85,6 +91,7 @@ export default {
     BpmnInfo,
     DeployDetail,
     longText,
+    ModelEditor,
   },
   props: {
     visible: {
@@ -98,20 +105,15 @@ export default {
   },
   data() {
     return {
-      business: '',
-      deployments: [],
-      deployNumber: 0,
-      systemType: null,
+      modelList: [],
       deployDetailVisible: false,
-      deployedId: '',
+      modelEditorVisible: false,
+      modelId: '',
+      modelName: '',
+      totalModel: 0,
     };
   },
   computed: {
-    ...mapState('uiConfig', ['cascaderProps']),
-    ...mapGetters('config', ['rootOrganizationChildren', 'findOrganizations']),
-    systemTypeOptions() {
-      return this.findOrganizations(this.workflow.business);
-    },
     processDisplayInfo() {
       return [
         {
@@ -140,32 +142,47 @@ export default {
   watch: {
     visible(value) {
       if (value) {
-        this.fetchDeployDetails();
+        this.fetchModelList();
       }
     },
-    workflow(workflow) {
-      this.business = workflow.business;
-      // this.fetchDeployDetails()
+    modelName(newVal, oldVal) {
+      if (newVal === oldVal) return;
+      this.fetchModelList();
     },
   },
   methods: {
     onDeletedDeploy() {
-      this.fetchDeployDetails();
+      this.fetchModelList();
       this.$emit('deleted');
     },
     onClose() {
-      this.systemType = null;
       this.$emit('cloase');
       this.$emit('update:visible', false);
     },
-    onSystemTypeChange() {
-      this.fetchDeployDetails();
-    },
-    onClickDetail(index) {
-      this.deployedId = this.deployments[index].id;
+    onClickDetail(modelId) {
+      this.modelId = modelId;
       this.deployDetailVisible = true;
     },
-    async fetchDeployDetails() {
+    onClickEdit(modelId) {
+      this.modelId = modelId;
+      this.modelEditorVisible = true;
+    },
+    async fetchModelList() {
+      const { data, code, msg } = await fetchModelList({
+        tenantId: this.workflow.tenantId,
+        projectId: this.workflow.projectId,
+        applicationId: this.workflow.applicationId,
+        processId: this.workflow.processId,
+        modelName: this.modelName,
+        limit: 9999,
+        page: 1,
+      });
+      if (code !== '200') {
+        this.$message.error(msg);
+        return;
+      }
+      this.totalModel = Number(data.total);
+      this.modelList = data.dataList;
     },
   },
 };
@@ -182,12 +199,8 @@ export default {
   padding: 30px 0;
   font-size: 12px;
 
-  & > span:first-child {
-    margin-right: 20px;
-  }
-
-  & > span:last-child {
-    margin-left: 20px;
+  .input-box {
+    width: 300px;
   }
 }
 
@@ -222,10 +235,23 @@ export default {
     }
   }
 
-  .detail-button {
-    float: right;
-    cursor: pointer;
-    color: $button-submit-bg-color;
+  .operation-box {
+    display: flex;
+    justify-content: right;
+
+    & > div {
+      cursor: pointer;
+      color: $button-submit-bg-color;
+    }
+
+    .detail-button{
+      margin-right: 10px;
+    }
   }
+  // .detail-button {
+  //   float: right;
+  //   cursor: pointer;
+  //   color: $button-submit-bg-color;
+  // }
 }
 </style>

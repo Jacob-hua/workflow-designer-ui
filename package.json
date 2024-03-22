@@ -10,11 +10,12 @@
   "dependencies": {
     "@bpmn-io/form-js-editor": "^0.7.0",
     "@bpmn-io/form-js-viewer": "^0.7.1",
-    "@formily/antdv": "^1.0.0-alpha.7",
+    "@formily/antdv": "^1.0.0-alpha.8",
     "@formily/core": "^2.3.1",
     "@formily/vue": "^2.3.1",
     "@vue/composition-api": "^1.0.0-rc.7",
     "ant-design-vue": "^1.7.8",
+    "babel-plugin-import": "^1.13.8",
     "beautifier": "^0.1.7",
     "bpmn-js": "^6.0.0 || ^8.0.0 || ^9.0.2",
     "bpmn-js-bpmnlint": "^0.18.0",
@@ -65,6 +66,10 @@
     "sass-loader": "^10.1.1",
     "svg-sprite-loader": "^4.1.6",
     "vue-template-compiler": "^2.6.12"
+  },
+  "peerDependencies": {
+    "@vue/composition-api": "^1.0.0-beta.1",
+    "vue": "^2.6.12 "
   },
   "peerDependenciesMeta": {
     "@vue/composition-api": {

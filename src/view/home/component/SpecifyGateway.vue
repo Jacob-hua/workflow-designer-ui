@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     title="执行人员选择"
-    :visible.sync="nodeDialogVisible"
+    :visible.sync="gatewayDialogVisible"
     @close="close"
     append-to-body
   >
@@ -22,7 +22,7 @@
     <div class="specify-box">
       <el-card class="box-card">
         <div slot="header" class="clear-dix">
-          <span>{{ operationTitle }}</span>
+          <span>条件选择</span>
         </div>
         <div class="specify-select">
           <p>当前节点</p>
@@ -31,6 +31,15 @@
           <el-select v-model="selectedNode" filterable="">
             <el-option
               v-for="item in taskNodeList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <p>选择表单字段</p>
+          <el-select v-model="selectedFormitem" filterable="">
+            <el-option
+              v-for="item in formitemList"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -46,11 +55,13 @@
   </el-dialog>
 </template>
 <script>
+import { mapState } from 'vuex';
 import { fetchTaskNodeList } from '../../../api/workflow';
+import { fetchFormVersion } from '../../../api/workflowForm';
 export default {
-  name: 'SpecifyNode',
+  name: 'SpecifyGateway',
   props: {
-    nodeDialogVisible: {
+    gatewayDialogVisible: {
       type: Boolean,
       default: false,
     },
@@ -62,9 +73,6 @@ export default {
     taskInfo: {
       type: Object,
     },
-    flag: {
-      type: String,
-    },
     processId: {
       type: String,
     },
@@ -74,18 +82,22 @@ export default {
       iBpmnViewer: null,
       taskNodeList: [],
       selectedNode: '',
+      formitemList: [],
+      selectedFormitem: '',
     };
   },
   computed: {
-    operationTitle(){
-      return this.flag === 'dynamic_set' ? '其他节点指定：' : '同一节点指定：';
-    }
+    ...mapState('model', ['modelTaskConfigs', 'startFormVersionId']),
   },
   watch: {
-    nodeDialogVisible(value) {
+    gatewayDialogVisible(value) {
       if (value) {
         this.fetchTaskNodeList();
       }
+    },
+    selectedNode(newVal, oldVal) {
+      if (newVal === oldVal) return;
+      this.fetchFormFile(newVal);
     },
   },
   methods: {
@@ -109,20 +121,76 @@ export default {
         };
       });
     },
+    async fetchFormFile(taskKey) {
+      this.formitemList = [];
+      this.selectedFormitem = '';
+      let formVersionId = '';
+      if (this.taskInfo.taskType === 'StartEvent') {
+        if (!this.startFormVersionId) {
+          this.$message.warning('未关联启动项表单');
+          return;
+        }
+        formVersionId = this.startFormVersionId;
+      } else {
+        if (!this.modelTaskConfigs) return;
+        const modelTaskInfo = this.modelTaskConfigs.find(
+          ({ taskDefKey }) => taskDefKey === taskKey
+        );
+        if (!modelTaskInfo || !modelTaskInfo.taskFormVersionId) {
+          this.$message.warning('选择节点未绑定表单');
+          return;
+        }
+        formVersionId = modelTaskInfo.taskFormVersionId;
+      }
+      const { data, code, msg } = await fetchFormVersion({
+        formVersionId,
+      });
+      if (code !== '200') {
+        this.$message.error(msg);
+      }
+      const formVersionFile = JSON.parse(data.formVersionFile);
+      const schema = formVersionFile.schema;
+      this.handleFormSchma(schema);
+    },
+
+    handleFormSchma(schema) {
+      const properties = schema.properties;
+      this.formitemList = flatFormSchema(properties);
+
+      function flatFormSchema(item) {
+        let res = [];
+        for (let obj in item) {
+          if (!item[obj].properties) {
+            res.push({
+              label: item[obj].title,
+              value: item[obj]['x-designable-id'],
+            });
+          } else {
+            res = res.concat(flatFormSchema(item[obj]));
+          }
+        }
+        return res;
+      }
+    },
     save() {
-      if(!this.selectedNode){
-        this.close();
+      if (!this.selectedNode || !this.selectedFormitem) {
+        this.$message.warning('节点或者表单不能为空');
+        // this.close();
         return;
       }
       const selectedData = this.taskNodeList.find(
         ({ value }) => this.selectedNode === value
       );
-      this.$emit('saveNode', {selectedData, flag: this.flag});
+      const selectForm = this.formitemList.find(
+        ({ value }) => value === this.selectedFormitem
+      );
+      this.$emit('saveGateway', { selectedData, selectForm });
       this.close();
     },
     close() {
-      this.selectedNode = ''
-      this.$emit('closeNodeDialog');
+      this.selectedNode = '';
+      this.selectedFormitem = '';
+      this.$emit('closeGatewayDialog');
     },
   },
 };

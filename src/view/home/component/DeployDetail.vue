@@ -1,16 +1,15 @@
 <template>
   <div>
     <el-dialog title="部署详情" fullscreen :visible="visible" @close="onCancel">
-      <workflow-info
+      <!-- <workflow-info
         :workflow="workflow"
-        :xml="workflow.processResource"
+        :xml="workflow.processFile"
         :processDisplayInfo="processDisplayInfo"
-      />
+      /> -->
+      
+      <model-detail :modelTasks="workflow.modelTasks" :xml="xml" :processDisplayInfo="processDisplayInfo"></model-detail>
       <span slot="footer">
-        <el-button
-          class="remove-button"
-          @click="onDeleteClick"
-        >
+        <el-button class="remove-button" @click="onDeleteClick">
           删除
         </el-button>
       </span>
@@ -19,17 +18,13 @@
 </template>
 
 <script>
-import {
-  getDeleteDeployment,
-  getDeployAndProcessInfo,
-} from '@/api/unit/api.js';
-import { mapState } from 'vuex';
-import WorkflowInfo from './WorkflowInfo.vue';
+import ModelDetail from './ModelDetail.vue'
+import { fetchModelInfo, deleteModel } from '../../../api/workflowModel';
 
 export default {
   name: 'DeployDetail',
   components: {
-    WorkflowInfo,
+    ModelDetail
   },
   props: {
     visible: {
@@ -37,7 +32,12 @@ export default {
       default: false,
       required: true,
     },
-    deployedId: {
+    modelId: {
+      type: String,
+      default: '',
+      required: true,
+    },
+    xml: {
       type: String,
       default: '',
       required: true,
@@ -49,7 +49,6 @@ export default {
     };
   },
   computed: {
-    ...mapState('account', ['tenantId', 'userInfo']),
     processDisplayInfo() {
       return [
         {
@@ -76,18 +75,18 @@ export default {
     },
   },
   watch: {
-    visible(value) {
-      if (value) {
-        this.fetchDeployedWorkflow();
-      }
-    },
-    deployedId: {
+    // visible(value) {
+    //   if (value) {
+    //     this.fetchDeployedWorkflow();
+    //   }
+    // },
+    modelId: {
       immediate: true,
-      handler(deployedId) {
-        if (!deployedId) {
+      handler(modelId) {
+        if (!modelId) {
           return;
         }
-        // this.fetchDeployedWorkflow();
+        this.fetchModelInfo();
       },
     },
   },
@@ -104,12 +103,11 @@ export default {
           cancelButtonClass: 'btn-custom-cancel',
           type: 'warning',
         });
-        const { errorInfo, result } = await getDeleteDeployment({
-          id: this.workflow.deployRecordId,
-          cascade: false,
+        const { code, msg } = await deleteModel({
+          modelId: this.modelId,
         });
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg);
+        if (code !== '200') {
+          this.$message.error(msg);
           return;
         }
         this.$message({
@@ -123,19 +121,15 @@ export default {
     colse() {
       this.$emit('update:visible', false);
     },
-    async fetchDeployedWorkflow() {
-      try {
-        const { errorInfo, result } = await getDeployAndProcessInfo(
-          this.deployedId
-        );
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg);
-          return;
-        }
-        this.workflow = result;
-      } catch (error) {
-        this.workflow = {};
+    async fetchModelInfo() {
+      const { data, code, msg } = await fetchModelInfo({
+        modelId: this.modelId,
+      });
+      if (code !== '200') {
+        this.$message.error(msg);
+        return;
       }
+      this.workflow = data;
     },
   },
 };
