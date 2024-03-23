@@ -258,6 +258,10 @@ export default {
       this.$refs.guideForm.resetField();
     },
     closeForm() {
+      this.removeGlobalStateChangeListener();
+      if (this.microApp) {
+        this.microApp.unmount();
+      }
       this.$emit('changeFormDesignerVisible', false);
       this.$refs.newOrEditForm.clearValidate();
       this.$refs.newOrEditForm.resetField();
@@ -273,16 +277,27 @@ export default {
       this.saveForm();
     },
     loadMicroApp() {
-      this.microApp = loadMicroApp({
-        name: 'formDesigner',
-        entry: `${
-          process.env.QIAN_KUN_URL
-            ? process.env.QIAN_KUN_URL
-            : 'http://localhost:3000/'
-        }`,
-        container: '#designer-app',
-        props: { actions },
-      });
+      this.microApp = loadMicroApp(
+        {
+          name: 'formDesigner',
+          entry: `${
+            process.env.QIAN_KUN_URL
+              ? process.env.QIAN_KUN_URL
+              : 'http://127.0.0.1:3000/'
+          }`,
+          container: '#designer-app',
+          props: { actions },
+        },
+        {
+          singular: true,
+          fetch(url, ...args) {
+            return window.fetch(url, {
+              ...args,
+              mode: 'cors',
+            });
+          },
+        }
+      );
     },
     nextDiolog() {
       this.$refs['guideForm'].validate((valid) => {

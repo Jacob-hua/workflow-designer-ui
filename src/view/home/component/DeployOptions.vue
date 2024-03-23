@@ -173,7 +173,10 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('model', ['updateModelTaskConfigs','updateStartFormVersionId']),
+    ...mapMutations('model', [
+      'updateModelTaskConfigs',
+      'updateStartFormVersionId',
+    ]),
     resetModelTaskConfig(taskDefKey = '') {
       this.modelTaskConfig = {
         caUserConfig: [],
@@ -205,8 +208,10 @@ export default {
         formVersionInfo.formVersionFile
       );
       if (this.shapeType === BpmnShapeType.START_EVENT) {
-        this.startFormVersionId = formVersionInfo.formVersionFile;
-        this.updateStartFormVersionId({startFormVersionId: this.startFormVersionId})
+        this.startFormVersionId = formVersionInfo.formVersionId;
+        this.updateStartFormVersionId({
+          startFormVersionId: this.startFormVersionId,
+        });
       } else {
         const index = this.modelTaskConfigs.findIndex(
           ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
@@ -248,13 +253,13 @@ export default {
       this.formContent = {};
       this.modelTaskConfigs = [];
       this.resetModelTaskConfig();
-        this.updateStartFormVersionId({startFormVersionId: ''})
+      this.updateStartFormVersionId({ startFormVersionId: '' });
       this.updateModelTaskConfigs({ modelTaskConfigs: [] });
       this.$emit('update:visible', false);
     },
     changeTaskConfigs({ type, mode, data }) {
-      if(!data) return
-      if(data instanceof Array && !data.length) return
+      if (!data) return;
+      if (data instanceof Array && !data.length) return;
       if (mode === 'push') {
         for (let ele of data) {
           const index = this.modelTaskConfig[type].findIndex(
@@ -280,9 +285,9 @@ export default {
     },
     async onSave() {
       const { code, msg } = await saveModel({
-        tenantId: this.workflow.tenantId,
-        projectId: this.workflow.projectId,
-        applicationId: this.workflow.applicationId,
+        tenantId: this.workflow.tenantId??'',
+        projectId: this.workflow.projectId??'',
+        applicationId: this.workflow.applicationId??'',
         modelInfoConfig: {
           modelDesc: this.workflow.modelDesc,
           modelName: this.workflow.modelName,
@@ -299,7 +304,6 @@ export default {
       this.onClose();
     },
     async fetchFormList() {
-      console.log(this.workflow, 'adada');
       const { data, code, msg } = await fetchFormList({
         tenantId: this.workflow.tenantId,
         projectId: this.workflow.projectId,

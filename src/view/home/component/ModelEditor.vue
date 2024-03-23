@@ -182,7 +182,10 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('model', ['updateModelTaskConfigs']),
+    ...mapMutations('model', [
+      'updateModelTaskConfigs',
+      'updateStartFormVersionId',
+    ]),
     resetModelTaskConfig(taskDefKey = '') {
       this.modelTaskConfig = {
         caUserConfig: [],
@@ -214,7 +217,10 @@ export default {
         formVersionInfo.formVersionFile
       );
       if (this.shapeType === BpmnShapeType.START_EVENT) {
-        this.startFormVersionId = formVersionInfo.formVersionFile;
+        this.startFormVersionId = formVersionInfo.formVersionId;
+        this.updateStartFormVersionId({
+          startFormVersionId: this.startFormVersionId,
+        });
       } else {
         const index = this.modelTaskConfigs.findIndex(
           ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
@@ -285,9 +291,9 @@ export default {
     },
     async onSave() {
       const { code, msg } = await updateModel({
-        tenantId: this.workflow.tenantId,
-        projectId: this.workflow.projectId,
-        applicationId: this.workflow.applicationId,
+        tenantId: this.workflow.tenantId ?? '',
+        projectId: this.workflow.projectId ?? '',
+        applicationId: this.workflow.applicationId ?? '',
         modeId: this.modelId,
         modelInfoConfig: {
           modelDesc: this.workflow.modelDesc,

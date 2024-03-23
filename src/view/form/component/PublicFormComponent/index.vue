@@ -103,7 +103,7 @@ import { addFormInfo, addFormVersion } from '../../../../api/workflowForm';
 
 export default {
   components: {
-    formVersion
+    formVersion,
   },
   props: {
     title: {
@@ -123,17 +123,17 @@ export default {
     return {
       rules: {
         formName: [
-          { required: true, message: "请输入表单名称", trigger: "blur" },
+          { required: true, message: '请输入表单名称', trigger: 'blur' },
           {
             min: 1,
             max: 100,
-            message: "表单名称长度在 1 到 100 个字符",
-            trigger: "blur",
+            message: '表单名称长度在 1 到 100 个字符',
+            trigger: 'blur',
           },
         ],
       },
       dialogVisible2: false,
-      input: "",
+      input: '',
       options: [],
       postData: {
         formId: '',
@@ -172,12 +172,16 @@ export default {
   },
   methods: {
     close() {
+      this.removeGlobalStateChangeListener();
+      if (this.microApp) {
+        this.microApp.unmount();
+      }
       this.$emit('changeFormDesignerVisible', false);
-      this.$refs["form"].clearValidate();
-      this.$refs["form"].resetFields();
-      localStorage.removeItem("formVersionFile");
+      this.$refs['form'].clearValidate();
+      this.$refs['form'].resetFields();
+      localStorage.removeItem('formVersionFile');
     },
-    
+
     closeVersionDialog() {
       this.formVersionVisible = false;
     },
@@ -187,20 +191,32 @@ export default {
       this.formVersionVisible = false;
       this.saveForm();
     },
-    
+
     loadMicroApp() {
-      this.microApp = loadMicroApp({
-        name: 'formDesigner',
-        entry: `${
-          process.env.QIAN_KUN_URL
-            ? process.env.QIAN_KUN_URL
-            : 'http://localhost:3000/'
-        }`,
-        container: '#designer-app',
-        props: { actions },
-      });
+      const entry = process.env.QIAN_KUN_URL;
+      this.microApp = loadMicroApp(
+        {
+          name: 'formDesigner',
+          entry: `${
+            process.env.QIAN_KUN_URL
+              ? process.env.QIAN_KUN_URL
+              : 'http://127.0.0.1:3000/'
+          }`,
+          container: '#designer-app',
+          props: { actions },
+        },
+        {
+          singular: true,
+          fetch(url, ...args) {
+            return window.fetch(url, {
+              ...args,
+              mode: 'cors',
+            });
+          },
+        }
+      );
     },
-    
+
     async saveForm() {
       const newFormFile = localStorage.getItem('formVersionFile') ?? '';
       if (!newFormFile) return;
@@ -208,9 +224,9 @@ export default {
         this.$message.error('表单不能为空');
         return;
       }
-      const formFile = new File([newFormFile], "form.json", {
-            type: "text/json",
-          });
+      const formFile = new File([newFormFile], 'form.json', {
+        type: 'text/json',
+      });
       if (this.$props.formInfo) {
         if (this.$props.formInfo.formVersionFile === newFormFile) {
           this.close();
@@ -246,7 +262,7 @@ export default {
         this.$message.success('保存成功');
         this.$emit('addSuccess');
       }
-      localStorage.removeItem("formVersionFile");
+      localStorage.removeItem('formVersionFile');
       this.close();
     },
 
@@ -262,9 +278,9 @@ export default {
       actions.offGlobalStateChange();
     },
   },
-  beforeDestroy() {
-    this.removeGlobalStateChangeListener();
-  },
+  // beforeDestroy() {
+  //   this.removeGlobalStateChangeListener();
+  // },
 };
 </script>
 
