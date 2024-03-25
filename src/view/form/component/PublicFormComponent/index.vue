@@ -83,9 +83,6 @@
           </div>
         </div>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <div class="cancel" @click="close">取消</div>
-      </div>
     </el-dialog>
     <formVersion
       :formVersionVisible="formVersionVisible"
@@ -100,6 +97,7 @@ import formVersion from '../formVersion.vue';
 import { loadMicroApp } from 'qiankun';
 import actions from '../../../../util/actions';
 import { addFormInfo, addFormVersion } from '../../../../api/workflowForm';
+import { Loading } from 'element-ui';
 
 export default {
   components: {
@@ -176,9 +174,9 @@ export default {
       if (this.microApp) {
         this.microApp.unmount();
       }
+      this.$refs['form']?.resetFields();
+      this.$refs['form']?.clearValidate();
       this.$emit('changeFormDesignerVisible', false);
-      this.$refs['form'].clearValidate();
-      this.$refs['form'].resetFields();
       localStorage.removeItem('formVersionFile');
     },
 
@@ -193,7 +191,10 @@ export default {
     },
 
     loadMicroApp() {
-      const entry = process.env.QIAN_KUN_URL;
+      // let loadingInstance = Loading.service({
+      //   text: '表单设计器加载中',
+      //   body: true,
+      // });
       this.microApp = loadMicroApp(
         {
           name: 'formDesigner',
@@ -248,6 +249,7 @@ export default {
         this.$emit('addSuccess');
       } else {
         await this.$refs['form'].validate();
+        let formData = new FormData();
         formData.append('bindType', 'common');
         formData.append('formDesc', this.postData.formDesc);
         formData.append('formName', this.postData.formName);
@@ -269,9 +271,11 @@ export default {
     addGlobalStateChangeListener() {
       const _this = this;
       actions.onGlobalStateChange((value) => {
-        // this.saveForm();
+        if (value.tagInfo === 'cancle') {
+          _this.close();
+          return;
+        }
         _this.formVersionVisible = true;
-        // console.log(value);
       });
     },
     removeGlobalStateChangeListener() {

@@ -135,9 +135,6 @@
           </div>
         </el-form>
       </div>
-      <div slot="footer" class="dialog-footer">
-        <div class="cancel" @click="dialogVisible2 = false">取消</div>
-      </div>
     </el-dialog>
     <formVersion
       :formVersionVisible="formVersionVisible"
@@ -155,6 +152,7 @@ import actions from '../../../../util/actions';
 import { addFormInfo, addFormVersion } from '../../../../api/workflowForm';
 
 import { mapGetters, mapState } from 'vuex';
+import { Loading } from 'element-ui';
 
 export default {
   components: {
@@ -254,17 +252,17 @@ export default {
   methods: {
     close() {
       this.$emit('changeAddFormVisible', false);
-      this.$refs.guideForm.clearValidate();
-      this.$refs.guideForm.resetField();
     },
     closeForm() {
       this.removeGlobalStateChangeListener();
       if (this.microApp) {
         this.microApp.unmount();
       }
+      this.$refs['guideForm']?.resetFields();
+      this.$refs['guideForm']?.clearValidate();
+      this.$refs['newOrEditForm']?.resetFields();
+      this.$refs['newOrEditForm']?.clearValidate();
       this.$emit('changeFormDesignerVisible', false);
-      this.$refs.newOrEditForm.clearValidate();
-      this.$refs.newOrEditForm.resetField();
       localStorage.removeItem('formVersionFile');
     },
     closeVersionDialog() {
@@ -277,6 +275,10 @@ export default {
       this.saveForm();
     },
     loadMicroApp() {
+      let loadingInstance = Loading.service({
+        text: '表单设计器加载中',
+        body: true,
+      });
       this.microApp = loadMicroApp(
         {
           name: 'formDesigner',
@@ -298,6 +300,12 @@ export default {
           },
         }
       );
+      if (this.microApp) {
+        this.$nextTick(() => {
+          // 以服务的方式调用的 Loading 需要异步关闭
+          loadingInstance.close();
+        });
+      }
     },
     nextDiolog() {
       this.$refs['guideForm'].validate((valid) => {
@@ -370,9 +378,11 @@ export default {
     addGlobalStateChangeListener() {
       const _this = this;
       actions.onGlobalStateChange((value) => {
-        // this.saveForm();
+        if (value.tagInfo === 'cancle') {
+          _this.closeForm();
+          return;
+        }
         _this.formVersionVisible = true;
-        // console.log(value);
       });
     },
     removeGlobalStateChangeListener() {

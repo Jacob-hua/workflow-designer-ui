@@ -20,7 +20,7 @@ function conditionEffect({ condition }, iBpmnModeler = new IBpmnModeler()) {
     if(!condition.judgment || condition.conditionTarget === '') return;
     iBpmnModeler.updateSelectedShapeProperties({
       conditionExpression: iBpmnModeler.createBpmnModdleInstance('FormalExpression', {
-        body: '${'+condition.sourceRef+condition.judgment+condition.conditionTarget+'}',
+        body: '${'+condition.sourceRef+'_gateway_condition'+condition.judgment+condition.conditionTarget+'}',
       }),
       'camunda:judgment': condition.judgment,
       'camunda:conditionTarget': condition.conditionTarget

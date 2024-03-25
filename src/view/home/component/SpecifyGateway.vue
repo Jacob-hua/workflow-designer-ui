@@ -96,6 +96,7 @@ export default {
       }
     },
     selectedNode(newVal, oldVal) {
+      if(!newVal) return;
       if (newVal === oldVal) return;
       this.fetchFormFile(newVal);
     },
@@ -125,7 +126,7 @@ export default {
       this.formitemList = [];
       this.selectedFormitem = '';
       let formVersionId = '';
-      if (this.taskInfo.taskType === 'StartEvent') {
+      if (taskKey === 'start_task') {
         if (!this.startFormVersionId) {
           this.$message.warning('未关联启动项表单');
           return;
@@ -205,6 +206,9 @@ export default {
 .process-canvas {
   height: 300px;
   border: 1px solid $border-color;
+}
+p{
+  color: #fff;
 }
 .node-name {
   width: 100px;

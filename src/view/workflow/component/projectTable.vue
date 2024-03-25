@@ -49,10 +49,6 @@ import { mapState } from 'vuex'
 
 export default {
   props: {
-    business: {
-      type: Array,
-      default: [],
-    },
     searchForm: {
       type: Object,
       default: () => ({}),
@@ -128,9 +124,9 @@ export default {
 
     async fetchWorkflowList(){
       const params = this.bindType === 'bind' ? {
-        tenantId: this.business[0]??"",
-        projectId: this.business[1]??"",
-        applicationId: this.business[2]??"",
+        tenantId: this.searchForm.business[0]??"",
+        projectId: this.searchForm.business[1]??"",
+        applicationId: this.searchForm.business[2]??"",
         bindType: this.bindType,
         limit: this.pageInfo.limit,
         page: this.pageInfo.page,

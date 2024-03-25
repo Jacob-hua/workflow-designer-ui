@@ -117,10 +117,10 @@ export default {
       },
       modelTaskConfigs: [],
       modelTaskConfig: {
-        caUserConfig: [],
-        gatewayCondition: '',
-        mutilUserConfig: [],
-        taskActions: [],
+        caUserConfig: null,
+        gatewayCondition: null,
+        mutilUserConfig: null,
+        taskActions: null,
         taskDefKey: '',
         taskFormVersionId: '',
       },
@@ -179,10 +179,10 @@ export default {
     ]),
     resetModelTaskConfig(taskDefKey = '') {
       this.modelTaskConfig = {
-        caUserConfig: [],
-        gatewayCondition: {},
-        mutilUserConfig: [],
-        taskActions: [],
+        caUserConfig: null,
+        gatewayCondition: null,
+        mutilUserConfig: null,
+        taskActions: null,
         taskDefKey: taskDefKey,
         taskFormVersionId: '',
       };
@@ -227,23 +227,37 @@ export default {
       }
     },
     onSelectedShape(element) {
-      if (
-        !element ||
-        (this.iBpmn.getShapeType(element) !== BpmnShapeType.USER_TASK &&
-          this.iBpmn.getShapeType(element) !== BpmnShapeType.START_EVENT)
-      ) {
+      if (!element) {
         this.canLink = false;
         this.resetModelTaskConfig();
         return;
       }
-      this.shapeType = this.iBpmn.getShapeType(element);
-      this.modelTaskConfig = this.modelTaskConfigs.find(
-        ({ taskDefKey }) => taskDefKey === element.id
-      );
-      if (!this.modelTaskConfig) {
-        this.resetModelTaskConfig(element.id);
+      const taskShape = this.iBpmn.getShapeType(element);
+      if (
+        taskShape === BpmnShapeType.USER_TASK ||
+        taskShape === BpmnShapeType.START_EVENT
+      ) {
+        this.shapeType = taskShape;
+        this.modelTaskConfig = this.modelTaskConfigs.find(
+          ({ taskDefKey }) => taskDefKey === element.id
+        );
+        if (!this.modelTaskConfig) {
+          this.resetModelTaskConfig(element.id);
+        }
+        this.canLink = true;
+      } else if (taskShape === BpmnShapeType.EXCLUSIVE_GATEWAY) {
+        this.shapeType = taskShape;
+        this.modelTaskConfig = this.modelTaskConfigs.find(
+          ({ taskDefKey }) => taskDefKey === element.id
+        );
+        if (!this.modelTaskConfig) {
+          this.resetModelTaskConfig(element.id);
+        }
+        this.canLink = false;
+      } else {
+        this.canLink = false;
+        this.resetModelTaskConfig();
       }
-      this.canLink = true;
     },
     onCanvasLoaded(iBpmn) {
       this.iBpmn = iBpmn;
@@ -278,16 +292,17 @@ export default {
         ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
       );
       if (index !== -1) {
-        this.modelTaskConfigs[index] = this.modelTaskConfig;
+        // this.modelTaskConfigs[index] = this.modelTaskConfig;
+        this.modelTaskConfigs.splice(index, 1, this.modelTaskConfig);
       } else {
         this.modelTaskConfigs.push(this.modelTaskConfig);
       }
     },
     async onSave() {
       const { code, msg } = await saveModel({
-        tenantId: this.workflow.tenantId??'',
-        projectId: this.workflow.projectId??'',
-        applicationId: this.workflow.applicationId??'',
+        tenantId: this.workflow.tenantId ?? '',
+        projectId: this.workflow.projectId ?? '',
+        applicationId: this.workflow.applicationId ?? '',
         modelInfoConfig: {
           modelDesc: this.workflow.modelDesc,
           modelName: this.workflow.modelName,

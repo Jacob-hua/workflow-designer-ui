@@ -19,7 +19,7 @@ export const addFormInfo = (params) => post('/workflow/design/form/create/info',
 export const updateFormInfo = (params) => post('/workflow/design/form/update/info', params);
 
 //删除表单主体信息
-export const deleteFormInfo = (params) => post('/workflow/design/form/delete/info', params);
+export const deleteFormInfo = (params) => get('/workflow/design/form/delete/info', params);
 
 //删除表单版本信息
 export const deleteFormVersion = (params) => post('/workflow/design/form/delete/version', params);

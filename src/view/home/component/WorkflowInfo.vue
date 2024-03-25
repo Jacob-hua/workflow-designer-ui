@@ -130,6 +130,7 @@
       :xml="xml"
       :taskInfo="taskInfo"
       :processId="workflow.processId"
+      @saveGateway="saveGateway"
       @closeGatewayDialog="closeGatewayDialog"
     ></specify-gateway>
   </div>

@@ -39,11 +39,7 @@
       >
         <div class="card-title">
           <span class="title">{{ item.formCode }}</span>
-          <span
-            class="detailWord"
-            @click="detailsDiolog(item)"
-            >详情</span
-          >
+          <span class="detailWord" @click="detailsDiolog(item)">详情</span>
         </div>
         <div class="card-main">
           <div class="card-main-item">
@@ -55,7 +51,7 @@
           </div>
           <div class="card-main-item">
             <span class="label">创建人:</span>
-            <span class="value">{{item.creatorName}}</span>
+            <span class="value">{{ item.creatorName }}</span>
           </div>
           <div class="card-main-item">
             <span class="label">创建时间:</span>
@@ -80,7 +76,8 @@
       </el-pagination>
     </div>
     <PublicFormDiolog
-    :title="publicFormTitle"
+      :title="publicFormTitle"
+      :form-info="formInfo"
       ref="PublicFormDiolog"
       :formDesignerVisible="formDesignerVisible"
       @addSuccess="addSuccess()"
@@ -126,7 +123,7 @@ export default {
       detailsDiologVisible: false,
       formDesignerVisible: false,
       publicFormTitle: '新建表单',
-      formInfo: null
+      formInfo: null,
     };
   },
   async mounted() {
@@ -183,7 +180,8 @@ export default {
     addSuccess(value) {
       this.detailDialogVisible = false;
       this.addFormDialogVisible = false;
-      localStorage.removeItem('formVersionFile')
+      this.formInfo = null;
+      localStorage.removeItem('formVersionFile');
       this.getFormList();
     },
     addForm(item, tileText) {
@@ -197,8 +195,8 @@ export default {
       }
       this.formDesignerVisible = true;
     },
-    changeFormDesignerVisible(visible){
-      this.formDesignerVisible = visible
+    changeFormDesignerVisible(visible) {
+      this.formDesignerVisible = visible;
     },
     detailsDiolog(item) {
       this.formData = item;

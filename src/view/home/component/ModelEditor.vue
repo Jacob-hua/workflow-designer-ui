@@ -124,10 +124,10 @@ export default {
       },
       modelTaskConfigs: [],
       modelTaskConfig: {
-        caUserConfig: [],
-        gatewayCondition: '',
-        mutilUserConfig: [],
-        taskActions: [],
+        caUserConfig: null,
+        gatewayCondition: null,
+        mutilUserConfig: null,
+        taskActions: null,
         taskDefKey: '',
         taskFormVersionId: '',
       },
@@ -170,10 +170,6 @@ export default {
         this.fetchModelInfo();
       }
     },
-    changeTaskConfigs: {
-      deep: true,
-      handler() {},
-    },
     modelTaskConfigs: {
       deep: true,
       handler(value) {
@@ -188,10 +184,10 @@ export default {
     ]),
     resetModelTaskConfig(taskDefKey = '') {
       this.modelTaskConfig = {
-        caUserConfig: [],
-        gatewayCondition: {},
-        mutilUserConfig: [],
-        taskActions: [],
+        caUserConfig: null,
+        gatewayCondition: null,
+        mutilUserConfig: null,
+        taskActions: null,
         taskDefKey: taskDefKey,
         taskFormVersionId: '',
       };
@@ -237,24 +233,38 @@ export default {
       // this.modelTaskConfig.taskFormVersionId = formVersionInfo.formVersionId;
     },
     onSelectedShape(element) {
-      if (
-        !element ||
-        (this.iBpmn.getShapeType(element) !== BpmnShapeType.USER_TASK &&
-          this.iBpmn.getShapeType(element) !== BpmnShapeType.START_EVENT)
-      ) {
+      if (!element) {
         this.canLink = false;
         this.resetModelTaskConfig();
         return;
       }
-      this.shapeType = this.iBpmn.getShapeType(element);
-      this.modelTaskConfig = this.modelTaskConfigs.find(
-        ({ taskDefKey }) => taskDefKey === element.id
-      );
-      if (!this.modelTaskConfig) {
-        this.resetModelTaskConfig(element.id);
+      const taskShape = this.iBpmn.getShapeType(element);
+      if (
+        taskShape === BpmnShapeType.USER_TASK ||
+        taskShape === BpmnShapeType.START_EVENT
+      ) {
+        this.shapeType = taskShape;
+        this.modelTaskConfig = this.modelTaskConfigs.find(
+          ({ taskDefKey }) => taskDefKey === element.id
+        );
+        if (!this.modelTaskConfig) {
+          this.resetModelTaskConfig(element.id);
+        }
+        this.canLink = true;
+        this.fetchFormVersion();
+      } else if (taskShape === BpmnShapeType.EXCLUSIVE_GATEWAY) {
+        this.shapeType = taskShape;
+        this.modelTaskConfig = this.modelTaskConfigs.find(
+          ({ taskDefKey }) => taskDefKey === element.id
+        );
+        if (!this.modelTaskConfig) {
+          this.resetModelTaskConfig(element.id);
+        }
+        this.canLink = false;
+      } else {
+        this.canLink = false;
+        this.resetModelTaskConfig();
       }
-      this.canLink = true;
-      this.fetchFormVersion();
     },
     onCanvasLoaded(iBpmn) {
       this.iBpmn = iBpmn;
@@ -266,6 +276,8 @@ export default {
       this.updateModelTaskConfigs({ modelTaskConfigs: [] });
     },
     changeTaskConfigs({ type, mode, data }) {
+      if (!data) return;
+      if (data instanceof Array && !data.length) return;
       if (mode === 'push') {
         for (let ele of data) {
           const index = this.modelTaskConfig[type].findIndex(
@@ -284,23 +296,17 @@ export default {
         ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
       );
       if (index !== -1) {
-        this.modelTaskConfigs[index] = this.modelTaskConfig;
+        this.modelTaskConfigs.splice(index, 1, this.modelTaskConfig);
       } else {
         this.modelTaskConfigs.push(this.modelTaskConfig);
       }
     },
     async onSave() {
       const { code, msg } = await updateModel({
-        tenantId: this.workflow.tenantId ?? '',
-        projectId: this.workflow.projectId ?? '',
-        applicationId: this.workflow.applicationId ?? '',
-        modeId: this.modelId,
-        modelInfoConfig: {
-          modelDesc: this.workflow.modelDesc,
-          modelName: this.workflow.modelName,
-          processId: this.workflow.processId,
-          startFormVersionId: this.startFormVersionId,
-        },
+        modelId: this.modelId,
+        modelDesc: this.workflow.modelDesc,
+        modelName: this.workflow.modelName,
+        startFormVersionId: this.startFormVersionId,
         modelTaskConfigs: this.modelTaskConfigs,
       });
       if (code !== '200') {

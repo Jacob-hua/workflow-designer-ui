@@ -138,6 +138,9 @@ export default {
   height: 300px;
   border: 1px solid $border-color;
 }
+p{
+  color: #fff;
+}
 .node-name {
   width: 100px;
   border: 1px solid #409eff;

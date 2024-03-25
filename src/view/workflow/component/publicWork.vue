@@ -32,7 +32,6 @@
       </div>
       <div class="project-table">
         <projectTable
-            :business="projectValue"
             :searchForm="searchFormData"
             bindType="common"
             @lookBpmnShow="onLookBpmnShow"

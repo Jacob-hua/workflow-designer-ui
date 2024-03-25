@@ -52,7 +52,6 @@
       </div>
       <div class="project-table">
         <projectTable
-          :business="projectValue"
           :searchForm="searchFormData"
           bindType="bind"
           @lookBpmnShow="onProjectLookBpmnShow"
@@ -139,8 +138,8 @@ export default {
   watch: {},
   async mounted() {
     await this.dispatchProjectOriganizations();
-    await this.refreshWorkFlowRecord();
     this.setDefaultorganization();
+    await this.refreshWorkFlowRecord();
   },
   methods: {
     ...mapActions('config', [

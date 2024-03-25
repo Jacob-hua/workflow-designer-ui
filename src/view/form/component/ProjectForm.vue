@@ -246,6 +246,7 @@ export default {
     addSuccess() {
       this.detailDialogVisible = false;
       this.addFormDialogVisible = false;
+      this.formInfo = null;
       localStorage.removeItem('formVersionFile')
       this.getFormList();
     },
