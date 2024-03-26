@@ -261,6 +261,22 @@ export default {
     },
     onCanvasLoaded(iBpmn) {
       this.iBpmn = iBpmn;
+      const bpmnElements = iBpmn.elementRegistryGetAll();
+      bpmnElements.forEach(({ type, id }) => {
+        if (
+          type === 'bpmn:UserTask' ||
+          type === 'bpmn:ExclusiveGateway'
+        ) {
+          this.modelTaskConfigs.push({
+            caUserConfig: null,
+            gatewayCondition: null,
+            mutilUserConfig: null,
+            taskActions: null,
+            taskDefKey: id,
+            taskFormVersionId: '',
+          });
+        }
+      });
     },
     onClose() {
       this.formName = '';
@@ -271,19 +287,18 @@ export default {
       this.updateModelTaskConfigs({ modelTaskConfigs: [] });
       this.$emit('update:visible', false);
     },
-    changeTaskConfigs({ type, mode, data }) {
+    changeTaskConfigs({ type, mode, data, source }) {
       if (!data) return;
       if (data instanceof Array && !data.length) return;
       if (mode === 'push') {
-        for (let ele of data) {
-          const index = this.modelTaskConfig[type].findIndex(
-            ({ value }) => value === ele.value
+        if (!this.modelTaskConfig[type]) {
+          this.modelTaskConfig[type] = [];
+          this.modelTaskConfig[type].push(...data);
+        } else {
+          this.modelTaskConfig[type] = this.modelTaskConfig[type].filter(
+            (item) => source !== item.source
           );
-          if (index !== -1) {
-            this.modelTaskConfig[type][index] = ele;
-          } else {
-            this.modelTaskConfig[type].push(ele);
-          }
+          this.modelTaskConfig[type].push(...data);
         }
       } else {
         this.modelTaskConfig[type] = data;

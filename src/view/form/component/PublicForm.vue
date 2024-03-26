@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="PublicForm-title-button">
-      <div class="boxBtn" @click="addForm(true, '新建表单')">新建表单</div>
+      <div class="boxBtn" @click="addForm()">新建表单</div>
     </div>
     <div class="content-wrapper">
       <div
@@ -79,8 +79,10 @@
       :title="publicFormTitle"
       :form-info="formInfo"
       ref="PublicFormDiolog"
+      :addFormDialogVisible="addFormDialogVisible"
       :formDesignerVisible="formDesignerVisible"
       @addSuccess="addSuccess()"
+      @changeAddFormVisible="changeAddFormVisible"
       @changeFormDesignerVisible="changeFormDesignerVisible"
     ></PublicFormDiolog>
     <detailsDiolog
@@ -122,6 +124,7 @@ export default {
       },
       detailsDiologVisible: false,
       formDesignerVisible: false,
+      addFormDialogVisible: false,
       publicFormTitle: '新建表单',
       formInfo: null,
     };
@@ -184,16 +187,19 @@ export default {
       localStorage.removeItem('formVersionFile');
       this.getFormList();
     },
-    addForm(item, tileText) {
-      if (typeof item === 'boolean') {
-        this.publicFormTitle = tileText;
-      } else {
-        this.formInfo = item;
-        this.$nextTick(() => {
-          this.publicFormTitle = tileText;
-        });
-      }
+    addForm() {
+      this.addFormDialogVisible = true;
+      this.projectFormTitle = '新建表单';
+    },
+    addForm2(item, tileText) {
       this.formDesignerVisible = true;
+      this.formInfo = item;
+      this.$nextTick(() => {
+        this.projectFormTitle = tileText;
+      });
+    },
+    changeAddFormVisible(visible){
+      this.addFormDialogVisible = visible;
     },
     changeFormDesignerVisible(visible) {
       this.formDesignerVisible = visible;
@@ -203,7 +209,7 @@ export default {
       this.detailsDiologVisible = true;
     },
     editForm(item, tileText) {
-      this.addForm(item, tileText);
+      this.addForm2(item, tileText);
     },
   },
 };
@@ -212,6 +218,10 @@ export default {
 <style scoped lang="scss">
 /deep/ .el-tabs__content {
   padding: 50px 20px;
+}
+
+/deep/ .el-dialog {
+  @include formDialog;
 }
 .noData {
   color: #fff;

@@ -1,20 +1,6 @@
 <template>
   <el-dialog title="新建工作流" :close-on-click-modal="false" :visible="visible" @close="onClose">
     <el-form label-position="right" label-width="80px" ref="formData" :model="formData" :rules="formRules">
-      <el-form-item label="应用项目" prop="business">
-        <el-col :span="24">
-          <el-cascader
-            v-model="formData.business"
-            clearable
-            :style="{ width: '100%' }"
-            :options="projectOrganizations()"
-            :props="{
-              emitPath: true,
-              checkStrictly: true,
-            }"
-          ></el-cascader>
-        </el-col>
-      </el-form-item>
       <el-form-item label="流程名称" prop="processName">
         <el-col :span="24">
           <el-input v-model="formData.processName" placeholder="请输入流程名称"></el-input>
@@ -46,13 +32,10 @@ export default {
   data() {
     return {
       formData: {
-        ascription: '',
-        business: [],
         processName: '',
         processDesc: ''
       },
       formRules: {
-        business: [{ required: true, message: '请选择应用项目', trigger: 'change' }],
         processName: [
           {
             required: true,

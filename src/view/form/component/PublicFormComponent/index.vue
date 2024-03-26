@@ -2,14 +2,51 @@
   <div>
     <el-dialog
       :title="title"
-      fullscreen
       @close="close"
+      :close-on-click-modal="false"
+      :visible.sync="addFormDialogVisible"
+    >
+      <div class="guid">
+        <el-form
+          ref="guideForm"
+          label-width="80px"
+          label-position="right"
+          :rules="rules4NewFormGuide"
+          :model="postData"
+        >
+          <div class="from-item">
+            <el-form-item label="表单名称" prop="formName">
+              <el-input
+                v-model="postData.formName"
+                placeholder="请输入表单名称"
+              ></el-input>
+            </el-form-item>
+          </div>
+          <div class="from-item">
+            <el-form-item label="表单描述" prop="formDesc">
+              <el-input
+                v-model="postData.formDesc"
+                placeholder="请输入表单描述"
+              ></el-input>
+            </el-form-item>
+          </div>
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <div class="next" @click="nextDiolog()" type="primary">下一步</div>
+        <div class="cancel" @click="close">取消</div>
+      </div>
+    </el-dialog>
+    <el-dialog
+      :title="title"
+      fullscreen
+      @close="closeForm"
       :visible.sync="formDesignerVisible"
       width="90%"
-      custom-class="dialogVisible2"
+      custom-class="dialogVisibleEdit"
     >
       <el-form
-        ref="form"
+        ref="newOrEditForm"
         label-width="100px"
         label-position="right"
         :rules="rules"
@@ -108,6 +145,10 @@ export default {
       type: String,
       default: '新建表单',
     },
+    addFormDialogVisible: {
+      type: Boolean,
+      default: false,
+    },
     formDesignerVisible: {
       type: Boolean,
       default: false,
@@ -120,6 +161,17 @@ export default {
   data() {
     return {
       rules: {
+        formName: [
+          { required: true, message: '请输入表单名称', trigger: 'blur' },
+          {
+            min: 1,
+            max: 100,
+            message: '表单名称长度在 1 到 100 个字符',
+            trigger: 'blur',
+          },
+        ],
+      },
+      rules4NewFormGuide: {
         formName: [
           { required: true, message: '请输入表单名称', trigger: 'blur' },
           {
@@ -168,14 +220,22 @@ export default {
       }
     },
   },
+  mounted() {
+    this.addGlobalStateChangeListener();
+  },
   methods: {
     close() {
+      this.$emit('changeAddFormVisible', false);
+    },
+    closeForm() {
       this.removeGlobalStateChangeListener();
       if (this.microApp) {
         this.microApp.unmount();
       }
-      this.$refs['form']?.resetFields();
-      this.$refs['form']?.clearValidate();
+      this.$refs['guideForm']?.resetFields();
+      this.$refs['guideForm']?.clearValidate();
+      this.$refs['newOrEditForm']?.resetFields();
+      this.$refs['newOrEditForm']?.clearValidate();
       this.$emit('changeFormDesignerVisible', false);
       localStorage.removeItem('formVersionFile');
     },
@@ -217,7 +277,20 @@ export default {
         }
       );
     },
-
+    nextDiolog() {
+      this.$refs['guideForm'].validate((valid) => {
+        if (valid) {
+          this.$emit('changeAddFormVisible', false);
+          this.$emit('changeFormDesignerVisible', true);
+          this.$nextTick(() => {
+            this.title = '新建表单';
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
     async saveForm() {
       const newFormFile = localStorage.getItem('formVersionFile') ?? '';
       if (!newFormFile) return;
@@ -230,10 +303,10 @@ export default {
       });
       if (this.$props.formInfo) {
         if (this.$props.formInfo.formVersionFile === newFormFile) {
-          this.close();
+          this.closeForm();;
           return;
         }
-        await this.$refs['form'].validate();
+        await this.$refs['newOrEditForm'].validate();
         let formData = new FormData();
         formData.append('formId', this.postData.formId);
         formData.append('formVersionDesc', this.postData.formVersionDesc);
@@ -248,7 +321,7 @@ export default {
         this.$message.success('保存成功');
         this.$emit('addSuccess');
       } else {
-        await this.$refs['form'].validate();
+        await this.$refs['newOrEditForm'].validate();
         let formData = new FormData();
         formData.append('bindType', 'common');
         formData.append('formDesc', this.postData.formDesc);
@@ -265,14 +338,14 @@ export default {
         this.$emit('addSuccess');
       }
       localStorage.removeItem('formVersionFile');
-      this.close();
+      this.closeForm();
     },
 
     addGlobalStateChangeListener() {
       const _this = this;
       actions.onGlobalStateChange((value) => {
         if (value.tagInfo === 'cancle') {
-          _this.close();
+          _this.closeForm();
           return;
         }
         _this.formVersionVisible = true;
@@ -282,41 +355,28 @@ export default {
       actions.offGlobalStateChange();
     },
   },
-  // beforeDestroy() {
-  //   this.removeGlobalStateChangeListener();
-  // },
+  beforeDestroy() {
+    this.removeGlobalStateChangeListener();
+  },
 };
 </script>
 
 <style scoped lang="scss">
-/deep/ .el-select {
-  width: 100%;
-}
 .next {
   @include primaryBtn;
 }
 .cancel {
   @include cancelBtn;
 }
+/deep/.dialogVisibleEdit {
+  width: 100% !important;
+}
 .dialog-footer {
   display: flex;
   justify-content: center;
 }
-.from-item {
-  display: flex;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.from-item > span {
-  width: 100px;
-  height: 40px;
-  line-height: 40px;
-}
-
-.form-title {
-  border-bottom: 1px solid #cccccc;
-  margin-bottom: 40px;
+/deep/.el-dialog__body {
+  padding: 10px 30px !important;
 }
 .title-item {
   display: inline-block;

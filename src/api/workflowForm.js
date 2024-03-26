@@ -22,7 +22,7 @@ export const updateFormInfo = (params) => post('/workflow/design/form/update/inf
 export const deleteFormInfo = (params) => get('/workflow/design/form/delete/info', params);
 
 //删除表单版本信息
-export const deleteFormVersion = (params) => post('/workflow/design/form/delete/version', params);
+export const deleteFormVersion = (params) => get('/workflow/design/form/delete/version', params);
 
 //查询表单版本信息
 export const fetchFormVersion = (params) => get('/workflow/design/form/get/version', params);

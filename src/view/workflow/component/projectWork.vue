@@ -73,9 +73,6 @@
     ></addBpmn>
     <quoteBpmn
       v-if="quoteBpmnVisible"
-      :valueDate="searchForm.valueDate"
-      :ascription="searchForm.ascription"
-      :business="projectValue"
       :visible="quoteBpmnVisible"
       @close="onQuoteBpmnClose"
       @lookBpmn="onLookBpmnShow"
@@ -113,7 +110,7 @@ export default {
   data() {
     return {
       searchForm: {
-        ascription:'',
+        ascription: '',
         business: [],
         valueDate: [],
         processName: '',
@@ -142,9 +139,7 @@ export default {
     await this.refreshWorkFlowRecord();
   },
   methods: {
-    ...mapActions('config', [
-      'dispatchProjectOriganizations',
-    ]),
+    ...mapActions('config', ['dispatchProjectOriganizations']),
     setDefaultorganization() {
       const options = this.projectOrganizations();
       if (options.length <= 0) return;
@@ -162,15 +157,8 @@ export default {
       this.addProjectVisible = true;
     },
     async onQuoteBpmn(_, row) {
-      try {
-        const uuid = await this.$generateUUID();
-        this.setProjectData({
-          ...row,
-          code: `process_${uuid}`,
-          docName: `${uuid}.bpmn`,
-        });
-        this.addProjectVisible = true;
-      } catch (error) {}
+      this.setProjectData(row);
+      this.addProjectVisible = true;
     },
     onReset() {
       this.searchForm = {
@@ -179,11 +167,17 @@ export default {
         valueDate: [],
         processName: '',
       };
+      this.setDefaultorganization();
       this.refreshWorkFlowRecord();
     },
     onAddProjectSubmit(value) {
       this.addProjectVisible = false;
-      this.setProjectData(value);
+      this.setProjectData({
+        ...value,
+        tenantId: value.business[0] ?? '',
+        projectId: value.business[1] ?? '',
+        applicationId: value.business[2] ?? '',
+      });
       this.addBpmnVisible = true;
     },
     onAddBpmnClose() {
@@ -222,17 +216,11 @@ export default {
       this.setProjectData(row);
       this.addBpmnVisible = true;
     },
-    onDraftTableEdit(row) {
-      this.setProjectData(row);
-      this.addBpmnVisible = true;
-    },
     onChangeActiveName() {
       this.refreshWorkFlowRecord();
     },
-    onProjectDeleteRow() {
-    },
-    onDraftDeleteRow() {
-    },
+    onProjectDeleteRow() {},
+    onDraftDeleteRow() {},
     resetProjectData() {
       this.projectData = {};
     },

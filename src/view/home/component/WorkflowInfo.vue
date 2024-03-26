@@ -341,7 +341,7 @@ export default {
           value: key,
         };
       });
-      this.$emit('changeTaskConfigs', { type, mode, data });
+      this.$emit('changeTaskConfigs', { type, mode, data, source: 'source_fixed' });
       // this.closeUserDialog();
     },
     handleChangeNodeUser(flag) {
@@ -355,7 +355,7 @@ export default {
       const mode = 'push';
       const type = this.isSignNode ? 'mutilUserConfig' : 'caUserConfig';
       const data = { ...selectedData, source: flag };
-      this.$emit('changeTaskConfigs', { type, mode, data: [data] });
+      this.$emit('changeTaskConfigs', { type, mode, data: [data], source: flag });
       // this.closeNodeDialog();
     },
     handleChangeGateway() {

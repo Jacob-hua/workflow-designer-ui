@@ -13,18 +13,24 @@
       <el-button class="save" @click="onSave">保存</el-button>
       <el-button class="cancel" @click="onClose">取消</el-button>
     </div>
+    <editor-confirm
+      :editorConfirmVisible="editorConfirmVisible"
+      @submit="handleConfirm"
+      @close="closeConfirm"
+    ></editor-confirm>
   </el-dialog>
 </template>
-
 <script>
 import { saveWorkflow, updateWorkflow } from '../../../api/workflow';
 import BpmnDesigner from '@/component/BpmnDesigner.vue';
+import editorConfirm from './editorConfirm.vue';
 import { mapState } from 'vuex';
 import md5 from 'md5';
 
 export default {
   components: {
     BpmnDesigner,
+    editorConfirm,
   },
   props: {
     projectData: {
@@ -48,6 +54,7 @@ export default {
     return {
       iBpmnModeler: {},
       rootBaseInfo: {},
+      editorConfirmVisible: false,
     };
   },
   computed: {
@@ -67,13 +74,10 @@ export default {
       // TODO: 此处的文件名和文件id应该以addProject.vue中设置的参数为主
       const { processName, processDesc } = this.rootBaseInfo;
       let processFormData = new FormData();
-      if (!this.projectData.processId) {
-        processFormData.set('tenantId', this.projectData.business[0]) ?? '';
-        processFormData.set('projectId', this.projectData.business[1] ?? '');
-        processFormData.set('applicationId', this.projectData.business[2]) ??
-          '';
-      } else {
+      if (this.projectData.processId) {
         processFormData.set('processId', this.projectData.processId);
+      }
+      if (this.bindType === 'bind') {
         processFormData.set('tenantId', this.projectData.tenantId ?? '');
         processFormData.set('projectId', this.projectData.projectId ?? '');
         processFormData.set('applicationId', this.projectData.applicationId) ??
@@ -88,7 +92,17 @@ export default {
       this.$emit('close');
       this.$emit('update:visible', false);
     },
-    async onSave() {
+    onSave() {
+      this.editorConfirmVisible = true;
+    },
+    closeConfirm() {
+      this.editorConfirmVisible = false;
+    },
+    async handleConfirm(value) {
+      this.rootBaseInfo = {
+        ...this.rootBaseInfo,
+        ...value,
+      };
       const { error } = await this.iBpmnModeler.validate();
       if (error.length > 0) {
         this.$message.error('流程设计存在错误/警告');
@@ -126,6 +140,7 @@ export default {
           this.$message.error(msg);
           return;
         }
+        this.closeConfirm();
         this.$message.success('保存成功');
         this.$emit('submit', 'drafted');
         this.onClose();

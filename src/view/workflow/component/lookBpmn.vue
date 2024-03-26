@@ -14,12 +14,12 @@
       >
         编辑
       </el-button>
-      <el-button
+      <!-- <el-button
         class="status-button"
         @click="onDeactivate"
       >
         {{ statusButtonLabel }}
-      </el-button>
+      </el-button> -->
     </span>
   </el-dialog>
 </template>

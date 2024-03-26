@@ -4,8 +4,8 @@
       <div>
         <el-table :data="tableData">
           <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>
-          <el-table-column prop="name" label="名称" align="center"> </el-table-column>
-          <el-table-column prop="createBy" label="创建人" align="center"> </el-table-column>
+          <el-table-column prop="processName" label="名称" align="center"> </el-table-column>
+          <el-table-column prop="creatorName" label="创建人" align="center"> </el-table-column>
           <el-table-column prop="createTime" label="编辑时间" align="center"> </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="{ $index, row }">
@@ -31,7 +31,7 @@
 
 <script>
 import AddProject from './addProject.vue'
-import { workFlowRecord } from '@/api/managerWorkflow'
+import { fetchWorkflowList } from '../../../api/workflow'
 import { mapState } from 'vuex'
 
 export default {
@@ -43,17 +43,6 @@ export default {
     visible: {
       type: Boolean,
       default: false,
-    },
-    valueDate: {
-      default: () => [],
-    },
-    ascription: {
-      type: String,
-      default: '',
-    },
-    business: {
-      type: String,
-      default: '',
     },
   },
   data() {
@@ -71,28 +60,29 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
   mounted() {
-    this.findWorkFlowRecord()
+    this.fetchWorkflowList()
   },
+  // watch: {
+  //   visible(value) {
+  //     if(value){
+  //       this.fetchWorkflowList()
+  //     }
+  //   }
+  // },
   methods: {
-    async findWorkFlowRecord() {
+    async fetchWorkflowList() {
       try {
-        const { errorInfo, result } = await workFlowRecord({
-          tenantId: this.tenantId,
-          status: 'enabled',
-          ascription: 'public',
-          business: this.business,
-          createBy: this.userInfo.account,
-          name: this.input,
-          startTime: this.valueDate[0],
-          endTime: this.valueDate[1],
+        const { data, code, msg } = await fetchWorkflowList({
+          bindType: 'common',
           page: this.getData.page,
           limit: this.getData.limit,
         })
-        if (errorInfo.errorCode) {
-          this.$message.error(errorInfo.errorMsg)
+        if (code!=='200') {
+          this.$message.error(msg)
           return
         }
-        this.tableData = result.list
+        this.tableData = data.dataList;
+        this.getData.total = Number(total);
       } catch (error) {}
     },
     close() {
@@ -111,11 +101,11 @@ export default {
     onAddProjectSubmit() {},
     handleSizeChange(val) {
       this.getData.limit = val
-      this.findWorkFlowRecord()
+      this.fetchWorkflowList()
     },
     handleCurrentChange(val) {
       this.getData.page = val
-      this.findWorkFlowRecord()
+      this.fetchWorkflowList()
     },
   },
 }
