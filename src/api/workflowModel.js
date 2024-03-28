@@ -7,7 +7,7 @@ export const saveModel = (params) => post('/workflow/design/model/save',params)
 export const updateModel = (params) => post('/workflow/design/model/update', params)
 
 //删除模型配置信息
-export const deleteModel = (params) => post('/workflow/design/model/delete', params)
+export const deleteModel = (params) => get('/workflow/design/model/delete', params)
 
 //查询模型配置列表
 export const fetchModelList = (params) => post('/workflow/design/model/list', params)

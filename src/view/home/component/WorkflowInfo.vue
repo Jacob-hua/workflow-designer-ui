@@ -89,7 +89,12 @@
       </div>
       <div class="ticket-form">
         <div class="title">
-          <div>任务执行内容</div>
+          <div>
+            <span>任务执行内容</span
+            ><span v-if="formShow"
+              >{{ formShow.formName }}-{{ formShow.formVersionTag }}</span
+            >
+          </div>
           <el-button
             class="remove-button"
             v-if="formShow && canRemoveForm"
@@ -103,7 +108,7 @@
               <label>表单名称</label>
               <el-input placeholder="请输入表单名称"></el-input>
             </div>
-            <form-preview :formTree="formShow"></form-preview>
+            <form-preview :formTree="formShow.formVersionFile"></form-preview>
           </div>
           <div v-else class="empty-data">当前未关联表单</div>
         </div>
@@ -341,7 +346,12 @@ export default {
           value: key,
         };
       });
-      this.$emit('changeTaskConfigs', { type, mode, data, source: 'source_fixed' });
+      this.$emit('changeTaskConfigs', {
+        type,
+        mode,
+        data,
+        source: 'source_fixed',
+      });
       // this.closeUserDialog();
     },
     handleChangeNodeUser(flag) {
@@ -355,7 +365,12 @@ export default {
       const mode = 'push';
       const type = this.isSignNode ? 'mutilUserConfig' : 'caUserConfig';
       const data = { ...selectedData, source: flag };
-      this.$emit('changeTaskConfigs', { type, mode, data: [data], source: flag });
+      this.$emit('changeTaskConfigs', {
+        type,
+        mode,
+        data: [data],
+        source: flag,
+      });
       // this.closeNodeDialog();
     },
     handleChangeGateway() {
@@ -416,6 +431,11 @@ export default {
 .ticket-form {
   flex: 3;
   margin: 20px 0px 0px 20px;
+  .title {
+    span:first-child {
+      margin-right: 10px;
+    }
+  }
 }
 
 .info {

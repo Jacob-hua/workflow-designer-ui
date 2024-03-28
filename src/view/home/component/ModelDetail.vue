@@ -64,11 +64,18 @@
       </div>
       <div class="ticket-form">
         <div class="title">
-          <div>任务执行内容</div>
+          <div>
+            <span>任务执行内容</span
+            ><span v-if="formShow"
+              >{{ formContent.formName }}-{{ formContent.formVersionTag }}</span
+            >
+          </div>
         </div>
         <div class="content-wrapper form">
           <div v-if="formShow">
-            <form-preview :formTree="formContent"></form-preview>
+            <form-preview
+              :formTree="formContent.formVersionFile"
+            ></form-preview>
           </div>
           <div v-else class="empty-data">当前未关联表单</div>
         </div>
@@ -93,7 +100,7 @@ export default {
   props: {
     modelTasks: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     xml: {
       type: String,
@@ -150,13 +157,13 @@ export default {
       return this.modelTasks[this.taskInfo.taskDefKey] ?? {};
     },
     historyTaskActios() {
-      return this.currentTaskModel.taskActions;
+      return this.currentTaskModel.taskActions ?? [];
     },
   },
   watch: {
-    'currentTaskModel.taskFormVersionId'(value){
-      if(value){
-        this.fetchFormVersion(value)
+    'currentTaskModel.taskFormVersionId'(value) {
+      if (value) {
+        this.fetchFormVersion(value);
       }
     },
     historyTaskActios(value) {
@@ -177,6 +184,7 @@ export default {
           taskDefKey: '',
           taskType: '',
         };
+        this.formContent = {};
         return;
       }
       this.taskInfo.taskType = element.type.split(':')[1];
@@ -199,14 +207,17 @@ export default {
       this.taskActios = data;
     },
     async fetchFormVersion(versionId) {
-      const { data, code, msg} = await fetchFormVersion({
-        formVersionId: versionId
+      const { data, code, msg } = await fetchFormVersion({
+        formVersionId: versionId,
       });
-      if(code!=='200'){
+      if (code !== '200') {
         this.$message.error(msg);
-        return
+        return;
       }
-      this.formContent = JSON.parse(data.formVersionFile)
+      this.formContent = {
+        ...data,
+        formVersionFile: JSON.parse(data.formVersionFile),
+      };
     },
   },
 };
@@ -245,6 +256,11 @@ export default {
 .ticket-form {
   flex: 3;
   margin: 20px 0px 0px 20px;
+  .title {
+    span:first-child {
+      margin-right: 10px;
+    }
+  }
 }
 
 .info {

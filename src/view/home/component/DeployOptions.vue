@@ -106,7 +106,6 @@ export default {
     return {
       iBpmn: {},
       formContent: {},
-      formContents: [],
       formList: [],
       formName: '',
       canLink: false,
@@ -205,7 +204,7 @@ export default {
       this.$set(
         this.formContent,
         this.modelTaskConfig.taskDefKey,
-        formVersionInfo.formVersionFile
+        formVersionInfo
       );
       if (this.shapeType === BpmnShapeType.START_EVENT) {
         this.startFormVersionId = formVersionInfo.formVersionId;
@@ -372,10 +371,12 @@ export default {
         return [];
       }
       return data.dataList.map(
-        ({ formVersionId, formVersion, formVersionTag, formVersionFile }) => {
+        ({ formName, formVersionId, formVersion, formVersionTag, formVersionFile }) => {
           const versionInfo = {
             formVersionId,
             formVersionFile: JSON.parse(formVersionFile),
+            formName,
+            formVersionTag
           };
           return {
             label: `${formVersionTag}_${formVersion}`,
