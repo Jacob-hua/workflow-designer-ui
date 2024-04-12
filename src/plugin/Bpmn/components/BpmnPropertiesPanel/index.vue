@@ -104,7 +104,7 @@ export default {
         component: MultiInstancePanel,
       },
       condiInstancePanelInfo: {
-        title: '条件选择',
+        title: '完成条件',
         component: CondiInstancePanel,
       },
       // actionButtonPanelInfo: {
