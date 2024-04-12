@@ -34,6 +34,11 @@ const state = () => ({
     elementVariable: '',
     completionCondition: '',
   },
+  condiInstance: {
+    typeSt: '',
+    passPerson: '',
+    passPercent: '',
+  },
   userTask: {
     displayAssignee: {},
     displayCandidateUsers: [],
@@ -196,6 +201,9 @@ const mutations = {
   updateCondition(state, { newCondition }) {
     state.condition = deepCopy(newCondition)
   },
+  updateCondiInstance(state, newData) {
+    state.condiInstance = {...newData}
+  }
 }
 
 const mutationsEffect = {
@@ -220,6 +228,7 @@ const mutationsEffect = {
   updateActions: panelEffect.actionsEffect,
   updateTimer: panelEffect.timerEffect,
   updateCondition: panelEffect.conditionEffect,
+  updateCondiInstance: panelEffect.condiInstanceEffect
 }
 
 const eventsListener = {

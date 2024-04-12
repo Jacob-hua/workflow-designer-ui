@@ -9,6 +9,7 @@ import timerEffect from './timerEffect'
 import conditionEffect from './conditionEffect'
 import documentationEffect from './documentationEffect'
 import parentDocumentationEffect from './parentDocumentationEffect'
+import condiInstanceEffect from './condiInstanceEffect'
 
 export default {
   baseInfoEffect,
@@ -21,5 +22,6 @@ export default {
   timerEffect,
   conditionEffect,
   documentationEffect,
-  parentDocumentationEffect
+  parentDocumentationEffect,
+  condiInstanceEffect
 }

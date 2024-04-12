@@ -28,6 +28,7 @@ import SignalMessagePanel from './components/SignalMessagePanel.vue';
 import MultiInstancePanel from './components/MultiInstancePanel.vue';
 import TimerPanel from './components/TimerPanel.vue';
 import ConditionPanel from './components/ConditionPanel.vue';
+import CondiInstancePanel from './components/CondiInstancePanel.vue'
 import bridgingBpmn, { generateNamespace } from '../../utils/bridging-bpmn';
 import bridgingModuleFunc from './store';
 import shapeType from '../../enum/shapeType';
@@ -41,6 +42,7 @@ export default {
     MultiInstancePanel,
     TimerPanel,
     ConditionPanel,
+    CondiInstancePanel
   },
   props: {
     iBpmnModeler: {
@@ -101,6 +103,10 @@ export default {
         title: '多实例',
         component: MultiInstancePanel,
       },
+      condiInstancePanelInfo: {
+        title: '条件选择',
+        component: CondiInstancePanel,
+      },
       // actionButtonPanelInfo: {
       //   title: '操作按钮配置',
       //   component: ActionButtonPanel,
@@ -135,10 +141,9 @@ export default {
           this.timerPanelInfo,
         ],
         [BpmnShapeType.END_EVENT]: [this.baseInfoPanelInfo],
-        [BpmnShapeType.USER_TASK]: [
-          this.baseInfoPanelInfo,
-          this.documentationPanelInfo,
-        ],
+        [BpmnShapeType.USER_TASK]: (this.baseInfo.name.indexOf('并行') >= 0 || this.baseInfo.name.indexOf('串行') >= 0)
+          ? [ this.baseInfoPanelInfo, this.documentationPanelInfo, this.condiInstancePanelInfo]
+          : [ this.baseInfoPanelInfo, this.documentationPanelInfo],
         [BpmnShapeType.EXCLUSIVE_GATEWAY]: [this.baseInfoPanelInfo],
         [BpmnShapeType.SEQUENCE_FLOW]:
           this.baseInfo.sourceRefType === shapeType.START_EVENT

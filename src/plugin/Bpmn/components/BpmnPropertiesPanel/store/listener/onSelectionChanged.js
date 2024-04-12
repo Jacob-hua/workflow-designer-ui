@@ -242,6 +242,50 @@ function condition2State(iBpmnModeler = new IBpmnModeler()) {
   return state;
 }
 
+function condiIntance2State(iBpmnModeler = new IBpmnModeler()) {
+  const state = {
+    type: 'nrOfInstances',
+    typeSt: 'nrOfInstances',
+    passPerson: 0,
+    passPercent: 0
+  };
+  if(iBpmnModeler.getSelectedShapeInfo()){
+    const shapeInfo = iBpmnModeler.getSelectedShapeInfo();
+    if (!shapeInfo.loopCharacteristics?.completionCondition) return;
+    const body = shapeInfo.loopCharacteristics.completionCondition.body
+    const len = body.length
+    const newList = body.substring(2, len - 1).split(' ')
+    if (newList[2] === 'nrOfInstances') {
+      state.typeSt = 'nrOfInstances';
+      state.passPerson = 0;
+      state.passPercent = 0;
+    } else if (newList[2] !== 'nrOfInstances' && newList[1] === '==') {
+      state.typeSt = 'passPerson';
+      state.passPerson = newList[2];
+      state.passPercent = 0;
+    } else {
+      state.typeSt = 'passPercent';
+      state.passPerson = 0;
+      state.passPercent = (100 * newList[2]).toFixed(0);
+    }
+  }
+
+  const temp = iBpmnModeler.getSelectedShapeInfoByType(
+    'sequenceFlow '
+  );
+
+  const completionCondition = iBpmnModeler.getSelectedShapeInfoByType(
+    'completionCondition'
+  );
+  if (!completionCondition) {
+    return state;
+  }
+
+  state.type = 'nrOfInstances';
+
+  return state;
+}
+
 function onSelectionChangedListener(
   _,
   commit,
@@ -278,6 +322,8 @@ function onSelectionChangedListener(
 
   const condition = condition2State(iBpmnModeler);
 
+  const condiInstance = condiIntance2State(iBpmnModeler);
+
   commit('refreshState', {
     shapeType,
     baseInfo,
@@ -290,6 +336,7 @@ function onSelectionChangedListener(
     multiInstance,
     timer,
     condition,
+    condiInstance
   });
 }
 
