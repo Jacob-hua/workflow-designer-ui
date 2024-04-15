@@ -78,10 +78,7 @@ export default {
       this.$store.commit(`${this.namespace}/panel/updateCondition`, payload)
     },
     changeInput(e) {
-      this.conditionTragetOptions.push({
-        label: e.target.value,
-        value: e.target.value
-      })
+      if (!e.target.value || e.target.value === '') return;
       this.conditionForm.conditionTarget = e.target.value
     },
     handlerToFocus(e) {
