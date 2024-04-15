@@ -13,7 +13,7 @@
       </el-form-item>
       <el-form-item  label="目标值">
         <!-- <el-input v-model="conditionForm.target"></el-input> -->
-        <el-select allow-create filterable v-model="conditionForm.conditionTarget">
+        <el-select allow-create filterable v-model="conditionForm.conditionTarget" @focus="handlerToFocus" @blur="handlerToBlur">
           <el-option
             v-for="({ label, value }, index) in conditionTragetOptions"
             :key="index"
@@ -77,6 +77,21 @@ export default {
     updateCondition(payload) {
       this.$store.commit(`${this.namespace}/panel/updateCondition`, payload)
     },
+    changeInput(e) {
+      this.conditionTragetOptions.push({
+        label: e.target.value,
+        value: e.target.value
+      })
+      this.conditionForm.conditionTarget = e.target.value
+    },
+    handlerToFocus(e) {
+      const target = e.target
+      target.addEventListener('change', this.changeInput)
+    },
+    handlerToBlur(e) {
+      const target = e.target
+      target.removeEventListener('change', this.changeInput)
+    }
   },
 }
 </script>
