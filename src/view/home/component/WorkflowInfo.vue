@@ -20,9 +20,10 @@
                 <span>流程节点:</span><span>{{ taskInfo.taskName }}</span>
               </div>
               <div>
-                <span>固定执行人员:</span
-                ><span v-for="item in sourceFixed" :key="item.value">{{
-                  item.label ?? '暂无'
+                <span>固定执行人员:</span>
+                <span v-if="sourceFixed.length <= 0">暂无</span>
+                <span v-else v-for="item in sourceFixed" :key="item.value">{{
+                  item.label
                 }}</span>
                 <el-button
                   :disabled="!taskInfo.taskDefKey"
@@ -90,10 +91,11 @@
       <div class="ticket-form">
         <div class="title">
           <div>
-            <span>任务执行内容</span
-            ><span v-if="formShow"
-              >{{ formShow.formName }}-{{ formShow.formVersionTag }}</span
-            >
+            <span>任务执行内容</span>
+            <div v-if="formShow">
+              <span>表单名称：{{ formShow.formName }}</span>
+              <span>版本名称：{{ formShow.formVersionTag }}</span>
+            </div>
           </div>
           <el-button
             class="remove-button"
@@ -126,6 +128,7 @@
       :xml="xml"
       :flag="flag"
       :taskInfo="taskInfo"
+      :historySelected="selectedNode"
       @closeNodeDialog="closeNodeDialog"
       :processId="workflow.processId"
       @saveNode="saveNode"
@@ -204,6 +207,7 @@ export default {
       organization: {},
       flag: '',
       isSignNode: false,
+      selectedNode: null
     };
   },
   computed: {
@@ -356,6 +360,11 @@ export default {
     },
     handleChangeNodeUser(flag) {
       this.flag = flag;
+      if(flag === 'dynamic_set'){
+        this.selectedNode = this.dynamicSet;
+      }else{
+        this.selectedNode = this.taskEecutor
+      }
       this.nodeDialogVisible = true;
     },
     closeNodeDialog() {
@@ -364,11 +373,17 @@ export default {
     saveNode({ selectedData, flag }) {
       const mode = 'push';
       const type = this.isSignNode ? 'mutilUserConfig' : 'caUserConfig';
-      const data = { ...selectedData, source: flag };
+      // const data = { ...selectedData, source: flag };
+      const data = selectedData.map((item) => {
+        return {
+          ...item,
+          source: flag,
+        };
+      });
       this.$emit('changeTaskConfigs', {
         type,
         mode,
-        data: [data],
+        data: data,
         source: flag,
       });
       // this.closeNodeDialog();

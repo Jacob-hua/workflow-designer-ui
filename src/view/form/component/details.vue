@@ -105,7 +105,7 @@
           <span>表单名称</span>
           <el-input
             v-model="postData.name"
-            placeholder="请输入部署名称"
+            placeholder="请输入表单名称"
           ></el-input>
         </div>
       </div>

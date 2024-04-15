@@ -69,10 +69,10 @@ export default {
           menuRoute: 'Home',
           projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
         },
-        {
-          menuRoute: 'Configuration',
-          projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
-        },
+        // {
+        //   menuRoute: 'Configuration',
+        //   projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
+        // },
       ],
       menuListNameMapping: {
         Workflow: {
@@ -100,11 +100,11 @@ export default {
           activeIcon: require('../assets/image/menu/active/history.svg'),
           label: '历史工作流',
         },
-        Configuration: {
-          icon: require('../assets/image/menu/glob-config.svg'),
-          activeIcon: require('../assets/image/menu/active/glob-config.svg'),
-          label: '工作流全局配置',
-        },
+        // Configuration: {
+        //   icon: require('../assets/image/menu/glob-config.svg'),
+        //   activeIcon: require('../assets/image/menu/active/glob-config.svg'),
+        //   label: '工作流全局配置',
+        // },
         Power: {
           icon: require('../assets/image/menu/power.svg'),
           activeIcon: require('../assets/image/menu/active/power.svg'),

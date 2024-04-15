@@ -74,6 +74,7 @@
       :visible.sync="modelEditorVisible"
       :modelId="modelId"
       :workflow="workflow"
+      @saveSuccess="saveSuccess"
     ></model-editor>
   </div>
 </template>
@@ -118,11 +119,11 @@ export default {
       return [
         {
           label: '流程编码',
-          value: this.workflow.numberCode,
+          value: this.workflow.processCode,
         },
         {
-          label: '模型名称',
-          value: this.workflow.modelName,
+          label: '流程名称',
+          value: this.workflow.processName,
         },
         // {
         //   label: '创建时间',
@@ -166,6 +167,9 @@ export default {
     onClickEdit(modelId) {
       this.modelId = modelId;
       this.modelEditorVisible = true;
+    },
+    saveSuccess() {
+      this.fetchModelList()
     },
     async fetchModelList() {
       const { data, code, msg } = await fetchModelList({

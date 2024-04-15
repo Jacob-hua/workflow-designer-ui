@@ -262,10 +262,7 @@ export default {
       this.iBpmn = iBpmn;
       const bpmnElements = iBpmn.elementRegistryGetAll();
       bpmnElements.forEach(({ type, id }) => {
-        if (
-          type === 'bpmn:UserTask' ||
-          type === 'bpmn:ExclusiveGateway'
-        ) {
+        if (type === 'bpmn:UserTask' || type === 'bpmn:ExclusiveGateway') {
           this.modelTaskConfigs.push({
             caUserConfig: null,
             gatewayCondition: null,
@@ -288,16 +285,16 @@ export default {
     },
     changeTaskConfigs({ type, mode, data, source }) {
       if (!data) return;
-      if (data instanceof Array && !data.length) return;
+      // if (data instanceof Array && !data.length) return;
       if (mode === 'push') {
         if (!this.modelTaskConfig[type]) {
           this.modelTaskConfig[type] = [];
-          this.modelTaskConfig[type].push(...data);
+          if (data.length) this.modelTaskConfig[type].push(...data);
         } else {
           this.modelTaskConfig[type] = this.modelTaskConfig[type].filter(
             (item) => source !== item.source
           );
-          this.modelTaskConfig[type].push(...data);
+          if (data.length) this.modelTaskConfig[type].push(...data);
         }
       } else {
         this.modelTaskConfig[type] = data;
@@ -309,7 +306,8 @@ export default {
         // this.modelTaskConfigs[index] = this.modelTaskConfig;
         this.modelTaskConfigs.splice(index, 1, this.modelTaskConfig);
       } else {
-        this.modelTaskConfigs.push(this.modelTaskConfig);
+        if (this.modelTaskConfig.taskDefKey)
+          this.modelTaskConfigs.push(this.modelTaskConfig);
       }
     },
     async onSave() {
@@ -371,12 +369,18 @@ export default {
         return [];
       }
       return data.dataList.map(
-        ({ formName, formVersionId, formVersion, formVersionTag, formVersionFile }) => {
+        ({
+          formName,
+          formVersionId,
+          formVersion,
+          formVersionTag,
+          formVersionFile,
+        }) => {
           const versionInfo = {
             formVersionId,
             formVersionFile: JSON.parse(formVersionFile),
             formName,
-            formVersionTag
+            formVersionTag,
           };
           return {
             label: `${formVersionTag}_${formVersion}`,

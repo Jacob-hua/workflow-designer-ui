@@ -48,7 +48,7 @@
           <div class="label">可部署工作流</div>
         </div>
       </div>
-      <div>
+      <!-- <div>
         <div class="data-wrapper">
           <div class="icon">
             <img :src="require('../../assets/image/home/executed.svg')" />
@@ -74,7 +74,7 @@
           <div class="title">{{ workflowContents.executionCompleteCount }}</div>
           <div class="label">已完成数量</div>
         </div>
-      </div>
+      </div> -->
       <div>
         <div class="data-wrapper" @click="gotoWorkflow">
           <div class="icon">
@@ -164,11 +164,9 @@ export default {
         this.deployedWorkflowContents = res.result;
       });
     },
-    onWorkflowRefresh(count) {
-      this.WorkflowTableNum = count;
-    },
-    onDraftsRefresh(count) {
-      this.draftsTableNum = count;
+    onWorkflowRefresh({ deployCount, deployedCount }) {
+      this.WorkflowTableNum = deployCount;
+      this.deployedWorkflowContents = deployedCount;
     },
     onWorkflowDeployed() {
       this.getManyData();
@@ -183,9 +181,6 @@ export default {
     onDraftsDeployed() {
       this.getManyData();
       this.$refs.workflow.fetchWorkflows();
-    },
-    onDraftsSaved() {
-      this.getManyData();
     },
     getManyData() {
       this.getDataNumber();

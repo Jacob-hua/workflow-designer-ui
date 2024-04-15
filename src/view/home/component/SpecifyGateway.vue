@@ -76,6 +76,9 @@ export default {
     processId: {
       type: String,
     },
+    historyInfo: {
+      type: Object
+    }
   },
   data() {
     return {

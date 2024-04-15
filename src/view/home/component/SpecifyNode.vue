@@ -68,6 +68,9 @@ export default {
     processId: {
       type: String,
     },
+    historySelected: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -77,14 +80,17 @@ export default {
     };
   },
   computed: {
-    operationTitle(){
+    operationTitle() {
       return this.flag === 'dynamic_set' ? '其他节点指定：' : '同一节点指定：';
-    }
+    },
   },
   watch: {
-    nodeDialogVisible(value) {
+    async nodeDialogVisible(value) {
       if (value) {
-        this.fetchTaskNodeList();
+        await this.fetchTaskNodeList();
+        this.selectedNode = this.historySelected
+          ? this.historySelected.value
+          : '';
       }
     },
   },
@@ -110,18 +116,18 @@ export default {
       });
     },
     save() {
-      if(!this.selectedNode){
-        this.close();
-        return;
-      }
-      const selectedData = this.taskNodeList.find(
+      // if(!this.selectedNode){
+      //   this.close();
+      //   return;
+      // }
+      const selectedData = this.taskNodeList.filter(
         ({ value }) => this.selectedNode === value
       );
-      this.$emit('saveNode', {selectedData, flag: this.flag});
+      this.$emit('saveNode', { selectedData, flag: this.flag });
       this.close();
     },
     close() {
-      this.selectedNode = ''
+      this.selectedNode = '';
       this.$emit('closeNodeDialog');
     },
   },
@@ -138,7 +144,7 @@ export default {
   height: 300px;
   border: 1px solid $border-color;
 }
-p{
+p {
   color: #fff;
 }
 .node-name {

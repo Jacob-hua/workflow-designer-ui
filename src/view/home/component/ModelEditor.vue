@@ -146,7 +146,7 @@ export default {
         },
         {
           label: '模型名称',
-          value: this.workflow.modelName,
+          value: this.modelInfo.modelName,
         },
         // {
         //   label: "部署时间",
@@ -224,6 +224,7 @@ export default {
         if (index !== -1) {
           this.modelTaskConfigs[index].taskFormVersionId =
             formVersionInfo.formVersionId;
+          // const
         } else {
           this.modelTaskConfig.taskFormVersionId =
             formVersionInfo.formVersionId;
@@ -277,16 +278,16 @@ export default {
     },
     changeTaskConfigs({ type, mode, data, source }) {
       if (!data) return;
-      if (data instanceof Array && !data.length) return;
+      // if (data instanceof Array && !data.length) return;
       if (mode === 'push') {
         if (!this.modelTaskConfig[type]) {
           this.modelTaskConfig[type] = [];
-          this.modelTaskConfig[type].push(...data);
+          if (data.length) this.modelTaskConfig[type].push(...data);
         } else {
           this.modelTaskConfig[type] = this.modelTaskConfig[type].filter(
             (item) => source !== item.source
           );
-          this.modelTaskConfig[type].push(...data);
+          if (data.length) this.modelTaskConfig[type].push(...data);
         }
       } else {
         this.modelTaskConfig[type] = data;
@@ -297,7 +298,8 @@ export default {
       if (index !== -1) {
         this.modelTaskConfigs.splice(index, 1, this.modelTaskConfig);
       } else {
-        this.modelTaskConfigs.push(this.modelTaskConfig);
+        if (this.modelTaskConfig.taskDefKey)
+          this.modelTaskConfigs.push(this.modelTaskConfig);
       }
     },
     async onSave() {
@@ -313,6 +315,7 @@ export default {
         return;
       }
       this.$message.success('保存成功');
+      this.$emit('saveSuccess');
       this.onClose();
     },
     async fetchModelInfo() {
@@ -365,12 +368,18 @@ export default {
         return [];
       }
       return data.dataList.map(
-        ({ formName, formVersionId, formVersion, formVersionTag, formVersionFile }) => {
+        ({
+          formName,
+          formVersionId,
+          formVersion,
+          formVersionTag,
+          formVersionFile,
+        }) => {
           const versionInfo = {
             formVersionId,
             formVersionFile: JSON.parse(formVersionFile),
             formName,
-            formVersionTag
+            formVersionTag,
           };
           return {
             label: `${formVersionTag}_${formVersion}`,
@@ -390,14 +399,10 @@ export default {
         this.$message.error(msg);
         return;
       }
-      this.$set(
-        this.formContent,
-        this.modelTaskConfig.taskDefKey,
-        {
-          ...data,
-          formVersionFile: JSON.parse(data.formVersionFile),
-        }
-      );
+      this.$set(this.formContent, this.modelTaskConfig.taskDefKey, {
+        ...data,
+        formVersionFile: JSON.parse(data.formVersionFile),
+      });
     },
 
     onSizeChange(val) {

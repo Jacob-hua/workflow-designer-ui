@@ -225,11 +225,13 @@ export default {
   },
   methods: {
     close() {
+      localStorage.removeItem('formVersionFile');
       this.$emit('changeAddFormVisible', false);
     },
     closeForm() {
       this.removeGlobalStateChangeListener();
       if (this.microApp) {
+        localStorage.removeItem('formVersionFile');
         this.microApp.unmount();
       }
       this.$refs['guideForm']?.resetFields();
@@ -237,7 +239,6 @@ export default {
       this.$refs['newOrEditForm']?.resetFields();
       this.$refs['newOrEditForm']?.clearValidate();
       this.$emit('changeFormDesignerVisible', false);
-      localStorage.removeItem('formVersionFile');
     },
 
     closeVersionDialog() {
@@ -303,7 +304,7 @@ export default {
       });
       if (this.$props.formInfo) {
         if (this.$props.formInfo.formVersionFile === newFormFile) {
-          this.closeForm();;
+          this.closeForm();
           return;
         }
         await this.$refs['newOrEditForm'].validate();

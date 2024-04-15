@@ -251,11 +251,13 @@ export default {
 
   methods: {
     close() {
+      localStorage.removeItem('formVersionFile');
       this.$emit('changeAddFormVisible', false);
     },
     closeForm() {
       this.removeGlobalStateChangeListener();
       if (this.microApp) {
+        localStorage.removeItem('formVersionFile');
         this.microApp.unmount();
       }
       this.$refs['guideForm']?.resetFields();
@@ -263,7 +265,6 @@ export default {
       this.$refs['newOrEditForm']?.resetFields();
       this.$refs['newOrEditForm']?.clearValidate();
       this.$emit('changeFormDesignerVisible', false);
-      localStorage.removeItem('formVersionFile');
     },
     closeVersionDialog() {
       this.formVersionVisible = false;
