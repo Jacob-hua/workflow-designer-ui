@@ -141,7 +141,7 @@ export default {
           this.timerPanelInfo,
         ],
         [BpmnShapeType.END_EVENT]: [this.baseInfoPanelInfo],
-        [BpmnShapeType.USER_TASK]: (this.baseInfo.name.indexOf('并行') >= 0 || this.baseInfo.name.indexOf('串行') >= 0)
+        [BpmnShapeType.USER_TASK]: (this.baseInfo.name?.indexOf('并行') >= 0 || this.baseInfo.name?.indexOf('串行') >= 0)
           ? [ this.baseInfoPanelInfo, this.documentationPanelInfo, this.condiInstancePanelInfo]
           : [ this.baseInfoPanelInfo, this.documentationPanelInfo],
         [BpmnShapeType.EXCLUSIVE_GATEWAY]: [this.baseInfoPanelInfo],
