@@ -244,10 +244,10 @@ function condition2State(iBpmnModeler = new IBpmnModeler()) {
 
 function condiIntance2State(iBpmnModeler = new IBpmnModeler()) {
   const state = {
-    type: 'nrOfInstances',
     typeSt: 'nrOfInstances',
     passPerson: 0,
-    passPercent: 0
+    passPercent: 0,
+    isHavLoopCharacteristics: true
   };
   if(iBpmnModeler.getSelectedShapeInfo()){
     const shapeInfo = iBpmnModeler.getSelectedShapeInfo();
@@ -281,7 +281,7 @@ function condiIntance2State(iBpmnModeler = new IBpmnModeler()) {
     return state;
   }
 
-  state.type = 'nrOfInstances';
+  // state.type = 'isHavLoopCharacteristics';
 
   return state;
 }

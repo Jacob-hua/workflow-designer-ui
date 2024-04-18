@@ -130,6 +130,7 @@ export default {
       return this.$store.state[this.namespace].panel.multiInstance
     },
     panels() {
+      const iHavLoop = this.$store.state[this.namespace].panel.condiInstance?.isHavLoopCharacteristics
       const elementPanels = {
         [BpmnShapeType.START_EVENT]: [this.baseInfoPanelInfo],
         [BpmnShapeType.TIMER_START_EVENT]: [
@@ -141,7 +142,7 @@ export default {
           this.timerPanelInfo,
         ],
         [BpmnShapeType.END_EVENT]: [this.baseInfoPanelInfo],
-        [BpmnShapeType.USER_TASK]: (this.baseInfo.name?.indexOf('并行') >= 0 || this.baseInfo.name?.indexOf('串行') >= 0)
+        [BpmnShapeType.USER_TASK]: iHavLoop
           ? [ this.baseInfoPanelInfo, this.documentationPanelInfo, this.condiInstancePanelInfo]
           : [ this.baseInfoPanelInfo, this.documentationPanelInfo],
         [BpmnShapeType.EXCLUSIVE_GATEWAY]: [this.baseInfoPanelInfo],

@@ -9,10 +9,7 @@
     />
     <div class="ticket-wrapper">
       <div class="ticket-left">
-        <div
-          v-if="taskInfo.taskType !== 'ExclusiveGateway'"
-          class="ticket-info"
-        >
+        <div v-if="taskInfo.taskType !== 'ExclusiveGateway'" class="ticket-info">
           <div class="title">执行人员</div>
           <div class="content-wrapper info">
             <div>
@@ -34,10 +31,7 @@
             </div>
           </div>
         </div>
-        <div
-          v-if="taskInfo.taskType === 'ExclusiveGateway'"
-          class="ticket-info"
-        >
+        <div v-if="taskInfo.taskType === 'ExclusiveGateway'" class="ticket-info">
           <div class="title">网关</div>
           <div class="content-wrapper gateway">
             <div>

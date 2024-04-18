@@ -62,7 +62,28 @@ export default {
   computed: {
     ...mapState('account', ['tenantId', 'currentOrganization']),
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.initlistenDomChanged();
+    });
+  },
   methods: {
+    listenObserver() {
+      const shapeInfo = this.iBpmnModeler.getSelectedShapeInfo()
+      const dom = document.getElementsByClassName('djs-popup bpmn-replace')[0]
+      if (dom && shapeInfo.$type !== 'bpmn:ExclusiveGateway') {
+        const innerDom = dom.getElementsByClassName('djs-popup-body')[0]
+        if (innerDom) innerDom.style.display = 'none'
+      }
+    },
+    initlistenDomChanged() {
+      const observer = new MutationObserver(this.listenObserver)
+      const dom = document.getElementsByClassName('djs-container djs-palette-shown djs-palette-two-column djs-palette-open')[0]
+      observer.observe(dom, {
+        childList: true,
+        characterData: true
+      })
+    },
     onEditorLoaded(iBpmnModeler) {
       this.iBpmnModeler = iBpmnModeler;
       this.$emit('loaded', iBpmnModeler);
