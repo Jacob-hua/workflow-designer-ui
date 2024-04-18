@@ -9,40 +9,33 @@
     />
     <div class="ticket-wrapper">
       <div class="ticket-left">
-        <div
-          v-if="taskInfo.taskType !== 'ExclusiveGateway'"
-          class="ticket-info"
-        >
+        <div v-if="taskInfo.taskType !== 'ExclusiveGateway'" class="ticket-info">
           <div class="title">执行人员</div>
           <div class="content-wrapper info">
             <div>
               <span>流程节点:</span><span>{{ currentTaskModel.taskName }}</span>
             </div>
             <div>
-              <span>固定执行人员:</span
-              ><span v-for="item in sourceFixed" :key="item.value">{{
-                item.label ?? '暂无'
+              <span>固定执行人员:</span>
+              <span v-for="item in sourceFixed" :key="item.value">{{
+                item.label ? item.label : '暂无'
               }}</span>
             </div>
             <div>
-              <span>其他节点指定:</span
-              ><span>{{ dynamicSet.label ?? '暂无' }}</span>
+              <span>其他节点指定:</span>
+              <span>{{ dynamicSet.label ? dynamicSet.label : '暂无' }}</span>
             </div>
             <div>
-              <span>同一节点执行人:</span
-              ><span>{{ taskEecutor.label ?? '暂无' }}</span>
+              <span>同一节点执行人:</span>
+              <span>{{ taskEecutor.label ? askEecutor.label : '暂无' }}</span>
             </div>
           </div>
         </div>
-        <div
-          v-if="taskInfo.taskType === 'ExclusiveGateway'"
-          class="ticket-info"
-        >
+        <div v-if="taskInfo.taskType === 'ExclusiveGateway'" class="ticket-info">
           <div class="title">网关</div>
           <div class="content-wrapper gateway">
             <div>
-              <span>网关字段条件:</span
-              ><span>{{ gatewayCondition.label ?? '暂无' }}</span>
+              <span>网关字段条件: {{ gatewayCondition.label ? gatewayCondition.label : '暂无' }}</span>
             </div>
           </div>
         </div>

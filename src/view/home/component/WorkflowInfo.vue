@@ -33,7 +33,7 @@
               </div>
               <div>
                 <span>其他节点指定:</span
-                ><span>{{ dynamicSet.label ?? '暂无' }}</span>
+                ><span>{{ dynamicSet.label ? dynamicSet.label : '暂无' }}</span>
                 <el-button
                   :disabled="!taskInfo.taskDefKey"
                   @click="handleChangeNodeUser('dynamic_set')"
@@ -42,7 +42,7 @@
               </div>
               <div>
                 <span>同一节点执行人:</span
-                ><span>{{ taskEecutor.label ?? '暂无' }}</span>
+                ><span>{{ taskEecutor.label ? taskEecutor.label : '暂无' }}</span>
                 <el-button
                   :disabled="!taskInfo.taskDefKey"
                   @click="handleChangeNodeUser('task_executor')"
@@ -60,7 +60,7 @@
           <div class="content-wrapper gateway">
             <div>
               <span>网关字段条件:</span
-              ><span>{{ gatewayCondition.label ?? '暂无' }}</span>
+              ><span>{{ gatewayCondition.label ? gatewayCondition.label :  '暂无' }}</span>
               <el-button
                 :disabled="!taskInfo.taskDefKey"
                 @click="handleChangeGateway()"

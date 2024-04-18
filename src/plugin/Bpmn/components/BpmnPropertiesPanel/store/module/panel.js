@@ -35,7 +35,8 @@ const state = () => ({
     completionCondition: '',
   },
   condiInstance: {
-    typeSt: '',
+    isHavLoopCharacteristics: false,
+    typeSt: 'nrOfInstances',
     passPerson: '',
     passPercent: '',
   },
@@ -203,7 +204,7 @@ const mutations = {
   },
   updateCondiInstance(state, newData) {
     state.condiInstance = {...newData}
-  }
+  },
 }
 
 const mutationsEffect = {
