@@ -1,5 +1,5 @@
-const { name } = require('./package')
-const webpack = require('webpack')
+const { name } = require('./package');
+const webpack = require('webpack');
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
@@ -18,12 +18,15 @@ module.exports = {
           QIAN_KUN_URL: JSON.stringify(process.env.QIAN_KUN_URL),
         },
       }),
-    ]
+    ],
   },
   devServer: {
     host: '0.0.0.0',
     port: 8818,
-    public: require("os").networkInterfaces()[Object.keys(require("os").networkInterfaces())[0]][1].address + ":8818",
+    public:
+      require('os').networkInterfaces()[
+        Object.keys(require('os').networkInterfaces())[0]
+      ][1].address + ':8818',
     disableHostCheck: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
@@ -31,7 +34,7 @@ module.exports = {
     hot: true,
     proxy: {
       [`${process.env.VUE_APP_BASE_API}`]: {
-        // target: 'http://192.100.4.24:8060/workflow', // 刘旺
+        // target: 'http://192.100.4.24:19931/', // 刘旺
         // target: 'http://192.100.4.35:8060/workflow/', //李柯
         // target: "http://192.100.8.20:8060",
         // target: 'http://k8s.isiact.com/workflow-runtime-service',
@@ -40,8 +43,8 @@ module.exports = {
         target: 'http://192.100.4.35:19932/',
         changeOrigin: true, //是否允许跨域
         pathRewrite(path) {
-          const reg = new RegExp(`${process.env.VUE_APP_BASE_API}`)
-          return path.replace(reg, '')
+          const reg = new RegExp(`${process.env.VUE_APP_BASE_API}`);
+          return path.replace(reg, '');
         },
       },
     },
@@ -52,29 +55,40 @@ module.exports = {
         additionalData: `@import '~@/assets/style/index.scss';`,
       },
       less: {
-        // modifyVars: {
-        //   "@heading-color": '#bfbfbf',
-        //   "@input-bg": '#eee'
-        // },
         lessOptions: {
           javascriptEnabled: true,
-        }
-      }
+          modifyVars: {
+            'heading-color': '#bfbfbf',
+            'input-bg': '#eee',
+          },
+        },
+      },
     },
   },
   chainWebpack: (config) => {
     config.plugin('html').tap((args) => {
-      args[0].title = '流程引擎工作台'
-      return args
-    })
+      args[0].title = '流程引擎工作台';
+      return args;
+    });
     config.module
       .rule('bpmnlint')
       .test(/\.bpmnlintrc$/)
       .use('bpmnlint-loader')
       .loader('bpmnlint-loader')
-      .end()
-    config.module.rule('fonts').use('url-loader').loader('url-loader').options({}).end()
-    config.module.rule('images').use('url-loader').loader('url-loader').options({}).end()
+      .end();
+    config.module
+      .rule('fonts')
+      .use('url-loader')
+      .loader('url-loader')
+      .options({})
+      .end();
+    config.module
+      .rule('images')
+      .use('url-loader')
+      .loader('url-loader')
+      .options({})
+      .end();
+    config.module.rule('vue').use('vue-loader').loader('vue-loader').end();
     // config.module.rule('css').test(/\.less$/).use('less-loader').loader('less-loader').end()
   },
-}
+};

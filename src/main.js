@@ -21,7 +21,7 @@ import { Bpmn, FormPlugin } from './plugin'
 // 引入 actions 实例
 import actions from '@/util/qiankunActions.js'
 import '@/directive/RoleDirective.js'
-// import VueCompositionAPI from '@vue/composition-api'
+import VueCompositionAPI from '@vue/composition-api'
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)

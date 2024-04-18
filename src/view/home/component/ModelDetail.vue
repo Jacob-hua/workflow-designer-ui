@@ -16,18 +16,18 @@
               <span>流程节点:</span><span>{{ currentTaskModel.taskName }}</span>
             </div>
             <div>
-              <span>固定执行人员:</span>
-              <span v-for="item in sourceFixed" :key="item.value">{{
+              <span>固定执行人员:</span
+              ><span v-for="item in sourceFixed" :key="item.value">{{
                 item.label ? item.label : '暂无'
               }}</span>
             </div>
             <div>
-              <span>其他节点指定:</span>
-              <span>{{ dynamicSet.label ? dynamicSet.label : '暂无' }}</span>
+              <span>其他节点指定:</span
+              ><span>{{ dynamicSet.label ? dynamicSet.label : '暂无' }}</span>
             </div>
             <div>
-              <span>同一节点执行人:</span>
-              <span>{{ taskEecutor.label ? askEecutor.label : '暂无' }}</span>
+              <span>同一节点执行人:</span
+              ><span>{{ taskEecutor.label ? taskEecutor.label : '暂无' }}</span>
             </div>
           </div>
         </div>
@@ -35,7 +35,10 @@
           <div class="title">网关</div>
           <div class="content-wrapper gateway">
             <div>
-              <span>网关字段条件: {{ gatewayCondition.label ? gatewayCondition.label : '暂无' }}</span>
+              <span>网关字段条件:</span
+              ><span>{{
+                gatewayCondition.label ? gatewayCondition.label : '暂无'
+              }}</span>
             </div>
           </div>
         </div>

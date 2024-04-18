@@ -42,7 +42,9 @@
               </div>
               <div>
                 <span>同一节点执行人:</span
-                ><span>{{ taskEecutor.label ? taskEecutor.label : '暂无' }}</span>
+                ><span>{{
+                  taskEecutor.label ? taskEecutor.label : '暂无'
+                }}</span>
                 <el-button
                   :disabled="!taskInfo.taskDefKey"
                   @click="handleChangeNodeUser('task_executor')"
@@ -60,7 +62,7 @@
           <div class="content-wrapper gateway">
             <div>
               <span>网关字段条件:</span
-              ><span>{{ gatewayCondition.label ? gatewayCondition.label :  '暂无' }}</span>
+              ><span>{{ gatewayCondition.label ?gatewayCondition.label: '暂无' }}</span>
               <el-button
                 :disabled="!taskInfo.taskDefKey"
                 @click="handleChangeGateway()"
@@ -207,7 +209,7 @@ export default {
       organization: {},
       flag: '',
       isSignNode: false,
-      selectedNode: null
+      selectedNode: null,
     };
   },
   computed: {
@@ -360,10 +362,10 @@ export default {
     },
     handleChangeNodeUser(flag) {
       this.flag = flag;
-      if(flag === 'dynamic_set'){
+      if (flag === 'dynamic_set') {
         this.selectedNode = this.dynamicSet;
-      }else{
-        this.selectedNode = this.taskEecutor
+      } else {
+        this.selectedNode = this.taskEecutor;
       }
       this.nodeDialogVisible = true;
     },
