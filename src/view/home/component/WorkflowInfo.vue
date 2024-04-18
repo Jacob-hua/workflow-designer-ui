@@ -112,7 +112,7 @@
               <label>表单名称</label>
               <el-input placeholder="请输入表单名称"></el-input>
             </div>
-            <form-preview :formTree="formShow.formVersionFile"></form-preview>
+            <form-preview :formTree="formShow.formVersionFile" :disabled="true"></form-preview>
           </div>
           <div v-else class="empty-data">当前未关联表单</div>
         </div>

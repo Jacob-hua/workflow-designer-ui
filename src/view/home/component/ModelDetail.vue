@@ -76,7 +76,7 @@
         <div class="content-wrapper form">
           <div v-if="formShow">
             <form-preview
-              :formTree="formContent.formVersionFile"
+              :formTree="formContent.formVersionFile" :disabled="true"
             ></form-preview>
           </div>
           <div v-else class="empty-data">当前未关联表单</div>

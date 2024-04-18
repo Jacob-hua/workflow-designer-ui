@@ -37,6 +37,10 @@ export default {
       default: '',
       required: true,
     },
+    processName: {
+      type: String,
+      default: ''
+    },
     xml: {
       type: String,
       default: '',
@@ -52,12 +56,12 @@ export default {
     processDisplayInfo() {
       return [
         {
-          label: '流程编码',
-          value: this.workflow.processCode,
+          label: '流程名称',
+          value: this.processName,
         },
         {
           label: '模型名称',
-          value: this.workflow.deployName,
+          value: this.workflow?.modelInfo?.modelName,
         },
         // {
         //   label: '部署时间',
@@ -65,7 +69,7 @@ export default {
         // },
         {
           label: '应用项目',
-          value: this.workflow.projectName,
+          value: this.workflow?.modelInfo?.projectName,
         },
         // {
         //   label: '部署人',

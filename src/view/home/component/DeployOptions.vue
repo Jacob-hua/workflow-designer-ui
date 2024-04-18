@@ -132,8 +132,8 @@ export default {
     processDisplayInfo() {
       return [
         {
-          label: '流程编码',
-          value: this.workflow.processCode,
+          label: '流程名称',
+          value: this.workflow.processName,
         },
         {
           label: '模型名称',

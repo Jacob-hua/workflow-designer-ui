@@ -67,6 +67,7 @@
     <deploy-detail
       :visible.sync="deployDetailVisible"
       :modelId="modelId"
+      :processName="workflow.processName"
       :xml="workflow.processFile"
       @deleted="onDeletedDeploy"
     />
@@ -131,7 +132,7 @@ export default {
         // },
         {
           label: '应用项目',
-          value: this.workflow.processCode,
+          value: this.workflow.projectName,
         },
         // {
         //   label: '部署人',
