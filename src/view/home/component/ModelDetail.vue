@@ -21,16 +21,16 @@
             <div>
               <span>固定执行人员:</span
               ><span v-for="item in sourceFixed" :key="item.value">{{
-                item.label ?? '暂无'
+                item.label ? item.label : '暂无'
               }}</span>
             </div>
             <div>
               <span>其他节点指定:</span
-              ><span>{{ dynamicSet.label ?? '暂无' }}</span>
+              ><span>{{ dynamicSet.label ? dynamicSet.label : '暂无' }}</span>
             </div>
             <div>
               <span>同一节点执行人:</span
-              ><span>{{ taskEecutor.label ?? '暂无' }}</span>
+              ><span>{{ taskEecutor.label ? taskEecutor.label : '暂无' }}</span>
             </div>
           </div>
         </div>
@@ -42,7 +42,9 @@
           <div class="content-wrapper gateway">
             <div>
               <span>网关字段条件:</span
-              ><span>{{ gatewayCondition.label ?? '暂无' }}</span>
+              ><span>{{
+                gatewayCondition.label ? gatewayCondition.label : '暂无'
+              }}</span>
             </div>
           </div>
         </div>

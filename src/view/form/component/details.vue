@@ -65,7 +65,7 @@
             :formConf="formConf"
             v-if="dialogVisible2"
           ></preview> -->
-          <FormPreview :formTree="formTree"> </FormPreview>
+          <FormPreview :formTree="formTree" :editable="true"> </FormPreview>
         </div>
       </div>
     </el-dialog>
