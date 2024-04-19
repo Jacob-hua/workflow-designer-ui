@@ -1,7 +1,6 @@
 <template>
-  <div class="PublicForm">
-    <div class="projectHeader">
-      <div class="PublicForm-title"></div>
+  <div class="ProjectForm">
+    <div class="ProjectForm-title">
       <div class="datePick">
         <span class="text">业务</span>
         <el-cascader
@@ -26,27 +25,29 @@
         >
         </el-date-picker>
         <span class="text">表单</span>
-        <el-input
-          v-model="formName"
-          placeholder="请输入表单名称或编号"
-        ></el-input>
+        <el-input v-model="formName" placeholder="请输入表单名称"></el-input>
       </div>
 
-      <div class="PublicForm-title-input">
-        <el-button class="search" @click="getData()">查询</el-button>
+      <div class="ProjectForm-title-search">
+        <div>
+          <el-button class="search" @click="getData()">查询</el-button>
+        </div>
+        <div>
+          <el-button class="reset" @click="reset()" type="primary"
+            >重置</el-button
+          >
+        </div>
       </div>
-      <div class="PublicForm-title-input">
-        <el-button class="reset" @click="reset()" type="primary"
-          >重置</el-button
-        >
-      </div>
-    </div>
-    <div>
-      <div class="PublicForm-title-button">
-        <el-button class="boxBtn" @click="application()"> 关联表单 </el-button>
-      </div>
-      <div class="PublicForm-title-button">
-        <el-button class="boxBtn" @click="addForm()"> 新建表单 </el-button>
+
+      <div class="ProjectForm-title-button">
+        <div>
+          <el-button class="boxBtn" @click="addForm()"> 新建表单 </el-button>
+        </div>
+        <div>
+          <el-button class="boxBtn" @click="application()">
+            关联表单
+          </el-button>
+        </div>
       </div>
     </div>
     <div class="content-wrapper">
@@ -82,17 +83,19 @@
         </div>
       </div>
       <div class="noData" v-if="pageInfo.total === 0">暂无数据</div>
-      <el-pagination
-        v-if="this.pageInfo.total"
-        @size-change="onSizeChange"
-        @current-change="onPageChange"
-        :current-page="pageInfo.page"
-        :page-size="pageInfo.limit"
-        layout="prev, pager, next, jumper"
-        :total="pageInfo.total"
-      >
-      </el-pagination>
     </div>
+    <div class="pagination-box">
+    <el-pagination
+      v-if="this.pageInfo.total"
+      @size-change="onSizeChange"
+      @current-change="onPageChange"
+      :current-page="pageInfo.page"
+      :page-size="pageInfo.limit"
+      layout="prev, pager, next, jumper"
+      :total="pageInfo.total"
+    >
+    </el-pagination>
+  </div>
     <projectFormDiolog
       :title="projectFormTitle"
       :formInfo="formInfo"
@@ -139,7 +142,7 @@ export default {
     return {
       pageInfo: {
         page: 1,
-        limit: 6,
+        limit: 8,
         total: 0,
       },
       formData: {},
@@ -152,7 +155,7 @@ export default {
       projectFormTitle: '新建表单',
       addFormDialogVisible: false,
       formDesignerVisible: false,
-      formInfo: null
+      formInfo: null,
     };
   },
   async mounted() {
@@ -161,9 +164,7 @@ export default {
     await this.getFormList();
   },
   computed: {
-    ...mapGetters('config', [
-      'projectOrganizations',
-    ]),
+    ...mapGetters('config', ['projectOrganizations']),
   },
   watch: {},
   methods: {
@@ -247,16 +248,16 @@ export default {
       this.detailDialogVisible = false;
       this.addFormDialogVisible = false;
       this.formInfo = null;
-      localStorage.removeItem('formVersionFile')
+      localStorage.removeItem('formVersionFile');
       this.getFormList();
     },
 
-    changeAddFormVisible(visible){
+    changeAddFormVisible(visible) {
       this.addFormDialogVisible = visible;
     },
 
-    changeFormDesignerVisible(visible){
-      this.formDesignerVisible = visible
+    changeFormDesignerVisible(visible) {
+      this.formDesignerVisible = visible;
     },
     addForm() {
       this.addFormDialogVisible = true;
@@ -272,14 +273,14 @@ export default {
     },
     detailsDiolog(item) {
       this.formData = item;
-      this.detailDialogVisible = true
+      this.detailDialogVisible = true;
     },
     editForm(item, tileText) {
       this.addForm2(item, tileText);
     },
-    handleCloseDetail(){
+    handleCloseDetail() {
       this.detailDialogVisible = false;
-    }
+    },
   },
 };
 </script>
@@ -302,8 +303,14 @@ export default {
   margin-left: 10px;
 }
 
-.projectHeader /deep/ .el-input {
-  width: 180px;
+.ProjectForm-title {
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  grid-template-columns: 4fr 2fr 1fr;
+  /deep/ .el-input {
+    width: 180px;
+  }
 }
 
 /deep/ .el-date-editor {
@@ -324,9 +331,6 @@ export default {
 
 .reset {
   @include resetBtn;
-}
-.PublicForm {
-  width: 1500px;
 }
 
 .checkPro {
@@ -370,7 +374,6 @@ export default {
 
 .datePick {
   display: inline-block;
-  margin-top: 15px;
 }
 
 .datePickTitle {
@@ -380,27 +383,26 @@ export default {
   margin-left: 20px;
 }
 
-.PublicForm-title-option {
+.ProjectForm-title-option {
   display: inline-block;
   margin-right: 40px;
 }
 
-.PublicForm-title-input {
-  display: inline-block;
-  margin-left: 15px;
+.ProjectForm-title-search {
+  display: flex;
+  grid-gap: 15px;
 }
 
-.PublicForm-title-button {
-  display: inline-block;
-  margin-left: 15px;
-  float: right;
-  margin-top: 15px;
+.ProjectForm-title-button {
+  display: flex;
+  grid-gap: 20px;
 }
 
 .content-wrapper {
-  min-height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   margin-top: 40px;
-  @include contentTab;
+  grid-gap: 30px
 }
 
 .home-table {
@@ -414,9 +416,7 @@ export default {
   border: 1px solid #666666;
   min-height: 170px;
   display: inline-block;
-  width: 310px;
-  margin-right: 40px;
-  margin-bottom: 40px;
+  border-radius: 5px;
 }
 
 .card-title {
@@ -425,6 +425,7 @@ export default {
   line-height: 30px;
   background-color: #212739;
   padding: 0px 20px;
+  border-radius: 5px;
 }
 
 .card-title .title {
@@ -439,7 +440,6 @@ export default {
 }
 
 .card-main {
-  display: inline;
   padding: 10px 10px;
 }
 
@@ -464,5 +464,11 @@ export default {
   white-space: nowrap;
   display: inline-block;
   vertical-align: top;
+}
+
+.pagination-box {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
 }
 </style>

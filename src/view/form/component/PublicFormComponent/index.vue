@@ -251,11 +251,33 @@ export default {
       this.saveForm();
     },
 
+    domChanged() {
+      setTimeout(() => {
+        const selectDomList = document.getElementsByClassName(
+          'ant-select-dropdown'
+        );
+        const modalDomList = document.getElementsByClassName('ant-modal-wrap');
+        for (let i = 0; i < selectDomList.length; i++) {
+          selectDomList[i].style.zIndex = 9999;
+        }
+        for (let i = 0; i < modalDomList.length; i++) {
+          modalDomList[i].style.zIndex = 9999;
+        }
+      }, 100);
+    },
+    mutationObserverDom() {
+      const mutationObserver = new MutationObserver(this.domChanged);
+
+      mutationObserver.observe(document.body, {
+        childList: true,
+      });
+    },
+
     loadMicroApp() {
-      // let loadingInstance = Loading.service({
-      //   text: '表单设计器加载中',
-      //   body: true,
-      // });
+      let loadingInstance = Loading.service({
+        text: '表单设计器加载中',
+        body: true,
+      });
       this.microApp = loadMicroApp(
         {
           name: 'formDesigner',
@@ -277,6 +299,13 @@ export default {
           },
         }
       );
+      if (this.microApp) {
+        this.$nextTick(() => {
+          // 以服务的方式调用的 Loading 需要异步关闭
+          loadingInstance.close();
+        });
+        this.mutationObserverDom();
+      }
     },
     nextDiolog() {
       this.$refs['guideForm'].validate((valid) => {
@@ -394,8 +423,11 @@ export default {
   margin-left: 70px;
 }
 .form-Main {
-  height: 630px;
+  height: 700px;
   overflow: auto;
+  #designer-app {
+    height: 100%;
+  }
 }
 #form {
   height: 100%;

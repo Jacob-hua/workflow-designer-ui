@@ -27,9 +27,9 @@
           >查询</el-button
         >
       </div>
-    </div>
-    <div class="PublicForm-title-button">
-      <div class="boxBtn" @click="addForm()">新建表单</div>
+      <div class="PublicForm-title-button">
+        <div class="boxBtn" @click="addForm()">新建表单</div>
+      </div>
     </div>
     <div class="content-wrapper">
       <div
@@ -64,6 +64,8 @@
         </div>
       </div>
       <div class="noData" v-if="this.pageInfo.total === 0">暂无数据</div>
+    </div>
+    <div class="pagination-box">
       <el-pagination
         v-if="this.pageInfo.total"
         @size-change="onSizeChange"
@@ -119,7 +121,7 @@ export default {
       formListSecond: [],
       pageInfo: {
         page: 1,
-        limit: 6,
+        limit: 8,
         total: 0,
       },
       detailsDiologVisible: false,
@@ -198,7 +200,7 @@ export default {
         this.projectFormTitle = tileText;
       });
     },
-    changeAddFormVisible(visible){
+    changeAddFormVisible(visible) {
       this.addFormDialogVisible = visible;
     },
     changeFormDesignerVisible(visible) {
@@ -226,10 +228,17 @@ export default {
 .noData {
   color: #fff;
 }
+
+.PublicForm-title {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  align-items: center;
+}
 .content-wrapper {
-  min-height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   margin-top: 40px;
-  @include contentTab;
+  grid-gap: 30px
 }
 .primary {
   @include primaryBtn;
@@ -249,7 +258,6 @@ export default {
 
 .datePick {
   display: inline-block;
-  margin-top: 15px;
 }
 .datePickTitle {
   width: 56px;
@@ -261,9 +269,7 @@ export default {
   margin-right: 10px;
   margin-left: 10px;
 }
-.PublicForm {
-  width: 1500px;
-}
+
 .PublicForm-title-input {
   display: inline-block;
   margin-left: 40px;
@@ -309,9 +315,7 @@ export default {
   border: 1px solid #666666;
   min-height: 170px;
   display: inline-block;
-  width: 310px;
-  margin-right: 40px;
-  margin-bottom: 40px;
+  border-radius: 5px;
 }
 .card-title {
   height: 30px;
@@ -319,6 +323,7 @@ export default {
   background-color: #212739;
   color: #fff;
   padding: 0px 20px;
+  border-radius: 5px;
 }
 .card-title .title {
   font-size: 14px;
@@ -330,7 +335,6 @@ export default {
   cursor: pointer;
 }
 .card-main {
-  display: inline;
   padding: 10px 10px;
 }
 .card-main-item {
@@ -351,5 +355,10 @@ export default {
   display: inline-block;
   vertical-align: top;
   color: #fff;
+}
+.pagination-box {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
 }
 </style>

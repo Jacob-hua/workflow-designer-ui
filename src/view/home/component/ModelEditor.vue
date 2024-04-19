@@ -50,6 +50,7 @@
                     :formConf="config"
                     class="preview-popper"
                   ></preview> -->
+                  <form-preview :formTree="JSON.parse(ele.selectedVersion).formVersionFile" :disabled="true"></form-preview>
                   <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover>
                 <span class="link-button" v-if="canLink" @click="onLinked(ele)">
@@ -81,6 +82,7 @@
 
 <script>
 import WorkflowInfo from './WorkflowInfo.vue';
+import FormPreview from '../../../component/FormPreview.vue';
 import { mapState, mapMutations } from 'vuex';
 import BpmnShapeType from '../../../plugin/Bpmn/enum/shapeType';
 import {
@@ -94,6 +96,7 @@ export default {
   name: 'ModelEditor',
   components: {
     WorkflowInfo,
+    FormPreview
   },
   props: {
     visible: {
