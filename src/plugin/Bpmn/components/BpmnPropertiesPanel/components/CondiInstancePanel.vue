@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="config-st-at">
       <el-form :model="condInstance" label-position="right" label-width="130px">
         <el-form-item label="判断类型">
           <el-select v-model="condInstance.typeSt" @change="handlerToChange">
@@ -13,7 +13,7 @@
         </el-form-item>
         <el-form-item label="完成设置" v-if="condInstance.typeSt === 'passPerson'">
             <!-- <el-input v-model="condInstance.passPerson" placeholder="请输入"  @change="handlerToChangePerson" /> -->
-            <el-input-number v-model="condInstance.passPerson" :precision="0" :step="1" :min="0" :max="1000" @change="handlerToChangePerson"></el-input-number>
+            <el-input-number class="stt-att" v-model="condInstance.passPerson" :precision="0" :step="1" :min="0" :max="1000" @change="handlerToChangePerson"></el-input-number>
         </el-form-item>
         <el-form-item label="完成条件" v-if="condInstance.typeSt === 'passPercent'">
             <!-- <el-input v-model="condInstance.passPercent" placeholder="请输入"  @change="handlerToChangePercent"> -->
@@ -60,23 +60,41 @@
       condiInstanceSt: {
         immediate: true,
         handler(value) {
+          this.changeDomStyle()
           this.condInstance = { ...this.condiInstanceSt }
         },
       },
     },
+    mounted() {
+      // this.changeDomStyle()
+    },
     methods: {
-        handlerToChange() {
-            this.updateCondiInstance()
-        },
-        handlerToChangePerson() {
-            this.updateCondiInstance()
-        },
-        handlerToChangePercent() {
-            this.updateCondiInstance()
-        },
-        updateCondiInstance() {
-            this.$store.commit(`${this.namespace}/panel/updateCondiInstance`, this.condInstance)
-        }
+      changeDomStyle() {
+        this.$nextTick(() => {
+          const dom1 = document.getElementsByClassName('el-input-number__decrease')[0]
+          const dom2 = document.getElementsByClassName('el-input-number__increase')[0]
+          console.log(dom1, dom2)
+          if (dom1) {
+            dom1.style.background = '#212739'
+          }
+          if (dom2) {
+            dom2.style.background = '#212739'
+          }
+        })
+      },
+      handlerToChange() {
+          this.updateCondiInstance()
+          this.changeDomStyle()
+      },
+      handlerToChangePerson() {
+          this.updateCondiInstance()
+      },
+      handlerToChangePercent() {
+          this.updateCondiInstance()
+      },
+      updateCondiInstance() {
+          this.$store.commit(`${this.namespace}/panel/updateCondiInstance`, this.condInstance)
+      }
     },
   }
   </script>
@@ -84,10 +102,10 @@
   <style scoped lang="scss">
   @import '../index.scss';
   :deep(.el-input-number__decrease) {
-    background-color: #212739;
+    background-color: #212739 !important;
   }
   :deep(.el-input-number__increase) {
-    background-color: #212739;
+    background-color: #212739 !important;
   }
   </style>
   
