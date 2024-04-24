@@ -19,7 +19,7 @@
         <el-input
           style="width: 260px"
           v-model="input"
-          placeholder="请输入内容"
+          placeholder="请输入表单名称"
         ></el-input>
       </div>
       <div class="PublicForm-title-input">

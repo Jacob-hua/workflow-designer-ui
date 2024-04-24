@@ -20,10 +20,12 @@ import JsonViewer from 'vue-json-viewer'
 import { Bpmn, FormPlugin } from './plugin'
 // 引入 actions 实例
 import actions from '@/util/qiankunActions.js'
+import { prefetchApps } from 'qiankun'
 import '@/directive/RoleDirective.js'
 import VueCompositionAPI from '@vue/composition-api'
 Vue.config.productionTip = false
 
+Vue.use(VueCompositionAPI)
 Vue.use(ElementUI)
 Vue.use(JsonViewer)
 Vue.use(FormPlugin)
@@ -33,7 +35,9 @@ Vue.use(VueRouter)
 
 Vue.use(Vuex)
 
-// Vue.use(VueCompositionAPI)
+prefetchApps([
+  {name:'formDesigner', entry: `${process.env.QIAN_KUN_URL?process.env.QIAN_KUN_URL:'http://127.0.0.1:3000'}`}
+])
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {

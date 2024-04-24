@@ -12,12 +12,12 @@
           label-width="80px"
           label-position="right"
           :rules="rules4NewFormGuide"
-          :model="postData"
+          :model="formBaseInfo"
         >
           <div class="from-item">
             <el-form-item label="应用项目" prop="business">
               <el-cascader
-                v-model="postData.business"
+                v-model="formBaseInfo.business"
                 clearable
                 :style="{ width: '100%' }"
                 :options="projectOrganizations()"
@@ -32,7 +32,7 @@
           <div class="from-item">
             <el-form-item label="表单名称" prop="formName">
               <el-input
-                v-model="postData.formName"
+                v-model="formBaseInfo.formName"
                 placeholder="请输入表单名称"
               ></el-input>
             </el-form-item>
@@ -40,7 +40,7 @@
           <div class="from-item">
             <el-form-item label="表单描述" prop="formDesc">
               <el-input
-                v-model="postData.formDesc"
+                v-model="formBaseInfo.formDesc"
                 placeholder="请输入表单描述"
               ></el-input>
             </el-form-item>
@@ -84,7 +84,7 @@
                 </div>
               </el-form-item>
             </div>
-            <div class="title-item">
+            <div class="title-item" v-if="title !== '新建表单'">
               <el-form-item
                 label="版本名称"
                 class="title-item-label"
@@ -99,7 +99,7 @@
                 </div>
               </el-form-item>
             </div>
-            <div class="title-item">
+            <div class="title-item" v-if="title !== '新建表单'">
               <el-form-item
                 label="版本号"
                 class="title-item-label"
@@ -114,7 +114,7 @@
                 </div>
               </el-form-item>
             </div>
-            <div class="title-item">
+            <div class="title-item" v-if="title !== '新建表单'">
               <el-form-item
                 label="创建时间"
                 class="title-item-label"
@@ -207,6 +207,11 @@ export default {
           },
         ],
       },
+      formBaseInfo: {
+        business: [],
+        formName: '',
+        formDesc: '',
+      },
       postData: {
         formId: '',
         formName: '',
@@ -251,6 +256,11 @@ export default {
 
   methods: {
     close() {
+      this.formBaseInfo = {
+        business: [],
+        formName: '',
+        formDesc: '',
+      };
       localStorage.removeItem('formVersionFile');
       this.$emit('changeAddFormVisible', false);
     },
@@ -281,8 +291,10 @@ export default {
           'ant-select-dropdown'
         );
         const modalDomList = document.getElementsByClassName('ant-modal-wrap');
-        const designebleDom = document.getElementById('__qiankun_microapp_wrapper_for_form_designer__')
-        designebleDom.style.height = '100%'
+        const designebleDom = document.getElementById(
+          '__qiankun_microapp_wrapper_for_form_designer__'
+        );
+        designebleDom.style.height = '100%';
         for (let i = 0; i < selectDomList.length; i++) {
           selectDomList[i].style.zIndex = 9999;
         }
@@ -333,6 +345,10 @@ export default {
       }
     },
     nextDiolog() {
+      this.postData = {
+        ...this.postData,
+        ...this.formBaseInfo,
+      };
       this.$refs['guideForm'].validate((valid) => {
         if (valid) {
           this.$emit('changeAddFormVisible', false);

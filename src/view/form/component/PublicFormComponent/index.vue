@@ -257,6 +257,10 @@ export default {
           'ant-select-dropdown'
         );
         const modalDomList = document.getElementsByClassName('ant-modal-wrap');
+        const designebleDom = document.getElementById(
+          '__qiankun_microapp_wrapper_for_form_designer__'
+        );
+        designebleDom.style.height = '100%';
         for (let i = 0; i < selectDomList.length; i++) {
           selectDomList[i].style.zIndex = 9999;
         }

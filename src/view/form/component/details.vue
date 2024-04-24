@@ -193,6 +193,7 @@ export default {
   },
   methods: {
     close() {
+      this.formTree = {}
       this.$emit('handleCloseDetail');
     },
     async getFormVersionList() {

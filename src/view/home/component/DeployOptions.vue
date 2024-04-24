@@ -26,7 +26,7 @@
             <el-input
               v-model="formName"
               placeholder="请输入内容"
-              @keyup.native.enter="fetchFormList"
+              @keyup.native.enter="filterFormList"
             ></el-input>
           </div>
           <div class="content-wrapper">
@@ -50,7 +50,7 @@
                     :formConf="config"
                     class="preview-popper"
                   ></preview> -->
-                  <form-preview :formTree="JSON.parse(ele.selectedVersion).formVersionFile" :disabled="true"></form-preview>
+                  <form-preview :formTree="JSON.parse(ele.selectedVersion).formVersionFile"></form-preview>
                   <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover>
                 <span class="link-button" v-if="canLink" @click="onLinked(ele)">
@@ -332,6 +332,10 @@ export default {
       }
       this.$message.success('保存成功');
       this.onClose();
+    },
+    filterFormList() {
+      this.pageInfo.page = 1;
+      this.fetchFormList()
     },
     async fetchFormList() {
       const { data, code, msg } = await fetchFormList({

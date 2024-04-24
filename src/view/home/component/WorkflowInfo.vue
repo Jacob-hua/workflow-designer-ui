@@ -62,7 +62,9 @@
           <div class="content-wrapper gateway">
             <div>
               <span>网关字段条件:</span
-              ><span>{{ gatewayCondition.label ?gatewayCondition.label: '暂无' }}</span>
+              ><span>{{
+                gatewayCondition.label ? gatewayCondition.label : '暂无'
+              }}</span>
               <el-button
                 :disabled="!taskInfo.taskDefKey"
                 @click="handleChangeGateway()"
@@ -112,7 +114,7 @@
               <label>表单名称</label>
               <el-input placeholder="请输入表单名称"></el-input>
             </div>
-            <form-preview :formTree="formShow.formVersionFile" :disabled="true"></form-preview>
+            <form-preview :formTree="formShow.formVersionFile"></form-preview>
           </div>
           <div v-else class="empty-data">当前未关联表单</div>
         </div>
@@ -499,7 +501,7 @@ export default {
 }
 
 .form {
-  padding: 20px 0px !important;
+  // padding: 20px 0px !important;
   min-height: 200px;
 
   .empty-data {

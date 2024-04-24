@@ -1,7 +1,7 @@
 <template>
   <div>
     <FormProvider :form="form">
-      <SchemaField :schema="schema"></SchemaField>
+      <SchemaField :schema="JsonSchema"></SchemaField>
     </FormProvider>
   </div>
 </template>
@@ -40,6 +40,7 @@ import {
 } from '@formily/antdv';
 import { Card, Rate, Slider, Card as Display } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
+import { post } from '../api/unit/request';
 
 const { SchemaField } = createSchemaField({
   components: {
@@ -99,6 +100,7 @@ export default {
   data() {
     return {
       form: createForm(),
+      JsonSchema: {},
     };
   },
   computed: {
@@ -109,12 +111,56 @@ export default {
       return this.formTree.schema;
     },
   },
+  methods: {
+    handleSchema(schema) {
+      this.JsonSchema = handleDisplayComp(schema);
+
+      function handleDisplayComp(obj) {
+        let childObj = obj;
+        if (!obj.hasOwnProperty('properties')) {
+          if (obj['x-component'] === 'Display') {
+            childObj = {
+              ...obj,
+              type: 'void',
+              'x-component': 'Card',
+              'x-component-props': {
+                title: '知识库组件',
+                style: {
+                  margin: '0px 0px 10px 0px',
+                  backgroundColor: 'rgba(0,0,0,1)',
+                  borderColor: 'rgba(0,0,0,1)',
+                },
+              },
+            };
+          }
+        } else {
+          for (let [key, value] of Object.entries(obj.properties)) {
+            childObj.properties[key] = handleDisplayComp(value);
+          }
+        }
+        return childObj;
+      }
+    },
+  },
   watch: {
-    schema() {
+    schema(val) {
+      if (!val) return;
       this.form = createForm({
         disabled: this.disabled,
         values: this.initialValues,
       });
+      // this.JsonSchema = JSON.parse(JSON.stringify(val));
+      this.handleSchema(JSON.parse(JSON.stringify(val)));
+      // this.JsonSchema = val;
+      // const keyList = Object.keys(val.properties);
+      // // console.log(keyList, val);
+      // const displayComp = keyList.find(
+      //   (item) => val.properties[item]['x-component'] === 'Display'
+      // );
+      // const defaultCardSchema = {};
+      // if (displayComp) {
+      //   delete this.JsonSchema.properties[displayComp];
+      // }
     },
   },
 };

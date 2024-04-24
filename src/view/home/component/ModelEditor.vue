@@ -50,7 +50,7 @@
                     :formConf="config"
                     class="preview-popper"
                   ></preview> -->
-                  <form-preview :formTree="JSON.parse(ele.selectedVersion).formVersionFile" :disabled="true"></form-preview>
+                  <form-preview :formTree="JSON.parse(ele.selectedVersion).formVersionFile"></form-preview>
                   <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover>
                 <span class="link-button" v-if="canLink" @click="onLinked(ele)">
