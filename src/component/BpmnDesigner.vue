@@ -73,15 +73,36 @@ export default {
       const dom = document.getElementsByClassName('djs-popup bpmn-replace')[0]
       if (dom && shapeInfo.$type !== 'bpmn:ExclusiveGateway') {
         const innerDom = dom.getElementsByClassName('djs-popup-body')[0]
+        const headers = dom.getElementsByClassName('djs-popup-header')[0]
+        const loopDom = headers.getElementsByClassName('bpmn-icon-loop-marker')[0]
+        const parallelDom = headers.getElementsByClassName('bpmn-icon-parallel-mi-marker')[0]
+        const sequentialDom = headers.getElementsByClassName('bpmn-icon-sequential-mi-marker')[0]
         if (innerDom) innerDom.style.display = 'none'
+        if (loopDom) loopDom.style.display = 'none'
+        if (parallelDom) parallelDom.innerHTML = '并行'
+        if (sequentialDom) sequentialDom.innerHTML = '串行'
       }
     },
     initlistenDomChanged() {
+      const displayNoneDomList = [
+        'bpmn-icon-intermediate-event-none',
+        'bpmn-icon-subprocess-expanded',
+        'bpmn-icon-data-object',
+        'bpmn-icon-data-store',
+        'bpmn-icon-participant',
+        'bpmn-icon-group',
+      ]
       const observer = new MutationObserver(this.listenObserver)
       const dom = document.getElementsByClassName('djs-container djs-palette-shown djs-palette-two-column djs-palette-open')[0]
       observer.observe(dom, {
         childList: true,
         characterData: true
+      })
+      displayNoneDomList.forEach(item => {
+        const dom = document.getElementsByClassName(item)[0]
+        if (dom) {
+          dom.style.display = 'none'
+        }
       })
     },
     onEditorLoaded(iBpmnModeler) {
