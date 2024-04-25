@@ -8,6 +8,7 @@
       fullscreen
       top="1vh"
       append-to-body
+      :close-on-click-modal="false"
     >
       <div style="display: flex">
         <el-scrollbar  style="width: 70%" class="center-scrollbar " >

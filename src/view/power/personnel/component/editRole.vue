@@ -6,6 +6,7 @@
     :before-close="handleClose"
     fullscreen
     top="1vh"
+    :close-on-click-modal="false"
   >
     <div class="dialogHeader">
       <span>人员信息</span>

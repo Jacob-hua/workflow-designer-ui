@@ -5,6 +5,7 @@
     top="1vh"
     fullscreen
     @close="onDialogClose"
+    :close-on-click-modal="false"
   >
     <div class="container">
       <div>

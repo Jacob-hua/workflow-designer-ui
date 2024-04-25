@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="部署详情" fullscreen :visible="visible" @close="onCancel">
+    <el-dialog title="部署详情" fullscreen :visible="visible" @close="onCancel" :close-on-click-modal="false">
       <!-- <workflow-info
         :workflow="workflow"
         :xml="workflow.processFile"

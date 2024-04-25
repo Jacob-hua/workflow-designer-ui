@@ -93,7 +93,8 @@ export default {
   methods: {
     async openFile() {
       try {
-        const newId = await Promise.resolve(this.generateIdFunc())
+        // const newId = await Promise.resolve(this.generateIdFunc())
+        const newId = new Date().getTime().toString()
         const files = await selectFile(['.xml', '.bpmn'])
         const content = await readFile((reader) => reader.readAsText(files[0]))
         this.iBpmnModeler.loadDiagram(content, { id: `process_${newId}` })

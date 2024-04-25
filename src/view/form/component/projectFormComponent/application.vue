@@ -8,6 +8,7 @@
       custom-class="dialogVisibleEdit"
       top="1vh"
       :before-close="handleClose"
+      :close-on-click-modal="false"
     >
       <div class="diologMain">
         <div class="diologMain-right">

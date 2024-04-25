@@ -59,6 +59,7 @@
       @close="closeForm"
       top="1vh"
       custom-class="dialogVisibleEdit"
+      :close-on-click-modal="false"
     >
       <div class="dialogVisible2-main">
         <el-form

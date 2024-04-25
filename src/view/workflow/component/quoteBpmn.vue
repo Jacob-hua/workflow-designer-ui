@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="关联工作流" :visible="visible" top="5vh" fullscreen @close="close">
+    <el-dialog title="关联工作流" :visible="visible" top="5vh" fullscreen @close="close" :close-on-click-modal="false">
       <div>
         <el-table :data="tableData">
           <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>

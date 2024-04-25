@@ -5,6 +5,7 @@
     :close-on-click-modal="false"
     width="30%"
     append-to-body
+    :closeOnClickModal="false"
   >
     <span>
       <el-form ref="form" :model="form" :rules="rules" label-width="84px">

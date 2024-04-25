@@ -5,6 +5,7 @@
       fullscreen
       :visible="visible"
       @close="onClose"
+      :close-on-click-modal="false"
     >
       <div class="container">
         <bpmn-info

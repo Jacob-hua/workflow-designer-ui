@@ -44,6 +44,7 @@
       :visible.sync="formDesignerVisible"
       width="90%"
       custom-class="dialogVisibleEdit"
+      :close-on-click-modal="false"
     >
       <el-form
         ref="newOrEditForm"

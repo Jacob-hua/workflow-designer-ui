@@ -8,6 +8,7 @@
       width="90%"
       @close="close"
       custom-class="dialogVisibleEdit"
+      :close-on-click-modal="false"
     >
       <div class="dialogVisible2-main">
         <div class="ProjectForm-title">

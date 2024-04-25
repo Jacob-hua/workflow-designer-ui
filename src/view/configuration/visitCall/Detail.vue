@@ -7,6 +7,7 @@
     top="1vh"
     append-to-body
     @close="visitColse"
+    :close-on-click-modal="false"
   >
     <el-form ref="form" label-width="80px">
       <div class="top">

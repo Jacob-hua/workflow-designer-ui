@@ -5,6 +5,7 @@
       :visible="visible"
       @close="onCancel"
       fullscreen
+      :close-on-click-modal="false"
     >
       <div class="deploy-wrapper">
         <div>
