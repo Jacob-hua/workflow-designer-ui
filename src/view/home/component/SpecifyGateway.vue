@@ -8,7 +8,7 @@
   >
     <div class="process-canvas">
       <bpmn-viewer
-        :visible="true"
+        :visible="gatewayDialogVisible"
         :xml="xml"
         :prop="{
           bpmnRenderer: {
@@ -113,6 +113,15 @@ export default {
   methods: {
     onBpmnViewerLoaded(iBpmnViewer) {
       this.iBpmnViewer = iBpmnViewer;
+      iBpmnViewer.elementRegistryForEach(item => {
+        if(item.id === this.taskInfo.taskDefKey){
+          iBpmnViewer.canvasAddMarker(item, 'svgOncomplete')
+        }else {
+          if(iBpmnViewer.canvasHasMarker(item, 'svgOncomplete')){
+            iBpmnViewer.canvasRemoveMarker(item, 'svgOncomplete')
+          }
+        }
+      })
       this.$emit('loaded', iBpmnViewer);
     },
     async fetchTaskNodeList() {

@@ -67,7 +67,6 @@
       <workflow-table
         :searchForm="searchFormData"
         ref="workflow"
-        @refreshTable="onWorkflowRefresh"
         @deployed="onWorkflowDeployed"
         @saved="onWorkflowSaved"
         @deleted="onWorkflowDeleted"
@@ -79,6 +78,7 @@
 <script>
 import WorkflowTable from './component/WorkflowTable.vue';
 import { mapState, mapGetters, mapActions } from 'vuex';
+import { fetchDeployCount } from '../../api/workflow';
 
 export default {
   components: {
@@ -132,10 +132,25 @@ export default {
     totalChange(value, key) {
       this[key] = value;
     },
-    onWorkflowRefresh({ deployCount, deployedCount }) {
-      this.WorkflowTableNum = deployCount;
-      this.deployedWorkflowContents = deployedCount;
+    async getDeployCount() {
+      const { data, code, msg } = await fetchDeployCount({
+        tenantId: this.searchForm.business[0] ?? '',
+        projectId: this.searchForm.business[1] ?? '',
+        applicationId: this.searchForm.business[2] ?? '',
+        startTime: this.searchForm.valueDate[0] ?? '',
+        endTime: this.searchForm.valueDate[1] ?? '',
+      });
+      if (code !== '200') {
+        this.$message.error(msg);
+        return;
+      }
+      this.WorkflowTableNum = data.total;
+      this.deployedWorkflowContents = data.deploy;
     },
+    // onWorkflowRefresh({ deployCount, deployedCount }) {
+    //   this.WorkflowTableNum = deployCount;
+    //   this.deployedWorkflowContents = deployedCount;
+    // },
     onWorkflowDeployed() {
       this.refreshWorkFlowRecord();
     },
@@ -152,8 +167,10 @@ export default {
       this.searchFormData = {
         ...this.searchForm,
       };
+      this.getDeployCount();
     },
     onReset() {
+      this.setDefaultorganization();
       this.searchForm = {
         ...this.searchForm,
         valueDate: [],

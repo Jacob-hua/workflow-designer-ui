@@ -67,6 +67,7 @@
       v-if="addBpmnVisible"
       :visible.sync="addBpmnVisible"
       :projectData="projectData"
+      :isQuote="isQuote"
       bindType="bind"
       @close="onAddBpmnClose"
       @submit="onAddBpmnSubmit"
@@ -127,6 +128,7 @@ export default {
       lookBpmnVisible: false,
       lookBpmnFooterVisible: true,
       activeName: 'enabled,disabled',
+      isQuote: false,
     };
   },
   computed: {
@@ -154,9 +156,11 @@ export default {
       }
     },
     async onAddProject() {
+      this.isQuote = false;
       this.addProjectVisible = true;
     },
     async onQuoteBpmn(_, row) {
+      this.isQuote = true;
       this.setProjectData(row);
       this.addProjectVisible = true;
     },
@@ -212,6 +216,7 @@ export default {
       this.refreshWorkFlowRecord();
     },
     onLookBpmnEdit(row) {
+      this.isQuote = false;
       this.lookBpmnVisible = false;
       this.setProjectData(row);
       this.addBpmnVisible = true;

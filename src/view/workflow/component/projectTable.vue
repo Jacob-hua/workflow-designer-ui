@@ -2,8 +2,8 @@
   <div>
     <el-table :data="listData">
       <el-table-column type="index" label="序号" width="180" align="center"> </el-table-column>
-      <el-table-column prop="processName" label="名称" width="180" align="center"> </el-table-column>
-      <el-table-column prop="processName" label="流程文件" align="center">
+      <el-table-column prop="processName" label="名称" width="180" align="center" show-overflow-tooltip> </el-table-column>
+      <el-table-column prop="processName" label="流程文件" align="center" show-overflow-tooltip>
         <template slot-scope="scope">
           <span class="file">{{ scope.row.processName }}.bpmn</span>
         </template>

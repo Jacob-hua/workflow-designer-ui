@@ -5,6 +5,7 @@
       :name="projectData.processName"
       :desc="projectData.processDesc"
       :xml="projectData.processFile"
+      :isEditor="isEditor"
       :generateIdFunc="fetchUUID"
       :prop="{
         bpmnRenderer: {
@@ -48,6 +49,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    isEditor: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

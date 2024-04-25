@@ -60,6 +60,14 @@ export default {
             trigger: 'blur',
           },
         ],
+        processDesc: [
+        {
+            min: 1,
+            max: 200,
+            message: '流程描述长度在 1 到 200 个字符',
+            trigger: 'blur',
+          },
+        ]
       },
     };
   },

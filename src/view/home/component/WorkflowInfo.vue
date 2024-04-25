@@ -67,7 +67,7 @@
               ><span
                 >{{
                   gatewayCondition.label ? gatewayCondition.label : '暂无'
-                }}-{{ gatewayCondition.posLabel ? gatewayCondition.posLabel : '暂无' }}</span
+                }}：{{ gatewayCondition.posLabel ? gatewayCondition.posLabel : '暂无' }}</span
               >
               <el-button
                 :disabled="!taskInfo.taskDefKey"
@@ -250,8 +250,8 @@ export default {
       return (
         this.sourceFixed.map(({ label, value }) => {
           return {
-            key: value,
-            label,
+            userId: value,
+            userName: label,
           };
         }) ?? []
       );
@@ -359,12 +359,12 @@ export default {
     saveUser(value) {
       const mode = 'push';
       const type = this.isSignNode ? 'mutilUserConfig' : 'caUserConfig';
-      const data = value.map(({ key, label }) => {
+      const data = value.map(({ userId, userName }) => {
         return {
           pos: '',
-          label,
+          label: userName,
           source: 'source_fixed',
-          value: key,
+          value: userId,
         };
       });
       this.$emit('changeTaskConfigs', {
@@ -540,7 +540,8 @@ export default {
     margin-top: 26px;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    align-items: center;
+    grid-gap: 10px;
   }
 }
 

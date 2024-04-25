@@ -21,5 +21,7 @@ export const fetchWorkflowInfo = (params) => get('/workflow/design/process/get',
 //获取任务节点列表
 export const fetchTaskNodeList = (params) => post('/workflow/design/process/task/before/list', params)
 
+//统计流程总数和已部署数量
+export const fetchDeployCount = (params) => post('/workflow/design/process/deploy/count', params)
 
 

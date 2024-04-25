@@ -6,11 +6,54 @@
     append-to-body
     :close-on-click-modal="false"
   >
-    <el-transfer
-      filterable
-      :data="userList"
-      v-model="selectedUser"
-    ></el-transfer>
+    <div class="dialog-content">
+      <div class="user-list list-card">
+        <div class="card-header">人员选择</div>
+        <div class="content-wrapper">
+          <div class="search-wrapper">
+            <el-input
+              v-model="userName"
+              placeholder="请输入名称"
+              prefix-icon="el-icon-search"
+            ></el-input>
+            <el-button type="primary" @click="handlesearch">查询</el-button>
+          </div>
+          <div class="user-table">
+            <div class="table-header">
+              <div class="name-column header-column">姓名</div>
+              <div class="selector-column header-column">选择</div>
+            </div>
+            <div class="table-content">
+              <div
+                v-for="item in userList"
+                :key="item.userId"
+                class="table-row"
+              >
+                <div class="name-column table-column">{{ item.userName }}</div>
+                <div class="selector-column table-column">
+                  <el-checkbox
+                    v-model="item.selectStatus"
+                  ></el-checkbox>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="selected-list list-card">
+        <div class="card-header">选择预览</div>
+        <div class="selected-user content-wrapper">
+          <div
+            v-for="item in selectedUser"
+            :key="item.userId"
+            class="user-item"
+          >
+            <span class="item-content">{{ item.userName }}</span>
+            <span class="delete-icon" @click="handleDeleteUser(item)"><i class="el-icon-circle-close"></i></span>
+          </div>
+        </div>
+      </div>
+    </div>
     <div slot="footer">
       <div class="next" @click="save()" type="primary">保存</div>
       <div class="cancel" @click="close">取消</div>
@@ -38,8 +81,14 @@ export default {
   data() {
     return {
       userList: [],
-      selectedUser: [],
+      // selectedUser: [],
+      userName: '',
     };
+  },
+  computed: {
+    selectedUser() {
+      return this.userList.filter(({ selectStatus }) => selectStatus);
+    },
   },
   watch: {
     userDialogVisible(value) {
@@ -47,9 +96,9 @@ export default {
         this.fetchUserList();
       }
     },
-    selectedFixed(value){
-      this.selectedUser = value.map(({ key }) => key);
-    }
+    // selectedFixed(value) {
+    //   this.selectedUser = value.map(({ userId }) => userId);
+    // },
   },
   methods: {
     async fetchUserList() {
@@ -63,21 +112,41 @@ export default {
         return;
       }
       this.userList = data.map(({ userId, userName }) => {
+        const index = this.selectedFixed.findIndex(
+          ({ userId: id }) => userId === id
+        );
+        let selectStatus = false;
+        if (index !== -1) {
+          selectStatus = true;
+        }
         return {
-          key: userId,
-          label: userName,
+          userId,
+          userName,
+          selectStatus,
         };
       });
     },
+    handlesearch() {},
+    handleDeleteUser(item) {
+      this.userList = this.userList.map(ele => {
+        if(item.userId === ele.userId){
+          return {
+            ...item,
+            selectStatus: false
+          }
+        }
+        return ele
+      })
+    },
     save() {
-      const user = this.selectedUser.map((item) => {
-        return this.userList.find(({ key }) => key === item);
-      });
-      this.$emit('saveUser', user);
-      this.close()
+      // const user = this.selectedUser.map((item) => {
+      //   return this.userList.find(({ userId }) => userId === item);
+      // });
+      this.$emit('saveUser', this.selectedUser);
+      this.close();
     },
     close() {
-      this.selectedUser = []
+      this.selectedUser = [];
       this.$emit('closeUserDialog');
     },
   },
@@ -91,21 +160,97 @@ export default {
   @include cancelBtn;
 }
 
-/deep/.el-transfer-panel {
-  background: #1b1e2d;
-  width: 40%;
+.dialog-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 30px;
 
-  .el-transfer-panel__header {
-    background: #1b1e2d;
-    .el-checkbox__label {
-      color: #fff;
+  .list-card {
+    margin: 0 10px;
+    border: 1px solid;
+    border-radius: 5px;
+
+    .card-header {
+      display: inline-block;
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      padding: 0 10px;
+      border-bottom: 1px solid;
+    }
+
+    .content-wrapper {
+      padding: 0 10px;
     }
   }
-  .el-transfer-panel__list::-webkit-scrollbar {
-    display: none;
+  .user-list {
+    .search-wrapper {
+      display: flex;
+      margin: 20px 0;
+      grid-gap: 20px;
+    }
+
+    .user-table {
+      padding: 10px 0;
+      .table-header {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        justify-content: center;
+        align-items: center;
+        border-top: 1px solid;
+        border-bottom: 1px solid;
+        height: 40px;
+
+        .header-column {
+          text-align: center;
+        }
+      }
+      .table-content {
+        max-height: 40vh;
+        overflow: auto;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
+        .table-row {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          justify-content: center;
+          align-items: center;
+          border-bottom: 1px solid;
+          height: 40px;
+
+          .table-column {
+            text-align: center;
+          }
+        }
+      }
+    }
   }
-  .el-transfer-panel__item.el-checkbox {
-    color: #fff;
+
+  .selected-list {
+
+    .selected-user {
+      margin: 10px 0;
+      display: flex;
+      grid-gap: 10px;
+      flex-wrap: wrap;
+      .user-item {
+        border: 1px solid;
+        border-radius: 8px;
+        padding: 5px 10px;
+        display: flex;
+        justify-content: space-around;
+        grid-gap: 5px;
+        align-items: center;
+
+        .delete-icon {
+          cursor: pointer;
+          font-size: 20px;
+          color: red;
+        }
+      }
+    }
   }
 }
 </style>

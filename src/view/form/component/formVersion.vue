@@ -51,7 +51,21 @@ export default {
       formRules: {
         formVersionTag: [
           { required: true, message: '请输入表单版本名称', trigger: 'change' },
+          {
+            min: 1,
+            max: 100,
+            message: '表单版本名称长度在 1 到 100 个字符',
+            trigger: 'blur',
+          },
         ],
+        formVersionDesc: [
+        {
+            min: 1,
+            max: 200,
+            message: '表单版本描述长度在 1 到 200 个字符',
+            trigger: 'blur',
+          },
+        ]
       },
     };
   },

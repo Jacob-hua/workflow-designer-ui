@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import IBpmnViewer from '../../IBpmnViewer'
+import IBpmnViewer from '../../IBpmnViewer';
 
 export default {
   name: 'BpmnViewer',
@@ -30,58 +30,62 @@ export default {
     const defaultProp = {
       type: 'camunda',
       lintActive: true,
-    }
+    };
     return {
       iBpmnViewer: new IBpmnViewer({ ...defaultProp, ...this.prop }),
-    }
+    };
   },
   watch: {
     xml: {
       immediate: true,
       handler(value) {
         if (!value || !String.prototype.trim.call(value)) {
-          return
+          return;
         }
         const loading = this.$loading({
           lock: true,
           text: '加载中...',
           spinner: 'el-icon-loading',
-        })
+        });
         this.iBpmnViewer.loadDiagram(value).then(() => {
-          loading.close()
-          this.onLoaded()
-        })
+          loading.close();
+          this.onLoaded();
+        });
       },
     },
     visible: {
       immediate: true,
-      handler() {
+      handler(val) {
+        if (val) this.onLoaded();
         this.$nextTick(() => {
           if (this.$refs.containers) {
-            this.iBpmnViewer.detach()
-            this.iBpmnViewer.attachTo(this.$refs.containers)
+            this.iBpmnViewer.detach();
+            this.iBpmnViewer.attachTo(this.$refs.containers);
             setTimeout(() => {
-              this.iBpmnViewer.canvasZoom('fit-viewport', 'auto')
-            })
+              this.iBpmnViewer.canvasZoom('fit-viewport', 'auto');
+            });
           }
-        })
-      }
-    }
+        });
+      },
+    },
   },
   mounted() {
-    this.initBpmn()
+    this.initBpmn();
   },
   methods: {
     initBpmn() {
       this.iBpmnViewer.on('selection.changed', () => {
-        this.selectedChanged(this.iBpmnViewer.getSelectedShape(), this.iBpmnViewer)
-      })
+        this.selectedChanged(
+          this.iBpmnViewer.getSelectedShape(),
+          this.iBpmnViewer
+        );
+      });
     },
     onLoaded() {
-      this.$emit('loaded', this.iBpmnViewer)
+      this.$emit('loaded', this.iBpmnViewer);
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

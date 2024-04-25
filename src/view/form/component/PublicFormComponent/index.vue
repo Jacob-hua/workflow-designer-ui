@@ -171,6 +171,14 @@ export default {
             trigger: 'blur',
           },
         ],
+        formDesc: [
+          {
+            min: 1,
+            max: 200,
+            message: '表单描述长度在 1 到 200 个字符',
+            trigger: 'blur',
+          },
+        ],
       },
       rules4NewFormGuide: {
         formName: [
@@ -179,6 +187,14 @@ export default {
             min: 1,
             max: 100,
             message: '表单名称长度在 1 到 100 个字符',
+            trigger: 'blur',
+          },
+        ],
+        formDesc: [
+          {
+            min: 1,
+            max: 200,
+            message: '表单描述长度在 1 到 200 个字符',
             trigger: 'blur',
           },
         ],

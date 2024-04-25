@@ -11,10 +11,10 @@
 </template>
 
 <script>
-import ControlHeader from './components/ControlHeader.vue'
-import bridgingBpmn, { generateNamespace } from '../../utils/bridging-bpmn'
-import bridgingModuleFunc from './store'
-import IBpmnModeler from '../../IBpmnModeler'
+import ControlHeader from './components/ControlHeader.vue';
+import bridgingBpmn, { generateNamespace } from '../../utils/bridging-bpmn';
+import bridgingModuleFunc from './store';
+import IBpmnModeler from '../../IBpmnModeler';
 
 export default {
   name: 'BpmnEditor',
@@ -55,88 +55,111 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    isEditor: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const defaultProp = {
       id: this._uid,
       type: 'camunda',
       lintActive: true,
-    }
-    const iBpmnModeler = new IBpmnModeler({ ...defaultProp, ...this.prop })
-    const namespace = generateNamespace(this)
-    const unBridgingFunc = bridgingBpmn(this.$store, namespace, iBpmnModeler, bridgingModuleFunc)
+    };
+    const iBpmnModeler = new IBpmnModeler({ ...defaultProp, ...this.prop });
+    const namespace = generateNamespace(this);
+    const unBridgingFunc = bridgingBpmn(
+      this.$store,
+      namespace,
+      iBpmnModeler,
+      bridgingModuleFunc
+    );
     return {
       namespace,
       iBpmnModeler,
       unBridgingFunc,
-    }
+    };
   },
   computed: {
     newBaseInfo() {
       return {
         name: this.name,
-      }
+      };
     },
   },
   watch: {
     pelatteVisible(value) {
-      this.iBpmnModeler.paletteVisible(value)
+      this.iBpmnModeler.paletteVisible(value);
     },
     xml: {
       immediate: true,
       handler(value) {
         if (!value || !String.prototype.trim.call(value)) {
-          return
+          return;
         }
         const loading = this.$loading({
           lock: true,
           text: '加载中...',
           spinner: 'el-icon-loading',
-        })
-        this.iBpmnModeler.loadDiagram(value, this.newBaseInfo).then(() => {
-          loading.close()
-          this.onLoaded()
-        })
+        });
+        if (this.isEditor) {
+          this.iBpmnModeler.loadDiagram(value).then(() => {
+            loading.close();
+            this.onLoaded();
+          });
+        } else {
+          this.iBpmnModeler.loadDiagram(value, this.newBaseInfo).then(() => {
+            loading.close();
+            this.onLoaded();
+          });
+        }
       },
     },
     linterToggle: {
       immediate: true,
       handler(value) {
-        this.iBpmnModeler.linterToggle(value)
+        this.iBpmnModeler.linterToggle(value);
       },
     },
   },
   mounted() {
-    this.initBpmn()
+    this.initBpmn();
   },
   beforeUpdate() {
-    this.unBridgingFunc()
+    this.unBridgingFunc();
   },
   updated() {
-    this.namespace = generateNamespace(this)
-    this.unBridgingFunc = bridgingBpmn(this.$store, this.namespace, this.iBpmnModeler, bridgingModuleFunc)
+    this.namespace = generateNamespace(this);
+    this.unBridgingFunc = bridgingBpmn(
+      this.$store,
+      this.namespace,
+      this.iBpmnModeler,
+      bridgingModuleFunc
+    );
   },
   beforeDestroy() {
-    this.unBridgingFunc()
+    this.unBridgingFunc();
   },
   methods: {
     initBpmn() {
-      this.iBpmnModeler.attachTo(this.$refs.containers)
-      this.iBpmnModeler.paletteVisible(this.pelatteVisible)
+      this.iBpmnModeler.attachTo(this.$refs.containers);
+      this.iBpmnModeler.paletteVisible(this.pelatteVisible);
       if (!this.xml) {
-        this.iBpmnModeler.createEmptyDiagram(this.name, this.newBaseInfo).then(() => {
-          this.onLoaded()
-        })
+        this.iBpmnModeler
+          .createEmptyDiagram(this.name, this.newBaseInfo)
+          .then(() => {
+            this.onLoaded();
+          });
       }
       this.iBpmnModeler.on('selection.changed', () => {
-        this.selectedChanged(this.iBpmnModeler.getSelectedShape())
-      })
+        this.selectedChanged(this.iBpmnModeler.getSelectedShape());
+      });
     },
     onLoaded() {
-      this.$emit('loaded', this.iBpmnModeler)
+      this.$emit('loaded', this.iBpmnModeler);
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

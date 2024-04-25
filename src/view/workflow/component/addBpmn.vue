@@ -4,6 +4,7 @@
       <bpmn-designer
         v-if="visible"
         :projectData="projectData"
+        :isEditor="isEditor"
         @loaded="onBpmnDesignerLoaded"
         @getRootInfo="getRootBaseInfo"
       />
@@ -49,6 +50,10 @@ export default {
       type: String,
       default: 'bind',
     },
+    isQuote: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -61,6 +66,9 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId', 'currentOrganization']),
     title() {
       return this.projectData.processId ? '编辑流程' : '新建流程';
+    },
+    isEditor() {
+      return this.projectData.processId ? true : false;
     },
   },
   methods: {
@@ -94,9 +102,7 @@ export default {
     },
     async onSave() {
       if (this.projectData.processId) {
-        const { xml } = await this.iBpmnModeler.saveXML({
-          format: true,
-        });
+        const { xml } = await this.iBpmnModeler.saveXML();
         if (md5(this.projectData.processFile) === md5(xml)) {
           this.createOrUpdateWorkflow();
         } else {
@@ -123,9 +129,7 @@ export default {
         return;
       }
       try {
-        const { xml } = await this.iBpmnModeler.saveXML({
-          format: true,
-        });
+        const { xml } = await this.iBpmnModeler.saveXML();
         const processFormData = this.processFormData();
         processFormData.set(
           'processFile',
@@ -135,16 +139,18 @@ export default {
         );
         let promise;
         // 如果projectData存在id，则走修改的流程
-        if (this.projectData.processId) {
-          if (md5(this.projectData.processFile) === md5(xml)) {
-            const { processName, processDesc } = this.rootBaseInfo;
-            promise = updateWorkflow({
-              processId: this.projectData.processId,
-              processName: processName,
-              processDesc: processDesc,
-            });
-          } else {
-            promise = saveWorkflow(processFormData);
+        if (!this.isQuote || !this.projectData.processId) {
+          if (this.projectData.processId) {
+            if (md5(this.projectData.processFile) === md5(xml)) {
+              const { processName, processDesc } = this.rootBaseInfo;
+              promise = updateWorkflow({
+                processId: this.projectData.processId,
+                processName: processName,
+                processDesc: processDesc,
+              });
+            } else {
+              promise = saveWorkflow(processFormData);
+            }
           }
         } else {
           promise = saveWorkflow(processFormData);

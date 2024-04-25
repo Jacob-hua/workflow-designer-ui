@@ -39,7 +39,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'DeployConfirmation',
   props: {
@@ -52,17 +51,30 @@ export default {
     return {
       formData: {
         modelName: '',
-        modelDesc:''
+        modelDesc: '',
       },
       formRules: {
         modelName: [
           { required: true, message: '请输入模型名称', trigger: 'change' },
+          {
+            min: 1,
+            max: 100,
+            message: '模型名称长度在 1 到 100 个字符',
+            trigger: 'blur',
+          },
+        ],
+        modelDesc: [
+          {
+            min: 1,
+            max: 200,
+            message: '模型描述长度在 1 到 200 个字符',
+            trigger: 'blur',
+          },
         ],
       },
     };
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     onSubmit() {
       this.$refs.formData &&
