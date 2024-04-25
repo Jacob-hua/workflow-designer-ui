@@ -97,7 +97,6 @@ export default {
       if (value) {
         await this.fetchTaskNodeList();
         this.selectedNode = this.historyInfo.value;
-        this.selectedFormitem = this.historyInfo.pos;
       }
     },
     async selectedNode(newVal, oldVal) {
@@ -107,6 +106,7 @@ export default {
       }
       if (newVal === oldVal) return;
       await this.fetchFormFile(newVal);
+      this.selectedFormitem = this.historyInfo.pos;
     },
   },
   methods: {
