@@ -4,6 +4,7 @@
     @close="onClose"
     title="流程信息"
     append-to-body
+    :close-on-click-modal="false"
   >
     <el-form
       :model="confirmForm"

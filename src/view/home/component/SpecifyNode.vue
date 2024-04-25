@@ -28,7 +28,7 @@
           <p>当前节点</p>
           <div class="node-name">{{ taskInfo.taskName }}</div>
           <p>选择指定节点</p>
-          <el-select v-model="selectedNode" filterable="">
+          <el-select v-model="selectedNode" filterable clearable>
             <el-option
               v-for="item in taskNodeList"
               :key="item.value"

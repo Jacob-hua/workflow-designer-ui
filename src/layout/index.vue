@@ -261,7 +261,7 @@ $aside-logo-height: 320px;
   .el-menu-item {
     color: $menu-color;
     font-size: 16px;
-    font-family: '楷体', KaiTi, serif;
+    font-family: '微软雅黑';
     font-weight: bold;
   }
 
@@ -269,11 +269,11 @@ $aside-logo-height: 320px;
     color: #ffffff;
     background-color: $menu-active-bg-color;
 
-    .menu-text {
-      color: transparent;
-      background-image: linear-gradient(0deg, #fff, #009cff);
-      -webkit-background-clip: text;
-    }
+    // .menu-text {
+    //   color: transparent;
+    //   background-image: linear-gradient(0deg, #fff, #009cff);
+    //   -webkit-background-clip: text;
+    // }
 
     ::after {
       content: '';

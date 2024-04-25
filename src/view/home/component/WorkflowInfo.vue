@@ -21,10 +21,12 @@
               </div>
               <div>
                 <span>固定执行人员:</span>
-                <span v-if="sourceFixed.length <= 0">暂无</span>
-                <span v-else v-for="item in sourceFixed" :key="item.value">{{
-                  item.label
-                }}</span>
+                <div class="fixed-user">
+                  <span v-if="sourceFixed.length <= 0">暂无</span>
+                  <span v-else v-for="item in sourceFixed" :key="item.value">{{
+                    item.label
+                  }}</span>
+                </div>
                 <el-button
                   :disabled="!taskInfo.taskDefKey"
                   @click="handleChangeUser"
@@ -62,9 +64,11 @@
           <div class="content-wrapper gateway">
             <div>
               <span>网关字段条件:</span
-              ><span>{{
-                gatewayCondition.label ? gatewayCondition.label : '暂无'
-              }}</span>
+              ><span
+                >{{
+                  gatewayCondition.label ? gatewayCondition.label : '暂无'
+                }}-{{ gatewayCondition.posLabel ? gatewayCondition.posLabel : '暂无' }}</span
+              >
               <el-button
                 :disabled="!taskInfo.taskDefKey"
                 @click="handleChangeGateway()"
@@ -94,11 +98,12 @@
       </div>
       <div class="ticket-form">
         <div class="title">
-          <div>
+          <div class="title-form-info">
             <span>任务执行内容</span>
             <div v-if="formShow">
               <span>表单名称：{{ formShow.formName }}</span>
               <span>版本名称：{{ formShow.formVersionTag }}</span>
+              <span>版本号：{{ formShow.formVersion }}</span>
             </div>
           </div>
           <el-button
@@ -110,9 +115,12 @@
         </div>
         <div class="content-wrapper form">
           <div v-if="formShow">
-            <div v-if="taskInfo.taskType === 'StartEvent'">
-              <label>表单名称</label>
-              <el-input placeholder="请输入表单名称"></el-input>
+            <div v-if="taskInfo.taskType === 'StartEvent'" class="inner-box">
+              <div class="inner-label">工单名称：</div>
+              <el-input
+                v-model="innerName"
+                placeholder="请输入工单名称"
+              ></el-input>
             </div>
             <form-preview :formTree="formShow.formVersionFile"></form-preview>
           </div>
@@ -142,6 +150,7 @@
       :xml="xml"
       :taskInfo="taskInfo"
       :processId="workflow.processId"
+      :historyInfo="gatewayCondition"
       @saveGateway="saveGateway"
       @closeGatewayDialog="closeGatewayDialog"
     ></specify-gateway>
@@ -212,13 +221,17 @@ export default {
       flag: '',
       isSignNode: false,
       selectedNode: null,
+      innerName: '',
     };
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
     formShow() {
-      const formContent = this.formContent;
-      return formContent[this.taskInfo.taskDefKey];
+      const formContent = JSON.parse(JSON.stringify(this.formContent));
+      if (formContent[this.taskInfo.taskDefKey]) {
+        return formContent[this.taskInfo.taskDefKey];
+      }
+      return null;
     },
     gatewayCondition() {
       return this.modelTaskConfig.gatewayCondition ?? {};
@@ -298,6 +311,7 @@ export default {
         this.taskActios = [];
         return;
       }
+      this.innerName = '';
       this.taskInfo.taskType = element.type.split(':')[1];
       this.taskOperationsList();
       const shapeInfo = this.iBpmn.getSelectedShapeInfo();
@@ -319,8 +333,7 @@ export default {
       this.iBpmn.updateSelectedShapeProperties({
         'camunda:formId': '',
       });
-      delete this.formContent[this.taskInfo.taskDefKey];
-      this.$emit('removeForm', this.workflow);
+      this.$emit('removeForm');
     },
 
     async taskOperationsList() {
@@ -440,6 +453,15 @@ export default {
     padding: 20px 30px;
     overflow: auto;
     border: 1px solid $border-color;
+
+    .inner-box {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      .inner-label {
+        width: 80px;
+      }
+    }
   }
 }
 
@@ -451,7 +473,10 @@ export default {
   flex: 3;
   margin: 20px 0px 0px 20px;
   .title {
-    span:first-child {
+    .title-form-info {
+      display: flex;
+    }
+    span {
       margin-right: 10px;
     }
   }
@@ -468,15 +493,34 @@ export default {
     margin-top: 26px;
     display: flex;
     flex-direction: row;
+    align-items: center;
+  }
+
+  .fixed-user {
+    // display: flex;
+    // flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 5px;
+
+    span {
+      border: 1px solid;
+      border-radius: 4px;
+      padding: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   & > div:not(:first-child) {
-    justify-content: space-around;
+    grid-gap: 10px;
   }
 
   & > div > span:first-child {
-    text-align: end;
+    text-align: start;
     margin-right: 20px;
+    min-width: 100px;
   }
 
   & > div > span:last-child {

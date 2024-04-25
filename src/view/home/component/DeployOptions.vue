@@ -18,6 +18,7 @@
             @canvasLoaded="onCanvasLoaded"
             @selectedShape="onSelectedShape"
             @changeTaskConfigs="changeTaskConfigs"
+            @removeForm="removeForm"
           />
         </div>
         <div class="form-list-wrapper">
@@ -25,7 +26,7 @@
           <div class="search-form">
             <el-input
               v-model="formName"
-              placeholder="请输入内容"
+              placeholder="请输入表单名称"
               @keyup.native.enter="filterFormList"
             ></el-input>
           </div>
@@ -50,7 +51,9 @@
                     :formConf="config"
                     class="preview-popper"
                   ></preview> -->
-                  <form-preview :formTree="JSON.parse(ele.selectedVersion).formVersionFile"></form-preview>
+                  <form-preview
+                    :formTree="JSON.parse(ele.selectedVersion).formVersionFile"
+                  ></form-preview>
                   <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover>
                 <span class="link-button" v-if="canLink" @click="onLinked(ele)">
@@ -92,7 +95,7 @@ export default {
   name: 'DeployOptions',
   components: {
     WorkflowInfo,
-    FormPreview
+    FormPreview,
   },
   props: {
     visible: {
@@ -218,6 +221,16 @@ export default {
         const index = this.modelTaskConfigs.findIndex(
           ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
         );
+        const gatewayNodeIndex = this.modelTaskConfigs.findIndex(
+          ({ gatewayCondition }) => gatewayCondition
+        );
+        if (gatewayNodeIndex !== -1) {
+          this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition = {
+            ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
+            pos: '',
+            posLabel: '',
+          };
+        }
         if (index !== -1) {
           this.modelTaskConfigs[index].taskFormVersionId =
             formVersionInfo.formVersionId;
@@ -225,6 +238,22 @@ export default {
           this.modelTaskConfig.taskFormVersionId =
             formVersionInfo.formVersionId;
           this.modelTaskConfigs.push(this.modelTaskConfig);
+        }
+      }
+    },
+    removeForm() {
+      this.$delete(this.formContent, this.modelTaskConfig.taskDefKey);
+      if (this.shapeType === BpmnShapeType.START_EVENT) {
+        this.startFormVersionId = '';
+        this.updateStartFormVersionId({
+          startFormVersionId: this.startFormVersionId,
+        });
+      } else {
+        const index = this.modelTaskConfigs.findIndex(
+          ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
+        );
+        if (index !== -1) {
+          this.modelTaskConfigs[index].taskFormVersionId = '';
         }
       }
     },
@@ -331,11 +360,12 @@ export default {
         return;
       }
       this.$message.success('保存成功');
+      this.$emit('deployed');
       this.onClose();
     },
     filterFormList() {
       this.pageInfo.page = 1;
-      this.fetchFormList()
+      this.fetchFormList();
     },
     async fetchFormList() {
       const { data, code, msg } = await fetchFormList({
@@ -388,6 +418,7 @@ export default {
             formVersionFile: JSON.parse(formVersionFile),
             formName,
             formVersionTag,
+            formVersion,
           };
           return {
             label: `${formVersionTag}_${formVersion}`,

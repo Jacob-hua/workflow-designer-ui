@@ -5,9 +5,9 @@
         <div
           v-for="({ label, value }, index) in processDisplayInfo"
           :key="index"
+          class="info-item"
         >
-          <span>{{ label }}</span>
-          :
+          <span>{{ label }}：</span>
           <span>{{ value }}</span>
         </div>
       </el-card>
@@ -107,9 +107,22 @@ export default {
 
   /deep/.el-card__body{
     display: grid;
-    grid-template-columns: repeat(3,auto);
+    grid-template-columns: repeat(3,1fr);
     border-radius: 10px;
     background-color: #272938;
+    .info-item {
+      display: flex;
+      grid-gap: 5px;
+      overflow: hidden;
+      span:first-child {
+        min-width: 70px;
+      }
+      span:last-child{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   }
 }
 </style>

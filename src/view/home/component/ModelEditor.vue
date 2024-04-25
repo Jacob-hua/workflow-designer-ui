@@ -18,20 +18,21 @@
             @canvasLoaded="onCanvasLoaded"
             @selectedShape="onSelectedShape"
             @changeTaskConfigs="changeTaskConfigs"
+            @removeForm="removeForm"
           />
         </div>
-        <div class="form-list-wrapper">
+        <div class="form-list-wrapper" v-show="canLink">
           <div class="title">表单筛选</div>
           <div class="search-form">
             <el-input
               v-model="formName"
-              placeholder="请输入内容"
-              @keyup.native.enter="fetchFormList"
+              placeholder="请输入表单名称"
+              @keyup.native.enter="filterFormList"
             ></el-input>
           </div>
           <div class="content-wrapper">
             <div v-for="(ele, index) in formList" :key="ele.formId">
-              <div>{{ ele.formName }}</div>
+              <div class="form-name">{{ ele.formName }}</div>
               <el-select
                 v-model="formList[index].selectedVersion"
                 @change="handleChangeVersion(ele)"
@@ -50,7 +51,9 @@
                     :formConf="config"
                     class="preview-popper"
                   ></preview> -->
-                  <form-preview :formTree="JSON.parse(ele.selectedVersion).formVersionFile"></form-preview>
+                  <form-preview
+                    :formTree="JSON.parse(ele.selectedVersion).formVersionFile"
+                  ></form-preview>
                   <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover>
                 <span class="link-button" v-if="canLink" @click="onLinked(ele)">
@@ -96,7 +99,7 @@ export default {
   name: 'ModelEditor',
   components: {
     WorkflowInfo,
-    FormPreview
+    FormPreview,
   },
   props: {
     visible: {
@@ -224,6 +227,16 @@ export default {
         const index = this.modelTaskConfigs.findIndex(
           ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
         );
+        const gatewayNodeIndex = this.modelTaskConfigs.findIndex(
+          ({ gatewayCondition }) => gatewayCondition
+        );
+        if (gatewayNodeIndex !== -1) {
+          this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition = {
+            ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
+            pos: '',
+            posLabel: '',
+          };
+        }
         if (index !== -1) {
           this.modelTaskConfigs[index].taskFormVersionId =
             formVersionInfo.formVersionId;
@@ -235,6 +248,22 @@ export default {
         }
       }
       // this.modelTaskConfig.taskFormVersionId = formVersionInfo.formVersionId;
+    },
+    removeForm() {
+      this.$delete(this.formContent, this.modelTaskConfig.taskDefKey);
+      if (this.shapeType === BpmnShapeType.START_EVENT) {
+        this.startFormVersionId = '';
+        this.updateStartFormVersionId({
+          startFormVersionId: this.startFormVersionId,
+        });
+      } else {
+        const index = this.modelTaskConfigs.findIndex(
+          ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
+        );
+        if (index !== -1) {
+          this.modelTaskConfigs[index].taskFormVersionId = '';
+        }
+      }
     },
     onSelectedShape(element) {
       if (!element) {
@@ -276,6 +305,11 @@ export default {
     onClose() {
       this.formName = '';
       this.formContent = {};
+      this.pageInfo = {
+        limit: 10,
+        page: 1,
+        total: 0,
+      },
       this.$emit('update:visible', false);
       this.updateModelTaskConfigs({ modelTaskConfigs: [] });
     },
@@ -332,6 +366,10 @@ export default {
       this.modelTaskConfigs = Object.values(data.modelTasks);
       this.modelInfo = data.modelInfo;
     },
+    filterFormList() {
+      this.pageInfo.page = 1;
+      this.fetchFormList();
+    },
     async fetchFormList() {
       const { data, code, msg } = await fetchFormList({
         tenantId: this.workflow.tenantId,
@@ -383,6 +421,7 @@ export default {
             formVersionFile: JSON.parse(formVersionFile),
             formName,
             formVersionTag,
+            formVersion,
           };
           return {
             label: `${formVersionTag}_${formVersion}`,
@@ -392,11 +431,13 @@ export default {
       );
     },
     async fetchFormVersion() {
+      const formVersionId =
+        this.shapeType === BpmnShapeType.START_EVENT
+          ? this.modelInfo.startFormVersionId
+          : this.modelTaskConfig.taskFormVersionId;
+      if (!formVersionId) return;
       const { data, code, msg } = await fetchFormVersion({
-        formVersionId:
-          this.shapeType === BpmnShapeType.START_EVENT
-            ? this.modelInfo.startFormVersionId
-            : this.modelTaskConfig.taskFormVersionId,
+        formVersionId,
       });
       if (code !== '200') {
         this.$message.error(msg);
@@ -456,7 +497,6 @@ export default {
 
 .form-list-wrapper {
   width: 468px;
-  height: 680px;
   padding: 0 38px;
 
   .title {
@@ -470,7 +510,6 @@ export default {
   }
 
   .content-wrapper {
-    height: 650px;
     overflow: scroll;
     margin: 10px 0;
 
@@ -484,6 +523,12 @@ export default {
       align-items: center;
       padding: 6px 20px;
       font-size: 14px;
+
+      .form-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
 
       .el-select {
         width: 100px;

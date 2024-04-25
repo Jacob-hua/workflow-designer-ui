@@ -28,7 +28,7 @@
           <p>当前节点</p>
           <div class="node-name">{{ taskInfo.taskName }}</div>
           <p>选择指定节点</p>
-          <el-select v-model="selectedNode" filterable="">
+          <el-select v-model="selectedNode" filterable clearable>
             <el-option
               v-for="item in taskNodeList"
               :key="item.value"
@@ -37,7 +37,7 @@
             ></el-option>
           </el-select>
           <p>选择表单字段</p>
-          <el-select v-model="selectedFormitem" filterable="">
+          <el-select v-model="selectedFormitem" filterable clearable>
             <el-option
               v-for="item in formitemList"
               :key="item.value"
@@ -77,8 +77,8 @@ export default {
       type: String,
     },
     historyInfo: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
@@ -93,15 +93,20 @@ export default {
     ...mapState('model', ['modelTaskConfigs', 'startFormVersionId']),
   },
   watch: {
-    gatewayDialogVisible(value) {
+    async gatewayDialogVisible(value) {
       if (value) {
-        this.fetchTaskNodeList();
+        await this.fetchTaskNodeList();
+        this.selectedNode = this.historyInfo.value;
+        this.selectedFormitem = this.historyInfo.pos;
       }
     },
-    selectedNode(newVal, oldVal) {
-      if(!newVal) return;
+    async selectedNode(newVal, oldVal) {
+      if (!newVal) {
+        this.selectedFormitem = '';
+        return;
+      }
       if (newVal === oldVal) return;
-      this.fetchFormFile(newVal);
+      await this.fetchFormFile(newVal);
     },
   },
   methods: {
@@ -210,7 +215,7 @@ export default {
   height: 300px;
   border: 1px solid $border-color;
 }
-p{
+p {
   color: #fff;
 }
 .node-name {

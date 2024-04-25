@@ -92,17 +92,31 @@ export default {
       this.$emit('close');
       this.$emit('update:visible', false);
     },
-    onSave() {
-      this.editorConfirmVisible = true;
+    async onSave() {
+      if (this.projectData.processId) {
+        const { xml } = await this.iBpmnModeler.saveXML({
+          format: true,
+        });
+        if (md5(this.projectData.processFile) === md5(xml)) {
+          this.createOrUpdateWorkflow();
+        } else {
+          this.editorConfirmVisible = true;
+        }
+      } else {
+        this.createOrUpdateWorkflow();
+      }
     },
     closeConfirm() {
       this.editorConfirmVisible = false;
     },
-    async handleConfirm(value) {
+    handleConfirm(value) {
       this.rootBaseInfo = {
         ...this.rootBaseInfo,
         ...value,
       };
+      this.createOrUpdateWorkflow();
+    },
+    async createOrUpdateWorkflow() {
       const { error } = await this.iBpmnModeler.validate();
       if (error.length > 0) {
         this.$message.error('流程设计存在错误/警告');

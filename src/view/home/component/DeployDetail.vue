@@ -6,8 +6,13 @@
         :xml="workflow.processFile"
         :processDisplayInfo="processDisplayInfo"
       /> -->
-      
-      <model-detail :modelTasks="workflow.modelTasks" :xml="xml" :processDisplayInfo="processDisplayInfo"></model-detail>
+
+      <model-detail
+        :modelInfo="workflow.modelInfo"
+        :modelTasks="workflow.modelTasks"
+        :xml="xml"
+        :processDisplayInfo="processDisplayInfo"
+      ></model-detail>
       <span slot="footer">
         <el-button class="remove-button" @click="onDeleteClick">
           删除
@@ -18,13 +23,13 @@
 </template>
 
 <script>
-import ModelDetail from './ModelDetail.vue'
+import ModelDetail from './ModelDetail.vue';
 import { fetchModelInfo, deleteModel } from '../../../api/workflowModel';
 
 export default {
   name: 'DeployDetail',
   components: {
-    ModelDetail
+    ModelDetail,
   },
   props: {
     visible: {
@@ -39,7 +44,7 @@ export default {
     },
     processName: {
       type: String,
-      default: ''
+      default: '',
     },
     xml: {
       type: String,
@@ -79,20 +84,20 @@ export default {
     },
   },
   watch: {
-    // visible(value) {
-    //   if (value) {
-    //     this.fetchDeployedWorkflow();
-    //   }
-    // },
-    modelId: {
-      immediate: true,
-      handler(modelId) {
-        if (!modelId) {
-          return;
-        }
+    visible(value) {
+      if (value) {
         this.fetchModelInfo();
-      },
+      }
     },
+    // modelId: {
+    //   immediate: true,
+    //   handler(modelId) {
+    //     if (!modelId) {
+    //       return;
+    //     }
+    //     this.fetchModelInfo();
+    //   },
+    // },
   },
   methods: {
     onCancel() {
@@ -123,6 +128,7 @@ export default {
       } catch (error) {}
     },
     colse() {
+      this.workflow = {}
       this.$emit('update:visible', false);
     },
     async fetchModelInfo() {

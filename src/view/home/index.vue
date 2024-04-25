@@ -30,6 +30,12 @@
           </el-date-picker>
         </el-form-item>
       </el-form>
+      <div class="button-wrapper">
+        <el-button class="search-button" @click="refreshWorkFlowRecord"
+          >查询</el-button
+        >
+        <el-button class="reset-button" @click="onReset">重置</el-button>
+      </div>
     </div>
     <div class="statistics-wrapper">
       <div>
@@ -48,33 +54,6 @@
           <div class="label">可部署工作流</div>
         </div>
       </div>
-      <!-- <div>
-        <div class="data-wrapper">
-          <div class="icon">
-            <img :src="require('../../assets/image/home/executed.svg')" />
-          </div>
-          <div class="title">
-            {{ workflowContents.executionTotalProcessCount }}
-          </div>
-          <div class="label">操作工作流总数</div>
-        </div>
-        <div class="data-wrapper">
-          <div class="icon">
-            <img :src="require('../../assets/image/home/executing.svg')" />
-          </div>
-          <div class="title">
-            {{ workflowContents.executionInProcessCount }}
-          </div>
-          <div class="label">操作中</div>
-        </div>
-        <div class="data-wrapper">
-          <div class="icon">
-            <img :src="require('../../assets/image/home/completed.svg')" />
-          </div>
-          <div class="title">{{ workflowContents.executionCompleteCount }}</div>
-          <div class="label">已完成数量</div>
-        </div>
-      </div> -->
       <div>
         <div class="data-wrapper" @click="gotoWorkflow">
           <div class="icon">
@@ -86,7 +65,7 @@
     </div>
     <div class="content-wrapper">
       <workflow-table
-        :searchForm="searchForm"
+        :searchForm="searchFormData"
         ref="workflow"
         @refreshTable="onWorkflowRefresh"
         @deployed="onWorkflowDeployed"
@@ -99,7 +78,6 @@
 
 <script>
 import WorkflowTable from './component/WorkflowTable.vue';
-import { getDeployCount, getTaskCountStatistic } from '@/api/unit/api.js';
 import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -121,6 +99,7 @@ export default {
       WorkflowTableNum: 0,
       draftsTableNum: 0,
       deployedWorkflowContents: 0,
+      searchFormData: {},
     };
   },
   computed: {
@@ -130,6 +109,7 @@ export default {
   async mounted() {
     await this.dispatchProjectOriganizations();
     this.setDefaultorganization();
+    this.refreshWorkFlowRecord();
   },
   methods: {
     ...mapActions('config', ['dispatchProjectOriganizations']),
@@ -152,59 +132,33 @@ export default {
     totalChange(value, key) {
       this[key] = value;
     },
-    getDeployCountList() {
-      getDeployCount({
-        ascription: this.searchForm.ascription,
-        business: this.searchForm.business,
-        startTime: this.searchForm.valueDate[0],
-        endTime: this.searchForm.valueDate[1],
-        status: 'activation',
-        tenantId: this.tenantId,
-      }).then((res) => {
-        this.deployedWorkflowContents = res.result;
-      });
-    },
     onWorkflowRefresh({ deployCount, deployedCount }) {
       this.WorkflowTableNum = deployCount;
       this.deployedWorkflowContents = deployedCount;
     },
     onWorkflowDeployed() {
-      this.getManyData();
+      this.refreshWorkFlowRecord();
     },
     onWorkflowSaved() {
-      this.getManyData();
-      this.$refs.drafts.fetchWorkflows();
+      this.refreshWorkFlowRecord();
     },
     onWorkflowDeleted() {
-      this.getManyData();
+      this.refreshWorkFlowRecord();
     },
     onDraftsDeployed() {
-      this.getManyData();
-      this.$refs.workflow.fetchWorkflows();
+      this.refreshWorkFlowRecord();
     },
-    getManyData() {
-      this.getDataNumber();
-      this.getDeployCountList();
+    refreshWorkFlowRecord() {
+      this.searchFormData = {
+        ...this.searchForm,
+      };
     },
-    getDataNumber() {
-      getTaskCountStatistic({
-        ascription: this.searchForm.ascription,
-        assignee: this.userInfo.account,
-        business: this.searchForm.business,
-        endTime: this.searchForm.valueDate[1],
-        startTime: this.searchForm.valueDate[0],
-        tenantId: this.tenantId,
-      }).then((res) => {
-        if (res) {
-          this.workflowContents = res.result;
-        } else {
-          this.workflowContents = {
-            executionCompleteCount: 0,
-            executionInProcessCount: 0,
-            executionTotalProcessCount: 0,
-          };
-        }
-      });
+    onReset() {
+      this.searchForm = {
+        ...this.searchForm,
+        valueDate: [],
+      };
+      this.refreshWorkFlowRecord();
     },
   },
 };
@@ -215,14 +169,28 @@ export default {
   height: 106px;
   background-color: $card-bg-color;
   border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
 
   @include searchForm;
 
+  .button-wrapper {
+    display: flex;
+    flex-direction: row;
+
+    .search-button {
+      @include primaryBtn;
+    }
+
+    .reset-button {
+      @include resetBtn;
+    }
+  }
+
   .el-form {
-    width: 100%;
     display: flex;
     align-items: center;
-    padding: 0 43px;
   }
 
   .el-form-item {

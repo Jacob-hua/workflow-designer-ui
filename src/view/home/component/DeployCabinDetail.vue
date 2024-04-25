@@ -145,6 +145,8 @@ export default {
     visible(value) {
       if (value) {
         this.fetchModelList();
+      } else {
+        this.modelName = '';
       }
     },
     modelName(newVal, oldVal) {
@@ -170,7 +172,7 @@ export default {
       this.modelEditorVisible = true;
     },
     saveSuccess() {
-      this.fetchModelList()
+      this.fetchModelList();
     },
     async fetchModelList() {
       const { data, code, msg } = await fetchModelList({
@@ -249,7 +251,7 @@ export default {
       color: $button-submit-bg-color;
     }
 
-    .detail-button{
+    .detail-button {
       margin-right: 10px;
     }
   }

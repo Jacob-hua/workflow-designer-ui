@@ -40,7 +40,7 @@ import {
 } from '@formily/antdv';
 import { Card, Rate, Slider, Card as Display } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
-import { post } from '../api/unit/request';
+import _ from 'lodash';
 
 const { SchemaField } = createSchemaField({
   components: {
@@ -143,24 +143,18 @@ export default {
     },
   },
   watch: {
-    schema(val) {
-      if (!val) return;
-      this.form = createForm({
-        disabled: this.disabled,
-        values: this.initialValues,
-      });
-      // this.JsonSchema = JSON.parse(JSON.stringify(val));
-      this.handleSchema(JSON.parse(JSON.stringify(val)));
-      // this.JsonSchema = val;
-      // const keyList = Object.keys(val.properties);
-      // // console.log(keyList, val);
-      // const displayComp = keyList.find(
-      //   (item) => val.properties[item]['x-component'] === 'Display'
-      // );
-      // const defaultCardSchema = {};
-      // if (displayComp) {
-      //   delete this.JsonSchema.properties[displayComp];
-      // }
+    schema: {
+      handler(val) {
+        if (!val) return;
+        this.JsonSchema = val;
+        this.form = createForm({
+          disabled: this.disabled,
+          values: this.initialValues,
+        });
+        this.handleSchema(val);
+      },
+      deep: true,
+      immediate: true
     },
   },
 };

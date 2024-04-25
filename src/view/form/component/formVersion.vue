@@ -4,6 +4,7 @@
     :visible.sync="formVersionVisible"
     @close="close"
     width="30%"
+    :close-on-click-modal="false"
   >
     <el-form
       :model="versionForm"

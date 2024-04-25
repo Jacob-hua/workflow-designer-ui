@@ -9,7 +9,10 @@
     />
     <div class="ticket-wrapper">
       <div class="ticket-left">
-        <div v-if="taskInfo.taskType !== 'ExclusiveGateway'" class="ticket-info">
+        <div
+          v-if="taskInfo.taskType !== 'ExclusiveGateway'"
+          class="ticket-info"
+        >
           <div class="title">执行人员</div>
           <div class="content-wrapper info">
             <div>
@@ -31,14 +34,21 @@
             </div>
           </div>
         </div>
-        <div v-if="taskInfo.taskType === 'ExclusiveGateway'" class="ticket-info">
+        <div
+          v-if="taskInfo.taskType === 'ExclusiveGateway'"
+          class="ticket-info"
+        >
           <div class="title">网关</div>
           <div class="content-wrapper gateway">
             <div>
               <span>网关字段条件:</span
-              ><span>{{
-                gatewayCondition.label ? gatewayCondition.label : '暂无'
-              }}</span>
+              ><span
+                >{{
+                  gatewayCondition.label ? gatewayCondition.label : '暂无'
+                }}-{{
+                  gatewayCondition.posLabel ? gatewayCondition.posLabel : '暂无'
+                }}</span
+              >
             </div>
           </div>
         </div>
@@ -60,15 +70,22 @@
       </div>
       <div class="ticket-form">
         <div class="title">
-          <div>
-            <span>任务执行内容</span
-            ><span v-if="formShow"
-              >{{ formContent.formName }}-{{ formContent.formVersionTag }}</span
-            >
+          <span>任务执行内容</span>
+          <div v-if="formShow">
+            <span>表单名称：{{ formContent.formName }}</span>
+            <span>版本名称：{{ formContent.formVersionTag }}</span>
+            <span>版本号：{{ formContent.formVersion }}</span>
           </div>
         </div>
         <div class="content-wrapper form">
           <div v-if="formShow">
+            <div v-if="taskInfo.taskType === 'StartEvent'" class="inner-box">
+              <div class="inner-label">工单名称：</div>
+              <el-input
+                v-model="innerName"
+                placeholder="请输入工单名称"
+              ></el-input>
+            </div>
             <form-preview
               :formTree="formContent.formVersionFile"
             ></form-preview>
@@ -98,6 +115,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    modelInfo: {
+      type: Object,
+      default: () => ({}),
+    },
     xml: {
       type: String,
       default: '',
@@ -121,12 +142,13 @@ export default {
       selectedTaskActions: [],
       formContent: {},
       isSignNode: false,
+      innerName: '',
     };
   },
   computed: {
     ...mapState('account', ['tenantId', 'userInfo']),
     formShow() {
-      return this.currentTaskModel.taskFormVersionId;
+      return Object.keys(this.formContent).length;
     },
     gatewayCondition() {
       return this.currentTaskModel.gatewayCondition ?? {};
@@ -157,9 +179,12 @@ export default {
     },
   },
   watch: {
-    'currentTaskModel.taskFormVersionId'(value) {
-      if (value) {
-        this.fetchFormVersion(value);
+    'taskInfo.taskDefKey'() {
+      if (Object.keys(this.currentTaskModel).length <= 0) return;
+      if (this.taskInfo.taskType === 'StartEvent') {
+        this.fetchFormVersion(this.modelInfo.startFormVersionId);
+      } else {
+        this.fetchFormVersion(this.currentTaskModel.taskFormVersionId);
       }
     },
     historyTaskActios(value) {
@@ -175,14 +200,15 @@ export default {
     onSelectedShape(element, iBpmn) {
       this.$emit('selectedShape', element);
       this.iBpmn = iBpmn;
+      this.formContent = {};
       if (!element) {
         this.taskInfo = {
           taskDefKey: '',
           taskType: '',
         };
-        this.formContent = {};
         return;
       }
+      this.innerName = '';
       this.taskInfo.taskType = element.type.split(':')[1];
       this.taskOperationsList();
       const shapeInfo = this.iBpmn.getSelectedShapeInfo();
@@ -203,6 +229,7 @@ export default {
       this.taskActios = data;
     },
     async fetchFormVersion(versionId) {
+      if (!versionId) return;
       const { data, code, msg } = await fetchFormVersion({
         formVersionId: versionId,
       });
@@ -235,13 +262,21 @@ export default {
     font-size: 14px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
   }
 
   .content-wrapper {
     padding: 20px 30px;
     overflow: auto;
     border: 1px solid $border-color;
+
+    .inner-box {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      .inner-label {
+        width: 80px;
+      }
+    }
   }
 }
 

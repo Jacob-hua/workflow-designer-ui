@@ -4,6 +4,7 @@
     :visible.sync="userDialogVisible"
     @close="close"
     append-to-body
+    :close-on-click-modal="false"
   >
     <el-transfer
       filterable

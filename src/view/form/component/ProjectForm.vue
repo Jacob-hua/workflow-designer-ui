@@ -279,6 +279,7 @@ export default {
       this.addForm2(item, tileText);
     },
     handleCloseDetail() {
+      this.formInfo = null
       this.detailDialogVisible = false;
     },
   },

@@ -17,7 +17,7 @@
     "ant-design-vue": "1.7.8",
     "babel-plugin-import": "^1.13.8",
     "beautifier": "^0.1.7",
-    "bpmn-js": "^6.0.0 || ^8.0.0 || ^9.0.2",
+    "bpmn-js": "^9.0.2",
     "bpmn-js-bpmnlint": "^0.18.0",
     "bpmn-js-properties-panel": "^0.46.0",
     "bpmn-js-sketchy": "^0.5.3",
