@@ -22,7 +22,7 @@
             @removeForm="removeForm"
           />
         </div>
-        <div class="form-list-wrapper">
+        <div class="form-list-wrapper" v-show="canLink">
           <div class="title">表单筛选</div>
           <div class="search-form">
             <el-input
@@ -33,7 +33,7 @@
           </div>
           <div class="content-wrapper">
             <div v-for="(ele, index) in formList" :key="ele.formId">
-              <div>{{ ele.formName }}</div>
+              <div class="form-name">{{ ele.formName }}</div>
               <el-select
                 v-model="formList[index].selectedVersion"
                 @change="handleChangeVersion(ele)"
@@ -223,14 +223,19 @@ export default {
           ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
         );
         const gatewayNodeIndex = this.modelTaskConfigs.findIndex(
-          ({ gatewayCondition }) => gatewayCondition
+          ({ gatewayCondition }) =>
+            gatewayCondition && Object.keys(gatewayCondition).length > 0
         );
         if (gatewayNodeIndex !== -1) {
-          this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition = {
-            ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
-            pos: '',
-            posLabel: '',
-          };
+          const gatewatTaskKye =
+            this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition.value;
+          if (gatewatTaskKye === this.modelTaskConfig.taskDefKey) {
+            this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition = {
+              ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
+              pos: '',
+              posLabel: '',
+            };
+          }
         }
         if (index !== -1) {
           this.modelTaskConfigs[index].taskFormVersionId =
@@ -253,6 +258,21 @@ export default {
         const index = this.modelTaskConfigs.findIndex(
           ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
         );
+        const gatewayNodeIndex = this.modelTaskConfigs.findIndex(
+          ({ gatewayCondition }) =>
+            gatewayCondition && Object.keys(gatewayCondition).length > 0
+        );
+        if (gatewayNodeIndex !== -1) {
+          const gatewatTaskKye =
+            this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition.value;
+          if (gatewatTaskKye === this.modelTaskConfig.taskDefKey) {
+            this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition = {
+              ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
+              pos: '',
+              posLabel: '',
+            };;
+          }
+        }
         if (index !== -1) {
           this.modelTaskConfigs[index].taskFormVersionId = '';
         }
@@ -471,13 +491,11 @@ export default {
 
   & > div:last-child {
     color: $font-color;
-    width: 510px;
   }
 }
 
 .form-list-wrapper {
   width: 468px;
-  height: 680px;
   padding: 0 38px;
 
   .title {
@@ -491,7 +509,6 @@ export default {
   }
 
   .content-wrapper {
-    height: 650px;
     overflow: scroll;
     margin: 10px 0;
 
@@ -505,6 +522,12 @@ export default {
       align-items: center;
       padding: 6px 20px;
       font-size: 14px;
+
+      .form-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
 
       .el-select {
         width: 100px;

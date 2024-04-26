@@ -103,6 +103,7 @@ export default {
     async selectedNode(newVal, oldVal) {
       if (!newVal) {
         this.selectedFormitem = '';
+        this.formitemList = [];
         return;
       }
       if (newVal === oldVal) return;
@@ -113,15 +114,15 @@ export default {
   methods: {
     onBpmnViewerLoaded(iBpmnViewer) {
       this.iBpmnViewer = iBpmnViewer;
-      iBpmnViewer.elementRegistryForEach(item => {
-        if(item.id === this.taskInfo.taskDefKey){
-          iBpmnViewer.canvasAddMarker(item, 'svgOncomplete')
-        }else {
-          if(iBpmnViewer.canvasHasMarker(item, 'svgOncomplete')){
-            iBpmnViewer.canvasRemoveMarker(item, 'svgOncomplete')
+      iBpmnViewer.elementRegistryForEach((item) => {
+        if (item.id === this.taskInfo.taskDefKey) {
+          iBpmnViewer.canvasAddMarker(item, 'svgOncomplete');
+        } else {
+          if (iBpmnViewer.canvasHasMarker(item, 'svgOncomplete')) {
+            iBpmnViewer.canvasRemoveMarker(item, 'svgOncomplete');
           }
         }
-      })
+      });
       this.$emit('loaded', iBpmnViewer);
     },
     async fetchTaskNodeList() {
@@ -192,11 +193,11 @@ export default {
       }
     },
     save() {
-      if (!this.selectedNode || !this.selectedFormitem) {
-        this.$message.warning('节点或者表单不能为空');
-        // this.close();
-        return;
-      }
+      // if (!this.selectedNode || !this.selectedFormitem) {
+      //   this.$message.warning('节点或者表单不能为空');
+      //   this.close();
+      //   return;
+      // }
       const selectedData = this.taskNodeList.find(
         ({ value }) => this.selectedNode === value
       );

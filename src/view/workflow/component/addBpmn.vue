@@ -138,8 +138,9 @@ export default {
           })
         );
         let promise;
-        // 如果projectData存在id，则走修改的流程
-        if (!this.isQuote || !this.projectData.processId) {
+        if (this.isQuote) {
+          promise = saveWorkflow(processFormData);
+        } else {
           if (this.projectData.processId) {
             if (md5(this.projectData.processFile) === md5(xml)) {
               const { processName, processDesc } = this.rootBaseInfo;
@@ -151,9 +152,9 @@ export default {
             } else {
               promise = saveWorkflow(processFormData);
             }
+          } else {
+            promise = saveWorkflow(processFormData);
           }
-        } else {
-          promise = saveWorkflow(processFormData);
         }
         const { code, msg } = await Promise.resolve(promise);
         if (code !== '200') {

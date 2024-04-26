@@ -180,10 +180,10 @@ export default {
   },
   watch: {
     'taskInfo.taskDefKey'() {
-      if (Object.keys(this.currentTaskModel).length <= 0) return;
       if (this.taskInfo.taskType === 'StartEvent') {
         this.fetchFormVersion(this.modelInfo.startFormVersionId);
       } else {
+        if (Object.keys(this.currentTaskModel).length <= 0) return;
         this.fetchFormVersion(this.currentTaskModel.taskFormVersionId);
       }
     },
@@ -242,6 +242,9 @@ export default {
         formVersionFile: JSON.parse(data.formVersionFile),
       };
     },
+  },
+  beforeDestroy() {
+    this.formContent = {};
   },
 };
 </script>
@@ -328,12 +331,12 @@ export default {
     margin-top: 26px;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    align-items: center;
+    grid-gap: 10px;
   }
 }
 
 .form {
-  padding: 20px 0px !important;
   min-height: 200px;
 
   .empty-data {

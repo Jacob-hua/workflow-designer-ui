@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper">
+    <div class="toCenter" @click="handleToCenter">居中</div>
     <div class="containers" ref="containers" v-if="visible"></div>
   </div>
 </template>
@@ -84,6 +85,11 @@ export default {
     onLoaded() {
       this.$emit('loaded', this.iBpmnViewer);
     },
+    handleToCenter() {
+      this.$nextTick(() => {
+        this.iBpmnViewer.canvasZoom('fit-viewport', 'auto');
+      });
+    },
   },
 };
 </script>
@@ -96,10 +102,31 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .containers {
   background-color: rgb(27, 30, 45);
   width: 100%;
   height: 100%;
+}
+
+.toCenter {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  cursor: pointer;
+  border: 1px solid #009efb;
+  border-radius: 4px;
+  width: 80px;
+  text-align: center;
+  padding: 5px 10px;
+  z-index: 2999;
+  color: #009efb;
+
+  &:hover {
+    background: #009efb90;
+    border-color: #009efb90;
+    color: #fff;
+  }
 }
 </style>

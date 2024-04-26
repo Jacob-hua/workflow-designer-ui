@@ -10,7 +10,7 @@
     <div class="ticket-wrapper">
       <div class="ticket-left">
         <div
-          v-if="taskInfo.taskType !== 'ExclusiveGateway'"
+          v-if="taskInfo.taskType === 'UserTask'"
           class="ticket-info"
         >
           <div class="title">执行人员</div>
@@ -67,7 +67,9 @@
               ><span
                 >{{
                   gatewayCondition.label ? gatewayCondition.label : '暂无'
-                }}：{{ gatewayCondition.posLabel ? gatewayCondition.posLabel : '暂无' }}</span
+                }}：{{
+                  gatewayCondition.posLabel ? gatewayCondition.posLabel : '暂无'
+                }}</span
               >
               <el-button
                 :disabled="!taskInfo.taskDefKey"
@@ -77,7 +79,7 @@
             </div>
           </div>
         </div>
-        <div class="operation-config">
+        <div class="operation-config" v-if="taskInfo.taskType === 'UserTask'">
           <div class="title">操作配置</div>
           <div class="content-wrapper config">
             <div v-if="alterFlag">
@@ -96,7 +98,7 @@
           </div>
         </div>
       </div>
-      <div class="ticket-form">
+      <div class="ticket-form" v-if="taskInfo.taskType === 'UserTask' || taskInfo.taskType === 'StartEvent'">
         <div class="title">
           <div class="title-form-info">
             <span>任务执行内容</span>
@@ -412,13 +414,18 @@ export default {
       this.gatewayDialogVisible = false;
     },
     saveGateway({ selectedData, selectForm }) {
-      const gatewayCondition = {
-        label: selectedData.label,
-        value: selectedData.value,
-        pos: selectForm.value,
-        posLabel: selectForm.label,
-        source: 'task_form',
-      };
+      let gatewayCondition = null;
+      if (!selectedData) {
+        gatewayCondition = {};
+      } else {
+        gatewayCondition = {
+          label: selectedData.label,
+          value: selectedData.value,
+          pos: selectForm?.value ?? '',
+          posLabel: selectForm?.label ?? '',
+          source: 'task_form',
+        };
+      }
       this.$emit('changeTaskConfigs', {
         type: 'gatewayCondition',
         mode: 'replace',
@@ -437,8 +444,7 @@ export default {
 }
 
 .ticket-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+  display: flex;
   color: $font-color;
 
   .title {

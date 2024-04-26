@@ -6,7 +6,7 @@ import Modeling from 'bpmn-js/lib/features/modeling';
 import X2JS from 'x2js';
 import { filterPublicFunction } from './utils/function';
 import zoomScroll from './utils/zoomScroll';
-import moveCanvas from './utils/moveCanvas';
+// import moveCanvas from './utils/moveCanvas';
 import { getShapeType } from './enum/shapeType';
 
 import config from './config';
@@ -53,8 +53,7 @@ class IBpmnViewer {
         ImportModule,
         ElementRegistry,
         Modeling,
-        moveCanvas,
-        zoomScroll,
+        zoomScroll
       ],
       moddleExtensions: config.extensions[this.type],
     });

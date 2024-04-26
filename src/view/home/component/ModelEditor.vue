@@ -232,11 +232,15 @@ export default {
           ({ gatewayCondition }) => gatewayCondition
         );
         if (gatewayNodeIndex !== -1) {
-          this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition = {
-            ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
-            pos: '',
-            posLabel: '',
-          };
+          const gatewatTaskKye =
+            this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition.value;
+          if (gatewatTaskKye === this.modelTaskConfig.taskDefKey) {
+            this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition = {
+              ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
+              pos: '',
+              posLabel: '',
+            };
+          }
         }
         if (index !== -1) {
           this.modelTaskConfigs[index].taskFormVersionId =
@@ -261,6 +265,21 @@ export default {
         const index = this.modelTaskConfigs.findIndex(
           ({ taskDefKey }) => taskDefKey === this.modelTaskConfig.taskDefKey
         );
+        const gatewayNodeIndex = this.modelTaskConfigs.findIndex(
+          ({ gatewayCondition }) =>
+            gatewayCondition && Object.keys(gatewayCondition).length > 0
+        );
+        if (gatewayNodeIndex !== -1) {
+          const gatewatTaskKye =
+            this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition.value;
+          if (gatewatTaskKye === this.modelTaskConfig.taskDefKey) {
+            this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition = {
+              ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
+              pos: '',
+              posLabel: '',
+            };;
+          }
+        }
         if (index !== -1) {
           this.modelTaskConfigs[index].taskFormVersionId = '';
         }
@@ -306,12 +325,12 @@ export default {
     onClose() {
       this.formName = '';
       this.formContent = {};
-      this.pageInfo = {
+      (this.pageInfo = {
         limit: 10,
         page: 1,
         total: 0,
-      },
-      this.$emit('update:visible', false);
+      }),
+        this.$emit('update:visible', false);
       this.updateModelTaskConfigs({ modelTaskConfigs: [] });
     },
     changeTaskConfigs({ type, mode, data, source }) {
@@ -466,7 +485,7 @@ export default {
         this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page;
       this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page;
     },
-  },
+  }
 };
 </script>
 

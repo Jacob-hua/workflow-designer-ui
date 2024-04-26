@@ -1,6 +1,12 @@
 <template>
   <div>
-    <el-dialog title="部署详情" fullscreen :visible="visible" @close="onCancel" :close-on-click-modal="false">
+    <el-dialog
+      title="部署详情"
+      fullscreen
+      :visible="visible"
+      @close="onCancel"
+      :close-on-click-modal="false"
+    >
       <!-- <workflow-info
         :workflow="workflow"
         :xml="workflow.processFile"
@@ -8,6 +14,7 @@
       /> -->
 
       <model-detail
+        v-if="visible"
         :modelInfo="workflow.modelInfo"
         :modelTasks="workflow.modelTasks"
         :xml="xml"
@@ -128,7 +135,7 @@ export default {
       } catch (error) {}
     },
     colse() {
-      this.workflow = {}
+      this.workflow = {};
       this.$emit('update:visible', false);
     },
     async fetchModelInfo() {

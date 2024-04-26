@@ -13,7 +13,7 @@
           <div class="search-wrapper">
             <el-input
               v-model="userName"
-              placeholder="请输入名称"
+              placeholder="请输入人员名称"
               prefix-icon="el-icon-search"
             ></el-input>
             <el-button type="primary" @click="handlesearch">查询</el-button>
@@ -25,7 +25,7 @@
             </div>
             <div class="table-content">
               <div
-                v-for="item in userList"
+                v-for="item in displayUserList"
                 :key="item.userId"
                 class="table-row"
               >
@@ -33,6 +33,7 @@
                 <div class="selector-column table-column">
                   <el-checkbox
                     v-model="item.selectStatus"
+                    @change="handleSelect(item)"
                   ></el-checkbox>
                 </div>
               </div>
@@ -83,6 +84,7 @@ export default {
       userList: [],
       // selectedUser: [],
       userName: '',
+      displayUserList: []
     };
   },
   computed: {
@@ -125,8 +127,29 @@ export default {
           selectStatus,
         };
       });
+      this.displayUserList = this.userList
     },
-    handlesearch() {},
+    handlesearch() {
+      if(!this.userName) {
+        this.displayUserList = this.userList;
+        return
+      }
+      this.displayUserList = this.userList.filter(({userName}) => {
+        return userName.includes(this.userName)
+      })
+    },
+    handleSelect(item) {
+      this.userList = this.userList.map(ele => {
+        if(item.userId === ele.userId){
+          return{
+            ...ele,
+            selectStatus: item.selectStatus
+          }
+        }
+        return ele
+      })
+      this.handlesearch()
+    },
     handleDeleteUser(item) {
       this.userList = this.userList.map(ele => {
         if(item.userId === ele.userId){
@@ -137,6 +160,7 @@ export default {
         }
         return ele
       })
+      this.handlesearch()
     },
     save() {
       // const user = this.selectedUser.map((item) => {
@@ -241,8 +265,9 @@ export default {
         padding: 5px 10px;
         display: flex;
         justify-content: space-around;
-        grid-gap: 5px;
+        grid-gap: 10px;
         align-items: center;
+        color: #409eff;
 
         .delete-icon {
           cursor: pointer;

@@ -29,7 +29,6 @@ import {
   TimePicker,
   Transfer,
   TreeSelect,
-  Upload,
   FormGrid,
   FormLayout,
   FormTab,
@@ -38,7 +37,7 @@ import {
   ArrayCards,
   FormButtonGroup,
 } from '@formily/antdv';
-import { Card, Rate, Slider, Card as Display } from 'ant-design-vue';
+import { Card, Rate, Slider, Card as Display, Upload } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
 import _ from 'lodash';
 
