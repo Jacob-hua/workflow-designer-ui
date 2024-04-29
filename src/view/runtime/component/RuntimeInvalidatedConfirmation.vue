@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="作废" :close-on-click-modal="false" :visible="visible" width="70%" @close="onCancel" :append-to-body="true">
+  <el-dialog title="作废" :close-on-click-modal="false" :visible="visible" width="70%" @close="onCancel" :append-to-body="true" :close-on-press-escape="false">
     <el-form :model="form" :rules="formRules" ref="form">
       <el-form-item label="作废原因" prop="invalidatedReason">
         <el-input type="textarea" :rows="15" placeholder="请输入内容" v-model="form.invalidatedReason"> </el-input>

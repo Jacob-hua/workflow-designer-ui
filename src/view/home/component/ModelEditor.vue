@@ -6,6 +6,7 @@
       @close="onCancel"
       fullscreen
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
       <div class="deploy-wrapper">
         <div>
@@ -277,7 +278,7 @@ export default {
               ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
               pos: '',
               posLabel: '',
-            };;
+            };
           }
         }
         if (index !== -1) {
@@ -330,7 +331,8 @@ export default {
         page: 1,
         total: 0,
       }),
-        this.$emit('update:visible', false);
+        (this.modelTaskConfigs = []);
+      this.$emit('update:visible', false);
       this.updateModelTaskConfigs({ modelTaskConfigs: [] });
     },
     changeTaskConfigs({ type, mode, data, source }) {
@@ -355,7 +357,10 @@ export default {
       if (index !== -1) {
         this.modelTaskConfigs.splice(index, 1, this.modelTaskConfig);
       } else {
-        if (this.modelTaskConfig.taskDefKey)
+        if (
+          this.modelTaskConfig.taskDefKey &&
+          this.shapeType !== BpmnShapeType.START_EVENT
+        )
           this.modelTaskConfigs.push(this.modelTaskConfig);
       }
     },
@@ -383,7 +388,11 @@ export default {
         this.$message.error(msg);
         return;
       }
-      this.modelTaskConfigs = Object.values(data.modelTasks);
+      for (let obj in data.modelTasks) {
+        if (obj.startsWith('Activity') || obj.startsWith('Gateway'))
+          this.modelTaskConfigs.push(data.modelTasks[obj]);
+      }
+      // this.modelTaskConfigs = Object.values(data.modelTasks);
       this.modelInfo = data.modelInfo;
     },
     filterFormList() {
@@ -485,7 +494,7 @@ export default {
         this.pageInfo.page > totalPage ? totalPage : this.pageInfo.page;
       this.pageInfo.page = this.pageInfo.page < 1 ? 1 : this.pageInfo.page;
     },
-  }
+  },
 };
 </script>
 
@@ -518,6 +527,7 @@ export default {
 .form-list-wrapper {
   width: 468px;
   padding: 0 38px;
+  flex-shrink: 0;
 
   .title {
     font-size: 14px;
@@ -532,6 +542,10 @@ export default {
   .content-wrapper {
     overflow: scroll;
     margin: 10px 0;
+    min-height: 898px;
+    border: 1px solid #666666;
+    border-radius: 5px;
+    padding: 0 5px;
 
     & > div {
       border: 1px solid #666666;

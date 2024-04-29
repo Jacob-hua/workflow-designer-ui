@@ -6,6 +6,7 @@
       @close="onCancel"
       :close-on-click-modal="false"
       :append-to-body="true"
+      :close-on-press-escape="false"
     >
       <el-skeleton v-if="isLoading" />
       <div v-else>

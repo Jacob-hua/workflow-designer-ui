@@ -6,6 +6,7 @@
     fullscreen
     @close="onDialogClose"
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
     <div class="container">
       <div>

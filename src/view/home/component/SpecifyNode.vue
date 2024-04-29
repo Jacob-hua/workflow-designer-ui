@@ -5,6 +5,7 @@
     @close="close"
     append-to-body
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
     <div class="process-canvas">
       <bpmn-viewer

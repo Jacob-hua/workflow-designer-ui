@@ -6,6 +6,7 @@
     v-if="dialogVisible"
     width="30%"
     append-to-body
+    :close-on-press-escape="false"
   >
     <span>
       <el-form ref="form" :rules="rules" :model="form" label-width="80px">

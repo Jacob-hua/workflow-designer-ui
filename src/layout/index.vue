@@ -17,11 +17,7 @@
               <span>Workflow Engine Platform</span>
             </div>
           </div>
-          <el-menu
-            :default-active="$route.name"
-            router
-            @select="onSelect"
-          >
+          <el-menu :default-active="$route.name" router @select="onSelect">
             <el-menu-item
               :index="item.menuRoute"
               v-for="(item, index) in menuList"
@@ -146,12 +142,12 @@ export default {
     //   this.$router.push('/home/noPermission')
     //   this.$message.error('该账号无任何菜单访问权限')
     // }
-      let findRole = this.menuList.filter((item) => {
-        return item.menuRoute === this.$route.name
-      })
-      if (findRole.length === 0) {
-        this.$router.push({ name: this.menuList[0].menuRoute })
-      }
+    let findRole = this.menuList.filter((item) => {
+      return item.menuRoute === this.$route.name;
+    });
+    if (findRole.length === 0) {
+      this.$router.push({ name: this.menuList[0].menuRoute });
+    }
   },
   mounted() {
     this.activeMenu = this.$route.name;
@@ -208,6 +204,7 @@ $aside-logo-height: 320px;
   display: flex;
   flex-direction: column;
   background-color: $menu-bg-color;
+  font-family: '微软雅黑';
 }
 
 .aside-logo {
@@ -218,6 +215,7 @@ $aside-logo-height: 320px;
   border-radius: 0px 30px 30px 0px;
   position: absolute;
   top: 0px;
+  box-shadow: 0 0 0.625rem #141414;
 
   img {
     width: 168px;
@@ -254,20 +252,20 @@ $aside-logo-height: 320px;
   width: $aside-width;
   padding-top: 26px;
 
-  :hover {
-    background-color: $menu-active-bg-color;
-  }
-
   .el-menu-item {
     color: $menu-color;
-    font-size: 16px;
+    font-size: 18px;
     font-family: '微软雅黑';
-    font-weight: bold;
+    font-weight: 400;
+
+    &:hover {
+      background-color: $menu-active-bg-color;
+    }
   }
 
   .is-active {
     color: #ffffff;
-    background-color: $menu-active-bg-color;
+    background-color: $menu-bg-color;
 
     // .menu-text {
     //   color: transparent;
@@ -275,29 +273,29 @@ $aside-logo-height: 320px;
     //   -webkit-background-clip: text;
     // }
 
-    ::after {
-      content: '';
-      display: block;
-      position: absolute;
-      right: 0;
-      bottom: 100%;
-      border-bottom-right-radius: 30px;
-      width: 30px;
-      height: 30px;
-      box-shadow: 0.49rem 0.49rem $menu-active-bg-color;
-    }
+    // ::after {
+    //   content: '';
+    //   display: block;
+    //   position: absolute;
+    //   right: 0;
+    //   bottom: 100%;
+    //   border-bottom-right-radius: 30px;
+    //   width: 30px;
+    //   height: 30px;
+    //   box-shadow: 0.49rem 0.49rem $menu-active-bg-color;
+    // }
 
-    ::before {
-      content: '';
-      display: block;
-      position: absolute;
-      right: 0;
-      top: 100%;
-      border-top-right-radius: 30px;
-      width: 30px;
-      height: 30px;
-      box-shadow: 0.49rem -0.49rem $menu-active-bg-color;
-    }
+    // ::before {
+    //   content: '';
+    //   display: block;
+    //   position: absolute;
+    //   right: 0;
+    //   top: 100%;
+    //   border-top-right-radius: 30px;
+    //   width: 30px;
+    //   height: 30px;
+    //   box-shadow: 0.49rem -0.49rem $menu-active-bg-color;
+    // }
   }
 }
 

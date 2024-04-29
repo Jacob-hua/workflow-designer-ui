@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="终止" :close-on-click-modal="false" :visible="visible" width="70%" @close="onCancel" append-to-body>
+  <el-dialog title="终止" :close-on-click-modal="false" :visible="visible" width="70%" @close="onCancel" append-to-body :close-on-press-escape="false">
     <el-form :model="form" :rules="formRules" ref="form">
       <el-form-item label="终止原因" prop="terminateReason">
         <el-input type="textarea" :rows="15" placeholder="请输入内容" v-model="form.terminateReason"> </el-input>

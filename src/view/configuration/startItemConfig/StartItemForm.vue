@@ -8,6 +8,7 @@
       @close="onClose"
       fullscreen
       append-to-body
+      :close-on-press-escape="false"
     >
       <div class="start_container">
         <div class="start_left">

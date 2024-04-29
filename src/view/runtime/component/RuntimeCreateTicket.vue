@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="title" :visible="visible" @close="onCloseModal" :close-on-click-modal="false">
+    <el-dialog :title="title" :visible="visible" @close="onCloseModal" :close-on-click-modal="false" :close-on-press-escape="false">
       <el-skeleton v-if="isLoading" />
       <div v-else>
         <div class="form-preview">

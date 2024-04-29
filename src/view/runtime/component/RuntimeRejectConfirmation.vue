@@ -7,6 +7,7 @@
     top="5vh"
     @close="onCancel"
     append-to-body
+    :close-on-press-escape="false"
   >
     <bpmn-info :xml="workflow.processDeployResource" @selectedShape="onSelectedChanged" :showProcess="true"/>
     <div class="reason-wrapper">

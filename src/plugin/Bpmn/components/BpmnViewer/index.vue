@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="toCenter" @click="handleToCenter">居中</div>
+    <div class="toCenter" @click="handleToCenter">回到中心</div>
     <div class="containers" ref="containers" v-if="visible"></div>
   </div>
 </template>

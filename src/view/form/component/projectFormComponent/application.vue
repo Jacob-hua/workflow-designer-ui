@@ -9,6 +9,7 @@
       top="1vh"
       :before-close="handleClose"
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
       <div class="diologMain">
         <div class="diologMain-right">
@@ -52,6 +53,7 @@
             width="35%"
             custom-class="dialogVisible1"
             append-to-body
+            :close-on-press-escape="false"
           >
             <div class="container">
               <el-form

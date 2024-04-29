@@ -7,6 +7,7 @@
       :visible="dialogVisible"
       @close="onClose"
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
       <div class="content-wrapper">
         <div>

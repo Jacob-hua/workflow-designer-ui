@@ -38,7 +38,7 @@ import {
   FormButtonGroup,
 } from '@formily/antdv';
 import { Card, Rate, Slider, Card as Display, Upload } from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.less';
+// import 'ant-design-vue/dist/antd.less';
 import _ from 'lodash';
 
 const { SchemaField } = createSchemaField({

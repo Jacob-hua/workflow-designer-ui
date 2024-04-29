@@ -21,6 +21,7 @@
       @open="show()"
       :destroy-on-close="true"
       top="15px"
+      :close-on-press-escape="false"
     >
       <!--搜索暂不启用-->
       <!-- <div class="search-text" v-show="searchable">

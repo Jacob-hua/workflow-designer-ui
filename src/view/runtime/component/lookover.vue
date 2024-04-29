@@ -6,6 +6,7 @@
     :visible="visible"
     @close="onClose"
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
     <div class="container">
       <bpmn-info

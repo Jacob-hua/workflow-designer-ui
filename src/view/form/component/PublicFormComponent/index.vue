@@ -5,6 +5,7 @@
       @close="close"
       :close-on-click-modal="false"
       :visible.sync="addFormDialogVisible"
+      :close-on-press-escape="false"
     >
       <div class="guid">
         <el-form
@@ -45,6 +46,7 @@
       width="90%"
       custom-class="dialogVisibleEdit"
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
       <el-form
         ref="newOrEditForm"
@@ -170,6 +172,17 @@ export default {
             message: '表单名称长度在 1 到 100 个字符',
             trigger: 'blur',
           },
+          {
+            trigger: 'blur',
+            validator: (_, value, callback) => {
+              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value)
+              if(flag){
+                callback()
+              }else {
+                callback(new Error('表单名称只能是中文、数字、字母、下划线和中划线!'))
+              }
+            },
+          },
         ],
         formDesc: [
           {
@@ -188,6 +201,17 @@ export default {
             max: 100,
             message: '表单名称长度在 1 到 100 个字符',
             trigger: 'blur',
+          },
+          {
+            trigger: 'blur',
+            validator: (_, value, callback) => {
+              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value)
+              if(flag){
+                callback()
+              }else {
+                callback(new Error('表单名称只能是中文、数字、字母、下划线和中划线!'))
+              }
+            },
           },
         ],
         formDesc: [
@@ -277,14 +301,16 @@ export default {
         const designebleDom = document.getElementById(
           '__qiankun_microapp_wrapper_for_form_designer__'
         );
-        designebleDom.style.height = '100%';
+        if (designebleDom) {
+          designebleDom.style.height = '100%';
+        }
         for (let i = 0; i < selectDomList.length; i++) {
           selectDomList[i].style.zIndex = 9999;
         }
         for (let i = 0; i < modalDomList.length; i++) {
           modalDomList[i].style.zIndex = 9999;
         }
-      }, 100);
+      }, 200);
     },
     mutationObserverDom() {
       const mutationObserver = new MutationObserver(this.domChanged);

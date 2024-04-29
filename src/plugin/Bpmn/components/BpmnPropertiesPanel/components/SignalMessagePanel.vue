@@ -40,6 +40,7 @@
       :destroy-on-close="true"
       width="400px"
       append-to-body
+      :close-on-press-escape="false"
     >
       <el-form :model="modalForm" ref="modalForm" size="mini" label-width="90px" @submit.native.prevent>
         <el-form-item

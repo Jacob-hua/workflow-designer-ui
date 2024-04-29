@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog append-to-body :title="title" :visible="visible" @close="onCancel" :close-on-click-modal="false">
+    <el-dialog append-to-body :title="title" :visible="visible" @close="onCancel" :close-on-click-modal="false" :close-on-press-escape="false">
       <div>
         <el-form ref="form" :model="form" :rules="formRules" label-width="80px">
           <el-form-item label="账号" prop="usernmae">

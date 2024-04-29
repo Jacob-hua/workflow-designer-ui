@@ -9,12 +9,9 @@
     />
     <div class="ticket-wrapper">
       <div class="ticket-left">
-        <div
-          v-if="taskInfo.taskType === 'UserTask'"
-          class="ticket-info"
-        >
+        <div v-if="taskInfo.taskType === 'UserTask'" class="ticket-info">
           <div class="title">执行人员</div>
-          <div class="content-wrapper">
+          <div class="content-wrapper executor">
             <div v-if="alterFlag" class="info">
               <div>
                 <span>流程节点:</span><span>{{ taskInfo.taskName }}</span>
@@ -98,11 +95,16 @@
           </div>
         </div>
       </div>
-      <div class="ticket-form" v-if="taskInfo.taskType === 'UserTask' || taskInfo.taskType === 'StartEvent'">
+      <div
+        class="ticket-form"
+        v-if="
+          taskInfo.taskType === 'UserTask' || taskInfo.taskType === 'StartEvent'
+        "
+      >
         <div class="title">
           <div class="title-form-info">
-            <span>任务执行内容</span>
-            <div v-if="formShow">
+            <span style="width: 110px; flex-shrink: 0">任务执行内容</span>
+            <div v-if="formShow" class="form-message">
               <span>表单名称：{{ formShow.formName }}</span>
               <span>版本名称：{{ formShow.formVersionTag }}</span>
               <span>版本号：{{ formShow.formVersion }}</span>
@@ -167,6 +169,7 @@ import { taskOperationsList } from '@/api/globalConfig';
 import SpecifyUser from './SpecifyUser.vue';
 import SpecifyNode from './SpecifyNode.vue';
 import SpecifyGateway from './SpecifyGateway.vue';
+import IBpmnViewer from '../../../plugin/Bpmn/IBpmnViewer';
 
 export default {
   name: 'WorkflowInfo',
@@ -315,13 +318,13 @@ export default {
       }
       this.innerName = '';
       this.taskInfo.taskType = element.type.split(':')[1];
-      this.taskOperationsList();
       const shapeInfo = this.iBpmn.getSelectedShapeInfo();
       if (shapeInfo.loopCharacteristics) {
         this.isSignNode = true;
       } else {
         this.isSignNode = false;
       }
+      this.taskOperationsList();
       this.taskInfo.taskDefKey = shapeInfo['id'];
       this.taskInfo.taskName = shapeInfo['name'];
     },
@@ -344,7 +347,14 @@ export default {
         this.$message.error(msg);
         return;
       }
-      this.taskActios = data;
+      this.taskActios = data.filter(({ actionCode }) => {
+        if (actionCode === 'update_executor') {
+          if (this.isSignNode) {
+            return false;
+          }
+        }
+        return true;
+      });
     },
 
     handleChangeUser() {
@@ -459,6 +469,7 @@ export default {
     padding: 20px 30px;
     overflow: auto;
     border: 1px solid $border-color;
+    height: 100%;
 
     .inner-box {
       margin-bottom: 10px;
@@ -469,18 +480,45 @@ export default {
       }
     }
   }
+
+  .executor {
+    height: 287px;
+  }
+
+  .form {
+    height: 390px;
+  }
 }
 
 .ticket-info {
   margin-top: 20px;
 }
 
+.ticket-left {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
 .ticket-form {
-  flex: 3;
+  flex: 1;
   margin: 20px 0px 0px 20px;
+  display: flex;
+  flex-direction: column;
   .title {
     .title-form-info {
       display: flex;
+      .form-message {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        white-space: nowrap;
+        grid-gap: 10px;
+
+        .message-item {
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     }
     span {
       margin-right: 10px;

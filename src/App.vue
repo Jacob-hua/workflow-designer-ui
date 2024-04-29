@@ -1,10 +1,16 @@
 <template>
-  <div id="app">
-    <router-view></router-view>
-  </div>
+  <ConfigProvider :locale="locale"
+    ><div id="app">
+      <router-view></router-view></div
+  ></ConfigProvider>
 </template>
 <script>
+import { ConfigProvider } from 'ant-design-vue';
+import locale from 'ant-design-vue/es/locale/zh_CN';
 export default {
+  components: {
+    ConfigProvider
+  },
   data() {
     return {
       routerMapping: {
@@ -17,9 +23,10 @@ export default {
         power: 'Power',
       },
       roleGo: ['login', 'noPermission'],
-    }
+      locale: locale
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">
@@ -32,6 +39,13 @@ body {
   margin: 0;
   box-sizing: border-box;
   height: 100%;
+
+  .ant-picker-dropdown {
+    z-index: 3000;
+  }
+  .ant-calendar-picker-container {
+    z-index: 3000;
+  }
 }
 
 #app {
@@ -63,6 +77,11 @@ body {
 }
 
 .svgOncomplete .djs-visual rect {
+  stroke: #0055ff !important;
+  stroke-dasharray: 3 4;
+}
+
+.svgOncomplete .djs-visual polygon {
   stroke: #0055ff !important;
   stroke-dasharray: 3 4;
 }

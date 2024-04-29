@@ -72,6 +72,7 @@
         fullscreen
         title="预览"
         append-to-body
+        :close-on-press-escape="false"
     >
       <preview
           :uploadFun="upload"
@@ -87,6 +88,7 @@
         center
         :close-on-click-modal="false"
         append-to-body
+        :close-on-press-escape="false"
     >
       <codemirror v-model="viewCode" :options="options" />
       <span slot="footer" class="dialog-footer">

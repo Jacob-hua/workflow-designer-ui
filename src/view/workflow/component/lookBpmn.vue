@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="查看" :visible="visible" fullscreen @close="close" :close-on-click-modal="false">
+  <el-dialog title="查看" :visible="visible" fullscreen @close="close" :close-on-click-modal="false" :close-on-press-escape="false">
     <div>
       <bpmn-info
         :xml="projectData.processFile"

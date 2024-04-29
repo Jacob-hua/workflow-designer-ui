@@ -10,7 +10,7 @@
     <div class="ticket-wrapper">
       <div class="ticket-left">
         <div
-          v-if="taskInfo.taskType !== 'ExclusiveGateway'"
+          v-if="taskInfo.taskType === 'UserTask'"
           class="ticket-info"
         >
           <div class="title">执行人员</div>
@@ -52,7 +52,7 @@
             </div>
           </div>
         </div>
-        <div class="operation-config">
+        <div class="operation-config"  v-if="taskInfo.taskType === 'UserTask'">
           <div class="title">操作配置</div>
           <div class="content-wrapper config">
             <div class="noData" v-if="taskActios.length === 0">未选择节点</div>
@@ -68,7 +68,7 @@
           </div>
         </div>
       </div>
-      <div class="ticket-form">
+      <div class="ticket-form" v-if="taskInfo.taskType === 'UserTask' || taskInfo.taskType === 'StartEvent'">
         <div class="title">
           <span>任务执行内容</span>
           <div v-if="formShow">
@@ -256,8 +256,7 @@ export default {
 }
 
 .ticket-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+  display: flex;
   color: $font-color;
 
   .title {
@@ -271,6 +270,7 @@ export default {
     padding: 20px 30px;
     overflow: auto;
     border: 1px solid $border-color;
+    height: 100%;
 
     .inner-box {
       margin-bottom: 10px;
@@ -290,6 +290,8 @@ export default {
 .ticket-form {
   flex: 3;
   margin: 20px 0px 0px 20px;
+  display: flex;
+  flex-direction: column;
   .title {
     span:first-child {
       margin-right: 10px;
@@ -328,7 +330,6 @@ export default {
 
   & > div {
     font-size: 14px;
-    margin-top: 26px;
     display: flex;
     flex-direction: row;
     align-items: center;

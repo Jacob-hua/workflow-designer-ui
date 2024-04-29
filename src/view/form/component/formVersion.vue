@@ -5,6 +5,7 @@
     @close="close"
     width="30%"
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
     <el-form
       :model="versionForm"

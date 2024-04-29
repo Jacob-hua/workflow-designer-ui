@@ -52,7 +52,7 @@
       </div>
       <div v-if="fieldInfo.showTip" slot="tip" class="el-upload__tip">{{ fieldInfo.tips }}</div>
     </el-upload>
-    <el-dialog :visible.sync="dialogVisible" append-to-body>
+    <el-dialog :visible.sync="dialogVisible" append-to-body :close-on-press-escape="false">
       <img width="100%" :src="dialogImageUrl" alt="" />
     </el-dialog>
     <ul v-if="isShowTextUpload">

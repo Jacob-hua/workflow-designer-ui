@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="70%" append-to-body title="组件树" :visible.sync="visible">
+  <el-dialog width="70%" append-to-body title="组件树" :visible.sync="visible" :close-on-press-escape="false">
     <el-tree
         :data="data"
         node-key="id"

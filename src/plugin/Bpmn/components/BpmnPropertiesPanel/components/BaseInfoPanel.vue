@@ -1,13 +1,23 @@
 <template>
   <div>
-    <el-form :model="baseInfoForm" label-position="right" label-width="130px">
+    <el-form
+      ref="baseInfoFormRef"
+      :model="baseInfoForm"
+      label-position="right"
+      label-width="130px"
+      :rules="formRules"
+    >
       <!-- <el-form-item :label="labels.id">
         <el-input v-model="baseInfoForm.id" disabled></el-input>
       </el-form-item> -->
-      <el-form-item :label="labels.processName">
+      <el-form-item :label="labels.processName" prop="processName">
         <el-input v-model="baseInfoForm.processName" clearable></el-input>
       </el-form-item>
-      <el-form-item v-if="!this.shapeType" :label="labels.processDesc">
+      <el-form-item
+        v-if="!this.shapeType"
+        :label="labels.processDesc"
+        prop="processDesc"
+      >
         <el-input
           type="textarea"
           v-model="baseInfoForm.processDesc"
@@ -21,7 +31,7 @@
 <script>
 import shapeType from '../../../enum/shapeType';
 import zh from '../../../i18n/zh';
-import { deepCopy, deepEquals } from '../../../utils/object';
+import { deepCopy, deepEqual } from '../../../utils/object';
 
 export default {
   name: 'BaseInfo',
@@ -34,7 +44,43 @@ export default {
   },
   data() {
     return {
-      baseInfoForm: {},
+      baseInfoForm: {
+        processName: '',
+        processDesc: '',
+      },
+      formRules: {
+        processName: [
+          { required: true, message: '请输入流程名称', trigger: 'blur' },
+          {
+            min: 2,
+            max: 100,
+            message: '流程名称长度在 2 到 100 个字符',
+            trigger: 'blur',
+          },
+          {
+            trigger: 'blur',
+            validator: (_, value, callback) => {
+              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
+              if (flag) {
+                callback();
+              } else {
+                callback(
+                  new Error('流程名称只能是中文、数字、字母、下划线和中划线!')
+                );
+              }
+            },
+          },
+        ],
+        processDesc: [
+          {
+            min: 1,
+            max: 200,
+            message: '流程描述长度在 1 到 200 个字符',
+            trigger: 'blur',
+          },
+        ],
+      },
+      count: 0,
     };
   },
   computed: {
@@ -60,7 +106,7 @@ export default {
   },
   watch: {
     shapeType(value) {
-      if(!value){
+      if (!value) {
         this.baseInfoForm = this.rootBaseInfo;
       }
       const existedListener = (listener) =>
@@ -131,19 +177,51 @@ export default {
         if (this.shapeType && value.processName === this.baseInfo.name) {
           return;
         }
-        if(!this.shapeType && deepEquals(value, this.rootBaseInfo)){
-          return
+        if (!this.shapeType && deepEqual(value, this.rootBaseInfo)) {
+          return;
         }
-        if(this.shapeType){
-          this.updateBaseInfo({ newBaseInfo: {id: this.baseInfo.id, name: value.processName} });          
-        }else{
-          this.updateRootBaseInfo({rootBaseInfo: value})
+        if (this.shapeType) {
+          if (this.count) {
+            this.$nextTick(() => {
+              this.$refs['baseInfoFormRef'].validate((valid) => {
+                if (valid) {
+                  this.updateBaseInfo({
+                    newBaseInfo: {
+                      id: this.baseInfo.id,
+                      name: value.processName,
+                    },
+                  });
+                }
+              });
+            });
+          } else {
+            this.updateBaseInfo({
+              newBaseInfo: {
+                id: this.baseInfo.id,
+                name: value.processName,
+              },
+            });
+            this.count++;
+          }
+        } else {
+          if (this.count) {
+            this.$nextTick(() => {
+              this.$refs['baseInfoFormRef'].validate((valid) => {
+                if (valid) {
+                  this.updateRootBaseInfo({ rootBaseInfo: value });
+                }
+              });
+            });
+          }else{
+            this.updateRootBaseInfo({ rootBaseInfo: value });
+            this.count++
+          }
         }
       },
     },
   },
   mounted() {
-    this.baseInfoForm = deepCopy(this.baseInfo);
+    this.baseInfoForm = deepCopy({ processName: this.baseInfo.name });
   },
   methods: {
     updateBaseInfo(payload) {
@@ -164,6 +242,9 @@ export default {
       });
     },
   },
+  beforeDestroy(){
+    this.count = 0
+  }
 };
 </script>
 

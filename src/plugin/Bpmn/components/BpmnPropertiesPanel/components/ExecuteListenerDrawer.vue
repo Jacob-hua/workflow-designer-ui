@@ -100,6 +100,7 @@
       @close="onCloseFieldModal"
       append-to-body
       destroy-on-close
+      :close-on-press-escape="false"
     >
       <el-form :model="fieldForm" :rules="fieldFormRules" label-width="100px" ref="fieldForm" style="height: 136px">
         <el-form-item label="字段名称" prop="name">

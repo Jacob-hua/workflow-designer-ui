@@ -7,6 +7,7 @@
     fullscreen
     top="1vh"
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
     <div class="dialogHeader">
       <span>人员信息</span>

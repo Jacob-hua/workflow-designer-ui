@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" :visible="visible" @close="onClose" fullscreen>
+  <el-dialog :title="title" :visible="visible" @close="onClose" fullscreen :close-on-press-escape="false">
     <div class="editor-wrapper">
       <bpmn-designer
         v-if="visible"

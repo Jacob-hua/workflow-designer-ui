@@ -87,11 +87,11 @@ const state = () => ({
   ],
   conditionTragetOptions: [
     {
-      label: 'true',
+      label: '是',
       value: true
     },
     {
-      label: 'false',
+      label: '否',
       value: false
     },
   ],

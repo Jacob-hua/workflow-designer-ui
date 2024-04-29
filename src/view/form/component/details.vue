@@ -9,6 +9,7 @@
       @close="close"
       custom-class="dialogVisibleEdit"
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
       <div class="dialogVisible2-main">
         <div class="ProjectForm-title">
@@ -76,6 +77,7 @@
       :close-on-click-modal="false"
       width="35%"
       custom-class="dialogVisible1"
+      :close-on-press-escape="false"
     >
       <div>
         <div class="from-item">
@@ -194,7 +196,7 @@ export default {
   },
   methods: {
     close() {
-      this.formTree = {}
+      this.formTree = {};
       this.$emit('handleCloseDetail');
     },
     async getFormVersionList() {
@@ -231,7 +233,7 @@ export default {
         this.$message.error(msg);
         return;
       }
-      this.selectedForm = {...data, formName: this.formDatas.formName};
+      this.selectedForm = { ...data, formName: this.formDatas.formName };
     },
 
     deleteRow() {
@@ -328,15 +330,16 @@ export default {
 
 .detail-title {
   color: white;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  align-items: center;
 }
 
 .detail-title-item {
   margin-right: 30px;
-  display: inline-block;
-  margin-top: 10px;
-  padding-bottom: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .detail-title-item-label {

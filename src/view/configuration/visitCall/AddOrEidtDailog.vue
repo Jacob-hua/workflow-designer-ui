@@ -9,6 +9,7 @@
       top="1vh"
       append-to-body
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
       <div style="display: flex">
         <el-scrollbar  style="width: 70%" class="center-scrollbar " >
@@ -241,6 +242,7 @@
       :close-on-click-modal="false"
       width="40%"
       append-to-body
+      :close-on-press-escape="false"
     >
       <el-form ref="formMethod" label-width="80px">
         <el-form-item label="类型">

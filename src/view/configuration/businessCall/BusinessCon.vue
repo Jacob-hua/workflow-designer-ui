@@ -7,6 +7,7 @@
     width="50%"
     @close="handleClose()"
     append-to-body
+    :close-on-press-escape="false"
   >
     <el-button
       @click="goEdit"

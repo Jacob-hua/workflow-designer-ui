@@ -8,6 +8,7 @@
     append-to-body
     @close="visitColse"
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
     <el-form ref="form" label-width="80px">
       <div class="top">

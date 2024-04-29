@@ -8,6 +8,7 @@
     top="1vh"
     fullscreen
     append-to-body
+    :close-on-press-escape="false"
   >
     <div class="container">
       <div class="organization-wrapper">

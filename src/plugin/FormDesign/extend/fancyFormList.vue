@@ -44,6 +44,7 @@
       :show-close="true"
       :lock-scroll="true"
       :destroy-on-close="true"
+      :close-on-press-escape="false"
     >
       <el-table
         ref="dataTable"
@@ -100,6 +101,7 @@
       :show-close="true"
       :close-on-click-modal="false"
       @close="hideImage"
+      :close-on-press-escape="false"
     >
       <img
         :src="previewImage"

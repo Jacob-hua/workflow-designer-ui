@@ -5,6 +5,7 @@
     title="流程信息"
     append-to-body
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
     <el-form
       :model="confirmForm"

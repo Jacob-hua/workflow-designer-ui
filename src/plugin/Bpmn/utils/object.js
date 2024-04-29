@@ -1,81 +1,96 @@
-import { isEmptyArray } from './array'
+import { isEmptyArray } from './array';
 
 export function typeAssert(value, type) {
   if (Object.prototype.toString.call(type) !== '[object Function]') {
-    throw new Error('typeCheck type is not a function')
+    throw new Error('typeCheck type is not a function');
   }
 
-  const typeString = type.toString().match(/(?<=(function )).*(?=(\())/g)[0]
-  const valueTypeStirng = Object.prototype.toString.call(value).match(/(?<=(\[object )).*(?=(\]))/g)[0]
-  return typeString === valueTypeStirng
+  const typeString = type.toString().match(/(?<=(function )).*(?=(\())/g)[0];
+  const valueTypeStirng = Object.prototype.toString
+    .call(value)
+    .match(/(?<=(\[object )).*(?=(\]))/g)[0];
+  return typeString === valueTypeStirng;
 }
 
 export function deepCopy(obj, cache = []) {
   if (typeAssert(obj, Function)) {
-    return new Function(`return ${obj.toString()}`)()
+    return new Function(`return ${obj.toString()}`)();
   }
 
   if (typeAssert(obj, RegExp)) {
-    obj = obj.toString().substr(1)
-    obj = obj.substr(0, obj.length - 1)
-    return new RegExp(obj)
+    obj = obj.toString().substr(1);
+    obj = obj.substr(0, obj.length - 1);
+    return new RegExp(obj);
   }
 
   if (typeAssert(obj, Map)) {
-    return new Map(obj)
+    return new Map(obj);
   }
 
   if (typeAssert(obj, Set)) {
-    return new Set(obj)
+    return new Set(obj);
   }
 
   if (obj === null || typeof obj !== 'object') {
-    return obj
+    return obj;
   }
 
-  const hit = cache.find((item) => item.origin === obj)
+  const hit = cache.find((item) => item.origin === obj);
   if (hit) {
-    return hit.copy
+    return hit.copy;
   }
 
-  const copy = Array.isArray(obj) ? [] : {}
+  const copy = Array.isArray(obj) ? [] : {};
   cache.push({
     origin: obj,
     copy,
-  })
-  const keys = Object.keys(obj)
+  });
+  const keys = Object.keys(obj);
   for (let i = 0; i < keys.length; i++) {
-    const key = keys[i]
+    const key = keys[i];
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      copy[key] = deepCopy(obj[key], cache)
+      copy[key] = deepCopy(obj[key], cache);
     }
   }
-  return copy
+  return copy;
 }
 
 export function emptyPropertiesObject(obj) {
-  return isEmptyArray(Object.keys(obj))
+  return isEmptyArray(Object.keys(obj));
 }
 
 export function isObject(obj) {
-  return typeof obj == 'object' && obj !== null
+  return typeof obj == 'object' && obj !== null;
 }
 
 export function deepEquals(obj1, obj2) {
   if (!isObject(obj1) || !isObject(obj2)) {
-    return obj1 === obj2
+    return obj1 === obj2;
   }
-  if (obj1 === obj2) return true
-  const obj1Properties = Object.keys(obj1)
-  const obj2Properties = Object.keys(obj2)
+  if (obj1 === obj2) return true;
+  const obj1Properties = Object.keys(obj1);
+  const obj2Properties = Object.keys(obj2);
   if (obj1Properties.length !== obj2Properties.length) {
-    return false
+    return false;
   }
   for (const key in obj1) {
-    const result = deepEquals(obj1[key], obj2[key])
+    const result = deepEquals(obj1[key], obj2[key]);
     if (!result) {
-      return false
+      return false;
     }
   }
-  return true
+  return true;
+}
+
+export function deepEqual(first, second) {
+  const arr1 = Object.keys(first);
+  const arr2 = Object.keys(second);
+
+  if (arr1.length != arr2.length) return false;
+  for (const k in first) {
+    if (typeof first[k] === 'object' || typeof second[k] === 'object') {
+      if ((!deepEqual(first[k]), second[k])) return false;
+    } else if (first[k] !== second[k]) return false;
+  }
+  return true;
 }

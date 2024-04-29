@@ -5,6 +5,7 @@
     @close="close"
     append-to-body
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
     <div class="process-canvas">
       <bpmn-viewer
@@ -59,6 +60,8 @@
 import { mapState } from 'vuex';
 import { fetchTaskNodeList } from '../../../api/workflow';
 import { fetchFormVersion } from '../../../api/workflowForm';
+
+const allowFormItem = ['Input', 'Select', 'Radio.Group', 'Switch'];
 export default {
   name: 'SpecifyGateway',
   props: {
@@ -88,6 +91,7 @@ export default {
       selectedNode: '',
       formitemList: [],
       selectedFormitem: '',
+      // allowFormItem: ['Input', 'Select', 'Radio.Group', 'Switch'],
     };
   },
   computed: {
@@ -175,18 +179,21 @@ export default {
 
     handleFormSchma(schema) {
       const properties = schema.properties;
-      this.formitemList = flatFormSchema(properties);
-
-      function flatFormSchema(item) {
+      this.formitemList = flatFormSchema(properties, allowFormItem);
+      function flatFormSchema(item, allowItem) {
+        const temp = allowItem;
         let res = [];
         for (let obj in item) {
+          const index = temp.findIndex((el) => el === item[obj]['x-component']);
           if (!item[obj].properties) {
-            res.push({
-              label: item[obj].title,
-              value: item[obj]['x-designable-id'],
-            });
+            if (index !== -1) {
+              res.push({
+                label: item[obj].title,
+                value: item[obj]['x-designable-id'],
+              });
+            }
           } else {
-            res = res.concat(flatFormSchema(item[obj]));
+            res = res.concat(flatFormSchema(item[obj], temp));
           }
         }
         return res;
