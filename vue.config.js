@@ -55,11 +55,11 @@ module.exports = {
         additionalData: `@import '~@/assets/style/index.scss';`,
       },
       less: {
-        lessOptions: {
+        lessOptions: { additionalData: `@import '~@/assets/style/default.less';`,
           javascriptEnabled: true,
           modifyVars: {
             'heading-color': '#bfbfbf',
-            'input-bg': '#eee',
+            // 'component-background': '#212739'
           },
         },
       },
