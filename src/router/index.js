@@ -1,11 +1,11 @@
 import layout from '@/layout/index.vue'
 
 const routes = [
-  {
-    path: '/',
-    name: '/',
-    redirect: 'home',
-  },
+  // {
+  //   path: '/',
+  //   name: '/',
+  //   redirect: '',
+  // },
   {
     path: '/login',
     name: 'login',
@@ -13,22 +13,22 @@ const routes = [
     hidden: true,
   },
   {
-    path: '/home',
+    path: '/',
     name: 'index',
     component: layout,
     children: [
       {
-        path: '/home/Workflow',
+        path: '/Workflow',
         name: 'Workflow',
         component: () => import('@/view/workflow/index'),
       },
       {
-        path: '/home/Form',
+        path: '/Form',
         name: 'Form',
         component: () => import('@/view/form/index'),
       },
       {
-        path: '/home/Home',
+        path: '/Home',
         name: 'Home',
         component: () => import('@/view/home/index'),
       },
@@ -49,12 +49,12 @@ const routes = [
       //   component: () => import('@/component/permission/index'),
       //   hidden: true,
       // },
-      {
-        path: '/home/Configuration',
-        name: 'Configuration',
-        component: () => import('@/view/configuration'),
-        hidden: true,
-      },
+      // {
+      //   path: '/home/Configuration',
+      //   name: 'Configuration',
+      //   component: () => import('@/view/configuration'),
+      //   hidden: true,
+      // },
       // {
       //   path: '/home/Power',
       //   name: 'Power',

@@ -86,26 +86,26 @@ export default {
           activeIcon: require('../assets/image/menu/active/cabin.svg'),
           label: '工作流驾驶舱',
         },
-        RunTime: {
-          icon: require('../assets/image/menu/runing.svg'),
-          activeIcon: require('../assets/image/menu/active/runing.svg'),
-          label: '运行中工作流',
-        },
-        History: {
-          icon: require('../assets/image/menu/history.svg'),
-          activeIcon: require('../assets/image/menu/active/history.svg'),
-          label: '历史工作流',
-        },
+        // RunTime: {
+        //   icon: require('../assets/image/menu/runing.svg'),
+        //   activeIcon: require('../assets/image/menu/active/runing.svg'),
+        //   label: '运行中工作流',
+        // },
+        // History: {
+        //   icon: require('../assets/image/menu/history.svg'),
+        //   activeIcon: require('../assets/image/menu/active/history.svg'),
+        //   label: '历史工作流',
+        // },
         // Configuration: {
         //   icon: require('../assets/image/menu/glob-config.svg'),
         //   activeIcon: require('../assets/image/menu/active/glob-config.svg'),
         //   label: '工作流全局配置',
         // },
-        Power: {
-          icon: require('../assets/image/menu/power.svg'),
-          activeIcon: require('../assets/image/menu/active/power.svg'),
-          label: '权限管理',
-        },
+        // Power: {
+        //   icon: require('../assets/image/menu/power.svg'),
+        //   activeIcon: require('../assets/image/menu/active/power.svg'),
+        //   label: '权限管理',
+        // },
       },
     };
   },

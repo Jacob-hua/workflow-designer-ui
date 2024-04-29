@@ -349,7 +349,7 @@ export default {
       }
       this.taskActios = data.filter(({ actionCode }) => {
         if (actionCode === 'update_executor') {
-          if (this.isSignNode) {
+          if (!this.isSignNode) {
             return false;
           }
         }
