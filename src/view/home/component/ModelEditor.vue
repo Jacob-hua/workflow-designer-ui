@@ -513,6 +513,7 @@ export default {
 .deploy-wrapper {
   display: flex;
   flex-direction: row;
+  grid-gap: 20px;
 
   & > div:first-child {
     flex-grow: 1;
@@ -526,13 +527,17 @@ export default {
 
 .form-list-wrapper {
   width: 468px;
-  padding: 0 38px;
   flex-shrink: 0;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  background: $card-bg-color-2;
 
   .title {
     font-size: 14px;
     line-height: 20px;
     font-weight: 400;
+    padding: 20px;
+    border-bottom: 1px solid $border-color;
   }
 
   .search-form {
@@ -543,8 +548,6 @@ export default {
     overflow: scroll;
     margin: 10px 0;
     min-height: 898px;
-    border: 1px solid #666666;
-    border-radius: 5px;
     padding: 0 5px;
 
     & > div {

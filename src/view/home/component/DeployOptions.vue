@@ -498,6 +498,7 @@ export default {
 .form-list-wrapper {
   width: 468px;
   padding: 0 38px;
+  flex-shrink: 0;
 
   .title {
     font-size: 14px;

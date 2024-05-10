@@ -1,4 +1,5 @@
 import layout from '@/layout/index.vue'
+import NotFound from '@/layout/404.vue'
 
 const routes = [
   // {
@@ -62,6 +63,10 @@ const routes = [
       //   hidden: true,
       // },
     ],
+  },
+  {
+    path: '*',
+    component: NotFound
   },
   {
     path: '/workflow-viewer/:processInstanceId',
