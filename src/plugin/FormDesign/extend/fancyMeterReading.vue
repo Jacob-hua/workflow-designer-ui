@@ -34,16 +34,24 @@
             @change="handleChange(insCode, $event)"
           ></el-input>
         </el-form-item>
+        <el-form-item label="用量" label-width="100px">
+          <el-input
+            v-model="meterDosList[meterIndex].devList[devIndex].dosageMeter"
+            placeholder="自动计算用量"
+            disabled
+          ></el-input>
+        </el-form-item>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { formatDate } from "@/util/date.js";
+import { formatDate } from '@/util/date.js';
+import { subtract } from '@/util/mathOperation.js';
 import _ from 'lodash';
 export default {
-  name: "fancyMeterReading",
+  name: 'fancyMeterReading',
   props: {
     value: {
       type: Array,
@@ -82,14 +90,15 @@ export default {
     return {
       meterReadingList: this.$props.value,
       meterRule: this.$props.dataRule,
+      meterDosList: this.$props.value,
       correctFlag: true,
-      currentPreMeter: "",
-      currentInsCode: "",
+      currentPreMeter: '',
+      currentInsCode: '',
       curMeterRules: [
-        { required: true, message: "本次抄表数不能为空", trigger: "blur" },
+        { required: true, message: '本次抄表数不能为空', trigger: 'blur' },
         {
           validator: this.meterValidator.bind(this),
-          trigger: "blur",
+          trigger: 'blur',
         },
       ],
     };
@@ -111,7 +120,7 @@ export default {
     dataRule(newVal) {
       this.meterRule = newVal;
     },
-    "options.result": {
+    'options.result': {
       handler(opt) {
         if (!opt) return;
         this.meterReadingList = this.meterReadingList.map((element) => {
@@ -119,9 +128,28 @@ export default {
             const devValueObj = opt.find(
               ({ meterCode }) => meterCode === item.insCode
             );
+            if(item.preMeter && item.preMeter>=0){
+              return item;
+            }
             if (devValueObj) {
               item.preMeter = devValueObj.value;
               item.preTime = devValueObj.time;
+            }
+            return item;
+          });
+          return element;
+        });
+      },
+    },
+    meterReadingList: {
+      deep: true,
+      handler(list) {
+        if (!list || list.length <= 0) return;
+        const readindList = JSON.parse(JSON.stringify(list));
+        this.meterDosList = readindList.map((element) => {
+          element.devList = element.devList.map((item) => {
+            if (item.curMeter) {
+              item.dosageMeter = subtract(item.curMeter, item.preMeter);
             }
             return item;
           });
@@ -136,16 +164,19 @@ export default {
       this.meterReadingList = this.meterReadingList.map((element) => {
         element.devList = element.devList.map((item) => {
           if (item.insCode === meterCode) {
-            if (['number'].includes(this.$props.datatypeRule) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(event) === false) {
+            if (
+              ['number'].includes(this.$props.datatypeRule) &&
+              new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(event) === false
+            ) {
               this.correctFlag = false;
             } else {
               this.currentPreMeter = item.preMeter;
-              if (this.$props.dataRule === "larger") {
+              if (this.$props.dataRule === 'larger') {
                 if (item.preMeter >= event) {
                   this.correctFlag = false;
                 }
               }
-              if (this.$props.dataRule === "larger_amount") {
+              if (this.$props.dataRule === 'larger_amount') {
                 if (item.preMeter > event) {
                   this.correctFlag = false;
                 }
@@ -153,7 +184,7 @@ export default {
             }
             if (this.correctFlag) {
               if (this.timeFlag) {
-                item.curTime = formatDate(new Date(), "YYYY-MM-DD HH:mm:ss");
+                item.curTime = formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss');
               }
             }
           }
@@ -161,7 +192,7 @@ export default {
         });
         return element;
       });
-      this.$emit("input", this.meterReadingList);
+      this.$emit('input', this.meterReadingList);
     },
     handleValueList(meterCode) {
       this.meterReadingList = this.meterReadingList.map((element) => {
@@ -174,30 +205,40 @@ export default {
         });
         return element;
       });
-      this.$emit("input", this.meterReadingList);
+      this.$emit('input', this.meterReadingList);
     },
     meterValidator(rule, value, callback) {
-      if(['default'].includes(this.$props.datatypeRule)){
+      if (['default'].includes(this.$props.datatypeRule)) {
         callback();
         return;
       }
       const meterRule = this.meterRule;
       const devicePath = rule.field.split('.');
-      const currentPreMeter = this.meterReadingList[devicePath[1]].devList[devicePath[3]].preMeter;
-      if (!_.isNumber(this.currentPreMeter) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === true) {
+      const currentPreMeter =
+        this.meterReadingList[devicePath[1]].devList[devicePath[3]].preMeter;
+      if (
+        !_.isNumber(this.currentPreMeter) &&
+        new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === true
+      ) {
         callback();
-      } else if (['number'].includes(this.$props.datatypeRule) && new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === false) {
+      } else if (
+        ['number'].includes(this.$props.datatypeRule) &&
+        new RegExp('^[0-9]+(\.[0-9]{1,4})?$').test(value) === false
+      ) {
         this.handleValueList(this.currentInsCode);
         callback(new Error('请输入整数或者不超过小数点后四位的小数'));
-      } else if (!['number'].includes(this.$props.datatypeRule) && new RegExp(this.$props.datatypeRule).test(value) === false) {
+      } else if (
+        !['number'].includes(this.$props.datatypeRule) &&
+        new RegExp(this.$props.datatypeRule).test(value) === false
+      ) {
         this.handleValueList(this.currentInsCode);
         callback(new Error(this.$props.datatypeRuleMsg));
-      } else if ( meterRule === "larger" && value <= currentPreMeter) {
+      } else if (meterRule === 'larger' && value <= currentPreMeter) {
         this.handleValueList(this.currentInsCode);
-        callback(new Error("本次抄表数必须大于上次抄表数"));
-      } else if (meterRule === "larger_amount" && value < currentPreMeter) {
+        callback(new Error('本次抄表数必须大于上次抄表数'));
+      } else if (meterRule === 'larger_amount' && value < currentPreMeter) {
         this.handleValueList(this.currentInsCode);
-        callback(new Error("本次抄表数必须大于等于上次抄表数"));
+        callback(new Error('本次抄表数必须大于等于上次抄表数'));
       } else {
         callback();
       }
@@ -209,7 +250,7 @@ export default {
 .meter-reading {
   .input-item {
     .el-form-item {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
   }
 }

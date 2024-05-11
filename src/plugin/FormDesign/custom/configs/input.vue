@@ -98,6 +98,7 @@
         <el-option label="邮箱" value="email" />
         <el-option label="纯数字" value="number" />
         <el-option label="身份证" value="idcard" />
+        <el-option label="电话或座机" value="phoneNum" />
       </el-select>
     </el-form-item>
     <div v-for="(item, index) in props.rules" :key="index" class="rule-item">
@@ -138,20 +139,24 @@ import DependValue from "./component/DependValue.vue";
 const defaultRules = {
   phone: {
     rule: "^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$",
-    msg: "您输入的电话号码不符合规则",
+    msg: "请输入正确的手机号",
   },
   email: {
     rule: "\\w[-\\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\\.)+[A-Za-z]{2,14}",
-    msg: "您输入的邮件地址不符合规则",
+    msg: "请输入正确的邮箱号",
   },
   number: { rule: "^[0-9]*$", msg: "您输入的内容不符合纯数字规则" },
   idcard: {
     rule: "\\d{17}[\\d|x]|\\d{15}",
-    msg: "您输入的身份证号码不符合规则",
+    msg: "请输入正确的身份证号码",
   },
   landline: {
     rule: "^\\d{4}$|^\\d{8}$|^\\d{11}$",
-    msg: "您输入的座机号码不符合规则"
+    msg: "请输入正确的座机号"
+  },
+  phoneNum: {
+    rule: "^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$|^\\d{7,8}$|^0\\d{2}[-]?\\d{8}$|^0\\d{3}[-]?\\d{7}$",
+    msg: "请输入正确的手机号码或座机号",
   }
 };
 /**
