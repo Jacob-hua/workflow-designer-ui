@@ -20,7 +20,7 @@ export let meterReading = {
   
   //禁用
   disabled:false,
-
+  dosageMeter: true,
   preDisable: true,
   timeFlag: true,
   curRequired: true,

@@ -34,7 +34,7 @@
             @change="handleChange(insCode, $event)"
           ></el-input>
         </el-form-item>
-        <el-form-item label="用量" label-width="100px">
+        <el-form-item v-if="dosageMeter" label="用量" label-width="100px">
           <el-input
             v-model="meterDosList[meterIndex].devList[devIndex].dosageMeter"
             placeholder="自动计算用量"
@@ -85,6 +85,9 @@ export default {
     id: {
       type: String,
     },
+    dosageMeter: {
+      type: Boolean
+    }
   },
   data() {
     return {
@@ -145,6 +148,7 @@ export default {
       deep: true,
       handler(list) {
         if (!list || list.length <= 0) return;
+        if(!this.$props.dosageMeter) return
         const readindList = JSON.parse(JSON.stringify(list));
         this.meterDosList = readindList.map((element) => {
           element.devList = element.devList.map((item) => {
