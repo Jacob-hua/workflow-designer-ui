@@ -66,6 +66,14 @@ export default {
           projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
         },
         // {
+        //   menuRoute: 'system-management',
+        //   projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
+        // },
+        {
+          menuRoute: 'SystemManagement',
+          projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
+        }
+        // {
         //   menuRoute: 'Configuration',
         //   projectList: ['XM_ba7fca3e847547b1ade1bf27dadaf038'],
         // },
@@ -86,6 +94,23 @@ export default {
           activeIcon: require('../assets/image/menu/active/cabin.svg'),
           label: '工作流驾驶舱',
         },
+        SystemManagement: {
+          icon: require('../assets/image/menu/cabin.svg'),
+          activeIcon: require('../assets/image/menu/active/cabin.svg'),
+          label: '系统管理',
+        }
+        // 'system-management': {
+        //   icon: require('../assets/image/menu/cabin.svg'),
+        //   activeIcon: require('../assets/image/menu/active/cabin.svg'),
+        //   label: '系统管理',
+        //   children: {
+        //     'api-list': {
+        //       icon: require('../assets/image/menu/cabin.svg'),
+        //       activeIcon: require('../assets/image/menu/active/cabin.svg'),
+        //       label: '接口管理',
+        //     }
+        //   }
+        // }
         // RunTime: {
         //   icon: require('../assets/image/menu/runing.svg'),
         //   activeIcon: require('../assets/image/menu/active/runing.svg'),

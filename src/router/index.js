@@ -33,6 +33,11 @@ const routes = [
         name: 'Home',
         component: () => import('@/view/home/index'),
       },
+      {
+        path: '/systemManagement',
+        name: 'SystemManagement',
+        component: () => import('@/view/systemManagement/index.vue'),
+      }
       // {
       //   path: '/home/History',
       //   name: 'History',
