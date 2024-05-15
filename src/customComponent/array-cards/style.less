@@ -1,0 +1,19 @@
+@import '../__builtins__/styles/common.less';
+
+@array-cards-prefix-cls: ~'@{formily-prefix}-array-cards';
+
+.@{array-cards-prefix-cls}-item {
+  margin-bottom: 10px !important;
+  background: transparent;
+}
+
+.@{array-cards-prefix-cls}-remove,
+.@{array-cards-prefix-cls}-fold {
+  transition: all 0.25s ease-in-out;
+  color: @text-color;
+  font-size: 16px;
+  margin: 5px;
+  &:hover {
+    color: @primary-5;
+  }
+}

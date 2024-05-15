@@ -90,10 +90,10 @@
     <detailsDiolog
       tileText="编辑表单"
       ref="detailsDiolog"
-      :visible="detailsDiologVisible"
+      :visible="detailDialogVisible"
       :formDatas="formData"
       @editForm="editForm"
-      @close="close"
+      @handleCloseDetail="handleCloseDetail"
       @deleteSuccsee="deleteSuccsee()"
     ></detailsDiolog>
   </div>
@@ -124,7 +124,7 @@ export default {
         limit: 8,
         total: 0,
       },
-      detailsDiologVisible: false,
+      detailDialogVisible: false,
       formDesignerVisible: false,
       addFormDialogVisible: false,
       publicFormTitle: '新建表单',
@@ -138,9 +138,6 @@ export default {
     ...mapState('account', ['userInfo', 'tenantId']),
   },
   methods: {
-    close() {
-      delete this.$refs.PublicFormDiolog.postData.id;
-    },
     async getFormList() {
       const { data, code, msg } = await fetchFormList({
         bindType: 'common',
@@ -176,6 +173,10 @@ export default {
     getData() {
       this.getEnableData();
     },
+    handleCloseDetail() {
+      this.formInfo = null
+      this.detailDialogVisible = false;
+    },
 
     deleteSuccsee() {
       this.detailDialogVisible = false;
@@ -208,7 +209,7 @@ export default {
     },
     detailsDiolog(item) {
       this.formData = item;
-      this.detailsDiologVisible = true;
+      this.detailDialogVisible = true;
     },
     editForm(item, tileText) {
       this.addForm2(item, tileText);

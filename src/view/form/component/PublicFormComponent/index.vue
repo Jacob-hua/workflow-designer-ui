@@ -378,8 +378,8 @@ export default {
       const formFile = new File([newFormFile], 'form.json', {
         type: 'text/json',
       });
-      if (this.$props.formInfo) {
-        if (this.$props.formInfo.formVersionFile === newFormFile) {
+      if (this.formInfo) {
+        if (this.formInfo.formVersionFile === newFormFile) {
           this.closeForm();
           return;
         }

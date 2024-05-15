@@ -607,24 +607,29 @@ export default {
   justify-content: flex-start;
   color: #bbbbbb;
 
-  /deep/ .el-tabs__nav {
-    background: $tabs-header-bg-color;
-    border: 1px solid transparent;
-
-    .el-tabs__item {
-      color: #cccccc;
+  /deep/ .el-tabs--card {
+    .el-tabs__header {
+      border-bottom: none;
+    }
+    .el-tabs__nav {
+      background: $tabs-header-bg-color;
       border: 1px solid transparent;
 
-      &:first-child {
-        border-radius: 4px 0px 0 4px;
+      .el-tabs__item {
+        color: #cccccc;
+        border: 1px solid transparent;
+
+        &:first-child {
+          border-radius: 4px 0px 0 4px;
+        }
+        &:last-child {
+          border-radius: 0 4px 4px 0;
+        }
       }
-      &:last-child {
-        border-radius: 0 4px 4px 0;
+      .is-active {
+        color: #ffffff;
+        background: #0b71e8;
       }
-    }
-    .is-active {
-      color: #ffffff;
-      background: #0b71e8;
     }
   }
 
