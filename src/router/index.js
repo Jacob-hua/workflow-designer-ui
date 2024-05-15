@@ -5,7 +5,7 @@ const routes = [
   // {
   //   path: '/',
   //   name: '/',
-  //   redirect: '',
+  //   redirect: '/Workflow',
   // },
   {
     path: '/login',
