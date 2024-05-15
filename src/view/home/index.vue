@@ -127,7 +127,7 @@ export default {
       }
     },
     gotoWorkflow() {
-      this.$router.push('/');
+      this.$router.push('/WorkFlow');
     },
     totalChange(value, key) {
       this[key] = value;

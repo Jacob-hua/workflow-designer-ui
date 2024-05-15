@@ -40,8 +40,7 @@
         >
         <el-button class="reset-button" @click="onReset">重置</el-button>
       </div>
-    </div>
-    <div class="content-wrapper">
+
       <div class="tool-wrapper">
         <el-button class="create-button" @click="onAddProject">
           新建工作流
@@ -50,6 +49,8 @@
           关联工作流
         </el-button>
       </div>
+    </div>
+    <div class="content-wrapper">
       <div class="project-table">
         <projectTable
           :searchForm="searchFormData"
@@ -245,7 +246,20 @@ export default {
 
 <style scoped lang="scss">
 .search-wrapper {
-  @include searchForm;
+  // @include searchForm;
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  grid-template-columns: 5fr 3fr 1fr;
+
+  .el-form {
+    display: flex;
+    align-items: center;
+
+    .el-form-item {
+      margin-bottom: 0;
+    }
+  }
 
   .button-wrapper {
     display: flex;
@@ -259,10 +273,6 @@ export default {
       @include resetBtn;
     }
   }
-}
-
-.content-wrapper {
-  @include contentTab;
 
   .tool-wrapper {
     display: flex;
@@ -276,6 +286,11 @@ export default {
   .quote-button {
     @include primaryPlainBtn;
   }
+}
+
+.content-wrapper {
+  @include contentTab;
+  margin-top: 40px;
 
   .project-table {
     border: 1px solid #333333;

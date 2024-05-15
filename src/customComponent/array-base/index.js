@@ -1,7 +1,7 @@
-import { Button, Icon } from 'ant-design-vue'
-import { stylePrefix } from '../__builtins__/configs'
-import { Fragment, useField, useFieldSchema, h } from '@formily/vue'
-import { isValid, clone, uid } from '@formily/shared'
+import { Button, Icon } from 'ant-design-vue';
+import { stylePrefix } from '../__builtins__/configs';
+import { Fragment, useField, useFieldSchema, h } from '@formily/vue';
+import { isValid, clone, uid } from '@formily/shared';
 import {
   defineComponent,
   provide,
@@ -9,117 +9,126 @@ import {
   toRefs,
   ref,
   onBeforeUnmount,
-} from '@vue/composition-api'
-import { HandleDirective } from 'vue-slicksort'
-import { composeExport } from '../__builtins__/shared'
+} from '@vue/composition-api';
+import { HandleDirective } from 'vue-slicksort';
+import { composeExport } from '../__builtins__/shared';
 
-const ArrayBaseSymbol=
-  Symbol('ArrayBaseContext')
-const ItemSymbol= Symbol('ItemContext')
+const ArrayBaseSymbol = Symbol('ArrayBaseContext');
+const ItemSymbol = Symbol('ItemContext');
 
 const useArray = () => {
-  return inject(ArrayBaseSymbol, null)
-}
+  return inject(ArrayBaseSymbol, null);
+};
 
 const useIndex = (index) => {
-  const { index: indexRef } = toRefs(inject(ItemSymbol))
-  return indexRef ?? ref(index)
-}
+  const { index: indexRef } = toRefs(inject(ItemSymbol));
+  return indexRef ?? ref(index);
+};
 
 const useRecord = (record) => {
-  const { record: recordRef } = toRefs(inject(ItemSymbol))
-  return recordRef ?? ref(record)
-}
+  const { record: recordRef } = toRefs(inject(ItemSymbol));
+  return recordRef ?? ref(record);
+};
 
 const isObjectValue = (schema) => {
-  if (Array.isArray(schema?.items)) return isObjectValue(schema.items[0])
+  if (Array.isArray(schema?.items)) return isObjectValue(schema.items[0]);
 
   if (schema?.items?.type === 'array' || schema?.items?.type === 'object') {
-    return true
+    return true;
   }
-  return false
-}
+  return false;
+};
 
 const useKey = (schema) => {
-  const isObject = isObjectValue(schema)
-  let keyMap = null
+  const isObject = isObjectValue(schema);
+  let keyMap = null;
 
   if (isObject) {
-    keyMap = new WeakMap()
+    keyMap = new WeakMap();
   } else {
-    keyMap = []
+    keyMap = [];
   }
 
   onBeforeUnmount(() => {
-    keyMap = null
-  })
+    keyMap = null;
+  });
 
   return {
     keyMap,
     getKey: (record, index) => {
       if (keyMap instanceof WeakMap) {
         if (!keyMap.has(record)) {
-          keyMap.set(record, uid())
+          keyMap.set(record, uid());
         }
-        return `${keyMap.get(record)}-${index}`
+        return `${keyMap.get(record)}-${index}`;
       }
 
       if (!keyMap[index]) {
-        keyMap[index] = uid()
+        keyMap[index] = uid();
       }
 
-      return `${keyMap[index]}-${index}`
+      return `${keyMap[index]}-${index}`;
     },
-  }
-}
+  };
+};
 
 const getSchemaDefaultValue = (schema) => {
-  if (schema?.type === 'array') return []
-  if (schema?.type === 'object') return {}
+  if (schema?.type === 'array') return [];
+  if (schema?.type === 'object') return {};
   if (schema?.type === 'void') {
     for (let key in schema.properties) {
-      const value = getSchemaDefaultValue(schema.properties[key])
-      if (isValid(value)) return value
+      const value = getSchemaDefaultValue(schema.properties[key]);
+      if (isValid(value)) return value;
     }
   }
-}
+};
 
 const getDefaultValue = (defaultValue, schema) => {
-  if (isValid(defaultValue)) return clone(defaultValue)
+  if (isValid(defaultValue)) return clone(defaultValue);
   if (Array.isArray(schema?.items))
-    return getSchemaDefaultValue(schema.items[0])
-  return getSchemaDefaultValue(schema.items)
-}
+    return getSchemaDefaultValue(schema.items[0]);
+  return getSchemaDefaultValue(schema.items);
+};
 
 const ArrayBaseInner = defineComponent({
   name: 'ArrayBase',
   props: ['disabled', 'keyMap'],
   setup(props, { listeners, slots }) {
-    const field = useField()
-    const schema = useFieldSchema()
+    const field = useField();
+    const schema = useFieldSchema();
     provide(ArrayBaseSymbol, {
       field,
       schema,
       props,
       listeners,
       keyMap: props.keyMap,
-    })
+    });
     return () => {
-      return h(Fragment, {}, slots)
-    }
+      return h(Fragment, {}, slots);
+    };
   },
-})
+});
+
+let addFoleded;
 
 const ArrayBaseItem = defineComponent({
   name: 'ArrayBaseItem',
-  props: ['index', 'record'],
+  props: [
+    'index',
+    'record',
+    'setFoleded',
+    'addFoleded',
+    'deleteFoleded',
+    'foldedList',
+  ],
   setup(props, { slots }) {
-    provide(ItemSymbol, props)
+    addFoleded = props.addFoleded
+    provide(ItemSymbol, props);
     return () => {
-      return h(Fragment, {}, slots)
-    }
+      return h(Fragment, {}, slots);
+    };
   },
-})
+});
 
 const ArrayBaseSortHandle = defineComponent({
   name: 'ArrayBaseSortHandle',
@@ -128,12 +137,12 @@ const ArrayBaseSortHandle = defineComponent({
     handle: HandleDirective,
   },
   setup(props, { attrs }) {
-    const array = useArray()
-    const prefixCls = `${stylePrefix}-array-base`
+    const array = useArray();
+    const prefixCls = `${stylePrefix}-array-base`;
 
     return () => {
-      if (!array) return null
-      if (array.field.value?.pattern !== 'editable') return null
+      if (!array) return null;
+      if (array.field.value?.pattern !== 'editable') return null;
 
       return h(
         Icon,
@@ -149,16 +158,16 @@ const ArrayBaseSortHandle = defineComponent({
           },
         },
         {}
-      )
-    }
+      );
+    };
   },
-})
+});
 
 const ArrayBaseIndex = defineComponent({
   name: 'ArrayBaseIndex',
   setup(props, { attrs }) {
-    const index = useIndex()
-    const prefixCls = `${stylePrefix}-array-base`
+    const index = useIndex();
+    const prefixCls = `${stylePrefix}-array-base`;
     return () => {
       return h(
         'span',
@@ -169,25 +178,25 @@ const ArrayBaseIndex = defineComponent({
         {
           default: () => [`#${index.value + 1}.`],
         }
-      )
-    }
+      );
+    };
   },
-})
+});
 
 const ArrayBaseAddition = defineComponent({
   name: 'ArrayBaseAddition',
   props: ['title', 'method', 'defaultValue'],
   setup(props, { listeners }) {
-    const self = useField()
-    const array = useArray()
-    const prefixCls = `${stylePrefix}-array-base`
+    const self = useField();
+    const array = useArray();
+    const prefixCls = `${stylePrefix}-array-base`;
     return () => {
-      if (!array) return null
+      if (!array) return null;
       if (
         array?.field.value.pattern !== 'editable' &&
         array?.field.value.pattern !== 'disabled'
       )
-        return null
+        return null;
       return h(
         Button,
         {
@@ -201,20 +210,21 @@ const ArrayBaseAddition = defineComponent({
           on: {
             ...listeners,
             click: (e) => {
-              if (array.props?.disabled) return
+              if (array.props?.disabled) return;
               const defaultValue = getDefaultValue(
                 props.defaultValue,
                 array?.schema.value
-              )
+              );
               if (props.method === 'unshift') {
-                array?.field?.value.unshift(defaultValue)
-                array.listeners?.add?.(0)
+                array?.field?.value.unshift(defaultValue);
+                array.listeners?.add?.(0);
               } else {
-                array?.field?.value.push(defaultValue)
-                array.listeners?.add?.(array?.field?.value?.value?.length - 1)
+                array?.field?.value.push(defaultValue);
+                array.listeners?.add?.(array?.field?.value?.value?.length - 1);
+                addFoleded?.value?.();
               }
               if (listeners.click) {
-                listeners.click(e)
+                listeners.click(e);
               }
             },
           },
@@ -225,20 +235,21 @@ const ArrayBaseAddition = defineComponent({
             self.value.title || props.title,
           ],
         }
-      )
-    }
+      );
+    };
   },
-})
+});
 
 const ArrayBaseRemove = defineComponent({
   name: 'ArrayBaseRemove',
   props: ['title', 'index'],
   setup(props, { attrs, listeners }) {
-    const indexRef = useIndex(props.index)
-    const base = useArray()
-    const prefixCls = `${stylePrefix}-array-base`
+    const { deleteFoleded } = toRefs(inject(ItemSymbol));
+    const indexRef = useIndex(props.index);
+    const base = useArray();
+    const prefixCls = `${stylePrefix}-array-base`;
     return () => {
-      if (base?.field.value.pattern !== 'editable') return null
+      if (base?.field.value.pattern !== 'editable') return null;
       return h(
         Icon,
         {
@@ -250,35 +261,71 @@ const ArrayBaseRemove = defineComponent({
           on: {
             ...listeners,
             click: (e) => {
-              e.stopPropagation()
+              e.stopPropagation();
               if (Array.isArray(base?.keyMap)) {
-                base?.keyMap?.splice(indexRef.value, 1)
+                base?.keyMap?.splice(indexRef.value, 1);
               }
 
-              base?.field.value.remove(indexRef.value)
-              base?.listeners?.remove?.(indexRef.value)
-
+              base?.field.value.remove(indexRef.value);
+              base?.listeners?.remove?.(indexRef.value);
+              deleteFoleded?.value?.(indexRef.value);
               if (listeners.click) {
-                listeners.click(e)
+                listeners.click(e);
               }
             },
           },
         },
         {}
-      )
-    }
+      );
+    };
   },
-})
+});
 
 const ArrayBaseMoveDown = defineComponent({
   name: 'ArrayBaseMoveDown',
   props: ['title', 'index'],
   setup(props, { attrs, listeners }) {
-    const indexRef = useIndex(props.index)
-    const base = useArray()
-    const prefixCls = `${stylePrefix}-array-base`
+    const { foldedList, setFoleded } = toRefs(inject(ItemSymbol));
+    const indexRef = useIndex(props.index);
+    const base = useArray();
+    // const folded = foldedList.value ? foldedList.value[indexRef.value] : false;
+    const prefixCls = `${stylePrefix}-array-base`;
     return () => {
-      if (base?.field.value.pattern !== 'editable') return null
+      if (base?.field.value.pattern !== 'editable') return null;
+      if (foldedList.value && foldedList.value[indexRef.value]) {
+        return h(
+          Icon,
+          {
+            class: `${prefixCls}-move-down`,
+            attrs,
+            props: {
+              type: 'right',
+            },
+            on: {
+              ...listeners,
+              click: (e) => {
+                e.stopPropagation();
+                // if (Array.isArray(base?.keyMap)) {
+                //   base.keyMap.splice(
+                //     indexRef.value + 1,
+                //     0,
+                //     base.keyMap.splice(indexRef.value, 1)[0]
+                //   )
+                // }
+
+                // base?.field.value.moveDown(indexRef.value)
+                // base?.listeners?.moveDown?.(indexRef.value)
+                // folded.value = false;
+                setFoleded?.value?.(false, indexRef.value);
+                if (listeners.click) {
+                  listeners.click(e);
+                }
+              },
+            },
+          },
+          {}
+        );
+      }
       return h(
         Icon,
         {
@@ -290,7 +337,7 @@ const ArrayBaseMoveDown = defineComponent({
           on: {
             ...listeners,
             click: (e) => {
-              e.stopPropagation()
+              e.stopPropagation();
               // if (Array.isArray(base?.keyMap)) {
               //   base.keyMap.splice(
               //     indexRef.value + 1,
@@ -301,28 +348,29 @@ const ArrayBaseMoveDown = defineComponent({
 
               // base?.field.value.moveDown(indexRef.value)
               // base?.listeners?.moveDown?.(indexRef.value)
-
+              // folded.value = true;
+              setFoleded?.value?.(true, indexRef.value);
               if (listeners.click) {
-                listeners.click(e)
+                listeners.click(e);
               }
             },
           },
         },
         {}
-      )
-    }
+      );
+    };
   },
-})
+});
 
 const ArrayBaseMoveUp = defineComponent({
   name: 'ArrayBaseMoveUp',
   props: ['title', 'index'],
   setup(props, { attrs, listeners }) {
-    const indexRef = useIndex(props.index)
-    const base = useArray()
-    const prefixCls = `${stylePrefix}-array-base`
+    const indexRef = useIndex(props.index);
+    const base = useArray();
+    const prefixCls = `${stylePrefix}-array-base`;
     return () => {
-      if (base?.field.value.pattern !== 'editable') return null
+      if (base?.field.value.pattern !== 'editable') return null;
       return h(
         Icon,
         {
@@ -334,29 +382,29 @@ const ArrayBaseMoveUp = defineComponent({
           on: {
             ...listeners,
             click: (e) => {
-              e.stopPropagation()
+              e.stopPropagation();
               if (Array.isArray(base?.keyMap)) {
                 base.keyMap.splice(
                   indexRef.value - 1,
                   0,
                   base.keyMap.splice(indexRef.value, 1)[0]
-                )
+                );
               }
 
-              base?.field.value.moveUp(indexRef.value)
-              base?.listeners?.moveUp?.(indexRef.value)
+              base?.field.value.moveUp(indexRef.value);
+              base?.listeners?.moveUp?.(indexRef.value);
 
               if (listeners.click) {
-                listeners.click(e)
+                listeners.click(e);
               }
             },
           },
         },
         {}
-      )
-    }
+      );
+    };
   },
-})
+});
 
 export const ArrayBase = composeExport(ArrayBaseInner, {
   Index: ArrayBaseIndex,
@@ -370,6 +418,6 @@ export const ArrayBase = composeExport(ArrayBaseInner, {
   useIndex: useIndex,
   useKey: useKey,
   useRecord: useRecord,
-})
+});
 
-export default ArrayBase
+export default ArrayBase;

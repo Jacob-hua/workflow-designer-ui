@@ -4,6 +4,7 @@ import {
   useFieldSchema,
   RecursionField,
   h,
+  Fragment,
 } from '@formily/vue';
 import { isValid, clone } from '@formily/shared';
 import { observer } from '@formily/reactive-vue';
@@ -40,37 +41,39 @@ const isOperationComponent = (schema, foldable = true) => {
 };
 
 const getSchemaDefaultValue = (schema) => {
-  if (schema?.type === 'array') return []
-  if (schema?.type === 'object') return {}
+  if (schema?.type === 'array') return [];
+  if (schema?.type === 'object') return {};
   if (schema?.type === 'void') {
     for (let key in schema.properties) {
-      const value = getSchemaDefaultValue(schema.properties[key])
-      if (isValid(value)) return value
+      const value = getSchemaDefaultValue(schema.properties[key]);
+      if (isValid(value)) return value;
     }
   }
-}
+};
 
 const getDefaultValue = (defaultValue, schema) => {
-  if (isValid(defaultValue)) return clone(defaultValue)
+  if (isValid(defaultValue)) return clone(defaultValue);
   if (Array.isArray(schema?.items))
-    return getSchemaDefaultValue(schema.items[0])
-  return getSchemaDefaultValue(schema.items)
-}
+    return getSchemaDefaultValue(schema.items[0]);
+  return getSchemaDefaultValue(schema.items);
+};
 
 export const ArrayCards = observer(
   defineComponent({
     name: 'ArrayCards',
-    props: [],
-    setup(_props, { attrs }) {
+    props: ['title', 'addable', 'foldable', 'disabled'],
+    setup(props, { attrs }) {
       const fieldRef = useField();
       const schemaRef = useFieldSchema();
       const prefixCls = `${stylePrefix}-array-cards`;
       const foldedList = ref([false]);
       return () => {
-        const props = { ...attrs };
+        // const props = { ...attrs };
         const field = fieldRef.value;
         const schema = schemaRef.value;
-        const dataSource = Array.isArray(field.value) ? field.value : [];
+        const dataSource = Array.isArray(field.value)
+          ? field.value
+          : getDefaultValue(props.defaultValue, schema);
         dataSource?.forEach((item, index) => {
           foldedList.value.splice(index, 1, false);
         });
@@ -205,7 +208,8 @@ export const ArrayCards = observer(
               {
                 title: () => title,
                 extra: () => extra,
-                default: () => (foldedList.value[index] ? null : content),
+                default: () =>
+                  foldedList.value[index] ? h('div', {}, {}) : content,
               }
             );
           });
@@ -375,13 +379,13 @@ export const ArrayCards = observer(
             {
               title: () => title,
               extra: () => extra,
-              default: () => (foldedList.value[0] ? null : content),
+              default: () => (foldedList.value[0] ? h('div', {}, {}) : content),
             }
           );
         };
 
         return h(
-          Space,
+          Fragment,
           {},
           {
             default: () => [renderEmpty(), renderItems(), renderAddition()],
