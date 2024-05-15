@@ -9,10 +9,7 @@
     />
     <div class="ticket-wrapper">
       <div class="ticket-left">
-        <div
-          v-if="taskInfo.taskType === 'UserTask'"
-          class="ticket-info"
-        >
+        <div v-if="taskInfo.taskType === 'UserTask'" class="ticket-info">
           <div class="title">执行人员</div>
           <div class="content-wrapper info">
             <div>
@@ -52,7 +49,7 @@
             </div>
           </div>
         </div>
-        <div class="operation-config"  v-if="taskInfo.taskType === 'UserTask'">
+        <div class="operation-config" v-if="taskInfo.taskType === 'UserTask'">
           <div class="title">操作配置</div>
           <div class="content-wrapper config">
             <div class="noData" v-if="taskActios.length === 0">未选择节点</div>
@@ -68,10 +65,15 @@
           </div>
         </div>
       </div>
-      <div class="ticket-form" v-if="taskInfo.taskType === 'UserTask' || taskInfo.taskType === 'StartEvent'">
+      <div
+        class="ticket-form"
+        v-if="
+          taskInfo.taskType === 'UserTask' || taskInfo.taskType === 'StartEvent'
+        "
+      >
         <div class="title">
-          <span>任务执行内容</span>
-          <div v-if="formShow">
+          <span style="width: 110px; white-space: nowarap">任务执行内容</span>
+          <div v-if="formShow" class="form-base-info">
             <span>表单名称：{{ formContent.formName }}</span>
             <span>版本名称：{{ formContent.formVersionTag }}</span>
             <span>版本号：{{ formContent.formVersion }}</span>
@@ -264,6 +266,18 @@ export default {
     font-size: 14px;
     display: flex;
     align-items: center;
+
+    .form-base-info {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
   }
 
   .content-wrapper {

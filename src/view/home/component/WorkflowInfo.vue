@@ -10,13 +10,60 @@
     <div class="ticket-wrapper">
       <div class="ticket-left">
         <div v-if="taskInfo.taskType === 'UserTask'" class="ticket-info">
-          <div class="title">执行人员</div>
+          <div class="title">流程节点执行人员</div>
           <div class="content-wrapper executor">
             <div v-if="alterFlag" class="info">
               <div>
                 <span>流程节点:</span><span>{{ taskInfo.taskName }}</span>
               </div>
-              <div>
+              <el-tabs v-model="activeName" type="card">
+                <el-tab-pane label="固定执行人员" name="first">
+                  <div class="user-selector">
+                    <el-button
+                      :disabled="!taskInfo.taskDefKey"
+                      @click="handleChangeUser"
+                      icon="el-icon-edit-outline"
+                      >变更</el-button
+                    >
+                    <div class="fixed-user">
+                      <span v-if="sourceFixed.length <= 0">暂无</span>
+                      <span
+                        v-else
+                        v-for="item in sourceFixed"
+                        :key="item.value"
+                        >{{ item.label }}</span
+                      >
+                    </div>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="其他节点指定" name="second">
+                  <div class="other-node-selector">
+                    <el-button
+                      :disabled="!taskInfo.taskDefKey"
+                      @click="handleChangeNodeUser('dynamic_set')"
+                      icon="el-icon-edit-outline"
+                      >变更</el-button
+                    >
+                    <span>{{
+                      dynamicSet.label ? dynamicSet.label : '暂无'
+                    }}</span>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="同一节点执行人" name="third">
+                  <div class="same-node-selector">
+                    <el-button
+                      :disabled="!taskInfo.taskDefKey"
+                      @click="handleChangeNodeUser('task_executor')"
+                      icon="el-icon-edit-outline"
+                      >变更</el-button
+                    >
+                    <span>{{
+                      taskEecutor.label ? taskEecutor.label : '暂无'
+                    }}</span>
+                  </div>
+                </el-tab-pane>
+              </el-tabs>
+              <!-- <div>
                 <span>固定执行人员:</span>
                 <div class="fixed-user">
                   <span v-if="sourceFixed.length <= 0">暂无</span>
@@ -49,7 +96,7 @@
                   @click="handleChangeNodeUser('task_executor')"
                   >变更</el-button
                 >
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -227,6 +274,7 @@ export default {
       isSignNode: false,
       selectedNode: null,
       innerName: '',
+      activeName: 'first',
     };
   },
   computed: {
@@ -458,17 +506,16 @@ export default {
   color: $font-color;
 
   .title {
-    line-height: 40px;
     font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    color: #cccccc;
   }
 
   .content-wrapper {
-    padding: 20px 30px;
+    padding: 0px 10px;
     overflow: auto;
-    border: 1px solid $border-color;
     height: 100%;
 
     .inner-box {
@@ -487,11 +534,34 @@ export default {
 
   .form {
     height: 390px;
+    padding: 10px 10px;
   }
 }
 
 .ticket-info {
   margin-top: 20px;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  background: $card-bg-color-2;
+  .title {
+    padding: 20px;
+    border-bottom: 1px solid $border-color;
+  }
+}
+
+.operation-config {
+  margin-top: 20px;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  background: $card-bg-color-2;
+  .title {
+    padding: 20px;
+    border-bottom: 1px solid $border-color;
+  }
+
+  .config {
+    padding: 20px 10px;
+  }
 }
 
 .ticket-left {
@@ -504,7 +574,12 @@ export default {
   margin: 20px 0px 0px 20px;
   display: flex;
   flex-direction: column;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  background: $card-bg-color-2;
   .title {
+    padding: 20px;
+    border-bottom: 1px solid $border-color;
     .title-form-info {
       display: flex;
       .form-message {
@@ -513,7 +588,7 @@ export default {
         white-space: nowrap;
         grid-gap: 10px;
 
-        .message-item {
+        span {
           width: 100%;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -530,14 +605,37 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  color: #999999;
+  color: #bbbbbb;
+
+  /deep/ .el-tabs--card {
+    .el-tabs__header {
+      border-bottom: none;
+    }
+    .el-tabs__nav {
+      background: $tabs-header-bg-color;
+      border: 1px solid transparent;
+
+      .el-tabs__item {
+        color: #cccccc;
+        border: 1px solid transparent;
+
+        &:first-child {
+          border-radius: 4px 0px 0 4px;
+        }
+        &:last-child {
+          border-radius: 0 4px 4px 0;
+        }
+      }
+      .is-active {
+        color: #ffffff;
+        background: #0b71e8;
+      }
+    }
+  }
 
   & > div {
     font-size: 14px;
-    margin-top: 26px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    margin-top: 10px;
   }
 
   .fixed-user {
@@ -569,7 +667,7 @@ export default {
 
   & > div > span:last-child {
     text-align: start;
-    color: $font-color;
+    color: #dddddd;
   }
 }
 

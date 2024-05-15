@@ -34,9 +34,10 @@ import {
   FormTab,
   FormCollapse,
   ArrayTable,
-  ArrayCards,
+  // ArrayCards,
   FormButtonGroup,
 } from '@formily/antdv';
+import { ArrayCards, Text } from '../customComponent';
 import { Card, Rate, Slider, Card as Display, Upload } from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.less';
 import _ from 'lodash';
@@ -74,6 +75,7 @@ const { SchemaField } = createSchemaField({
     Rate,
     Slider,
     Display,
+    Text,
   },
 });
 export default {
@@ -153,7 +155,7 @@ export default {
         this.handleSchema(val);
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
   },
 };
