@@ -47,7 +47,7 @@ VueRouter.prototype.push = function push(location) {
 
 const createRouter = () => {
   const router = new VueRouter({
-    // base: window.__POWERED_BY_QIANKUN__ ? '/ftkms-gdgl/#/' : '/',
+    base: window.__POWERED_BY_QIANKUN__ ? '/ftkms-gdgl/' : '/',
     mode: 'history',
     routes,
   })
