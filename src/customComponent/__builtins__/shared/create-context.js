@@ -1,5 +1,3 @@
-import type { Component } from 'vue'
-import type { InjectionKey, Ref } from '@vue/composition-api'
 import {
   defineComponent,
   provide,
@@ -9,14 +7,9 @@ import {
   toRef,
 } from '@vue/composition-api'
 
-export type CreateContext<T> = {
-  Provider: Component
-  Consumer: Component
-  injectKey: InjectionKey<Ref<T>>
-}
 
-export const createContext = <T>(defaultValue?: T): CreateContext<T> => {
-  const injectKey: InjectionKey<Ref<T>> = Symbol()
+export const createContext = (defaultValue) => {
+  const injectKey = Symbol()
 
   return {
     Provider: defineComponent({
@@ -49,7 +42,7 @@ export const createContext = <T>(defaultValue?: T): CreateContext<T> => {
   }
 }
 
-export const useContext = <T>(context: CreateContext<T>) => {
+export const useContext = (context) => {
   const key = context.injectKey
 
   return inject(key, ref(null))

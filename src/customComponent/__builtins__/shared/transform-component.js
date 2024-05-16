@@ -1,15 +1,12 @@
-import type { Component } from 'vue'
 import { merge } from '@formily/shared'
 import { h } from '@formily/vue'
 import { isVue2, defineComponent } from 'vue-demi'
 
-type ListenersTransformRules = Record<string, string>
-
-export const transformComponent = <T extends Record<string, any>>(
-  tag: any,
-  transformRules?: ListenersTransformRules,
-  defaultProps?: Partial<T>
-): Component<T> | any => {
+export const transformComponent = (
+  tag,
+  transformRules,
+  defaultProps
+) => {
   if (isVue2) {
     return defineComponent({
       setup(props, { attrs, slots, listeners }) {

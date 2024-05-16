@@ -37,7 +37,7 @@ import {
   // ArrayCards,
   FormButtonGroup,
 } from '@formily/antdv';
-import { ArrayCards, Text } from '../customComponent';
+import { ArrayCards, Text, TextArea } from '../customComponent';
 import { Card, Rate, Slider, Card as Display, Upload } from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.less';
 import _ from 'lodash';
@@ -76,6 +76,7 @@ const { SchemaField } = createSchemaField({
     Slider,
     Display,
     Text,
+    TextArea,
   },
 });
 export default {

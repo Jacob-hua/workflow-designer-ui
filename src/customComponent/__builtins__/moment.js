@@ -1,7 +1,7 @@
 import { isArr, isFn } from '@formily/shared'
 import moment from 'moment'
 
-export const momentable = (value: any, format?: string) => {
+export const momentable = (value, format) => {
   return Array.isArray(value)
     ? value.map((val) => moment(val, format))
     : value
@@ -10,11 +10,11 @@ export const momentable = (value: any, format?: string) => {
 }
 
 export const formatMomentValue = (
-  value: any,
-  format: any,
-  placeholder?: string
-): string | string[] => {
-  const formatDate = (date: any, format: any, i = 0) => {
+  value,
+  format,
+  placeholder
+) => {
+  const formatDate = (date, format, i = 0) => {
     if (!date) return placeholder
     if (isArr(format)) {
       const _format = format[i]
