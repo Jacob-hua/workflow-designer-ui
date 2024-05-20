@@ -21,7 +21,7 @@ import {
   Switch,
   Password,
   PreviewText,
-  Radio,
+  // Radio,
   Reset,
   Select,
   Space,
@@ -37,7 +37,7 @@ import {
   // ArrayCards,
   FormButtonGroup,
 } from '@formily/antdv';
-import { ArrayCards, Text, TextArea } from '../customComponent';
+import { ArrayCards, Text, TextArea, Radio } from '../customComponent';
 import { Card, Rate, Slider, Card as Display, Upload } from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.less';
 import _ from 'lodash';
