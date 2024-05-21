@@ -147,7 +147,7 @@ export default {
           : [ this.baseInfoPanelInfo, this.documentationPanelInfo],
         [BpmnShapeType.EXCLUSIVE_GATEWAY]: [this.baseInfoPanelInfo],
         [BpmnShapeType.SEQUENCE_FLOW]:
-          this.baseInfo.sourceRefType === shapeType.START_EVENT
+          this.baseInfo.sourceRefType !== shapeType.EXCLUSIVE_GATEWAY
             ? [this.baseInfoPanelInfo]
             : [this.baseInfoPanelInfo, this.conditionPanelInfo],
       };
