@@ -61,7 +61,7 @@ import { mapState } from 'vuex';
 import { fetchTaskNodeList } from '../../../api/workflow';
 import { fetchFormVersion } from '../../../api/workflowForm';
 
-const allowFormItem = ['Input', 'Select', 'Radio.Group', 'Switch'];
+const allowFormItem = ['Input', 'Select', 'Radio', 'Switch'];
 export default {
   name: 'SpecifyGateway',
   props: {
