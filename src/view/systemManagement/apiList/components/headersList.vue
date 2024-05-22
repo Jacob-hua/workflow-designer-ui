@@ -7,7 +7,7 @@
         <div class="table-data-list">
           <div v-for="(tb, index) in tableData" :key="tb.index" class="table-data-item">
             <div
-              v-for="col in tableTitle.slice(0, 4)"
+              v-for="col in tableTitle.slice(0, 5)"
               :key="col.value"
               class="table-data-item-col"
               :style="{ width: col.width }"
@@ -32,13 +32,13 @@
         ></el-input>
         <el-select
           class="input-wrapper"
-          v-show="['paramsType'].includes(currentType)"
+          v-show="['paramsType', 'valueType'].includes(currentType)"
           @blur="handlerToBlur"
           @change="handlerToChangeSelect"
           :style="{...styleData}"
           v-model="selectValue">
           <el-option
-            v-for="item in options"
+            v-for="item in getOptions(currentType)"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -59,11 +59,12 @@
           { label: '参数名', value: 'paramsName', width: '20%' },
           { label: '类型', value: 'paramsType', width: '10%' },
           { label: '参数值', value: 'paramsValue', width: '20%' },
-          { label: '说明', value: 'paramsDes', width: '40%' },
+          { label: '说明', value: 'paramsDes', width: '25%' },
+          { label: '取值方式', value: 'valueType', width: '15%' },
           { label: '操作', value: 'paramsOperation', width: '10%' },
         ],
         tableData: [
-          { paramsName: '', paramsValue: '', paramsType: '', paramsDes: '' }
+          { paramsName: '', paramsValue: '', paramsType: '', paramsDes: '', valueType: '' }
         ],
         styleData: {
           width: '',
@@ -75,10 +76,26 @@
         selectValue: '',
         options: [
           { label: '字符串', value: '字符串' },
-          { label: '整数', value: '整数' },
           { label: '数字', value: '数字' },
           { label: '布尔', value: '布尔' }
         ]
+      }
+    },
+    computed: {
+      getOptions: () => (val) => {
+        if (val === 'paramsType') {
+          return [
+            { label: '字符串', value: '字符串' },
+            { label: '数字', value: '数字' },
+            { label: '布尔', value: '布尔' }
+          ]
+        }
+        if (val === 'valueType') {
+          return [
+            { label: '固定值', value: 'fixed' },
+            { label: '变量', value: 'variable' }
+          ]
+        }
       }
     },
     methods: {
@@ -126,7 +143,7 @@
         this.tableData.splice(index, 1)
       },
       handlerToAdd() {
-        this.tableData.push({ paramsName: '', paramsValue: '', paramsType: '', paramsDes: '' })
+        this.tableData.push({ paramsName: '', paramsValue: '', paramsType: '', paramsDes: '', valueType: '' })
       }
     }
   }
