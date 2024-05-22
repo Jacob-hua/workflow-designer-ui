@@ -7,7 +7,7 @@
       <div class="table-data-list">
         <div v-for="(tb, index) in tableData" :key="tb.index" class="table-data-item">
           <div
-            v-for="col in tableTitle.slice(0, 4)"
+            v-for="col in tableTitle.slice(0, 5)"
             :key="col.value"
             class="table-data-item-col"
             :style="{ width: col.width }"
@@ -43,13 +43,13 @@
       ></el-input>
       <el-select
         class="input-wrapper"
-        v-show="['paramsType'].includes(currentType)"
+        v-show="['paramsType', 'valueType'].includes(currentType)"
         @blur="handlerToBlur"
         @change="handlerToChangeSelect"
         :style="{...styleData}"
         v-model="selectValue">
         <el-option
-          v-for="item in options"
+          v-for="item in getOptions(currentType)"
           :key="item.value"
           :label="item.label"
           :value="item.value">
@@ -71,7 +71,8 @@ export default {
         { label: '参数名', value: 'paramsName', width: '20%' },
         { label: '类型', value: 'paramsType', width: '10%' },
         { label: '参数值', value: 'paramsValue', width: '20%' },
-        { label: '说明', value: 'paramsDes', width: '40%' },
+        { label: '说明', value: 'paramsDes', width: '25%' },
+        { label: '取值方式', value: 'valueType', width: '15%' },
         { label: '操作', value: 'paramsOperation', width: '10%' },
       ],
       tableData: [
@@ -87,11 +88,27 @@ export default {
       selectValue: '',
       options: [
         { label: '字符串', value: '字符串' },
-        { label: '整数', value: '整数' },
         { label: '数字', value: '数字' },
         { label: '布尔', value: '布尔' },
         { label: '数组', value: '数组' },
       ]
+    }
+  },
+  computed: {
+    getOptions: () => (val) => {
+      if (val === 'paramsType') {
+        return [
+          { label: '字符串', value: '字符串' },
+          { label: '数字', value: '数字' },
+          { label: '布尔', value: '布尔' }
+        ]
+      }
+      if (val === 'valueType') {
+        return [
+          { label: '固定值', value: 'fixed' },
+          { label: '变量', value: 'variable' }
+        ]
+      }
     }
   },
   methods: {
@@ -232,6 +249,7 @@ export default {
         .table-data-item-col {
           height: auto;
           border-right: 1px solid #333333;
+          box-sizing: border-box;
           &:hover {
             border: 1px solid #409EFF;
           }

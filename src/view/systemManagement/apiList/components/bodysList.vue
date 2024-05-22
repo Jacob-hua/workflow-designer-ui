@@ -365,29 +365,87 @@ export default {
     async copyData() {
       this.isCopy = true
       const text = await navigator.clipboard.readText()
-      console.log(typeof text)
-      try {
-        const jsonData = JSON.parse(text)
-        // if () {}
-        console.log(jsonData)
-        const newData = this.formatterJSONData(jsonData, this.currentLineData)
-        const contentIdx = this.lineData.findIndex(item => item.id === this.currentLineData.id);
-        console.log(contentIdx, '55555555555', this.currentLineData)
-        if (this.lineData.length > 1) {
-          const beforeLineData = this.lineData.filter((_, index) => index <= contentIdx)
-          const afterLineData = this.lineData.filter((_, index) => index > contentIdx)
-          this.lineData = [...beforeLineData, ...newData, ...afterLineData]
+      let lineData = []
+      const contentIdx = this.lineData.findIndex(item => item.id === this.currentLineData.id);
+      let len = text.length;
+      let str = ''
+      for (let i = 0; i < len; i++) {
+        const txt= text[i];
+        if (['[', '{'].includes(txt)) {
+          const newStr = str.replaceAll(' ', '')
+          lineData.push({
+            id: this.getId(),
+            content: str.replaceAll('\n', '').replaceAll(' ', '') + txt,
+            indentCount: Math.ceil((str.length - newStr.length - 1) / 2) + this.currentLineData.indentCount
+          })
+          str = ''
+          // lineData.push({ 
+          //   id: this.getId(),
+          //   content: txt,
+          //   indentCount: this.currentLineData.indentCount
+          // })
+        } else if ([']', '}'].includes(txt)) {
+          const newStr = str.replaceAll(' ', '')
+          lineData.push({
+            id: this.getId(),
+            content: str.replaceAll('\n', '').replaceAll(' ', ''),
+            indentCount: ['}', ']', ']\r', '}\r'].includes(lineData[lineData.length - 1].content) ? lineData[lineData.length - 1].indentCount - 1 : lineData[lineData.length - 1].indentCount
+          })
+          str = txt
+          if (i === len - 1) {
+            lineData.push({
+              id: this.getId(),
+              content: txt,
+              indentCount: this.currentLineData.indentCount
+            })
+          }
+        } else if ([','].includes(txt)) {
+          if (str !== '') {
+            console.log(str, 131231313131)
+            const newStr = str.replaceAll(' ', '')
+            lineData.push({
+              id: this.getId(),
+              content: str.replaceAll('\n', '').replaceAll(' ', '') + txt,
+              indentCount: ['}', ']'].includes(str) ? lineData[lineData.length - 1].indentCount - 1 : (str.length - newStr.length - 1) / 2 + this.currentLineData.indentCount
+            })
+          }
+          str = ''
         } else {
-          this.lineData.push(...newData)
+          str += txt
         }
+      }
+      lineData = lineData.filter(itm => itm.content !== '' && itm.content !== ',')
+      if (this.lineData.length > 1) {
+        const beforeLineData = this.lineData.filter((_, index) => index <= contentIdx)
+        const afterLineData = this.lineData.filter((_, index) => index > contentIdx)
+        this.lineData = [...beforeLineData, ...lineData, ...afterLineData]
+      } else {
+        this.lineData = lineData
+      }
         this.lineList = this.lineData.length
         this.isControl = false
         this.isCopy = false
         this.isEdit = false
-      } catch (error) {
-        console.log(error)
-        this.inputValue += text
-      }
+      console.log(lineData)
+      // try {
+      //   const jsonData = JSON.parse(text)
+      //   const newData = this.formatterJSONData(jsonData, this.currentLineData)
+      //   const contentIdx = this.lineData.findIndex(item => item.id === this.currentLineData.id);
+      //   if (this.lineData.length > 1) {
+      //     const beforeLineData = this.lineData.filter((_, index) => index <= contentIdx)
+      //     const afterLineData = this.lineData.filter((_, index) => index > contentIdx)
+      //     this.lineData = [...beforeLineData, ...newData, ...afterLineData]
+      //   } else {
+      //     this.lineData.push(...newData)
+      //   }
+      //   this.lineList = this.lineData.length
+      //   this.isControl = false
+      //   this.isCopy = false
+      //   this.isEdit = false
+      // } catch (error) {
+      //   console.log(error)
+      //   this.inputValue += text
+      // }
     },
     selectAllData() {
       this.isSelectAll = true
@@ -422,7 +480,6 @@ export default {
       this.inputValue = ''
     },
     handlerToChoose(e, index) {
-      console.log(e ,index)
       const ctIdx = index ? index : 0
       const domList = this.$refs.writableWrapper.getElementsByClassName('line-data-item');
       const { left, top, width } = domList[ctIdx].getBoundingClientRect()
@@ -456,7 +513,7 @@ export default {
       // this.formatContentByInput(this.inputValue)
     },
     handlerToBlur() {
-      console.log(1231312313123)
+      console.log(this.getJSONData())
       // this.currentLineData = {}
     },
     getJSONData() {
