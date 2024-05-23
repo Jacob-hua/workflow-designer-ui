@@ -1,38 +1,49 @@
 <template>
-  <div class="bodys-list" ref="parentDom">
-    <div class="left-index-line" :style="{ height: `${lineList * 24}px` }">
-      <div class="left-index-line-item" v-for="index in lineList" :key="index">{{ index }}</div>
+  <div>
+    <div class="bodys-all">
+      <el-radio-group style="margin-bottom: 10px;" @input="handlerToChange" v-model="bodyType" size="small">
+        <el-radio-button label="form-data"></el-radio-button>
+        <el-radio-button label="x-www-form-urlencoded"></el-radio-button>
+        <el-radio-button label="json"></el-radio-button>
+      </el-radio-group>
     </div>
-    <div class="right-writable-content" ref="" :style="{ height: `${lineList * 24}px` }" ref="writableWrapper" @wheel="handlerToScroll">
-      <div
-        class="line-data-item"
-        v-for="(item, index) in lineData"
-        :key="item.id"
-        @click="handlerToChoose($event, index)"
-        :style="{ paddingLeft: item.indentCount * 24 + 15 + 'px'}">
-        <span v-for="(font, index) in formatContentAll(item.content)" :class="['mark-st', font.className, isSelectAll ? 'bg-color' : '']">{{ font.value }}</span>
-        <!-- {{ item.content }} -->
+    <div v-show="bodyType === 'json'" class="bodys-list" ref="parentDom" @click="handlerToChoose($event, 0)">
+      <div class="left-index-line" :style="{ height: `${lineList * 24}px` }">
+        <div class="left-index-line-item" v-for="index in lineList" :key="index">{{ index }}</div>
       </div>
+      <div class="right-writable-content" :style="{ height: `${lineList * 24}px` }" ref="writableWrapper" @wheel="handlerToScroll">
+        <div
+          class="line-data-item"
+          v-for="(item, index) in lineData"
+          :key="item.id"
+          @click.stop="handlerToChoose($event, index)"
+          :style="{ paddingLeft: item.indentCount * 24 + 15 + 'px'}">
+          <span v-for="(font, index) in formatContentAll(item.content)" :class="['mark-st', font.className, isSelectAll ? 'bg-color' : '']">{{ font.value }}</span>
+        </div>
+      </div>
+      <el-input
+        class="input-wrapper"
+        ref="inputWrapper"
+        v-show="isEdit"
+        v-model="inputValue"
+        @input="handlerToChangeInput"
+        @blur="handlerToBlur"
+        :style="{...styleInputData}"
+        ></el-input>
     </div>
-    <el-input
-      class="input-wrapper"
-      ref="inputWrapper"
-      v-show="isEdit"
-      v-model="inputValue"
-      @input="handlerToChangeInput"
-      @blur="handlerToBlur"
-      :style="{...styleInputData}"
-      ></el-input>
-      <!-- <div v-show="isShowFormat" :style="{...styleFormatData}" class="format-item-content">
-        <div class="format-item-content-row" v-for="(item, index) in formatContent" :key>{{ item }}</div>
-      </div> -->
+    <ParamsList v-show="bodyType !== 'json'" ref="paramsComp" />
   </div>
 </template>
 
 <script>
+import ParamsList from './paramsList.vue'
 export default {
+  components: {
+    ParamsList
+  },
   data() {
     return {
+      bodyType: 'form-data',
       rptOptions: [':', ','],
       lineList: 1,
       lineData: [],
@@ -57,7 +68,8 @@ export default {
       styleFormatData: {
         left: '',
         top: ''
-      }
+      },
+      bodyParams: {}
     }
   },
   mounted() {
@@ -126,7 +138,7 @@ export default {
       return Math.random().toString(16).substring(3, 30);
     },
     initClick(e) {
-      const list = ['right-writable-content', 'line-data-item', 'el-input__inner']
+      const list = ['right-writable-content', 'line-data-item', 'el-input__inner', 'bodys-list']
       const className = e.target.className
       const isHav = list.some(item => item === className)
       if (!isHav) {
@@ -156,14 +168,6 @@ export default {
       }
       return cursorPos;
     },
-    // formatContentByInput(data) {
-    //   // const dataNew =
-    //   if (this.semicolonList.length === 0 && this.commaList.length === 0) {
-    //     this.formatContent.push('"' + data + '"')
-    //   } else {
-    //     this.formatContent.push(data)
-    //   }
-    // },
     setListner(e) {
       this.isEmptyLine = (this.currentLineData.content === "" || !this.currentLineData.content) && (!this.currentLineData.indentCount || this.currentLineData.indentCount === 0)
       if (e.code === 'AltLeft') {
@@ -379,11 +383,6 @@ export default {
             indentCount: Math.ceil((str.length - newStr.length - 1) / 2) + this.currentLineData.indentCount
           })
           str = ''
-          // lineData.push({ 
-          //   id: this.getId(),
-          //   content: txt,
-          //   indentCount: this.currentLineData.indentCount
-          // })
         } else if ([']', '}'].includes(txt)) {
           const newStr = str.replaceAll(' ', '')
           lineData.push({
@@ -401,7 +400,6 @@ export default {
           }
         } else if ([','].includes(txt)) {
           if (str !== '') {
-            console.log(str, 131231313131)
             const newStr = str.replaceAll(' ', '')
             lineData.push({
               id: this.getId(),
@@ -426,31 +424,12 @@ export default {
         this.isControl = false
         this.isCopy = false
         this.isEdit = false
-      console.log(lineData)
-      // try {
-      //   const jsonData = JSON.parse(text)
-      //   const newData = this.formatterJSONData(jsonData, this.currentLineData)
-      //   const contentIdx = this.lineData.findIndex(item => item.id === this.currentLineData.id);
-      //   if (this.lineData.length > 1) {
-      //     const beforeLineData = this.lineData.filter((_, index) => index <= contentIdx)
-      //     const afterLineData = this.lineData.filter((_, index) => index > contentIdx)
-      //     this.lineData = [...beforeLineData, ...newData, ...afterLineData]
-      //   } else {
-      //     this.lineData.push(...newData)
-      //   }
-      //   this.lineList = this.lineData.length
-      //   this.isControl = false
-      //   this.isCopy = false
-      //   this.isEdit = false
-      // } catch (error) {
-      //   console.log(error)
-      //   this.inputValue += text
-      // }
     },
     selectAllData() {
       this.isSelectAll = true
     },
     keyUpListener(e) {
+      console.log(e)
       e.preventDefault();
       if (e.code === 'Enter') {
         this.addLine()
@@ -531,6 +510,13 @@ export default {
       }
       return jsonData
     },
+    getBodyData(params) {
+      this.$refs.paramsComp.tableData = params.bodyParams;
+      this.bodyType = params.bodyType === 'json' ? 'form-data' : params.bodyType
+    },
+    handlerToChange(val) {
+      this.$emit('changeBodyType', val)
+    }
   }
 }
 </script>

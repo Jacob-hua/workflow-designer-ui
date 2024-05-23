@@ -3,10 +3,11 @@
     title="编辑"
     :visible.sync="dialogVisible"
     width="30%">
-    <el-input v-model="modelVal"></el-input>
+    <label style="color: #fff">接口名称：</label>
+    <el-input v-model="modelVal" style="width: 80%"></el-input>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
       <el-button type="primary" @click="handlerToClick" size="mini">确 定</el-button>
+      <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
     </span>
   </el-dialog>
 </template>
