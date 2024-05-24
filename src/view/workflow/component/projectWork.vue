@@ -250,7 +250,7 @@ export default {
   display: grid;
   align-items: center;
   grid-auto-flow: column;
-  grid-template-columns: 5fr 3fr 1fr;
+  grid-template-columns: 8fr 3fr 1fr;
 
   .el-form {
     display: flex;

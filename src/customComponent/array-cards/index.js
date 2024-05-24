@@ -168,7 +168,7 @@ const ArrayCardsInner = observer(
 
         const renderAddition = () => {
           return schema.reduceProperties((addition, schema, key) => {
-            if (isAdditionComponent(schema)) {
+            if (isAdditionComponent(schema) && props.addable) {
               return h(
                 RecursionField,
                 {
