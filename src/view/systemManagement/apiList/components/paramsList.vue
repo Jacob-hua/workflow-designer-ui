@@ -12,9 +12,9 @@
             class="table-data-item-col"
             :style="{ width: col.width }"
             >
-            <div class="table-data-item-value-st" v-if="!getList(tb[col.value])" @click="handlerToClick($event, tb, col.value)">{{ tb[col.value] }}</div>
+            <div class="table-data-item-value-st" v-if="!getList(tb[col.value])" @click="handlerToClick($event, tb, col.value)">{{ getFormatter(tb[col.value], col.value) }}</div>
             <div v-if="col.value === 'paramValue' && getList(tb[col.value])" class="table-item-params-value">
-              <div class="table-item-params-value-item" @click="handlerToClickValue($event, tb, vl, vlIdx)" v-for="(vl, vlIdx) in tb[col.value]">
+              <div class="table-item-params-value-item" @click="handlerToClickValue($event, tb, vl, col.value, vlIdx)" v-for="(vl, vlIdx) in tb[col.value]">
                 {{ vl }}
                 <span class="right-opt" v-if="tb['paramType'] === 'list'">
                   <i class="el-icon-plus" @click.stop="handlerToAddValueData(tb[col.value], index)"></i>
@@ -69,10 +69,10 @@ export default {
       currentIndex: null,
       tableTitle: [
         { label: '参数名', value: 'paramName', width: '20%' },
+        { label: '取值方式', value: 'paramSource', width: '15%' },
         { label: '类型', value: 'paramType', width: '10%' },
         { label: '参数值', value: 'paramValue', width: '20%' },
         { label: '说明', value: 'paramsDes', width: '25%' },
-        { label: '取值方式', value: 'paramSource', width: '15%' },
         { label: '操作', value: 'paramsOperation', width: '10%' },
       ],
       tableData: [],
@@ -104,10 +104,19 @@ export default {
       }
       if (val === 'paramSource') {
         return [
-          { label: 'fixed', value: 'fixed' },
-          { label: 'variable', value: 'variable' }
+          { label: '固定值', value: 'fixed' },
+          { label: '变量值', value: 'variable' }
         ]
       }
+    },
+    getFormatter: () => (val, type) => {
+      if (type === 'paramSource') {
+        return [
+          { label: '固定值', value: 'fixed' },
+          { label: '变量值', value: 'variable' }
+        ].filter(item => item.value === val)[0]?.label ?? ''
+      }
+      return val
     },
     getList: () => (val) => {
       return Object.prototype.toString.call(val) === '[object Array]'
@@ -149,9 +158,8 @@ export default {
       }
       this.inputFocus();
     },
-    handlerToClickValue(e, row, value, index) {
-      if (e.target) {}
-      console.log(e)
+    handlerToClickValue(e, row, value, key, index) {
+      if (row.paramSource === 'variable' && key === 'paramValue') return;
       const { width, left, top } = e.target.getBoundingClientRect()
       this.currentType = 'paramValue'
       this.currentRow = row
@@ -174,7 +182,12 @@ export default {
     },
     handlerToChangeSelect() {
       this.currentRow[this.currentType] = this.selectValue
-      this.currentRow.paramValue = ['']
+      if (this.currentType === 'paramType') {
+        this.currentRow.paramValue = ['']
+      }
+      if (this.selectValue === 'variable') {
+        this.currentRow.paramValue = ['']
+      }
     },
     handlerToBlur() {
       setTimeout(() => {
@@ -250,7 +263,7 @@ export default {
           border-bottom: hidden;
         }
         .table-data-item-col {
-          min-height: 30px;
+          min-height: 32px;
           border-right: 1px solid #333333;
           box-sizing: border-box;
           &:hover {

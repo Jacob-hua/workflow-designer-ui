@@ -18,9 +18,10 @@
             <i v-show="currentIdx !== index" class="el-icon-caret-right"></i>
             <i v-show="currentIdx === index" class="el-icon-caret-bottom"></i>
             <!-- <span class="inline-st">{{ item.apiGroupName }}</span> -->
-            <el-tooltip class="inline-st" effect="dark" :content="item.apiGroupName" placement="top">
+            <el-tooltip v-if="item.apiGroupName.length > 12" :open-delay="300" class="inline-st" effect="dark" :content="item.apiGroupName" placement="top">
               <span>{{item.apiGroupName}}</span>
             </el-tooltip>
+            <span v-else class="inline-st">{{item.apiGroupName}}</span>
             <i class="el-icon-more more-icon" @click.stop="handlerToOperate($event, index, item, 'parent')"></i>
           </div>
           <div class="inner-content" v-if="currentIdx === index">
@@ -33,7 +34,7 @@
               <span>{{ ps.requestName }}</span>
               <i class="el-icon-more more-icon" @click.stop="handlerToOperate($event, idx, ps, 'children')"></i>
             </div>
-            <div v-show="!innerTableData.length" class="no-data">暂无数据</div>
+            <!-- <div v-show="!innerTableData.length" class="no-data">暂无数据</div> -->
           </div>
         </div>
       </div>
@@ -90,7 +91,7 @@
         </div>
         <el-input
           class="response-content-input"
-          :autosize="{ minRows: 10, maxRows: 10}"
+          :autosize="true"
           type="textarea"
           readonly
           v-model="response"
@@ -204,6 +205,7 @@ export default {
       }
     },
     async _getApiList(params) {
+      this.innerTableData = [];
       const result = await getApiList(params).catch(err => {
         this.$message.error(err.msg)
       })
@@ -217,6 +219,11 @@ export default {
       })
       if (result?.code === '200') {
         this.$message.success('接口保存成功')
+        // this._getApiList({
+        //   limit: 10000,
+        //   page: 1,
+        //   requestGroup: this.tableData[this.currentIdx].apiGroupId
+        // });
       }
     },
     async _updateApiItem(params) {
@@ -242,7 +249,8 @@ export default {
     },
     async _getApiResponse(params) {
       const result = await getApiResponse(params)
-      this.response = JSON.stringify(result)
+      let jsonStr = JSON.stringify(result, null, 4)
+      this.response = jsonStr
     },
     initClick(e) {
       const list = ['tooltip-at-st-item']
@@ -255,11 +263,47 @@ export default {
     },
     handlerToSendApi() {
       const datas = this.innerTableData[this.currentInnerIdx]
+      const bodyData = {}
+      const headerData = {}
+      const paramData = {}
+      datas.requestParams.bodyParams.forEach(item => {
+        if (item.paramType === 'string') {
+          bodyData[item.paramName] = typeof item.paramValue === 'object' ? item.paramValue[0] : item.paramValue
+        } else if (item.paramType === 'number') {
+          bodyData[item.paramName] = typeof item.paramValue === 'object' ? Number(item.paramValue[0]) : Number(item.paramValue)
+        } else if (item.paramType === 'bool') {
+          bodyData[item.paramName] = typeof item.paramValue === 'object' ? (item.paramValue[0] === 'true') : (item.paramValue === 'true')
+        } else {
+          bodyData[item.paramName] = item.paramValue
+        }
+      })
+      datas.requestHeaders.forEach(item => {
+        if (item.headerType === 'string') {
+          headerData[item.headerName] = item.headerValue
+        } else if (item.headerType === 'number') {
+          headerData[item.headerName] = Number(item.headerValue)
+        } else if (item.headerType === 'bool') {
+          headerData[item.headerName] = item.headerValue === 'true'
+        }
+      })
+      datas.requestParams.queryStringParams.forEach(item => {
+        if (item.paramType === 'string') {
+          paramData[item.paramName] = typeof item.paramValue === 'object' ? item.paramValue[0] : item.paramValue
+        } else if (item.paramType === 'number') {
+          paramData[item.paramName] = typeof item.paramValue === 'object' ? Number(item.paramValue[0]) : Number(item.paramValue)
+        } else if (item.paramType === 'bool') {
+          paramData[item.paramName] = typeof item.paramValue === 'object' ? (item.paramValue[0] === 'true') : (item.paramValue === 'true')
+        } else {
+          paramData[item.paramName] = item.paramValue
+        }
+      })
       this._getApiResponse({
-        "apiId": datas.apiId,
-        "groupId": datas.requestGroup,
-        "requestHeaderData": datas.requestHeaders,
-        "requestParamData": datas.requestParams
+        "bodyType": datas.requestParams.bodyType,
+        "requestAddr": datas.requestAddr,
+        "requestBodyData": bodyData,
+        "requestHeaderData": headerData,
+        "requestQueryData": paramData,
+        "requestWay": datas.requestWay
       })
     },
     handlerToSaveApi() {
@@ -290,6 +334,7 @@ export default {
         page: 1,
         requestGroup: data.apiGroupId
       })
+      this.response = ''
     },
     handleInnerNodeClick(index, data) {
       this.currentInnerIdx = index
@@ -307,6 +352,7 @@ export default {
           bodyParams: this.innerTableData[this.currentInnerIdx].requestParams.bodyParams,
           bodyType: this.innerTableData[this.currentInnerIdx].requestParams.bodyType
         })
+        this.response = ''
       }, 20);
     },
     handlerToOperate(e, index, data, type) {
@@ -346,20 +392,32 @@ export default {
         }
       } else if (data.value === 'delete') {
         if (this.hoverIdx !== null) {
-          this._deleteGroupItem({
-            apiGroupId: this.tableData[this.hoverIdx].apiGroupId
+          this.$confirm(`是否确定删除${this.tableData[this.hoverIdx].apiGroupName}`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this._deleteGroupItem({
+              apiGroupId: this.tableData[this.hoverIdx].apiGroupId
+            })
           })
         }
         if (this.innerHoverIdx !== null) {
-          this._deleteApiItem({
-            apiId: this.innerTableData[this.innerHoverIdx].apiId
+          this.$confirm(`是否确定删除${this.innerTableData[this.innerHoverIdx].requestName}`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this._deleteApiItem({
+                apiId: this.innerTableData[this.innerHoverIdx].apiId
+              })
           })
         }
       } else if (data.value === 'add') {
         if (this.hoverIdx !== null) {
           this.$refs.addApiDom.handlerToOpenClose();
           this.currentIdx = this.hoverIdx
-          this.innerTableData = []
+          // this.innerTableData = []
         }
       }
       // else if (data.value === 'add' && this.hoverIdx !== null) {
@@ -416,6 +474,10 @@ export default {
         "requestWay": "",
         "tenantId": ""
       })
+      setTimeout(() => {
+        this.currentInnerIdx = this.innerTableData.length - 1
+        this.handleInnerNodeClick(this.currentInnerIdx, this.innerTableData[this.currentInnerIdx])
+      }, 20)
     },
     handlerToAddParamsStData() {
       this.paramsStData.push({
@@ -473,6 +535,7 @@ export default {
         margin-top: 5px;
         margin-right: 10px;
         font-size: 18px;
+        cursor: pointer;
       }
     }
     .table-content {
@@ -582,6 +645,11 @@ export default {
           width: 100px;
           background-color: #212739;
           color: #fff;
+        }
+        ::v-deep .el-input-group__prepend {
+          background-color: #212739 !important;
+          border: 1px solid #333333;
+          box-sizing: border-box;
         }
       }
     }

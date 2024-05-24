@@ -12,7 +12,7 @@
               class="table-data-item-col"
               :style="{ width: col.width }"
               @click="handlerToClick($event, tb, col.value)"
-              >{{ tb[col.value] }}</div>
+              >{{ getFormatter(tb[col.value], col.value) }}</div>
             <div class="operation-table-item" style="width: 10%">
               <i class="el-icon-remove-outline" @click="handerToDelete(index)"></i>
             </div>
@@ -57,10 +57,10 @@
         currentRow: {},
         tableTitle: [
           { label: '参数名', value: 'headerName', width: '20%' },
+          { label: '取值方式', value: 'headerSource', width: '15%' },
           { label: '类型', value: 'headerType', width: '10%' },
           { label: '参数值', value: 'headerValue', width: '20%' },
           { label: '说明', value: 'paramsDes', width: '25%' },
-          { label: '取值方式', value: 'headerSource', width: '15%' },
           { label: '操作', value: 'paramsOperation', width: '10%' },
         ],
         tableData: [],
@@ -90,10 +90,19 @@
         }
         if (val === 'headerSource') {
           return [
-            { label: 'fixed', value: 'fixed' },
-            { label: 'variable', value: 'variable' }
+            { label: '固定值', value: 'fixed' },
+            { label: '变量值', value: 'variable' }
           ]
         }
+      },
+      getFormatter: () => (val, type) => {
+        if (type === 'headerSource') {
+          return [
+            { label: '固定值', value: 'fixed' },
+            { label: '变量值', value: 'variable' }
+          ].filter(item => item.value === val)[0]?.label ?? ''
+        }
+        return val
       }
     },
     methods: {
@@ -106,6 +115,7 @@
         }
       },
       handlerToClick(e, value, key) {
+        if (value.headerSource === 'variable' && key === 'headerValue') return;
         const { width, left, top } = e.target.getBoundingClientRect()
         this.currentRow = value
         this.currentType = key
@@ -128,6 +138,9 @@
       },
       handlerToChangeSelect() {
         this.currentRow[this.currentType] = this.selectValue
+        if (this.selectValue === 'variable') {
+          this.currentRow.headerValue = ''
+        }
       },
       handlerToBlur() {
         setTimeout(() => {

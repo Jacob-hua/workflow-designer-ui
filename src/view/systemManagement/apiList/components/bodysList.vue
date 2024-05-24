@@ -7,7 +7,7 @@
         <el-radio-button label="json"></el-radio-button>
       </el-radio-group>
     </div>
-    <div v-show="bodyType === 'json'" class="bodys-list" ref="parentDom" @click="handlerToChoose($event, 0)">
+    <div v-show="false" class="bodys-list" ref="parentDom" @click="handlerToChoose($event, 0)">
       <div class="left-index-line" :style="{ height: `${lineList * 24}px` }">
         <div class="left-index-line-item" v-for="index in lineList" :key="index">{{ index }}</div>
       </div>
@@ -31,7 +31,7 @@
         :style="{...styleInputData}"
         ></el-input>
     </div>
-    <ParamsList v-show="bodyType !== 'json'" ref="paramsComp" />
+    <ParamsList v-show="true" ref="paramsComp" />
   </div>
 </template>
 
@@ -512,7 +512,7 @@ export default {
     },
     getBodyData(params) {
       this.$refs.paramsComp.tableData = params.bodyParams;
-      this.bodyType = params.bodyType === 'json' ? 'form-data' : params.bodyType
+      this.bodyType = params.bodyType;
     },
     handlerToChange(val) {
       this.$emit('changeBodyType', val)
