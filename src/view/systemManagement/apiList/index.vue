@@ -1,7 +1,10 @@
 <template>
   <div class="api-list">
     <div class="left-content">
-      <div class="left-content-title">接口列表</div>
+      <div class="left-content-title">
+        <span>接口列表</span>
+        <i class="el-icon-plus" @click.stop="handlerToOperate($event, null, null, 'grandParent')"></i>
+      </div>
       <div class="table-content">
         <div
           :class="['table-content-item']"
@@ -14,12 +17,16 @@
           >
             <i v-show="currentIdx !== index" class="el-icon-caret-right"></i>
             <i v-show="currentIdx === index" class="el-icon-caret-bottom"></i>
-            <span>{{ item.apiGroupName }}</span>
+            <!-- <span class="inline-st">{{ item.apiGroupName }}</span> -->
+            <el-tooltip v-if="item.apiGroupName.length > 12" :open-delay="300" class="inline-st" effect="dark" :content="item.apiGroupName" placement="top">
+              <span>{{item.apiGroupName}}</span>
+            </el-tooltip>
+            <span v-else class="inline-st">{{item.apiGroupName}}</span>
             <i class="el-icon-more more-icon" @click.stop="handlerToOperate($event, index, item, 'parent')"></i>
           </div>
           <div class="inner-content" v-if="currentIdx === index">
             <div
-              :class="['inner-content-item', currentInnerIdx === idx || innerHoverIdx === idx ? 'active' : '']"
+              :class="['inner-content-item', currentInnerIdx === idx ? 'active' : '']"
               v-for="(ps, idx) in innerTableData"
               :key="idx"
               @click.stop="handleInnerNodeClick(idx, ps)"
@@ -27,38 +34,34 @@
               <span>{{ ps.requestName }}</span>
               <i class="el-icon-more more-icon" @click.stop="handlerToOperate($event, idx, ps, 'children')"></i>
             </div>
+            <!-- <div v-show="!innerTableData.length" class="no-data">暂无数据</div> -->
           </div>
         </div>
       </div>
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :total="page.total">
-      </el-pagination>
     </div>
-    <div class="right-content">
+    <div class="right-content" v-if="currentInnerIdx !== null">
       <div class="top-input-method">
         <el-input placeholder="请输入内容" v-model="searchApi" class="input-with-select" size="mini">
           <el-select v-model="methodType" slot="prepend" placeholder="请选择" size="mini" class="prepend-select">
-            <el-option label="GET" value="GET"></el-option>
-            <el-option label="POST" value="POST"></el-option>
-            <el-option label="PUT" value="PUT"></el-option>
-            <el-option label="DELETE" value="DELETE"></el-option>
+            <el-option label="GET" value="get"></el-option>
+            <el-option label="POST" value="post"></el-option>
+            <el-option label="PUT" value="put"></el-option>
+            <el-option label="DELETE" value="delete"></el-option>
           </el-select>
         </el-input>
         <el-button size="mini" type="primary" style="margin-left: 10px;" @click="handlerToSendApi">发送</el-button>
-        <el-button size="mini" type="primary" style="margin-left: 10px;" @click="handlerToSendApi">保存</el-button>
+        <el-button size="mini" type="primary" style="margin-left: 10px;" @click="handlerToSaveApi">保存</el-button>
       </div>
       <div class="tab-params-list">
         <el-tabs v-model="activeName" @tab-click="handleClick" size="mini">
           <el-tab-pane label="请求头" name="headers">
-            <headers-list></headers-list>
+            <headers-list ref="headersCom"></headers-list>
           </el-tab-pane>
           <el-tab-pane label="参数" name="params">
-            <params-list></params-list>
+            <params-list ref="paramsCom"></params-list>
           </el-tab-pane>
           <el-tab-pane label="请求体" name="body">
-            <bodys-list></bodys-list>
+            <bodys-list ref="bodysCom" @changeBodyType="changeBodyType"></bodys-list>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -75,9 +78,9 @@
           >
             <span>{{ index + 1 }}.</span>
             <span>参数key</span>
-            <el-input size="mini" v-model="item.key" style="width: 150px;" placeholder=""></el-input>
+            <el-input size="mini" v-model="item.resultName" style="width: 150px;" placeholder=""></el-input>
             <span>参数value</span>
-            <el-input size="mini" v-model="item.value" style="width: 150px;" placeholder=""></el-input>
+            <el-input size="mini" v-model="item.resultField" style="width: 150px;" placeholder=""></el-input>
             <i class="el-icon-remove-outline" @click="handlerToDeleteItem(index)"></i>
           </div>
         </div>
@@ -88,7 +91,7 @@
         </div>
         <el-input
           class="response-content-input"
-          :autosize="{ minRows: 10, maxRows: 10}"
+          :autosize="true"
           type="textarea"
           readonly
           v-model="response"
@@ -99,35 +102,44 @@
       <div class="tooltip-at-st-item" v-for="(item, index) in tooltipData" :key="index" @click="handlerToSet(item)">{{ item.key }}</div>
     </div>
     <EditDialog ref="editDom" @changeName="changeName" />
+    <AddGroupDialog ref="addGroupDom" @addGroup="addGroup" />
+    <AddApiDialog ref="addApiDom" @addApi="addApi" />
   </div>
 </template>
 
 <script>
+import {
+  getGroupList,
+  addGroupItem,
+  editGroupItem,
+  deleteGroupItem,
+  getApiList,
+  getApiResponse,
+  updateApiItem,
+  addApiList,
+  deleteApiItem } from '@/api/systemManagement.js';
 import ParamsList from './components/paramsList.vue'
 import HeadersList from './components/headersList.vue'
 import BodysList from './components/bodysList.vue'
 import EditDialog from './components/editDialog.vue'
+import AddGroupDialog from './components/addGroupDialog.vue'
+import AddApiDialog from './components/addApiDialog.vue'
 export default {
   components: {
     ParamsList,
     HeadersList,
     BodysList,
-    EditDialog
+    EditDialog,
+    AddGroupDialog,
+    AddApiDialog
   },
   data() {
     return {
       searchApi: '',
-      methodType: 'GET',
+      methodType: 'get',
       activeName: 'headers',
-      tableData: [
-        { apiGroupName: '123', apiGroupId: '11111', apiGroupParentId: '-1', children: [] },
-        { apiGroupName: '1234', apiGroupId: '111111', apiGroupParentId: '-1', children: [] },
-        { apiGroupName: '1235', apiGroupId: '111111', apiGroupParentId: '-1', children: [] }
-      ],
-      innerTableData: [
-        { requestName: '测试接口1' },
-        { requestName: '测试接口2' }
-      ],
+      tableData: [],
+      innerTableData: [],
       currentIdx: null,
       hoverIdx: null,
       innerHoverIdx: null,
@@ -138,600 +150,11 @@ export default {
         top: 0,
         left: 0
       },
-      page: {
-        size: 10,
-        number: 1,
-        total: 10
-      },
-      response: `
-      {
-        "code": "200",
-        "msg": "操作成功",
-        "data": {
-          "id": "2",
-          "name": "康明斯项目-智慧运维",
-          "parentId": "-1",
-          "sortNum": null,
-          "remark": "智慧运维",
-          "abbre": "zhyw",
-          "bindRelId": "",
-          "startFormVersionId": "",
-          "businessType": "2",
-          "childrenList": [
-            {
-              "id": "3",
-              "name": "周期性",
-              "parentId": "2",
-              "sortNum": null,
-              "remark": "周期性",
-              "abbre": "zq",
-              "bindRelId": "",
-              "startFormVersionId": "",
-              "businessType": "1",
-              "childrenList": [
-                {
-                  "id": "1771340944120758274",
-                  "name": "巡检",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1783387044411396098",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1773166998625198081",
-                  "name": "测试周期性",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1782313793161625601",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1773174390427492353",
-                  "name": "测试01",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1783387252016861186",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1778588481265401858",
-                  "name": "测试03-03",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1783011704405049346",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990186340353",
-                  "name": "测试知识库组件",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1783316731447271426",
-                  "startFormVersionId": "1773183641199841282",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990119231490",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1783766173212332034",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990186340354",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990370889730",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1783317417127895042",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990307975170",
-                  "name": "21",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990245060610",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990119231491",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1782977365558509569",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990186340355",
-                  "name": "1212",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1784413319406116865",
-                  "startFormVersionId": "1773183641199841282",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990370889731",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990307975171",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990245060611",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990119231492",
-                  "name": "1212",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990186340356",
-                  "name": "21",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990370889732",
-                  "name": "211",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990307975172",
-                  "name": "21",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990245060612",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990119231493",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990370889733",
-                  "name": "21",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990245060613",
-                  "name": "12",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782972990370889734",
-                  "name": "2",
-                  "parentId": "3",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1783299425384071175",
-                  "startFormVersionId": "",
-                  "businessType": "1",
-                  "childrenList": []
-                }
-              ]
-            },
-            {
-              "id": "4",
-              "name": "非周期性",
-              "parentId": "2",
-              "sortNum": null,
-              "remark": "非周期性",
-              "abbre": "fzq",
-              "bindRelId": "",
-              "startFormVersionId": "",
-              "businessType": "2",
-              "childrenList": [
-                {
-                  "id": "1771412698545549314",
-                  "name": "抢修",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "2",
-                  "childrenList": [
-                    {
-                      "id": "1771412789113131009",
-                      "name": "抢修车间1",
-                      "parentId": "1771412698545549314",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "1783374159664705537",
-                      "startFormVersionId": "",
-                      "businessType": "2",
-                      "childrenList": []
-                    },
-                    {
-                      "id": "1783762947788361729",
-                      "name": "抢修车间2",
-                      "parentId": "1771412698545549314",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "1784750484111564802",
-                      "startFormVersionId": "1783755971612172291",
-                      "businessType": "2",
-                      "childrenList": []
-                    },
-                    {
-                      "id": "1785132742262968322",
-                      "name": "抢修车间3",
-                      "parentId": "1771412698545549314",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "1785133618511794178",
-                      "startFormVersionId": "1785129773756878849",
-                      "businessType": "2",
-                      "childrenList": []
-                    }
-                  ]
-                },
-                {
-                  "id": "1773166998654558209",
-                  "name": "测试非周期性",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1782313828733517826",
-                  "startFormVersionId": "",
-                  "businessType": "2",
-                  "childrenList": []
-                },
-                {
-                  "id": "1780480896189636609",
-                  "name": "测试串并行条件",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1782966745991852034",
-                  "startFormVersionId": "",
-                  "businessType": "2",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782973245036445697",
-                  "name": "测试一下",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "2",
-                  "childrenList": []
-                },
-                {
-                  "id": "1782973245036445698",
-                  "name": "121",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1784488397682589698",
-                  "startFormVersionId": "",
-                  "businessType": "2",
-                  "childrenList": [
-                    {
-                      "id": "1785188106681503746",
-                      "name": "抢修1",
-                      "parentId": "1782973245036445698",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "",
-                      "startFormVersionId": "",
-                      "businessType": "2",
-                      "childrenList": []
-                    }
-                  ]
-                },
-                {
-                  "id": "1782978931631931393",
-                  "name": "测试打卡",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1783049560699801602",
-                  "startFormVersionId": "1777169089000374274",
-                  "businessType": "2",
-                  "childrenList": []
-                },
-                {
-                  "id": "1783757788609892353",
-                  "name": "H-测试-H",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "1784414604050128897",
-                  "startFormVersionId": "",
-                  "businessType": "2",
-                  "childrenList": []
-                },
-                {
-                  "id": "1788089495311953922",
-                  "name": "陕汽",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "2",
-                  "childrenList": [
-                    {
-                      "id": "1788090846209191937",
-                      "name": "蒸汽系统",
-                      "parentId": "1788089495311953922",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "",
-                      "startFormVersionId": "",
-                      "businessType": "2",
-                      "childrenList": []
-                    },
-                    {
-                      "id": "1788090846146277377",
-                      "name": "天然气系统",
-                      "parentId": "1788089495311953922",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "",
-                      "startFormVersionId": "",
-                      "businessType": "2",
-                      "childrenList": []
-                    },
-                    {
-                      "id": "1788090846272106498",
-                      "name": "配电系统",
-                      "parentId": "1788089495311953922",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "",
-                      "startFormVersionId": "",
-                      "businessType": "2",
-                      "childrenList": []
-                    },
-                    {
-                      "id": "1788090846209191938",
-                      "name": "空压系统",
-                      "parentId": "1788089495311953922",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "",
-                      "startFormVersionId": "",
-                      "businessType": "2",
-                      "childrenList": []
-                    },
-                    {
-                      "id": "1788090846146277378",
-                      "name": "污水系统",
-                      "parentId": "1788089495311953922",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "",
-                      "startFormVersionId": "",
-                      "businessType": "2",
-                      "childrenList": []
-                    },
-                    {
-                      "id": "1788090846146277379",
-                      "name": "自来水系统",
-                      "parentId": "1788089495311953922",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "",
-                      "startFormVersionId": "",
-                      "businessType": "2",
-                      "childrenList": []
-                    },
-                    {
-                      "id": "1788090846146277380",
-                      "name": "空调/采暖系统",
-                      "parentId": "1788089495311953922",
-                      "sortNum": null,
-                      "remark": "",
-                      "abbre": "",
-                      "bindRelId": "",
-                      "startFormVersionId": "",
-                      "businessType": "2",
-                      "childrenList": []
-                    }
-                  ]
-                },
-                {
-                  "id": "1788089495311953923",
-                  "name": "test1",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "2",
-                  "childrenList": []
-                },
-                {
-                  "id": "1791277036761800706",
-                  "name": "测试组件",
-                  "parentId": "4",
-                  "sortNum": null,
-                  "remark": "",
-                  "abbre": "",
-                  "bindRelId": "",
-                  "startFormVersionId": "",
-                  "businessType": "2",
-                  "childrenList": []
-                }
-              ]
-            }
-          ]
-        }
-      }
-      `
+      response: ''
     }
+  },
+  created() {
+    this._getGroupList()
   },
   mounted() {
     window.addEventListener('click', this.initClick)
@@ -739,9 +162,98 @@ export default {
   beforeDestroy() {
     window.removeEventListener('click', this.initClick)
   },
+  watch: {
+    searchApi(newV) {
+      // this.methodType = this.innerTableData[this.currentInnerIdx].requestWay
+      // this.searchApi = this.innerTableData[this.currentInnerIdx].requestAddr
+      this.innerTableData[this.currentInnerIdx].requestAddr = newV
+    },
+    methodType(newV) {
+      this.innerTableData[this.currentInnerIdx].requestWay = newV
+    }
+  },
   methods: {
+    async _getGroupList() {
+      const result = await getGroupList({
+        limit: 10000,
+        page: 1
+      }).catch(err => {
+        this.$message.error(err.msg)
+      })
+      if (result?.code === '200') {
+        this.tableData = result.data.dataList
+      }
+    },
+    async _addGroupItem(params) {
+      const result = await addGroupItem(params).catch(err => { this.$message.error(err.msg) })
+      if (result?.code === '200') {
+        this.$message.success('分组添加成功')
+        this._getGroupList()
+      }
+    },
+    async _editGroupItem(params) {
+      const result = await editGroupItem(params).catch(err => { this.$message.error(err.msg) })
+      if (result?.code === '200') {
+        this.$message.success('分组编辑成功')
+      }
+    },
+    async _deleteGroupItem(params) {
+      const result = await deleteGroupItem(params).catch(err => { this.$message.error(err.msg) })
+      if (result?.code === '200') {
+        this.$message.success('分组删除成功')
+        this._getGroupList()
+      }
+    },
+    async _getApiList(params) {
+      this.innerTableData = [];
+      const result = await getApiList(params).catch(err => {
+        this.$message.error(err.msg)
+      })
+      if (result?.code === '200') {
+        this.innerTableData = result.data.dataList
+      }
+    },
+    async _addApiList(params) {
+      const result = await addApiList(params).catch(err => {
+        this.$message.error(err.msg)
+      })
+      if (result?.code === '200') {
+        this.$message.success('接口保存成功')
+        // this._getApiList({
+        //   limit: 10000,
+        //   page: 1,
+        //   requestGroup: this.tableData[this.currentIdx].apiGroupId
+        // });
+      }
+    },
+    async _updateApiItem(params) {
+      const result = await updateApiItem(params).catch(err => {
+        this.$message.error(err.msg)
+      })
+      if (result?.code === '200') {
+        this.$message.success('接口编辑成功')
+      }
+    },
+    async _deleteApiItem(params) {
+      const result = await deleteApiItem(params).catch(err => {
+        this.$message.error(err.msg)
+      })
+      if (result?.code === '200') {
+        this.$message.success('接口删除成功')
+        this._getApiList({
+          limit: 10000,
+          page: 1,
+          requestGroup: this.tableData[this.currentIdx].apiGroupId
+        })
+      }
+    },
+    async _getApiResponse(params) {
+      const result = await getApiResponse(params)
+      let jsonStr = JSON.stringify(result, null, 4)
+      this.response = jsonStr
+    },
     initClick(e) {
-      const list = ['el-icon-more more-icon', 'tooltip-at-st-item']
+      const list = ['tooltip-at-st-item']
       if (!list.includes(e.target.className)) {
         this.tooltipStyle = { left: 0, top: 0 }
         this.tooltipData = []
@@ -750,20 +262,105 @@ export default {
       }
     },
     handlerToSendApi() {
-      console.log(this.searchApi, this.methodType)
+      const datas = this.innerTableData[this.currentInnerIdx]
+      const bodyData = {}
+      const headerData = {}
+      const paramData = {}
+      datas.requestParams.bodyParams.forEach(item => {
+        if (item.paramType === 'string') {
+          bodyData[item.paramName] = typeof item.paramValue === 'object' ? item.paramValue[0] : item.paramValue
+        } else if (item.paramType === 'number') {
+          bodyData[item.paramName] = typeof item.paramValue === 'object' ? Number(item.paramValue[0]) : Number(item.paramValue)
+        } else if (item.paramType === 'bool') {
+          bodyData[item.paramName] = typeof item.paramValue === 'object' ? (item.paramValue[0] === 'true') : (item.paramValue === 'true')
+        } else {
+          bodyData[item.paramName] = item.paramValue
+        }
+      })
+      datas.requestHeaders.forEach(item => {
+        if (item.headerType === 'string') {
+          headerData[item.headerName] = item.headerValue
+        } else if (item.headerType === 'number') {
+          headerData[item.headerName] = Number(item.headerValue)
+        } else if (item.headerType === 'bool') {
+          headerData[item.headerName] = item.headerValue === 'true'
+        }
+      })
+      datas.requestParams.queryStringParams.forEach(item => {
+        if (item.paramType === 'string') {
+          paramData[item.paramName] = typeof item.paramValue === 'object' ? item.paramValue[0] : item.paramValue
+        } else if (item.paramType === 'number') {
+          paramData[item.paramName] = typeof item.paramValue === 'object' ? Number(item.paramValue[0]) : Number(item.paramValue)
+        } else if (item.paramType === 'bool') {
+          paramData[item.paramName] = typeof item.paramValue === 'object' ? (item.paramValue[0] === 'true') : (item.paramValue === 'true')
+        } else {
+          paramData[item.paramName] = item.paramValue
+        }
+      })
+      this._getApiResponse({
+        "bodyType": datas.requestParams.bodyType,
+        "requestAddr": datas.requestAddr,
+        "requestBodyData": bodyData,
+        "requestHeaderData": headerData,
+        "requestQueryData": paramData,
+        "requestWay": datas.requestWay
+      })
+    },
+    handlerToSaveApi() {
+      const data = this.innerTableData[this.currentInnerIdx]
+      if (data.apiId === '') {
+        this._addApiList({
+          ...data
+        })
+      } else {
+        this._updateApiItem({
+          ...data
+        }) 
+      }
     },
     handleClick() {
       console.log(this.activeName)
     },
     handleNodeClick(index, data) {
+      if (index === this.currentIdx) return;
       this.currentInnerIdx = null
       this.currentIdx = index
+      this.tooltipStyle = { left: 0, top: 0 }
+      this.tooltipData = []
+      this.hoverIdx = null
+      this.innerHoverIdx = null
+      this._getApiList({
+        limit: 10000,
+        page: 1,
+        requestGroup: data.apiGroupId
+      })
+      this.response = ''
     },
     handleInnerNodeClick(index, data) {
-      console.log(data)
       this.currentInnerIdx = index
+      this.tooltipStyle = { left: 0, top: 0 }
+      this.tooltipData = []
+      this.hoverIdx = null
+      this.innerHoverIdx = null
+      this.methodType = this.innerTableData[this.currentInnerIdx].requestWay
+      this.searchApi = this.innerTableData[this.currentInnerIdx].requestAddr
+      setTimeout(() => {
+        this.$refs.headersCom.tableData = this.innerTableData[this.currentInnerIdx].requestHeaders
+        this.$refs.paramsCom.tableData = this.innerTableData[this.currentInnerIdx].requestParams.queryStringParams
+        this.paramsStData = this.innerTableData[this.currentInnerIdx].requestResults
+        this.$refs.bodysCom.getBodyData({
+          bodyParams: this.innerTableData[this.currentInnerIdx].requestParams.bodyParams,
+          bodyType: this.innerTableData[this.currentInnerIdx].requestParams.bodyType
+        })
+        this.response = ''
+      }, 20);
     },
     handlerToOperate(e, index, data, type) {
+      e.stopPropagation();
+      if (type === 'grandParent') {
+        this.$refs.addGroupDom.handlerToOpenClose();
+        return;
+      }
       const { left, top } = e.target.getBoundingClientRect();
       this.tooltipStyle.top = top + 20 + 'px'
       this.tooltipStyle.left = left + 'px'
@@ -772,7 +369,7 @@ export default {
       if (type === 'parent') {
         this.tooltipData = [
           { key: '编辑', value: 'edit' },
-          { key: '增加', value: 'add' },
+          { key: '新增', value: 'add' },
           { key: '删除', value: 'delete' },
         ]
         this.hoverIdx = index
@@ -785,31 +382,114 @@ export default {
       }
     },
     handlerToSet(data) {
-      console.log(data)
       if (data.value === 'edit') {
         this.$refs.editDom.handlerToOpenClose();
+        if (this.hoverIdx !== null) {
+          this.$refs.editDom.modelVal = this.tableData[this.hoverIdx].apiGroupName
+        }
+        if (this.innerHoverIdx !== null) {
+          this.$refs.editDom.modelVal = this.innerTableData[this.innerHoverIdx].requestName
+        }
+      } else if (data.value === 'delete') {
+        if (this.hoverIdx !== null) {
+          this.$confirm(`是否确定删除${this.tableData[this.hoverIdx].apiGroupName}`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this._deleteGroupItem({
+              apiGroupId: this.tableData[this.hoverIdx].apiGroupId
+            })
+          })
+        }
+        if (this.innerHoverIdx !== null) {
+          this.$confirm(`是否确定删除${this.innerTableData[this.innerHoverIdx].requestName}`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this._deleteApiItem({
+                apiId: this.innerTableData[this.innerHoverIdx].apiId
+              })
+          })
+        }
+      } else if (data.value === 'add') {
+        if (this.hoverIdx !== null) {
+          this.$refs.addApiDom.handlerToOpenClose();
+          this.currentIdx = this.hoverIdx
+          // this.innerTableData = []
+        }
       }
+      // else if (data.value === 'add' && this.hoverIdx !== null) {
+      // }
       this.tooltipData = []
-      
     },
     changeName(val) {
       if (this.hoverIdx !== null) {
+        this._editGroupItem({
+          "apiGroupId": this.tableData[this.hoverIdx].apiGroupId,
+          "apiGroupName": val,
+          "apiGroupParentId": "",
+          "applicationId": "-1",
+          "projectId": "",
+          "tenantId": ""
+        })
         this.tableData[this.hoverIdx].apiGroupName = val
       }
       if (this.innerHoverIdx !== null) {
+        this.innerTableData[this.innerHoverIdx].requestName = val
+        this._updateApiItem({
+          ...this.innerTableData[this.innerHoverIdx]
+        }) 
         this.innerTableData[this.innerHoverIdx].requestName = val
       }
       this.hoverIdx = null
       this.innerHoverIdx = null
     },
+    addGroup(val) {
+      const params = {
+        apiGroupName: val,
+        apiGroupParentId: '-1',
+        "applicationId": "",
+        "projectId": "",
+        "tenantId": ""
+      }
+      this._addGroupItem(params)
+    },
+    addApi(val) {
+      this.innerTableData.push({
+        "apiId": "",
+        "applicationId": "",
+        "projectId": "",
+        "requestAddr": "",
+        "requestGroup": this.tableData[this.currentIdx].apiGroupId,
+        "requestHeaders": [],
+        "requestName": val,
+        "requestParams": {
+          "bodyParams": [],
+          "bodyType": "",
+          "queryStringParams": []
+        },
+        "requestResults": [],
+        "requestWay": "",
+        "tenantId": ""
+      })
+      setTimeout(() => {
+        this.currentInnerIdx = this.innerTableData.length - 1
+        this.handleInnerNodeClick(this.currentInnerIdx, this.innerTableData[this.currentInnerIdx])
+      }, 20)
+    },
     handlerToAddParamsStData() {
       this.paramsStData.push({
-        key: '',
-        value: ''
+        resultName: '',
+        resultField: ''
       })
     },
     handlerToDeleteItem(index) {
       this.paramsStData.splice(index, 1)
+    },
+    changeBodyType(val) {
+      this.innerTableData[this.currentInnerIdx].requestParams.bodyType = val
     }
   }
 }
@@ -850,6 +530,13 @@ export default {
       border-bottom: 1px solid rgba(255, 255, 255, 0.3);
       font-size: 16px;
       color: #fff;
+      .el-icon-plus {
+        float: right;
+        margin-top: 5px;
+        margin-right: 10px;
+        font-size: 18px;
+        cursor: pointer;
+      }
     }
     .table-content {
       width: 100%;
@@ -867,6 +554,18 @@ export default {
         overflow: hidden;
         cursor: pointer;
         .table-content-item-row {
+          .el-icon-caret-right, .el-icon-caret-bottom {
+            margin-right: 5px;
+            vertical-align: middle;
+          }
+          .inline-st {
+            display: inline-block;
+            width: 70%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+          }
           &.active {
             background-color: rgba(255, 255, 255, 0.15);
             .more-icon {
@@ -895,6 +594,14 @@ export default {
           overflow: hidden;
           padding-left: 10px;
           box-sizing: border-box;
+          .no-data {
+            width: 100%;
+            padding: 0px 0px;
+            text-align: center;
+            font-size: 14px;
+            box-sizing: border-box;
+            color: rgba(255, 255, 255, 0.5);
+          }
           .inner-content-item {
             width: 100%;
             height: 30px;
@@ -939,6 +646,11 @@ export default {
           background-color: #212739;
           color: #fff;
         }
+        ::v-deep .el-input-group__prepend {
+          background-color: #212739 !important;
+          border: 1px solid #333333;
+          box-sizing: border-box;
+        }
       }
     }
     .tab-params-list {
@@ -969,6 +681,7 @@ export default {
           margin-left: 10px;
           font-size: 20px;
           vertical-align: middle;
+          cursor: pointer;
         }
       }
       .params-inst-content {
@@ -980,6 +693,7 @@ export default {
         .params-inst-content-item {
           margin-bottom: 10px;
           span {
+            display: inline-block;
             margin: 0 20px;
           }
           .el-icon-remove-outline {

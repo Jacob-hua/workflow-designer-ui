@@ -12,11 +12,11 @@
             class="table-data-item-col"
             :style="{ width: col.width }"
             >
-            <div class="table-data-item-value-st" v-if="col.value !== 'paramsValue'" @click="handlerToClick($event, tb, col.value)">{{ tb[col.value] }}</div>
-            <div v-else class="table-item-params-value">
-              <div class="table-item-params-value-item" @click="handlerToClickValue($event, tb, vl, vlIdx)" v-for="(vl, vlIdx) in tb[col.value]">
+            <div class="table-data-item-value-st" v-if="!getList(tb[col.value])" @click="handlerToClick($event, tb, col.value)">{{ getFormatter(tb[col.value], col.value) }}</div>
+            <div v-if="col.value === 'paramValue' && getList(tb[col.value])" class="table-item-params-value">
+              <div class="table-item-params-value-item" @click="handlerToClickValue($event, tb, vl, col.value, vlIdx)" v-for="(vl, vlIdx) in tb[col.value]">
                 {{ vl }}
-                <span class="right-opt" v-if="tb['paramsType'] === '数组'">
+                <span class="right-opt" v-if="tb['paramType'] === 'list'">
                   <i class="el-icon-plus" @click.stop="handlerToAddValueData(tb[col.value], index)"></i>
                   <i class="el-icon-minus" @click.stop="handlerToDeleteValueData(tb[col.value], index)"></i>
                 </span>
@@ -35,7 +35,7 @@
       <el-input
         class="input-wrapper"
         ref="inputWrapper"
-        v-show="['paramsName', 'paramsValue', 'paramsDes'].includes(currentType)"
+        v-show="['paramName', 'paramValue', 'paramsDes'].includes(currentType)"
         v-model="inputValue"
         @change="handlerToChangeInput"
         @blur="handlerToBlur"
@@ -43,7 +43,7 @@
       ></el-input>
       <el-select
         class="input-wrapper"
-        v-show="['paramsType', 'valueType'].includes(currentType)"
+        v-show="['paramType', 'paramSource'].includes(currentType)"
         @blur="handlerToBlur"
         @change="handlerToChangeSelect"
         :style="{...styleData}"
@@ -68,16 +68,14 @@ export default {
       currentRow: {},
       currentIndex: null,
       tableTitle: [
-        { label: '参数名', value: 'paramsName', width: '20%' },
-        { label: '类型', value: 'paramsType', width: '10%' },
-        { label: '参数值', value: 'paramsValue', width: '20%' },
+        { label: '参数名', value: 'paramName', width: '20%' },
+        { label: '取值方式', value: 'paramSource', width: '15%' },
+        { label: '类型', value: 'paramType', width: '10%' },
+        { label: '参数值', value: 'paramValue', width: '20%' },
         { label: '说明', value: 'paramsDes', width: '25%' },
-        { label: '取值方式', value: 'valueType', width: '15%' },
         { label: '操作', value: 'paramsOperation', width: '10%' },
       ],
-      tableData: [
-        { paramsName: '', paramsValue: [''], paramsType: '', paramsDes: '' }
-      ],
+      tableData: [],
       styleData: {
         width: '',
         height: '30px',
@@ -96,19 +94,32 @@ export default {
   },
   computed: {
     getOptions: () => (val) => {
-      if (val === 'paramsType') {
+      if (val === 'paramType') {
         return [
-          { label: '字符串', value: '字符串' },
-          { label: '数字', value: '数字' },
-          { label: '布尔', value: '布尔' }
+          { label: 'string', value: 'string' },
+          { label: 'number', value: 'number' },
+          { label: 'bool', value: 'bool' },
+          { label: 'list', value: 'list' },
         ]
       }
-      if (val === 'valueType') {
+      if (val === 'paramSource') {
         return [
           { label: '固定值', value: 'fixed' },
-          { label: '变量', value: 'variable' }
+          { label: '变量值', value: 'variable' }
         ]
       }
+    },
+    getFormatter: () => (val, type) => {
+      if (type === 'paramSource') {
+        return [
+          { label: '固定值', value: 'fixed' },
+          { label: '变量值', value: 'variable' }
+        ].filter(item => item.value === val)[0]?.label ?? ''
+      }
+      return val
+    },
+    getList: () => (val) => {
+      return Object.prototype.toString.call(val) === '[object Array]'
     }
   },
   methods: {
@@ -147,10 +158,10 @@ export default {
       }
       this.inputFocus();
     },
-    handlerToClickValue(e, row, value, index) {
-      if (e.target) {}
+    handlerToClickValue(e, row, value, key, index) {
+      if (row.paramSource === 'variable' && key === 'paramValue') return;
       const { width, left, top } = e.target.getBoundingClientRect()
-      this.currentType = 'paramsValue'
+      this.currentType = 'paramValue'
       this.currentRow = row
       this.inputValue = value
       this.currentIndex = index
@@ -171,7 +182,12 @@ export default {
     },
     handlerToChangeSelect() {
       this.currentRow[this.currentType] = this.selectValue
-      this.currentRow.paramsValue = ['']
+      if (this.currentType === 'paramType') {
+        this.currentRow.paramValue = ['']
+      }
+      if (this.selectValue === 'variable') {
+        this.currentRow.paramValue = ['']
+      }
     },
     handlerToBlur() {
       setTimeout(() => {
@@ -186,7 +202,7 @@ export default {
       this.tableData.splice(index, 1)
     },
     handlerToAdd() {
-      this.tableData.push({ paramsName: '', paramsValue: [''], paramsType: '', paramsDes: '' })
+      this.tableData.push({ paramName: '', paramValue: [''], paramType: '', paramsDes: '', paramSource: '' })
     },
     handlerToAddValueData(arr, index) {
       arr.push('')
@@ -247,7 +263,7 @@ export default {
           border-bottom: hidden;
         }
         .table-data-item-col {
-          height: auto;
+          min-height: 32px;
           border-right: 1px solid #333333;
           box-sizing: border-box;
           &:hover {
@@ -263,11 +279,13 @@ export default {
             justify-content: center;
             overflow: hidden;
             color: #fff;
+            box-sizing: border-box;
           }
           .table-item-params-value {
             width: 100%;
             min-height: 30px;
             height: auto;
+            box-sizing: border-box;
             .table-item-params-value-item {
               width: 100%;
               height: 30px;
@@ -276,6 +294,7 @@ export default {
               color: #fff;
               border-bottom: 1px solid #333333;
               overflow: hidden;
+              box-sizing: border-box;
               &:last-child {
                 border-bottom: hidden;
               }

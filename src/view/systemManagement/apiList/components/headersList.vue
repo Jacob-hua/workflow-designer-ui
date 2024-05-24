@@ -12,7 +12,7 @@
               class="table-data-item-col"
               :style="{ width: col.width }"
               @click="handlerToClick($event, tb, col.value)"
-              >{{ tb[col.value] }}</div>
+              >{{ getFormatter(tb[col.value], col.value) }}</div>
             <div class="operation-table-item" style="width: 10%">
               <i class="el-icon-remove-outline" @click="handerToDelete(index)"></i>
             </div>
@@ -24,7 +24,7 @@
         <el-input
           class="input-wrapper"
           ref="inputWrapper"
-          v-show="['paramsName', 'paramsValue', 'paramsDes'].includes(currentType)"
+          v-show="['headerName', 'headerValue', 'paramsDes'].includes(currentType)"
           v-model="inputValue"
           @change="handlerToChangeInput"
           @blur="handlerToBlur"
@@ -32,7 +32,7 @@
         ></el-input>
         <el-select
           class="input-wrapper"
-          v-show="['paramsType', 'valueType'].includes(currentType)"
+          v-show="['headerType', 'headerSource'].includes(currentType)"
           @blur="handlerToBlur"
           @change="handlerToChangeSelect"
           :style="{...styleData}"
@@ -56,16 +56,14 @@
         currentType: '',
         currentRow: {},
         tableTitle: [
-          { label: '参数名', value: 'paramsName', width: '20%' },
-          { label: '类型', value: 'paramsType', width: '10%' },
-          { label: '参数值', value: 'paramsValue', width: '20%' },
+          { label: '参数名', value: 'headerName', width: '20%' },
+          { label: '取值方式', value: 'headerSource', width: '15%' },
+          { label: '类型', value: 'headerType', width: '10%' },
+          { label: '参数值', value: 'headerValue', width: '20%' },
           { label: '说明', value: 'paramsDes', width: '25%' },
-          { label: '取值方式', value: 'valueType', width: '15%' },
           { label: '操作', value: 'paramsOperation', width: '10%' },
         ],
-        tableData: [
-          { paramsName: '', paramsValue: '', paramsType: '', paramsDes: '', valueType: '' }
-        ],
+        tableData: [],
         styleData: {
           width: '',
           height: '30px',
@@ -83,19 +81,28 @@
     },
     computed: {
       getOptions: () => (val) => {
-        if (val === 'paramsType') {
+        if (val === 'headerType') {
           return [
-            { label: '字符串', value: '字符串' },
-            { label: '数字', value: '数字' },
-            { label: '布尔', value: '布尔' }
+            { label: 'string', value: 'string' },
+            { label: 'number', value: 'number' },
+            { label: 'bool', value: 'bool' }
           ]
         }
-        if (val === 'valueType') {
+        if (val === 'headerSource') {
           return [
             { label: '固定值', value: 'fixed' },
-            { label: '变量', value: 'variable' }
+            { label: '变量值', value: 'variable' }
           ]
         }
+      },
+      getFormatter: () => (val, type) => {
+        if (type === 'headerSource') {
+          return [
+            { label: '固定值', value: 'fixed' },
+            { label: '变量值', value: 'variable' }
+          ].filter(item => item.value === val)[0]?.label ?? ''
+        }
+        return val
       }
     },
     methods: {
@@ -108,6 +115,7 @@
         }
       },
       handlerToClick(e, value, key) {
+        if (value.headerSource === 'variable' && key === 'headerValue') return;
         const { width, left, top } = e.target.getBoundingClientRect()
         this.currentRow = value
         this.currentType = key
@@ -130,6 +138,9 @@
       },
       handlerToChangeSelect() {
         this.currentRow[this.currentType] = this.selectValue
+        if (this.selectValue === 'variable') {
+          this.currentRow.headerValue = ''
+        }
       },
       handlerToBlur() {
         setTimeout(() => {
@@ -143,7 +154,7 @@
         this.tableData.splice(index, 1)
       },
       handlerToAdd() {
-        this.tableData.push({ paramsName: '', paramsValue: '', paramsType: '', paramsDes: '', valueType: '' })
+        this.tableData.push({ headerName: '', headerValue: '', headerType: '', paramsDes: '', headerSource: '' })
       }
     }
   }
@@ -201,6 +212,7 @@
             text-align: center;
             color: #fff;
             border-right: 1px solid #333333;
+            box-sizing: border-box;
             &:hover {
               border: 1px solid #409EFF;
             }
