@@ -1,6 +1,18 @@
 <template>
   <div class="api-list">
     <div class="left-content">
+      <span style="color: #fff;">业务: </span>
+      <el-cascader
+        style="width: 150px;margin-right: 10px;"
+        size="mini"
+        v-model="business"
+        :options="options"
+        :props="{
+          emitPath: true,
+          checkStrictly: true,
+        }"
+      ></el-cascader>
+      <el-button type="primary" size="mini" @click="handlerToSearch">查询</el-button>
       <div class="left-content-title">
         <span>接口列表</span>
         <i class="el-icon-plus" @click.stop="handlerToOperate($event, null, null, 'grandParent')"></i>
@@ -135,6 +147,8 @@ export default {
   },
   data() {
     return {
+      business: [],
+      options: [],
       searchApi: '',
       methodType: 'get',
       activeName: 'headers',
@@ -154,6 +168,9 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch('config/dispatchProjectOriganizations').then(() => {
+      this.options = this.$store.state.config.organizations
+    })
     this._getGroupList()
   },
   mounted() {
@@ -176,7 +193,10 @@ export default {
     async _getGroupList() {
       const result = await getGroupList({
         limit: 10000,
-        page: 1
+        page: 1,
+        applicationId: this.business[2] ?? '',
+        tenantId: this.business[0] ?? '',
+        projectId: this.business[1] ?? ''
       }).catch(err => {
         this.$message.error(err.msg)
       })
@@ -251,6 +271,9 @@ export default {
       const result = await getApiResponse(params)
       let jsonStr = JSON.stringify(result, null, 4)
       this.response = jsonStr
+    },
+    handlerToSearch() {
+      this._getGroupList()
     },
     initClick(e) {
       const list = ['tooltip-at-st-item']
@@ -417,6 +440,7 @@ export default {
         if (this.hoverIdx !== null) {
           this.$refs.addApiDom.handlerToOpenClose();
           this.currentIdx = this.hoverIdx
+          this.$refs.addApiDom.modelVal = ''
           // this.innerTableData = []
         }
       }
@@ -450,9 +474,9 @@ export default {
       const params = {
         apiGroupName: val,
         apiGroupParentId: '-1',
-        "applicationId": "",
-        "projectId": "",
-        "tenantId": ""
+        applicationId: this.business[2] ?? '',
+        tenantId: this.business[0] ?? '',
+        projectId: this.business[1] ?? ''
       }
       this._addGroupItem(params)
     },
@@ -529,6 +553,7 @@ export default {
       height: 30px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.3);
       font-size: 16px;
+      margin-top: 10px;
       color: #fff;
       .el-icon-plus {
         float: right;

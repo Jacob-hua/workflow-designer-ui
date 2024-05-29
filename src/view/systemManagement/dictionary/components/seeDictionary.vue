@@ -58,13 +58,13 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- <el-pagination
+    <el-pagination
       style="float:right; margin-top: 10px;"
       background
       layout="prev, pager, next"
       @current-change="handleCurrentChange"
       :total="page.total">
-    </el-pagination> -->
+    </el-pagination>
     <AddEnum ref="addEnum" @addOne="addOne" />
     <EditEnum ref="editEnum" @update="update" />
   </div>
@@ -88,11 +88,11 @@ export default {
       },
       options: [],
       tableData: [],
-      // page: {
-      //   pageNumber: 1,
-      //   pageSize: 10,
-      //   total: 20
-      // }
+      page: {
+        pageNumber: 1,
+        pageSize: 10,
+        total: 20
+      }
     }
   },
   computed: {
@@ -110,7 +110,8 @@ export default {
         this.$message.error(err.msg)
       })
       if (result?.code === '200') {
-        this.tableData = result.data
+        this.tableData = result.data.dataList
+        this.page.total = Number(result.data.total)
       }
     },
     async _addEnumItem(params) {
@@ -119,7 +120,11 @@ export default {
       })
       if (result?.code === '200') {
         this._getDictionaryItemEnum({
-          code: this.parentData.code
+          code: this.formData.code,
+          limit: 12,
+          page: 1,
+          name: this.formData.name,
+          parentCode: this.parentData.code
         })
       }
     },
@@ -129,7 +134,11 @@ export default {
       })
       if (result?.code === '200') {
         this._getDictionaryItemEnum({
-          code: this.parentData.code
+          code: this.formData.code,
+          limit: 12,
+          page: 1,
+          name: this.formData.name,
+          parentCode: this.parentData.code
         })
       }
     },
@@ -139,13 +148,21 @@ export default {
       })
       if (result?.code === '200') {
         this._getDictionaryItemEnum({
-          code: this.parentData.code
+          code: this.formData.code,
+          limit: 12,
+          page: 1,
+          name: this.formData.name,
+          parentCode: this.parentData.code
         })
       }
     },
     onSearch() {
       this._getDictionaryItemEnum({
-        code: this.parentData.code
+        code: this.formData.code,
+          limit: 12,
+          page: 1,
+          name: this.formData.name,
+          parentCode: this.parentData.code
       })
     },
     onAdd() {
@@ -196,12 +213,17 @@ export default {
         }
       }, 100)
     },
-    // handleCurrentChange(number) {
-    //   this.page.pageNumber = number
-    //   console.log(this.page.pageNumber)
-    // },
+    handleCurrentChange(number) {
+      this.page.pageNumber = number
+      this._getDictionaryItemEnum({
+        code: this.formData.code,
+          limit: 12,
+          page: 1,
+          name: this.formData.name,
+          parentCode: this.parentData.code
+      })
+    },
     handlerToCloseDom() {
-      console.log(this.$parent.seeDictionaryDetail)
       this.$parent.seeDictionaryDetail = false;
     }
   }

@@ -117,7 +117,9 @@ export default {
       page: this.page.pageNumber,
       name: this.formData.name,
       code:this.formData.code,
-      projectId: ''
+      applicationId: this.formData.business[2] ?? '',
+      tenantId: this.formData.business[0] ?? '',
+      projectId: this.formData.business[1] ?? ''
     })
   },
   methods: {
@@ -141,7 +143,9 @@ export default {
           page: this.page.pageNumber,
           name: this.formData.name,
           code:this.formData.code,
-          projectId: this.formData.business[this.formData.business.length - 1] ?? ''
+          applicationId: this.formData.business[2] ?? '',
+          tenantId: this.formData.business[0] ?? '',
+          projectId: this.formData.business[1] ?? ''
         })
       }
     },
@@ -156,7 +160,9 @@ export default {
           page: this.page.pageNumber,
           name: this.formData.name,
           code:this.formData.code,
-          projectId: this.formData.business[this.formData.business.length - 1] ?? ''
+          applicationId: this.formData.business[2] ?? '',
+          tenantId: this.formData.business[0] ?? '',
+          projectId: this.formData.business[1] ?? ''
         })
       }
     },
@@ -171,17 +177,22 @@ export default {
           page: this.page.pageNumber,
           name: this.formData.name,
           code:this.formData.code,
-          projectId: this.formData.business[this.formData.business.length - 1] ?? ''
+          applicationId: this.formData.business[2] ?? '',
+          tenantId: this.formData.business[0] ?? '',
+          projectId: this.formData.business[1] ?? ''
         })
       }
     },
     onSearch() {
+      console.log(this.formData.business)
       this._getDictionaryList({
         limit: this.page.pageSize,
         page: this.page.pageNumber,
         name: this.formData.name,
         code:this.formData.code,
-        projectId: this.formData.business[this.formData.business.length - 1] ?? ''
+        applicationId: this.formData.business[2] ?? '',
+        tenantId: this.formData.business[0] ?? '',
+        projectId: this.formData.business[1] ?? ''
       })
     },
     onAdd() {
@@ -191,10 +202,10 @@ export default {
       const params = {
         "code": obj.code,
         "name": obj.name,
-        "projectId": obj.business[obj.business.length - 1] ?? '',
+        "projectId": obj.business[1] ?? '',
         "remark": obj.desc,
-        "tenantId": "",
-        "applicationId": ""
+        "tenantId": obj.business[0] ?? '',
+        "applicationId": obj.business[2] ?? ''
       }
       this._addDictionaryItem(params);
     },
@@ -225,14 +236,17 @@ export default {
           message: '已取消删除'
         });          
       });
-      console.log(row)
     },
     onSee(row) {
       this.seeDictionaryDetail = true;
       setTimeout(() => {
         this.$refs.seeDom.getParentData(row)
         this.$refs.seeDom._getDictionaryItemEnum({
-          code: row.code
+          code: '',
+          limit: 12,
+          page: 1,
+          name: '',
+          parentCode: row.code
         })
       }, 100)
     },
@@ -243,7 +257,9 @@ export default {
         page: this.page.pageNumber,
         name: this.formData.name,
         code:this.formData.code,
-        projectId: this.formData.business[this.formData.business.length - 1] ?? ''
+        applicationId: this.formData.business[2] ?? '',
+        tenantId: this.formData.business[0] ?? '',
+        projectId: this.formData.business[1] ?? ''
       })
     }
   }

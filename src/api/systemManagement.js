@@ -40,7 +40,7 @@ export const editDictionaryItem = (params) => post('/workflow/system/dict/update
 export const deleteDictionaryItem = (params) => get('/workflow/system/dict/delete/parent',params)
 
 // 查询一个字典下所有枚举信息
-export const getDictionaryItemEnum = (params) => get('/workflow/system/dict/get/childs',params)
+export const getDictionaryItemEnum = (params) => post('/workflow/system/dict/list/childs',params)
 
 // 新增枚举 /workflow/system/dict/add/child
 export const addEnumItem = (params) => post('/workflow/system/dict/add/child',params)

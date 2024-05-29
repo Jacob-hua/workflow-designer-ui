@@ -119,7 +119,6 @@ const actions = {
       if (Array.isArray(data.children) && data.children.length > 0) {
         result['children'] = data.children.map(organizationCascaderData)
       }
-      console.log(result)
       return result
     }
   }

@@ -23,9 +23,9 @@
     methods: {
       handlerToOpenClose() {
         this.dialogVisible = !this.dialogVisible;
+        this.modelVal = ''
       },
       handlerToClick() {
-        console.log(this.modelVal)
         if (this.modelVal === '') {
           this.$message.warning('名称不能为空')
           return
