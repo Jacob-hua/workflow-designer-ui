@@ -67,6 +67,7 @@
       style="float:right; margin-top: 10px;"
       background
       layout="prev, pager, next"
+      :page-size="page.pageSize"
       @current-change="handleCurrentChange"
       :total="page.total">
     </el-pagination>
@@ -99,8 +100,8 @@ export default {
       tableData: [],
       page: {
         pageNumber: 1,
-        pageSize: 10,
-        total: 20
+        pageSize: 8,
+        total: 0
       }
     }
   },
@@ -130,6 +131,7 @@ export default {
       if (result?.code === '200') {
         this.tableData = result.data.dataList
         this.page.total = Number(result.data.total)
+        console.log(this.page.total)
       }
     },
     async _addDictionaryItem(params) {

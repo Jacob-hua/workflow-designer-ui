@@ -39,14 +39,14 @@
         options: [],
         rule: {
             name: [
-                { required: true, message: '请输入名称', trigger: 'change' },
+                { required: true, message: '请输入名称', trigger: 'blur' },
             ],
             code: [
-                { required: true, message: '请输入code', trigger: 'change' },
+                { required: true, message: '请输入code', trigger: 'blur' },
             ],
             sort: [
-              { required: true, message: '请输入序号', trigger: 'change' },
-              { type: 'number', message: '排序必须为数字值', trigger: 'change' }
+              { required: true, message: '请输入序号', trigger: 'blur' },
+              { type: 'number', message: '排序必须为数字值', trigger: 'blur' }
             ]
         }
       }

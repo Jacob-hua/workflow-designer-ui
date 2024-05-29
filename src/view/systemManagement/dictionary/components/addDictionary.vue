@@ -48,13 +48,13 @@
         options: [],
         rule: {
             name: [
-                { required: true, message: '请输入名称', trigger: 'change' },
+                { required: true, message: '请输入名称', trigger: 'blur' },
             ],
             code: [
-                { required: true, message: '请输入code', trigger: 'change' },
+                { required: true, message: '请输入code', trigger: 'blur' },
             ],
             business: [
-                { required: true, message: '请选择业务', trigger: 'change' },
+                { required: true, message: '请选择业务', trigger: 'blur' },
             ],
         }
       }
@@ -63,6 +63,12 @@
         openDialog() {
             this.dialogVisible = true;
             this.options = this.$store.state.config.organizations
+            this.formData = {
+              business: '',
+              name: '',
+              code: '',
+              desc: ''
+            }
         },
         handlerToClick() {
             this.$refs.formWrapper.validate((valid) => {

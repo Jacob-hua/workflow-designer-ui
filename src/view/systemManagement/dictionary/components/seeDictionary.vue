@@ -62,6 +62,7 @@
       style="float:right; margin-top: 10px;"
       background
       layout="prev, pager, next"
+      :page-size="page.pageSize"
       @current-change="handleCurrentChange"
       :total="page.total">
     </el-pagination>
@@ -90,7 +91,7 @@ export default {
       tableData: [],
       page: {
         pageNumber: 1,
-        pageSize: 10,
+        pageSize: 12,
         total: 20
       }
     }
