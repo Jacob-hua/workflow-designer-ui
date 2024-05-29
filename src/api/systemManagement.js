@@ -26,3 +26,27 @@ export const deleteApiItem = (params) => get('/workflow/system/api/delete/conf',
 
 // 执行接口 /workflow/system/api/execute/conf
 export const getApiResponse = (params) => post('/workflow/system/api/execute/conf',params)
+
+// 查询字典列表
+export const getDictionaryList = (params) => post('/workflow/system/dict/list/parent',params)
+
+// 新增字典
+export const addDictionaryItem = (params) => post('/workflow/system/dict/add/parent',params)
+
+// 编辑字典
+export const editDictionaryItem = (params) => post('/workflow/system/dict/update/parent',params)
+
+// 删除字典
+export const deleteDictionaryItem = (params) => get('/workflow/system/dict/delete/parent',params)
+
+// 查询一个字典下所有枚举信息
+export const getDictionaryItemEnum = (params) => get('/workflow/system/dict/get/childs',params)
+
+// 新增枚举 /workflow/system/dict/add/child
+export const addEnumItem = (params) => post('/workflow/system/dict/add/child',params)
+
+// 编辑枚举 /workflow/system/dict/update/child
+export const editEnumItem = (params) => post('/workflow/system/dict/update/child',params)
+
+// 删除枚举 /workflow/system/dict/delete/child
+export const deleteEnumItem = (params) => get('/workflow/system/dict/delete/child',params)
