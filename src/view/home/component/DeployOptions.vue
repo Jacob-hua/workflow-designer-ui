@@ -47,7 +47,7 @@
                 ></el-option>
               </el-select>
               <div class="operations">
-                <el-popover placement="right" width="400" trigger="click">
+                <el-popover placement="right" trigger="click">
                   <!-- <preview
                     :itemList="fields"
                     :formConf="config"
@@ -271,7 +271,7 @@ export default {
               ...this.modelTaskConfigs[gatewayNodeIndex].gatewayCondition,
               pos: '',
               posLabel: '',
-            };;
+            };
           }
         }
         if (index !== -1) {
@@ -360,7 +360,10 @@ export default {
         // this.modelTaskConfigs[index] = this.modelTaskConfig;
         this.modelTaskConfigs.splice(index, 1, this.modelTaskConfig);
       } else {
-        if (this.modelTaskConfig.taskDefKey && this.shapeType !== BpmnShapeType.START_EVENT)
+        if (
+          this.modelTaskConfig.taskDefKey &&
+          this.shapeType !== BpmnShapeType.START_EVENT
+        )
           this.modelTaskConfigs.push(this.modelTaskConfig);
       }
     },

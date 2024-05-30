@@ -168,10 +168,10 @@
           <div v-if="formShow">
             <div v-if="taskInfo.taskType === 'StartEvent'" class="inner-box">
               <div class="inner-label">工单名称：</div>
-              <el-input
+              <antInput
                 v-model="innerName"
                 placeholder="请输入工单名称"
-              ></el-input>
+              ></antInput>
             </div>
             <form-preview :formTree="formShow.formVersionFile"></form-preview>
           </div>
@@ -217,6 +217,7 @@ import SpecifyUser from './SpecifyUser.vue';
 import SpecifyNode from './SpecifyNode.vue';
 import SpecifyGateway from './SpecifyGateway.vue';
 import IBpmnViewer from '../../../plugin/Bpmn/IBpmnViewer';
+import { Input as antInput } from 'ant-design-vue';
 
 export default {
   name: 'WorkflowInfo',
@@ -226,6 +227,7 @@ export default {
     SpecifyUser,
     SpecifyNode,
     SpecifyGateway,
+    antInput
   },
   props: {
     workflow: {

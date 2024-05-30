@@ -13,7 +13,7 @@ import {
   Form,
   FormItem,
   DatePicker,
-  Checkbox,
+  // Checkbox,
   Cascader,
   Editable,
   Input,
@@ -37,8 +37,8 @@ import {
   // ArrayCards,
   FormButtonGroup,
 } from '@formily/antdv';
-import { ArrayCards, Text, TextArea, Radio, Upload } from '../customComponent';
-import { Card, Rate, Slider, Card as Display } from 'ant-design-vue';
+import { ArrayCards, Text, TextArea, Radio, Upload, Checkbox } from '../customComponent';
+import { Card, Rate, Slider, Card as Display, Tooltip } from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.less';
 import _ from 'lodash';
 
@@ -77,6 +77,7 @@ const { SchemaField } = createSchemaField({
     Display,
     Text,
     TextArea,
+    Tooltip
   },
 });
 export default {

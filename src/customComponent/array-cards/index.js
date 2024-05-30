@@ -38,7 +38,7 @@ const isOperationComponent = (schema, foldable = true) => {
 const ArrayCardsInner = observer(
   defineComponent({
     name: 'ArraryCards',
-    // props: [],
+    props: ['title', 'addable', 'foldable'],
     setup(props, { attrs }) {
       const fieldRef = useField();
       const schemaRef = useFieldSchema();
@@ -53,6 +53,7 @@ const ArrayCardsInner = observer(
       };
 
       const deleteFoleded = (index) => {
+        if (foldedList.value.length === 1) return;
         foldedList.value.splice(index, 1);
       };
 
@@ -144,7 +145,7 @@ const ArrayCardsInner = observer(
                   setFoleded,
                   addFoleded,
                   deleteFoleded,
-                  foldedList: foldedList.value
+                  foldedList: foldedList.value,
                 },
               },
               {

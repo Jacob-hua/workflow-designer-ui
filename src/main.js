@@ -16,6 +16,7 @@ Vue.prototype.$generateUUID = generateUUID
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'ant-design-vue/dist/antd.less'
+import './assets/style/default.less'
 import JsonViewer from 'vue-json-viewer'
 
 import { Bpmn, FormPlugin } from './plugin'

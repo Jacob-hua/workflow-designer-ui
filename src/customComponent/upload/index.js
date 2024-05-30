@@ -17,7 +17,7 @@ const UploadWrapper = defineComponent({
         Button,
         {
           attrs: {
-            disabled: attrs.disabled,
+            disabled: true,
           },
         },
         {
@@ -32,6 +32,7 @@ const UploadWrapper = defineComponent({
         {
           attrs: {
             ...attrs,
+            maxCount: 5,
             action: '#',
             accept: Array.isArray(attrs.accept)
               ? attrs.accept.join()

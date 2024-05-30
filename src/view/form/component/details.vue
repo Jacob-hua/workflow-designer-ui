@@ -185,10 +185,18 @@ export default {
       },
     },
     selectedVersion(newVal, oldVal) {
+      if (!newVal) return;
       if (newVal === oldVal) return;
       this.formTree = this.versionList.find(
         ({ value }) => value === newVal
       ).formTree;
+    },
+    visible: {
+      handler(val) {
+        if (val) {
+          this.setDefaultSelectedVersion();
+        }
+      },
     },
   },
   computed: {
@@ -197,6 +205,7 @@ export default {
   methods: {
     close() {
       this.formTree = {};
+      this.selectedVersion = '';
       this.$emit('handleCloseDetail');
     },
     async getFormVersionList() {

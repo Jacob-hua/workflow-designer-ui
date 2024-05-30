@@ -47,7 +47,11 @@
                 ></el-option>
               </el-select>
               <div class="operations">
-                <el-popover placement="right" width="400" trigger="click">
+                <el-popover
+                  popper-class="popover-item"
+                  placement="right"
+                  trigger="click"
+                >
                   <!-- <preview
                     :itemList="fields"
                     :formConf="config"
@@ -614,5 +618,9 @@ export default {
 
 .cancel-button {
   @include cancelBtn;
+}
+
+.popover-item {
+  width: fit-content;
 }
 </style>
