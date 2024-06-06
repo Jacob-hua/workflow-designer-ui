@@ -470,13 +470,13 @@ export default {
       this.hoverIdx = null
       this.innerHoverIdx = null
     },
-    addGroup(val) {
+    addGroup(obj) {
       const params = {
-        apiGroupName: val,
+        apiGroupName: obj.val,
         apiGroupParentId: '-1',
-        applicationId: this.business[2] ?? '',
-        tenantId: this.business[0] ?? '',
-        projectId: this.business[1] ?? ''
+        applicationId: obj.business[2] ?? '',
+        tenantId: obj.business[0] ?? '',
+        projectId: obj.business[1] ?? ''
       }
       this._addGroupItem(params)
     },
