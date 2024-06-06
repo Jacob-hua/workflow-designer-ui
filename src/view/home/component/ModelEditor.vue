@@ -414,6 +414,7 @@ export default {
         page: this.pageInfo.page,
       });
       if (code !== '200') {
+        this.pageInfo.page = 1;
         this.$message.error(msg);
         return;
       }

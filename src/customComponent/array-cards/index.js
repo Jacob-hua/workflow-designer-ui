@@ -142,10 +142,10 @@ const ArrayCardsInner = observer(
                 props: {
                   index,
                   record: item,
-                  setFoleded,
-                  addFoleded,
-                  deleteFoleded,
-                  foldedList: foldedList.value,
+                  // setFoleded,
+                  // addFoleded,
+                  // deleteFoleded,
+                  // foldedList: foldedList.value,
                 },
               },
               {
@@ -264,9 +264,9 @@ const ArrayCardsInner = observer(
               props: {
                 index: 0,
                 record: items,
-                setFoleded,
-                addFoleded,
-                deleteFoleded,
+                // setFoleded,
+                // addFoleded,
+                // deleteFoleded,
               },
             },
             {
@@ -289,7 +289,15 @@ const ArrayCardsInner = observer(
 
         return h(
           ArrayBase,
-          { props: { keyMap } },
+          {
+            props: {
+              keyMap,
+              setFoleded,
+              addFoleded,
+              deleteFoleded,
+              foldedList: foldedList.value,
+            },
+          },
           {
             default: () => [renderEmpty(), renderItems(), renderAddition()],
           }

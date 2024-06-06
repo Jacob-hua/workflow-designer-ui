@@ -470,7 +470,7 @@ export default {
   margin-left: 70px;
 }
 .form-Main {
-  height: 700px;
+  // height: 700px;
   overflow: auto;
   #designer-app {
     height: 100%;

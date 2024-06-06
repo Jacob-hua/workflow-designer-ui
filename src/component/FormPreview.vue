@@ -11,8 +11,8 @@ import { createForm } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/vue';
 import {
   Form,
-  FormItem,
-  DatePicker,
+  // FormItem,
+  // DatePicker,
   // Checkbox,
   Cascader,
   Editable,
@@ -23,7 +23,7 @@ import {
   PreviewText,
   // Radio,
   Reset,
-  Select,
+  // Select,
   Space,
   Submit,
   TimePicker,
@@ -37,7 +37,18 @@ import {
   // ArrayCards,
   FormButtonGroup,
 } from '@formily/antdv';
-import { ArrayCards, Text, TextArea, Radio, Upload, Checkbox } from '../customComponent';
+import {
+  ArrayCards,
+  Text,
+  TextArea,
+  Radio,
+  Upload,
+  Checkbox,
+  RangePicker,
+  FormItem,
+  Select,
+  DatePicker
+} from '../customComponent';
 import { Card, Rate, Slider, Card as Display, Tooltip } from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.less';
 import _ from 'lodash';
@@ -77,7 +88,8 @@ const { SchemaField } = createSchemaField({
     Display,
     Text,
     TextArea,
-    Tooltip
+    Tooltip,
+    RangePicker,
   },
 });
 export default {
@@ -160,6 +172,9 @@ export default {
       immediate: true,
     },
   },
+  // beforeDestroy() {
+  //   this.form = null
+  // }
 };
 </script>
 <style scoped></style>

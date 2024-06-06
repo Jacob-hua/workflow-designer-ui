@@ -10,7 +10,12 @@
       custom-class="dialogVisibleEdit"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      destroy-on-close
     >
+      <DatePicker
+        :showTime="{ format: 'HH:mm' }"
+        format="YYYY-MM-DD HH:mm"
+      ></DatePicker>
       <div class="dialogVisible2-main">
         <div class="ProjectForm-title">
           <div class="detail-title">
@@ -135,6 +140,7 @@ import {
   fetchFormVersion,
   deleteFormVersion,
 } from '../../../api/workflowForm';
+import { DatePicker } from 'ant-design-vue';
 
 export default {
   components: {
@@ -142,6 +148,7 @@ export default {
     formBpmnEdit,
     preview,
     FormPreview,
+    DatePicker,
   },
   props: {
     tileText: {

@@ -92,14 +92,21 @@ const getDefaultValue = (defaultValue, schema) => {
 
 const ArrayBaseInner = defineComponent({
   name: 'ArrayBase',
-  props: ['disabled', 'keyMap'],
+  props: [
+    'disabled',
+    'keyMap',
+    'setFoleded',
+    'addFoleded',
+    'deleteFoleded',
+    'foldedList',
+  ],
   setup(props, { listeners, slots }) {
     const field = useField();
     const schema = useFieldSchema();
     provide(ArrayBaseSymbol, {
       field,
       schema,
-      props,
+      ...props,
       listeners,
       keyMap: props.keyMap,
     });
@@ -109,20 +116,20 @@ const ArrayBaseInner = defineComponent({
   },
 });
 
-let addFoleded;
+// let addFoleded;
 
 const ArrayBaseItem = defineComponent({
   name: 'ArrayBaseItem',
   props: [
     'index',
     'record',
-    'setFoleded',
-    'addFoleded',
-    'deleteFoleded',
-    'foldedList',
+    // 'setFoleded',
+    // 'addFoleded',
+    // 'deleteFoleded',
+    // 'foldedList',
   ],
   setup(props, { slots }) {
-    addFoleded = props.addFoleded
+    // addFoleded = props.addFoleded;
     provide(ItemSymbol, props);
     return () => {
       return h(Fragment, {}, slots);
@@ -189,6 +196,7 @@ const ArrayBaseAddition = defineComponent({
   setup(props, { listeners }) {
     const self = useField();
     const array = useArray();
+    const { addFoleded } = toRefs(inject(ArrayBaseSymbol));
     const prefixCls = `${stylePrefix}-array-base`;
     return () => {
       if (!array) return null;
@@ -244,7 +252,7 @@ const ArrayBaseRemove = defineComponent({
   name: 'ArrayBaseRemove',
   props: ['title', 'index'],
   setup(props, { attrs, listeners }) {
-    const { deleteFoleded } = toRefs(inject(ItemSymbol));
+    const { deleteFoleded } = toRefs(inject(ArrayBaseSymbol));
     const indexRef = useIndex(props.index);
     const base = useArray();
     const prefixCls = `${stylePrefix}-array-base`;
@@ -285,7 +293,7 @@ const ArrayBaseMoveDown = defineComponent({
   name: 'ArrayBaseMoveDown',
   props: ['title', 'index'],
   setup(props, { attrs, listeners }) {
-    const { foldedList, setFoleded } = toRefs(inject(ItemSymbol));
+    const { foldedList, setFoleded } = toRefs(inject(ArrayBaseSymbol));
     const indexRef = useIndex(props.index);
     const base = useArray();
     // const folded = foldedList.value ? foldedList.value[indexRef.value] : false;
