@@ -56,10 +56,10 @@ const mapDateFormat = function () {
     const mode = props.picker === 'time' ? 'time' : undefined;
     const placeholder = getPlaceholder(props);
     const showTime = getShowTime(props);
-    const defaultValue = moment(props?.value) || null
+    // const defaultValue = moment(props?.value) || null
     return mode ? {
       ...props,
-      value: defaultValue,
+      // value: defaultValue,
       mode: mode,
       placeholder,
       showTime,
@@ -75,7 +75,7 @@ const mapDateFormat = function () {
       getCalendarContainer: (trigger) => trigger.parentNode,
     }: {
       ...props,
-      value: defaultValue,
+      // value: defaultValue,
       placeholder,
       showTime,
       format: format,

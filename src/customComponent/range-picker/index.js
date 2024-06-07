@@ -56,10 +56,10 @@ const mapDateFormat = function () {
     const mode = props.picker === 'time' ? ['time', 'time'] : ['date', 'date'];
     const placeholder = getPlaceholder(props);
     const showTime = getShowTime(props);
-    const defaultValue = props.value ? props.value.map((val) => moment(val)) : null;
+    // const defaultValue = props.value ? props.value.map((val) => moment(val)) : null;
     return {
       ...props,
-      value: defaultValue,
+      // value: defaultValue,
       mode: mode,
       format: format,
       placeholder,

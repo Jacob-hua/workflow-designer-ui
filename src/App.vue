@@ -46,6 +46,10 @@ body {
   .ant-calendar-picker-container {
     z-index: 3000;
   }
+
+  h1{
+    font-size: 2em !important;
+  }
 }
 
 #app {
