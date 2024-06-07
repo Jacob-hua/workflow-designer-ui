@@ -12,10 +12,10 @@
       :close-on-press-escape="false"
       destroy-on-close
     >
-      <DatePicker
+      <!-- <DatePicker
         :showTime="{ format: 'HH:mm' }"
         format="YYYY-MM-DD HH:mm"
-      ></DatePicker>
+      ></DatePicker> -->
       <div class="dialogVisible2-main">
         <div class="ProjectForm-title">
           <div class="detail-title">

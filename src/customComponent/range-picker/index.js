@@ -2,6 +2,7 @@ import { connect, mapProps, mapReadPretty } from '@formily/vue';
 import { DatePicker as AntdDatePicker } from 'ant-design-vue';
 import { formatMomentValue } from '../__builtins__';
 import { PreviewText } from '../preview-text';
+import moment from 'moment'
 
 const mapDateFormat = function () {
   const getDefaultFormat = (props) => {
@@ -39,15 +40,14 @@ const mapDateFormat = function () {
 
   const getShowTime = (props) => {
     const picker = props?.picker;
-    const showTime = props.showTime;
     const precision = props?.precision;
-    if (showTime) {
-      if (picker === 'date_time') {
-        return { format: 'HH:mm' };
-      }
+    if (picker === 'time') {
       return { format: precision };
     }
-    return showTime;
+    if (picker === 'date_time') {
+      return { format: 'HH:mm' };
+    }
+    return false;
   };
 
   return (props) => {
@@ -56,8 +56,10 @@ const mapDateFormat = function () {
     const mode = props.picker === 'time' ? ['time', 'time'] : ['date', 'date'];
     const placeholder = getPlaceholder(props);
     const showTime = getShowTime(props);
+    // const defaultValue = props.value ? props.value.map((val) => moment(val)) : null;
     return {
       ...props,
+      // value: defaultValue,
       mode: mode,
       format: format,
       placeholder,
