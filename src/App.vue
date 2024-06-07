@@ -39,6 +39,7 @@ body {
   margin: 0;
   box-sizing: border-box;
   height: 100%;
+  padding-right: 0 !important;
 
   .ant-picker-dropdown {
     z-index: 3000;

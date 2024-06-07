@@ -36,9 +36,11 @@
         rule: {
             name: [
                 { required: true, message: '请输入名称', trigger: 'change' },
+                { max: 100, message: '长度不能超过100字符', trigger: 'blur' }
             ],
             code: [
                 { required: true, message: '请输入code', trigger: 'change' },
+                { max: 100, message: '长度不能超过100字符', trigger: 'blur' }
             ]
         }
       }
@@ -54,7 +56,6 @@
         handlerToClick() {
             this.$refs.formWrapper.validate((valid) => {
                 if (valid) {
-                    this.dialogVisible = false;
                     this.$emit('update', { ...this.formData, id: this.id })
                 } else {
                     // console.log('error submit!!');

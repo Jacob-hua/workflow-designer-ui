@@ -135,14 +135,6 @@
       },
       handlerToChangeInput() {
         this.currentRow[this.currentType] = this.inputValue
-      },
-      handlerToChangeSelect() {
-        this.currentRow[this.currentType] = this.selectValue
-        if (this.selectValue === 'variable') {
-          this.currentRow.headerValue = ''
-        }
-      },
-      handlerToBlur() {
         setTimeout(() => {
           this.inputValue = ''
           this.selectValue = ''
@@ -150,8 +142,29 @@
           // this.currentRow = {}
         }, 50)
       },
+      handlerToChangeSelect() {
+        this.currentRow[this.currentType] = this.selectValue
+        if (this.selectValue === 'variable') {
+          this.currentRow.headerValue = ''
+        }
+        setTimeout(() => {
+          this.inputValue = ''
+          this.selectValue = ''
+          this.currentType = ''
+          // this.currentRow = {}
+        }, 50)
+      },
+      handlerToBlur() {
+        // setTimeout(() => {
+        //   this.inputValue = ''
+        //   this.selectValue = ''
+        //   this.currentType = ''
+        //   // this.currentRow = {}
+        // }, 50)
+      },
       handerToDelete(index) {
         this.tableData.splice(index, 1)
+        this.currentType = ''
       },
       handlerToAdd() {
         this.tableData.push({ headerName: '', headerValue: '', headerType: '', paramsDes: '', headerSource: '' })
@@ -213,6 +226,9 @@
             color: #fff;
             border-right: 1px solid #333333;
             box-sizing: border-box;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
             &:hover {
               border: 1px solid #409EFF;
             }

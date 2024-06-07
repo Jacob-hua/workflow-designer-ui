@@ -2,6 +2,7 @@
     <el-dialog
       title="新增分组"
       :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
       width="30%">
       <label style="color: #fff">选择业务：</label>
       <el-cascader
@@ -16,7 +17,7 @@
       <br/>
       <br/>
       <label style="color: #fff">分组名称：</label>
-      <el-input v-model="modelVal" style="width: 80%"></el-input>
+      <el-input v-model="modelVal" style="width: 400px"></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="handlerToClick" size="mini">确 定</el-button>
         <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
@@ -48,6 +49,10 @@
       handlerToClick() {
         if (this.modelVal === '') {
           this.$message.warning('名称不能为空')
+          return
+        }
+        if (this.modelVal.length >= 100) {
+          this.$message.warning('名称不能超过100个字符')
           return
         }
         if (!this.business.length) {

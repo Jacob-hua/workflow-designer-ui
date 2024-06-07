@@ -19,22 +19,35 @@
     </el-form>
     <el-table
       :data="tableData"
-      stripe
       height="800px"
       style="width: 100%">
       <el-table-column
-        fixed
-        prop="name"
         label="枚举名称">
+        <template slot-scope="scope">
+          <!-- {{ scope.row.name }} -->
+          <el-tooltip :content="scope.row.name" :open-delay="500" placement="top">
+            <div style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{ scope.row.name }}</div>
+          </el-tooltip>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="code"
         label="枚举code">
+        <template slot-scope="scope">
+          <!-- {{ scope.row.name }} -->
+          <el-tooltip :content="scope.row.code" :open-delay="500" placement="top">
+            <div style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{ scope.row.code }}</div>
+          </el-tooltip>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="remark"
         width="300"
         label="枚举描述">
+        <template slot-scope="scope">
+          <!-- {{ scope.row.name }} -->
+          <el-tooltip :content="scope.row.remark" :open-delay="500" placement="top">
+            <div style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{ scope.row.remark }}</div>
+          </el-tooltip>
+        </template>
       </el-table-column>
       <el-table-column
         prop="sortNum"
@@ -60,14 +73,15 @@
     </el-table>
     <el-pagination
       style="float:right; margin-top: 10px;"
-      background
       layout="prev, pager, next"
       :page-size="page.pageSize"
       @current-change="handleCurrentChange"
       :total="page.total">
     </el-pagination>
-    <AddEnum ref="addEnum" @addOne="addOne" />
-    <EditEnum ref="editEnum" @update="update" />
+    <div style="position: fixed; z-index: 9999">
+      <AddEnum ref="addEnum" @addOne="addOne" />
+      <EditEnum ref="editEnum" @update="update" />
+    </div>
   </div>
 </template>
 
@@ -122,11 +136,14 @@ export default {
       if (result?.code === '200') {
         this._getDictionaryItemEnum({
           code: this.formData.code,
-          limit: 12,
-          page: 1,
+          limit: this.page.pageSize,
+          page: this.page.pageNumber,
           name: this.formData.name,
           parentCode: this.parentData.code
         })
+        this.$refs.addEnum.dialogVisible = false;
+      } else {
+        this.$message.error(result.msg)
       }
     },
     async _editEnumItem(params) {
@@ -136,11 +153,14 @@ export default {
       if (result?.code === '200') {
         this._getDictionaryItemEnum({
           code: this.formData.code,
-          limit: 12,
-          page: 1,
+          limit: this.page.pageSize,
+          page: this.page.pageNumber,
           name: this.formData.name,
           parentCode: this.parentData.code
         })
+        this.$refs.editEnum.dialogVisible = false;
+      } else {
+        this.$message.error(result.msg)
       }
     },
     async _deleteEnumItem(params) {
@@ -150,18 +170,20 @@ export default {
       if (result?.code === '200') {
         this._getDictionaryItemEnum({
           code: this.formData.code,
-          limit: 12,
-          page: 1,
+          limit: this.page.pageSize,
+          page: this.page.pageNumber,
           name: this.formData.name,
           parentCode: this.parentData.code
         })
+      } else {
+        this.$message.error(result.msg)
       }
     },
     onSearch() {
       this._getDictionaryItemEnum({
         code: this.formData.code,
-          limit: 12,
-          page: 1,
+          limit: this.page.pageSize,
+          page: this.page.pageNumber,
           name: this.formData.name,
           parentCode: this.parentData.code
       })
@@ -193,7 +215,7 @@ export default {
       })
     },
     onDelete(row) {
-      this.$confirm(`是否确认删除枚举: ${row.name}`, '提示', {
+      this.$confirm(`是否确认删除枚举: ${row.name}?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -218,8 +240,8 @@ export default {
       this.page.pageNumber = number
       this._getDictionaryItemEnum({
         code: this.formData.code,
-          limit: 12,
-          page: 1,
+          limit: this.page.pageSize,
+          page: number,
           name: this.formData.name,
           parentCode: this.parentData.code
       })
@@ -239,12 +261,19 @@ export default {
   right: 0;
   bottom: 0;
   background-color: #212739;
-  z-index: 3000;
+  z-index: 1000;
   padding: 20px 20px;
   box-sizing: border-box;
   ::v-deep .el-table__cell {
-    background: transparent !important;
+    background: #212739 !important;
   }
+}
+</style>
+<style>
+.el-message-box p {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
   
