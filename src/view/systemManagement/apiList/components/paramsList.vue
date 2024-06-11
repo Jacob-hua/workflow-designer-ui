@@ -200,6 +200,7 @@ export default {
     },
     handerToDelete(index) {
       this.tableData.splice(index, 1)
+      this.currentType = ''
     },
     handlerToAdd() {
       this.tableData.push({ paramName: '', paramValue: [''], paramType: '', paramsDes: '', paramSource: '' })

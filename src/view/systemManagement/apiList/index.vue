@@ -181,8 +181,6 @@ export default {
   },
   watch: {
     searchApi(newV) {
-      // this.methodType = this.innerTableData[this.currentInnerIdx].requestWay
-      // this.searchApi = this.innerTableData[this.currentInnerIdx].requestAddr
       this.innerTableData[this.currentInnerIdx].requestAddr = newV
     },
     methodType(newV) {
@@ -208,20 +206,31 @@ export default {
       const result = await addGroupItem(params).catch(err => { this.$message.error(err.msg) })
       if (result?.code === '200') {
         this.$message.success('分组添加成功')
+        this.currentIdx += 1
         this._getGroupList()
+        this.$refs.addGroupDom.dialogVisible = false;
+      } else {
+        this.$message.error(result.msg)
       }
     },
-    async _editGroupItem(params) {
+    async _editGroupItem(params, val) {
       const result = await editGroupItem(params).catch(err => { this.$message.error(err.msg) })
       if (result?.code === '200') {
         this.$message.success('分组编辑成功')
+        this.tableData[this.hoverIdx].apiGroupName = val
+        this.$refs.editDom.dialogVisible = false;
+      } else {
+        this.$message.error(result.msg)
       }
     },
     async _deleteGroupItem(params) {
       const result = await deleteGroupItem(params).catch(err => { this.$message.error(err.msg) })
       if (result?.code === '200') {
         this.$message.success('分组删除成功')
+        this.currentIdx -= 1
         this._getGroupList()
+      } else {
+        this.$message.error(result.msg)
       }
     },
     async _getApiList(params) {
@@ -239,19 +248,25 @@ export default {
       })
       if (result?.code === '200') {
         this.$message.success('接口保存成功')
-        // this._getApiList({
-        //   limit: 10000,
-        //   page: 1,
-        //   requestGroup: this.tableData[this.currentIdx].apiGroupId
-        // });
+      } else {
+        this.$message.error(result.msg)
       }
     },
-    async _updateApiItem(params) {
+    async _updateApiItem(params, val = undefined) {
+      if (val) {
+        params.requestName = val
+      }
       const result = await updateApiItem(params).catch(err => {
         this.$message.error(err.msg)
       })
       if (result?.code === '200') {
         this.$message.success('接口编辑成功')
+        if (val) {
+          this.innerTableData[this.innerHoverIdx].requestName = val
+        }
+        this.$refs.editDom.dialogVisible = false;
+      } else {
+        this.$message.error(result.msg)
       }
     },
     async _deleteApiItem(params) {
@@ -265,11 +280,19 @@ export default {
           page: 1,
           requestGroup: this.tableData[this.currentIdx].apiGroupId
         })
+      } else {
+        this.$message.error(result.msg)
       }
     },
     async _getApiResponse(params) {
       const result = await getApiResponse(params)
-      let jsonStr = JSON.stringify(result, null, 4)
+      let newRes = ''
+      if (result.code === '200') {
+        newRes = result.data ?? ''
+      } else {
+        newRes = result.msg ?? '接口报错'
+      }
+      let jsonStr = JSON.stringify(newRes, null, 4)
       this.response = jsonStr
     },
     handlerToSearch() {
@@ -280,8 +303,6 @@ export default {
       if (!list.includes(e.target.className)) {
         this.tooltipStyle = { left: 0, top: 0 }
         this.tooltipData = []
-        // this.hoverIdx = null
-        // this.innerHoverIdx = null
       }
     },
     handlerToSendApi() {
@@ -338,7 +359,7 @@ export default {
       } else {
         this._updateApiItem({
           ...data
-        }) 
+        }, data.requestName) 
       }
     },
     handleClick() {
@@ -415,7 +436,7 @@ export default {
         }
       } else if (data.value === 'delete') {
         if (this.hoverIdx !== null) {
-          this.$confirm(`是否确定删除${this.tableData[this.hoverIdx].apiGroupName}`, '提示', {
+          this.$confirm(`是否确定删除${this.tableData[this.hoverIdx].apiGroupName}?`, '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -426,7 +447,7 @@ export default {
           })
         }
         if (this.innerHoverIdx !== null) {
-          this.$confirm(`是否确定删除${this.innerTableData[this.innerHoverIdx].requestName}`, '提示', {
+          this.$confirm(`是否确定删除${this.innerTableData[this.innerHoverIdx].requestName}?`, '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -457,18 +478,20 @@ export default {
           "applicationId": "-1",
           "projectId": "",
           "tenantId": ""
-        })
-        this.tableData[this.hoverIdx].apiGroupName = val
+        }, val)
+        // this.tableData[this.hoverIdx].apiGroupName = val
       }
       if (this.innerHoverIdx !== null) {
-        this.innerTableData[this.innerHoverIdx].requestName = val
-        this._updateApiItem({
-          ...this.innerTableData[this.innerHoverIdx]
-        }) 
+        // this._updateApiItem({
+        //   ...this.innerTableData[this.innerHoverIdx]
+        // }, val)
+        this.$refs.editDom.dialogVisible = false;
         this.innerTableData[this.innerHoverIdx].requestName = val
       }
-      this.hoverIdx = null
-      this.innerHoverIdx = null
+      setTimeout(() => {
+        this.hoverIdx = null
+        this.innerHoverIdx = null
+      }, 1000)
     },
     addGroup(obj) {
       const params = {
@@ -635,6 +658,13 @@ export default {
             color: #fff;
             box-sizing: border-box;
             padding-left: 10px;
+            span {
+              display: inline-block;
+              width: 80%;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
             &:hover {
               background-color: rgba(255, 255, 255, 0.15);
               .more-icon {

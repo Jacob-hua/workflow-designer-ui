@@ -169,6 +169,7 @@ export default {
       return cursorPos;
     },
     setListner(e) {
+      return;
       this.isEmptyLine = (this.currentLineData.content === "" || !this.currentLineData.content) && (!this.currentLineData.indentCount || this.currentLineData.indentCount === 0)
       if (e.code === 'AltLeft') {
         this.isEdit = false

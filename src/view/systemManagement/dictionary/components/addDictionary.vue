@@ -49,9 +49,11 @@
         rule: {
             name: [
                 { required: true, message: '请输入名称', trigger: 'blur' },
+                { max: 100, message: '长度不能超过100字符', trigger: 'blur' }
             ],
             code: [
                 { required: true, message: '请输入code', trigger: 'blur' },
+                { max: 100, message: '长度不能超过100字符', trigger: 'blur' }
             ],
             business: [
                 { required: true, message: '请选择业务', trigger: 'blur' },
@@ -73,7 +75,6 @@
         handlerToClick() {
             this.$refs.formWrapper.validate((valid) => {
                 if (valid) {
-                    this.dialogVisible = false;
                     this.$emit('addOne', { ...this.formData })
                 } else {
                     // console.log('error submit!!');

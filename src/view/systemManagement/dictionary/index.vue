@@ -31,18 +31,32 @@
       height="550px"
       style="width: 100%">
       <el-table-column
-        fixed
-        prop="name"
         label="字典名称">
+        <template slot-scope="scope">
+          <!-- {{ scope.row.name }} -->
+          <el-tooltip :content="scope.row.name" :open-delay="500" placement="top">
+            <div style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{ scope.row.name }}</div>
+          </el-tooltip>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="code"
         label="字典code">
+        <template slot-scope="scope">
+          <!-- {{ scope.row.name }} -->
+          <el-tooltip :content="scope.row.code" :open-delay="500" placement="top">
+            <div style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{ scope.row.code }}</div>
+          </el-tooltip>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="remark"
         width="300"
         label="字典描述">
+        <template slot-scope="scope">
+          <!-- {{ scope.row.name }} -->
+          <el-tooltip :content="scope.row.remark" :open-delay="500" placement="top">
+            <div style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{ scope.row.remark }}</div>
+          </el-tooltip>
+        </template>
       </el-table-column>
       <el-table-column
         prop="creatorName"
@@ -53,7 +67,6 @@
         label="添加时间">
       </el-table-column>
       <el-table-column
-        fixed="right"
         label="操作"
         width="200">
         <template slot-scope="scope">
@@ -65,7 +78,6 @@
     </el-table>
     <el-pagination
       style="float:right; margin-top: 10px;"
-      background
       layout="prev, pager, next"
       :page-size="page.pageSize"
       @current-change="handleCurrentChange"
@@ -131,7 +143,6 @@ export default {
       if (result?.code === '200') {
         this.tableData = result.data.dataList
         this.page.total = Number(result.data.total)
-        console.log(this.page.total)
       }
     },
     async _addDictionaryItem(params) {
@@ -149,6 +160,9 @@ export default {
           tenantId: this.formData.business[0] ?? '',
           projectId: this.formData.business[1] ?? ''
         })
+        this.$refs.addDom.dialogVisible = false;
+      } else {
+        this.$message.error(result.msg)
       }
     },
     async _editDictionaryItem(params) {
@@ -166,6 +180,9 @@ export default {
           tenantId: this.formData.business[0] ?? '',
           projectId: this.formData.business[1] ?? ''
         })
+        this.$refs.editDom.dialogVisible = false;
+      } else {
+        this.$message.error(result.msg)
       }
     },
     async _deleteDictionaryItem(params) {
@@ -183,10 +200,11 @@ export default {
           tenantId: this.formData.business[0] ?? '',
           projectId: this.formData.business[1] ?? ''
         })
+      } else {
+        this.$message.error(result.msg)
       }
     },
     onSearch() {
-      console.log(this.formData.business)
       this._getDictionaryList({
         limit: this.page.pageSize,
         page: this.page.pageNumber,
@@ -224,7 +242,7 @@ export default {
       this._editDictionaryItem(params)
     },
     onDelete(row) {
-      this.$confirm(`是否确认删除字典: ${row.name}`, '提示', {
+      this.$confirm(`是否确认删除字典: ${row.name}?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -273,7 +291,7 @@ export default {
   overflow: hidden;
   height: 640px;
   ::v-deep .el-table__cell {
-    background: transparent !important;
+    background: #212739 !important;
   }
 }
 </style>

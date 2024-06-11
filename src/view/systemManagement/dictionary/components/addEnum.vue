@@ -3,6 +3,7 @@
       title="新增枚举"
       :close-on-click-modal="false"
       :visible.sync="dialogVisible"
+      :modal-append-to-body="false"
       width="30%">
       <el-form ref="formWrapper" :model="formData" class="search-wrapper" size="mini" :rules="rule">
         <el-form-item label="枚举名称" prop="name" label-width="100px">
@@ -28,6 +29,15 @@
   <script>
   export default {
     data() {
+      const validateSort = (rule, value, callback) => {
+        const num = Number(value)
+        console.log(num)
+        if (num < 0 || num > 100000) {
+          callback(new Error('排序必须在0到100000之间'));
+        } else {
+          callback();
+        }
+      };
       return {
         dialogVisible: false,
         formData: {
@@ -40,32 +50,35 @@
         rule: {
             name: [
                 { required: true, message: '请输入名称', trigger: 'blur' },
+                { max: 100, message: '长度不能超过100字符', trigger: 'blur' }
             ],
             code: [
                 { required: true, message: '请输入code', trigger: 'blur' },
+                { max: 100, message: '长度不能超过100字符', trigger: 'blur' }
             ],
             sort: [
               { required: true, message: '请输入序号', trigger: 'blur' },
-              { type: 'number', message: '排序必须为数字值', trigger: 'blur' }
+              { type: 'number', message: '排序必须为数字值', trigger: 'blur' },
+              { validator: validateSort, trigger: 'blur' }
             ]
         }
       }
     },
     methods: {
         openDialog() {
+            this.formData = {
+              desc: '',
+              name: '',
+              code: '',
+              sort: ''
+            }
             this.dialogVisible = true;
         },
         handlerToClick() {
             this.$refs.formWrapper.validate((valid) => {
                 if (valid) {
-                    this.dialogVisible = false;
+                    // this.dialogVisible = false;
                     this.$emit('addOne', { ...this.formData })
-                    this.formData = {
-                      desc: '',
-                      name: '',
-                      code: '',
-                      sort: ''
-                    }
                 } else {
                     // console.log('error submit!!');
                     return false;

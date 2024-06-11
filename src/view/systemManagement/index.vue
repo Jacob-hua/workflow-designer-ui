@@ -35,5 +35,6 @@ export default {
 <style lang="scss" scoped>
 .system-management {
     overflow: hidden;
+    width: 1620px;
 }
 </style>
