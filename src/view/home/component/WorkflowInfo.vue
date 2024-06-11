@@ -23,6 +23,7 @@
                       :disabled="!taskInfo.taskDefKey"
                       @click="handleChangeUser"
                       icon="el-icon-edit-outline"
+                      size="small"
                       >变更</el-button
                     >
                     <div class="fixed-user">
@@ -41,6 +42,7 @@
                     <el-button
                       :disabled="!taskInfo.taskDefKey"
                       @click="handleChangeNodeUser('dynamic_set')"
+                      size="small"
                       icon="el-icon-edit-outline"
                       >变更</el-button
                     >
@@ -54,6 +56,8 @@
                     <el-button
                       :disabled="!taskInfo.taskDefKey"
                       @click="handleChangeNodeUser('task_executor')"
+                      size="small"
+                      type="primary"
                       icon="el-icon-edit-outline"
                       >变更</el-button
                     >
@@ -526,6 +530,7 @@ export default {
       align-items: center;
       .inner-label {
         width: 80px;
+        color: #bfbfbf;
       }
     }
   }

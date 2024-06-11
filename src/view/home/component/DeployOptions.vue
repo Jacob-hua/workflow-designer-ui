@@ -332,6 +332,11 @@ export default {
       this.formName = '';
       this.formContent = {};
       this.modelTaskConfigs = [];
+      this.pageInfo = {
+        limit: 10,
+        page: 1,
+        total: 0,
+      };
       this.resetModelTaskConfig();
       this.updateStartFormVersionId({ startFormVersionId: '' });
       this.updateModelTaskConfigs({ modelTaskConfigs: [] });
@@ -489,6 +494,7 @@ export default {
 .deploy-wrapper {
   display: flex;
   flex-direction: row;
+  grid-gap: 20px;
 
   & > div:first-child {
     flex-grow: 1;
@@ -496,18 +502,89 @@ export default {
 
   & > div:last-child {
     color: $font-color;
+    width: 510px;
   }
 }
 
+// .form-list-wrapper {
+//   width: 468px;
+//   padding: 0 38px;
+//   flex-shrink: 0;
+
+//   .title {
+//     font-size: 14px;
+//     line-height: 20px;
+//     font-weight: 400;
+//   }
+
+//   .search-form {
+//     margin-top: 25px;
+//   }
+
+//   .content-wrapper {
+//     overflow: scroll;
+//     margin: 10px 0;
+//     min-height: 898px;
+//     border: 1px solid #666666;
+//     border-radius: 5px;
+//     padding: 0 5px;
+
+//     & > div {
+//       border: 1px solid #666666;
+//       background-color: #212739;
+//       margin-top: 20px;
+//       display: grid;
+//       grid-auto-flow: column;
+//       grid-template-columns: 3fr 2fr 1.5fr;
+//       align-items: center;
+//       padding: 6px 20px;
+//       font-size: 14px;
+
+//       .form-name {
+//         overflow: hidden;
+//         text-overflow: ellipsis;
+//         white-space: nowrap;
+//       }
+
+//       .el-select {
+//         width: 100px;
+
+//         /deep/.el-input__inner {
+//           overflow: hidden;
+//           text-overflow: ellipsis;
+//         }
+//       }
+//       .info {
+//         display: flex;
+//         flex-direction: row;
+//         color: #999999;
+
+//         & > div:first-child {
+//           width: 150px;
+//         }
+//       }
+
+//       .operations {
+//         display: flex;
+//         flex-direction: row;
+//       }
+//     }
+//   }
+// }
+
 .form-list-wrapper {
   width: 468px;
-  padding: 0 38px;
   flex-shrink: 0;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  background: $card-bg-color-2;
 
   .title {
     font-size: 14px;
     line-height: 20px;
     font-weight: 400;
+    padding: 20px;
+    border-bottom: 1px solid $border-color;
   }
 
   .search-form {
@@ -518,8 +595,6 @@ export default {
     overflow: scroll;
     margin: 10px 0;
     min-height: 898px;
-    border: 1px solid #666666;
-    border-radius: 5px;
     padding: 0 5px;
 
     & > div {

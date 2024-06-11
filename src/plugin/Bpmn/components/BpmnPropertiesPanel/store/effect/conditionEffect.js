@@ -15,9 +15,11 @@ function conditionEffect({ condition }, iBpmnModeler = new IBpmnModeler()) {
   //     body: condition.expression,
   //   },
   // }
-
+  const shapeInfo = iBpmnModeler.getSelectedShapeInfo()
   if (condition.type) {
     if(!condition.judgment || condition.conditionTarget === '') return;
+    // shapeInfo.conditionExpression.body = '${'+condition.sourceRef+'_gateway_condition'+condition.judgment+condition.conditionTarget+'}'
+    // console.log(shapeInfo)
     iBpmnModeler.updateSelectedShapeProperties({
       conditionExpression: iBpmnModeler.createBpmnModdleInstance('FormalExpression', {
         body: '${'+condition.sourceRef+'_gateway_condition'+condition.judgment+condition.conditionTarget+'}',

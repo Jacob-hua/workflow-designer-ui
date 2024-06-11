@@ -284,7 +284,7 @@ export default {
     padding: 20px 30px;
     overflow: auto;
     border: 1px solid $border-color;
-    height: 100%;
+    // height: 100%;
 
     .inner-box {
       margin-bottom: 10px;
@@ -318,6 +318,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
   color: #999999;
+  height: 230px;
 
   & > div {
     font-size: 14px;
@@ -352,7 +353,7 @@ export default {
 }
 
 .form {
-  min-height: 200px;
+  height: 333px;
 
   .empty-data {
     height: 100%;
