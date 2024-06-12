@@ -76,9 +76,9 @@ export default {
         ],
         modelDesc: [
           {
-            min: 1,
+            min: 0,
             max: 200,
-            message: '模型描述长度在 1 到 200 个字符',
+            message: '模型描述长度在 0 到 200 个字符',
             trigger: 'blur',
           },
         ],

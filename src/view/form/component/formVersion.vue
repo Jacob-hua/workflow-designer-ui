@@ -61,9 +61,9 @@ export default {
         ],
         formVersionDesc: [
         {
-            min: 1,
+            min: 0,
             max: 200,
-            message: '表单版本描述长度在 1 到 200 个字符',
+            message: '表单版本描述长度在 0 到 200 个字符',
             trigger: 'blur',
           },
         ]
