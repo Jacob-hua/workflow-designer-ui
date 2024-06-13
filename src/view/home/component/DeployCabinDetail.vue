@@ -134,7 +134,7 @@ export default {
         // },
         {
           label: '应用项目',
-          value: this.workflow.projectName,
+          value: `${this.workflow.projectName}-${this.workflow.applicationName}`,
         },
         // {
         //   label: '部署人',

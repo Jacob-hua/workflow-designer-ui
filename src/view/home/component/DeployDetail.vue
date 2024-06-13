@@ -82,7 +82,7 @@ export default {
         // },
         {
           label: '应用项目',
-          value: this.workflow?.modelInfo?.projectName,
+          value: `${this.workflow?.modelInfo?.projectName}-${this.workflow?.modelInfo?.applicationName}`,
         },
         // {
         //   label: '部署人',

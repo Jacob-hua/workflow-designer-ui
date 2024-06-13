@@ -8,7 +8,6 @@
           :options="projectOrganizations()"
           :props="{
             emitPath: true,
-            checkStrictly: true,
           }"
         ></el-cascader>
         <span class="text">创建时间</span>

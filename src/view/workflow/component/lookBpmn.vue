@@ -100,7 +100,7 @@ export default {
         },
         {
           label: '应用项目',
-          value: this.projectData.projectName,
+          value: `${this.projectData.projectName}-${this.projectData.applicationName}`,
         },
         {
           label: '流程描述',

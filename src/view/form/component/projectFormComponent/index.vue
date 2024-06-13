@@ -24,7 +24,6 @@
                 :options="projectOrganizations()"
                 :props="{
                   emitPath: true,
-                  checkStrictly: true,
                 }"
               >
               </el-cascader>

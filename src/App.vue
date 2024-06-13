@@ -103,4 +103,8 @@ body {
 .el-dialog .el-dialog__footer {
   text-align: center;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
 </style>

@@ -40,6 +40,16 @@
               </div>
             </div>
           </div>
+          <div class="pagination-box">
+            <el-pagination
+              @current-change="handleCurrentChange"
+              :current-page.sync="currentPage"
+              :page-size="pageSize"
+              layout="prev, pager, next, jumper"
+              :total="pageTotal"
+            >
+            </el-pagination>
+          </div>
         </div>
       </div>
       <div class="selected-list list-card">
@@ -51,7 +61,9 @@
             class="user-item"
           >
             <span class="item-content">{{ item.userName }}</span>
-            <span class="delete-icon" @click="handleDeleteUser(item)"><i class="el-icon-circle-close"></i></span>
+            <span class="delete-icon" @click="handleDeleteUser(item)"
+              ><i class="el-icon-circle-close"></i
+            ></span>
           </div>
         </div>
       </div>
@@ -85,7 +97,10 @@ export default {
       userList: [],
       // selectedUser: [],
       userName: '',
-      displayUserList: []
+      displayUserList: [],
+      currentPage: 1,
+      pageSize: 10,
+      pageTotal: 0
     };
   },
   computed: {
@@ -128,40 +143,58 @@ export default {
           selectStatus,
         };
       });
-      this.displayUserList = this.userList
+      this.handleDisplayUsers();
     },
     handlesearch() {
-      if(!this.userName) {
-        this.displayUserList = this.userList;
-        return
-      }
-      this.displayUserList = this.userList.filter(({userName}) => {
-        return userName.includes(this.userName)
-      })
+      this.currentPage = 1;
+      this.handleDisplayUsers();
     },
     handleSelect(item) {
-      this.userList = this.userList.map(ele => {
-        if(item.userId === ele.userId){
-          return{
+      this.userList = this.userList.map((ele) => {
+        if (item.userId === ele.userId) {
+          return {
             ...ele,
-            selectStatus: item.selectStatus
-          }
+            selectStatus: item.selectStatus,
+          };
         }
-        return ele
-      })
-      this.handlesearch()
+        return ele;
+      });
+      this.handleDisplayUsers();
     },
     handleDeleteUser(item) {
-      this.userList = this.userList.map(ele => {
-        if(item.userId === ele.userId){
+      this.userList = this.userList.map((ele) => {
+        if (item.userId === ele.userId) {
           return {
             ...item,
-            selectStatus: false
-          }
+            selectStatus: false,
+          };
         }
-        return ele
-      })
-      this.handlesearch()
+        return ele;
+      });
+      this.handleDisplayUsers();
+    },
+    handleCurrentChange(pageNum) {
+      this.currentPage = pageNum;
+      this.handleDisplayUsers();
+    },
+    handleDisplayUsers() {
+      if (!this.userName) {
+        this.displayUserList = this.userList.slice(
+          (this.currentPage - 1) * this.pageSize,
+          this.currentPage * this.pageSize
+        );
+        this.pageTotal = this.userList.length
+        return;
+      }
+      const filterList = this.userList
+        .filter(({ userName }) => {
+          return userName.includes(this.userName);
+        })
+      this.displayUserList = filterList.slice(
+          (this.currentPage - 1) * this.pageSize,
+          this.currentPage * this.pageSize
+        );
+      this.pageTotal = filterList.length
     },
     save() {
       // const user = this.selectedUser.map((item) => {
@@ -171,7 +204,7 @@ export default {
       this.close();
     },
     close() {
-      this.selectedUser = [];
+      this.userList = [];
       this.$emit('closeUserDialog');
     },
   },
@@ -201,7 +234,8 @@ export default {
       height: 50px;
       line-height: 50px;
       padding: 0 10px;
-      border-bottom: 1px solid;
+      border-bottom: 1px solid #99999970;
+      color: #f5f5f5;
     }
 
     .content-wrapper {
@@ -217,13 +251,14 @@ export default {
 
     .user-table {
       padding: 10px 0;
+      color: #e8e8e8;
       .table-header {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         justify-content: center;
         align-items: center;
-        border-top: 1px solid;
-        border-bottom: 1px solid;
+        // border-top: 1px solid;
+        // border-bottom: 1px solid;
         height: 40px;
 
         .header-column {
@@ -231,7 +266,7 @@ export default {
         }
       }
       .table-content {
-        max-height: 40vh;
+        max-height: 30vh;
         overflow: auto;
         &::-webkit-scrollbar {
           display: none;
@@ -242,8 +277,16 @@ export default {
           grid-template-columns: repeat(2, 1fr);
           justify-content: center;
           align-items: center;
-          border-bottom: 1px solid;
-          height: 40px;
+          // border-bottom: 1px solid;
+          height: 50px;
+
+          &:nth-of-type(odd) {
+            background: #33333370;
+          }
+
+          &:hover {
+            background: #99999970;
+          }
 
           .table-column {
             text-align: center;
@@ -251,29 +294,43 @@ export default {
         }
       }
     }
+
+    .pagination-box {
+      text-align: right;
+      margin-bottom: 10px;
+    }
   }
 
   .selected-list {
-
     .selected-user {
       margin: 10px 0;
-      display: flex;
+      display: grid;
       grid-gap: 10px;
-      flex-wrap: wrap;
+      grid-template-columns: repeat(2, 1fr);
+
       .user-item {
-        border: 1px solid;
-        border-radius: 8px;
-        padding: 5px 10px;
         display: flex;
-        justify-content: space-around;
         grid-gap: 10px;
         align-items: center;
         color: #409eff;
+        justify-content: center;
+
+        .item-content {
+          border: 1px solid;
+          border-radius: 4px;
+          padding: 5px 10px;
+          text-align: center;
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
 
         .delete-icon {
           cursor: pointer;
           font-size: 20px;
           color: red;
+          flex-shrink: 0;
         }
       }
     }
