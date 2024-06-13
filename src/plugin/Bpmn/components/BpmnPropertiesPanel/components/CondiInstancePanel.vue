@@ -73,7 +73,7 @@
         this.$nextTick(() => {
           const dom1 = document.getElementsByClassName('el-input-number__decrease')[0]
           const dom2 = document.getElementsByClassName('el-input-number__increase')[0]
-          console.log(dom1, dom2)
+          // console.log(dom1, dom2)
           if (dom1) {
             dom1.style.background = '#212739'
           }

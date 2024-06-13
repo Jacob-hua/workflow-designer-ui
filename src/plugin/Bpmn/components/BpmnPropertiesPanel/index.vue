@@ -28,10 +28,10 @@ import SignalMessagePanel from './components/SignalMessagePanel.vue';
 import MultiInstancePanel from './components/MultiInstancePanel.vue';
 import TimerPanel from './components/TimerPanel.vue';
 import ConditionPanel from './components/ConditionPanel.vue';
-import CondiInstancePanel from './components/CondiInstancePanel.vue'
+import CondiInstancePanel from './components/CondiInstancePanel.vue';
 import bridgingBpmn, { generateNamespace } from '../../utils/bridging-bpmn';
 import bridgingModuleFunc from './store';
-import shapeType from '../../enum/shapeType';
+// import shapeType from '../../enum/shapeType';
 import { deepCopy, deepEquals } from '../../utils/object';
 
 export default {
@@ -42,7 +42,7 @@ export default {
     MultiInstancePanel,
     TimerPanel,
     ConditionPanel,
-    CondiInstancePanel
+    CondiInstancePanel,
   },
   props: {
     iBpmnModeler: {
@@ -126,11 +126,14 @@ export default {
     userTask() {
       return this.$store.state[this.namespace].panel.userTask;
     },
-    multiInstance(){
-      return this.$store.state[this.namespace].panel.multiInstance
+    multiInstance() {
+      return this.$store.state[this.namespace].panel.multiInstance;
     },
     panels() {
-      const iHavLoop = this.$store.state[this.namespace].panel.condiInstance?.isHavLoopCharacteristics
+      const selectedShapeInfo = this.iBpmnModeler.getSelectedShape();
+      const iHavLoop =
+        this.$store.state[this.namespace].panel.condiInstance
+          ?.isHavLoopCharacteristics;
       const elementPanels = {
         [BpmnShapeType.START_EVENT]: [this.baseInfoPanelInfo],
         [BpmnShapeType.TIMER_START_EVENT]: [
@@ -143,11 +146,15 @@ export default {
         ],
         [BpmnShapeType.END_EVENT]: [this.baseInfoPanelInfo],
         [BpmnShapeType.USER_TASK]: iHavLoop
-          ? [ this.baseInfoPanelInfo, this.documentationPanelInfo, this.condiInstancePanelInfo]
-          : [ this.baseInfoPanelInfo, this.documentationPanelInfo],
+          ? [
+              this.baseInfoPanelInfo,
+              this.documentationPanelInfo,
+              this.condiInstancePanelInfo,
+            ]
+          : [this.baseInfoPanelInfo, this.documentationPanelInfo],
         [BpmnShapeType.EXCLUSIVE_GATEWAY]: [this.baseInfoPanelInfo],
         [BpmnShapeType.SEQUENCE_FLOW]:
-          this.baseInfo.sourceRefType !== shapeType.EXCLUSIVE_GATEWAY
+          selectedShapeInfo?.source?.type !== 'bpmn:ExclusiveGateway'
             ? [this.baseInfoPanelInfo]
             : [this.baseInfoPanelInfo, this.conditionPanelInfo],
       };
@@ -155,9 +162,9 @@ export default {
     },
   },
   watch: {
-    rootBaseInfo(newVal, oldVal){
-      if(!deepEquals(oldVal, newVal)){
-        this.$emit('getBaseInfo', newVal)
+    rootBaseInfo(newVal, oldVal) {
+      if (!deepEquals(oldVal, newVal)) {
+        this.$emit('getBaseInfo', newVal);
       }
     },
     userTask(value) {
@@ -166,7 +173,10 @@ export default {
         displayCandidateUsers: [],
         displayCandidateGroups: [],
       };
-      if (deepEquals(value, emptyUserTask) && this.shapeType === BpmnShapeType.USER_TASK) {
+      if (
+        deepEquals(value, emptyUserTask) &&
+        this.shapeType === BpmnShapeType.USER_TASK
+      ) {
         const processId = this.iBpmnModeler.getSelectedShapeInfo().id;
         const newUserTask = {
           displayAssignee: {
@@ -186,39 +196,41 @@ export default {
             },
           ],
         };
-        this.updateUserTask({newUserTask: deepCopy(newUserTask)})
+        this.updateUserTask({ newUserTask: deepCopy(newUserTask) });
       }
     },
-    multiInstance(value){
-      const {collection, loopCharacteristics} = value;
-      if(collection || !loopCharacteristics) return;
+    multiInstance(value) {
+      const { collection, loopCharacteristics } = value;
+      if (collection || !loopCharacteristics) return;
       const processId = this.iBpmnModeler.getSelectedShapeInfo().id;
       const newMultiInstance = {
         loopCharacteristics,
         collection: '${' + processId + '_userlist}',
         elementVariable: 'user',
-        completionCondition: '${nrOfCompletedInstances == nrOfInstances}'
-      }
-      this.updateMultiInstance({ newMultiInstance: deepCopy(newMultiInstance) });
+        completionCondition: '${nrOfCompletedInstances == nrOfInstances}',
+      };
+      this.updateMultiInstance({
+        newMultiInstance: deepCopy(newMultiInstance),
+      });
       const newUserTask = {
-          displayAssignee: {
-            key: '${user}',
-            value: '${user}',
+        displayAssignee: {
+          key: '${user}',
+          value: '${user}',
+        },
+        displayCandidateUsers: [
+          {
+            key: '${' + processId + '_ca_users}',
+            value: '${' + processId + '_ca_users}',
           },
-          displayCandidateUsers: [
-            {
-              key: '${' + processId + '_ca_users}',
-              value: '${' + processId + '_ca_users}',
-            },
-          ],
-          displayCandidateGroups: [
-            {
-              key: '${' + processId + '_ca_groups}',
-              value: '${' + processId + '_ca_groups}',
-            },
-          ],
-        };
-        this.updateUserTask({newUserTask: deepCopy(newUserTask)})
+        ],
+        displayCandidateGroups: [
+          {
+            key: '${' + processId + '_ca_groups}',
+            value: '${' + processId + '_ca_groups}',
+          },
+        ],
+      };
+      this.updateUserTask({ newUserTask: deepCopy(newUserTask) });
     },
     iBpmnModeler: {
       deep: true,
@@ -274,7 +286,7 @@ export default {
         ...payload,
       });
     },
-    updateUserTask(payload){
+    updateUserTask(payload) {
       this.$store.commit({
         type: `${this.namespace}/panel/updateUserTask`,
         ...payload,
@@ -284,7 +296,7 @@ export default {
       this.$store.commit({
         type: `${this.namespace}/panel/updateMultiInstance`,
         ...payload,
-      })
+      });
     },
     updateParentDocumentationInfo(payload) {
       this.$store.commit(

@@ -41,9 +41,6 @@ body {
   height: 100%;
   padding-right: 0 !important;
 
-  .ant-picker-dropdown {
-    z-index: 3000;
-  }
   .ant-calendar-picker-container {
     z-index: 3000;
   }
