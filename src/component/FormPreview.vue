@@ -9,6 +9,8 @@
 <script>
 import { createForm } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/vue';
+import Abnormal from '../customComponent/Abnormal/index.vue'
+import ChooseEq from '../customComponent/ChooseEq/index.vue'
 import {
   Form,
   // FormItem,
@@ -90,6 +92,8 @@ const { SchemaField } = createSchemaField({
     TextArea,
     Tooltip,
     RangePicker,
+    Abnormal,
+    ChooseEq
   },
 });
 export default {
