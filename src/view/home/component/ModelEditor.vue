@@ -47,21 +47,41 @@
                 ></el-option>
               </el-select>
               <div class="operations">
-                <el-popover
+                <!-- <el-popover
                   popper-class="popover-item"
                   placement="right"
                   trigger="click"
+                  :width="500"
+                  :visible-arrow="false"
+                  style="position: relative;"
                 >
-                  <!-- <preview
-                    :itemList="fields"
-                    :formConf="config"
-                    class="preview-popper"
-                  ></preview> -->
                   <form-preview
                     :formTree="JSON.parse(ele.selectedVersion).formVersionFile"
                   ></form-preview>
                   <span class="preview-button" slot="reference"> 查看 </span>
-                </el-popover>
+                </el-popover> -->
+                <Popover
+                  trigger="click"
+                  :getPopupContainer="(triggerNode) => triggerNode.parentElement"
+                  :destroyTooltipOnHide="true"
+                  placement="left"
+                  :arrowPointAtCenter="true"
+                >
+                  <div slot="content">
+                    <form-preview
+                      :formTree="
+                        JSON.parse(ele.selectedVersion).formVersionFile
+                      "
+                    ></form-preview>
+                  </div>
+                  <span class="preview-button"> 查看 </span>
+                </Popover>
+                <!-- <div v-if="previewVisible" class="preview-form">
+                  <form-preview
+                    :formTree="JSON.parse(ele.selectedVersion).formVersionFile"
+                  ></form-preview>
+                </div>
+                <span class="preview-button" @click="previewVisible = !previewVisible">查看</span> -->
                 <span class="link-button" v-if="canLink" @click="onLinked(ele)">
                   关联
                 </span>
@@ -100,12 +120,14 @@ import {
   fetchFormVersion,
 } from '../../../api/workflowForm';
 import { fetchModelInfo, updateModel } from '../../../api/workflowModel';
+import { Popover } from 'ant-design-vue';
 
 export default {
   name: 'ModelEditor',
   components: {
     WorkflowInfo,
     FormPreview,
+    Popover,
   },
   props: {
     visible: {
@@ -146,6 +168,7 @@ export default {
       shapeType: null,
       startFormVersionId: '',
       modelInfo: {},
+      previewVisible: false,
     };
   },
   computed: {
@@ -593,6 +616,16 @@ export default {
       .operations {
         display: flex;
         flex-direction: row;
+        .el-popover.popover-item {
+          position: absolute;
+          width: 500px;
+          max-height: 50vh;
+          overflow: auto;
+        }
+
+        .preview-form {
+          position: relative;
+        }
       }
     }
   }

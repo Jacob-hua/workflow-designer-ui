@@ -9,7 +9,7 @@ import { ConfigProvider } from 'ant-design-vue';
 import locale from 'ant-design-vue/es/locale/zh_CN';
 export default {
   components: {
-    ConfigProvider
+    ConfigProvider,
   },
   data() {
     return {
@@ -23,7 +23,7 @@ export default {
         power: 'Power',
       },
       roleGo: ['login', 'noPermission'],
-      locale: locale
+      locale: locale,
     };
   },
 };
@@ -45,7 +45,7 @@ body {
     z-index: 3000;
   }
 
-  h1{
+  h1 {
     font-size: 2em !important;
   }
 }
@@ -105,6 +105,16 @@ body {
 }
 
 ::-webkit-scrollbar {
+  width: 2px;
+  height: 4px;
+  // display: none;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba (0, 0, 0, 0.2);
+  background: #535353;
+}
+::-webkit-scrollbar-corner {
   display: none;
 }
 </style>

@@ -14,6 +14,7 @@ export const Select = connect(
         ...props,
         loading:
           field?.['loading'] || field?.['validating'] ? true : props.loading,
+        optionFilterProp: 'label',
         getPopupContainer: (triggerNode) => triggerNode.parentNode,
       };
     }

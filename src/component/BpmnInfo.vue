@@ -110,6 +110,7 @@ export default {
     grid-template-columns: repeat(3,1fr);
     border-radius: 10px;
     background-color: #272938;
+    grid-column-gap: 20px;
     .info-item {
       display: flex;
       grid-gap: 5px;

@@ -19,10 +19,16 @@
         </div>
       </el-tooltip>
       <el-button-group>
-        <el-button :size="buttonSize" :disabled="defaultZoom < 0.2" icon="el-icon-zoom-out" @click="canvasZoomOut" />
+        <el-tooltip effect="light" content="缩小">
+          <el-button :size="buttonSize" :disabled="defaultZoom < 0.2" icon="el-icon-zoom-out" @click="canvasZoomOut" />
+        </el-tooltip>
         <el-button :size="buttonSize">{{ zoomRatio }}</el-button>
-        <el-button :size="buttonSize" :disabled="defaultZoom > 4" icon="el-icon-zoom-in" @click="canvasZoomIn" />
-        <el-button :size="buttonSize" icon="el-icon-c-scale-to-original" @click="canvasResetZoom" />
+        <el-tooltip effect="light" content="放大">
+          <el-button :size="buttonSize" :disabled="defaultZoom > 4" icon="el-icon-zoom-in" @click="canvasZoomIn" />
+        </el-tooltip>
+        <el-tooltip effect="light" content="1:1">
+          <el-button :size="buttonSize" icon="el-icon-c-scale-to-original" @click="canvasResetZoom" />
+        </el-tooltip>
       </el-button-group>
       <el-button-group>
         <el-tooltip effect="light" content="撤销">
@@ -64,6 +70,9 @@ export default {
       type: Function,
       default: () => {},
     },
+    fileName: {
+      type: String
+    }
   },
   data() {
     return {
@@ -104,7 +113,7 @@ export default {
     },
     async downloadAs(fileType) {
       try {
-        const fileName = this.iBpmnModeler.getRootShapeInfo().name
+        const fileName = this.fileName || this.iBpmnModeler.getRootShapeInfo().name
         const download = curryFunction(downloadFile)(fileName, fileType)
         if (['xml', 'bpmn'].includes(fileType)) {
           const { xml } = await this.iBpmnModeler.saveXML()
