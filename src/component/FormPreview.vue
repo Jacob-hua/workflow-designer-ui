@@ -18,7 +18,7 @@ import {
   // FormItem,
   // DatePicker,
   // Checkbox,
-  Cascader,
+  // Cascader,
   Editable,
   Input,
   InputNumber as NumberPicker,
@@ -51,7 +51,8 @@ import {
   RangePicker,
   FormItem,
   Select,
-  DatePicker
+  DatePicker,
+  Cascader
 } from '../customComponent';
 import { Card, Rate, Slider, Tooltip } from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.less';

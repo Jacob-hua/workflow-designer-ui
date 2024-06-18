@@ -6,6 +6,7 @@
       :close-on-click-modal="false"
       :visible.sync="addFormDialogVisible"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
     >
       <div class="guid">
         <el-form
@@ -13,12 +14,12 @@
           label-width="80px"
           label-position="right"
           :rules="rules4NewFormGuide"
-          :model="postData"
+          :model="formBaseInfo"
         >
           <div class="from-item">
             <el-form-item label="表单名称" prop="formName">
               <el-input
-                v-model="postData.formName"
+                v-model="formBaseInfo.formName"
                 placeholder="请输入表单名称"
               ></el-input>
             </el-form-item>
@@ -26,7 +27,7 @@
           <div class="from-item">
             <el-form-item label="表单描述" prop="formDesc">
               <el-input
-                v-model="postData.formDesc"
+                v-model="formBaseInfo.formDesc"
                 placeholder="请输入表单描述"
               ></el-input>
             </el-form-item>
@@ -72,7 +73,7 @@
                 </div>
               </el-form-item>
             </div>
-            <div class="title-item">
+            <div class="title-item"  v-if="title !== '新建表单'">
               <el-form-item
                 label="版本名称"
                 class="title-item-label"
@@ -87,7 +88,7 @@
                 </div>
               </el-form-item>
             </div>
-            <div class="title-item">
+            <div class="title-item" v-if="title !== '新建表单'">
               <el-form-item
                 label="版本号"
                 class="title-item-label"
@@ -102,7 +103,7 @@
                 </div>
               </el-form-item>
             </div>
-            <div class="title-item">
+            <div class="title-item" v-if="title !== '新建表单'">
               <el-form-item
                 label="创建时间"
                 class="title-item-label"
@@ -175,11 +176,13 @@ export default {
           {
             trigger: 'blur',
             validator: (_, value, callback) => {
-              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value)
-              if(flag){
-                callback()
-              }else {
-                callback(new Error('表单名称只能是中文、数字、字母、下划线和中划线!'))
+              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
+              if (flag) {
+                callback();
+              } else {
+                callback(
+                  new Error('表单名称只能是中文、数字、字母、下划线和中划线!')
+                );
               }
             },
           },
@@ -205,11 +208,13 @@ export default {
           {
             trigger: 'blur',
             validator: (_, value, callback) => {
-              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value)
-              if(flag){
-                callback()
-              }else {
-                callback(new Error('表单名称只能是中文、数字、字母、下划线和中划线!'))
+              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
+              if (flag) {
+                callback();
+              } else {
+                callback(
+                  new Error('表单名称只能是中文、数字、字母、下划线和中划线!')
+                );
               }
             },
           },
@@ -226,6 +231,10 @@ export default {
       dialogVisible2: false,
       input: '',
       options: [],
+      formBaseInfo: {
+        formName: '',
+        formDesc: '',
+      },
       postData: {
         formId: '',
         formName: '',
@@ -249,7 +258,7 @@ export default {
           formId: value.formId,
           createTime: value.createTime,
           formVersion: value.formVersion,
-          formVersionSource: value.formVersionSource,
+          formVersionId: value.formVersionId,
           formVersionTag: value.formVersionTag,
         };
       }
@@ -266,6 +275,10 @@ export default {
   },
   methods: {
     close() {
+      this.formBaseInfo = {
+        formName: '',
+        formDesc: '',
+      };
       localStorage.removeItem('formVersionFile');
       this.$emit('changeAddFormVisible', false);
     },
@@ -355,6 +368,10 @@ export default {
       }
     },
     nextDiolog() {
+      this.postData = {
+        ...this.postData,
+        ...this.formBaseInfo,
+      };
       this.$refs['guideForm'].validate((valid) => {
         if (valid) {
           this.$emit('changeAddFormVisible', false);
@@ -388,7 +405,7 @@ export default {
         formData.append('formId', this.postData.formId);
         formData.append('formVersionDesc', this.postData.formVersionDesc);
         formData.append('formVersionFile', formFile);
-        formData.append('formVersionSource', this.postData.formVersionSource);
+        formData.append('formVersionSource', this.postData.formVersionId);
         formData.append('formVersionTag', this.postData.formVersionTag);
         const { code, msg } = await addFormVersion(formData);
         if (code !== '200') {

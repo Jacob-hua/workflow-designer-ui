@@ -6,6 +6,7 @@
       :close-on-click-modal="false"
       :visible.sync="addFormDialogVisible"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
     >
       <div class="guid">
         <el-form
@@ -24,7 +25,6 @@
                 :options="projectOrganizations()"
                 :props="{
                   emitPath: true,
-                  checkStrictly: true,
                 }"
               >
               </el-cascader>
@@ -187,7 +187,7 @@ export default {
     return {
       rules4NewFormGuide: {
         business: [
-          { required: true, message: '请选择表单类型', trigger: 'change' },
+          { required: true, message: '请选择应用项目', trigger: 'change' },
         ],
         formName: [
           { required: true, message: '请输入表单名称', trigger: 'blur' },

@@ -8,7 +8,6 @@
           :options="projectOrganizations()"
           :props="{
             emitPath: true,
-            checkStrictly: true,
           }"
         ></el-cascader>
         <span class="text">创建时间</span>
@@ -185,6 +184,11 @@ export default {
     reset() {
       this.formName = '';
       this.valueDate = [];
+      this.pageInfo = {
+        page: 1,
+        limit: 8,
+        total: 0,
+      }
       this.setDefaultorganization();
       this.getFormList();
     },
@@ -232,10 +236,11 @@ export default {
     },
 
     getData() {
-      this.getFormList();
-    },
-
-    changeActiveName() {
+      this.pageInfo = {
+        page: 1,
+        limit: 8,
+        total: 0,
+      }
       this.getFormList();
     },
 

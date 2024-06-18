@@ -7,6 +7,7 @@
       @close="onClose"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
     >
       <div class="container">
         <bpmn-info
@@ -134,7 +135,7 @@ export default {
         // },
         {
           label: '应用项目',
-          value: this.workflow.projectName,
+          value: `${this.workflow.projectName}-${this.workflow.applicationName}`,
         },
         // {
         //   label: '部署人',

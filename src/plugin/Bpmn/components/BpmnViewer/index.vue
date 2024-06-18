@@ -120,7 +120,7 @@ export default {
   width: 80px;
   text-align: center;
   padding: 5px 10px;
-  z-index: 2999;
+  z-index: 2001;
   color: #009efb;
 
   &:hover {

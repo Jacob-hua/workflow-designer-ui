@@ -29,7 +29,11 @@
             </div>
             <div class="detail-title-item">
               <span class="detail-title-item-label">项目名称:</span>
-              <span>{{ formDatas.projectName }}</span>
+              <span
+                >{{ formDatas.projectName }}-{{
+                  formDatas.applicationName
+                }}</span
+              >
             </div>
             <div class="detail-title-item">
               <span class="detail-title-item-label">创建人:</span>

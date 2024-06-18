@@ -7,6 +7,7 @@
       @close="onCancel"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
     >
       <!-- <workflow-info
         :workflow="workflow"
@@ -82,7 +83,7 @@ export default {
         // },
         {
           label: '应用项目',
-          value: this.workflow?.modelInfo?.projectName,
+          value: `${this.workflow?.modelInfo?.projectName}-${this.workflow?.modelInfo?.applicationName}`,
         },
         // {
         //   label: '部署人',

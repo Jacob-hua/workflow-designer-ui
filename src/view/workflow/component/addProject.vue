@@ -5,6 +5,7 @@
     :visible="visible"
     @close="onClose"
     :close-on-press-escape="false"
+      :destroy-on-close="true"
   >
     <el-form
       label-position="right"
@@ -22,7 +23,6 @@
             :options="projectOrganizations()"
             :props="{
               emitPath: true,
-              checkStrictly: true,
             }"
           ></el-cascader>
         </el-col>

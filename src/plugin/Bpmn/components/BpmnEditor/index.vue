@@ -5,6 +5,7 @@
       :iBpmnModeler="iBpmnModeler"
       :namespace="namespace"
       :generateIdFunc="generateIdFunc"
+      :fileName="name"
     />
     <div class="containers" ref="containers"></div>
   </div>

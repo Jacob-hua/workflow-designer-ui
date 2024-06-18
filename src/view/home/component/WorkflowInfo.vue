@@ -23,16 +23,12 @@
                       :disabled="!taskInfo.taskDefKey"
                       @click="handleChangeUser"
                       icon="el-icon-edit-outline"
-                      size="small"
                       >变更</el-button
                     >
                     <div class="fixed-user">
                       <span v-if="sourceFixed.length <= 0">暂无</span>
-                      <span
-                        v-else
-                        v-for="item in sourceFixed"
-                        :key="item.value"
-                        >{{ item.label }}</span
+                      <span v-else v-for="item in sourceFixed" :key="item.value"
+                        >{{ item.label }};</span
                       >
                     </div>
                   </div>
@@ -42,13 +38,14 @@
                     <el-button
                       :disabled="!taskInfo.taskDefKey"
                       @click="handleChangeNodeUser('dynamic_set')"
-                      size="small"
                       icon="el-icon-edit-outline"
                       >变更</el-button
                     >
-                    <span>{{
+                    <div>
+                      <span>{{
                       dynamicSet.label ? dynamicSet.label : '暂无'
                     }}</span>
+                    </div>
                   </div>
                 </el-tab-pane>
                 <el-tab-pane label="同一节点执行人" name="third">
@@ -56,14 +53,14 @@
                     <el-button
                       :disabled="!taskInfo.taskDefKey"
                       @click="handleChangeNodeUser('task_executor')"
-                      size="small"
-                      type="primary"
                       icon="el-icon-edit-outline"
                       >变更</el-button
                     >
-                    <span>{{
+                    <div>
+                      <span>{{
                       taskEecutor.label ? taskEecutor.label : '暂无'
                     }}</span>
+                    </div>
                   </div>
                 </el-tab-pane>
               </el-tabs>
@@ -231,7 +228,7 @@ export default {
     SpecifyUser,
     SpecifyNode,
     SpecifyGateway,
-    antInput
+    antInput,
   },
   props: {
     workflow: {
@@ -536,11 +533,11 @@ export default {
   }
 
   .executor {
-    height: 287px;
+    height: 297px;
   }
 
   .form {
-    height: 390px;
+    height: 430px;
     padding: 10px 10px;
   }
 }
@@ -574,6 +571,7 @@ export default {
 .ticket-left {
   flex-grow: 0;
   flex-shrink: 0;
+  max-width: 416px;
 }
 
 .ticket-form {
@@ -640,6 +638,22 @@ export default {
     }
   }
 
+  .user-selector, .other-node-selector, .same-node-selector {
+    .el-button {
+      border-radius: 3px;
+      background: transparent;
+      width: 70px;
+      height: 30px;
+      padding: 0;
+      border-color: #0b71e8;
+      color: #fff;
+
+      &:hover {
+        color: #0b71e8;
+      }
+    }
+  }
+
   & > div {
     font-size: 14px;
     margin-top: 10px;
@@ -648,17 +662,18 @@ export default {
   .fixed-user {
     // display: flex;
     // flex-wrap: wrap;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    // grid-template-columns: repeat(3, 1fr);
     grid-gap: 5px;
 
     span {
-      border: 1px solid;
-      border-radius: 4px;
-      padding: 4px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      // border: 1px solid;
+      // border-radius: 4px;
+      // padding: 4px;
+      // overflow: hidden;
+      // text-overflow: ellipsis;
+      // white-space: nowrap;
     }
   }
 
