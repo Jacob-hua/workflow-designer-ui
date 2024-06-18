@@ -701,16 +701,7 @@ export default {
           border: 1px solid #666666;
           transition: left 1s linear 0s;
           transition: top 1s linear 0s;
-
-          // &::after {
-          //   content: '';
-          //   position: absolute;
-          //   border-top: 50px solid transparent;
-          //   border-bottom: 50px solid transparent;
-          //   border-left: 50px solid #212739;
-          //   border-right: 50px solid transparent;
-          //   // border: ;
-          // }
+          min-width: 300px;
         }
       }
     }

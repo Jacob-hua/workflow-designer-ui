@@ -712,6 +712,7 @@ export default {
           border: 1px solid #666666;
           transition: left 1s linear 0s;
           transition: top 1s linear 0s;
+          min-width: 300px;
         }
       }
     }
