@@ -7,6 +7,7 @@
       fullscreen
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
     >
       <div class="deploy-wrapper">
         <div>
@@ -35,13 +36,10 @@
           <div class="content-wrapper">
             <div v-for="(ele, index) in formList" :key="ele.formId">
               <div class="form-name">{{ ele.formName }}</div>
-              <el-select
-                v-model="formList[index].selectedVersion"
-                @change="handleChangeVersion(ele)"
-              >
+              <el-select v-model="formList[index].selectedVersion">
                 <el-option
-                  v-for="(item, index) in ele.versionList"
-                  :key="index"
+                  v-for="(item, idx) in ele.versionList"
+                  :key="idx"
                   :label="item.label"
                   :value="item.value"
                 ></el-option>
@@ -60,9 +58,13 @@
                   ></form-preview>
                   <span class="preview-button" slot="reference"> 查看 </span>
                 </el-popover> -->
-                <Popover
+                <!-- <Popover
+                  v-resize="popoverResize"
+                  ref="popoverRef"
                   trigger="click"
-                  :getPopupContainer="(triggerNode) => triggerNode.parentElement"
+                  :getPopupContainer="
+                    (triggerNode) => triggerNode.parentElement
+                  "
                   :destroyTooltipOnHide="true"
                   placement="left"
                   :arrowPointAtCenter="true"
@@ -75,13 +77,19 @@
                     ></form-preview>
                   </div>
                   <span class="preview-button"> 查看 </span>
-                </Popover>
-                <!-- <div v-if="previewVisible" class="preview-form">
+                </Popover> -->
+                <div
+                  v-resize="popoverResize"
+                  class="preview-form"
+                  ref="popoverRef"
+                >
                   <form-preview
                     :formTree="JSON.parse(ele.selectedVersion).formVersionFile"
                   ></form-preview>
                 </div>
-                <span class="preview-button" @click="previewVisible = !previewVisible">查看</span> -->
+                <span class="preview-button" @click="lookover($event, index)"
+                  >查看</span
+                >
                 <span class="link-button" v-if="canLink" @click="onLinked(ele)">
                   关联
                 </span>
@@ -129,6 +137,29 @@ export default {
     FormPreview,
     Popover,
   },
+  directives: {
+    // 使用局部注册指令的方式
+    resize: {
+      // 指令的名称
+      bind(el, binding) {
+        // el为绑定的元素，binding为绑定给指令的对象
+        let width = '',
+          height = '';
+        function isReize() {
+          const style = document.defaultView.getComputedStyle(el);
+          if (width !== style.width || height !== style.height) {
+            binding.value(); // 关键
+          }
+          width = style.width;
+          height = style.height;
+        }
+        el.__vueSetInterval__ = setInterval(isReize, 300);
+      },
+      unbind(el) {
+        clearInterval(el.__vueSetInterval__);
+      },
+    },
+  },
   props: {
     visible: {
       type: Boolean,
@@ -169,8 +200,10 @@ export default {
       startFormVersionId: '',
       modelInfo: {},
       previewVisible: false,
+      currentIndex: -1,
     };
   },
+  mounted() {},
   computed: {
     // ...mapState('model', ['modelTaskConfigs']),
     processDisplayInfo() {
@@ -226,6 +259,37 @@ export default {
         taskDefKey: taskDefKey,
         taskFormVersionId: '',
       };
+    },
+    popoverResize() {
+      const popoverRef = this.$refs.popoverRef[this.currentIndex] || null;
+      if (!popoverRef) return;
+      this.$nextTick(() => {
+        popoverRef.style.top = '-' + popoverRef.clientHeight / 2 + 'px';
+        popoverRef.style.left = '-' + (popoverRef.clientWidth + 10) + 'px';
+      });
+    },
+    lookover(evet, index) {
+      const popoverRef = this.$refs.popoverRef;
+      if (this.currentIndex === index) {
+        popoverRef[index].style.visibility = 'hidden';
+        this.currentIndex = -1;
+        return;
+      }
+      if (
+        popoverRef[this.currentIndex] &&
+        popoverRef[this.currentIndex].style.visibility === 'visible'
+      ) {
+        popoverRef[this.currentIndex].style.visibility = 'hidden';
+      }
+      console.log(evet, 'popoverRef');
+      popoverRef[index].style.visibility = 'visible';
+      this.$nextTick(() => {
+        popoverRef[index].style.top =
+          '-' + popoverRef[index].clientHeight / 2 + 'px';
+        popoverRef[index].style.left =
+          '-' + (popoverRef[index].clientWidth + 10) + 'px';
+      });
+      this.currentIndex = index;
     },
     onCancel() {
       this.$emit('cancel');
@@ -352,6 +416,7 @@ export default {
     },
     onClose() {
       this.formName = '';
+      this.currentIndex = -1;
       this.formContent = {};
       (this.pageInfo = {
         limit: 10,
@@ -512,6 +577,7 @@ export default {
     },
     onPageChange(val) {
       this.pageInfo.page = val;
+      this.currentIndex = -1;
       this.fetchFormList();
     },
     updatePageNum() {
@@ -573,7 +639,6 @@ export default {
   }
 
   .content-wrapper {
-    overflow: scroll;
     margin: 10px 0;
     min-height: 898px;
     padding: 0 5px;
@@ -616,6 +681,7 @@ export default {
       .operations {
         display: flex;
         flex-direction: row;
+        position: relative;
         .el-popover.popover-item {
           position: absolute;
           width: 500px;
@@ -624,7 +690,27 @@ export default {
         }
 
         .preview-form {
-          position: relative;
+          position: absolute;
+          visibility: hidden;
+          background-color: #212739;
+          z-index: 3000;
+          max-height: 50vh;
+          max-width: 500px;
+          overflow: auto;
+          padding: 10px;
+          border: 1px solid #666666;
+          transition: left 1s linear 0s;
+          transition: top 1s linear 0s;
+
+          // &::after {
+          //   content: '';
+          //   position: absolute;
+          //   border-top: 50px solid transparent;
+          //   border-bottom: 50px solid transparent;
+          //   border-left: 50px solid #212739;
+          //   border-right: 50px solid transparent;
+          //   // border: ;
+          // }
         }
       }
     }

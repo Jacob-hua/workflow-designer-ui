@@ -6,6 +6,7 @@
     append-to-body
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+      :destroy-on-close="true"
   >
     <div class="dialog-content">
       <div class="user-list list-card">

@@ -1,5 +1,13 @@
 <template>
-  <el-dialog title="查看" :visible="visible" fullscreen @close="close" :close-on-click-modal="false" :close-on-press-escape="false">
+  <el-dialog
+    title="查看"
+    :visible="visible"
+    fullscreen
+    @close="close"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+      :destroy-on-close="true"
+  >
     <div>
       <bpmn-info
         :xml="projectData.processFile"
@@ -8,12 +16,7 @@
       />
     </div>
     <span slot="footer" v-if="footerVisible">
-      <el-button
-        class="editor-button"
-        @click="onEdit"
-      >
-        编辑
-      </el-button>
+      <el-button class="editor-button" @click="onEdit"> 编辑 </el-button>
       <!-- <el-button
         class="status-button"
         @click="onDeactivate"

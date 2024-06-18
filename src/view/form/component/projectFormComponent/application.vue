@@ -64,7 +64,7 @@
                 :model="postData"
               >
                 <div class="from-item">
-                  <el-form-item label="表单类型" prop="business">
+                  <el-form-item label="应用项目" prop="business">
                     <el-cascader
                       v-model="postData.business"
                       clearable
@@ -137,7 +137,7 @@ export default {
     return {
       rules: {
         business: [
-          { required: true, message: '请输入资源标识', trigger: 'change' },
+          { required: true, message: '请选择应用项目', trigger: 'change' },
         ],
         formName: [
           { required: true, message: '请输入表单名称', trigger: 'blur' },

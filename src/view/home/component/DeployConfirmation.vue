@@ -5,6 +5,7 @@
       :close-on-click-modal="false"
       :visible.sync="visible"
       @close="onCancel"
+      :destroy-on-close="true"
     >
       <el-form
         label-position="right"

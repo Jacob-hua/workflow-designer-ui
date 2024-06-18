@@ -26,7 +26,7 @@
         <el-tooltip effect="light" content="放大">
           <el-button :size="buttonSize" :disabled="defaultZoom > 4" icon="el-icon-zoom-in" @click="canvasZoomIn" />
         </el-tooltip>
-        <el-tooltip effect="light" content="1:1">
+        <el-tooltip effect="light" content="重置位置">
           <el-button :size="buttonSize" icon="el-icon-c-scale-to-original" @click="canvasResetZoom" />
         </el-tooltip>
       </el-button-group>

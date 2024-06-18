@@ -192,13 +192,13 @@ export default {
     },
     addForm() {
       this.addFormDialogVisible = true;
-      this.projectFormTitle = '新建表单';
+      this.publicFormTitle = '新建表单';
     },
     addForm2(item, tileText) {
       this.formDesignerVisible = true;
       this.formInfo = item;
       this.$nextTick(() => {
-        this.projectFormTitle = tileText;
+        this.publicFormTitle = tileText;
       });
     },
     changeAddFormVisible(visible) {

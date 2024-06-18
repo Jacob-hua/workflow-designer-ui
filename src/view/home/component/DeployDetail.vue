@@ -7,6 +7,7 @@
       @close="onCancel"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
     >
       <!-- <workflow-info
         :workflow="workflow"

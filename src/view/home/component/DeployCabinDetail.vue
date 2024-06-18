@@ -7,6 +7,7 @@
       @close="onClose"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
     >
       <div class="container">
         <bpmn-info

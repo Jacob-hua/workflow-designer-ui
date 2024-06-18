@@ -6,6 +6,7 @@
     width="30%"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+    :destroy-on-close="true"
   >
     <el-form
       :model="versionForm"
@@ -60,13 +61,13 @@ export default {
           },
         ],
         formVersionDesc: [
-        {
+          {
             min: 0,
             max: 200,
             message: '表单版本描述长度在 0 到 200 个字符',
             trigger: 'blur',
           },
-        ]
+        ],
       },
     };
   },
