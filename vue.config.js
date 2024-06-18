@@ -35,8 +35,8 @@ module.exports = {
     proxy: {
       [`${process.env.VUE_APP_BASE_API}`]: {
         // target: 'http://192.100.4.24:19931/', // 刘旺
-        // target: 'http://192.100.4.35:8060/workflow/', //李柯
-        target: "http://192.100.8.20:10001",
+        target: 'http://192.100.4.35:19931/', //李柯
+        // target: "http://192.100.8.20:10001",
         // target: 'http://k8s.isiact.com/workflow-runtime-service',
         // target: 'http://k8s.isiact.com/kms-runtime-service/workflow', // 康明斯
         // target: 'http://workflow-dev.isiact.com/kms/workflow/',
