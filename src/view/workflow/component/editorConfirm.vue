@@ -17,7 +17,7 @@
     >
       <el-form-item label="流程名称" prop="processName">
         <el-input
-          v-model="confirmForm.processName"
+          v-model.trim="confirmForm.processName"
           placeholder="请输入流程名称"
         ></el-input>
       </el-form-item>
@@ -25,7 +25,7 @@
         <el-col :span="24">
           <el-input
             type="textarea"
-            v-model="confirmForm.processDesc"
+            v-model.trim="confirmForm.processDesc"
             placeholder="请输入流程描述"
           ></el-input>
         </el-col>

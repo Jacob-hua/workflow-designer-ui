@@ -17,13 +17,13 @@
     >
       <el-form-item label="版本名称" prop="formVersionTag">
         <el-input
-          v-model="versionForm.formVersionTag"
+          v-model.trim="versionForm.formVersionTag"
           placeholder="请输入表单版本名称"
         ></el-input>
       </el-form-item>
       <el-form-item label="版本描述" prop="formVersionDesc">
         <el-input
-          v-model="versionForm.formVersionDesc"
+          v-model.trim="versionForm.formVersionDesc"
           placeholder="请输入表单版本描述"
         ></el-input>
       </el-form-item>

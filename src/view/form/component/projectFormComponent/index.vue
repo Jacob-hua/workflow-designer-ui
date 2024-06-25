@@ -33,7 +33,7 @@
           <div class="from-item">
             <el-form-item label="表单名称" prop="formName">
               <el-input
-                v-model="formBaseInfo.formName"
+                v-model.trim="formBaseInfo.formName"
                 placeholder="请输入表单名称"
               ></el-input>
             </el-form-item>
@@ -41,7 +41,7 @@
           <div class="from-item">
             <el-form-item label="表单描述" prop="formDesc">
               <el-input
-                v-model="formBaseInfo.formDesc"
+                v-model.trim="formBaseInfo.formDesc"
                 placeholder="请输入表单描述"
               ></el-input>
             </el-form-item>

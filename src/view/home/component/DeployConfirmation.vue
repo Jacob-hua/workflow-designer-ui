@@ -17,7 +17,7 @@
         <el-form-item label="模型名称" prop="modelName">
           <el-col :span="24">
             <el-input
-              v-model="formData.modelName"
+              v-model.trim="formData.modelName"
               placeholder="请输入部署名称"
             ></el-input>
           </el-col>
@@ -25,7 +25,7 @@
         <el-form-item label="模型描述" prop="modelDesc">
           <el-col :span="24">
             <el-input
-              v-model="formData.modelDesc"
+              v-model.trim="formData.modelDesc"
               placeholder="请输入部署名称"
             ></el-input>
           </el-col>

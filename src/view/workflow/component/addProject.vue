@@ -30,7 +30,7 @@
       <el-form-item label="流程名称" prop="processName">
         <el-col :span="24">
           <el-input
-            v-model="formData.processName"
+            v-model.trim="formData.processName"
             placeholder="请输入流程名称"
           ></el-input>
         </el-col>
@@ -39,7 +39,7 @@
         <el-col :span="24">
           <el-input
             type="textarea"
-            v-model="formData.processDesc"
+            v-model.trim="formData.processDesc"
             placeholder="请输入流程描述"
           ></el-input>
         </el-col>

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { createForm } from '@formily/core';
+import { createForm, onFieldChange } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/vue';
 import Abnormal from '../customComponent/Abnormal/index.vue'
 import ChooseEq from '../customComponent/ChooseEq/index.vue'
