@@ -11,6 +11,8 @@ import { createForm, onFieldChange } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/vue';
 import Abnormal from '../customComponent/Abnormal/index.vue'
 import ChooseEq from '../customComponent/ChooseEq/index.vue'
+import DataTranscription from '../customComponent/DataTranscription/index.vue'
+import Display from '../customComponent/Display/index.vue'
 import {
   Form,
   // FormItem,
@@ -52,7 +54,7 @@ import {
   DatePicker,
   Cascader
 } from '../customComponent';
-import { Card, Rate, Slider, Card as Display, Tooltip } from 'ant-design-vue';
+import { Card, Rate, Slider, Tooltip } from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.less';
 import _ from 'lodash';
 
@@ -94,7 +96,8 @@ const { SchemaField } = createSchemaField({
     Tooltip,
     RangePicker,
     Abnormal,
-    ChooseEq
+    ChooseEq,
+    DataTranscription
   },
 });
 export default {
@@ -138,21 +141,21 @@ export default {
       function handleDisplayComp(obj) {
         let childObj = obj;
         if (!obj.hasOwnProperty('properties')) {
-          if (obj['x-component'] === 'Display') {
-            childObj = {
-              ...obj,
-              type: 'void',
-              'x-component': 'Card',
-              'x-component-props': {
-                title: '知识库组件',
-                style: {
-                  margin: '0px 0px 10px 0px',
-                  backgroundColor: 'rgba(0,0,0,1)',
-                  borderColor: 'rgba(0,0,0,1)',
-                },
-              },
-            };
-          }
+          // if (obj['x-component'] === 'Display') {
+          //   childObj = {
+          //     ...obj,
+          //     type: 'void',
+          //     'x-component': 'Card',
+          //     'x-component-props': {
+          //       title: '知识库组件',
+          //       style: {
+          //         margin: '0px 0px 10px 0px',
+          //         backgroundColor: 'rgba(0,0,0,1)',
+          //         borderColor: 'rgba(0,0,0,1)',
+          //       },
+          //     },
+          //   };
+          // }
         } else {
           for (let [key, value] of Object.entries(obj.properties)) {
             childObj.properties[key] = handleDisplayComp(value);
