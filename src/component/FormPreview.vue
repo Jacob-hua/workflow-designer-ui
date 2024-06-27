@@ -52,7 +52,8 @@ import {
   FormItem,
   Select,
   DatePicker,
-  Cascader
+  Cascader,
+  CheckIn
 } from '../customComponent';
 import { Card, Rate, Slider, Tooltip } from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.less';
@@ -97,7 +98,8 @@ const { SchemaField } = createSchemaField({
     RangePicker,
     Abnormal,
     ChooseEq,
-    DataTranscription
+    DataTranscription,
+    CheckIn
   },
 });
 export default {
