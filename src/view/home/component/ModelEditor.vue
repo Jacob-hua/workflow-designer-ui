@@ -244,6 +244,13 @@ export default {
         this.updateModelTaskConfigs({ modelTaskConfigs: value });
       },
     },
+    startFormVersionId: {
+      handler(value) {
+        this.updateStartFormVersionId({
+          startFormVersionId: value
+        })
+      }
+    }
   },
   methods: {
     ...mapMutations('model', [
@@ -486,6 +493,7 @@ export default {
       }
       // this.modelTaskConfigs = Object.values(data.modelTasks);
       this.modelInfo = data.modelInfo;
+      this.startFormVersionId = data.modelInfo?.startFormVersionId;
     },
     filterFormList() {
       this.pageInfo.page = 1;

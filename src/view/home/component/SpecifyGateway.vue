@@ -6,7 +6,7 @@
     append-to-body
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-      :destroy-on-close="true"
+    :destroy-on-close="true"
   >
     <div class="process-canvas">
       <bpmn-viewer
@@ -62,7 +62,7 @@ import { mapState } from 'vuex';
 import { fetchTaskNodeList } from '../../../api/workflow';
 import { fetchFormVersion } from '../../../api/workflowForm';
 
-const allowFormItem = ['Input', 'Select', 'Radio', 'Switch'];
+const allowFormItem = ['Radio', 'Switch'];
 export default {
   name: 'SpecifyGateway',
   props: {
@@ -106,14 +106,15 @@ export default {
       }
     },
     async selectedNode(newVal, oldVal) {
+      this.selectedFormitem = '';
       if (!newVal) {
-        this.selectedFormitem = '';
         this.formitemList = [];
         return;
       }
       if (newVal === oldVal) return;
       await this.fetchFormFile(newVal);
-      this.selectedFormitem = this.historyInfo.pos;
+      if (this.historyInfo?.value === newVal)
+        this.selectedFormitem = this.historyInfo.pos;
     },
   },
   methods: {
