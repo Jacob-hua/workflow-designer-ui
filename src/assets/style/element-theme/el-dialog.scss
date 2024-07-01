@@ -9,6 +9,10 @@ $dialog-close-color: #8d9fc4 !default;
   flex-direction: column;
 }
 
+.is-fullscreen {
+  // margin-top: 50px !important;
+}
+
 .el-dialog__title {
   color: $dialog-title-color;
   font-size: 14px;

@@ -30,13 +30,16 @@ module.exports = {
     disableHostCheck: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Headers': '*',
+			'Access-Control-Allow-Methods': '*'
     },
     hot: true,
     proxy: {
       [`${process.env.VUE_APP_BASE_API}`]: {
         // target: 'http://192.100.4.24:19931/', // 刘旺
-        target: 'http://192.100.4.35:19931/', //李柯
-        // target: "http://192.100.8.20:10001",
+        // target: 'http://192.100.4.35:19931/', //李柯
+        target: "http://192.100.8.20:10001",
+        // target: 'http://120.46.152.159:10001/',
         // target: 'http://k8s.isiact.com/workflow-runtime-service',
         // target: 'http://k8s.isiact.com/kms-runtime-service/workflow', // 康明斯
         // target: 'http://workflow-dev.isiact.com/kms/workflow/',
