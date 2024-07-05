@@ -135,6 +135,11 @@ export default {
         this.$message.error('流程设计存在错误/警告');
         return;
       }
+      const { processName, processDesc } = this.rootBaseInfo;
+      if(!processName) {
+        this.$message.warning('流程名称不能为空')
+        return
+      }
       try {
         const { xml } = await this.iBpmnModeler.saveXML();
         const processFormData = this.processFormData();
@@ -150,7 +155,7 @@ export default {
         } else {
           if (this.projectData.processId) {
             if (md5(this.projectData.processFile) === md5(xml)) {
-              const { processName, processDesc } = this.rootBaseInfo;
+              // const { processName, processDesc } = this.rootBaseInfo;
               promise = updateWorkflow({
                 processId: this.projectData.processId,
                 processName: processName,

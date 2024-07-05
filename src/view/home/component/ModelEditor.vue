@@ -391,9 +391,10 @@ export default {
         return;
       }
       const taskShape = this.iBpmn.getShapeType(element);
+      const taskType = element.type.split(':')[1]
       if (
-        taskShape === BpmnShapeType.USER_TASK ||
-        taskShape === BpmnShapeType.START_EVENT
+        taskType === 'UserTask' ||
+        taskType === 'StartEvent'
       ) {
         this.shapeType = taskShape;
         this.modelTaskConfig = this.modelTaskConfigs.find(
@@ -404,7 +405,7 @@ export default {
         }
         this.canLink = true;
         this.fetchFormVersion();
-      } else if (taskShape === BpmnShapeType.EXCLUSIVE_GATEWAY) {
+      } else if (taskType === 'ExclusiveGateWay') {
         this.shapeType = taskShape;
         this.modelTaskConfig = this.modelTaskConfigs.find(
           ({ taskDefKey }) => taskDefKey === element.id

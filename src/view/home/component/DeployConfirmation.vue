@@ -19,6 +19,7 @@
             <el-input
               v-model.trim="formData.modelName"
               placeholder="请输入部署名称"
+              clearable=""
             ></el-input>
           </el-col>
         </el-form-item>
@@ -27,6 +28,7 @@
             <el-input
               v-model.trim="formData.modelDesc"
               placeholder="请输入部署名称"
+              clearable=""
             ></el-input>
           </el-col>
         </el-form-item>
@@ -40,6 +42,7 @@
 </template>
 
 <script>
+import { checkName } from '@/api/workflowModel';
 export default {
   name: 'DeployConfirmation',
   props: {
@@ -66,11 +69,13 @@ export default {
           {
             trigger: 'blur',
             validator: (_, value, callback) => {
-              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value)
-              if(flag){
-                callback()
-              }else {
-                callback(new Error('模型名称只能是中文、数字、字母、下划线和中划线!'))
+              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
+              if (flag) {
+                callback();
+              } else {
+                callback(
+                  new Error('模型名称只能是中文、数字、字母、下划线和中划线!')
+                );
               }
             },
           },
@@ -90,8 +95,12 @@ export default {
   methods: {
     onSubmit() {
       this.$refs.formData &&
-        this.$refs.formData.validate((validate) => {
+        this.$refs.formData.validate(async (validate) => {
           if (validate) {
+            const isSame = await this.checkSameName();
+            if (isSame) {
+              this.$message.warning('模型名称已存在')
+              return};
             this.$emit('submit', { ...this.formData });
             this.onCancel();
           }
@@ -100,6 +109,22 @@ export default {
     onCancel() {
       this.$refs.formData && this.$refs.formData.resetFields();
       this.$emit('cancel');
+    },
+    async checkSameName() {
+      let isSame = false;
+      try {
+        const { data, code, msg } = await checkName({
+          modelName: this.formData.modelName,
+        });
+        if (code !== '200') {
+          this.$message.error(msg);
+          return;
+        }
+        isSame = data;
+      } catch (err) {
+        this.$message.error(err.msg || err);
+      }
+      return isSame;
     },
     onClose() {
       // this.$emit('update:visible', false);

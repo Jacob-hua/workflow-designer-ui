@@ -14,3 +14,6 @@ export const fetchModelList = (params) => post('/workflow/design/model/list', pa
 
 //查询指定模型配置
 export const fetchModelInfo = (params) => get('/workflow/design/model/get', params)
+
+//检测模型名称是否重复
+export const checkName = params => get('/workflow/design/model/checke/name', params)

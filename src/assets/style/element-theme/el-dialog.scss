@@ -9,8 +9,9 @@ $dialog-close-color: #8d9fc4 !default;
   flex-direction: column;
 }
 
-.is-fullscreen {
-  // margin-top: 50px !important;
+.is-fullscreen_tebian {
+  margin-top: 50px !important;
+  height: calc(100% - 51px) !important;
 }
 
 .el-dialog__title {

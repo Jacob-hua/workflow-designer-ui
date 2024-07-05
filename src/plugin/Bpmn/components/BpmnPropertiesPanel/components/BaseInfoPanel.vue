@@ -109,6 +109,7 @@ export default {
       if (!value) {
         this.baseInfoForm = this.rootBaseInfo;
       }
+      this.$refs['baseInfoFormRef'].validate(() => {})
       const existedListener = (listener) =>
         this.listeners.find(
           (item) =>
@@ -163,11 +164,15 @@ export default {
     baseInfo(value) {
       if (this.shapeType) {
         this.baseInfoForm = { processName: value.name };
+        this.$refs['baseInfoFormRef'].clearValidate();
       }
     },
-    rootBaseInfo(value) {
-      if (!this.shapeType) {
+    rootBaseInfo: {
+      deep: true,
+      handler(value) {
+        if (!this.shapeType) {
         this.baseInfoForm = { ...value };
+      }
       }
     },
     baseInfoForm: {
@@ -209,12 +214,16 @@ export default {
               this.$refs['baseInfoFormRef'].validate((valid) => {
                 if (valid) {
                   this.updateRootBaseInfo({ rootBaseInfo: value });
+                } else {
+                  if (!value.processName) {
+                    this.updateRootBaseInfo({ rootBaseInfo: value });
+                  }
                 }
               });
             });
-          }else{
+          } else {
             this.updateRootBaseInfo({ rootBaseInfo: value });
-            this.count++
+            this.count++;
           }
         }
       },
@@ -242,9 +251,9 @@ export default {
       });
     },
   },
-  beforeDestroy(){
-    this.count = 0
-  }
+  beforeDestroy() {
+    this.count = 0;
+  },
 };
 </script>
 

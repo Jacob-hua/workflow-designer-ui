@@ -11,6 +11,7 @@ export const Cascader = connect(
     (props, field) => {
       return {
         ...props,
+				changeOnSelect: true,
         suffixIcon:
           field?.['loading'] || field?.['validating']
             ? h(Icon, { props: { type: 'loading' } }, {})

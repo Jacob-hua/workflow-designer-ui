@@ -343,10 +343,10 @@ export default {
         this.resetModelTaskConfig();
         return;
       }
-      const taskShape = this.iBpmn.getShapeType(element);
+      const taskShape = this.iBpmn.getShapeType(element);const taskType = element.type.split(':')[1]
       if (
-        taskShape === BpmnShapeType.USER_TASK ||
-        taskShape === BpmnShapeType.START_EVENT
+        taskType === 'UserTask' ||
+        taskType === 'StartEvent'
       ) {
         this.shapeType = taskShape;
         this.modelTaskConfig = this.modelTaskConfigs.find(
@@ -356,7 +356,7 @@ export default {
           this.resetModelTaskConfig(element.id);
         }
         this.canLink = true;
-      } else if (taskShape === BpmnShapeType.EXCLUSIVE_GATEWAY) {
+      } else if (taskType === 'ExclusiveGateWay') {
         this.shapeType = taskShape;
         this.modelTaskConfig = this.modelTaskConfigs.find(
           ({ taskDefKey }) => taskDefKey === element.id
