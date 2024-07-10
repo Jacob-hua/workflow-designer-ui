@@ -405,7 +405,7 @@ export default {
         }
         this.canLink = true;
         this.fetchFormVersion();
-      } else if (taskType === 'ExclusiveGateWay') {
+      } else if (taskType === 'ExclusiveGateway') {
         this.shapeType = taskShape;
         this.modelTaskConfig = this.modelTaskConfigs.find(
           ({ taskDefKey }) => taskDefKey === element.id

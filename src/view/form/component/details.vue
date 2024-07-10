@@ -275,7 +275,13 @@ export default {
             type: 'success',
             message: '删除成功!',
           });
-          this.$emit('deleteSuccsee');
+          // this.$emit('deleteSuccsee');
+          await this.getFormVersionList();
+          if (this.versionList.length <= 0) {
+            this.$emit('deleteSuccsee');
+          } else {
+            this.setDefaultSelectedVersion();
+          }
         })
         .catch(() => {});
     },

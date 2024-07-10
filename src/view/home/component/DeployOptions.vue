@@ -356,7 +356,7 @@ export default {
           this.resetModelTaskConfig(element.id);
         }
         this.canLink = true;
-      } else if (taskType === 'ExclusiveGateWay') {
+      } else if (taskType === 'ExclusiveGateway') {
         this.shapeType = taskShape;
         this.modelTaskConfig = this.modelTaskConfigs.find(
           ({ taskDefKey }) => taskDefKey === element.id
