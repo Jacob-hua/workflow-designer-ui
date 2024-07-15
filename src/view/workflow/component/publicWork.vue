@@ -13,7 +13,7 @@
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd HH:mm:ss"
             :default-time="['00:00:00', '23:59:59']"
-            :clearable="false"
+            clearable
           >
           </el-date-picker>
         </el-form-item>
@@ -160,8 +160,8 @@ export default {
     refreshWorkFlowRecord() {
       this.searchFormData = {
         ...this.searchForm,
-        startTime: this.searchForm.valueDate[0],
-        endTime: this.searchForm.valueDate[1],
+        startTime: this.searchForm.valueDate?.[0],
+        endTime: this.searchForm.valueDate?.[1],
       };
     },
   },

@@ -12,7 +12,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
-          :clearable="false"
+          clearable
         >
         </el-date-picker>
         <span class="datePickTitle">表单</span>
@@ -142,8 +142,8 @@ export default {
       const { data, code, msg } = await fetchFormList({
         bindType: 'common',
         processName: this.formName ?? '',
-        startTime: this.valueDate[0] ?? '',
-        endTime: this.valueDate[1] ?? '',
+        startTime: this.valueDate?.[0] ?? '',
+        endTime: this.valueDate?.[1] ?? '',
         limit: this.pageInfo.limit,
         page: this.pageInfo.page,
       });

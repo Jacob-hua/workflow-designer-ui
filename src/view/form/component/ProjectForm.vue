@@ -20,7 +20,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
-          :clearable="false"
+          clearable
         >
         </el-date-picker>
         <span class="text">表单</span>
@@ -206,8 +206,8 @@ export default {
         applicationId: this.business[2] ?? '',
         bindType: 'bind',
         formName: this.formName ?? '',
-        startTime: this.valueDate[0] ?? '',
-        endTime: this.valueDate[1] ?? '',
+        startTime: this.valueDate?.[0] ?? '',
+        endTime: this.valueDate?.[1] ?? '',
         limit: this.pageInfo.limit,
         page: this.pageInfo.page,
       });

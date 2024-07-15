@@ -136,8 +136,8 @@ export default {
         tenantId: this.searchForm.business[0] ?? '',
         projectId: this.searchForm.business[1] ?? '',
         applicationId: this.searchForm.business[2] ?? '',
-        startTime: this.searchForm.valueDate[0] ?? '',
-        endTime: this.searchForm.valueDate[1] ?? '',
+        startTime: this.searchForm.valueDate?.[0] ?? '',
+        endTime: this.searchForm.valueDate?.[1] ?? '',
       });
       if (code !== '200') {
         this.$message.error(msg);

@@ -131,15 +131,15 @@ export default {
         limit: this.pageInfo.limit,
         page: this.pageInfo.page,
         processName: this.searchForm.processName??'',
-        startTime: this.searchForm.valueDate[0]??'',
-        endTime: this.searchForm.valueDate[1]??''
+        startTime: this.searchForm.valueDate?.[0]??'',
+        endTime: this.searchForm.valueDate?.[1]??''
       } : {
         bindType: this.bindType,
         limit: this.pageInfo.limit,
         page: this.pageInfo.page,
         processName: this.searchForm.processName??'',
-        startTime: this.searchForm.valueDate[0]??'',
-        endTime: this.searchForm.valueDate[1]??''
+        startTime: this.searchForm.valueDate?.[0]??'',
+        endTime: this.searchForm.valueDate?.[1]??''
       }
       const {data, code, msg} = await fetchWorkflowList(params)
       if(code!=='200'){
