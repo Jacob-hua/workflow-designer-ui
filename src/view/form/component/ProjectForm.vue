@@ -19,7 +19,8 @@
           range-separator="——"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
           clearable
         >
         </el-date-picker>
@@ -84,17 +85,17 @@
       <div class="noData" v-if="pageInfo.total === 0">暂无数据</div>
     </div>
     <div class="pagination-box">
-    <el-pagination
-      v-if="this.pageInfo.total"
-      @size-change="onSizeChange"
-      @current-change="onPageChange"
-      :current-page="pageInfo.page"
-      :page-size="pageInfo.limit"
-      layout="prev, pager, next, jumper"
-      :total="pageInfo.total"
-    >
-    </el-pagination>
-  </div>
+      <el-pagination
+        v-if="this.pageInfo.total"
+        @size-change="onSizeChange"
+        @current-change="onPageChange"
+        :current-page="pageInfo.page"
+        :page-size="pageInfo.limit"
+        layout="prev, pager, next, jumper"
+        :total="pageInfo.total"
+      >
+      </el-pagination>
+    </div>
     <projectFormDiolog
       :title="projectFormTitle"
       :formInfo="formInfo"
@@ -188,7 +189,7 @@ export default {
         page: 1,
         limit: 8,
         total: 0,
-      }
+      };
       this.setDefaultorganization();
       this.getFormList();
     },
@@ -240,7 +241,7 @@ export default {
         page: 1,
         limit: 8,
         total: 0,
-      }
+      };
       this.getFormList();
     },
 
@@ -284,7 +285,7 @@ export default {
       this.addForm2(item, tileText);
     },
     handleCloseDetail() {
-      this.formInfo = null
+      this.formInfo = null;
       this.detailDialogVisible = false;
     },
   },
@@ -408,7 +409,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   margin-top: 40px;
-  grid-gap: 30px
+  grid-gap: 30px;
 }
 
 .home-table {

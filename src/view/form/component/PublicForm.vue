@@ -11,7 +11,8 @@
           range-separator="——"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
           clearable
         >
         </el-date-picker>
@@ -174,7 +175,7 @@ export default {
       this.getEnableData();
     },
     handleCloseDetail() {
-      this.formInfo = null
+      this.formInfo = null;
       this.detailDialogVisible = false;
     },
 
@@ -239,7 +240,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   margin-top: 40px;
-  grid-gap: 30px
+  grid-gap: 30px;
 }
 .primary {
   @include primaryBtn;
