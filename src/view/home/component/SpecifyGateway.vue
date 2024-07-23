@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="执行人员选择"
+    title="网关条件选择"
     :visible.sync="gatewayDialogVisible"
     @close="close"
     append-to-body

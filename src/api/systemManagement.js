@@ -50,3 +50,6 @@ export const editEnumItem = (params) => post('/workflow/system/dict/update/child
 
 // 删除枚举 /workflow/system/dict/delete/child
 export const deleteEnumItem = (params) => get('/workflow/system/dict/delete/child',params)
+
+//查询一个字典下所有枚举信息
+export const getDict = params => get('/workflow/system/dict/get/childs', params)

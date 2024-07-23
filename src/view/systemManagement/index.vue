@@ -1,9 +1,9 @@
 <template>
   <div class="system-management">
     <el-tabs v-model="activeName" type="border-card"  @tab-click="handleClick">
-      <el-tab-pane label="API管理" name="first">
+      <!-- <el-tab-pane label="API管理" name="first">
         <ApiList />
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane label="字典管理" name="second">
         <Dictionary />
       </el-tab-pane>
@@ -21,7 +21,7 @@ export default {
     },
     data() {
         return {
-            activeName: 'first'
+            activeName: 'second'
         }
     },
     methods: {

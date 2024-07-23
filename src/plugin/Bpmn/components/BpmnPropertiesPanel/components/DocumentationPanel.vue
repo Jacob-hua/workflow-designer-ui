@@ -25,7 +25,7 @@
 
 <script>
 import zh from '../../../i18n/zh';
-import { getWorkFlowNodeClassify } from '@/api/globalConfig';
+import { getDict } from '@/api/systemManagement';
 
 export default {
   name: 'Documentation',
@@ -47,7 +47,7 @@ export default {
   computed: {
     documentation() {
       return (
-        this.$store.state[this.namespace].panel.documentation || 'normal-task'
+        this.$store.state[this.namespace].panel.documentation || 'normal'
       );
     },
     shapeType() {
@@ -107,43 +107,54 @@ export default {
       //     this.documentationList = result;
       //   }
       // );
-      this.documentationList = [
-        {
-          id: '61',
-          code: 'normal-task',
-          name: '普通任务',
-        },
-        {
-          id: '62',
-          code: 'approval-task',
-          name: '审批任务',
-        },
-        {
-          id: '59',
-          code: 'jjbzx-task',
-          name: '交接班执行任务',
-        },
-        {
-          id: '60',
-          code: 'cbzx-task',
-          name: '抄表执行任务',
-        },
-        {
-          id: '63',
-          code: 'xjzx-task',
-          name: '巡检执行任务',
-        },
-        {
-          id: '64',
-          code: 'gdfp-task',
-          name: '分配任务',
-        },
-        {
-          id: '65',
-          code: 'wx-task',
-          name: '维修任务',
-        },
-      ];
+
+      getDict({code: 'taskNodeType'}).then(res => {
+        const {data, code, msg} = res
+        if(code!=='200'){
+          this.$message.error(msg)
+          return
+        }
+        this.documentationList = data
+      }).catch(error => {
+        this.$message.error(error)
+      })
+      // this.documentationList = [
+      //   {
+      //     id: '61',
+      //     code: 'normal-task',
+      //     name: '普通任务',
+      //   },
+      //   {
+      //     id: '62',
+      //     code: 'approval-task',
+      //     name: '审批任务',
+      //   },
+      //   {
+      //     id: '59',
+      //     code: 'jjbzx-task',
+      //     name: '交接班执行任务',
+      //   },
+      //   {
+      //     id: '60',
+      //     code: 'cbzx-task',
+      //     name: '抄表执行任务',
+      //   },
+      //   {
+      //     id: '63',
+      //     code: 'xjzx-task',
+      //     name: '巡检执行任务',
+      //   },
+      //   {
+      //     id: '64',
+      //     code: 'gdfp-task',
+      //     name: '分配任务',
+      //   },
+      //   {
+      //     id: '65',
+      //     code: 'wx-task',
+      //     name: '维修任务',
+      //   },
+      // ];
     },
   },
 };
