@@ -114,7 +114,12 @@ export default {
           this.$message.error(msg)
           return
         }
-        this.documentationList = data
+        const list = data.sort((obj1, obj2) => {
+          return (obj1.sortNum - obj2.sortNum)
+        })
+        // console.log(list)
+        this.documentationList = list
+
       }).catch(error => {
         this.$message.error(error)
       })

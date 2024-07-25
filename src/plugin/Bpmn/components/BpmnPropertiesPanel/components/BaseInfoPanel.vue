@@ -50,16 +50,19 @@ export default {
       },
       formRules: {
         processName: [
-          { required: true, message: '请输入流程名称', trigger: 'blur' },
+          // { required: true, message: `请输入${this.labels.processName}`, trigger: 'change' },
           {
             min: 2,
             max: 100,
             message: '流程名称长度在 2 到 100 个字符',
-            trigger: 'blur',
+            trigger: 'change',
           },
           {
-            trigger: 'blur',
+            trigger: 'change',
             validator: (_, value, callback) => {
+              if(!value){
+                callback(new Error(`请输入${this.labels.processName}`))
+              }
               let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
               if (flag) {
                 callback();
