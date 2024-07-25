@@ -228,7 +228,14 @@ export default {
         this.$message.error(msg);
         return;
       }
-      this.taskActios = data;
+      this.taskActios = data.filter(({ actionCode }) => {
+        if (actionCode === 'update_executor') {
+          if (!this.isSignNode) {
+            return false;
+          }
+        }
+        return true;
+      });
     },
     async fetchFormVersion(versionId) {
       if (!versionId) return;
