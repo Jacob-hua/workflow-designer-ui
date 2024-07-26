@@ -24,4 +24,7 @@ export const fetchTaskNodeList = (params) => post('/workflow/design/process/task
 //统计流程总数和已部署数量
 export const fetchDeployCount = (params) => post('/workflow/design/process/deploy/count', params)
 
+// 获取取值组件字典信息
+export const getDictData = (params) => get('/workflow/system/dict/get/childs', params)
+
 

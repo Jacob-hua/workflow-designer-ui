@@ -164,6 +164,12 @@
             @click="onRemoveForm"
             >移除表单</el-button
           >
+          <el-button
+            class="remove-button"
+            v-if="formShow && canRemoveForm"
+            @click="onSetForm"
+            >配置表单</el-button
+          >
         </div>
         <div class="content-wrapper form">
           <div v-if="formShow">
@@ -206,6 +212,7 @@
       @saveGateway="saveGateway"
       @closeGatewayDialog="closeGatewayDialog"
     ></specify-gateway>
+    <FormSet ref="formSetDom" @setData="handlerToSetData" />
   </div>
 </template>
 
@@ -219,6 +226,7 @@ import SpecifyNode from './SpecifyNode.vue';
 import SpecifyGateway from './SpecifyGateway.vue';
 import IBpmnViewer from '../../../plugin/Bpmn/IBpmnViewer';
 import { Input as antInput } from 'ant-design-vue';
+import FormSet from './FormSet'
 
 export default {
   name: 'WorkflowInfo',
@@ -229,6 +237,7 @@ export default {
     SpecifyNode,
     SpecifyGateway,
     antInput,
+    FormSet
   },
   props: {
     workflow: {
@@ -278,6 +287,8 @@ export default {
       selectedNode: null,
       innerName: '',
       activeName: 'first',
+      currentTaskElement: {}
+      // setDataList: []
     };
   },
   computed: {
@@ -378,6 +389,7 @@ export default {
       this.taskOperationsList();
       this.taskInfo.taskDefKey = shapeInfo['id'];
       this.taskInfo.taskName = shapeInfo['name'];
+      this.currentTaskElement = element
     },
     onRemoveForm() {
       if (!this.iBpmn.getSelectedShape()) {
@@ -391,7 +403,9 @@ export default {
       });
       this.$emit('removeForm');
     },
-
+    onSetForm() {
+      this.$refs.formSetDom.opOpen(this.currentTaskElement, this.workflow.processId)
+    },
     async taskOperationsList() {
       const { data, code, msg } = await taskOperationsList();
       if (code !== '200') {
@@ -406,6 +420,15 @@ export default {
         }
         return true;
       });
+    },
+
+    handlerToSetData(data) {
+      if (this.currentTaskElement.type === 'bpmn:StartEvent') {
+        this.modelTaskConfig.taskFormValueRels = data
+        console.log(this.modelTaskConfig)
+      } else {
+        this.$emit('setData', data)
+      }
     },
 
     handleChangeUser() {

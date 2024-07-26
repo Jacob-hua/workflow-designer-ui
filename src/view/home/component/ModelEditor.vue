@@ -22,6 +22,7 @@
             @selectedShape="onSelectedShape"
             @changeTaskConfigs="changeTaskConfigs"
             @removeForm="removeForm"
+            @setData="handlerToSetDataItem"
           />
         </div>
         <div class="form-list-wrapper" v-show="canLink">
@@ -195,6 +196,7 @@ export default {
         taskActions: null,
         taskDefKey: '',
         taskFormVersionId: '',
+        taskFormValueRels: [] 
       },
       shapeType: null,
       startFormVersionId: '',
@@ -265,6 +267,7 @@ export default {
         taskActions: null,
         taskDefKey: taskDefKey,
         taskFormVersionId: '',
+        taskFormValueRels: []
       };
     },
     popoverResize() {
@@ -313,6 +316,7 @@ export default {
       this.iBpmn.updateSelectedShapeProperties({
         'camunda:formId': form.formId,
       });
+      this.modelTaskConfig.taskFormValueRels = []
       this.$set(
         this.formContent,
         this.modelTaskConfig.taskDefKey,
@@ -384,6 +388,13 @@ export default {
         }
       }
     },
+    handlerToSetDataItem(data) {
+      this.modelTaskConfigs.forEach(item => {
+        if (item.taskDefKey === this.modelTaskConfig.taskDefKey) {
+          item.taskFormValueRels = data
+        }
+      })
+    },
     onSelectedShape(element) {
       if (!element) {
         this.canLink = false;
@@ -396,10 +407,13 @@ export default {
         taskType === 'UserTask' ||
         taskType === 'StartEvent'
       ) {
+        console.log(this.modelInfo, )
         this.shapeType = taskShape;
         this.modelTaskConfig = this.modelTaskConfigs.find(
           ({ taskDefKey }) => taskDefKey === element.id
         );
+        // this.modelTaskConfig.taskFormValueRels = this.modelInfo.taskFormValueRels
+        console.log(this.modelTaskConfig)
         if (!this.modelTaskConfig) {
           this.resetModelTaskConfig(element.id);
         }
@@ -436,6 +450,7 @@ export default {
       this.updateModelTaskConfigs({ modelTaskConfigs: [] });
     },
     changeTaskConfigs({ type, mode, data, source }) {
+      console.log(this.modelTaskConfig)
       if (!data) return;
       // if (data instanceof Array && !data.length) return;
       if (mode === 'push') {
@@ -470,6 +485,7 @@ export default {
         modelDesc: this.workflow.modelDesc,
         modelName: this.workflow.modelName,
         startFormVersionId: this.startFormVersionId,
+        taskFormValueRels: this.modelTaskConfig.taskFormValueRels,
         modelTaskConfigs: this.modelTaskConfigs,
       });
       if (code !== '200') {
@@ -578,6 +594,9 @@ export default {
         ...data,
         formVersionFile: JSON.parse(data.formVersionFile),
       });
+      if (this.shapeType === BpmnShapeType.START_EVENT) {
+        this.modelTaskConfig.taskFormValueRels = this.modelInfo.taskFormValueRels
+      }
     },
 
     onSizeChange(val) {

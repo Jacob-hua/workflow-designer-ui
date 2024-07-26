@@ -22,6 +22,7 @@
             @selectedShape="onSelectedShape"
             @changeTaskConfigs="changeTaskConfigs"
             @removeForm="removeForm"
+            @setData="handlerToSetDataItem"
           />
         </div>
         <div class="form-list-wrapper" v-show="canLink">
@@ -154,6 +155,7 @@ export default {
         taskActions: null,
         taskDefKey: '',
         taskFormVersionId: '',
+        taskFormValueRels: ''
       },
       shapeType: null,
       startFormVersionId: '',
@@ -261,6 +263,8 @@ export default {
         return;
       }
       const formVersionInfo = JSON.parse(form.selectedVersion);
+      // console.log(formVersionInfo, this.modelTaskConfig)
+      this.modelTaskConfig.taskFormValueRels = []
       this.iBpmn.updateSelectedShapeProperties({
         'camunda:formKey': 'camunda-forms:deployment:' + form.formName,
       });
@@ -337,6 +341,13 @@ export default {
         }
       }
     },
+    handlerToSetDataItem(data) {
+      this.modelTaskConfigs.forEach(item => {
+        if (item.taskDefKey === this.modelTaskConfig.taskDefKey) {
+          item.taskFormValueRels = data
+        }
+      })
+    },
     onSelectedShape(element) {
       if (!element) {
         this.canLink = false;
@@ -382,6 +393,7 @@ export default {
             taskActions: null,
             taskDefKey: id,
             taskFormVersionId: '',
+            taskFormValueRels: []
           });
         }
       });
@@ -441,6 +453,7 @@ export default {
           modelName: this.workflow.modelName,
           processId: this.workflow.processId,
           startFormVersionId: this.startFormVersionId,
+          taskFormValueRels: this.modelTaskConfig.taskFormValueRels
         },
         modelTaskConfigs: this.modelTaskConfigs,
       });
