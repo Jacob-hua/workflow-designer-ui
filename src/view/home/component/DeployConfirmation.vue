@@ -50,6 +50,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    workflow: {
+      type: Object,
+      default: () => ({}),
+      required: true,
+    }
   },
   data() {
     return {
@@ -115,6 +120,7 @@ export default {
       try {
         const { data, code, msg } = await checkName({
           modelName: this.formData.modelName,
+          processId: this.workflow.processId
         });
         if (code !== '200') {
           this.$message.error(msg);

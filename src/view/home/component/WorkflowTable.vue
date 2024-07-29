@@ -39,6 +39,7 @@
     </el-pagination>
     <deploy-confirmation
       :visible="deployConfirmationVisible"
+      :workflow="workflow"
       @submit="onConfirmationSubmit"
       @cancel="handleCloseConfirmation"
     />
