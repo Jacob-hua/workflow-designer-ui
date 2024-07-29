@@ -361,7 +361,11 @@ export default {
       this.microApp = loadMicroApp(
         {
           name: 'formDesigner',
-          entry: 'http://192.100.10.171:3000/',
+          entry: `${
+            process.env.QIAN_KUN_URL
+              ? process.env.QIAN_KUN_URL
+              : 'http://127.0.0.1:3000/'
+          }`,
           container: '#designer-app',
           props: { actions },
         },
