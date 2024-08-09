@@ -12,6 +12,7 @@ import { generateUUID } from '@/util/uuid.js'
 Vue.prototype.$axios = axios
 Vue.prototype.$getMappingName = getMappingName
 Vue.prototype.$generateUUID = generateUUID
+Vue.prototype.$EventBus = new Vue()
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'

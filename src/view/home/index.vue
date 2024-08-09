@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="model-wrapper">
     <div class="search-wrapper">
       <el-form :inline="true">
         <el-form-item label="业务">

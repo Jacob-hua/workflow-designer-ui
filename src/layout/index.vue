@@ -338,7 +338,7 @@ $aside-logo-height: 320px;
 }
 
 .main {
-  width: 100%;
+  width: calc(100% - 260px);
 
   // ::-webkit-scrollbar {
   //   display: none;

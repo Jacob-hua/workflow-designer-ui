@@ -11,6 +11,7 @@ import defaultEmpty from './utils/defaultEmpty'
 import config from './config'
 import { getShapeType } from './enum/shapeType'
 import custom from './custom'
+import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil'
 
 // bpmn左侧工具栏样式
 import 'bpmn-js/dist/assets/diagram-js.css'

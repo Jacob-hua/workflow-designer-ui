@@ -105,7 +105,7 @@ export default {
           return;
         }
         this.tableData = data.dataList;
-        this.getData.total = Number(total);
+        this.getData.total = Number(data.total);
       } catch (error) {}
     },
     close() {
@@ -136,7 +136,7 @@ export default {
 
 <style scoped lang="scss">
 /deep/ .el-table {
-  height: calc(100vh - 250px);
+  height: calc(100vh - 222px);
 }
 
 .el-pagination {

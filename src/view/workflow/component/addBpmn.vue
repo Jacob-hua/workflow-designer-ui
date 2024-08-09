@@ -67,6 +67,7 @@ export default {
       iBpmnModeler: {},
       rootBaseInfo: {},
       editorConfirmVisible: false,
+      workFlowCheck: true
     };
   },
   computed: {
@@ -77,6 +78,11 @@ export default {
     isEditor() {
       return this.projectData.processId ? true : false;
     },
+  },
+  mounted() {
+    this.$EventBus.$on('workflowCheck', (val) => {
+      this.workFlowCheck = val
+    })
   },
   methods: {
     onBpmnDesignerLoaded(iBpmnModeler) {
@@ -108,6 +114,20 @@ export default {
       this.$emit('update:visible', false);
     },
     async onSave() {
+      const { error } = await this.iBpmnModeler.validate();
+      if (error.length > 0) {
+        this.$message.error('流程设计存在错误/警告');
+        return;
+      }
+      const { processName } = this.rootBaseInfo;
+      if(!processName) {
+        this.$message.warning('流程名称不能为空')
+        return
+      }
+      if(!this.workFlowCheck){
+        this.$message.warning('节点名称错误')
+        return
+      }
       if (this.projectData.processId) {
         const { xml } = await this.iBpmnModeler.saveXML();
         if (md5(this.projectData.processFile) === md5(xml)) {
@@ -130,16 +150,16 @@ export default {
       this.createOrUpdateWorkflow();
     },
     async createOrUpdateWorkflow() {
-      const { error } = await this.iBpmnModeler.validate();
-      if (error.length > 0) {
-        this.$message.error('流程设计存在错误/警告');
-        return;
-      }
+      // const { error } = await this.iBpmnModeler.validate();
+      // if (error.length > 0) {
+      //   this.$message.error('流程设计存在错误/警告');
+      //   return;
+      // }
       const { processName, processDesc } = this.rootBaseInfo;
-      if(!processName) {
-        this.$message.warning('流程名称不能为空')
-        return
-      }
+      // if(!processName) {
+      //   this.$message.warning('流程名称不能为空')
+      //   return
+      // }
       try {
         const { xml } = await this.iBpmnModeler.saveXML();
         const processFormData = this.processFormData();

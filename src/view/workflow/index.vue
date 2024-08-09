@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="workflow-wrapper">
     <el-tabs type="border-card">
       <el-tab-pane label="项目流程">
         <project-work></project-work>
@@ -24,4 +24,13 @@ export default {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+// .workflow-wrapper {
+//   /deep/ .el-tabs--border-card {
+//     overflow-x: auto;
+//     .el-tabs__header, .el-tabs__content {
+//       width: 1618px;
+//     }
+//   }
+// }
+</style>

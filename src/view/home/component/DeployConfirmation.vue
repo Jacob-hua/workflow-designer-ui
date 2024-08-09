@@ -66,15 +66,14 @@ export default {
         modelName: [
           { required: true, message: '请输入模型名称', trigger: 'blur' },
           {
-            min: 1,
             max: 100,
-            message: '模型名称长度在 1 到 100 个字符',
+            message: '模型名称长度不超过 100 个字符',
             trigger: 'blur',
           },
           {
             trigger: 'blur',
             validator: (_, value, callback) => {
-              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
+              let flag = /^[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
               if (flag) {
                 callback();
               } else {
@@ -87,9 +86,8 @@ export default {
         ],
         modelDesc: [
           {
-            min: 0,
             max: 200,
-            message: '模型描述长度在 0 到 200 个字符',
+            message: '模型描述长度不超过 200 个字符',
             trigger: 'blur',
           },
         ],

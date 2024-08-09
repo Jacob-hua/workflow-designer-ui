@@ -21,6 +21,7 @@
           style="width: 260px"
           v-model="input"
           placeholder="请输入表单名称"
+          clearable
         ></el-input>
       </div>
       <div class="PublicForm-title-input">
@@ -142,7 +143,7 @@ export default {
     async getFormList() {
       const { data, code, msg } = await fetchFormList({
         bindType: 'common',
-        processName: this.formName ?? '',
+        formName: this.input ?? '',
         startTime: this.valueDate?.[0] ?? '',
         endTime: this.valueDate?.[1] ?? '',
         limit: this.pageInfo.limit,
@@ -181,6 +182,11 @@ export default {
 
     deleteSuccsee() {
       this.detailDialogVisible = false;
+      this.pageInfo = {
+        page: 1,
+        limit: 8,
+        total: 0,
+      };
       this.getFormList();
     },
 

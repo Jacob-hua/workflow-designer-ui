@@ -52,34 +52,35 @@ export default {
         processName: [
           // { required: true, message: `请输入${this.labels.processName}`, trigger: 'change' },
           {
-            min: 2,
             max: 100,
-            message: '流程名称长度在 2 到 100 个字符',
+            message: '流程名称长度不超过 100 个字符',
             trigger: 'change',
           },
           {
             trigger: 'change',
             validator: (_, value, callback) => {
-              if(!value){
-                callback(new Error(`请输入${this.labels.processName}`))
-              }
-              let flag = /[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
-              if (flag) {
-                callback();
+              if (!value) {
+                callback(new Error(`请输入${this.labels.processName}`));
               } else {
-                callback(
-                  new Error('流程名称只能是中文、数字、字母、下划线和中划线!')
-                );
+                let flag = /^[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
+                if (flag) {
+                  callback();
+                } else {
+                  callback(
+                    new Error(
+                      `${this.labels.processName}只能是中文、数字、字母、下划线和中划线!`
+                    )
+                  );
+                }
               }
             },
           },
         ],
         processDesc: [
           {
-            min: 0,
             max: 200,
-            message: '流程描述长度在 0 到 200 个字符',
-            trigger: 'blur',
+            message: '流程描述长度不超过 200 个字符',
+            trigger: 'change',
           },
         ],
       },
@@ -112,7 +113,7 @@ export default {
       if (!value) {
         this.baseInfoForm = this.rootBaseInfo;
       }
-      this.$refs['baseInfoFormRef'].validate(() => {})
+      this.$refs['baseInfoFormRef'].validate(() => {});
       const existedListener = (listener) =>
         this.listeners.find(
           (item) =>
@@ -167,16 +168,16 @@ export default {
     baseInfo(value) {
       if (this.shapeType) {
         this.baseInfoForm = { processName: value.name };
-        this.$refs['baseInfoFormRef'].clearValidate();
+        // this.$refs['baseInfoFormRef'].clearValidate();
       }
     },
     rootBaseInfo: {
       deep: true,
       handler(value) {
         if (!this.shapeType) {
-        this.baseInfoForm = { ...value };
-      }
-      }
+          this.baseInfoForm = { ...value };
+        }
+      },
     },
     baseInfoForm: {
       deep: true,
@@ -189,28 +190,64 @@ export default {
           return;
         }
         if (this.shapeType) {
-          if (this.count) {
-            this.$nextTick(() => {
-              this.$refs['baseInfoFormRef'].validate((valid) => {
-                if (valid) {
-                  this.updateBaseInfo({
-                    newBaseInfo: {
-                      id: this.baseInfo.id,
-                      name: value.processName,
-                    },
-                  });
-                }
-              });
-            });
-          } else {
+          this.$nextTick(() => {
             this.updateBaseInfo({
               newBaseInfo: {
                 id: this.baseInfo.id,
                 name: value.processName,
               },
             });
-            this.count++;
-          }
+            this.$refs['baseInfoFormRef'].validate((valid) => {
+              if (valid) {
+                // this.updateBaseInfo({
+                //   newBaseInfo: {
+                //     id: this.baseInfo.id,
+                //     name: value.processName,
+                //   },
+                // });
+                this.$EventBus.$emit('workflowCheck', true);
+              } else if (!value.processName) {
+                // this.updateBaseInfo({
+                //   newBaseInfo: {
+                //     id: this.baseInfo.id,
+                //     name: value.processName,
+                //   },
+                // });
+                this.$EventBus.$emit('workflowCheck', false);
+              } else {
+                this.$EventBus.$emit('workflowCheck', false);
+              }
+            });
+          });
+          // if (this.count) {
+          //   this.$nextTick(() => {
+          //     this.$refs['baseInfoFormRef'].validate((valid) => {
+          //       if (valid) {
+          //         this.updateBaseInfo({
+          //           newBaseInfo: {
+          //             id: this.baseInfo.id,
+          //             name: value.processName,
+          //           },
+          //         });
+          //       } else if (!value.processName) {
+          //         this.updateBaseInfo({
+          //           newBaseInfo: {
+          //             id: this.baseInfo.id,
+          //             name: value.processName,
+          //           },
+          //         });
+          //       }
+          //     });
+          //   });
+          // } else {
+          //   this.updateBaseInfo({
+          //     newBaseInfo: {
+          //       id: this.baseInfo.id,
+          //       name: value.processName,
+          //     },
+          //   });
+          //   this.count++;
+          // }
         } else {
           if (this.count) {
             this.$nextTick(() => {

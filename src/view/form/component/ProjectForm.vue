@@ -2,30 +2,36 @@
   <div class="ProjectForm">
     <div class="ProjectForm-title">
       <div class="datePick">
-        <span class="text">业务</span>
-        <el-cascader
-          v-model="business"
-          :options="projectOrganizations()"
-          :props="{
-            emitPath: true,
-          }"
-        ></el-cascader>
-        <span class="text">创建时间</span>
-        <el-date-picker
-          v-model="valueDate"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="——"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
-          clearable
-        >
-        </el-date-picker>
-        <span class="text">表单</span>
-        <el-input v-model="formName" placeholder="请输入表单名称"></el-input>
+        <div class="search-item">
+          <span class="text">业务</span>
+          <el-cascader
+            v-model="business"
+            :options="projectOrganizations()"
+            :props="{
+              emitPath: true,
+            }"
+          ></el-cascader>
+        </div>
+        <div class="search-item">
+          <span class="text">创建时间</span>
+          <el-date-picker
+            v-model="valueDate"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="——"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :default-time="['00:00:00', '23:59:59']"
+            clearable
+          >
+          </el-date-picker>
+        </div>
+        <div class="search-item">
+          <span class="text">表单</span>
+          <el-input v-model="formName" placeholder="请输入表单名称" clearable></el-input>
+        </div>
       </div>
 
       <div class="ProjectForm-title-search">
@@ -63,10 +69,7 @@
         <div class="card-main">
           <div class="card-main-item">
             <span class="label">表单名称:</span>
-            <long-text
-              contentStyle="color: white; width: 180px"
-              :content="item.formName"
-            />
+            <long-text contentStyle="color: white;" :content="item.formName" />
           </div>
           <div class="card-main-item">
             <span class="label">创建人:</span>
@@ -247,6 +250,11 @@ export default {
 
     deleteSuccsee() {
       this.detailDialogVisible = false;
+      this.pageInfo = {
+        page: 1,
+        limit: 8,
+        total: 0,
+      };
       this.getFormList();
     },
 
@@ -315,6 +323,7 @@ export default {
   align-items: center;
   grid-auto-flow: column;
   grid-template-columns: 4fr 2fr 1fr;
+  grid-gap: 10px;
   /deep/ .el-input {
     width: 180px;
   }
@@ -380,7 +389,11 @@ export default {
 }
 
 .datePick {
-  display: inline-block;
+  display: flex;
+  grid-gap: 10px;
+  .search-item {
+    white-space: nowrap;
+  }
 }
 
 .datePickTitle {
@@ -455,6 +468,7 @@ export default {
   height: 40px;
   color: black;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .card-main-item .label {
@@ -464,7 +478,7 @@ export default {
 }
 
 .card-main-item .value {
-  width: 220px;
+  // width: 220px;
   color: #fff;
   overflow: hidden;
   text-overflow: ellipsis;
