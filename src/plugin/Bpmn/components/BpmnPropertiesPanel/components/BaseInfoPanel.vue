@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import shapeType from '../../../enum/shapeType';
+import BpmnShapeType from '../../../enum/shapeType';
 import zh from '../../../i18n/zh';
 import { deepCopy, deepEqual } from '../../../utils/object';
 
@@ -59,6 +59,9 @@ export default {
           {
             trigger: 'change',
             validator: (_, value, callback) => {
+              if(this.isSequenceFlow){
+                callback()
+              }
               if (!value) {
                 callback(new Error(`请输入${this.labels.processName}`));
               } else {
@@ -84,6 +87,7 @@ export default {
           },
         ],
       },
+      errorList: [],
       count: 0,
     };
   },
@@ -107,13 +111,16 @@ export default {
         processDesc: `${zh[this.shapeType] ?? '流程'}描述`,
       };
     },
+    isSequenceFlow() {
+      return this.shapeType === BpmnShapeType.SEQUENCE_FLOW;
+    },
   },
   watch: {
     shapeType(value) {
       if (!value) {
         this.baseInfoForm = this.rootBaseInfo;
       }
-      this.$refs['baseInfoFormRef'].validate(() => {});
+      // this.$refs['baseInfoFormRef'].validate(() => {});
       const existedListener = (listener) =>
         this.listeners.find(
           (item) =>
@@ -126,35 +133,35 @@ export default {
         listenerType: 'class',
         class: '',
       };
-      if ([shapeType.TIMER_START_EVENT].includes(value)) {
+      if ([BpmnShapeType.TIMER_START_EVENT].includes(value)) {
         this.clearListener();
         listener.class = 'com.siact.product.jwp.listener.ScheduleStartListener';
       } else if (
-        [shapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)
+        [BpmnShapeType.TIMER_NON_INTERRUPTING_BOUNDARY_EVENT].includes(value)
       ) {
         this.clearListener();
         listener.class = 'com.siact.product.jwp.listener.TimeOutListener';
       } else if (
         [
-          shapeType.START_EVENT, // 开始事件
-          shapeType.MESSAGE_START_EVENT, // 消息开始事件
-          shapeType.CONDITIONAL_START_EVENT, // 条件开始事件
-          shapeType.SIGNAL_START_EVENT, // 信号开始事件
-          shapeType.END_EVENT, // 结束事件
-          shapeType.INTERMEDIATE_THROW_EVENT, // 中间抛出事件
-          shapeType.INTERMEDIATE_CATCH_EVENT, // 中间捕获事件
-          shapeType.BOUNDARY_EVENT, // 边界事件
-          shapeType.MESSAGE_BOUNDARY_EVENT, // 消息边界事件
-          shapeType.MESSAGE_NON_INTERRUPTING_BOUNDARY_EVENT, // 消息边界事件（非中断）
-          shapeType.TIMER_BOUNDARY_EVENT, // 定时边界事件
-          shapeType.ESCALATION_BOUNDARY_EVENT, // 升级边界事件
-          shapeType.ESCALATION_NON_INTERRUPTING_BOUNDARY_EVENT, // 升级边界事件（非中断）
-          shapeType.CONDITIONAL_BOUNDARY_EVENT, // 条件边界事件
-          shapeType.CONDITIONAL_NON_INTERRUPTING_BOUNDARY_EVENT, // 条件边界事件（非中断）
-          shapeType.ERROR_BOUNDARY_EVENT, // 错误边界事件
-          shapeType.SIGNAL_BOUNDARY_EVENT, // 信号边界事件
-          shapeType.SIGNAL_NON_INTERRUPTING_BOUNDARY_EVENT, // 信号边界事件（非中断）
-          shapeType.COMPENSATE_BOUNDARY_EVENT, // 补偿边界事件
+          BpmnShapeType.START_EVENT, // 开始事件
+          BpmnShapeType.MESSAGE_START_EVENT, // 消息开始事件
+          BpmnShapeType.CONDITIONAL_START_EVENT, // 条件开始事件
+          BpmnShapeType.SIGNAL_START_EVENT, // 信号开始事件
+          BpmnShapeType.END_EVENT, // 结束事件
+          BpmnShapeType.INTERMEDIATE_THROW_EVENT, // 中间抛出事件
+          BpmnShapeType.INTERMEDIATE_CATCH_EVENT, // 中间捕获事件
+          BpmnShapeType.BOUNDARY_EVENT, // 边界事件
+          BpmnShapeType.MESSAGE_BOUNDARY_EVENT, // 消息边界事件
+          BpmnShapeType.MESSAGE_NON_INTERRUPTING_BOUNDARY_EVENT, // 消息边界事件（非中断）
+          BpmnShapeType.TIMER_BOUNDARY_EVENT, // 定时边界事件
+          BpmnShapeType.ESCALATION_BOUNDARY_EVENT, // 升级边界事件
+          BpmnShapeType.ESCALATION_NON_INTERRUPTING_BOUNDARY_EVENT, // 升级边界事件（非中断）
+          BpmnShapeType.CONDITIONAL_BOUNDARY_EVENT, // 条件边界事件
+          BpmnShapeType.CONDITIONAL_NON_INTERRUPTING_BOUNDARY_EVENT, // 条件边界事件（非中断）
+          BpmnShapeType.ERROR_BOUNDARY_EVENT, // 错误边界事件
+          BpmnShapeType.SIGNAL_BOUNDARY_EVENT, // 信号边界事件
+          BpmnShapeType.SIGNAL_NON_INTERRUPTING_BOUNDARY_EVENT, // 信号边界事件（非中断）
+          BpmnShapeType.COMPENSATE_BOUNDARY_EVENT, // 补偿边界事件
         ].includes(value)
       ) {
         this.clearListener();
@@ -197,67 +204,35 @@ export default {
                 name: value.processName,
               },
             });
-            this.$refs['baseInfoFormRef'].validate((valid) => {
-              if (valid) {
-                // this.updateBaseInfo({
-                //   newBaseInfo: {
-                //     id: this.baseInfo.id,
-                //     name: value.processName,
-                //   },
-                // });
-                this.$EventBus.$emit('workflowCheck', true);
-              } else if (!value.processName) {
-                // this.updateBaseInfo({
-                //   newBaseInfo: {
-                //     id: this.baseInfo.id,
-                //     name: value.processName,
-                //   },
-                // });
-                this.$EventBus.$emit('workflowCheck', false);
-              } else {
-                this.$EventBus.$emit('workflowCheck', false);
-              }
-            });
+            if (!this.isSequenceFlow) {
+              this.$refs['baseInfoFormRef'].validate((valid) => {
+                const index = this.errorList.findIndex(
+                  (item) => item === this.baseInfo.id
+                );
+                if (valid) {
+                  if (index !== -1) this.errorList.splice(index, 1);
+                  this.$EventBus.$emit('workflowCheck', this.errorList);
+                } else {
+                  this.errorList.push(this.baseInfo.id)
+                  this.$EventBus.$emit('workflowCheck', this.errorList);
+                }
+              });
+            }
           });
-          // if (this.count) {
-          //   this.$nextTick(() => {
-          //     this.$refs['baseInfoFormRef'].validate((valid) => {
-          //       if (valid) {
-          //         this.updateBaseInfo({
-          //           newBaseInfo: {
-          //             id: this.baseInfo.id,
-          //             name: value.processName,
-          //           },
-          //         });
-          //       } else if (!value.processName) {
-          //         this.updateBaseInfo({
-          //           newBaseInfo: {
-          //             id: this.baseInfo.id,
-          //             name: value.processName,
-          //           },
-          //         });
-          //       }
-          //     });
-          //   });
-          // } else {
-          //   this.updateBaseInfo({
-          //     newBaseInfo: {
-          //       id: this.baseInfo.id,
-          //       name: value.processName,
-          //     },
-          //   });
-          //   this.count++;
-          // }
         } else {
           if (this.count) {
             this.$nextTick(() => {
               this.$refs['baseInfoFormRef'].validate((valid) => {
+                const index = this.errorList.findIndex(
+                  (item) => item === 'root'
+                );
+                this.updateRootBaseInfo({ rootBaseInfo: value });
                 if (valid) {
-                  this.updateRootBaseInfo({ rootBaseInfo: value });
+                  if (index !== -1) this.errorList.splice(index, 1);
+                  this.$EventBus.$emit('workflowCheck', this.errorList);
                 } else {
-                  if (!value.processName) {
-                    this.updateRootBaseInfo({ rootBaseInfo: value });
-                  }
+                  this.errorList.push('root')
+                  this.$EventBus.$emit('workflowCheck', this.errorList);
                 }
               });
             });
@@ -293,6 +268,7 @@ export default {
   },
   beforeDestroy() {
     this.count = 0;
+    console.log('destory');
   },
 };
 </script>

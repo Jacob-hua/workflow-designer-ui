@@ -25,9 +25,20 @@
         ></el-input>
       </div>
       <div class="PublicForm-title-input">
-        <el-button class="primary" type="primary" @click="getFormList()"
+        <!-- <el-button class="primary" type="primary" @click="getFormList()"
           >查询</el-button
-        >
+        > -->
+
+        <div>
+          <el-button class="primary" type="primary" @click="getFormList()"
+            >查询</el-button
+          >
+        </div>
+        <div>
+          <el-button class="reset" @click="reset()" type="primary"
+            >重置</el-button
+          >
+        </div>
       </div>
       <div class="PublicForm-title-button">
         <div class="boxBtn" @click="addForm()">新建表单</div>
@@ -155,6 +166,12 @@ export default {
       this.commonFormList = data.dataList;
       this.pageInfo.total = Number(data.total);
     },
+    reset() {
+      this.pageInfo.page = 1;
+      this.input = '';
+      this.valueDate = [];
+      this.getFormList();
+    },
     onSizeChange(val) {
       this.pageInfo.limit = val;
       this.getFormList();
@@ -251,6 +268,10 @@ export default {
 .primary {
   @include primaryBtn;
 }
+
+.reset {
+  @include resetBtn;
+}
 .boxBtn {
   font-size: 14px;
   color: #009efb;
@@ -279,8 +300,8 @@ export default {
 }
 
 .PublicForm-title-input {
-  display: inline-block;
-  margin-left: 40px;
+  display: flex;
+  grid-gap: 15px;
 }
 .PublicForm-title-button {
   display: flex;

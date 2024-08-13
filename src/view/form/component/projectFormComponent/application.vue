@@ -39,6 +39,7 @@
               <span class="value">{{ item.createTime }}</span>
             </div>
             <div class="processList-item-button">
+              <div class="refence" @click="detail(item)">详情</div>
               <div class="refence" @click="open(item)">关联</div>
             </div>
           </div>
@@ -128,6 +129,7 @@
         </div>
       </el-dialog>
     </el-dialog>
+    <formVersionDetail :visible="detailDialogVisible" :formDatas="formData" @closeDetail="closeDetail" />
   </div>
 </template>
 
@@ -137,8 +139,12 @@ import {
   fetchFormVersionList,
   bindCommonFormToBussiness,
 } from '../../../../api/workflowForm';
+import formVersionDetail from './formVersionDetail.vue';
 
 export default {
+  components: {
+    formVersionDetail
+  },
   props: {
     dialogVisible: {
       type: Boolean,
@@ -184,6 +190,8 @@ export default {
       },
       formList: [],
       currentData: null,
+      formData: null,
+      detailDialogVisible: false
     };
   },
   computed: {
@@ -243,6 +251,14 @@ export default {
       this.currentData = item;
       this.dialogVisibleModal = true;
     },
+    detail(item) {
+      this.formData = item
+      this.detailDialogVisible = true
+    },
+    closeDetail() {
+      this.formData = null
+      this.detailDialogVisible = false
+    },
     onSizeChange(val) {
       this.pageInfo.limit = val;
       this.getFormList();
@@ -294,7 +310,6 @@ export default {
 .refence {
   cursor: pointer;
   color: #0dd5ef;
-  padding-left: 180px;
 }
 
 .diologMain-right {
@@ -325,7 +340,7 @@ export default {
   width: 312px;
   height: 224px;
   background-color: #212739;
-  padding: 20px 0px 0px 20px;
+  padding: 20px;
   position: relative;
   display: inline-block;
   padding-bottom: 10px;
@@ -360,7 +375,7 @@ export default {
   }
 
   .value {
-    width: 200px;
+    width: calc(100% - 80px);
     color: #fff;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -376,6 +391,9 @@ export default {
 
 .processList-item-button {
   text-align: center;
+  display: flex;
+  justify-content: flex-end;
+  grid-gap: 15px;
 }
 .process-page {
   text-align: right;

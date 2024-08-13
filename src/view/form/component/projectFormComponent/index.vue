@@ -199,11 +199,13 @@ export default {
           {
             trigger: 'blur',
             validator: (_, value, callback) => {
-              let flag = /^[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value)
-              if(flag){
-                callback()
-              }else {
-                callback(new Error('表单名称只能是中文、数字、字母、下划线和中划线!'))
+              let flag = /^[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
+              if (flag) {
+                callback();
+              } else {
+                callback(
+                  new Error('表单名称只能是中文、数字、字母、下划线和中划线!')
+                );
               }
             },
           },
@@ -227,11 +229,13 @@ export default {
           {
             trigger: 'blur',
             validator: (_, value, callback) => {
-              let flag = /^[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value)
-              if(flag){
-                callback()
-              }else {
-                callback(new Error('表单名称只能是中文、数字、字母、下划线和中划线!'))
+              let flag = /^[a-zA-Z0-9\u4e00-\u9fa5\-_]+$/.test(value);
+              if (flag) {
+                callback();
+              } else {
+                callback(
+                  new Error('表单名称只能是中文、数字、字母、下划线和中划线!')
+                );
               }
             },
           },
@@ -462,7 +466,11 @@ export default {
           _this.closeForm();
           return;
         }
-        _this.formVersionVisible = true;
+        this.$refs['newOrEditForm'].validate((valid) => {
+          if (valid) {
+            _this.formVersionVisible = true;
+          }
+        });
       });
     },
     removeGlobalStateChangeListener() {

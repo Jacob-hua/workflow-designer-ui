@@ -81,7 +81,7 @@ export default {
   },
   mounted() {
     this.$EventBus.$on('workflowCheck', (val) => {
-      this.workFlowCheck = val
+      this.workFlowCheck = val.length <= 0
     })
   },
   methods: {
@@ -116,7 +116,7 @@ export default {
     async onSave() {
       const { error } = await this.iBpmnModeler.validate();
       if (error.length > 0) {
-        this.$message.error('流程设计存在错误/警告');
+        this.$message.warning('流程设计存在错误/警告');
         return;
       }
       const { processName } = this.rootBaseInfo;

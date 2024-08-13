@@ -45,7 +45,8 @@
       </div>
     </el-dialog>
     <add-project
-      :visible="addProjectVisible"
+      :visible.sync="addProjectVisible"
+      title="关联工作流"
       @close="onAddProjectClose"
       @submit="onAddProjectSubmit"
     ></add-project>
@@ -54,7 +55,7 @@
 
 <script>
 import AddProject from './addProject.vue';
-import { fetchWorkflowList } from '../../../api/workflow';
+import { fetchWorkflowList, saveWorkflow } from '../../../api/workflow';
 import { mapState } from 'vuex';
 
 export default {
@@ -77,6 +78,7 @@ export default {
         limit: 10,
         total: 1,
       },
+      processData: null,
     };
   },
   computed: {
@@ -108,20 +110,53 @@ export default {
         this.getData.total = Number(data.total);
       } catch (error) {}
     },
+    async quoteWorkFlow(processFormData) {
+      const { code, msg } = await saveWorkflow(processFormData);
+      if (code !== '200') {
+        this.$message.error(msg);
+        return;
+      }
+      this.addProjectVisible = false;
+      this.$message.success('保存成功');
+    },
     close() {
+      this.processData = null;
       this.$emit('close');
     },
     onLookBpmn(tit, _, row) {
       this.$emit('lookBpmn', row, tit);
     },
     onQuoteBpmn(title, _, row) {
-      const newData = { ...row };
-      delete newData.id;
-      this.$emit('quoteBpmn', title, newData);
+      this.processData = row;
+      this.addProjectVisible = true;
+      // const newData = { ...row };
+      // delete newData.id;
+      // this.$emit('quoteBpmn', title, newData);
     },
     // TODO: 关联工作流的业务逻辑需要重新梳理
     onAddProjectClose() {},
-    onAddProjectSubmit() {},
+    onAddProjectSubmit(value) {
+      let processFormData = new FormData();
+      processFormData.set('processId', this.processData.processId);
+      processFormData.set('tenantId', value.business[0] ?? '');
+      processFormData.set('projectId', value.business[1] ?? '');
+      processFormData.set('applicationId', value.business[2]) ?? '';
+      processFormData.set('bindType', 'bind');
+      processFormData.set('processName', value.processName);
+      processFormData.set('processDesc', value.processDesc);
+      processFormData.set(
+        'processFile',
+        new File(
+          [this.processData.processFile],
+          this.processData.processName + '.bpmn',
+          {
+            type: 'bpmn20-xml',
+          }
+        )
+      );
+      // processFormData.set('processFile', this.processData.processFile);
+      this.quoteWorkFlow(processFormData);
+    },
     handleSizeChange(val) {
       this.getData.limit = val;
       this.fetchWorkflowList();

@@ -199,6 +199,7 @@ export default {
     onQuoteBpmnClose() {
       this.quoteBpmnVisible = false;
       this.resetProjectData();
+      this.refreshWorkFlowRecord();
     },
     onProjectLookBpmnShow(row) {
       this.setProjectData(row);

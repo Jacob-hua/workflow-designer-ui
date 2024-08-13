@@ -1,11 +1,11 @@
 <template>
   <el-dialog
-    title="新建工作流"
+    :title="dialogTitle"
     :close-on-click-modal="false"
     :visible="visible"
     @close="onClose"
     :close-on-press-escape="false"
-      :destroy-on-close="true"
+    :destroy-on-close="true"
   >
     <el-form
       label-position="right"
@@ -46,7 +46,9 @@
       </el-form-item>
     </el-form>
     <div slot="footer">
-      <el-button class="submit" @click="onSubmit">下一步</el-button>
+      <el-button class="submit" @click="onSubmit">{{
+        title === '新建工作流' ? '下一步' : '确认'
+      }}</el-button>
       <el-button class="cancel" @click="onClose">取 消</el-button>
     </div>
   </el-dialog>
@@ -60,6 +62,10 @@ export default {
     visible: {
       type: Boolean,
       default: true,
+    },
+    title: {
+      type: String,
+      default: '新建工作流',
     },
   },
   data() {
@@ -88,7 +94,9 @@ export default {
               if (flag) {
                 callback();
               } else {
-                callback(new Error('流程名称只能是中文、数字、字母、下划线和中划线!'));
+                callback(
+                  new Error('流程名称只能是中文、数字、字母、下划线和中划线!')
+                );
               }
             },
           },
@@ -105,6 +113,9 @@ export default {
   },
   computed: {
     ...mapGetters('config', ['projectOrganizations']),
+    dialogTitle() {
+      return this.title;
+    },
   },
   methods: {
     onClose() {

@@ -73,7 +73,7 @@
                 </div>
               </el-form-item>
             </div>
-            <div class="title-item"  v-if="title !== '新建表单'">
+            <div class="title-item" v-if="title !== '新建表单'">
               <el-form-item
                 label="版本名称"
                 class="title-item-label"
@@ -438,7 +438,11 @@ export default {
           _this.closeForm();
           return;
         }
-        _this.formVersionVisible = true;
+        this.$refs['newOrEditForm'].validate((valid) => {
+          if (valid) {
+            _this.formVersionVisible = true;
+          }
+        });
       });
     },
     removeGlobalStateChangeListener() {

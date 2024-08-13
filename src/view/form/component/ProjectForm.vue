@@ -295,6 +295,8 @@ export default {
     handleCloseDetail() {
       this.formInfo = null;
       this.detailDialogVisible = false;
+      this.pageInfo.page = 1
+      this.getFormList()
     },
   },
 };
