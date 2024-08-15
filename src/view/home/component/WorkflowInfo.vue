@@ -423,12 +423,12 @@ export default {
     },
 
     handlerToSetData(data) {
-      if (this.currentTaskElement.type === 'bpmn:StartEvent') {
-        this.modelTaskConfig.taskFormValueRels = data
-        console.log(this.modelTaskConfig)
-      } else {
-        this.$emit('setData', data)
-      }
+      // if (this.currentTaskElement.type === 'bpmn:StartEvent') {
+      //   this.modelTaskConfig.taskFormValueRels = data
+      //   console.log(this.modelTaskConfig)
+      // } else {
+      this.$emit('setData', {data, type: this.currentTaskElement.type})
+      // }
     },
 
     handleChangeUser() {

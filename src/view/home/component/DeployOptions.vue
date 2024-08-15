@@ -159,7 +159,8 @@ export default {
       },
       shapeType: null,
       startFormVersionId: '',
-      currentIndex: -1
+      currentIndex: -1,
+      startModelTaskConfig: []
     };
   },
   computed: {
@@ -341,12 +342,16 @@ export default {
         }
       }
     },
-    handlerToSetDataItem(data) {
-      this.modelTaskConfigs.forEach(item => {
-        if (item.taskDefKey === this.modelTaskConfig.taskDefKey) {
-          item.taskFormValueRels = data
-        }
-      })
+    handlerToSetDataItem({data, type}) {
+      if (type === 'bpmn:StartEvent') {
+        this.startModelTaskConfig = data
+      } else {
+        this.modelTaskConfigs.forEach(item => {
+          if (item.taskDefKey === this.modelTaskConfig.taskDefKey) {
+            item.taskFormValueRels = data
+          }
+        })
+      }
     },
     onSelectedShape(element) {
       if (!element) {
@@ -365,6 +370,7 @@ export default {
         );
         if (!this.modelTaskConfig) {
           this.resetModelTaskConfig(element.id);
+          this.modelTaskConfig.taskFormValueRels = this.startModelTaskConfig
         }
         this.canLink = true;
       } else if (taskType === 'ExclusiveGateway') {
@@ -453,7 +459,7 @@ export default {
           modelName: this.workflow.modelName,
           processId: this.workflow.processId,
           startFormVersionId: this.startFormVersionId,
-          taskFormValueRels: this.modelTaskConfig.taskFormValueRels
+          taskFormValueRels: this.startModelTaskConfig
         },
         modelTaskConfigs: this.modelTaskConfigs,
       });

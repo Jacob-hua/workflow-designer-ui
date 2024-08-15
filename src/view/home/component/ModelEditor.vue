@@ -203,6 +203,7 @@ export default {
       modelInfo: {},
       previewVisible: false,
       currentIndex: -1,
+      startModelTaskConfig: []
     };
   },
   mounted() {},
@@ -291,7 +292,6 @@ export default {
       ) {
         popoverRef[this.currentIndex].style.visibility = 'hidden';
       }
-      console.log(evet, 'popoverRef');
       popoverRef[index].style.visibility = 'visible';
       this.$nextTick(() => {
         popoverRef[index].style.top =
@@ -388,12 +388,17 @@ export default {
         }
       }
     },
-    handlerToSetDataItem(data) {
-      this.modelTaskConfigs.forEach(item => {
-        if (item.taskDefKey === this.modelTaskConfig.taskDefKey) {
-          item.taskFormValueRels = data
-        }
-      })
+    handlerToSetDataItem({data, type}) {
+      if (type === 'bpmn:StartEvent') {
+        this.modelInfo.taskFormValueRels = data
+        this.modelTaskConfig.taskFormValueRels = data
+      } else {
+        this.modelTaskConfigs.forEach(item => {
+          if (item.taskDefKey === this.modelTaskConfig.taskDefKey) {
+            item.taskFormValueRels = data
+          }
+        })
+      }
     },
     onSelectedShape(element) {
       if (!element) {
@@ -407,17 +412,15 @@ export default {
         taskType === 'UserTask' ||
         taskType === 'StartEvent'
       ) {
-        console.log(this.modelInfo, )
         this.shapeType = taskShape;
         this.modelTaskConfig = this.modelTaskConfigs.find(
           ({ taskDefKey }) => taskDefKey === element.id
         );
-        // this.modelTaskConfig.taskFormValueRels = this.modelInfo.taskFormValueRels
-        console.log(this.modelTaskConfig)
         if (!this.modelTaskConfig) {
           this.resetModelTaskConfig(element.id);
         }
         this.canLink = true;
+        console.log(element, '3333333333333')
         this.fetchFormVersion();
       } else if (taskType === 'ExclusiveGateway') {
         this.shapeType = taskShape;
@@ -450,7 +453,6 @@ export default {
       this.updateModelTaskConfigs({ modelTaskConfigs: [] });
     },
     changeTaskConfigs({ type, mode, data, source }) {
-      console.log(this.modelTaskConfig)
       if (!data) return;
       // if (data instanceof Array && !data.length) return;
       if (mode === 'push') {
@@ -485,7 +487,7 @@ export default {
         modelDesc: this.workflow.modelDesc,
         modelName: this.workflow.modelName,
         startFormVersionId: this.startFormVersionId,
-        taskFormValueRels: this.modelTaskConfig.taskFormValueRels,
+        taskFormValueRels: this.modelInfo.taskFormValueRels,
         modelTaskConfigs: this.modelTaskConfigs,
       });
       if (code !== '200') {
@@ -582,6 +584,9 @@ export default {
         this.shapeType === BpmnShapeType.START_EVENT
           ? this.modelInfo.startFormVersionId
           : this.modelTaskConfig.taskFormVersionId;
+      if (this.shapeType === BpmnShapeType.START_EVENT) {
+        this.modelTaskConfig.taskFormValueRels = this.modelInfo.taskFormValueRels
+      }
       if (!formVersionId) return;
       const { data, code, msg } = await fetchFormVersion({
         formVersionId,
@@ -594,9 +599,6 @@ export default {
         ...data,
         formVersionFile: JSON.parse(data.formVersionFile),
       });
-      if (this.shapeType === BpmnShapeType.START_EVENT) {
-        this.modelTaskConfig.taskFormValueRels = this.modelInfo.taskFormValueRels
-      }
     },
 
     onSizeChange(val) {
