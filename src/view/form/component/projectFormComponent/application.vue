@@ -203,8 +203,26 @@ export default {
         this.getFormList();
       }
     },
+    dialogVisibleModal(value) {
+      if(value) {
+        this.setDefaultorganization()
+      }
+    }
   },
   methods: {
+    setDefaultorganization() {
+      const options = this.projectOrganizations();
+      if (options.length <= 0) return;
+      this.postData.business = defaultOrg(options[0]);
+      function defaultOrg(data) {
+        let res = [];
+        res.push(data.value);
+        if (data.children) {
+          res = res.concat(defaultOrg(data.children[0]));
+        }
+        return res;
+      }
+    },
     close() {
       this.dialogVisibleModal = false;
       this.currentData = null;
@@ -270,6 +288,7 @@ export default {
   },
   mounted() {
     // this.getFormList();
+    // this.setDefaultorganization()
   },
 };
 </script>

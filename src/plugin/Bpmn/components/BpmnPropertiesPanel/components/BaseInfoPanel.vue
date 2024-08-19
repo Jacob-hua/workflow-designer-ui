@@ -32,6 +32,7 @@
 import BpmnShapeType from '../../../enum/shapeType';
 import zh from '../../../i18n/zh';
 import { deepCopy, deepEqual } from '../../../utils/object';
+import BpmnModeler from '../../../IBpmnModeler';
 
 export default {
   name: 'BaseInfo',
@@ -40,6 +41,11 @@ export default {
       type: String,
       required: true,
       default: '',
+    },
+    iBpmnModeler: {
+      type: BpmnModeler,
+      required: true,
+      default: () => new BpmnModeler(),
     },
   },
   data() {
@@ -59,8 +65,8 @@ export default {
           {
             trigger: 'change',
             validator: (_, value, callback) => {
-              if(this.isSequenceFlow){
-                callback()
+              if (this.isSequenceFlow) {
+                callback();
               }
               if (!value) {
                 callback(new Error(`请输入${this.labels.processName}`));
@@ -112,6 +118,9 @@ export default {
       };
     },
     isSequenceFlow() {
+      // const selectedShapeInfo = this.iBpmnModeler.getSelectedShape();
+      // console.log(selectedShapeInfo)
+      // return true
       return this.shapeType === BpmnShapeType.SEQUENCE_FLOW;
     },
   },
@@ -213,7 +222,7 @@ export default {
                   if (index !== -1) this.errorList.splice(index, 1);
                   this.$EventBus.$emit('workflowCheck', this.errorList);
                 } else {
-                  this.errorList.push(this.baseInfo.id)
+                  this.errorList.push(this.baseInfo.id);
                   this.$EventBus.$emit('workflowCheck', this.errorList);
                 }
               });
@@ -231,7 +240,7 @@ export default {
                   if (index !== -1) this.errorList.splice(index, 1);
                   this.$EventBus.$emit('workflowCheck', this.errorList);
                 } else {
-                  this.errorList.push('root')
+                  this.errorList.push('root');
                   this.$EventBus.$emit('workflowCheck', this.errorList);
                 }
               });

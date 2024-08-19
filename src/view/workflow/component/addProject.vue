@@ -111,13 +111,36 @@ export default {
       },
     };
   },
+  mounted() {
+    // this.setDefaultorganization()
+  },
   computed: {
     ...mapGetters('config', ['projectOrganizations']),
     dialogTitle() {
       return this.title;
     },
   },
+  watch: {
+    visible(value) {
+      if(value) {
+        this.setDefaultorganization()
+      }
+    }
+  },
   methods: {
+    setDefaultorganization() {
+      const options = this.projectOrganizations();
+      if (options.length <= 0) return;
+      this.formData.business = defaultOrg(options[0]);
+      function defaultOrg(data) {
+        let res = [];
+        res.push(data.value);
+        if (data.children) {
+          res = res.concat(defaultOrg(data.children[0]));
+        }
+        return res;
+      }
+    },
     onClose() {
       this.$emit('close');
       this.$emit('update:visible', false);

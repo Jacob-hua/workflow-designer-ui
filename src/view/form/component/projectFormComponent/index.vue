@@ -290,12 +290,31 @@ export default {
         this.loadMicroApp();
       }
     },
+    addFormDialogVisible(value) {
+      if(value) {
+        this.setDefaultorganization()
+      }
+    }
   },
   mounted() {
     this.addGlobalStateChangeListener();
+    // this.setDefaultorganization()
   },
 
   methods: {
+    setDefaultorganization() {
+      const options = this.projectOrganizations();
+      if (options.length <= 0) return;
+      this.formBaseInfo.business = defaultOrg(options[0]);
+      function defaultOrg(data) {
+        let res = [];
+        res.push(data.value);
+        if (data.children) {
+          res = res.concat(defaultOrg(data.children[0]));
+        }
+        return res;
+      }
+    },
     close() {
       this.formBaseInfo = {
         business: [],
