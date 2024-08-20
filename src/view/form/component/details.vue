@@ -21,31 +21,31 @@
           <div class="detail-title">
             <div class="detail-title-item">
               <span class="detail-title-item-label">表单编码:</span>
-              <span>{{ formDatas.formCode }}</span>
+              <span>{{ formMsg.formCode }}</span>
             </div>
             <div class="detail-title-item">
               <span class="detail-title-item-label">表单名称:</span>
-              <span>{{ formDatas.formName }}</span>
+              <span>{{ formMsg.formName }}</span>
             </div>
             <div class="detail-title-item">
               <span class="detail-title-item-label">项目名称:</span>
               <span
-                >{{ formDatas.projectName }}-{{
-                  formDatas.applicationName
+                >{{ formMsg.projectName }}-{{
+                  formMsg.applicationName
                 }}</span
               >
             </div>
             <div class="detail-title-item">
               <span class="detail-title-item-label">创建人:</span>
-              <span>{{ formDatas.creatorName }}</span>
+              <span>{{ formMsg.creatorName }}</span>
             </div>
             <div class="detail-title-item">
               <span class="detail-title-item-label">创建时间:</span>
-              <span>{{ formDatas.createTime }}</span>
+              <span>{{ formMsg.createTime }}</span>
             </div>
             <div class="detail-title-item">
               <span class="detail-title-item-label">版本个数:</span>
-              <span>{{ formDatas.versionNum }}</span>
+              <span>{{ formMsg.versionNum }}</span>
             </div>
           </div>
           <div class="detail-title-item-button">
@@ -185,12 +185,14 @@ export default {
       formScheam: '',
       formTree: {},
       selectedForm: {},
+      formMsg: {}
     };
   },
   watch: {
     formDatas: {
       deep: true,
       async handler(value) {
+        this.formMsg = value
         await this.getFormVersionList();
         this.setDefaultSelectedVersion();
       },
@@ -275,6 +277,7 @@ export default {
             type: 'success',
             message: '删除成功!',
           });
+          this.formMsg.versionNum -= 1
           // this.$emit('deleteSuccsee');
           await this.getFormVersionList();
           if (this.versionList.length <= 0) {

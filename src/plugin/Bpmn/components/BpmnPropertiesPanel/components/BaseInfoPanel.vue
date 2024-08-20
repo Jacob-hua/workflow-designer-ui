@@ -32,7 +32,6 @@
 import BpmnShapeType from '../../../enum/shapeType';
 import zh from '../../../i18n/zh';
 import { deepCopy, deepEqual } from '../../../utils/object';
-import BpmnModeler from '../../../IBpmnModeler';
 
 export default {
   name: 'BaseInfo',
@@ -41,11 +40,6 @@ export default {
       type: String,
       required: true,
       default: '',
-    },
-    iBpmnModeler: {
-      type: BpmnModeler,
-      required: true,
-      default: () => new BpmnModeler(),
     },
   },
   data() {
@@ -206,13 +200,28 @@ export default {
           return;
         }
         if (this.shapeType) {
+          // const tempType = JSON.parse(JSON.stringify(this.shapeType))
+          // this.updateBaseInfo({
+          //   newBaseInfo: {
+          //     id: this.baseInfo.id,
+          //     name: value.processName,
+          //   },
+          // });
+          // if (this.shapeType !== BpmnShapeType.SEQUENCE_FLOW) {
+          //   this.$refs['baseInfoFormRef'].validate((valid) => {
+          //     const index = this.errorList.findIndex(
+          //       (item) => item === this.baseInfo.id
+          //     );
+          //     if (valid) {
+          //       if (index !== -1) this.errorList.splice(index, 1);
+          //       this.$EventBus.$emit('workflowCheck', this.errorList);
+          //     } else {
+          //       this.errorList.push(this.baseInfo.id);
+          //       this.$EventBus.$emit('workflowCheck', this.errorList);
+          //     }
+          //   });
+          // }
           this.$nextTick(() => {
-            this.updateBaseInfo({
-              newBaseInfo: {
-                id: this.baseInfo.id,
-                name: value.processName,
-              },
-            });
             if (!this.isSequenceFlow) {
               this.$refs['baseInfoFormRef'].validate((valid) => {
                 const index = this.errorList.findIndex(
@@ -227,24 +236,41 @@ export default {
                 }
               });
             }
+            this.updateBaseInfo({
+              newBaseInfo: {
+                id: this.baseInfo.id,
+                name: value.processName,
+              },
+            });
           });
         } else {
           if (this.count) {
-            this.$nextTick(() => {
-              this.$refs['baseInfoFormRef'].validate((valid) => {
-                const index = this.errorList.findIndex(
-                  (item) => item === 'root'
-                );
-                this.updateRootBaseInfo({ rootBaseInfo: value });
-                if (valid) {
-                  if (index !== -1) this.errorList.splice(index, 1);
-                  this.$EventBus.$emit('workflowCheck', this.errorList);
-                } else {
-                  this.errorList.push('root');
-                  this.$EventBus.$emit('workflowCheck', this.errorList);
-                }
-              });
+            this.$refs['baseInfoFormRef'].validate((valid) => {
+              const index = this.errorList.findIndex((item) => item === 'root');
+              this.updateRootBaseInfo({ rootBaseInfo: value });
+              if (valid) {
+                if (index !== -1) this.errorList.splice(index, 1);
+                this.$EventBus.$emit('workflowCheck', this.errorList);
+              } else {
+                this.errorList.push('root');
+                this.$EventBus.$emit('workflowCheck', this.errorList);
+              }
             });
+            // this.$nextTick(() => {
+            //   this.$refs['baseInfoFormRef'].validate((valid) => {
+            //     const index = this.errorList.findIndex(
+            //       (item) => item === 'root'
+            //     );
+            //     this.updateRootBaseInfo({ rootBaseInfo: value });
+            //     if (valid) {
+            //       if (index !== -1) this.errorList.splice(index, 1);
+            //       this.$EventBus.$emit('workflowCheck', this.errorList);
+            //     } else {
+            //       this.errorList.push('root');
+            //       this.$EventBus.$emit('workflowCheck', this.errorList);
+            //     }
+            //   });
+            // });
           } else {
             this.updateRootBaseInfo({ rootBaseInfo: value });
             this.count++;

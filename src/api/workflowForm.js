@@ -26,3 +26,6 @@ export const deleteFormVersion = (params) => get('/workflow/design/form/delete/v
 
 //查询表单版本信息
 export const fetchFormVersion = (params) => get('/workflow/design/form/get/version', params);
+
+//  查询表单名称是否重复
+export const checkFormName = (params) => get('/workflow/design/form/check/name/repeat', params)

@@ -137,7 +137,11 @@
 import formVersion from '../formVersion.vue';
 import { loadMicroApp } from 'qiankun';
 import actions from '../../../../util/actions';
-import { addFormInfo, addFormVersion } from '../../../../api/workflowForm';
+import {
+  addFormInfo,
+  addFormVersion,
+  checkFormName,
+} from '../../../../api/workflowForm';
 import { Loading } from 'element-ui';
 
 export default {
@@ -363,13 +367,35 @@ export default {
         this.mutationObserverDom();
       }
     },
+    async validFormName() {
+      let isSame = false;
+      try {
+        const { data, code, msg } = await checkFormName({
+          formName: this.postData.formName,
+          formBindType: 'common',
+        });
+        if (code !== '200') {
+          this.$message.error(msg);
+          return;
+        }
+        isSame = data;
+      } catch (err) {
+        this.$message.error(err.msg || err);
+      }
+      return isSame;
+    },
     nextDiolog() {
       this.postData = {
         ...this.postData,
         ...this.formBaseInfo,
       };
-      this.$refs['guideForm'].validate((valid) => {
+      this.$refs['guideForm'].validate(async (valid) => {
         if (valid) {
+          const isSame = await this.validFormName();
+          if (isSame) {
+            this.$message.warning('表单名称已存在');
+            return false;
+          }
           this.$emit('changeAddFormVisible', false);
           this.$emit('changeFormDesignerVisible', true);
           this.$nextTick(() => {
@@ -438,8 +464,13 @@ export default {
           _this.closeForm();
           return;
         }
-        this.$refs['newOrEditForm'].validate((valid) => {
+        this.$refs['newOrEditForm'].validate(async (valid) => {
           if (valid) {
+            const isSame = await this.validFormName();
+            if (isSame && this.title === '新建表单') {
+              this.$message.warning('表单名称已存在');
+              return;
+            }
             _this.formVersionVisible = true;
           }
         });

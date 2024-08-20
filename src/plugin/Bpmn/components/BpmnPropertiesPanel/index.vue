@@ -12,7 +12,6 @@
         <component
           :is="component"
           :namespace="namespace"
-          :IBpmnModeler="IBpmnModeler"
           :lazyLoadUser="lazyLoadUser"
         />
       </el-collapse-item>

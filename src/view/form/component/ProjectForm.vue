@@ -69,7 +69,7 @@
         <div class="card-main">
           <div class="card-main-item">
             <span class="label">表单名称:</span>
-            <long-text contentStyle="color: white;" :content="item.formName" />
+            <long-text contentStyle="color: white; width: 180px" :content="item.formName" />
           </div>
           <div class="card-main-item">
             <span class="label">创建人:</span>

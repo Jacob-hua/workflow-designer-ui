@@ -1,8 +1,8 @@
 import IBpmnModeler from '../../../../IBpmnModeler'
 
-function baseInfoParameter2State(iBpmnModeler = new IBpmnModeler()) {
+function baseInfoParameter2State(element, iBpmnModeler = new IBpmnModeler()) {
   const state = {}
-  const shapeInfo = iBpmnModeler.getSelectedShapeInfo()
+  const shapeInfo = iBpmnModeler.getShapeInfo(element)
   state.name = shapeInfo.name
   state.id = shapeInfo.id
   return state
@@ -86,7 +86,7 @@ function onShapeChangedListener({ element }, commit, iBpmnModeler = new IBpmnMod
   if (!element) {
     return
   }
-  const baseInfo = baseInfoParameter2State(iBpmnModeler)
+  const baseInfo = baseInfoParameter2State(element, iBpmnModeler)
   const shapeType = shapeType2State(element, iBpmnModeler)
   const multiInstance = multiInstance2State(element, iBpmnModeler)
   commit('refreshState', { baseInfo, shapeType, multiInstance });
