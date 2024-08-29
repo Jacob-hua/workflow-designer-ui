@@ -29,13 +29,15 @@ module.exports = {
       ][1].address + ':8818',
     disableHostCheck: true,
     headers: {
+      "Access-Control-Allow-Credentials": true,
       'Access-Control-Allow-Origin': '*',
 			'Access-Control-Allow-Headers': '*',
-			'Access-Control-Allow-Methods': '*'
+			'Access-Control-Allow-Methods': '*',
+      // "Content-Type": "application/json; charset=utf-8"
     },
     hot: true,
     proxy: {
-      [`${process.env.VUE_APP_BASE_API}`]: {
+      '/': {
         // target: 'http://192.100.4.24:19931/', // 刘旺
         // target: 'http://192.100.4.35:19931/', //李柯
         target: "http://192.100.8.20:10001",
@@ -46,8 +48,9 @@ module.exports = {
         // target: 'http://192.100.4.35:19931/',
         changeOrigin: true, //是否允许跨域
         pathRewrite(path) {
+          console.log(path, process.env)
           const reg = new RegExp(`${process.env.VUE_APP_BASE_API}`);
-          return path.replace(reg, '');
+          return path.replace(reg, 'http://192.100.8.20:10001');
         },
       },
     },
