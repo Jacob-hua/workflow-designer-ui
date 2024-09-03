@@ -26,12 +26,12 @@
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span
           >{{ data.name }}
-          <el-input
+          <!-- <el-input
             size="mini"
             v-if="showinput && data.id === currentNode.id"
             v-model="nodeCode"
             placeholder="请输入节点code"
-          ></el-input>
+          ></el-input> -->
           <el-input
             size="mini"
             v-if="showinput && data.id === currentNode.id"
@@ -88,14 +88,14 @@ import {
   updateBusinessConfig,
   businessConfigWithTreeCreate,
   deleteBusinessConfig,
-  getAllBusinessConfig
-} from "@/api/globalConfig";
+  getAllBusinessConfig,
+} from '@/api/globalConfig';
 
-import { mapState } from "vuex";
+import { mapState } from 'vuex';
 
 let id = 3;
 export default {
-  name: "BusinessCon",
+  name: 'BusinessCon',
 
   props: {
     edit: {
@@ -108,40 +108,40 @@ export default {
     },
     type: {
       type: String,
-      default: "edit",
+      default: 'edit',
     },
   },
 
   data() {
     return {
-      nodeCode: "",
-      btnTxt: "预览",
+      nodeCode: '',
+      btnTxt: '预览',
       editFlag: true,
       forms: {},
       currentNode: {},
-      inptVal: "",
+      inptVal: '',
       showinput: false,
       dialogVisible: false,
       data: [
         {
           code: 1,
-          name: "",
-          active: "Y",
-          type: "industry",
+          name: '',
+          active: 'Y',
+          type: 'industry',
           parentId: -1,
-          createBy: "",
-          tenantId: "",
-          ascription: "",
+          createBy: '',
+          tenantId: '',
+          ascription: '',
         },
       ],
       defaultProps: {
-        children: "children",
-        label: "name",
+        children: 'children',
+        label: 'name',
       },
     };
   },
   computed: {
-    ...mapState("account", ["tenantId", "userInfo"]),
+    ...mapState('account', ['tenantId', 'userInfo']),
   },
   mounted() {
     this.data[0].tenantId = this.tenantId;
@@ -152,16 +152,16 @@ export default {
       let _this = this;
       businessConfigWithTreeCreate(params).then((res) => {
         console.log(res);
-        if (res.result.parentId === "-1") {
+        if (res.result.parentId === '-1') {
           _this.$set(_this.data, 0, res.result);
         } else {
           if (!this.currentNode.children) {
-            this.$set(this.currentNode, "children", []);
+            this.$set(this.currentNode, 'children', []);
           }
           this.currentNode.children.push(res.result);
           this.showinput = false;
         }
-        if(res.result) {
+        if (res.result) {
           this.getMapping();
         }
       });
@@ -181,20 +181,20 @@ export default {
     },
     goEdit() {
       this.editFlag = true;
-      this.btnTxt = "预览";
+      this.btnTxt = '预览';
     },
     preview() {
       let _this = this;
-      if (this.btnTxt === "保存") {
+      if (this.btnTxt === '保存') {
         if (!_this.edit) {
           delete this.data[0].id;
         }
-        if (this.type === "see") {
+        if (this.type === 'see') {
           createBusinessConfig(this.data).then((res) => {
             this.dialogVisible = false;
             this.$message({
-              type: "success",
-              message: "保存成功",
+              type: 'success',
+              message: '保存成功',
             });
             _this.$parent.getBusinessConfigBasicList();
           });
@@ -202,30 +202,31 @@ export default {
           updateBusinessConfig(this.data).then((res) => {
             this.dialogVisible = false;
             this.$message({
-              type: "success",
-              message: "保存成功",
+              type: 'success',
+              message: '保存成功',
             });
             _this.$parent.getBusinessConfigBasicList();
           });
         }
       } else {
         this.editFlag = false;
-        this.btnTxt = "保存";
+        this.btnTxt = '保存';
       }
     },
     onblur(node, data) {
-      if (this.nodeCode && this.inptVal) {
+      // if (this.nodeCode && this.inptVal) {
+      if (this.inptVal) {
         if (this.nodeCode.length > 50) {
           this.$message({
-            type: "warning",
-            message: "节点code 超过50, 请修改保存",
+            type: 'warning',
+            message: '节点code 超过50, 请修改保存',
           });
           return;
         }
         if (this.inptVal.length > 50) {
           this.$message({
-            type: "warning",
-            message: "节点名称超过50, 请修改保存",
+            type: 'warning',
+            message: '节点名称超过50, 请修改保存',
           });
           return;
         }
@@ -234,41 +235,41 @@ export default {
           name: this.inptVal,
           createBy: this.userInfo.account,
           tenantId: this.tenantId,
-          type: "industry",
+          type: 'industry',
           parentId: data.id,
           ascription: this.data[0].code,
         });
       } else {
         this.$message({
-          type: "warning",
-          message: "code 或节点名称不能为空",
+          type: 'warning',
+          message: 'code 或节点名称不能为空',
         });
       }
     },
     handleNodeClick(data) {},
     append(data, node) {
-      this.nodeCode = "";
-      this.inptVal = "";
+      this.nodeCode = '';
+      this.inptVal = '';
       this.showinput = true;
       this.currentNode = data;
     },
     clearRedisBusinessConfigCode(data, cleaAllFlag = false) {
       clearRedisBusinessConfigCode({
         tenantId: this.tenantId,
-        code: data.code ?? "",
-        projectCode: this.forms.code ?? "",
+        code: data.code ?? '',
+        projectCode: this.forms.code ?? '',
         cleaAllFlag,
       });
     },
     remove(node, data) {
-      this.$confirm("此操作将删当前业务节点,是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm('此操作将删当前业务节点,是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
         beforeClose: (action, instance, done) => {
           // 取消回车确认事件
-          if (action === "confirm") {
-            (instance.$refs["confirm"].$el.onclick = function (e) {
+          if (action === 'confirm') {
+            (instance.$refs['confirm'].$el.onclick = function (e) {
               e = e || window.event;
               if (e.detail !== 0) {
                 done();
@@ -286,8 +287,8 @@ export default {
           updateBy: this.userInfo.account,
         }).then((res) => {
           this.$message({
-            type: "success",
-            message: "删除成功",
+            type: 'success',
+            message: '删除成功',
           });
           const parent = node.parent;
           const children = parent.data.children || parent.data;
@@ -302,9 +303,9 @@ export default {
         tenantId: this.tenantId,
       }).then((res) => {
         if (res) {
-          sessionStorage.setItem('mapping', JSON.stringify(res.result || '[]'))
+          sessionStorage.setItem('mapping', JSON.stringify(res.result || '[]'));
         }
-      })
+      });
     },
   },
 };
