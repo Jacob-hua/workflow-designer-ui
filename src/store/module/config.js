@@ -103,6 +103,7 @@ const actions = {
     const {data, code, msg} = await getOrganizations();
     if(code!=='200'){
       Message.error(msg)
+      return
     }
 
     commit('updateOrganizations', { organizations: organizationCascaderData(data ?? []) })

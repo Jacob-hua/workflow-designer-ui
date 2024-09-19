@@ -138,7 +138,7 @@ export default {
   async mounted() {
     await this.dispatchProjectOriganizations();
     this.setDefaultorganization();
-    await this.refreshWorkFlowRecord();
+    this.refreshWorkFlowRecord();
   },
   methods: {
     ...mapActions('config', ['dispatchProjectOriganizations']),
@@ -233,7 +233,7 @@ export default {
     setProjectData(data) {
       this.projectData = { ...this.projectData, ...data };
     },
-    async refreshWorkFlowRecord() {
+    refreshWorkFlowRecord() {
       this.searchFormData = {
         ...this.searchForm,
         startTime: this.searchForm.valueDate?.[0],
