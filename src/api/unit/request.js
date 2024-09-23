@@ -5,11 +5,11 @@ import {router} from '../../main'
 // create an axios instance
 export const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  withCredentials: true, // send cookies when cross-domain requests
+  withCredentials: false, // send cookies when cross-domain requests
   // timeout: 10000, // request timeout
 })
 
-axios.defaults.withCredentials = true
+axios.defaults.withCredentials = false
 
 service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' //设置编码
 
