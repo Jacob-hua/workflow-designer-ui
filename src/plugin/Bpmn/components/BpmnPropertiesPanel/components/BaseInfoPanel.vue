@@ -232,7 +232,9 @@ export default {
                   this.$EventBus.$emit('workflowCheck', this.errorList);
                 } else {
                   this.errorList.push(this.baseInfo.id);
-                  this.$EventBus.$emit('workflowCheck', this.errorList);
+                  // this.$EventBus.$emit('workflowCheck', this.errorList);
+                  const set = new Set([...this.errorList]);
+                  this.$EventBus.$emit('workflowCheck', Array.from(set));
                 }
               });
             }
@@ -253,7 +255,9 @@ export default {
                 this.$EventBus.$emit('workflowCheck', this.errorList);
               } else {
                 this.errorList.push('root');
-                this.$EventBus.$emit('workflowCheck', this.errorList);
+                // this.$EventBus.$emit('workflowCheck', this.errorList);
+                const set = new Set([...this.errorList]);
+                this.$EventBus.$emit('workflowCheck', Array.from(set));
               }
             });
             // this.$nextTick(() => {

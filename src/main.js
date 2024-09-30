@@ -27,6 +27,7 @@ import { prefetchApps } from 'qiankun'
 import '@/directive/RoleDirective.js'
 import VueCompositionAPI from '@vue/composition-api'
 Vue.config.productionTip = false
+Vue.prototype.$EventBus = new Vue()
 
 Vue.use(VueCompositionAPI)
 Vue.use(ElementUI)
